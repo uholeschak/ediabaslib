@@ -234,15 +234,15 @@
   <string name="trans_translator_deepl">DeepL</string>
   <string name="trans_key_desc">Для автоматического перевода с {0} требуется бесплатный ключ API и учётная запись, что позволяет делать ограниченное количество переводов в день.\nИспользуйте следующие кнопки для входа в свою учетную запись, чтобы создать ключ или для отображения существующих.\nСкопируйте ключ из браузера и вставьте его в нижнее поле с помощью кнопки Вставить.\nЧтобы скопировать ключ, нажмите и удерживайте первое слово, расширьте диапазон и выберите "Копировать".</string>
   <string name="trans_key_copy_title">копировать API ключ</string>
-  <string name="button_yandex_key_create">создать API ключ</string>
-  <string name="button_yandex_key_get">Показать API ключи</string>
-  <string name="yandex_key_paste_title">API ключ</string>
-  <string name="button_yandex_key_paste">Вставить API ключи</string>
+  <string name="button_api_key_create">создать API ключ</string>
+  <string name="button_api_key_get">Показать API ключи</string>
+  <string name="trans_key_paste_title">API ключ</string>
+  <string name="button_api_key_paste">Вставить API ключи</string>
   <string name="api_url_paste_title">API URL</string>
   <string name="button_api_url_paste">вставить API URL</string>
-  <string name="yandex_key_test_title">Перевести</string>
-  <string name="button_yandex_key_test">Проверить перевод</string>
-  <string name="button_yandex_key_test_failed">Ошибка при переводе</string>
+  <string name="trans_key_test_title">Перевести</string>
+  <string name="button_api_key_test">Проверить перевод</string>
+  <string name="button_api_key_test_failed">Ошибка при переводе</string>
 
   <!--  DeviceListActivity -->
   <string name="scanning">Поиск устройств ...</string>

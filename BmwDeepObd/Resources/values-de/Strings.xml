@@ -235,15 +235,15 @@
   <string name="trans_translator_deepl">DeepL</string>
   <string name="trans_key_desc">Für eine automatische Übersetzung mit {0} wird eine kostenloser API Key und Account benötigt, der eine begrenzte Anzahl an Übersetzungen pro Tag erlaubt.\nMit den folgenden Schaltflächen loggen Sie sich in Ihren Account ein um eine Key zu erzeugen oder Ihre bestehenden anzuzeigen.\nKopieren Sie den Key aus dem Browser und fügen Sie Ihn in das untere Feld mit der Einfügen Schaltfläche ein.\nUm den Key zu kopieren drücken und halten Sie das erste Wort, erweitern den Bereich und wählen Sie anschließend kopieren.</string>
   <string name="trans_key_copy_title">API Key kopieren</string>
-  <string name="button_yandex_key_create">API Key erzeugen</string>
-  <string name="button_yandex_key_get">API Keys anzeigen</string>
-  <string name="yandex_key_paste_title">API Key</string>
-  <string name="button_yandex_key_paste">API Key einfügen</string>
+  <string name="button_api_key_create">API Key erzeugen</string>
+  <string name="button_api_key_get">API Keys anzeigen</string>
+  <string name="trans_key_paste_title">API Key</string>
+  <string name="button_api_key_paste">API Key einfügen</string>
   <string name="api_url_paste_title">API URL</string>
   <string name="button_api_url_paste">API URL einfügen</string>
-  <string name="yandex_key_test_title">Translate</string>
-  <string name="button_yandex_key_test">Übersetzung testen</string>
-  <string name="button_yandex_key_test_failed">Übersetzung fehlgeschlagen</string>
+  <string name="trans_key_test_title">Translate</string>
+  <string name="button_api_key_test">Übersetzung testen</string>
+  <string name="button_api_key_test_failed">Übersetzung fehlgeschlagen</string>
 
   <!--  DeviceListActivity -->
   <string name="scanning">Nach Geräten suchen ...</string>
