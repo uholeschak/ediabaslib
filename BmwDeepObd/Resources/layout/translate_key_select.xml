@@ -34,12 +34,12 @@
                 android:text="@string/trans_translator_deepl" />
         </RadioGroup>
         <TextView
-            android:id="@+id/textViewYandexKeyDesc"
+            android:id="@+id/textViewTransKeyDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
-            android:id="@+id/textViewYandexKeyCopyTitle"
-            android:text="@string/yandex_key_copy_title"
+            android:id="@+id/textViewTransKeyCopyTitle"
+            android:text="@string/trans_key_copy_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />

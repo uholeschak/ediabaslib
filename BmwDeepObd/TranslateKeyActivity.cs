@@ -10,7 +10,7 @@ using AndroidX.AppCompat.App;
 
 namespace BmwDeepObd
 {
-    [Android.App.Activity(Label = "@string/yandex_api_key_title",
+    [Android.App.Activity(Label = "@string/trans_api_key_title",
         Name = ActivityCommon.AppNameSpace + "." + nameof(TranslateKeyActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
@@ -44,7 +44,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonTranslatorYandex;
         private RadioButton _radioButtonTranslatorIbm;
         private RadioButton _radioButtonTranslatorDeepl;
-        private TextView _textViewYandexKeyDesc;
+        private TextView _textViewTransKeyDesc;
         private LinearLayout _layoutYandexKey;
         private Button _buttonYandexApiKeyCreate;
         private Button _buttonYandexApiKeyGet;
@@ -127,7 +127,7 @@ namespace BmwDeepObd
                 UpdateDisplay();
             };
 
-            _textViewYandexKeyDesc = FindViewById<TextView>(Resource.Id.textViewYandexKeyDesc);
+            _textViewTransKeyDesc = FindViewById<TextView>(Resource.Id.textViewTransKeyDesc);
 
             _layoutYandexKey = FindViewById<LinearLayout>(Resource.Id.layoutYandexKey);
             _layoutYandexKey.SetOnTouchListener(this);
@@ -469,7 +469,7 @@ namespace BmwDeepObd
             try
             {
                 _ignoreChange = true;
-                _textViewYandexKeyDesc.Text = string.Format(GetString(Resource.String.yandex_key_desc), _activityCommon.TranslatorName());
+                _textViewTransKeyDesc.Text = string.Format(GetString(Resource.String.trans_key_desc), _activityCommon.TranslatorName());
 
                 switch (ActivityCommon.SelectedTranslator)
                 {
