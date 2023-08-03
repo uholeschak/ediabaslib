@@ -2889,6 +2889,50 @@ namespace PsdzClient
             return saLaPa;
         }
 
+        public List<Tuple<string, string>> GetTransmissionSaByTypeKey(string typekey)
+        {
+            log.InfoFormat("GetTransmissionSaByTypeKey Typekey: {0}", typekey);
+            if (string.IsNullOrEmpty(typekey))
+            {
+                return null;
+            }
+
+            List<Tuple<string, string>> saList = new List<Tuple<string, string>>();
+            try
+            {
+                string typeKeyId = GetTypeKeyId(typekey, false);
+                if (!string.IsNullOrEmpty(typeKeyId))
+                {
+                    return null;
+                }
+
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT SA.Name AS SANAME, LINK.VERB AS VERB FROM STD_TYPEKEY_SA_LINK LINK JOIN XEP_SALAPAS SA ON SA.ID = SALAPA_OID" +
+                    @" WHERE VEHICLETYPE_ID = {0} AND UPPER(SA_GROUP) = 'TRANSMISSION'", typeKeyId);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string saName = reader["SANAME"].ToString().Trim();
+                            string verb = reader["VERB"].ToString().Trim();
+                            Tuple<string, string> item = new Tuple<string, string>(saName, verb);
+                            saList.Add(item);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetTransmissionSaByTypeKey Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetTransmissionSaByTypeKey Count: {0}", saList.Count);
+            return saList;
+        }
+
         public SaLaPa GetSaLaPaByProductTypeAndSalesKey(string productType, string salesKey)
         {
             log.InfoFormat("GetSaLaPaByProductTypeAndSalesKey Type: {0}, Key: {1}", productType, salesKey);
