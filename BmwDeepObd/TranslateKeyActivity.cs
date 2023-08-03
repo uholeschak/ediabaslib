@@ -335,7 +335,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                UpdateSetting();
+                UpdateSettings();
                 _textViewYandexApiKeyTestResult.Text = string.Empty;
 
                 if (!_activityCommon.TranslateStrings(new List<string> {"Dieser Text wurde erfolgreich \x00fcbersetzt"}, list =>
@@ -567,7 +567,7 @@ namespace BmwDeepObd
             UpdateButtonState();
         }
 
-        private void UpdateSetting()
+        private void UpdateSettings()
         {
             UpdateTranslatorKeys();
             UpdateTranslatorType();
@@ -628,23 +628,78 @@ namespace BmwDeepObd
                 _activityCommon.Translator = translator;
             }
 
-            ActivityCommon.YandexApiKey = _instanceData.OldYandexApiKey;
-            ActivityCommon.IbmTranslatorApiKey = _instanceData.OldIbmTranslatorApiKey;
-            ActivityCommon.IbmTranslatorUrl = _instanceData.OldIbmTranslatorUrl;
-            ActivityCommon.DeeplApiKey = _instanceData.OldDeeplApiKey;
+            ActivityCommon.YandexApiKey = _instanceData.OldYandexApiKey ?? string.Empty;
+            ActivityCommon.IbmTranslatorApiKey = _instanceData.OldIbmTranslatorApiKey ?? string.Empty;
+            ActivityCommon.IbmTranslatorUrl = _instanceData.OldIbmTranslatorUrl ?? string.Empty;
+            ActivityCommon.DeeplApiKey = _instanceData.OldDeeplApiKey ?? string.Empty;
+        }
+
+        private bool SettingsChanged()
+        {
+            try
+            {
+                if (Enum.TryParse(_instanceData.OldTranslator, out ActivityCommon.TranslatorType translator))
+                {
+                    if (_activityCommon.Translator != translator)
+                    {
+                        return true;
+                    }
+                }
+
+                if (string.Compare(ActivityCommon.YandexApiKey ?? string.Empty, _instanceData.OldYandexApiKey ?? string.Empty, StringComparison.Ordinal) != 0)
+                {
+                    return true;
+                }
+
+                if (string.Compare(ActivityCommon.IbmTranslatorApiKey ?? string.Empty, _instanceData.OldIbmTranslatorApiKey ?? string.Empty, StringComparison.Ordinal) != 0)
+                {
+                    return true;
+                }
+
+                if (string.Compare(ActivityCommon.IbmTranslatorUrl ?? string.Empty, _instanceData.OldIbmTranslatorUrl ?? string.Empty, StringComparison.Ordinal) != 0)
+                {
+                    return true;
+                }
+
+                if (string.Compare(ActivityCommon.DeeplApiKey ?? string.Empty, _instanceData.OldDeeplApiKey ?? string.Empty, StringComparison.Ordinal) != 0)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return true;
+            }
         }
 
         private bool StoreYandexKey(EventHandler handler)
         {
+            UpdateSettings();
+            if (!SettingsChanged())
+            {
+                return true;
+            }
+
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                 {
-                    UpdateSetting();
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
                     SetResult(Android.App.Result.Ok);
                     handler?.Invoke(sender, args);
                 })
                 .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
                     RestoreSetting();
                     handler?.Invoke(sender, args);
                 })
