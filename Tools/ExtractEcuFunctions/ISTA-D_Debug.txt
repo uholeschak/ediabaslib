@@ -463,6 +463,28 @@ BMW.Rheingold.CoreFramework.DatabaseProvider.DatabaseTree.DiagnosisObjectsTreeNo
 BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetInfoObjectsByDiagObjectControlId(), IsInfoObjectValid(), GetInfoObjectObjectId()
 BMW.Rheingold.DatabaseProvider.SQLiteConnector.GetDiagObjectsByNodeclassName("DiagnosticObjectServicefunctionRoot");
 
+SaLaPa:
+=======
+doECUReadFA()
+BN2000:
+ D_CAS/D_LM/D_KBM C_FA_LESEN -> FA_STREAM2STRUCT -> STANDARD_FA -> SA_ANZ, SA_X, HO_WORT_ANZ, HO_WORT_X, E_WORT_ANZ, E_WORT_X, ZUSBAU_ANZ, ZUSBAU_X ->  UpdateFA(SA, HO, E, ZUSBAU)
+
+BN2020:
+ G_ZGW/ZGW_01 STATUS_VCM_GET_FA -> STAT_SALAPA, STAT_HO_WORTE, STAT_E_WORTE -> UpdateFA(SA, HO, E)
+ G_CAS STATUS_FAHRZEUGAUFTRAG -> FA_STREAM2STRUCT -> STANDARD_FA -> SA_ANZ, SA_X, HO_WORT_ANZ, HO_WORT_X, E_WORT_ANZ, E_WORT_X, ZUSBAU_ANZ, ZUSBAU_X ->  UpdateFA(SA, HO, E, ZUSBAU)
+ BACKUP:
+ - G_FRM:
+   G_FRM STATUS_LESEN ARG;VCM_DID_FA1 -> STAT_FAHRZEUGAUFTRAG_TEIL_1_DATA
+   G_FRM STATUS_LESEN ARG;VCM_DID_FA2 -> STAT_FAHRZEUGAUFTRAG_TEIL_2_DATA
+   DecodeVCMBackupFA()
+ - G_KOMBI:
+   G_KOMBI STATUS_VCM_BACKUP_FAHRZEUGAUFTRAG_LESEN ->STAT_FAHRZEUGAUFTRAG_TEIL_1_WERT, STAT_FAHRZEUGAUFTRAG_TEIL_2_WERT
+   DecodeVCMBackupFA()
+
+ UpdateFA:
+  prodArt = GetProdArt(vecInfo);
+  GetSaLaPaByProductTypeAndSalesKey(prodArt, saKey) -> SetSpecialEquipment, SetHOWordList, SetEWordList, 
+
 Log files:
 ==========
 ISTA creates a log file xxxIcomLogs*.tgz, this file is protected with the password: 3DkDxnKQZ1
