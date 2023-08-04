@@ -668,7 +668,7 @@ namespace PsdzClient.Programming
 
             if (!OverrideVehicleCharacteristics(programmingService))
             {
-                return false;
+                //return false;
             }
 
             return true;
@@ -733,9 +733,10 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                if (!string.IsNullOrEmpty(VecInfo.VINRangeType))
+                string gmType = VecInfo.GMType;
+                if (!string.IsNullOrEmpty(gmType))
                 {
-                    List<Tuple<string, string>> transmissionSaByTypeKey = programmingService.PdszDatabase.GetTransmissionSaByTypeKey(VecInfo.VINRangeType);
+                    List<Tuple<string, string>> transmissionSaByTypeKey = programmingService.PdszDatabase.GetTransmissionSaByTypeKey(gmType);
                     if (transmissionSaByTypeKey == null)
                     {
                         return false;

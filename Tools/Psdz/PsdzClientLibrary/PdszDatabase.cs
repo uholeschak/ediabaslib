@@ -2784,11 +2784,12 @@ namespace PsdzClient
             return BatteryEnum.PbNew;
         }
 
-        public bool IsVehicleAnAlpina(Vehicle vehicle)
+        public static bool IsVehicleAnAlpina(Vehicle vehicle)
         {
             return vehicle.hasSA("920");
         }
 
+        // ToDo: Check on update
         public static string GetProdArt(Vehicle vecInfo)
         {
             string result = "P";
