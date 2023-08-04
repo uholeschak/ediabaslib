@@ -2929,7 +2929,14 @@ namespace PsdzClient
                 return null;
             }
 
-            log.InfoFormat("GetTransmissionSaByTypeKey Count: {0}", saList.Count);
+            if (saList.Count > 1)
+            {
+                log.ErrorFormat("GetTransmissionSaByTypeKey Multipe entries: {0}", saList.Count);
+            }
+            else
+            {
+                log.InfoFormat("GetTransmissionSaByTypeKey Count: {0}", saList.Count);
+            }
             return saList;
         }
 

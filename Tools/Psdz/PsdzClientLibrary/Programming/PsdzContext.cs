@@ -7,6 +7,7 @@ using System.Linq;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Svb;
@@ -664,6 +665,12 @@ namespace PsdzClient.Programming
             VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
+
+            if (!OverrideVehicleCharacteristics(programmingService))
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -715,6 +722,45 @@ namespace PsdzClient.Programming
             }
 
             return ecuList;
+        }
+
+        public bool OverrideVehicleCharacteristics(ProgrammingService programmingService)
+        {
+            try
+            {
+                if (VecInfo == null)
+                {
+                    return false;
+                }
+
+                if (!string.IsNullOrEmpty(VecInfo.VINRangeType))
+                {
+                    List<Tuple<string, string>> transmissionSaByTypeKey = programmingService.PdszDatabase.GetTransmissionSaByTypeKey(VecInfo.VINRangeType);
+                    if (transmissionSaByTypeKey == null)
+                    {
+                        return false;
+                    }
+
+                    if (!transmissionSaByTypeKey.Any(sa => VecInfo.hasSA(sa.Item1)))
+                    {
+                        List<Tuple<string, string>> list = transmissionSaByTypeKey.Where(sa => sa.Item2 == "T").ToList();
+                        if (list.Count == 1)
+                        {
+                            string text = list.First().Item1;
+                            if (string.IsNullOrEmpty(text))
+                            {
+                                VecInfo.FA.SA.Add(text);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private bool _disposed;
