@@ -70,6 +70,9 @@ namespace PsdzClient
         public string ConstructYear { get; private set; }
         public string ConstructMonth { get; private set; }
         public DateTime? ConstructDate { get; private set; }
+        public List<string> Salapa { get; private set; }
+        public List<string> HoWords { get; private set; }
+        public List<string> EWords { get; private set; }
         public string ILevelShip { get; private set; }
         public string ILevelCurrent { get; private set; }
         public string ILevelBackup { get; private set; }
@@ -202,8 +205,54 @@ namespace PsdzClient
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
-                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                            if (!readFa)
+                            {
+                                int dictIndex = 0;
+                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                                {
+                                    if (dictIndex == 0)
+                                    {
+                                        dictIndex++;
+                                        continue;
+                                    }
+
+                                    // ReSharper disable once InlineOutVariableDeclaration
+                                    if (resultDict.TryGetValue("STAT_SALAPA", out EdiabasNet.ResultData resultDataSa))
+                                    {
+                                        string saStr = resultDataSa.OpData as string;
+                                        if (!string.IsNullOrEmpty(saStr))
+                                        {
+                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected SaLaPa: {0}", saStr);
+                                            Salapa.Add(saStr);
+                                        }
+                                    }
+
+                                    if (resultDict.TryGetValue("STAT_HO_WORTE", out EdiabasNet.ResultData resultDataHo))
+                                    {
+                                        string hoStr = resultDataHo.OpData as string;
+                                        if (!string.IsNullOrEmpty(hoStr))
+                                        {
+                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected HO: {0}", hoStr);
+                                            HoWords.Add(hoStr);
+                                        }
+                                    }
+
+                                    if (resultDict.TryGetValue("STAT_E_WORTE", out EdiabasNet.ResultData resultDataEw))
+                                    {
+                                        string ewStr = resultDataEw.OpData as string;
+                                        if (!string.IsNullOrEmpty(ewStr))
+                                        {
+                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW: {0}", ewStr);
+                                            EWords.Add(ewStr);
+                                        }
+                                    }
+
+                                    dictIndex++;
+                                }
+                            }
+
+                            Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
+                            if (resultDict1.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                             {
                                 if (readFa)
                                 {
@@ -217,8 +266,7 @@ namespace PsdzClient
                                         _ediabas.ResultsRequests = string.Empty;
                                         _ediabas.ExecuteJob("FA_STREAM2STRUCT");
 
-                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsFa =
-                                            _ediabas.ResultSets;
+                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsFa = _ediabas.ResultSets;
                                         if (resultSetsFa != null && resultSetsFa.Count >= 2)
                                         {
                                             Dictionary<string, EdiabasNet.ResultData> resultDictFa = resultSetsFa[1];
@@ -249,11 +297,6 @@ namespace PsdzClient
                                                     cDate = dateTime;
                                                 }
                                             }
-
-                                            if (vehicleType != null)
-                                            {
-                                                break;
-                                            }
                                         }
                                     }
                                 }
@@ -271,7 +314,7 @@ namespace PsdzClient
                                             vehicleType = vtype;
                                         }
 
-                                        if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
+                                        if (resultDict1.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
                                         {
                                             string cDateStr = resultDataCDate.OpData as string;
                                             DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
@@ -282,13 +325,13 @@ namespace PsdzClient
                                                 cDate = dateTime;
                                             }
                                         }
-
-                                        if (vehicleType != null)
-                                        {
-                                            break;
-                                        }
                                     }
                                 }
+                            }
+
+                            if (vehicleType != null)
+                            {
+                                break;
                             }
                         }
                     }
@@ -821,6 +864,9 @@ namespace PsdzClient
             ConstructDate = null;
             ConstructYear = null;
             ConstructMonth = null;
+            Salapa = new List<string>();
+            HoWords = new List<string>();
+            EWords = new List<string>();
         }
 
         public void Dispose()
