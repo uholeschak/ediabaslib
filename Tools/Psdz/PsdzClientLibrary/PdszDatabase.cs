@@ -2951,7 +2951,8 @@ namespace PsdzClient
             SaLaPa saLaPa = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", NAME, PRODUCT_TYPE FROM XEP_SALAPAS WHERE (NAME = '{0}' AND PRODUCT_TYPE = '{1}')", productType, salesKey);
+                string tmpSalesKey = salesKey.TrimStart('0');
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", NAME, PRODUCT_TYPE FROM XEP_SALAPAS WHERE (NAME = '{0}' AND PRODUCT_TYPE = '{1}')", productType, tmpSalesKey);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
