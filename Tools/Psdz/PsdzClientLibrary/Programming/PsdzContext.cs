@@ -666,11 +666,7 @@ namespace PsdzClient.Programming
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
 
-            if (!OverrideVehicleCharacteristics(programmingService))
-            {
-                //return false;
-            }
-
+            OverrideVehicleCharacteristics(programmingService);
             return true;
         }
 

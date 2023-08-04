@@ -2912,7 +2912,7 @@ namespace PsdzClient
             try
             {
                 string typeKeyId = GetTypeKeyId(typekey, false);
-                if (!string.IsNullOrEmpty(typeKeyId))
+                if (string.IsNullOrEmpty(typeKeyId))
                 {
                     return null;
                 }
