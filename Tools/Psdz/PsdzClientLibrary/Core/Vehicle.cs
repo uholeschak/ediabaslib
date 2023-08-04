@@ -186,7 +186,7 @@ namespace PsdzClient.Core
             PdszDatabase database = ClientContext.GetDatabase(this);
             if (database != null && !"XXXXXXX".Equals(this.VIN7) && !string.IsNullOrEmpty(this.VIN7) && !this.VIN7.Equals(this.vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
             {
-                PdszDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(this.VINType, this.VIN7, false);
+                PdszDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(this.VINType, this.VIN7, IsVehicleWithOnlyVin7());
 				if (vinRangesByVin != null)
 				{
                     this.vinRangeTypeLastResolvedType = this.VIN7;

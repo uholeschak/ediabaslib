@@ -588,7 +588,7 @@ namespace PsdzClient.Programming
             }
 
             VecInfo.Ereihe = DetectVehicle.Series;
-            VecInfo.SetVINRangeTypeFromVINRanges();
+            VecInfo.VINRangeType = VecInfo.SetVINRangeTypeFromVINRanges();
 
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             if (VecInfo.IsMotorcycle())
@@ -729,10 +729,9 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                string gmType = VecInfo.GMType;
-                if (!string.IsNullOrEmpty(gmType))
+                if (!string.IsNullOrEmpty(VecInfo.VINRangeType))
                 {
-                    List<Tuple<string, string>> transmissionSaByTypeKey = programmingService.PdszDatabase.GetTransmissionSaByTypeKey(gmType);
+                    List<Tuple<string, string>> transmissionSaByTypeKey = programmingService.PdszDatabase.GetTransmissionSaByTypeKey(VecInfo.VINRangeType);
                     if (transmissionSaByTypeKey == null)
                     {
                         return false;
