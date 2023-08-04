@@ -2789,6 +2789,16 @@ namespace PsdzClient
             return vehicle.hasSA("920");
         }
 
+        public static string GetProdArt(Vehicle vecInfo)
+        {
+            string result = "P";
+            if (vecInfo != null && ("M".Equals(vecInfo.Prodart) || vecInfo.BrandName == BrandName.HUSQVARNA || vecInfo.BrandName == BrandName.BMWMOTORRAD || vecInfo.BrandName == BrandName.ROSENBAUER))
+            {
+                result = "M";
+            }
+            return result;
+        }
+
         private void HandleAlpinaVehicles(Vehicle vehicle, List<Characteristics> characteristicsList)
         {
             log.InfoFormat("HandleAlpinaVehicles List size: {0}", characteristicsList.Count);
