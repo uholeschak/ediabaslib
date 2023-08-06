@@ -592,22 +592,25 @@ namespace PsdzClient.Programming
 
             if (!VecInfo.FA.AlreadyDone)
             {
-                foreach (string salapa in DetectVehicle.Salapa)
+                if (VecInfo.FA.SA.Count == 0 && VecInfo.FA.HO_WORT.Count == 0 && VecInfo.FA.E_WORT.Count == 0)
                 {
-                    VecInfo.FA.SA.AddIfNotContains(salapa);
-                }
+                    foreach (string salapa in DetectVehicle.Salapa)
+                    {
+                        VecInfo.FA.SA.AddIfNotContains(salapa);
+                    }
 
-                foreach (string hoWord in DetectVehicle.HoWords)
-                {
-                    VecInfo.FA.HO_WORT.AddIfNotContains(hoWord);
-                }
+                    foreach (string hoWord in DetectVehicle.HoWords)
+                    {
+                        VecInfo.FA.HO_WORT.AddIfNotContains(hoWord);
+                    }
 
-                foreach (string eWord in DetectVehicle.EWords)
-                {
-                    VecInfo.FA.E_WORT.AddIfNotContains(eWord);
-                }
+                    foreach (string eWord in DetectVehicle.EWords)
+                    {
+                        VecInfo.FA.E_WORT.AddIfNotContains(eWord);
+                    }
 
-                OverrideVehicleCharacteristics(programmingService);
+                    OverrideVehicleCharacteristics(programmingService);
+                }
             }
 
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
