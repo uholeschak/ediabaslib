@@ -590,6 +590,26 @@ namespace PsdzClient.Programming
             VecInfo.Ereihe = DetectVehicle.Series;
             VecInfo.VINRangeType = VecInfo.SetVINRangeTypeFromVINRanges();
 
+            if (!VecInfo.FA.AlreadyDone)
+            {
+                foreach (string salapa in DetectVehicle.Salapa)
+                {
+                    VecInfo.FA.SA.AddIfNotContains(salapa);
+                }
+
+                foreach (string hoWord in DetectVehicle.HoWords)
+                {
+                    VecInfo.FA.HO_WORT.AddIfNotContains(hoWord);
+                }
+
+                foreach (string eWord in DetectVehicle.EWords)
+                {
+                    VecInfo.FA.E_WORT.AddIfNotContains(eWord);
+                }
+
+                OverrideVehicleCharacteristics(programmingService);
+            }
+
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             if (VecInfo.IsMotorcycle())
             {
@@ -665,8 +685,6 @@ namespace PsdzClient.Programming
             VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
-
-            OverrideVehicleCharacteristics(programmingService);
             return true;
         }
 
