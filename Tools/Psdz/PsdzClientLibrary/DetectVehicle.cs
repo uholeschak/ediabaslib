@@ -36,6 +36,7 @@ namespace PsdzClient
         {
             new Tuple<string, string, string>("G_ZGW", "STATUS_VCM_GET_FA", "STAT_BAUREIHE"),
             new Tuple<string, string, string>("ZGW_01", "STATUS_VCM_GET_FA", "STAT_BAUREIHE"),
+            new Tuple<string, string, string>("G_CAS", "STATUS_FAHRZEUGAUFTRAG", "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
             new Tuple<string, string, string>("D_CAS", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string>("D_LM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string>("D_KBM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
@@ -193,7 +194,7 @@ namespace PsdzClient
 
                     try
                     {
-                        bool readFa = string.Compare(job.Item2, "C_FA_LESEN", StringComparison.OrdinalIgnoreCase) == 0;
+                        bool statVcm = string.Compare(job.Item2, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
 
                         _ediabas.ResolveSgbdFile(job.Item1);
 
@@ -208,7 +209,7 @@ namespace PsdzClient
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                             {
-                                if (readFa)
+                                if (!statVcm)
                                 {
                                     string fa = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(fa))
