@@ -41,6 +41,9 @@ namespace BmwFileReader
 
             public VehicleDataBmw()
             {
+                Salapa = new List<string>();
+                HoWords = new List<string>();
+                EWords = new List<string>();
             }
 
             public VehicleDataBmw(DetectVehicleBmw detectVehicleBmw)
@@ -82,9 +85,9 @@ namespace BmwFileReader
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
                 detectVehicleBmw.ConstructYear = ConstructYear;
                 detectVehicleBmw.ConstructMonth = ConstructMonth;
-                detectVehicleBmw.Salapa = Salapa;
-                detectVehicleBmw.HoWords = HoWords;
-                detectVehicleBmw.EWords = EWords;
+                detectVehicleBmw.Salapa = Salapa ?? new List<string>();
+                detectVehicleBmw.HoWords = HoWords ?? new List<string>();
+                detectVehicleBmw.EWords = EWords ?? new List<string>();
                 detectVehicleBmw.ILevelShip = ILevelShip;
                 detectVehicleBmw.ILevelCurrent = ILevelCurrent;
                 detectVehicleBmw.ILevelBackup = ILevelBackup;
@@ -347,6 +350,7 @@ namespace BmwFileReader
 
                                             if (vehicleType != null)
                                             {
+                                                SetFaSalpaInfo(resultDictFa);
                                                 break;
                                             }
                                         }
@@ -380,6 +384,7 @@ namespace BmwFileReader
 
                                         if (vehicleType != null)
                                         {
+                                            SetStatVcmSalpaInfo(resultSets);
                                             break;
                                         }
                                     }
@@ -899,5 +904,138 @@ namespace BmwFileReader
             ILevelBackup = null;
             Pin78ConnectRequire = false;
         }
+
+        private void SetStatVcmSalpaInfo(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            int dictIndex = 0;
+            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+            {
+                if (dictIndex == 0)
+                {
+                    dictIndex++;
+                    continue;
+                }
+
+                if (resultDict.TryGetValue("STAT_SALAPA", out EdiabasNet.ResultData resultDataSa))
+                {
+                    string saStr = resultDataSa.OpData as string;
+                    if (!string.IsNullOrEmpty(saStr))
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected SaLaPa: {0}", saStr);
+                        if (!Salapa.Contains(saStr))
+                        {
+                            Salapa.Add(saStr);
+                        }
+                    }
+                }
+
+                if (resultDict.TryGetValue("STAT_HO_WORTE", out EdiabasNet.ResultData resultDataHo))
+                {
+                    string hoStr = resultDataHo.OpData as string;
+                    if (!string.IsNullOrEmpty(hoStr))
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected HO: {0}", hoStr);
+                        if (!HoWords.Contains(hoStr))
+                        {
+                            HoWords.Add(hoStr);
+                        }
+                    }
+                }
+
+                if (resultDict.TryGetValue("STAT_E_WORTE", out EdiabasNet.ResultData resultDataEw))
+                {
+                    string ewStr = resultDataEw.OpData as string;
+                    if (!string.IsNullOrEmpty(ewStr))
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected EW: {0}", ewStr);
+                        if (!EWords.Contains(ewStr))
+                        {
+                            EWords.Add(ewStr);
+                        }
+                    }
+                }
+
+                dictIndex++;
+            }
+        }
+
+        private void SetFaSalpaInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
+        {
+            if (resultDict.TryGetValue("SA_ANZ", out EdiabasNet.ResultData resultDataSaCount))
+            {
+                Int64? saCount = resultDataSaCount.OpData as Int64?;
+                if (saCount != null)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected SaLaPa count: {0}", saCount.Value);
+                    for (int index = 0; index < saCount.Value; index++)
+                    {
+                        string saName = string.Format(CultureInfo.InvariantCulture, "SA_{0}", index + 1);
+                        if (resultDict.TryGetValue(saName, out EdiabasNet.ResultData resultDataSa))
+                        {
+                            string saStr = resultDataSa.OpData as string;
+                            if (!string.IsNullOrEmpty(saStr))
+                            {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected SaLaPa: {0}", saStr);
+                                if (!Salapa.Contains(saStr))
+                                {
+                                    Salapa.Add(saStr);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("HO_WORT_ANZ", out EdiabasNet.ResultData resultDataHoCount))
+            {
+                Int64? haCount = resultDataHoCount.OpData as Int64?;
+                if (haCount != null)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected HO count: {0}", haCount.Value);
+                    for (int index = 0; index < haCount.Value; index++)
+                    {
+                        string hoName = string.Format(CultureInfo.InvariantCulture, "HO_WORT_{0}", index + 1);
+                        if (resultDict.TryGetValue(hoName, out EdiabasNet.ResultData resultDataHo))
+                        {
+                            string hoStr = resultDataHo.OpData as string;
+                            if (!string.IsNullOrEmpty(hoStr))
+                            {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected HO: {0}", hoStr);
+                                if (!HoWords.Contains(hoStr))
+                                {
+                                    HoWords.Add(hoStr);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("E_WORT_ANZ", out EdiabasNet.ResultData resultDataEwCount))
+            {
+                Int64? ewCount = resultDataEwCount.OpData as Int64?;
+                if (ewCount != null)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh,"Detected EW count: {0}", ewCount.Value);
+                    for (int index = 0; index < ewCount.Value; index++)
+                    {
+                        string ewName = string.Format(CultureInfo.InvariantCulture, "E_WORT_{0}", index + 1);
+                        if (resultDict.TryGetValue(ewName, out EdiabasNet.ResultData resultDataEw))
+                        {
+                            string ewStr = resultDataEw.OpData as string;
+                            if (!string.IsNullOrEmpty(ewStr))
+                            {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected EW: {0}", ewStr);
+                                if (!EWords.Contains(ewStr))
+                                {
+                                    EWords.Add(ewStr);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
