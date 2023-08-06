@@ -205,52 +205,6 @@ namespace PsdzClient
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
-                            if (!readFa)
-                            {
-                                int dictIndex = 0;
-                                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                                {
-                                    if (dictIndex == 0)
-                                    {
-                                        dictIndex++;
-                                        continue;
-                                    }
-
-                                    // ReSharper disable once InlineOutVariableDeclaration
-                                    if (resultDict.TryGetValue("STAT_SALAPA", out EdiabasNet.ResultData resultDataSa))
-                                    {
-                                        string saStr = resultDataSa.OpData as string;
-                                        if (!string.IsNullOrEmpty(saStr))
-                                        {
-                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected SaLaPa: {0}", saStr);
-                                            Salapa.Add(saStr);
-                                        }
-                                    }
-
-                                    if (resultDict.TryGetValue("STAT_HO_WORTE", out EdiabasNet.ResultData resultDataHo))
-                                    {
-                                        string hoStr = resultDataHo.OpData as string;
-                                        if (!string.IsNullOrEmpty(hoStr))
-                                        {
-                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected HO: {0}", hoStr);
-                                            HoWords.Add(hoStr);
-                                        }
-                                    }
-
-                                    if (resultDict.TryGetValue("STAT_E_WORTE", out EdiabasNet.ResultData resultDataEw))
-                                    {
-                                        string ewStr = resultDataEw.OpData as string;
-                                        if (!string.IsNullOrEmpty(ewStr))
-                                        {
-                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW: {0}", ewStr);
-                                            EWords.Add(ewStr);
-                                        }
-                                    }
-
-                                    dictIndex++;
-                                }
-                            }
-
                             Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
                             if (resultDict1.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                             {
@@ -299,6 +253,11 @@ namespace PsdzClient
                                             }
                                         }
                                     }
+
+                                    if (vehicleType != null)
+                                    {
+                                        break;
+                                    }
                                 }
                                 else
                                 {
@@ -326,12 +285,13 @@ namespace PsdzClient
                                             }
                                         }
                                     }
-                                }
-                            }
 
-                            if (vehicleType != null)
-                            {
-                                break;
+                                    if (vehicleType != null)
+                                    {
+                                        SetStatVcmSalpaInfo(resultSets);
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
@@ -867,6 +827,51 @@ namespace PsdzClient
             Salapa = new List<string>();
             HoWords = new List<string>();
             EWords = new List<string>();
+        }
+
+        private void SetStatVcmSalpaInfo(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            int dictIndex = 0;
+            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+            {
+                if (dictIndex == 0)
+                {
+                    dictIndex++;
+                    continue;
+                }
+
+                if (resultDict.TryGetValue("STAT_SALAPA", out EdiabasNet.ResultData resultDataSa))
+                {
+                    string saStr = resultDataSa.OpData as string;
+                    if (!string.IsNullOrEmpty(saStr))
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected SaLaPa: {0}", saStr);
+                        Salapa.Add(saStr);
+                    }
+                }
+
+                if (resultDict.TryGetValue("STAT_HO_WORTE", out EdiabasNet.ResultData resultDataHo))
+                {
+                    string hoStr = resultDataHo.OpData as string;
+                    if (!string.IsNullOrEmpty(hoStr))
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected HO: {0}", hoStr);
+                        HoWords.Add(hoStr);
+                    }
+                }
+
+                if (resultDict.TryGetValue("STAT_E_WORTE", out EdiabasNet.ResultData resultDataEw))
+                {
+                    string ewStr = resultDataEw.OpData as string;
+                    if (!string.IsNullOrEmpty(ewStr))
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW: {0}", ewStr);
+                        EWords.Add(ewStr);
+                    }
+                }
+
+                dictIndex++;
+            }
         }
 
         public void Dispose()
