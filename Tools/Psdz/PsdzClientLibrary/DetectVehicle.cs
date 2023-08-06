@@ -205,8 +205,8 @@ namespace PsdzClient
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
-                            Dictionary<string, EdiabasNet.ResultData> resultDict1 = resultSets[1];
-                            if (resultDict1.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                            if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                             {
                                 if (readFa)
                                 {
@@ -251,12 +251,13 @@ namespace PsdzClient
                                                     cDate = dateTime;
                                                 }
                                             }
-                                        }
-                                    }
 
-                                    if (vehicleType != null)
-                                    {
-                                        break;
+                                            if (vehicleType != null)
+                                            {
+                                                SetFaSalpaInfo(resultDictFa);
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
                                 else
@@ -273,7 +274,7 @@ namespace PsdzClient
                                             vehicleType = vtype;
                                         }
 
-                                        if (resultDict1.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
+                                        if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
                                         {
                                             string cDateStr = resultDataCDate.OpData as string;
                                             DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
@@ -846,7 +847,10 @@ namespace PsdzClient
                     if (!string.IsNullOrEmpty(saStr))
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, "Detected SaLaPa: {0}", saStr);
-                        Salapa.Add(saStr);
+                        if (!Salapa.Contains(saStr))
+                        {
+                            Salapa.Add(saStr);
+                        }
                     }
                 }
 
@@ -856,7 +860,10 @@ namespace PsdzClient
                     if (!string.IsNullOrEmpty(hoStr))
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, "Detected HO: {0}", hoStr);
-                        HoWords.Add(hoStr);
+                        if (!HoWords.Contains(hoStr))
+                        {
+                            HoWords.Add(hoStr);
+                        }
                     }
                 }
 
@@ -866,11 +873,92 @@ namespace PsdzClient
                     if (!string.IsNullOrEmpty(ewStr))
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW: {0}", ewStr);
-                        EWords.Add(ewStr);
+                        if (!EWords.Contains(ewStr))
+                        {
+                            EWords.Add(ewStr);
+                        }
                     }
                 }
 
                 dictIndex++;
+            }
+        }
+
+        private void SetFaSalpaInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
+        {
+            if (resultDict.TryGetValue("SA_ANZ", out EdiabasNet.ResultData resultDataSaCount))
+            {
+                Int64? saCount = resultDataSaCount.OpData as Int64?;
+                if (saCount != null)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected SaLaPa count: {0}", saCount.Value);
+                    for (int index = 0; index < saCount.Value; index++)
+                    {
+                        string saName = string.Format(CultureInfo.InvariantCulture, "SA_{0}", index + 1);
+                        if (resultDict.TryGetValue(saName, out EdiabasNet.ResultData resultDataSa))
+                        {
+                            string saStr = resultDataSa.OpData as string;
+                            if (!string.IsNullOrEmpty(saStr))
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected SaLaPa: {0}", saStr);
+                                if (!Salapa.Contains(saStr))
+                                {
+                                    Salapa.Add(saStr);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("HO_WORT_ANZ", out EdiabasNet.ResultData resultDataHoCount))
+            {
+                Int64? haCount = resultDataHoCount.OpData as Int64?;
+                if (haCount != null)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected HO count: {0}", haCount.Value);
+                    for (int index = 0; index < haCount.Value; index++)
+                    {
+                        string hoName = string.Format(CultureInfo.InvariantCulture, "HO_WORT_{0}", index + 1);
+                        if (resultDict.TryGetValue(hoName, out EdiabasNet.ResultData resultDataHo))
+                        {
+                            string hoStr = resultDataHo.OpData as string;
+                            if (!string.IsNullOrEmpty(hoStr))
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected HO: {0}", hoStr);
+                                if (!HoWords.Contains(hoStr))
+                                {
+                                    HoWords.Add(hoStr);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("E_WORT_ANZ", out EdiabasNet.ResultData resultDataEwCount))
+            {
+                Int64? haCount = resultDataEwCount.OpData as Int64?;
+                if (haCount != null)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW count: {0}", haCount.Value);
+                    for (int index = 0; index < haCount.Value; index++)
+                    {
+                        string ewName = string.Format(CultureInfo.InvariantCulture, "E_WORT_{0}", index + 1);
+                        if (resultDict.TryGetValue(ewName, out EdiabasNet.ResultData resultDataEw))
+                        {
+                            string ewStr = resultDataEw.OpData as string;
+                            if (!string.IsNullOrEmpty(ewStr))
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW: {0}", ewStr);
+                                if (!EWords.Contains(ewStr))
+                                {
+                                    EWords.Add(ewStr);
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
