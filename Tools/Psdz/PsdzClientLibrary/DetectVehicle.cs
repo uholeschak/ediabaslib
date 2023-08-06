@@ -938,11 +938,11 @@ namespace PsdzClient
 
             if (resultDict.TryGetValue("E_WORT_ANZ", out EdiabasNet.ResultData resultDataEwCount))
             {
-                Int64? haCount = resultDataEwCount.OpData as Int64?;
-                if (haCount != null)
+                Int64? ewCount = resultDataEwCount.OpData as Int64?;
+                if (ewCount != null)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW count: {0}", haCount.Value);
-                    for (int index = 0; index < haCount.Value; index++)
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW count: {0}", ewCount.Value);
+                    for (int index = 0; index < ewCount.Value; index++)
                     {
                         string ewName = string.Format(CultureInfo.InvariantCulture, "E_WORT_{0}", index + 1);
                         if (resultDict.TryGetValue(ewName, out EdiabasNet.ResultData resultDataEw))
