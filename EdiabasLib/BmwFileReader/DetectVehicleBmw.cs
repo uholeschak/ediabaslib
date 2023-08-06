@@ -56,6 +56,9 @@ namespace BmwFileReader
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
                 ConstructYear = detectVehicleBmw.ConstructYear;
                 ConstructMonth = detectVehicleBmw.ConstructMonth;
+                Salapa = detectVehicleBmw.Salapa;
+                HoWords = detectVehicleBmw.HoWords;
+                EWords = detectVehicleBmw.EWords;
                 ILevelShip = detectVehicleBmw.ILevelShip;
                 ILevelCurrent = detectVehicleBmw.ILevelCurrent;
                 ILevelBackup = detectVehicleBmw.ILevelBackup;
@@ -79,6 +82,9 @@ namespace BmwFileReader
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
                 detectVehicleBmw.ConstructYear = ConstructYear;
                 detectVehicleBmw.ConstructMonth = ConstructMonth;
+                detectVehicleBmw.Salapa = Salapa;
+                detectVehicleBmw.HoWords = HoWords;
+                detectVehicleBmw.EWords = EWords;
                 detectVehicleBmw.ILevelShip = ILevelShip;
                 detectVehicleBmw.ILevelCurrent = ILevelCurrent;
                 detectVehicleBmw.ILevelBackup = ILevelBackup;
@@ -97,6 +103,9 @@ namespace BmwFileReader
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
             [XmlElement("ConstructYear"), DefaultValue(null)] public string ConstructYear { get; set; }
             [XmlElement("ConstructMonth"), DefaultValue(null)] public string ConstructMonth { get; set; }
+            [XmlElement("Salapa"), DefaultValue(null)] public List<string> Salapa { get; private set; }
+            [XmlElement("HoWords"), DefaultValue(null)] public List<string> HoWords { get; private set; }
+            [XmlElement("EWords"), DefaultValue(null)] public List<string> EWords { get; private set; }
             [XmlElement("ILevelShip"), DefaultValue(null)] public string ILevelShip { get; set; }
             [XmlElement("ILevelCurrent"), DefaultValue(null)] public string ILevelCurrent { get; set; }
             [XmlElement("ILevelBackup"), DefaultValue(null)] public string ILevelBackup { get; set; }
@@ -120,6 +129,9 @@ namespace BmwFileReader
         public string Ds2GroupFiles { get; private set; }
         public string ConstructYear { get; private set; }
         public string ConstructMonth { get; private set; }
+        public List<string> Salapa { get; private set; }
+        public List<string> HoWords { get; private set; }
+        public List<string> EWords { get; private set; }
         public string ILevelShip { get; private set; }
         public string ILevelCurrent { get; private set; }
         public string ILevelBackup { get; private set; }
@@ -147,6 +159,7 @@ namespace BmwFileReader
         {
             new Tuple<string, string, string>("G_ZGW", "STATUS_VCM_GET_FA", "STAT_BAUREIHE"),
             new Tuple<string, string, string>("ZGW_01", "STATUS_VCM_GET_FA", "STAT_BAUREIHE"),
+            new Tuple<string, string, string>("G_CAS", "STATUS_FAHRZEUGAUFTRAG", "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
             new Tuple<string, string, string>("D_CAS", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string>("D_LM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string>("D_KBM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
@@ -273,7 +286,7 @@ namespace BmwFileReader
                     }
                     try
                     {
-                        bool readFa = string.Compare(job.Item2, "C_FA_LESEN", StringComparison.OrdinalIgnoreCase) == 0;
+                        bool statVcm = string.Compare(job.Item2, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
                         ProgressFunc?.Invoke(100 * index / jobCount);
 
                         ActivityCommon.ResolveSgbdFile(_ediabas, job.Item1);
@@ -289,7 +302,7 @@ namespace BmwFileReader
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
                             {
-                                if (readFa)
+                                if (!statVcm)
                                 {
                                     string fa = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(fa))
@@ -878,6 +891,12 @@ namespace BmwFileReader
             Ds2GroupFiles = null;
             ConstructYear = null;
             ConstructMonth = null;
+            Salapa = new List<string>();
+            EWords = new List<string>();
+            HoWords = new List<string>();
+            ILevelShip = null;
+            ILevelCurrent = null;
+            ILevelBackup = null;
             Pin78ConnectRequire = false;
         }
     }
