@@ -44,6 +44,7 @@ namespace BmwFileReader
                 Salapa = new List<string>();
                 HoWords = new List<string>();
                 EWords = new List<string>();
+                ZbWords = new List<string>();
             }
 
             public VehicleDataBmw(DetectVehicleBmw detectVehicleBmw)
@@ -62,6 +63,7 @@ namespace BmwFileReader
                 Salapa = detectVehicleBmw.Salapa;
                 HoWords = detectVehicleBmw.HoWords;
                 EWords = detectVehicleBmw.EWords;
+                ZbWords = detectVehicleBmw.ZbWords;
                 ILevelShip = detectVehicleBmw.ILevelShip;
                 ILevelCurrent = detectVehicleBmw.ILevelCurrent;
                 ILevelBackup = detectVehicleBmw.ILevelBackup;
@@ -88,6 +90,7 @@ namespace BmwFileReader
                 detectVehicleBmw.Salapa = Salapa ?? new List<string>();
                 detectVehicleBmw.HoWords = HoWords ?? new List<string>();
                 detectVehicleBmw.EWords = EWords ?? new List<string>();
+                detectVehicleBmw.ZbWords = ZbWords ?? new List<string>();
                 detectVehicleBmw.ILevelShip = ILevelShip;
                 detectVehicleBmw.ILevelCurrent = ILevelCurrent;
                 detectVehicleBmw.ILevelBackup = ILevelBackup;
@@ -109,6 +112,7 @@ namespace BmwFileReader
             [XmlElement("Salapa"), DefaultValue(null)] public List<string> Salapa { get; private set; }
             [XmlElement("HoWords"), DefaultValue(null)] public List<string> HoWords { get; private set; }
             [XmlElement("EWords"), DefaultValue(null)] public List<string> EWords { get; private set; }
+            [XmlElement("ZbWords"), DefaultValue(null)] public List<string> ZbWords { get; private set; }
             [XmlElement("ILevelShip"), DefaultValue(null)] public string ILevelShip { get; set; }
             [XmlElement("ILevelCurrent"), DefaultValue(null)] public string ILevelCurrent { get; set; }
             [XmlElement("ILevelBackup"), DefaultValue(null)] public string ILevelBackup { get; set; }
@@ -135,6 +139,7 @@ namespace BmwFileReader
         public List<string> Salapa { get; private set; }
         public List<string> HoWords { get; private set; }
         public List<string> EWords { get; private set; }
+        public List<string> ZbWords { get; private set; }
         public string ILevelShip { get; private set; }
         public string ILevelCurrent { get; private set; }
         public string ILevelBackup { get; private set; }
@@ -882,6 +887,36 @@ namespace BmwFileReader
             return false;
         }
 
+        public string GetFaInfo()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (string item in Salapa)
+            {
+                sb.Append("$");
+                sb.Append(item);
+            }
+
+            foreach (string item in EWords)
+            {
+                sb.Append("-");
+                sb.Append(item);
+            }
+
+            foreach (string item in HoWords)
+            {
+                sb.Append("+");
+                sb.Append(item);
+            }
+
+            foreach (string item in ZbWords)
+            {
+                sb.Append(";");
+                sb.Append(item);
+            }
+
+            return sb.ToString();
+        }
+
         private void ResetValues()
         {
             Valid = false;
@@ -897,8 +932,9 @@ namespace BmwFileReader
             ConstructYear = null;
             ConstructMonth = null;
             Salapa = new List<string>();
-            EWords = new List<string>();
             HoWords = new List<string>();
+            EWords = new List<string>();
+            ZbWords = new List<string>();
             ILevelShip = null;
             ILevelCurrent = null;
             ILevelBackup = null;
@@ -921,7 +957,6 @@ namespace BmwFileReader
                     string saStr = resultDataSa.OpData as string;
                     if (!string.IsNullOrEmpty(saStr))
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected SaLaPa: {0}", saStr);
                         if (!Salapa.Contains(saStr))
                         {
                             Salapa.Add(saStr);
@@ -934,7 +969,6 @@ namespace BmwFileReader
                     string hoStr = resultDataHo.OpData as string;
                     if (!string.IsNullOrEmpty(hoStr))
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected HO: {0}", hoStr);
                         if (!HoWords.Contains(hoStr))
                         {
                             HoWords.Add(hoStr);
@@ -947,7 +981,6 @@ namespace BmwFileReader
                     string ewStr = resultDataEw.OpData as string;
                     if (!string.IsNullOrEmpty(ewStr))
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected EW: {0}", ewStr);
                         if (!EWords.Contains(ewStr))
                         {
                             EWords.Add(ewStr);
@@ -957,6 +990,8 @@ namespace BmwFileReader
 
                 dictIndex++;
             }
+
+            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected FA: {0}", GetFaInfo());
         }
 
         private void SetFaSalpaInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
@@ -966,7 +1001,6 @@ namespace BmwFileReader
                 Int64? saCount = resultDataSaCount.OpData as Int64?;
                 if (saCount != null)
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected SaLaPa count: {0}", saCount.Value);
                     for (int index = 0; index < saCount.Value; index++)
                     {
                         string saName = string.Format(CultureInfo.InvariantCulture, "SA_{0}", index + 1);
@@ -975,7 +1009,6 @@ namespace BmwFileReader
                             string saStr = resultDataSa.OpData as string;
                             if (!string.IsNullOrEmpty(saStr))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected SaLaPa: {0}", saStr);
                                 if (!Salapa.Contains(saStr))
                                 {
                                     Salapa.Add(saStr);
@@ -991,7 +1024,6 @@ namespace BmwFileReader
                 Int64? haCount = resultDataHoCount.OpData as Int64?;
                 if (haCount != null)
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected HO count: {0}", haCount.Value);
                     for (int index = 0; index < haCount.Value; index++)
                     {
                         string hoName = string.Format(CultureInfo.InvariantCulture, "HO_WORT_{0}", index + 1);
@@ -1000,7 +1032,6 @@ namespace BmwFileReader
                             string hoStr = resultDataHo.OpData as string;
                             if (!string.IsNullOrEmpty(hoStr))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected HO: {0}", hoStr);
                                 if (!HoWords.Contains(hoStr))
                                 {
                                     HoWords.Add(hoStr);
@@ -1016,7 +1047,6 @@ namespace BmwFileReader
                 Int64? ewCount = resultDataEwCount.OpData as Int64?;
                 if (ewCount != null)
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh,"Detected EW count: {0}", ewCount.Value);
                     for (int index = 0; index < ewCount.Value; index++)
                     {
                         string ewName = string.Format(CultureInfo.InvariantCulture, "E_WORT_{0}", index + 1);
@@ -1025,7 +1055,6 @@ namespace BmwFileReader
                             string ewStr = resultDataEw.OpData as string;
                             if (!string.IsNullOrEmpty(ewStr))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected EW: {0}", ewStr);
                                 if (!EWords.Contains(ewStr))
                                 {
                                     EWords.Add(ewStr);
@@ -1035,7 +1064,31 @@ namespace BmwFileReader
                     }
                 }
             }
-        }
 
+            if (resultDict.TryGetValue("ZUSBAU_ANZ", out EdiabasNet.ResultData resultDataZbCount))
+            {
+                Int64? zbCount = resultDataZbCount.OpData as Int64?;
+                if (zbCount != null)
+                {
+                    for (int index = 0; index < zbCount.Value; index++)
+                    {
+                        string zbName = string.Format(CultureInfo.InvariantCulture, "ZUSBAU_{0}", index + 1);
+                        if (resultDict.TryGetValue(zbName, out EdiabasNet.ResultData resultDataEw))
+                        {
+                            string zbStr = resultDataEw.OpData as string;
+                            if (!string.IsNullOrEmpty(zbStr))
+                            {
+                                if (!ZbWords.Contains(zbStr))
+                                {
+                                    ZbWords.Add(zbStr);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected FA: {0}", GetFaInfo());
+        }
     }
 }

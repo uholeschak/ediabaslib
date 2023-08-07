@@ -836,6 +836,12 @@ namespace PsdzClient
                 sb.Append(item);
             }
 
+            foreach (string item in ZbWords)
+            {
+                sb.Append(";");
+                sb.Append(item);
+            }
+
             return sb.ToString();
         }
 
@@ -925,7 +931,6 @@ namespace PsdzClient
                             string saStr = resultDataSa.OpData as string;
                             if (!string.IsNullOrEmpty(saStr))
                             {
-                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected SaLaPa: {0}", saStr);
                                 if (!Salapa.Contains(saStr))
                                 {
                                     Salapa.Add(saStr);
@@ -949,7 +954,6 @@ namespace PsdzClient
                             string hoStr = resultDataHo.OpData as string;
                             if (!string.IsNullOrEmpty(hoStr))
                             {
-                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected HO: {0}", hoStr);
                                 if (!HoWords.Contains(hoStr))
                                 {
                                     HoWords.Add(hoStr);
@@ -973,7 +977,6 @@ namespace PsdzClient
                             string ewStr = resultDataEw.OpData as string;
                             if (!string.IsNullOrEmpty(ewStr))
                             {
-                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW: {0}", ewStr);
                                 if (!EWords.Contains(ewStr))
                                 {
                                     EWords.Add(ewStr);
