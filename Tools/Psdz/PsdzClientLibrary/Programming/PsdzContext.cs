@@ -592,7 +592,8 @@ namespace PsdzClient.Programming
 
             if (!VecInfo.FA.AlreadyDone)
             {
-                if (VecInfo.FA.SA.Count == 0 && VecInfo.FA.HO_WORT.Count == 0 && VecInfo.FA.E_WORT.Count == 0)
+                if (VecInfo.FA.SA.Count == 0 && VecInfo.FA.HO_WORT.Count == 0 &&
+                    VecInfo.FA.E_WORT.Count == 0 && VecInfo.FA.ZUSBAU_WORT.Count == 0)
                 {
                     foreach (string salapa in DetectVehicle.Salapa)
                     {
@@ -607,6 +608,11 @@ namespace PsdzClient.Programming
                     foreach (string eWord in DetectVehicle.EWords)
                     {
                         VecInfo.FA.E_WORT.AddIfNotContains(eWord);
+                    }
+
+                    foreach (string zbWord in DetectVehicle.ZbWords)
+                    {
+                        VecInfo.FA.ZUSBAU_WORT.AddIfNotContains(zbWord);
                     }
 
                     OverrideVehicleCharacteristics(programmingService);

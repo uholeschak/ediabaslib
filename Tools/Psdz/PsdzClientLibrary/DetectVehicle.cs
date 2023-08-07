@@ -74,6 +74,7 @@ namespace PsdzClient
         public List<string> Salapa { get; private set; }
         public List<string> HoWords { get; private set; }
         public List<string> EWords { get; private set; }
+        public List<string> ZbWords { get; private set; }
         public string ILevelShip { get; private set; }
         public string ILevelCurrent { get; private set; }
         public string ILevelBackup { get; private set; }
@@ -829,6 +830,7 @@ namespace PsdzClient
             Salapa = new List<string>();
             HoWords = new List<string>();
             EWords = new List<string>();
+            ZbWords = new List<string>();
         }
 
         private void SetStatVcmSalpaInfo(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
@@ -955,6 +957,31 @@ namespace PsdzClient
                                 if (!EWords.Contains(ewStr))
                                 {
                                     EWords.Add(ewStr);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("ZUSBAU_ANZ", out EdiabasNet.ResultData resultDataZbCount))
+            {
+                Int64? zbCount = resultDataZbCount.OpData as Int64?;
+                if (zbCount != null)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected ZB count: {0}", zbCount.Value);
+                    for (int index = 0; index < zbCount.Value; index++)
+                    {
+                        string zbName = string.Format(CultureInfo.InvariantCulture, "ZUSBAU_{0}", index + 1);
+                        if (resultDict.TryGetValue(zbName, out EdiabasNet.ResultData resultDataEw))
+                        {
+                            string zbStr = resultDataEw.OpData as string;
+                            if (!string.IsNullOrEmpty(zbStr))
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected ZB: {0}", zbStr);
+                                if (!ZbWords.Contains(zbStr))
+                                {
+                                    ZbWords.Add(zbStr);
                                 }
                             }
                         }
