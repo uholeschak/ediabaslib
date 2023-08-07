@@ -141,6 +141,27 @@ namespace BmwFileReader
                         _propertiesDict.TryAdd("E-Bezeichnung".ToUpperInvariant(), new List<string> { detectVehicleBmw.Series.Trim() });
                     }
 
+                    List<string> salapa = new List<string>();
+                    if (detectVehicleBmw.Salapa != null)
+                    {
+                        salapa.AddRange(detectVehicleBmw.Salapa);
+                    }
+
+                    if (detectVehicleBmw.HoWords != null)
+                    {
+                        salapa.AddRange(detectVehicleBmw.HoWords);
+                    }
+
+                    if (detectVehicleBmw.EWords != null)
+                    {
+                        salapa.AddRange(detectVehicleBmw.EWords);
+                    }
+
+                    if (salapa.Count > 0)
+                    {
+                        _propertiesDict.TryAdd("SALAPA".ToUpperInvariant(), salapa);
+                    }
+
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructYear))
                     {
                         string constructDate = detectVehicleBmw.ConstructYear;
