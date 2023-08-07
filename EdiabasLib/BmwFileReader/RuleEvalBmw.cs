@@ -316,12 +316,6 @@ namespace BmwFileReader
             List<string> propertyStrings = GetPropertyStrings(name);
             if (propertyStrings == null)
             {
-#if DEBUG
-                if (logInfo)
-                {
-                    Log.Info(Tag, string.Format("IsValidRuleString missing property: '{0}'", name));
-                }
-#endif
                 return false;
             }
 
