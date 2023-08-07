@@ -56,11 +56,11 @@ namespace PsdzClient.Core
 #if false
 					if (ffmResolver != null && flag3)
 					{
-						ObservableCollectionEx<IXepInfoObject> infoObjectsByDiagObjectControlId = DatabaseProviderFactory.Instance.GetInfoObjectsByDiagObjectControlId(this.value, vec, ffmResolver, true, null);
+                        List<SwiInfoObj> infoObjectsByDiagObjectControlId = database.GetInfoObjectsByDiagObjectControlId(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver, true, null);
 						if (infoObjectsByDiagObjectControlId != null && infoObjectsByDiagObjectControlId.Count != 0)
 						{
 							bool? flag4 = ffmResolver.Resolve(this.value, infoObjectsByDiagObjectControlId.First<IXepInfoObject>());
-							vec.AddOrUpdateFFM(new FFMResult(equipmentById.ID, equipmentById.NAME, "FFMResolver", flag4, false));
+							vec.AddOrUpdateFFM(new FFMResult(equipmentById.Id, equipmentById.Name, "FFMResolver", flag4, false));
 							if (flag4 != null)
 							{
 								result = flag4.Value;
