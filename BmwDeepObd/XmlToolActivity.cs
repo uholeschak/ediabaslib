@@ -3065,12 +3065,7 @@ namespace BmwDeepObd
 
             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
             {
-                if (_ruleEvalBmw != null)
-                {
-                    _ruleEvalBmw.SetEvalProperties(detectVehicleBmw, null);
-                    // precompile rules
-                    VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
-                }
+                _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
 
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {

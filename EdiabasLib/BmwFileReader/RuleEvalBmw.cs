@@ -319,7 +319,7 @@ namespace BmwFileReader
 #if DEBUG
                 if (logInfo)
                 {
-                    Log.Info(Tag, string.Format("IsValidRuleString {0}: not found", name));
+                    Log.Info(Tag, string.Format("IsValidRuleString missing property: '{0}'", name));
                 }
 #endif
                 return false;
