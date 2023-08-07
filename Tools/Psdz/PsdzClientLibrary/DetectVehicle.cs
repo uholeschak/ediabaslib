@@ -815,6 +815,30 @@ namespace PsdzClient
             return _abortRequest;
         }
 
+        public string GetFaInfo()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (string item in Salapa)
+            {
+                sb.Append("$");
+                sb.Append(item);
+            }
+
+            foreach (string item in EWords)
+            {
+                sb.Append("-");
+                sb.Append(item);
+            }
+
+            foreach (string item in HoWords)
+            {
+                sb.Append("+");
+                sb.Append(item);
+            }
+
+            return sb.ToString();
+        }
+
         private void ResetValues()
         {
             _abortRequest = false;
@@ -849,7 +873,6 @@ namespace PsdzClient
                     string saStr = resultDataSa.OpData as string;
                     if (!string.IsNullOrEmpty(saStr))
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected SaLaPa: {0}", saStr);
                         if (!Salapa.Contains(saStr))
                         {
                             Salapa.Add(saStr);
@@ -862,7 +885,6 @@ namespace PsdzClient
                     string hoStr = resultDataHo.OpData as string;
                     if (!string.IsNullOrEmpty(hoStr))
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected HO: {0}", hoStr);
                         if (!HoWords.Contains(hoStr))
                         {
                             HoWords.Add(hoStr);
@@ -875,7 +897,6 @@ namespace PsdzClient
                     string ewStr = resultDataEw.OpData as string;
                     if (!string.IsNullOrEmpty(ewStr))
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW: {0}", ewStr);
                         if (!EWords.Contains(ewStr))
                         {
                             EWords.Add(ewStr);
@@ -885,6 +906,8 @@ namespace PsdzClient
 
                 dictIndex++;
             }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "Detected FA: {0}", GetFaInfo());
         }
 
         private void SetFaSalpaInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
@@ -894,7 +917,6 @@ namespace PsdzClient
                 Int64? saCount = resultDataSaCount.OpData as Int64?;
                 if (saCount != null)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected SaLaPa count: {0}", saCount.Value);
                     for (int index = 0; index < saCount.Value; index++)
                     {
                         string saName = string.Format(CultureInfo.InvariantCulture, "SA_{0}", index + 1);
@@ -919,7 +941,6 @@ namespace PsdzClient
                 Int64? haCount = resultDataHoCount.OpData as Int64?;
                 if (haCount != null)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected HO count: {0}", haCount.Value);
                     for (int index = 0; index < haCount.Value; index++)
                     {
                         string hoName = string.Format(CultureInfo.InvariantCulture, "HO_WORT_{0}", index + 1);
@@ -944,7 +965,6 @@ namespace PsdzClient
                 Int64? ewCount = resultDataEwCount.OpData as Int64?;
                 if (ewCount != null)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected EW count: {0}", ewCount.Value);
                     for (int index = 0; index < ewCount.Value; index++)
                     {
                         string ewName = string.Format(CultureInfo.InvariantCulture, "E_WORT_{0}", index + 1);
@@ -969,7 +989,6 @@ namespace PsdzClient
                 Int64? zbCount = resultDataZbCount.OpData as Int64?;
                 if (zbCount != null)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected ZB count: {0}", zbCount.Value);
                     for (int index = 0; index < zbCount.Value; index++)
                     {
                         string zbName = string.Format(CultureInfo.InvariantCulture, "ZUSBAU_{0}", index + 1);
@@ -978,7 +997,6 @@ namespace PsdzClient
                             string zbStr = resultDataEw.OpData as string;
                             if (!string.IsNullOrEmpty(zbStr))
                             {
-                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected ZB: {0}", zbStr);
                                 if (!ZbWords.Contains(zbStr))
                                 {
                                     ZbWords.Add(zbStr);
@@ -988,6 +1006,8 @@ namespace PsdzClient
                     }
                 }
             }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "Detected FA: {0}", GetFaInfo());
         }
 
         public void Dispose()
