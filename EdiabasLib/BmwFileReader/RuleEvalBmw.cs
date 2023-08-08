@@ -157,10 +157,7 @@ namespace BmwFileReader
                         salapa.AddRange(detectVehicleBmw.EWords);
                     }
 
-                    if (salapa.Count > 0)
-                    {
-                        _propertiesDict.TryAdd("SALAPA".ToUpperInvariant(), salapa);
-                    }
+                    _propertiesDict.TryAdd("SALAPA".ToUpperInvariant(), salapa);
 
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructYear))
                     {
