@@ -158,12 +158,13 @@ namespace BmwFileReader
                 int index = 0;
                 foreach (string itemName in ItemNames)
                 {
-                    if (index >= typeKeyList.Count)
+                    string itemValue = string.Empty;
+                    if (index < typeKeyList.Count)
                     {
-                        break;
+                        itemValue = typeKeyList[index] ?? string.Empty;
                     }
 
-                    propertyDict.TryAdd(itemName, typeKeyList[index] ?? string.Empty);
+                    propertyDict.TryAdd(itemName, itemValue);
                     index++;
                 }
 

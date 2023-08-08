@@ -191,22 +191,31 @@ namespace BmwFileReader
                         _propertiesDict.TryAdd("Produktionsdatum".ToUpperInvariant(), new List<string> { productionDate });
                     }
 
+                    string iStufe = string.Empty;
+                    string iStufeX = string.Empty;
+                    string br = string.Empty;
+
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ILevelCurrent))
                     {
                         string iLevelTrim = detectVehicleBmw.ILevelCurrent.Trim();
                         string[] levelParts = iLevelTrim.Split("-");
-                        _propertiesDict.Add("IStufe".ToUpperInvariant(), new List<string> { iLevelTrim.Trim() });
+                        iStufe = iLevelTrim;
+
                         if (levelParts.Length == 4 && iLevelTrim.Length == 14)
                         {
                             string iLevelNum = levelParts[1] + levelParts[2] + levelParts[3];
                             if (Int32.TryParse(iLevelNum, NumberStyles.Integer, CultureInfo.InvariantCulture, out int iLevelValue))
                             {
-                                _propertiesDict.Add("IStufeX".ToUpperInvariant(), new List<string> { iLevelValue.ToString(CultureInfo.InvariantCulture) });
+                                iStufeX = iLevelValue.ToString(CultureInfo.InvariantCulture);
                             }
 
-                            _propertiesDict.Add("Baureihenverbund".ToUpperInvariant(), new List<string> { levelParts[0] });
+                            br = levelParts[0];
                         }
                     }
+
+                    _propertiesDict.TryAdd("IStufe".ToUpperInvariant(), new List<string> { iStufe });
+                    _propertiesDict.TryAdd("IStufeX".ToUpperInvariant(), new List<string> { iStufeX });
+                    _propertiesDict.TryAdd("Baureihenverbund".ToUpperInvariant(), new List<string> { br });
 
                     return SetEvalEcuProperties(ecuVariant);
                 }
