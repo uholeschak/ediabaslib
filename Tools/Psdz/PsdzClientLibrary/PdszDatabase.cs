@@ -1251,7 +1251,7 @@ namespace PsdzClient
                 return null;
             }
 
-            public string GetRuleFormula(Vehicle vehicle, RuleExpression.FormulaConfig formulaConfig = null)
+            public string GetRuleFormula(Vehicle vehicle, RuleExpression.FormulaConfig formulaConfig = null, List<string> subRuleIds = null)
             {
                 if (vehicle == null)
                 {
@@ -1265,7 +1265,7 @@ namespace PsdzClient
                     RuleExpression.FormulaConfig formulaConfigCurrent = formulaConfig;
                     if (formulaConfigCurrent == null)
                     {
-                        formulaConfigCurrent = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid");
+                        formulaConfigCurrent = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", subRuleIds);
                     }
                     return ruleExpression.ToFormula(formulaConfigCurrent);
                 }

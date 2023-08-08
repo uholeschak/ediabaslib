@@ -3800,7 +3800,7 @@ namespace PsdzClient
                 Regex seriesFormulaRegex = new Regex(@"IsValidRuleString\(""(Baureihenverbund|E-Bezeichnung)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex brandFormulaRegex = new Regex(@"IsValidRuleString\(""(Marke)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", "|");
+                RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
 
                 Vehicle vehicle = new Vehicle(clientContext);
                 List<EcuCharacteristicsInfo> vehicleSeriesList = new List<EcuCharacteristicsInfo>();
@@ -4093,6 +4093,7 @@ namespace PsdzClient
 
                 SerializableDictionary<string, VehicleStructsBmw.RuleInfo> diagObjectRulesDict = new SerializableDictionary<string, VehicleStructsBmw.RuleInfo>();
                 Vehicle vehicle = new Vehicle(clientContext);
+                List<string> subRuleIDs = new List<string>();
                 foreach (SwiInfoObj infoObject in completeInfoObjects)
                 {
                     string infoObjId = infoObject.Id;
@@ -4103,10 +4104,13 @@ namespace PsdzClient
                             XepRule xepRule = GetRuleById(infoObjId);
                             if (xepRule != null)
                             {
-                                string ruleFormula = xepRule.GetRuleFormula(vehicle);
+                                string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
                                 if (!string.IsNullOrEmpty(ruleFormula))
                                 {
-                                    diagObjectRulesDict.Add(infoObjId, new VehicleStructsBmw.RuleInfo(infoObjId, ruleFormula));
+                                    if (!diagObjectRulesDict.ContainsKey(infoObjId))
+                                    {
+                                        diagObjectRulesDict.Add(infoObjId, new VehicleStructsBmw.RuleInfo(infoObjId, ruleFormula));
+                                    }
                                 }
                             }
                         }
@@ -4122,10 +4126,13 @@ namespace PsdzClient
                                 XepRule xepRule = GetRuleById(diagObjId);
                                 if (xepRule != null)
                                 {
-                                    string ruleFormula = xepRule.GetRuleFormula(vehicle);
+                                    string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
                                     if (!string.IsNullOrEmpty(ruleFormula))
                                     {
-                                        diagObjectRulesDict.Add(diagObjId, new VehicleStructsBmw.RuleInfo(diagObjId, ruleFormula));
+                                        if (!diagObjectRulesDict.ContainsKey(diagObjId))
+                                        {
+                                            diagObjectRulesDict.Add(diagObjId, new VehicleStructsBmw.RuleInfo(diagObjId, ruleFormula));
+                                        }
                                     }
                                 }
                             }
@@ -4371,6 +4378,7 @@ $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormu
                 }
 
                 Vehicle vehicle = new Vehicle(clientContext);
+                List<string> subRuleIDs = new List<string>();
                 SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ruleDict = new SerializableDictionary<string, VehicleStructsBmw.RuleInfo>();
                 foreach (EcuFunctionStructs.EcuFaultCode ecuFaultCode in ecuFaultCodeList)
                 {
@@ -4379,10 +4387,13 @@ $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormu
                         XepRule xepRule = GetRuleById(ecuFaultCode.Id);
                         if (xepRule != null)
                         {
-                            string ruleFormula = xepRule.GetRuleFormula(vehicle);
+                            string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
                             if (!string.IsNullOrEmpty(ruleFormula))
                             {
-                                ruleDict.Add(ecuFaultCode.Id, new VehicleStructsBmw.RuleInfo(ecuFaultCode.Id, ruleFormula));
+                                if (!ruleDict.ContainsKey(ecuFaultCode.Id))
+                                {
+                                    ruleDict.Add(ecuFaultCode.Id, new VehicleStructsBmw.RuleInfo(ecuFaultCode.Id, ruleFormula));
+                                }
                             }
                         }
                     }
@@ -4415,6 +4426,7 @@ $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormu
                 }
 
                 Vehicle vehicle = new Vehicle(clientContext);
+                List<string> subRuleIDs = new List<string>();
                 SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ruleDict = new SerializableDictionary<string, VehicleStructsBmw.RuleInfo>();
                 foreach (string ecuFixedFuncId in ecuFixedFuncList)
                 {
@@ -4425,10 +4437,13 @@ $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormu
                             XepRule xepRule = GetRuleById(ecuFixedFuncId);
                             if (xepRule != null)
                             {
-                                string ruleFormula = xepRule.GetRuleFormula(vehicle);
+                                string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
                                 if (!string.IsNullOrEmpty(ruleFormula))
                                 {
-                                    ruleDict.Add(ecuFixedFuncId, new VehicleStructsBmw.RuleInfo(ecuFixedFuncId, ruleFormula));
+                                    if (!ruleDict.ContainsKey(ecuFixedFuncId))
+                                    {
+                                        ruleDict.Add(ecuFixedFuncId, new VehicleStructsBmw.RuleInfo(ecuFixedFuncId, ruleFormula));
+                                    }
                                 }
                             }
                         }

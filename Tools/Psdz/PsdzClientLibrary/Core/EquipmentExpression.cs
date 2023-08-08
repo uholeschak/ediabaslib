@@ -129,7 +129,12 @@ namespace PsdzClient.Core
             stringBuilder.Append("\"");
             if (equipmentById != null)
             {
-                stringBuilder.Append(this.value.ToString(CultureInfo.InvariantCulture));
+                string ruleId = this.value.ToString(CultureInfo.InvariantCulture);
+                stringBuilder.Append(ruleId);
+                if (formulaConfig.SubRuleIds != null && !formulaConfig.SubRuleIds.Contains(ruleId))
+                {
+                    formulaConfig.SubRuleIds.Add(ruleId);
+                }
             }
             stringBuilder.Append("\")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
