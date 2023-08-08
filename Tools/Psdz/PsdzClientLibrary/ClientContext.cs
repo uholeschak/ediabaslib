@@ -94,7 +94,24 @@ namespace PsdzClient
                 return string.Empty;
             }
 
-            return clientContext.OutletCountry;
+            if (!string.IsNullOrEmpty(clientContext.OutletCountry))
+            {
+                return clientContext.OutletCountry;
+            }
+
+            if (vehicle == null)
+            {
+                log.ErrorFormat("GetCountry Vehicle is null");
+                return string.Empty;
+            }
+
+            string country = vehicle.Land ?? string.Empty;
+            if (country.Length > 2)
+            {
+                country = country.Substring(0, 2);
+            }
+
+            return country;
         }
 
         public static string GetLanguage(Vehicle vehicle)
