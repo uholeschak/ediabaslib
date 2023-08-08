@@ -4107,10 +4107,7 @@ namespace PsdzClient
                                 string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
                                 if (!string.IsNullOrEmpty(ruleFormula))
                                 {
-                                    if (!diagObjectRulesDict.ContainsKey(infoObjId))
-                                    {
-                                        diagObjectRulesDict.Add(infoObjId, new VehicleStructsBmw.RuleInfo(infoObjId, ruleFormula));
-                                    }
+                                    diagObjectRulesDict.Add(infoObjId, new VehicleStructsBmw.RuleInfo(infoObjId, ruleFormula));
                                 }
                             }
                         }
@@ -4129,15 +4126,18 @@ namespace PsdzClient
                                     string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
                                     if (!string.IsNullOrEmpty(ruleFormula))
                                     {
-                                        if (!diagObjectRulesDict.ContainsKey(diagObjId))
-                                        {
-                                            diagObjectRulesDict.Add(diagObjId, new VehicleStructsBmw.RuleInfo(diagObjId, ruleFormula));
-                                        }
+                                        diagObjectRulesDict.Add(diagObjId, new VehicleStructsBmw.RuleInfo(diagObjId, ruleFormula));
                                     }
                                 }
                             }
                         }
                     }
+                }
+
+                if (!AddSubRules(vehicle, diagObjectRulesDict, subRuleIDs))
+                {
+                    log.ErrorFormat("ExtractDiagObjRulesInfo AddSubRules failed");
+                    return null;
                 }
 
                 return diagObjectRulesDict;
@@ -4384,19 +4384,25 @@ $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormu
                 {
                     if (ecuFaultCode.Relevance.ConvertToInt() > 0)
                     {
-                        XepRule xepRule = GetRuleById(ecuFaultCode.Id);
-                        if (xepRule != null)
+                        if (!ruleDict.ContainsKey(ecuFaultCode.Id))
                         {
-                            string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
-                            if (!string.IsNullOrEmpty(ruleFormula))
+                            XepRule xepRule = GetRuleById(ecuFaultCode.Id);
+                            if (xepRule != null)
                             {
-                                if (!ruleDict.ContainsKey(ecuFaultCode.Id))
+                                string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
+                                if (!string.IsNullOrEmpty(ruleFormula))
                                 {
                                     ruleDict.Add(ecuFaultCode.Id, new VehicleStructsBmw.RuleInfo(ecuFaultCode.Id, ruleFormula));
                                 }
                             }
                         }
                     }
+                }
+
+                if (!AddSubRules(vehicle, ruleDict, subRuleIDs))
+                {
+                    log.ErrorFormat("ExtractFaultRulesInfo AddSubRules failed");
+                    return null;
                 }
 
                 return ruleDict;
@@ -4440,14 +4446,17 @@ $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormu
                                 string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
                                 if (!string.IsNullOrEmpty(ruleFormula))
                                 {
-                                    if (!ruleDict.ContainsKey(ecuFixedFuncId))
-                                    {
-                                        ruleDict.Add(ecuFixedFuncId, new VehicleStructsBmw.RuleInfo(ecuFixedFuncId, ruleFormula));
-                                    }
+                                    ruleDict.Add(ecuFixedFuncId, new VehicleStructsBmw.RuleInfo(ecuFixedFuncId, ruleFormula));
                                 }
                             }
                         }
                     }
+                }
+
+                if (!AddSubRules(vehicle, ruleDict, subRuleIDs))
+                {
+                    log.ErrorFormat("ExtractEcuFuncRulesInfo AddSubRules failed");
+                    return null;
                 }
 
                 return ruleDict;
@@ -4457,6 +4466,35 @@ $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormu
                 log.ErrorFormat("ExtractEcuFuncRulesInfo Exception: '{0}'", e.Message);
                 return null;
             }
+        }
+
+        public bool AddSubRules(Vehicle vehicle, SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ruleDict, List<string> subRuleIDs)
+        {
+            try
+            {
+                foreach (string subRule in subRuleIDs)
+                {
+                    if (!ruleDict.ContainsKey(subRule))
+                    {
+                        XepRule xepRule = GetRuleById(subRule);
+                        if (xepRule != null)
+                        {
+                            string ruleFormula = xepRule.GetRuleFormula(vehicle, null, subRuleIDs);
+                            if (!string.IsNullOrEmpty(ruleFormula))
+                            {
+                                ruleDict.Add(subRule, new VehicleStructsBmw.RuleInfo(subRule, ruleFormula));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("AddSubRules Exception: '{0}'", e.Message);
+                return false;
+            }
+
+            return true;
         }
     }
 }
