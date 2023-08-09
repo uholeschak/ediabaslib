@@ -4189,7 +4189,7 @@ namespace PsdzClient
                     }
 
                     sbRuleNames.Append("\"");
-                    sbRuleNames.Append(ruleName);
+                    sbRuleNames.Append(VehicleInfoBmw.RemoveNonAsciiChars(ruleName));
                     sbRuleNames.Append("\"");
                 }
 
