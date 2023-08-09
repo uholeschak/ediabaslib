@@ -4212,6 +4212,7 @@ namespace PsdzClient
                 StringBuilder sb = new StringBuilder();
                 sb.Append(
 $@"using BmwFileReader;
+using System.Collections.Generic;
 
 public class RulesInfo
 {{
