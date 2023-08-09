@@ -63,7 +63,7 @@ namespace PsdzClient.Core
             StringBuilder stringBuilder = new StringBuilder();
             PdszDatabase database = ClientContext.GetDatabase(this.vecInfo);
 
-            this.programmingVariant = database.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), this.vecInfo, null);
+            this.programmingVariant = database.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), null, null);
             if (programmingVariant != null)
             {
                 this.ecuVariant = database?.GetEcuVariantById(this.programmingVariant.EcuVarId);

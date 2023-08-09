@@ -7,7 +7,7 @@ public class RulesInfo
 
     public const string DatabaseDate = "09/20/2022 10:39:47";
 
-    public static List<string> RuleNames = new List<string> { "Marke", "SALAPA", "IStufeX", "Produktlinie", "Baustand", "E-Bezeichnung", "Baureihenverbund", "E-Maschine", "EcuClique", "EcuRepresentative", "Motor", "IStufe", "Motor Leistungsklasse", "Produktionsdatum", "Hybridkennzeichen", "Basisausf?hrung", "Motor ?berarbeitung", "Lenkung", "Typschl?ssel", "Baureihe", "Getriebe", "Verkaufsbezeichnung", "Motor Hubraum", "Motor Kraftstoffart/Einbaulage", "Country", "Motor 8-stellig", "Antrieb", "Motor Kraftstoffart", "elektrische Reichweite", "Karosserie", "Sicherheitsfahrzeug", "T?ren", "Montageland", "SiFa", "EcuProgrammingVariant", "HEAT 8-stellig" };
+    public static List<string> RuleNames = new List<string> { "Marke", "SALAPA", "IStufeX", "Produktlinie", "Baustand", "E-Bezeichnung", "Baureihenverbund", "E-Maschine", "EcuClique", "EcuRepresentative", "Motor", "IStufe", "Motor Leistungsklasse", "Produktionsdatum", "Hybridkennzeichen", "Basisausf?hrung", "Motor ?berarbeitung", "Lenkung", "Typschl?ssel", "Baureihe", "Getriebe", "Verkaufsbezeichnung", "Motor Hubraum", "Motor Kraftstoffart/Einbaulage", "Country", "Motor 8-stellig", "Antrieb", "Motor Kraftstoffart", "elektrische Reichweite", "Karosserie", "Sicherheitsfahrzeug", "T?ren", "Montageland", "SiFa", "ProgrammingVariantName", "VARIANTE", "HEAT 8-stellig" };
 
     public RuleEvalBmw RuleEvalClass { get; private set; }
 
@@ -16518,9 +16518,6 @@ public class RulesInfo
             case "2000013474319":
             case "2000010106735":
             case "20000101067212":
-            case "20000812664901":
-                return (IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleNum("EcuProgrammingVariant", 20000388253837)) && !(IsValidRuleNum("EcuProgrammingVariant", 20000506194522)));
-
             case "20000645051181":
                 return (IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("E-Bezeichnung", "A67")) && !(IsValidRuleString("E-Bezeichnung", "K60")));
 
@@ -16552,6 +16549,9 @@ public class RulesInfo
 
             case "20000806545851":
                 return (IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("EcuClique", "RDC_TPM")));
+
+            case "20000812664901":
+                return (IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("ProgrammingVariantName", "X_IABS-CTMIBEVO-IABS") && IsValidRuleString("VARIANTE", "x_abs")) && !(IsValidRuleString("ProgrammingVariantName", "X_IABS-VINT01-IABS") && IsValidRuleString("VARIANTE", "x_absvi")));
 
             case "2000009484488":
                 return (IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("Typschl?ssel", "0172")) && !(IsValidRuleString("Typschl?ssel", "0173")) && !(IsValidRuleString("Typschl?ssel", "0174")) && !(IsValidRuleString("Typschl?ssel", "0175")) && !(IsValidRuleString("Typschl?ssel", "0176")) && !(IsValidRuleString("Typschl?ssel", "0177")) && !(IsValidRuleString("Typschl?ssel", "0182")) && !(IsValidRuleString("Typschl?ssel", "0183")) && !(IsValidRuleString("Typschl?ssel", "0184")) && !(IsValidRuleString("Typschl?ssel", "0185")) && !(IsValidRuleString("Typschl?ssel", "0186")) && !(IsValidRuleString("Typschl?ssel", "0187")) && !(IsValidRuleString("Typschl?ssel", "0191")) && !(IsValidRuleString("Typschl?ssel", "0192")) && IsValidRuleString("EcuClique", "ABS Bosch"));
