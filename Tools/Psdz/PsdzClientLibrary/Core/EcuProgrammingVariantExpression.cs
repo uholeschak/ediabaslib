@@ -61,6 +61,18 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            PdszDatabase database = ClientContext.GetDatabase(this.vecInfo);
+
+            this.programmingVariant = database.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), this.vecInfo, null);
+            if (programmingVariant != null)
+            {
+                this.ecuVariant = database?.GetEcuVariantById(this.programmingVariant.EcuVarId);
+            }
+            else
+            {
+                this.ecuVariant = null;
+            }
+
             if (this.programmingVariant != null && this.ecuVariant != null)
             {
                 stringBuilder.Append(formulaConfig.CheckStringFunc);
