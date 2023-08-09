@@ -272,6 +272,29 @@ namespace BmwFileReader
 #endif
                         _propertiesDict.Add(keyEcuClique, new List<string> { cliqueName });
                     }
+
+#if DEBUG
+                    List<string> missingRules = GetMissingRules();
+                    if (missingRules.Count > 0)
+                    {
+                        StringBuilder sbMissing = new StringBuilder();
+                        foreach (string rule in missingRules)
+                        {
+                            if (sbMissing.Length > 0)
+                            {
+                                sbMissing.Append(", ");
+                            }
+
+                            sbMissing.Append(rule);
+                        }
+
+                        Log.Info(Tag, string.Format("SetEvalEcuProperties Missing rules: {0}", sbMissing));
+                    }
+                    else
+                    {
+                        Log.Info(Tag, string.Format("SetEvalEcuProperties All rules present"));
+                    }
+#endif
                 }
             }
             catch (Exception)
@@ -280,6 +303,20 @@ namespace BmwFileReader
             }
 
             return true;
+        }
+
+        public List<string> GetMissingRules()
+        {
+            List<string> missingRules = new List<string>();
+            foreach (string ruleName in RulesInfo.RuleNames)
+            {
+                if (!_propertiesDict.ContainsKey(ruleName.ToUpperInvariant()))
+                {
+                    missingRules.Add(ruleName);
+                }
+            }
+
+            return missingRules;
         }
 
         public void RuleNotFound(string id)
