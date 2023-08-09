@@ -292,7 +292,7 @@ namespace BmwFileReader
                     }
                     else
                     {
-                        Log.Info(Tag, string.Format("SetEvalEcuProperties All rules present"));
+                        Log.Info(Tag, "SetEvalEcuProperties All rules present");
                     }
 #endif
                 }
