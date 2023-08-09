@@ -4180,6 +4180,19 @@ namespace PsdzClient
                     return false;
                 }
 
+                StringBuilder sbRuleNames = new StringBuilder();
+                foreach (string ruleName in ruleNames)
+                {
+                    if (sbRuleNames.Length > 0)
+                    {
+                        sbRuleNames.Append(", ");
+                    }
+
+                    sbRuleNames.Append("\"");
+                    sbRuleNames.Append(ruleName);
+                    sbRuleNames.Append("\"");
+                }
+
                 DbInfo dbInfo = GetDbInfo();
                 if (dbInfo == null)
                 {
@@ -4205,6 +4218,8 @@ public class RulesInfo
     public const string DatabaseVersion = ""{dbInfo.Version}"";
 
     public const string DatabaseDate = ""{dbInfo.DateTime.ToString(CultureInfo.InvariantCulture)}"";
+
+    public static List<string> RuleNames = new List<string> {{ {sbRuleNames} }};
 
     public RuleEvalBmw RuleEvalClass {{ get; private set; }}
 
