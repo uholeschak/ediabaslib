@@ -4029,7 +4029,7 @@ namespace PsdzClient
                 rulesInfoData = new VehicleStructsBmw.RulesInfoData(versionInfo, faultRulesDict, ecuFuncRulesDict, diagObjectRulesDict);
                 if (!SaveFaultRulesClass(rulesInfoData, rulesCsFile))
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo SaveFaultRulesFunction failed");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo SaveFaultRulesFunction failed");
                     return false;
                 }
 
@@ -4158,6 +4158,25 @@ namespace PsdzClient
                 if (rulesInfoData == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesFunction faultRulesInfoData missing");
+                    return false;
+                }
+
+                List<string> ruleNames = new List<string>();
+                if (!ExtractRuleNames(rulesInfoData.FaultRuleDict, ruleNames))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractRuleNames FaultRuleDict failed");
+                    return false;
+                }
+
+                if (!ExtractRuleNames(rulesInfoData.EcuFuncRuleDict, ruleNames))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractRuleNames EcuFuncRuleDict failed");
+                    return false;
+                }
+
+                if (!ExtractRuleNames(rulesInfoData.DiagObjectRuleDict, ruleNames))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractRuleNames DiagObjectRuleDict failed");
                     return false;
                 }
 
@@ -4495,6 +4514,37 @@ $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormu
             }
 
             return true;
+        }
+
+        public bool ExtractRuleNames(SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ruleDict, List<string> ruleNames)
+        {
+            try
+            {
+                Regex formulaNameRegex = new Regex(@"(RuleString|RuleNum|IsValidRuleString|IsValidRuleNum)\(""([^""]+)""", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> keyValuePair in ruleDict)
+                {
+                    string ruleFormula = keyValuePair.Value.RuleFormula;
+                    MatchCollection nameMatches = formulaNameRegex.Matches(ruleFormula);
+                    foreach (Match match in nameMatches)
+                    {
+                        if (match.Groups.Count == 3 && match.Groups[2].Success)
+                        {
+                            string name = match.Groups[2].Value.Trim();
+                            if (!ruleNames.Contains(name))
+                            {
+                                ruleNames.Add(name);
+                            }
+                        }
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("ExtractRuleNames Exception: '{0}'", e.Message);
+                return false;
+            }
         }
     }
 }
