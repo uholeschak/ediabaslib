@@ -5,6 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Android.Util;
+using BmwDeepObd;
 using EdiabasLib;
 using Mono.CSharp;
 
@@ -125,6 +126,14 @@ namespace BmwFileReader
                             _propertiesDict.TryAdd(propertyPair.Key.ToUpperInvariant(), new List<string> { value.Trim() });
                         }
                     }
+
+                    // this should be the dealer languge, replace it with current language
+                    string language = ActivityCommon.GetCurrentLanguage();
+                    if (language.Length > 2)
+                    {
+                        language = language.Substring(0, 2);
+                    }
+                    _propertiesDict.TryAdd("Country".ToUpperInvariant(), new List<string> { language.ToUpperInvariant() });
 
                     if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
                     {
