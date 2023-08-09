@@ -1,10 +1,13 @@
 using BmwFileReader;
+using System.Collections.Generic;
 
 public class RulesInfo
 {
     public const string DatabaseVersion = "4.37.40";
 
     public const string DatabaseDate = "09/20/2022 10:39:47";
+
+    public static List<string> RuleNames = new List<string> { "Marke", "SALAPA", "IStufeX", "Produktlinie", "Baustand", "E-Bezeichnung", "Baureihenverbund", "E-Maschine", "EcuClique", "EcuRepresentative", "Motor", "IStufe", "Motor Leistungsklasse", "Produktionsdatum", "Hybridkennzeichen", "Basisausführung", "Motor Überarbeitung", "Lenkung", "Typschlüssel", "Baureihe", "Getriebe", "Verkaufsbezeichnung", "Motor Hubraum", "Motor Kraftstoffart/Einbaulage", "Country", "Motor 8-stellig", "Antrieb", "Motor Kraftstoffart", "elektrische Reichweite", "Karosserie", "Sicherheitsfahrzeug", "Türen", "Montageland", "SiFa", "EcuProgrammingVariant", "HEAT 8-stellig" };
 
     public RuleEvalBmw RuleEvalClass { get; private set; }
 
