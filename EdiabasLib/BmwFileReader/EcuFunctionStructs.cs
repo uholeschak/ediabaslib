@@ -76,6 +76,7 @@ namespace BmwFileReader
                 GroupName = string.Empty;
                 GroupFunctionIds = null;
                 Title = null;
+                EcuName = null;
             }
 
             public EcuVariant(string id, string groupId, string groupName, EcuTranslation title, List<string> groupFunctionIds)
@@ -85,6 +86,7 @@ namespace BmwFileReader
                 GroupName = groupName;
                 GroupFunctionIds = groupFunctionIds;
                 Title = title;
+                EcuName = null;
             }
 
             public string ToString(string prefix)
@@ -180,6 +182,7 @@ namespace BmwFileReader
             [XmlElement("ECli"), DefaultValue(null)] public EcuClique EcuClique { get; set; }
             [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDictFault { get; set; }
             [XmlIgnore] public Dictionary<Int64, EcuFaultCode> EcuFaultCodeDictInfo { get; set; }
+            [XmlIgnore] public string EcuName { get; set; }
         }
 
         [XmlType("Cliq")]
