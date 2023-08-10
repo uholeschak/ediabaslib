@@ -378,28 +378,32 @@ namespace BmwFileReader
         protected EcuFunctionStructs.EcuVariant GetEcuVariant(string ecuName)
         {
             EcuFunctionStructs.EcuVariant ecuVariant = GetEcuDataObject(ecuName, typeof(EcuFunctionStructs.EcuVariant)) as EcuFunctionStructs.EcuVariant;
-            if (ecuVariant?.EcuFaultCodeList != null)
+            if (ecuVariant != null)
             {
-                Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodeDictFault = new Dictionary<Int64, EcuFunctionStructs.EcuFaultCode>();
-                Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodeDictInfo = new Dictionary<Int64, EcuFunctionStructs.EcuFaultCode>();
-                foreach (EcuFunctionStructs.EcuFaultCode ecuFaultCode in ecuVariant.EcuFaultCodeList)
+                ecuVariant.EcuName = ecuName;
+                if (ecuVariant.EcuFaultCodeList != null)
                 {
-                    Int64 errorCode = ecuFaultCode.Code.ConvertToInt();
-                    if (errorCode != 0 && !string.IsNullOrEmpty(ecuFaultCode.DataType))
+                    Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodeDictFault = new Dictionary<Int64, EcuFunctionStructs.EcuFaultCode>();
+                    Dictionary<Int64, EcuFunctionStructs.EcuFaultCode> ecuFaultCodeDictInfo = new Dictionary<Int64, EcuFunctionStructs.EcuFaultCode>();
+                    foreach (EcuFunctionStructs.EcuFaultCode ecuFaultCode in ecuVariant.EcuFaultCodeList)
                     {
-                        if (string.Compare(ecuFaultCode.DataType, FaultDataTypeFault, StringComparison.OrdinalIgnoreCase) == 0)
+                        Int64 errorCode = ecuFaultCode.Code.ConvertToInt();
+                        if (errorCode != 0 && !string.IsNullOrEmpty(ecuFaultCode.DataType))
                         {
-                            ecuFaultCodeDictFault.TryAdd(errorCode, ecuFaultCode);
-                        }
-                        else if (string.Compare(ecuFaultCode.DataType, FaultDataTypeInfo, StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            ecuFaultCodeDictInfo.TryAdd(errorCode, ecuFaultCode);
+                            if (string.Compare(ecuFaultCode.DataType, FaultDataTypeFault, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                ecuFaultCodeDictFault.TryAdd(errorCode, ecuFaultCode);
+                            }
+                            else if (string.Compare(ecuFaultCode.DataType, FaultDataTypeInfo, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                ecuFaultCodeDictInfo.TryAdd(errorCode, ecuFaultCode);
+                            }
                         }
                     }
-                }
 
-                ecuVariant.EcuFaultCodeDictFault = ecuFaultCodeDictFault;
-                ecuVariant.EcuFaultCodeDictInfo = ecuFaultCodeDictInfo;
+                    ecuVariant.EcuFaultCodeDictFault = ecuFaultCodeDictFault;
+                    ecuVariant.EcuFaultCodeDictInfo = ecuFaultCodeDictInfo;
+                }
             }
             return ecuVariant;
         }
