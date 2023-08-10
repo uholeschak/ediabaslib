@@ -125,8 +125,7 @@ namespace PsdzClient.Core
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(formulaConfig.RuleValidFunc);
-            stringBuilder.Append("(");
-            stringBuilder.Append("\"");
+            stringBuilder.Append("(\"");
             if (equipmentById != null)
             {
                 string ruleId = this.value.ToString(CultureInfo.InvariantCulture);
