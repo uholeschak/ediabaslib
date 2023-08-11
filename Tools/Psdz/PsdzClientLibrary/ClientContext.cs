@@ -17,6 +17,7 @@ namespace PsdzClient
         public CharacteristicExpression.EnumBrand SelectedBrand { get; set; }
         public string OutletCountry { get; set; }
         public string Language { get; set; }
+        public bool ProtectionVehicleService { get; set; }
 
         public ClientContext()
         {
@@ -24,6 +25,7 @@ namespace PsdzClient
             SelectedBrand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             OutletCountry = string.Empty;
             Language = "En";
+            ProtectionVehicleService = true;
         }
 
         public static ClientContext GetClientContext(Vehicle vehicle)
@@ -100,6 +102,18 @@ namespace PsdzClient
             }
 
             return clientContext.Language.ToUpperInvariant();
+        }
+
+        public static bool GetProtectionVehicleService(Vehicle vehicle)
+        {
+            ClientContext clientContext = GetClientContext(vehicle);
+            if (clientContext == null)
+            {
+                log.ErrorFormat("GetProtectionVehicleService ClientContext is null");
+                return false;
+            }
+
+            return clientContext.ProtectionVehicleService;
         }
 
         public static string GetLanguage(Vehicle vehicle)

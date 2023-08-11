@@ -27,6 +27,11 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
+            if (!ClientContext.GetProtectionVehicleService(this.vecInfo))
+            {
+                return false;
+            }
 #if false
             Dealer instance = Dealer.Instance;
             if (instance != null && vec.BrandName != null)
@@ -68,12 +73,8 @@ namespace PsdzClient.Core
         {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-            if (this.value != 0L)
-            {
-                stringBuilder.Append("!");
-            }
             stringBuilder.Append(formulaConfig.CheckLongFunc);
-            stringBuilder.Append("(\"AccessSiFa\", 0)");
+            stringBuilder.Append("!(\"ProtectionVehicleService\", 0)");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();
