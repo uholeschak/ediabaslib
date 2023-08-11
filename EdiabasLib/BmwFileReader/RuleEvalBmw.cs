@@ -167,6 +167,7 @@ namespace BmwFileReader
                     }
 
                     _propertiesDict.TryAdd("SALAPA".ToUpperInvariant(), salapa);
+                    _propertiesDict.TryAdd("ProtectionVehicleService".ToUpperInvariant(), new List<string> { "1" });
 
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.ConstructYear))
                     {
