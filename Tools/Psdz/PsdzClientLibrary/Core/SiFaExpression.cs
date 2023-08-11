@@ -69,8 +69,9 @@ namespace PsdzClient.Core
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(formulaConfig.CheckLongFunc);
-            stringBuilder.Append("(\"SiFa\", ");
-            stringBuilder.Append(value.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append("(\"SafetyVehicle\", ");
+            int compareValue = this.value != 0L ? 1 : 0;
+            stringBuilder.Append(compareValue.ToString(CultureInfo.InvariantCulture));
             stringBuilder.Append(")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
