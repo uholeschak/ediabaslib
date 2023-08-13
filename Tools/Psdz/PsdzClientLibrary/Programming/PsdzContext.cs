@@ -592,6 +592,26 @@ namespace PsdzClient.Programming
 
             if (!VecInfo.FA.AlreadyDone)
             {
+                if (string.IsNullOrEmpty(VecInfo.FA.LACK))
+                {
+                    VecInfo.FA.LACK = DetectVehicle.Paint;
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.FA.POLSTER))
+                {
+                    VecInfo.FA.POLSTER = DetectVehicle.Upholstery;
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.FA.STANDARD_FA))
+                {
+                    VecInfo.FA.STANDARD_FA = DetectVehicle.StandardFa;
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.FA.TYPE))
+                {
+                    VecInfo.FA.TYPE = DetectVehicle.TypeKey;
+                }
+
                 if (VecInfo.FA.SA.Count == 0 && VecInfo.FA.HO_WORT.Count == 0 &&
                     VecInfo.FA.E_WORT.Count == 0 && VecInfo.FA.ZUSBAU_WORT.Count == 0)
                 {
