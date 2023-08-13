@@ -602,14 +602,15 @@ namespace ExtractEcuFunctions
                     string vinRangeFile = Path.Combine(outDirSub, "vinranges.txt");
                     using (StreamWriter swVinranges = new StreamWriter(vinRangeFile))
                     {
-                        string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.TYPSCHLUESSEL AS TYPEKEY FROM VINRANGES v";
+                        string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.TYPSCHLUESSEL AS TYPEKEY" +
+                                     @", v.PRODUCTIONDATEYEAR AS PRODYEAR, v.PRODUCTIONDATEMONTH AS PRODMONTH, v.CHANGEDATE AS CHANGEDATE, FROM VINRANGES v";
                         using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                         {
                             using (SQLiteDataReader reader = command.ExecuteReader())
                             {
                                 while (reader.Read())
                                 {
-                                    swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"]);
+                                    swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"] + "," + reader["PRODYEAR"] + "," + reader["PRODMONTH"] + "," + reader["CHANGEDATE"]);
                                 }
                             }
                         }
