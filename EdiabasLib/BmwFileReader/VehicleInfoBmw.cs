@@ -679,9 +679,10 @@ namespace BmwFileReader
         }
 #endif
 
-        public static string GetVehicleTypeFromBrName(string brName, EdiabasNet ediabas)
+        // ToDo: Check on update ExtractEreihe
+        public static string GetVehicleSeriesFromBrName(string brName, EdiabasNet ediabas)
         {
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleTypeFromBrName: {0}", brName ?? "No name");
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleSeriesFromBrName: {0}", brName ?? "No name");
             if (brName == null)
             {
                 return null;
@@ -722,8 +723,35 @@ namespace BmwFileReader
                 BR = brName
             };
 
-            string vehicleType = fa.ExtractEreihe();
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleTypeFromBrName: {0}", vehicleType ?? string.Empty);
+            string vehicleSeries = fa.ExtractEreihe();
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleSeriesFromBrName: {0}", vehicleSeries ?? string.Empty);
+            return vehicleSeries;
+#endif
+        }
+
+        // ToDo: Check on update ExtractType
+        public static string GetVehicleTypeFromStdFa(string standardFa, EdiabasNet ediabas)
+        {
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleTypeFromStdFa: {0}", standardFa ?? "No FA");
+#if Android
+            if (!string.IsNullOrEmpty(standardFa))
+            {
+                Match match = Regex.Match(standardFa, "\\*(?<TYPE>\\w{4})");
+                if (match.Success)
+                {
+                    return match.Groups["TYPE"].Value;
+                }
+            }
+
+            return null;
+#else
+            PsdzClient.Core.FA fa = new PsdzClient.Core.FA
+            {
+                STANDARD_FA = standardFa
+            };
+
+            string vehicleType = fa.ExtractType();
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleTypeFromStdFa: {0}", vehicleType ?? string.Empty);
             return vehicleType;
 #endif
         }
