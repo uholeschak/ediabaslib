@@ -559,13 +559,12 @@ namespace PsdzClient.Programming
             VecInfo.ILevelWerk = !string.IsNullOrEmpty(IstufeShipment) ? IstufeShipment : DetectVehicle.ILevelShip;
             VecInfo.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent: DetectVehicle.ILevelCurrent;
             VecInfo.VIN17 = DetectVehicle.Vin;
+
             if (DetectVehicle.ConstructDate != null)
             {
                 VecInfo.Modelljahr = DetectVehicle.ConstructYear;
                 VecInfo.Modellmonat = DetectVehicle.ConstructMonth;
                 VecInfo.Modelltag = "01";
-                VecInfo.ProductionDate = DetectVehicle.ConstructDate.Value;
-                VecInfo.ProductionDateSpecified = true;
 
                 if (string.IsNullOrEmpty(VecInfo.BaustandsJahr) || string.IsNullOrEmpty(VecInfo.BaustandsMonat))
                 {
@@ -587,8 +586,29 @@ namespace PsdzClient.Programming
                 }
             }
 
+            PdszDatabase.VinRanges vinRangesByVin = programmingService.PdszDatabase.GetVinRangesByVin17(VecInfo.VINType, VecInfo.VIN7, VecInfo.IsVehicleWithOnlyVin7());
+            if (vinRangesByVin != null)
+            {
+                VecInfo.VINRangeType = vinRangesByVin.TypeKey;
+                if (string.IsNullOrEmpty(VecInfo.Modellmonat) || string.IsNullOrEmpty(VecInfo.Modelljahr))
+                {
+                    if (!string.IsNullOrEmpty(vinRangesByVin.ProductionYear) && !string.IsNullOrEmpty(vinRangesByVin.ProductionMonth))
+                    {
+                        VecInfo.Modelljahr = vinRangesByVin.ProductionYear;
+                        VecInfo.Modellmonat = vinRangesByVin.ProductionMonth.PadLeft(2, '0');
+                        VecInfo.Modelltag = "01";
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(VecInfo.Modellmonat) && !string.IsNullOrEmpty(VecInfo.Modelljahr))
+            {
+                VecInfo.ProductionDate = DateTime.ParseExact(string.Format(CultureInfo.InvariantCulture, "{0}.{1}",
+                    VecInfo.Modellmonat, VecInfo.Modelljahr), "MM.yyyy", new CultureInfo("de-DE"));
+                VecInfo.ProductionDateSpecified = true;
+            }
+
             VecInfo.Ereihe = DetectVehicle.Series;
-            VecInfo.VINRangeType = VecInfo.SetVINRangeTypeFromVINRanges();
 
             if (!VecInfo.FA.AlreadyDone)
             {
