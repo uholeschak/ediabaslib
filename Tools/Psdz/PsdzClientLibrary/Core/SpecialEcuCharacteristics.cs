@@ -641,7 +641,8 @@ namespace PsdzClient.Core
             {
                 hashSet.Add(240);
             }
-            if (vecInfo.hasSA("265") && ((vecInfo.Ereihe == "R50" && "W10".Equals(vecInfo.Motor, StringComparison.OrdinalIgnoreCase) && vecInfo.BaustandsJahr == "2001" && int.Parse(vecInfo.BaustandsMonat) >= 3 && int.Parse(vecInfo.BaustandsMonat) >= 12) || (vecInfo.Ereihe == "R52" && "W10".Equals(vecInfo.Motor, StringComparison.OrdinalIgnoreCase) && (int.Parse(vecInfo.BaustandsJahr) >= 2008 || (vecInfo.BaustandsJahr == "2007" && int.Parse(vecInfo.BaustandsMonat) >= 9))) || (vecInfo.Ereihe == "R53" && "W11".Equals(vecInfo.Motor, StringComparison.OrdinalIgnoreCase) && vecInfo.BaustandsJahr == "2001" && int.Parse(vecInfo.BaustandsMonat) == 9)))
+            // [UH] Fix: replaced BaustandsJahr by Modelljahr and BaustandsMonat by Modellmonat
+            if (vecInfo.hasSA("265") && ((vecInfo.Ereihe == "R50" && "W10".Equals(vecInfo.Motor, StringComparison.OrdinalIgnoreCase) && vecInfo.Modelljahr == "2001" && int.Parse(vecInfo.Modellmonat) >= 3 && int.Parse(vecInfo.Modellmonat) >= 12) || (vecInfo.Ereihe == "R52" && "W10".Equals(vecInfo.Motor, StringComparison.OrdinalIgnoreCase) && (int.Parse(vecInfo.Modelljahr) >= 2008 || (vecInfo.Modelljahr == "2007" && int.Parse(vecInfo.Modellmonat) >= 9))) || (vecInfo.Ereihe == "R53" && "W11".Equals(vecInfo.Motor, StringComparison.OrdinalIgnoreCase) && vecInfo.Modelljahr == "2001" && int.Parse(vecInfo.Modellmonat) == 9)))
             {
                 hashSet.Add(112);
             }
