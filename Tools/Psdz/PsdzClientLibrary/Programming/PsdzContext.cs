@@ -597,6 +597,12 @@ namespace PsdzClient.Programming
                         VecInfo.Modelljahr = vinRangesByVin.ProductionYear;
                         VecInfo.Modellmonat = vinRangesByVin.ProductionMonth.PadLeft(2, '0');
                         VecInfo.Modelltag = "01";
+
+                        if (VecInfo.Modelljahr.Length == 4)
+                        {
+                            VecInfo.BaustandsJahr = VecInfo.Modelljahr.Substring(2, 2);
+                            VecInfo.BaustandsMonat = VecInfo.Modellmonat;
+                        }
                     }
                 }
             }
