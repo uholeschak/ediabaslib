@@ -332,11 +332,11 @@ namespace BmwFileReader
                                                 if (!string.IsNullOrEmpty(br))
                                                 {
                                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
-                                                    string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
-                                                    if (!string.IsNullOrEmpty(vtype))
+                                                    string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+                                                    if (!string.IsNullOrEmpty(vSeries))
                                                     {
-                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
-                                                        vehicleType = vtype;
+                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
+                                                        vehicleType = vSeries;
                                                     }
                                                 }
                                             }
@@ -367,12 +367,12 @@ namespace BmwFileReader
                                     if (!string.IsNullOrEmpty(br))
                                     {
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
-                                        string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
-                                        if (!string.IsNullOrEmpty(vtype))
+                                        string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+                                        if (!string.IsNullOrEmpty(vSeries))
                                         {
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle type: {0}", vtype);
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
                                             modelSeries = br;
-                                            vehicleType = vtype;
+                                            vehicleType = vSeries;
                                         }
 
                                         if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))

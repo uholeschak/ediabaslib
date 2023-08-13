@@ -236,12 +236,12 @@ namespace PsdzClient
                                                 if (!string.IsNullOrEmpty(br))
                                                 {
                                                     log.InfoFormat(CultureInfo.InvariantCulture, "Detected BR: {0}", br);
-                                                    string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
-                                                    if (!string.IsNullOrEmpty(vtype))
+                                                    string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+                                                    if (!string.IsNullOrEmpty(vSeries))
                                                     {
-                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}", vtype);
+                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle series: {0}", vSeries);
                                                         modelSeries = br;
-                                                        series = vtype;
+                                                        series = vSeries;
                                                     }
                                                 }
 
@@ -281,6 +281,11 @@ namespace PsdzClient
                                                     if (!string.IsNullOrEmpty(stdFaStr))
                                                     {
                                                         StandardFa = stdFaStr;
+                                                        string vehicleType = VehicleInfoBmw.GetVehicleTypeFromStdFa(stdFaStr, _ediabas);
+                                                        if (!string.IsNullOrEmpty(vehicleType))
+                                                        {
+                                                            TypeKey = vehicleType;
+                                                        }
                                                     }
                                                 }
                                             }
@@ -299,12 +304,12 @@ namespace PsdzClient
                                     if (!string.IsNullOrEmpty(br))
                                     {
                                         log.InfoFormat(CultureInfo.InvariantCulture, "Detected BR: {0}", br);
-                                        string vtype = VehicleInfoBmw.GetVehicleTypeFromBrName(br, _ediabas);
-                                        if (!string.IsNullOrEmpty(vtype))
+                                        string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+                                        if (!string.IsNullOrEmpty(vSeries))
                                         {
-                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}", vtype);
+                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle series: {0}", vSeries);
                                             modelSeries = br;
-                                            series = vtype;
+                                            series = vSeries;
                                         }
 
                                         if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
