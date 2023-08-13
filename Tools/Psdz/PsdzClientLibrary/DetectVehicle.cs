@@ -71,6 +71,9 @@ namespace PsdzClient
         public string ConstructYear { get; private set; }
         public string ConstructMonth { get; private set; }
         public DateTime? ConstructDate { get; private set; }
+        public string Paint { get; private set; }
+        public string Upholstery { get; private set; }
+        public string StandardFa { get; private set; }
         public List<string> Salapa { get; private set; }
         public List<string> HoWords { get; private set; }
         public List<string> EWords { get; private set; }
@@ -175,7 +178,7 @@ namespace PsdzClient
                 }
 
                 Vin = detectedVin;
-                string vehicleType = null;
+                string series = null;
                 string modelSeries = null;
                 DateTime? cDate = null;
 
@@ -237,24 +240,51 @@ namespace PsdzClient
                                                     {
                                                         log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}", vtype);
                                                         modelSeries = br;
-                                                        vehicleType = vtype;
+                                                        series = vtype;
+                                                    }
+                                                }
+
+                                                if (resultDictFa.TryGetValue("C_DATE", out EdiabasNet.ResultData resultDataCDate))
+                                                {
+                                                    string cDateStr = resultDataCDate.OpData as string;
+                                                    DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
+                                                    if (dateTime != null)
+                                                    {
+                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
+                                                            dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                                                        cDate = dateTime;
+                                                    }
+                                                }
+
+                                                if (resultDictFa.TryGetValue("LACK", out EdiabasNet.ResultData resultPaint))
+                                                {
+                                                    string paintStr = resultPaint.OpData as string;
+                                                    if (!string.IsNullOrEmpty(paintStr))
+                                                    {
+                                                        Paint = paintStr;
+                                                    }
+                                                }
+
+                                                if (resultDictFa.TryGetValue("POLSTER", out EdiabasNet.ResultData resultUpholstery))
+                                                {
+                                                    string upholsteryStr = resultUpholstery.OpData as string;
+                                                    if (!string.IsNullOrEmpty(upholsteryStr))
+                                                    {
+                                                        Upholstery = upholsteryStr;
+                                                    }
+                                                }
+
+                                                if (resultDictFa.TryGetValue("STANDARD_FA", out EdiabasNet.ResultData resultStdFa))
+                                                {
+                                                    string stdFaStr = resultStdFa.OpData as string;
+                                                    if (!string.IsNullOrEmpty(stdFaStr))
+                                                    {
+                                                        StandardFa = stdFaStr;
                                                     }
                                                 }
                                             }
 
-                                            if (resultDictFa.TryGetValue("C_DATE", out EdiabasNet.ResultData resultDataCDate))
-                                            {
-                                                string cDateStr = resultDataCDate.OpData as string;
-                                                DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
-                                                if (dateTime != null)
-                                                {
-                                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
-                                                        dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                                                    cDate = dateTime;
-                                                }
-                                            }
-
-                                            if (vehicleType != null)
+                                            if (series != null)
                                             {
                                                 SetFaSalpaInfo(resultDictFa);
                                                 break;
@@ -273,7 +303,7 @@ namespace PsdzClient
                                         {
                                             log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle type: {0}", vtype);
                                             modelSeries = br;
-                                            vehicleType = vtype;
+                                            series = vtype;
                                         }
 
                                         if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
@@ -287,9 +317,27 @@ namespace PsdzClient
                                                 cDate = dateTime;
                                             }
                                         }
+
+                                        if (resultDict.TryGetValue("STAT_LACKCODE", out EdiabasNet.ResultData resultPaint))
+                                        {
+                                            string paintStr = resultPaint.OpData as string;
+                                            if (!string.IsNullOrEmpty(paintStr))
+                                            {
+                                                Paint = paintStr;
+                                            }
+                                        }
+
+                                        if (resultDict.TryGetValue("STAT_POLSTERCODE", out EdiabasNet.ResultData resultUpholstery))
+                                        {
+                                            string upholsteryStr = resultUpholstery.OpData as string;
+                                            if (!string.IsNullOrEmpty(upholsteryStr))
+                                            {
+                                                Upholstery = upholsteryStr;
+                                            }
+                                        }
                                     }
 
-                                    if (vehicleType != null)
+                                    if (series != null)
                                     {
                                         SetStatVcmSalpaInfo(resultSets);
                                         break;
@@ -306,7 +354,7 @@ namespace PsdzClient
                 }
 
                 ModelSeries = modelSeries;
-                Series = vehicleType;
+                Series = series;
                 if (cDate.HasValue)
                 {
                     ConstructDate = cDate.Value;
@@ -334,7 +382,7 @@ namespace PsdzClient
                     return DetectResult.InvalidDatabase;
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, cDate, _ediabas);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(series, cDate, _ediabas);
                 if (vehicleSeriesInfo == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Vehicle series info not found");
@@ -857,6 +905,9 @@ namespace PsdzClient
             ConstructDate = null;
             ConstructYear = null;
             ConstructMonth = null;
+            Paint = null;
+            Upholstery = null;
+            StandardFa = null;
             Salapa = new List<string>();
             HoWords = new List<string>();
             EWords = new List<string>();
