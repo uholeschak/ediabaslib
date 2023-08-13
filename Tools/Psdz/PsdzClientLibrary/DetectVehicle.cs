@@ -65,6 +65,7 @@ namespace PsdzClient
 
         public List<PdszDatabase.EcuInfo> EcuList { get; private set; }
         public string Vin { get; private set; }
+        public string TypeKey { get; private set; }
         public string GroupSgdb { get; private set; }
         public string ModelSeries { get; private set; }
         public string Series { get; private set; }
@@ -73,7 +74,6 @@ namespace PsdzClient
         public DateTime? ConstructDate { get; private set; }
         public string Paint { get; private set; }
         public string Upholstery { get; private set; }
-        public string TypeKey { get; private set; }
         public string StandardFa { get; private set; }
         public List<string> Salapa { get; private set; }
         public List<string> HoWords { get; private set; }
@@ -282,7 +282,7 @@ namespace PsdzClient
                                                     {
                                                         StandardFa = stdFaStr;
                                                         string vehicleType = VehicleInfoBmw.GetVehicleTypeFromStdFa(stdFaStr, _ediabas);
-                                                        if (!string.IsNullOrEmpty(vehicleType))
+                                                        if (!string.IsNullOrEmpty(vehicleType) && string.IsNullOrEmpty(TypeKey))
                                                         {
                                                             TypeKey = vehicleType;
                                                         }
@@ -345,7 +345,7 @@ namespace PsdzClient
                                         if (resultDict.TryGetValue("STAT_TYP_SCHLUESSEL", out EdiabasNet.ResultData resultType))
                                         {
                                             string typeStr = resultType.OpData as string;
-                                            if (!string.IsNullOrEmpty(typeStr))
+                                            if (!string.IsNullOrEmpty(typeStr) && string.IsNullOrEmpty(TypeKey))
                                             {
                                                 TypeKey = typeStr;
                                             }
@@ -914,6 +914,7 @@ namespace PsdzClient
             _abortFunc = null;
             EcuList.Clear();
             Vin = null;
+            TypeKey = null;
             GroupSgdb = null;
             ModelSeries = null;
             Series = null;
@@ -922,7 +923,6 @@ namespace PsdzClient
             ConstructMonth = null;
             Paint = null;
             Upholstery = null;
-            TypeKey = null;
             StandardFa = null;
             Salapa = new List<string>();
             HoWords = new List<string>();
