@@ -332,6 +332,8 @@ namespace BmwDeepObd
                 StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
                 XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
                 XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
+                DataLogActive = instanceData.DataLogActive;
+                DataLogAppend = instanceData.DataLogAppend;
                 if (storage)
                 {
                     RecentConfigFiles = ActivityCommon.GetRecentConfigList();
