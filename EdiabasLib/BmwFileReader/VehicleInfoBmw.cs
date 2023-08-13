@@ -11,7 +11,6 @@ using System.Xml.Linq;
 using System.Xml.Serialization;
 using EdiabasLib;
 using ICSharpCode.SharpZipLib.Zip;
-using PsdzClient.Core;
 
 // ReSharper disable UnusedMemberInSuper.Global
 // ReSharper disable UnusedMember.Global
@@ -683,15 +682,50 @@ namespace BmwFileReader
         public static string GetVehicleTypeFromBrName(string brName, EdiabasNet ediabas)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleTypeFromBrName: {0}", brName ?? "No name");
-            FA fa = new FA
+            if (brName == null)
+            {
+                return null;
+            }
+            if (string.Compare(brName, ResultUnknown, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return null;
+            }
+#if Android
+            if (brName.EndsWith("_", StringComparison.Ordinal))
+            {
+                string vehicleType = brName.TrimEnd('_');
+                if (Regex.Match(vehicleType, "[ERKHM]\\d\\d").Success)
+                {
+                    return vehicleType;
+                }
+            }
+            if (brName.StartsWith("RR", StringComparison.OrdinalIgnoreCase))
+            {
+                string vehicleType = brName.TrimEnd('_');
+                if (Regex.Match(vehicleType, "^RR\\d$").Success)
+                {
+                    return vehicleType;
+                }
+                if (Regex.Match(vehicleType, "^RR0\\d$").Success)
+                {
+                    return "RR" + brName.Substring(3, 1);
+                }
+                if (Regex.Match(vehicleType, "^RR1\\d$").Success)
+                {
+                    return vehicleType;
+                }
+            }
+            return brName.Substring(0, 1) + brName.Substring(2, 2);
+#else
+            PsdzClient.Core.FA fa = new PsdzClient.Core.FA
             {
                 BR = brName
             };
 
-            string vtype = fa.ExtractEreihe();
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleTypeFromBrName: {0}", vtype ?? string.Empty);
-
-            return vtype;
+            string vehicleType = fa.ExtractEreihe();
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleTypeFromBrName: {0}", vehicleType ?? string.Empty);
+            return vehicleType;
+#endif
         }
 
         public static DateTime? ConvertConstructionDate(string cDateStr)

@@ -73,6 +73,7 @@ namespace PsdzClient
         public DateTime? ConstructDate { get; private set; }
         public string Paint { get; private set; }
         public string Upholstery { get; private set; }
+        public string TypeKey { get; private set; }
         public string StandardFa { get; private set; }
         public List<string> Salapa { get; private set; }
         public List<string> HoWords { get; private set; }
@@ -333,6 +334,15 @@ namespace PsdzClient
                                             if (!string.IsNullOrEmpty(upholsteryStr))
                                             {
                                                 Upholstery = upholsteryStr;
+                                            }
+                                        }
+
+                                        if (resultDict.TryGetValue("STAT_TYP_SCHLUESSEL", out EdiabasNet.ResultData resultType))
+                                        {
+                                            string typeStr = resultType.OpData as string;
+                                            if (!string.IsNullOrEmpty(typeStr))
+                                            {
+                                                TypeKey = typeStr;
                                             }
                                         }
                                     }
@@ -907,6 +917,7 @@ namespace PsdzClient
             ConstructMonth = null;
             Paint = null;
             Upholstery = null;
+            TypeKey = null;
             StandardFa = null;
             Salapa = new List<string>();
             HoWords = new List<string>();
