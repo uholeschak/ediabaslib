@@ -284,8 +284,12 @@ namespace BmwFileReader
                 }
 
                 Vin = detectedVin;
-                TypeKeyProperties = VehicleInfoBmw.GetVehiclePropertiesFromVin(detectedVin, _ediabas, _bmwDir, out string typeKey);
-                TypeKey = typeKey;
+                TypeKeyProperties = VehicleInfoBmw.GetVehiclePropertiesFromVin(detectedVin, _ediabas, _bmwDir, out VehicleInfoBmw.VinRangeInfo vinRangeInfo);
+                if (vinRangeInfo != null)
+                {
+                    TypeKey = vinRangeInfo.TypeKey;
+                }
+
                 string series = null;
                 string modelSeries = null;
                 DateTime? cDate = null;
@@ -797,8 +801,12 @@ namespace BmwFileReader
                 }
 
                 Vin = detectedVin;
-                TypeKeyProperties = VehicleInfoBmw.GetVehiclePropertiesFromVin(detectedVin, _ediabas, _bmwDir, out string typeKey);
-                TypeKey = typeKey;
+                TypeKeyProperties = VehicleInfoBmw.GetVehiclePropertiesFromVin(detectedVin, _ediabas, _bmwDir, out VehicleInfoBmw.VinRangeInfo vinRangeInfo);
+                if (vinRangeInfo != null)
+                {
+                    TypeKey = vinRangeInfo.TypeKey;
+                }
+
                 int modelYear = VehicleInfoBmw.GetModelYearFromVin(detectedVin);
                 if (modelYear >= 0)
                 {

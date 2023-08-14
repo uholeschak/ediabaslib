@@ -666,17 +666,15 @@ namespace BmwFileReader
             }
         }
 
-        public static Dictionary<string, string> GetVehiclePropertiesFromVin(string vin, EdiabasNet ediabas, string databaseDir, out string typeKey)
+        public static Dictionary<string, string> GetVehiclePropertiesFromVin(string vin, EdiabasNet ediabas, string databaseDir, out VinRangeInfo vinRangeInfo)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle properties from VIN: {0}", vin ?? "No VIN");
-            typeKey = null;
-            VinRangeInfo vinRangeInfo = GetRangeInfoFromVin(vin, ediabas, databaseDir);
+            vinRangeInfo = GetRangeInfoFromVin(vin, ediabas, databaseDir);
             if (vinRangeInfo == null)
             {
                 return null;
             }
 
-            typeKey = vinRangeInfo.TypeKey;
             if (_typeKeyInfo == null)
             {
                 _typeKeyInfo = GetTypeKeyInfo(ediabas, databaseDir);
