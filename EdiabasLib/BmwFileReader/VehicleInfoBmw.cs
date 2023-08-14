@@ -686,7 +686,7 @@ namespace BmwFileReader
                 return null;
             }
 
-            Dictionary<string, string> propertyDict = _typeKeyInfo.GetTypeKeyProperties(typeKey);
+            Dictionary<string, string> propertyDict = _typeKeyInfo.GetTypeKeyProperties(vinRangeInfo.TypeKey);
             if (propertyDict == null)
             {
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No type key properties present");
