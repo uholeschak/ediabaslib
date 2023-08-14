@@ -823,7 +823,7 @@ namespace BmwFileReader
                     {
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Model year: {0}", modelYear);
                         ConstructYear = string.Format(CultureInfo.InvariantCulture, "{0:0000}", modelYear);
-                        ConstructMonth = string.Empty;
+                        ConstructMonth = "01";
                     }
                 }
 
