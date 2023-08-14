@@ -174,12 +174,20 @@ namespace BmwFileReader
 
         public class VinRangeInfo
         {
-            public VinRangeInfo(string typeKey)
+            public VinRangeInfo(string typeKey, string prodYear, string prodMonth, string releaseState, string gearBox)
             {
                 TypeKey = typeKey;
+                ProdYear = prodYear;
+                ProdMonth = prodMonth;
+                ReleaseState = releaseState;
+                GearBox = gearBox;
             }
 
             public string TypeKey { get; }
+            public string ProdYear { get; }
+            public string ProdMonth { get; }
+            public string ReleaseState { get; }
+            public string GearBox { get; }
         }
 
         private static TypeKeyInfo _typeKeyInfo;
@@ -637,7 +645,29 @@ namespace BmwFileReader
                                             if (string.Compare(serialNumber, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
                                                 string.Compare(serialNumber, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
                                             {
-                                                VinRangeInfo vinRangeInfo = new VinRangeInfo(lineArray[2]);
+                                                string typeKey = lineArray[2];
+
+                                                string prodYear = null;
+                                                string prodMonth = null;
+                                                if (lineArray.Length >= 5)
+                                                {
+                                                    prodYear = lineArray[3];
+                                                    prodMonth = lineArray[4];
+                                                }
+
+                                                string releaseState = null;
+                                                if (lineArray.Length >= 6)
+                                                {
+                                                    releaseState = lineArray[5];
+                                                }
+
+                                                string gearBox = null;
+                                                if (lineArray.Length >= 7)
+                                                {
+                                                    gearBox = lineArray[6];
+                                                }
+
+                                                VinRangeInfo vinRangeInfo = new VinRangeInfo(typeKey, prodYear, prodMonth, releaseState, gearBox);
                                                 return vinRangeInfo;
                                             }
                                         }
