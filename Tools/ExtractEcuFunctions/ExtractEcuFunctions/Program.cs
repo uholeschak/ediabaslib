@@ -603,14 +603,15 @@ namespace ExtractEcuFunctions
                     using (StreamWriter swVinranges = new StreamWriter(vinRangeFile))
                     {
                         string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.TYPSCHLUESSEL AS TYPEKEY" +
-                                     @", v.PRODUCTIONDATEYEAR AS PRODYEAR, v.PRODUCTIONDATEMONTH AS PRODMONTH, v.CHANGEDATE AS CHANGEDATE, FROM VINRANGES v";
+                                     @", v.PRODUCTIONDATEYEAR AS PRODYEAR, v.PRODUCTIONDATEMONTH AS PRODMONTH, v.RELEASESTATE AS RELEASESTATE, v.GEARBOX_TYPE AS GEARBOX FROM VINRANGES v";
                         using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
                         {
                             using (SQLiteDataReader reader = command.ExecuteReader())
                             {
                                 while (reader.Read())
                                 {
-                                    swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"] + "," + reader["PRODYEAR"] + "," + reader["PRODMONTH"] + "," + reader["CHANGEDATE"]);
+                                    swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"] + "," + reader["PRODYEAR"] + "," + reader["PRODMONTH"] +
+                                                          "," + reader["RELEASESTATE"] + "," + reader["GEARBOX"]);
                                 }
                             }
                         }
