@@ -613,8 +613,15 @@ namespace BmwFileReader
                                         {
                                             break;
                                         }
+
+                                        bool isComment = line.StartsWith("#");
+                                        if (isComment)
+                                        {
+                                            continue;
+                                        }
+
                                         string[] lineArray = line.Split(',');
-                                        if (lineArray.Length == 3 &&
+                                        if (lineArray.Length >= 3 &&
                                             lineArray[0].Length == 7 && lineArray[1].Length == 7)
                                         {
                                             if (string.Compare(serialNumber, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
