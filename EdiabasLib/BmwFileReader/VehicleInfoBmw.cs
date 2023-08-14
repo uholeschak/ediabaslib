@@ -172,6 +172,16 @@ namespace BmwFileReader
             }
         }
 
+        public class VinRangeInfo
+        {
+            public VinRangeInfo(string typeKey)
+            {
+                TypeKey = typeKey;
+            }
+
+            public string TypeKey { get; }
+        }
+
         private static TypeKeyInfo _typeKeyInfo;
 #endif
 
@@ -565,7 +575,7 @@ namespace BmwFileReader
             }
         }
 
-        public static string GetTypeKeyFromVin(string vin, EdiabasNet ediabas, string databaseDir)
+        public static VinRangeInfo GetRangeInfoFromVin(string vin, EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key from VIN: {0}", vin ?? "No VIN");
             if (vin == null)
@@ -627,7 +637,8 @@ namespace BmwFileReader
                                             if (string.Compare(serialNumber, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
                                                 string.Compare(serialNumber, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
                                             {
-                                                return lineArray[2];
+                                                VinRangeInfo vinRangeInfo = new VinRangeInfo(lineArray[2]);
+                                                return vinRangeInfo;
                                             }
                                         }
                                     }
@@ -658,12 +669,14 @@ namespace BmwFileReader
         public static Dictionary<string, string> GetVehiclePropertiesFromVin(string vin, EdiabasNet ediabas, string databaseDir, out string typeKey)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle properties from VIN: {0}", vin ?? "No VIN");
-            typeKey = GetTypeKeyFromVin(vin, ediabas, databaseDir);
-            if (typeKey == null)
+            typeKey = null;
+            VinRangeInfo vinRangeInfo = GetRangeInfoFromVin(vin, ediabas, databaseDir);
+            if (vinRangeInfo == null)
             {
                 return null;
             }
 
+            typeKey = vinRangeInfo.TypeKey;
             if (_typeKeyInfo == null)
             {
                 _typeKeyInfo = GetTypeKeyInfo(ediabas, databaseDir);
