@@ -288,6 +288,8 @@ namespace BmwFileReader
                 if (vinRangeInfo != null)
                 {
                     TypeKey = vinRangeInfo.TypeKey;
+                    ConstructYear = vinRangeInfo.ProdYear;
+                    ConstructMonth = vinRangeInfo.ProdMonth;
                 }
 
                 string series = null;
@@ -499,6 +501,11 @@ namespace BmwFileReader
                 {
                     ConstructYear = cDate.Value.ToString("yyyy", CultureInfo.InvariantCulture);
                     ConstructMonth = cDate.Value.ToString("MM", CultureInfo.InvariantCulture);
+                }
+
+                if (!string.IsNullOrEmpty(ConstructYear) && !string.IsNullOrEmpty(ConstructMonth))
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Construct date: {0}.{1}", ConstructYear, ConstructMonth);
                 }
 
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(series, cDate, _ediabas);
@@ -805,14 +812,24 @@ namespace BmwFileReader
                 if (vinRangeInfo != null)
                 {
                     TypeKey = vinRangeInfo.TypeKey;
+                    ConstructYear = vinRangeInfo.ProdYear;
+                    ConstructMonth = vinRangeInfo.ProdMonth;
                 }
 
-                int modelYear = VehicleInfoBmw.GetModelYearFromVin(detectedVin);
-                if (modelYear >= 0)
+                if (string.IsNullOrEmpty(ConstructYear) || string.IsNullOrEmpty(ConstructMonth))
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Model year: {0}", modelYear);
-                    ConstructYear = string.Format(CultureInfo.InvariantCulture, "{0:0000}", modelYear);
-                    ConstructMonth = string.Empty;
+                    int modelYear = VehicleInfoBmw.GetModelYearFromVin(detectedVin);
+                    if (modelYear >= 0)
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Model year: {0}", modelYear);
+                        ConstructYear = string.Format(CultureInfo.InvariantCulture, "{0:0000}", modelYear);
+                        ConstructMonth = string.Empty;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(ConstructYear) && !string.IsNullOrEmpty(ConstructMonth))
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Construct date: {0}.{1}", ConstructYear, ConstructMonth);
                 }
 
                 string series = null;
