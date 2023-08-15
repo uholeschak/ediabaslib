@@ -1089,6 +1089,22 @@ namespace PsdzClient
 
             try
             {
+                Match matchBr = Regex.Match(stdFaStr, "^(?<BR>\\w+)[^\\w]");
+                if (!matchBr.Success)
+                {
+                    matchBr = Regex.Match(stdFaStr, "(?<BR>\\w{4})[^\\w]");
+                }
+
+                if (matchBr.Success)
+                {
+                    string brStr = matchBr.Groups["BR"]?.Value;
+                    if (!string.IsNullOrEmpty(brStr))
+                    {
+                        ModelSeries = brStr.Trim('_');
+                        Series = VehicleInfoBmw.GetVehicleSeriesFromBrName(ModelSeries, _ediabas);
+                    }
+                }
+
                 Match matchDate = Regex.Match(stdFaStr, "#(?<C_DATE>\\d{4})");
                 if (matchDate.Success)
                 {
