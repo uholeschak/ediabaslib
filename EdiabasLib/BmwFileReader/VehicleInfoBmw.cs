@@ -841,17 +841,19 @@ namespace BmwFileReader
             return vehicleSeriesInfoData.Version;
         }
 
-        public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(string series, DateTime? cDate, EdiabasNet ediabas)
+        public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(string series, string constructionYear, string constructionstMonth, EdiabasNet ediabas)
         {
-            string cDateStr = "No date";
             long dateValue = -1;
-            if (cDate.HasValue)
+            if (!string.IsNullOrEmpty(constructionYear) && !string.IsNullOrEmpty(constructionstMonth))
             {
-                cDateStr = cDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-                dateValue = cDate.Value.Year * 100 + cDate.Value.Month;
+                if (Int32.TryParse(constructionYear, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 year) &&
+                    Int32.TryParse(constructionstMonth, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 month))
+                {
+                    dateValue = year * 100 + month;
+                }
             }
 
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info from vehicle series: {0}, CDate: {1}", series ?? "No series", cDateStr);
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info from vehicle series: {0}, date: {1}", series ?? "No series", dateValue);
             if (series == null)
             {
                 return null;

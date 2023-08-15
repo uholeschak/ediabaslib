@@ -380,7 +380,7 @@ namespace PsdzClient
                     return DetectResult.InvalidDatabase;
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructDate, _ediabas);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Vehicle series info not found");
