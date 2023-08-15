@@ -292,10 +292,6 @@ namespace BmwFileReader
                     ConstructMonth = vinRangeInfo.ProdMonth;
                 }
 
-                string series = null;
-                string modelSeries = null;
-                DateTime? cDate = null;
-
                 foreach (Tuple<string, string, string> job in ReadIdentJobsBmwFast)
                 {
                     if (AbortFunc != null && AbortFunc())
@@ -344,6 +340,16 @@ namespace BmwFileReader
                                         if (resultSetsFa != null && resultSetsFa.Count >= 2)
                                         {
                                             Dictionary<string, EdiabasNet.ResultData> resultDictFa = resultSetsFa[1];
+                                            if (resultDictFa.TryGetValue("STANDARD_FA", out EdiabasNet.ResultData resultStdFa))
+                                            {
+                                                string stdFaStr = resultStdFa.OpData as string;
+                                                if (!string.IsNullOrEmpty(stdFaStr))
+                                                {
+                                                    StandardFa = stdFaStr;
+                                                    SetInfoFromStdFa(stdFaStr);
+                                                }
+                                            }
+
                                             if (resultDictFa.TryGetValue("BR", out EdiabasNet.ResultData resultDataBa))
                                             {
                                                 string br = resultDataBa.OpData as string;
@@ -354,7 +360,8 @@ namespace BmwFileReader
                                                     if (!string.IsNullOrEmpty(vSeries))
                                                     {
                                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
-                                                        series = vSeries;
+                                                        ModelSeries = br;
+                                                        Series = vSeries;
                                                     }
                                                 }
 
@@ -366,7 +373,7 @@ namespace BmwFileReader
                                                     {
                                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected construction date: {0}",
                                                             dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                                                        cDate = dateTime.Value;
+                                                        SetConstructDate(dateTime);
                                                     }
                                                 }
 
@@ -387,23 +394,9 @@ namespace BmwFileReader
                                                         Upholstery = upholsteryStr;
                                                     }
                                                 }
-
-                                                if (resultDictFa.TryGetValue("STANDARD_FA", out EdiabasNet.ResultData resultStdFa))
-                                                {
-                                                    string stdFaStr = resultStdFa.OpData as string;
-                                                    if (!string.IsNullOrEmpty(stdFaStr))
-                                                    {
-                                                        StandardFa = stdFaStr;
-                                                        string vehicleType = VehicleInfoBmw.GetVehicleTypeFromStdFa(stdFaStr, _ediabas);
-                                                        if (!string.IsNullOrEmpty(vehicleType) && string.IsNullOrEmpty(TypeKey))
-                                                        {
-                                                            TypeKey = vehicleType;
-                                                        }
-                                                    }
-                                                }
                                             }
 
-                                            if (series != null)
+                                            if (Series != null)
                                             {
                                                 SetFaSalpaInfo(resultDictFa);
                                                 break;
@@ -421,8 +414,8 @@ namespace BmwFileReader
                                         if (!string.IsNullOrEmpty(vSeries))
                                         {
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
-                                            modelSeries = br;
-                                            series = vSeries;
+                                            ModelSeries = br;
+                                            Series = vSeries;
                                         }
 
                                         if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
@@ -433,7 +426,7 @@ namespace BmwFileReader
                                             {
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected construction date: {0}",
                                                     dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                                                cDate = dateTime;
+                                                SetConstructDate(dateTime);
                                             }
                                         }
 
@@ -458,14 +451,14 @@ namespace BmwFileReader
                                         if (resultDict.TryGetValue("STAT_TYP_SCHLUESSEL", out EdiabasNet.ResultData resultType))
                                         {
                                             string typeStr = resultType.OpData as string;
-                                            if (!string.IsNullOrEmpty(typeStr) && string.IsNullOrEmpty(TypeKey))
+                                            if (!string.IsNullOrEmpty(typeStr))
                                             {
                                                 TypeKey = typeStr;
                                             }
                                         }
                                     }
 
-                                    if (series != null)
+                                    if (Series != null)
                                     {
                                         SetStatVcmSalpaInfo(resultSets);
                                         break;
@@ -490,17 +483,9 @@ namespace BmwFileReader
                     {
                         if (!string.IsNullOrEmpty(vehicleSeriesProp))
                         {
-                            series = vehicleSeriesProp;
+                            Series = vehicleSeriesProp;
                         }
                     }
-                }
-
-                ModelSeries = modelSeries;
-                Series = series;
-                if (cDate.HasValue)
-                {
-                    ConstructYear = cDate.Value.ToString("yyyy", CultureInfo.InvariantCulture);
-                    ConstructMonth = cDate.Value.ToString("MM", CultureInfo.InvariantCulture);
                 }
 
                 if (!string.IsNullOrEmpty(ConstructYear) && !string.IsNullOrEmpty(ConstructMonth))
@@ -508,7 +493,7 @@ namespace BmwFileReader
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Construct date: {0}.{1}", ConstructYear, ConstructMonth);
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(series, cDate, _ediabas);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo == null)
                 {
                     _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info not found");
@@ -885,7 +870,7 @@ namespace BmwFileReader
                     }
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(series, null, _ediabas);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo != null)
                 {
                     BrandList = vehicleSeriesInfo.BrandList;
@@ -1044,6 +1029,17 @@ namespace BmwFileReader
             Pin78ConnectRequire = false;
         }
 
+        private void SetConstructDate(DateTime? dateTime)
+        {
+            if (dateTime == null)
+            {
+                return;
+            }
+
+            ConstructYear = dateTime.Value.ToString("yyyy", CultureInfo.InvariantCulture);
+            ConstructMonth = dateTime.Value.ToString("MM", CultureInfo.InvariantCulture);
+        }
+
         private void SetStatVcmSalpaInfo(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
             int dictIndex = 0;
@@ -1192,6 +1188,128 @@ namespace BmwFileReader
             }
 
             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected FA: {0}", GetFaInfo());
+        }
+
+        private bool SetInfoFromStdFa(string stdFaStr)
+        {
+            if (string.IsNullOrEmpty(stdFaStr))
+            {
+                return false;
+            }
+
+            try
+            {
+                string vehicleType = VehicleInfoBmw.GetVehicleTypeFromStdFa(stdFaStr, _ediabas);
+                if (!string.IsNullOrEmpty(vehicleType))
+                {
+                    TypeKey = vehicleType;
+                }
+
+                Match matchBr = Regex.Match(stdFaStr, "^(?<BR>\\w+)[^\\w]");
+                if (!matchBr.Success)
+                {
+                    matchBr = Regex.Match(stdFaStr, "(?<BR>\\w{4})[^\\w]");
+                }
+
+                if (matchBr.Success)
+                {
+                    string br = matchBr.Groups["BR"]?.Value;
+                    if (!string.IsNullOrEmpty(br))
+                    {
+                        string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+                        if (!string.IsNullOrEmpty(vSeries))
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
+                            ModelSeries = br;
+                            Series = vSeries;
+                        }
+                    }
+                }
+
+                Match matchDate = Regex.Match(stdFaStr, "#(?<C_DATE>\\d{4})");
+                if (matchDate.Success)
+                {
+                    string dateStr = matchDate.Groups["C_DATE"]?.Value;
+                    if (!string.IsNullOrEmpty(dateStr))
+                    {
+                        DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(dateStr);
+                        SetConstructDate(dateTime);
+                    }
+                }
+
+                Match matchPaint = Regex.Match(stdFaStr, "%(?<LACK>\\w{4})");
+                if (matchPaint.Success)
+                {
+                    string paintStr = matchPaint.Groups["LACK"]?.Value;
+                    if (!string.IsNullOrEmpty(paintStr))
+                    {
+                        Paint = paintStr;
+                    }
+                }
+
+                Match matchUpholstery = Regex.Match(stdFaStr, "&(?<POLSTER>\\w{4})");
+                if (matchUpholstery.Success)
+                {
+                    string upholsteryStr = matchUpholstery.Groups["POLSTER"]?.Value;
+                    if (!string.IsNullOrEmpty(upholsteryStr))
+                    {
+                        Upholstery = upholsteryStr;
+                    }
+                }
+
+                foreach (Match match in Regex.Matches(stdFaStr, "\\$(?<SA>\\w{3})"))
+                {
+                    if (match.Success)
+                    {
+                        string saStr = match.Groups["SA"]?.Value;
+                        if (!string.IsNullOrEmpty(saStr))
+                        {
+                            if (!Salapa.Contains(saStr))
+                            {
+                                Salapa.Add(saStr);
+                            }
+                        }
+                    }
+                }
+
+                foreach (Match match in Regex.Matches(stdFaStr, "\\+(?<HOWORT>\\w{4})"))
+                {
+                    if (match.Success)
+                    {
+                        string hoStr = match.Groups["HOWORT"]?.Value;
+                        if (!string.IsNullOrEmpty(hoStr))
+                        {
+                            if (!HoWords.Contains(hoStr))
+                            {
+                                HoWords.Add(hoStr);
+                            }
+                        }
+                    }
+                }
+
+                foreach (Match match in Regex.Matches(stdFaStr, "\\-(?<EWORT>\\w{4})"))
+                {
+                    if (match.Success)
+                    {
+                        string ewStr = match.Groups["EWORT"]?.Value;
+                        if (!string.IsNullOrEmpty(ewStr))
+                        {
+                            if (!EWords.Contains(ewStr))
+                            {
+                                EWords.Add(ewStr);
+                            }
+                        }
+                    }
+                }
+
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected FA: {0}", GetFaInfo());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SetInfoFromStdFa Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return false;
+            }
         }
     }
 }
