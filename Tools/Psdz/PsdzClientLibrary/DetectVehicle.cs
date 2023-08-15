@@ -1080,56 +1080,79 @@ namespace PsdzClient
             log.InfoFormat(CultureInfo.InvariantCulture, "Detected FA: {0}", GetFaInfo());
         }
 
-        private void SetSalpaInfoFromStdFa(string stdFaStr)
+        private bool SetInfoFromStdFa(string stdFaStr)
         {
             if (string.IsNullOrEmpty(stdFaStr))
             {
-                return;
+                return false;
             }
 
-            foreach (Match match in Regex.Matches(stdFaStr, "\\$(?<SA>\\w{3})"))
+            try
             {
-                if (match.Success)
+                Match matchPaint = Regex.Match(stdFaStr, "%(?<LACK>\\w{4})");
+                if (matchPaint.Success)
                 {
-                    string saStr = match.Groups["SA"].Value;
-                    if (!string.IsNullOrEmpty(saStr))
+                    Paint = matchPaint.Groups["LACK"]?.Value;
+                }
+
+                Match matchUpholstery = Regex.Match(stdFaStr, "&(?<POLSTER>\\w{4})");
+                if (matchUpholstery.Success)
+                {
+                    Upholstery = matchUpholstery.Groups["POLSTER"]?.Value;
+                }
+
+                foreach (Match match in Regex.Matches(stdFaStr, "\\$(?<SA>\\w{3})"))
+                {
+                    if (match.Success)
                     {
-                        if (!Salapa.Contains(saStr))
+                        string saStr = match.Groups["SA"]?.Value;
+                        if (!string.IsNullOrEmpty(saStr))
                         {
-                            Salapa.Add(saStr);
+                            if (!Salapa.Contains(saStr))
+                            {
+                                Salapa.Add(saStr);
+                            }
                         }
                     }
                 }
-            }
 
-            foreach (Match match in Regex.Matches(stdFaStr, "\\+(?<HOWORT>\\w{4})"))
-            {
-                if (match.Success)
+                foreach (Match match in Regex.Matches(stdFaStr, "\\+(?<HOWORT>\\w{4})"))
                 {
-                    string hoStr = match.Groups["HOWORT"].Value;
-                    if (!string.IsNullOrEmpty(hoStr))
+                    if (match.Success)
                     {
-                        if (!HoWords.Contains(hoStr))
+                        string hoStr = match.Groups["HOWORT"]?.Value;
+                        if (!string.IsNullOrEmpty(hoStr))
                         {
-                            HoWords.Add(hoStr);
+                            if (!HoWords.Contains(hoStr))
+                            {
+                                HoWords.Add(hoStr);
+                            }
                         }
                     }
                 }
-            }
 
-            foreach (Match match in Regex.Matches(stdFaStr, "\\-(?<EWORT>\\w{4})"))
-            {
-                if (match.Success)
+                foreach (Match match in Regex.Matches(stdFaStr, "\\-(?<EWORT>\\w{4})"))
                 {
-                    string ewStr = match.Groups["EWORT"].Value;
-                    if (!string.IsNullOrEmpty(ewStr))
+                    if (match.Success)
                     {
-                        if (!EWords.Contains(ewStr))
+                        string ewStr = match.Groups["EWORT"]?.Value;
+                        if (!string.IsNullOrEmpty(ewStr))
                         {
-                            EWords.Add(ewStr);
+                            if (!EWords.Contains(ewStr))
+                            {
+                                EWords.Add(ewStr);
+                            }
                         }
                     }
                 }
+
+                log.InfoFormat(CultureInfo.InvariantCulture, "Detected FA: {0}", GetFaInfo());
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "SetInfoFromStdFa Exception: {0}", ex.Message);
+                return false;
             }
         }
 
