@@ -1089,16 +1089,40 @@ namespace PsdzClient
 
             try
             {
+                Match matchDate = Regex.Match(stdFaStr, "#(?<C_DATE>\\d{4})");
+                if (matchDate.Success)
+                {
+                    string dateStr = matchDate.Groups["C_DATE"]?.Value;
+                    if (!string.IsNullOrEmpty(dateStr))
+                    {
+                        DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(dateStr);
+                        if (dateTime.HasValue)
+                        {
+                            ConstructDate = dateTime;
+                            ConstructYear = dateTime.Value.ToString("yyyy", CultureInfo.InvariantCulture);
+                            ConstructMonth = dateTime.Value.ToString("MM", CultureInfo.InvariantCulture);
+                        }
+                    }
+                }
+
                 Match matchPaint = Regex.Match(stdFaStr, "%(?<LACK>\\w{4})");
                 if (matchPaint.Success)
                 {
-                    Paint = matchPaint.Groups["LACK"]?.Value;
+                    string paintStr = matchPaint.Groups["LACK"]?.Value;
+                    if (!string.IsNullOrEmpty(paintStr))
+                    {
+                        Paint = paintStr;
+                    }
                 }
 
                 Match matchUpholstery = Regex.Match(stdFaStr, "&(?<POLSTER>\\w{4})");
                 if (matchUpholstery.Success)
                 {
-                    Upholstery = matchUpholstery.Groups["POLSTER"]?.Value;
+                    string upholsteryStr = matchUpholstery.Groups["POLSTER"]?.Value;
+                    if (!string.IsNullOrEmpty(upholsteryStr))
+                    {
+                        Upholstery = upholsteryStr;
+                    }
                 }
 
                 foreach (Match match in Regex.Matches(stdFaStr, "\\$(?<SA>\\w{3})"))
