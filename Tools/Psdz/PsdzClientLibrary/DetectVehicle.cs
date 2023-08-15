@@ -1080,6 +1080,59 @@ namespace PsdzClient
             log.InfoFormat(CultureInfo.InvariantCulture, "Detected FA: {0}", GetFaInfo());
         }
 
+        private void SetSalpaInfoFromStdFa(string stdFaStr)
+        {
+            if (string.IsNullOrEmpty(stdFaStr))
+            {
+                return;
+            }
+
+            foreach (Match match in Regex.Matches(stdFaStr, "\\$(?<SA>\\w{3})"))
+            {
+                if (match.Success)
+                {
+                    string saStr = match.Groups["SA"].Value;
+                    if (!string.IsNullOrEmpty(saStr))
+                    {
+                        if (!Salapa.Contains(saStr))
+                        {
+                            Salapa.Add(saStr);
+                        }
+                    }
+                }
+            }
+
+            foreach (Match match in Regex.Matches(stdFaStr, "\\+(?<HOWORT>\\w{4})"))
+            {
+                if (match.Success)
+                {
+                    string hoStr = match.Groups["HOWORT"].Value;
+                    if (!string.IsNullOrEmpty(hoStr))
+                    {
+                        if (!HoWords.Contains(hoStr))
+                        {
+                            HoWords.Add(hoStr);
+                        }
+                    }
+                }
+            }
+
+            foreach (Match match in Regex.Matches(stdFaStr, "\\-(?<EWORT>\\w{4})"))
+            {
+                if (match.Success)
+                {
+                    string ewStr = match.Groups["EWORT"].Value;
+                    if (!string.IsNullOrEmpty(ewStr))
+                    {
+                        if (!EWords.Contains(ewStr))
+                        {
+                            EWords.Add(ewStr);
+                        }
+                    }
+                }
+            }
+        }
+
         public void Dispose()
         {
             Dispose(true);
