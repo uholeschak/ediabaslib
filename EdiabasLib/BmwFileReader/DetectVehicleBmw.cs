@@ -173,10 +173,13 @@ namespace BmwFileReader
             new Tuple<string, string, string, string>("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
             new Tuple<string, string, string, string>("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
             new Tuple<string, string, string, string>("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
-            // motorbikes
+            // motorbikes BN2000
             new Tuple<string, string, string, string>("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER"),
             new Tuple<string, string, string, string>("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
+            // motorbikes BN2020
             new Tuple<string, string, string, string>("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
+            new Tuple<string, string, string, string>("X_K001", "prog_fg_nr_lesen_funktional", "18", "FG_NR_LANG"),
+            new Tuple<string, string, string, string>("X_KS01", "prog_fg_nr_lesen_funktional", "18", "FG_NR_LANG"),
         };
 
         private static readonly Tuple<string, string, string, string>[] ReadIdentJobsBmwFast =
