@@ -30,6 +30,8 @@ namespace PsdzClient
             new Tuple<string, string, string>("ZGW_01", "STATUS_VIN_LESEN", "STAT_VIN"),
             new Tuple<string, string, string>("G_CAS", "STATUS_FAHRGESTELLNUMMER", "STAT_FGNR17_WERT"),
             new Tuple<string, string, string>("D_CAS", "STATUS_FAHRGESTELLNUMMER", "FGNUMMER"),
+            new Tuple<string, string, string>("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", "STAT_FGNUMMER"),
+            new Tuple<string, string, string>("D_MRMOT", "STATUS_LESEN", "STAT_FAHRGESTELLNUMMER_TEXT"),
         };
 
         private static readonly Tuple<string, string, string>[] ReadIdentJobsBmwFast =
@@ -40,6 +42,9 @@ namespace PsdzClient
             new Tuple<string, string, string>("D_CAS", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string>("D_LM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string>("D_KBM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
+            new Tuple<string, string, string>("D_MRKOMB", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
+            new Tuple<string, string, string>("D_MRZFE", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
+            new Tuple<string, string, string>("D_MRMOT", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
         };
 
         private static readonly Tuple<string, string>[] ReadILevelJobsBmwFast =
