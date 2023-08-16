@@ -178,8 +178,8 @@ namespace BmwFileReader
             new Tuple<string, string, string, string>("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
             // motorbikes BN2020
             new Tuple<string, string, string, string>("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
-            new Tuple<string, string, string, string>("X_K001", "prog_fg_nr_lesen_funktional", "18", "FG_NR_LANG"),
-            new Tuple<string, string, string, string>("X_KS01", "prog_fg_nr_lesen_funktional", "18", "FG_NR_LANG"),
+            new Tuple<string, string, string, string>("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG"),
+            new Tuple<string, string, string, string>("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG"),
         };
 
         private static readonly Tuple<string, string, string, string>[] ReadIdentJobsBmwFast =
@@ -190,10 +190,13 @@ namespace BmwFileReader
             new Tuple<string, string, string, string>("D_CAS", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string, string>("D_LM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string, string>("D_KBM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            // motorbikes
+            // motorbikes BN2000
             new Tuple<string, string, string, string>("D_MRMOT", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string, string>("D_MRKOMB", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
             new Tuple<string, string, string, string>("D_MRZFE", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            // motorbikes BN2020
+            new Tuple<string, string, string, string>("X_K001", "FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new Tuple<string, string, string, string>("X_KS01", "FA_LESEN", null, "FAHRZEUGAUFTRAG"),
         };
 
         private static readonly Tuple<string, string>[] ReadILevelJobsBmwFast =
