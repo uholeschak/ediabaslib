@@ -24,14 +24,15 @@ namespace PsdzClient
 
         private static readonly ILog log = LogManager.GetLogger(typeof(DetectVehicle));
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
-        private static readonly Tuple<string, string, string>[] ReadVinJobsBmwFast =
+        private static readonly Tuple<string, string, string, string>[] ReadVinJobsBmwFast =
         {
-            new Tuple<string, string, string>("G_ZGW", "STATUS_VIN_LESEN", "STAT_VIN"),
-            new Tuple<string, string, string>("ZGW_01", "STATUS_VIN_LESEN", "STAT_VIN"),
-            new Tuple<string, string, string>("G_CAS", "STATUS_FAHRGESTELLNUMMER", "STAT_FGNR17_WERT"),
-            new Tuple<string, string, string>("D_CAS", "STATUS_FAHRGESTELLNUMMER", "FGNUMMER"),
-            new Tuple<string, string, string>("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", "STAT_FGNUMMER"),
-            new Tuple<string, string, string>("D_MRMOT", "STATUS_LESEN", "STAT_FAHRGESTELLNUMMER_TEXT"),
+            new Tuple<string, string, string, string>("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new Tuple<string, string, string, string>("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new Tuple<string, string, string, string>("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
+            new Tuple<string, string, string, string>("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
+            new Tuple<string, string, string, string>("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER"),
+            new Tuple<string, string, string, string>("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
+            new Tuple<string, string, string, string>("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
         };
 
         private static readonly Tuple<string, string, string>[] ReadIdentJobsBmwFast =
@@ -131,7 +132,7 @@ namespace PsdzClient
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
                 string detectedVin = null;
-                foreach (Tuple<string, string, string> job in ReadVinJobsBmwFast)
+                foreach (Tuple<string, string, string, string> job in ReadVinJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
@@ -143,6 +144,11 @@ namespace PsdzClient
                         _ediabas.ResolveSgbdFile(job.Item1);
 
                         _ediabas.ArgString = string.Empty;
+                        if (!string.IsNullOrEmpty(job.Item3))
+                        {
+                            _ediabas.ArgString = job.Item3;
+                        }
+
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(job.Item2);
@@ -156,7 +162,7 @@ namespace PsdzClient
                             }
 
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                            if (resultDict.TryGetValue(job.Item4, out EdiabasNet.ResultData resultData))
                             {
                                 string vin = resultData.OpData as string;
                                 // ReSharper disable once AssignNullToNotNullAttribute
