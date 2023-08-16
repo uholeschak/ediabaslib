@@ -787,7 +787,7 @@ namespace BmwFileReader
                 Match match = Regex.Match(standardFa, "\\*(?<TYPE>\\w{4})");
                 if (match.Success)
                 {
-                    return match.Groups["TYPE"].Value;
+                    return match.Groups["TYPE"]?.Value;
                 }
             }
 
