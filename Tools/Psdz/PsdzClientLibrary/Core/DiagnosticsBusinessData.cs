@@ -63,6 +63,7 @@ namespace PsdzClient.Core
             vecInfo.Sp2021Enabled = vecInfo.Produktlinie.StartsWith("21");
         }
 
+        // ToDo: Check on update
         public string GetMainSeriesSgbd(IVehicle vecInfo)
         {
             switch (vecInfo.BNType)
@@ -127,6 +128,7 @@ namespace PsdzClient.Core
             }
         }
 
+        // ToDo: Check on update
         public string GetMainSeriesSgbdAdditional(IVehicle vecInfo)
         {
             if (vecInfo.Prodart == "P")
@@ -180,6 +182,7 @@ namespace PsdzClient.Core
             return null;
         }
 
+        // ToDo: Check on update
         public void SpecialTreatmentBasedOnEreihe(string typsnr, IVehicle vecInfo)
         {
             if ((string.Compare(vecInfo.Ereihe, "M12", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "M2_", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && string.Compare(typsnr, "CZ31", StringComparison.OrdinalIgnoreCase) == 0)
@@ -234,6 +237,7 @@ namespace PsdzClient.Core
             }
         }
 
+        // ToDo: Check on update
         public List<int> GetGatewayEcuAdresses(IVehicle vecInfo)
         {
             List<int> list = new List<int>();

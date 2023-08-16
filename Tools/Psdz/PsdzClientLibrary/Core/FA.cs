@@ -725,7 +725,7 @@ namespace PsdzClient.Core
 				Match match = Regex.Match(this.STANDARD_FA, "\\*(?<TYPE>\\w{4})");
 				if (match.Success)
 				{
-					return match.Groups["TYPE"].Value;
+					return match.Groups["TYPE"]?.Value;
 				}
 			}
 			return null;
