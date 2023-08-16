@@ -30,22 +30,16 @@ namespace PsdzClient
             new Tuple<string, string, string, string>("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
             new Tuple<string, string, string, string>("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
             new Tuple<string, string, string, string>("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
-            new Tuple<string, string, string, string>("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER"),
-            new Tuple<string, string, string, string>("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
-            new Tuple<string, string, string, string>("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
         };
 
-        private static readonly Tuple<string, string, string>[] ReadIdentJobsBmwFast =
+        private static readonly Tuple<string, string, string, string>[] ReadIdentJobsBmwFast =
         {
-            new Tuple<string, string, string>("G_ZGW", "STATUS_VCM_GET_FA", "STAT_BAUREIHE"),
-            new Tuple<string, string, string>("ZGW_01", "STATUS_VCM_GET_FA", "STAT_BAUREIHE"),
-            new Tuple<string, string, string>("G_CAS", "STATUS_FAHRZEUGAUFTRAG", "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
-            new Tuple<string, string, string>("D_CAS", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string>("D_LM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string>("D_KBM", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string>("D_MRKOMB", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string>("D_MRZFE", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string>("D_MRMOT", "C_FA_LESEN", "FAHRZEUGAUFTRAG"),
+            new Tuple<string, string, string, string>("G_ZGW", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
+            new Tuple<string, string, string, string>("ZGW_01", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
+            new Tuple<string, string, string, string>("G_CAS", "STATUS_FAHRZEUGAUFTRAG", null, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
+            new Tuple<string, string, string, string>("D_CAS", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new Tuple<string, string, string, string>("D_LM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new Tuple<string, string, string, string>("D_KBM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
         };
 
         private static readonly Tuple<string, string>[] ReadILevelJobsBmwFast =
@@ -190,7 +184,7 @@ namespace PsdzClient
                 }
 
                 Vin = detectedVin;
-                foreach (Tuple<string, string, string> job in ReadIdentJobsBmwFast)
+                foreach (Tuple<string, string, string, string> job in ReadIdentJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
@@ -211,6 +205,11 @@ namespace PsdzClient
                         _ediabas.ResolveSgbdFile(job.Item1);
 
                         _ediabas.ArgString = string.Empty;
+                        if (!string.IsNullOrEmpty(job.Item3))
+                        {
+                            _ediabas.ArgString = job.Item3;
+                        }
+
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(job.Item2);
@@ -219,7 +218,7 @@ namespace PsdzClient
                         if (resultSets != null && resultSets.Count >= 2)
                         {
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                            if (resultDict.TryGetValue(job.Item4, out EdiabasNet.ResultData resultData))
                             {
                                 if (!statVcm)
                                 {
