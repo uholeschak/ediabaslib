@@ -167,19 +167,37 @@ namespace BmwFileReader
 
         public static Regex VinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
-        private static readonly Tuple<string, string, string, string>[] ReadVinJobsBmwFast =
+        private class JobInfo
         {
-            new Tuple<string, string, string, string>("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new Tuple<string, string, string, string>("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new Tuple<string, string, string, string>("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
-            new Tuple<string, string, string, string>("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
+            public JobInfo(string sgdbName, string jobName, string jobArgs, string jobResult, bool motorbike = false)
+            {
+                SgdbName = sgdbName;
+                JobName = jobName;
+                JobArgs = jobArgs;
+                JobResult = jobResult;
+                Motorbike = motorbike;
+            }
+
+            public string SgdbName { get; }
+            public string JobName { get; }
+            public string JobArgs { get; }
+            public string JobResult { get; }
+            public bool Motorbike { get; }
+        }
+
+        private static readonly JobInfo[] ReadVinJobsBmwFast =
+        {
+            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
+            new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
             // motorbikes BN2000
-            new Tuple<string, string, string, string>("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER"),
-            new Tuple<string, string, string, string>("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
+            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER", true),
+            new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
             // motorbikes BN2020
-            new Tuple<string, string, string, string>("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT"),
-            new Tuple<string, string, string, string>("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG"),
-            new Tuple<string, string, string, string>("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG"),
+            new JobInfo("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
+            new JobInfo("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
+            new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
         };
 
         private static readonly Tuple<string, string, string, string>[] ReadIdentJobsBmwFast =
@@ -243,9 +261,9 @@ namespace BmwFileReader
                 string detectedVin = null;
                 int jobCount = ReadVinJobsBmwFast.Length + ReadIdentJobsBmwFast.Length + ReadILevelJobsBmwFast.Length;
                 int index = 0;
-                foreach (Tuple<string, string, string, string> job in ReadVinJobsBmwFast)
+                foreach (JobInfo jobInfo in ReadVinJobsBmwFast)
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0}", job.Item1);
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0}", jobInfo.JobName);
                     try
                     {
                         if (AbortFunc != null && AbortFunc())
@@ -255,17 +273,17 @@ namespace BmwFileReader
 
                         ProgressFunc?.Invoke(100 * index / jobCount);
 
-                        ActivityCommon.ResolveSgbdFile(_ediabas, job.Item1);
+                        ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
-                        if (!string.IsNullOrEmpty(job.Item3))
+                        if (!string.IsNullOrEmpty(jobInfo.JobArgs))
                         {
-                            _ediabas.ArgString = job.Item3;
+                            _ediabas.ArgString = jobInfo.JobArgs;
                         }
 
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(job.Item2);
+                        _ediabas.ExecuteJob(jobInfo.JobName);
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
@@ -275,7 +293,7 @@ namespace BmwFileReader
                                 detectedVin = string.Empty;
                             }
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue(job.Item4, out EdiabasNet.ResultData resultData))
+                            if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
                             {
                                 string vin = resultData.OpData as string;
                                 // ReSharper disable once AssignNullToNotNullAttribute
@@ -290,7 +308,7 @@ namespace BmwFileReader
                     }
                     catch (Exception)
                     {
-                        invalidSgbdSet.Add(job.Item1);
+                        invalidSgbdSet.Add(jobInfo.SgdbName);
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
                         // ignored
                     }
