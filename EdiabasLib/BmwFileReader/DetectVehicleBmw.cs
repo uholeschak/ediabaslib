@@ -127,6 +127,24 @@ namespace BmwFileReader
             [XmlElement("ILevelBackup"), DefaultValue(null)] public string ILevelBackup { get; set; }
         }
 
+        private class JobInfo
+        {
+            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, bool motorbike = false)
+            {
+                SgdbName = sgdbName;
+                JobName = jobName;
+                JobArgs = jobArgs;
+                JobResult = jobResult;
+                Motorbike = motorbike;
+            }
+
+            public string SgdbName { get; }
+            public string JobName { get; }
+            public string JobArgs { get; }
+            public string JobResult { get; }
+            public bool Motorbike { get; }
+        }
+
         public delegate bool AbortDelegate();
         public delegate void ProgressDelegate(int percent);
 
@@ -167,74 +185,56 @@ namespace BmwFileReader
 
         public static Regex VinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
-        private class JobInfo
+        private static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
-            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, bool motorbike = false)
-            {
-                SgdbName = sgdbName;
-                JobName = jobName;
-                JobArgs = jobArgs;
-                JobResult = jobResult;
-                Motorbike = motorbike;
-            }
-
-            public string SgdbName { get; }
-            public string JobName { get; }
-            public string JobArgs { get; }
-            public string JobResult { get; }
-            public bool Motorbike { get; }
-        }
-
-        private static readonly List<JobInfo> ReadVinJobsBmwFast = new()
-        {
-            new("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
-            new("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
+            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
+            new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
             // motorbikes BN2000
-            new("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER", true),
-            new("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
+            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER", true),
+            new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
             // motorbikes BN2020
-            new("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
-            new("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
-            new("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
+            new JobInfo("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
+            new JobInfo("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
+            new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
         };
 
-        private static readonly List<JobInfo> ReadIdentJobsBmwFast = new()
+        private static readonly List<JobInfo> ReadIdentJobsBmwFast = new List<JobInfo>
         {
-            new("G_ZGW", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
-            new("ZGW_01", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
-            new("G_CAS", "STATUS_FAHRZEUGAUFTRAG", null, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
-            new("D_CAS", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new("D_LM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new("D_KBM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new JobInfo("G_ZGW", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
+            new JobInfo("ZGW_01", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
+            new JobInfo("G_CAS", "STATUS_FAHRZEUGAUFTRAG", null, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
+            new JobInfo("D_CAS", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new JobInfo("D_LM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new JobInfo("D_KBM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
             // motorbikes BN2000
-            new("D_MRMOT", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
-            new("D_MRKOMB", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
-            new("D_MRZFE", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("D_MRMOT", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("D_MRKOMB", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("D_MRZFE", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
             // motorbikes BN2020
-            new("X_K001", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
-            new("X_KS01", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("X_K001", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("X_KS01", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
         };
 
-        private static readonly List<JobInfo> ReadILevelJobsBmwFast = new()
+        private static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
         {
-            new ("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
-            new ("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
-            new ("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
+            new JobInfo("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
+            new JobInfo("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
+            new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
         };
 
-        private static readonly List<JobInfo> ReadVinJobsDs2 = new()
+        private static readonly List<JobInfo> ReadVinJobsDs2 = new List<JobInfo>
         {
-            new ("ZCS_ALL", "FGNR_LESEN", null, "FG_NR"),
-            new ("D_0080", "AIF_FG_NR_LESEN", null, "AIF_FG_NR"),
-            new ("D_0010", "AIF_LESEN", null, "AIF_FG_NR"),
+            new JobInfo("ZCS_ALL", "FGNR_LESEN", null, "FG_NR"),
+            new JobInfo("D_0080", "AIF_FG_NR_LESEN", null, "AIF_FG_NR"),
+            new JobInfo("D_0010", "AIF_LESEN", null, "AIF_FG_NR"),
         };
 
-        private static readonly List<JobInfo> ReadIdentJobsDs2 = new()
+        private static readonly List<JobInfo> ReadIdentJobsDs2 = new List<JobInfo>
         {
-            new ("FZGIDENT", "GRUNDMERKMALE_LESEN", null, "BR_TXT"),
-            new ("FZGIDENT", "STRINGS_LESEN", null, "BR_TXT"),
+            new JobInfo("FZGIDENT", "GRUNDMERKMALE_LESEN", null, "BR_TXT"),
+            new JobInfo("FZGIDENT", "STRINGS_LESEN", null, "BR_TXT"),
         };
 
         private static readonly string[] ReadMotorJobsDs2 =
@@ -250,7 +250,7 @@ namespace BmwFileReader
 
         public bool DetectVehicleBmwFast(bool detectMotorbikes = false)
         {
-            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle BMW fast");
+            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle BMW fast, Motorbikes: {0}", detectMotorbikes);
             ResetValues();
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
@@ -350,7 +350,6 @@ namespace BmwFileReader
 
                     try
                     {
-                        bool statVcm = string.Compare(jobInfo.JobName, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
                         ProgressFunc?.Invoke(100 * index / jobCount);
 
                         if (!detectMotorbikes && jobInfo.Motorbike)
@@ -367,6 +366,7 @@ namespace BmwFileReader
                             continue;
                         }
 
+                        bool statVcm = string.Compare(jobInfo.JobName, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
                         ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
