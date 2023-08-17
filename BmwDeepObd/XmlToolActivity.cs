@@ -360,6 +360,8 @@ namespace BmwDeepObd
                 SgbdFunctional = string.Empty;
                 Vin = string.Empty;
                 VehicleType = string.Empty;
+                DetectMotorbike = false;
+                CommErrorsOccurred = false;
                 ShownServiceMenuHint = false;
                 ServiceFunctionWarningShown = false;
             }
@@ -381,6 +383,7 @@ namespace BmwDeepObd
             public string Vin { get; set; }
             public string VehicleType { get; set; }
             public string CDate { get; set; }
+            public bool DetectMotorbike { get; set; }
             public bool CommErrorsOccurred { get; set; }
             public bool ShownServiceMenuHint { get; set; }
             public bool ServiceFunctionWarningShown { get; set; }
@@ -603,6 +606,7 @@ namespace BmwDeepObd
         private View _barView;
         private Button _buttonRead;
         private Button _buttonSafe;
+        private CheckBox _checkBoxMotorbike;
         private ListView _listViewEcu;
         private EcuListAdapter _ecuListAdapter;
         private TextView _textViewCarInfo;
@@ -721,10 +725,18 @@ namespace BmwDeepObd
                 }
                 PerformAnalyze();
             };
+
             _buttonSafe = _barView.FindViewById<Button>(Resource.Id.buttonXmlSafe);
             _buttonSafe.Click += (sender, args) =>
             {
                 SaveConfiguration(false);
+            };
+
+            _checkBoxMotorbike = _barView.FindViewById<CheckBox>(Resource.Id.checkBoxMotorbike);
+            _checkBoxMotorbike.Checked = _instanceData.DetectMotorbike;
+            _checkBoxMotorbike.Click += (sender, args) =>
+            {
+                _instanceData.DetectMotorbike = _checkBoxMotorbike.Checked;
             };
 
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
@@ -787,8 +799,15 @@ namespace BmwDeepObd
             _datUkdDir = ActivityCommon.GetVagDatUkdDir(_ecuDir);
 
             ViewStates visibility = IsPageSelectionActive() ? ViewStates.Gone : ViewStates.Visible;
+            ViewStates visibilityMotorbike = visibility;
+            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+            {
+                visibilityMotorbike = ViewStates.Gone;
+            }
+
             _buttonRead.Visibility = visibility;
             _buttonSafe.Visibility = visibility;
+            _checkBoxMotorbike.Visibility = visibilityMotorbike;
             _textViewCarInfo.Visibility = visibility;
             _listViewEcu.Visibility = visibility;
 
@@ -1635,6 +1654,7 @@ namespace BmwDeepObd
             {
                 _buttonRead.Enabled = false;
                 _buttonSafe.Enabled = false;
+                _checkBoxMotorbike.Enabled = false;
                 return;
             }
 
@@ -1675,6 +1695,7 @@ namespace BmwDeepObd
             _buttonRead.Text = GetString((_instanceData.ManualConfigIdx > 0) ?
                 Resource.String.button_xml_tool_edit : Resource.String.button_xml_tool_read);
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
+            _checkBoxMotorbike.Enabled = _buttonRead.Enabled;
             int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
             _buttonSafe.Enabled = (_ecuList.Count > 0) && (_instanceData.AddErrorsPage || (selectedCount > 0));
             _ecuListAdapter.NotifyDataSetChanged();
@@ -3372,7 +3393,7 @@ namespace BmwDeepObd
 
                 string groupSgbd = null;
                 string detectedVin = null;
-                if (detectVehicleBmw.DetectVehicleBmwFast())
+                if (detectVehicleBmw.DetectVehicleBmwFast(_instanceData.DetectMotorbike))
                 {
                     groupSgbd = detectVehicleBmw.GroupSgdb;
                     detectedVin = detectVehicleBmw.Vin;

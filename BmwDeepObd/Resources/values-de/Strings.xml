@@ -563,6 +563,7 @@
   <string name="button_xml_tool_read">Lesen</string>
   <string name="button_xml_tool_edit">Bearbeiten</string>
   <string name="button_xml_tool_save">Speichern</string>
+  <string name="check_xml_tool_motorbike">Motorrad</string>
   <string name="xml_tool_analyze">Fahrzeugdaten lesen</string>
   <string name="xml_tool_continue_search">Wollen Sie den letzten abgebrochenen Suchvorgang fortsetzen?</string>
   <string name="xml_tool_clear_ecus">Sollen die bestehenden ECUs gelöscht werden?</string>

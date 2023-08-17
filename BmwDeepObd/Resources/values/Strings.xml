@@ -539,6 +539,7 @@
   <string name="button_xml_tool_read">Read</string>
   <string name="button_xml_tool_edit">Edit</string>
   <string name="button_xml_tool_save">Save</string>
+  <string name="check_xml_tool_motorbike">Motorbike</string>
   <string name="xml_tool_analyze">Reading vehicle data</string>
   <string name="xml_tool_continue_search">Do you want to continue the last aborted search?</string>
   <string name="xml_tool_clear_ecus">Should the existing ECUs be removed?</string>
