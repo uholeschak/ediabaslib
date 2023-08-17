@@ -185,36 +185,36 @@ namespace BmwFileReader
             public bool Motorbike { get; }
         }
 
-        private static readonly JobInfo[] ReadVinJobsBmwFast =
+        private static readonly List<JobInfo> ReadVinJobsBmwFast = new()
         {
-            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
-            new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
+            new("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
+            new("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
             // motorbikes BN2000
-            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER", true),
-            new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
+            new("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER", true),
+            new("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
             // motorbikes BN2020
-            new JobInfo("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
-            new JobInfo("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
-            new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
+            new("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
+            new("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
+            new("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
         };
 
-        private static readonly Tuple<string, string, string, string>[] ReadIdentJobsBmwFast =
+        private static readonly List<JobInfo> ReadIdentJobsBmwFast = new()
         {
-            new Tuple<string, string, string, string>("G_ZGW", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
-            new Tuple<string, string, string, string>("ZGW_01", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
-            new Tuple<string, string, string, string>("G_CAS", "STATUS_FAHRZEUGAUFTRAG", null, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
-            new Tuple<string, string, string, string>("D_CAS", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string, string>("D_LM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string, string>("D_KBM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new("G_ZGW", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
+            new("ZGW_01", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
+            new("G_CAS", "STATUS_FAHRZEUGAUFTRAG", null, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
+            new("D_CAS", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new("D_LM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new("D_KBM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
             // motorbikes BN2000
-            new Tuple<string, string, string, string>("D_MRMOT", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string, string>("D_MRKOMB", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string, string>("D_MRZFE", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new("D_MRMOT", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new("D_MRKOMB", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new("D_MRZFE", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
             // motorbikes BN2020
-            new Tuple<string, string, string, string>("X_K001", "FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string, string>("X_KS01", "FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new("X_K001", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new("X_KS01", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
         };
 
         private static readonly Tuple<string, string>[] ReadILevelJobsBmwFast =
@@ -259,7 +259,7 @@ namespace BmwFileReader
                 ProgressFunc?.Invoke(0);
 
                 string detectedVin = null;
-                int jobCount = ReadVinJobsBmwFast.Length + ReadIdentJobsBmwFast.Length + ReadILevelJobsBmwFast.Length;
+                int jobCount = ReadVinJobsBmwFast.Count + ReadIdentJobsBmwFast.Count + ReadILevelJobsBmwFast.Length;
                 int index = 0;
                 foreach (JobInfo jobInfo in ReadVinJobsBmwFast)
                 {
@@ -285,6 +285,7 @@ namespace BmwFileReader
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(jobInfo.JobName);
 
+                        invalidSgbdSet.Remove(jobInfo.SgdbName);
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
@@ -329,42 +330,42 @@ namespace BmwFileReader
                     ConstructMonth = vinRangeInfo.ProdMonth;
                 }
 
-                foreach (Tuple<string, string, string, string> job in ReadIdentJobsBmwFast)
+                foreach (JobInfo jobInfo in ReadIdentJobsBmwFast)
                 {
                     if (AbortFunc != null && AbortFunc())
                     {
                         return false;
                     }
 
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0},{1}", job.Item1, job.Item2);
-                    if (invalidSgbdSet.Contains(job.Item1))
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
+                    if (invalidSgbdSet.Contains(jobInfo.SgdbName))
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", job.Item1);
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", jobInfo.SgdbName);
                         index++;
                         continue;
                     }
                     try
                     {
-                        bool statVcm = string.Compare(job.Item2, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
+                        bool statVcm = string.Compare(jobInfo.JobName, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
                         ProgressFunc?.Invoke(100 * index / jobCount);
 
-                        ActivityCommon.ResolveSgbdFile(_ediabas, job.Item1);
+                        ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
-                        if (!string.IsNullOrEmpty(job.Item3))
+                        if (!string.IsNullOrEmpty(jobInfo.JobArgs))
                         {
-                            _ediabas.ArgString = job.Item3;
+                            _ediabas.ArgString = jobInfo.JobArgs;
                         }
 
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(job.Item2);
+                        _ediabas.ExecuteJob(jobInfo.JobName);
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue(job.Item4, out EdiabasNet.ResultData resultData))
+                            if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
                             {
                                 if (!statVcm)
                                 {
