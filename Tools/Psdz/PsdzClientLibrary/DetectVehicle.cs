@@ -22,31 +22,64 @@ namespace PsdzClient
             InvalidDatabase
         }
 
+        private class JobInfo
+        {
+            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, bool motorbike = false)
+            {
+                SgdbName = sgdbName;
+                JobName = jobName;
+                JobArgs = jobArgs;
+                JobResult = jobResult;
+                Motorbike = motorbike;
+            }
+
+            public string SgdbName { get; }
+            public string JobName { get; }
+            public string JobArgs { get; }
+            public string JobResult { get; }
+            public bool Motorbike { get; }
+        }
+
         private static readonly ILog log = LogManager.GetLogger(typeof(DetectVehicle));
         private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
-        private static readonly Tuple<string, string, string, string>[] ReadVinJobsBmwFast =
+
+        private static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
-            new Tuple<string, string, string, string>("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new Tuple<string, string, string, string>("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new Tuple<string, string, string, string>("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
-            new Tuple<string, string, string, string>("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
+            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
+            new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
+            // motorbikes BN2000
+            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER", true),
+            new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
+            // motorbikes BN2020
+            new JobInfo("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
+            new JobInfo("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
+            new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
         };
 
-        private static readonly Tuple<string, string, string, string>[] ReadIdentJobsBmwFast =
+        private static readonly List<JobInfo> ReadIdentJobsBmwFast = new List<JobInfo>
         {
-            new Tuple<string, string, string, string>("G_ZGW", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
-            new Tuple<string, string, string, string>("ZGW_01", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
-            new Tuple<string, string, string, string>("G_CAS", "STATUS_FAHRZEUGAUFTRAG", null, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
-            new Tuple<string, string, string, string>("D_CAS", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string, string>("D_LM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new Tuple<string, string, string, string>("D_KBM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new JobInfo("G_ZGW", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
+            new JobInfo("ZGW_01", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
+            new JobInfo("G_CAS", "STATUS_FAHRZEUGAUFTRAG", null, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
+            new JobInfo("D_CAS", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new JobInfo("D_LM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new JobInfo("D_KBM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            // motorbikes BN2000
+            new JobInfo("D_MRMOT", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("D_MRKOMB", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("D_MRZFE", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            // motorbikes BN2020
+            new JobInfo("X_K001", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("X_KS01", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
         };
 
-        private static readonly Tuple<string, string>[] ReadILevelJobsBmwFast =
+        private static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
         {
-            new Tuple<string, string>("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
-            new Tuple<string, string>("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
-            new Tuple<string, string>("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
+            new JobInfo("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
+            new JobInfo("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
+            new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
         };
 
         private static readonly Tuple<string, string, string, string>[] ReadVoltageJobsBmwFast =
@@ -109,7 +142,7 @@ namespace PsdzClient
             ResetValues();
         }
 
-        public DetectResult DetectVehicleBmwFast(AbortDelegate abortFunc)
+        public DetectResult DetectVehicleBmwFast(AbortDelegate abortFunc, bool detectMotorbikes = false)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Start");
             ResetValues();
@@ -126,7 +159,7 @@ namespace PsdzClient
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
                 string detectedVin = null;
-                foreach (Tuple<string, string, string, string> job in ReadVinJobsBmwFast)
+                foreach (JobInfo jobInfo in ReadVinJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
@@ -135,18 +168,25 @@ namespace PsdzClient
 
                     try
                     {
-                        _ediabas.ResolveSgbdFile(job.Item1);
+                        if (!detectMotorbikes && jobInfo.Motorbike)
+                        {
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Motorbike ignored: {0}", jobInfo.SgdbName);
+                            continue;
+                        }
+
+                        _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
-                        if (!string.IsNullOrEmpty(job.Item3))
+                        if (!string.IsNullOrEmpty(jobInfo.JobArgs))
                         {
-                            _ediabas.ArgString = job.Item3;
+                            _ediabas.ArgString = jobInfo.JobArgs;
                         }
 
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(job.Item2);
+                        _ediabas.ExecuteJob(jobInfo.JobName);
 
+                        invalidSgbdSet.Remove(jobInfo.SgdbName.ToUpperInvariant());
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
@@ -156,7 +196,7 @@ namespace PsdzClient
                             }
 
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue(job.Item4, out EdiabasNet.ResultData resultData))
+                            if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
                             {
                                 string vin = resultData.OpData as string;
                                 // ReSharper disable once AssignNullToNotNullAttribute
@@ -171,7 +211,7 @@ namespace PsdzClient
                     }
                     catch (Exception)
                     {
-                        invalidSgbdSet.Add(job.Item1);
+                        invalidSgbdSet.Add(jobInfo.SgdbName.ToUpperInvariant());
                         log.ErrorFormat(CultureInfo.InvariantCulture, "No VIN response");
                         // ignored
                     }
@@ -184,41 +224,47 @@ namespace PsdzClient
                 }
 
                 Vin = detectedVin;
-                foreach (Tuple<string, string, string, string> job in ReadIdentJobsBmwFast)
+                foreach (JobInfo jobInfo in ReadIdentJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
                         return DetectResult.Aborted;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Read BR job: {0},{1}", job.Item1, job.Item2);
-                    if (invalidSgbdSet.Contains(job.Item1))
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
+                    if (!detectMotorbikes && jobInfo.Motorbike)
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", job.Item1);
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Motorbike ignored: {0}", jobInfo.SgdbName);
+                        continue;
+                    }
+
+                    if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", jobInfo.SgdbName);
                         continue;
                     }
 
                     try
                     {
-                        bool statVcm = string.Compare(job.Item2, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
+                        bool statVcm = string.Compare(jobInfo.JobName, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
 
-                        _ediabas.ResolveSgbdFile(job.Item1);
+                        _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
-                        if (!string.IsNullOrEmpty(job.Item3))
+                        if (!string.IsNullOrEmpty(jobInfo.JobArgs))
                         {
-                            _ediabas.ArgString = job.Item3;
+                            _ediabas.ArgString = jobInfo.JobArgs;
                         }
 
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(job.Item2);
+                        _ediabas.ExecuteJob(jobInfo.JobName);
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue(job.Item4, out EdiabasNet.ResultData resultData))
+                            if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
                             {
                                 if (!statVcm)
                                 {
@@ -493,28 +539,28 @@ namespace PsdzClient
                 string iLevelShip = null;
                 string iLevelCurrent = null;
                 string iLevelBackup = null;
-                foreach (Tuple<string, string> job in ReadILevelJobsBmwFast)
+                foreach (JobInfo jobInfo in ReadILevelJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
                         return DetectResult.Aborted;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Read ILevel job: {0},{1}", job.Item1, job.Item2);
-                    if (invalidSgbdSet.Contains(job.Item1))
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Read ILevel job: {0},{1}", jobInfo.SgdbName, jobInfo.JobName);
+                    if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", job.Item1);
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", jobInfo.SgdbName);
                         continue;
                     }
 
                     try
                     {
-                        _ediabas.ResolveSgbdFile(job.Item1);
+                        _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(job.Item2);
+                        _ediabas.ExecuteJob(jobInfo.JobName);
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
