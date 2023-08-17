@@ -185,19 +185,19 @@ namespace BmwFileReader
             public bool Motorbike { get; }
         }
 
-        private static readonly JobInfo[] ReadVinJobsBmwFast =
+        private static readonly List<JobInfo> ReadVinJobsBmwFast = new()
         {
-            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
-            new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
+            new("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
+            new("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
+            new("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
             // motorbikes BN2000
-            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER", true),
-            new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
+            new("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER", true),
+            new("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
             // motorbikes BN2020
-            new JobInfo("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
-            new JobInfo("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
-            new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
+            new("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
+            new("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
+            new("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
         };
 
         private static readonly Tuple<string, string, string, string>[] ReadIdentJobsBmwFast =
@@ -259,7 +259,7 @@ namespace BmwFileReader
                 ProgressFunc?.Invoke(0);
 
                 string detectedVin = null;
-                int jobCount = ReadVinJobsBmwFast.Length + ReadIdentJobsBmwFast.Length + ReadILevelJobsBmwFast.Length;
+                int jobCount = ReadVinJobsBmwFast.Count + ReadIdentJobsBmwFast.Length + ReadILevelJobsBmwFast.Length;
                 int index = 0;
                 foreach (JobInfo jobInfo in ReadVinJobsBmwFast)
                 {
@@ -285,6 +285,7 @@ namespace BmwFileReader
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(jobInfo.JobName);
 
+                        invalidSgbdSet.Remove(jobInfo.SgdbName);
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
