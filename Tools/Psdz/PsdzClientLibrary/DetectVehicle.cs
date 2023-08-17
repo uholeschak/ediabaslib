@@ -45,12 +45,12 @@ namespace PsdzClient
 
         private static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
-            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", null, "STAT_VIN"),
-            new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNR17_WERT"),
-            new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", null, "FGNUMMER"),
+            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN"),
+            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN"),
+            new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNR17_WERT"),
+            new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "FGNUMMER"),
             // motorbikes BN2000
-            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", null, "STAT_FGNUMMER", true),
+            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNUMMER", true),
             new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
             // motorbikes BN2020
             new JobInfo("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
@@ -60,19 +60,19 @@ namespace PsdzClient
 
         private static readonly List<JobInfo> ReadIdentJobsBmwFast = new List<JobInfo>
         {
-            new JobInfo("G_ZGW", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
-            new JobInfo("ZGW_01", "STATUS_VCM_GET_FA", null, "STAT_BAUREIHE"),
-            new JobInfo("G_CAS", "STATUS_FAHRZEUGAUFTRAG", null, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
-            new JobInfo("D_CAS", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new JobInfo("D_LM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
-            new JobInfo("D_KBM", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG"),
+            new JobInfo("G_ZGW", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE"),
+            new JobInfo("ZGW_01", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE"),
+            new JobInfo("G_CAS", "STATUS_FAHRZEUGAUFTRAG", string.Empty, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
+            new JobInfo("D_CAS", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG"),
+            new JobInfo("D_LM", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG"),
+            new JobInfo("D_KBM", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG"),
             // motorbikes BN2000
-            new JobInfo("D_MRMOT", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
-            new JobInfo("D_MRKOMB", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
-            new JobInfo("D_MRZFE", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("D_MRMOT", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("D_MRKOMB", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("D_MRZFE", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
             // motorbikes BN2020
-            new JobInfo("X_K001", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
-            new JobInfo("X_KS01", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("X_K001", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
+            new JobInfo("X_KS01", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
         };
 
         private static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
@@ -82,10 +82,10 @@ namespace PsdzClient
             new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
         };
 
-        private static readonly Tuple<string, string, string, string>[] ReadVoltageJobsBmwFast =
+        private static List<JobInfo> ReadVoltageJobsBmwFast = new List<JobInfo>
         {
-            new Tuple<string, string, string, string>("G_MOTOR", "STATUS_LESEN", "ARG;MESSWERTE_IBS2015", "STAT_SPANNUNG_IBS2015_WERT"),
-            new Tuple<string, string, string, string>("G_MOTOR", "STATUS_MESSWERTE_IBS", string.Empty, "STAT_U_BATT_WERT"),
+            new JobInfo("G_MOTOR", "STATUS_LESEN", "ARG;MESSWERTE_IBS2015", "STAT_SPANNUNG_IBS2015_WERT"),
+            new JobInfo("G_MOTOR", "STATUS_MESSWERTE_IBS", null, "STAT_U_BATT_WERT"),
         };
 
         public delegate bool AbortDelegate();
@@ -665,30 +665,35 @@ namespace PsdzClient
                     return -1;
                 }
 
-                foreach (Tuple<string, string, string, string> job in ReadVoltageJobsBmwFast)
+                foreach (JobInfo jobInfo in ReadVoltageJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
                         return -1;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Read voltage job: {0}, {1}, {2}", job.Item1,
-                        job.Item2, job.Item3);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Read voltage job: {0}, {1}, {2}",
+                        jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
 
                     try
                     {
-                        _ediabas.ResolveSgbdFile(job.Item1);
+                        _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
-                        _ediabas.ArgString = job.Item3;
+                        _ediabas.ArgString = string.Empty;
+                        if (!string.IsNullOrEmpty(jobInfo.JobArgs))
+                        {
+                            _ediabas.ArgString = jobInfo.JobArgs;
+                        }
+
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(job.Item2);
+                        _ediabas.ExecuteJob(jobInfo.JobName);
 
                         List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue(job.Item4, out EdiabasNet.ResultData resultData))
+                            if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
                             {
                                 if (resultData.OpData is Double)
                                 {
