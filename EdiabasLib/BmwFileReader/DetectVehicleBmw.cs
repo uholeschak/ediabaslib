@@ -169,7 +169,7 @@ namespace BmwFileReader
 
         private class JobInfo
         {
-            public JobInfo(string sgdbName, string jobName, string jobArgs, string jobResult, bool motorbike = false)
+            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, bool motorbike = false)
             {
                 SgdbName = sgdbName;
                 JobName = jobName;
@@ -217,24 +217,26 @@ namespace BmwFileReader
             new("X_KS01", "FA_LESEN", null, "FAHRZEUGAUFTRAG", true),
         };
 
-        private static readonly Tuple<string, string>[] ReadILevelJobsBmwFast =
+        private static readonly List<JobInfo> ReadILevelJobsBmwFast = new()
         {
-            new Tuple<string, string>("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
-            new Tuple<string, string>("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
-            new Tuple<string, string>("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
+            new ("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
+            new ("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
+            new ("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
         };
 
-        private static readonly Tuple<string, string, string>[] ReadVinJobsDs2 =
+        private static readonly List<JobInfo> ReadVinJobsDs2 = new()
         {
-            new Tuple<string, string, string>("ZCS_ALL", "FGNR_LESEN", "FG_NR"),
-            new Tuple<string, string, string>("D_0080", "AIF_FG_NR_LESEN", "AIF_FG_NR"),
-            new Tuple<string, string, string>("D_0010", "AIF_LESEN", "AIF_FG_NR"),
+            new ("ZCS_ALL", "FGNR_LESEN", null, "FG_NR"),
+            new ("D_0080", "AIF_FG_NR_LESEN", null, "AIF_FG_NR"),
+            new ("D_0010", "AIF_LESEN", null, "AIF_FG_NR"),
         };
-        private static readonly Tuple<string, string, string>[] ReadIdentJobsDs2 =
+
+        private static readonly List<JobInfo> ReadIdentJobsDs2 = new()
         {
-            new Tuple<string, string, string>("FZGIDENT", "GRUNDMERKMALE_LESEN", "BR_TXT"),
-            new Tuple<string, string, string>("FZGIDENT", "STRINGS_LESEN", "BR_TXT"),
+            new ("FZGIDENT", "GRUNDMERKMALE_LESEN", null, "BR_TXT"),
+            new ("FZGIDENT", "STRINGS_LESEN", null, "BR_TXT"),
         };
+
         private static readonly string[] ReadMotorJobsDs2 =
         {
             "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
@@ -246,7 +248,7 @@ namespace BmwFileReader
             _bmwDir = bmwDir;
         }
 
-        public bool DetectVehicleBmwFast()
+        public bool DetectVehicleBmwFast(bool detectMotorbikes = false)
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle BMW fast");
             ResetValues();
@@ -259,11 +261,11 @@ namespace BmwFileReader
                 ProgressFunc?.Invoke(0);
 
                 string detectedVin = null;
-                int jobCount = ReadVinJobsBmwFast.Count + ReadIdentJobsBmwFast.Count + ReadILevelJobsBmwFast.Length;
+                int jobCount = ReadVinJobsBmwFast.Count + ReadIdentJobsBmwFast.Count + ReadILevelJobsBmwFast.Count;
                 int index = 0;
                 foreach (JobInfo jobInfo in ReadVinJobsBmwFast)
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0}", jobInfo.JobName);
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
                     try
                     {
                         if (AbortFunc != null && AbortFunc())
@@ -272,6 +274,13 @@ namespace BmwFileReader
                         }
 
                         ProgressFunc?.Invoke(100 * index / jobCount);
+
+                        if (!detectMotorbikes && jobInfo.Motorbike)
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motorbike ignored: {0}", jobInfo.SgdbName);
+                            index++;
+                            continue;
+                        }
 
                         ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
@@ -285,7 +294,7 @@ namespace BmwFileReader
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(jobInfo.JobName);
 
-                        invalidSgbdSet.Remove(jobInfo.SgdbName);
+                        invalidSgbdSet.Remove(jobInfo.SgdbName.ToUpperInvariant());
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
@@ -309,7 +318,7 @@ namespace BmwFileReader
                     }
                     catch (Exception)
                     {
-                        invalidSgbdSet.Add(jobInfo.SgdbName);
+                        invalidSgbdSet.Add(jobInfo.SgdbName.ToUpperInvariant());
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
                         // ignored
                     }
@@ -338,16 +347,25 @@ namespace BmwFileReader
                     }
 
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
-                    if (invalidSgbdSet.Contains(jobInfo.SgdbName))
-                    {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", jobInfo.SgdbName);
-                        index++;
-                        continue;
-                    }
+
                     try
                     {
                         bool statVcm = string.Compare(jobInfo.JobName, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
                         ProgressFunc?.Invoke(100 * index / jobCount);
+
+                        if (!detectMotorbikes && jobInfo.Motorbike)
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motorbike ignored: {0}", jobInfo.SgdbName);
+                            index++;
+                            continue;
+                        }
+
+                        if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", jobInfo.SgdbName);
+                            index++;
+                            continue;
+                        }
 
                         ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
@@ -549,7 +567,7 @@ namespace BmwFileReader
                 string iLevelShip = null;
                 string iLevelCurrent = null;
                 string iLevelBackup = null;
-                foreach (Tuple<string, string> job in ReadILevelJobsBmwFast)
+                foreach (JobInfo jobInfo in ReadILevelJobsBmwFast)
                 {
                     if (AbortFunc != null && AbortFunc())
                     {
@@ -558,22 +576,29 @@ namespace BmwFileReader
 
                     ProgressFunc?.Invoke(100 * index / jobCount);
 
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read ILevel job: {0},{1}", job.Item1, job.Item2);
-                    if (invalidSgbdSet.Contains(job.Item1))
+                    if (!detectMotorbikes && jobInfo.Motorbike)
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", job.Item1);
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motorbike ignored: {0}", jobInfo.SgdbName);
+                        index++;
+                        continue;
+                    }
+
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read ILevel job: {0},{1}", jobInfo.SgdbName, jobInfo.JobName);
+                    if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", jobInfo.SgdbName);
                         index++;
                         continue;
                     }
 
                     try
                     {
-                        _ediabas.ResolveSgbdFile(job.Item1);
+                        _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(job.Item2);
+                        _ediabas.ExecuteJob(jobInfo.JobName);
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
@@ -759,24 +784,24 @@ namespace BmwFileReader
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
                     int index = 0;
-                    foreach (Tuple<string, string, string> job in ReadVinJobsDs2)
+                    foreach (JobInfo jobInfo in ReadVinJobsDs2)
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0}", job.Item1);
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
                         try
                         {
-                            ProgressFunc?.Invoke(100 * index / ReadVinJobsDs2.Length);
-                            ActivityCommon.ResolveSgbdFile(_ediabas, job.Item1);
+                            ProgressFunc?.Invoke(100 * index / ReadVinJobsDs2.Count);
+                            ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                             _ediabas.ArgString = string.Empty;
                             _ediabas.ArgBinaryStd = null;
                             _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob(job.Item2);
+                            _ediabas.ExecuteJob(jobInfo.JobName);
 
                             resultSets = _ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
                                 Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                                if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                                if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
                                 {
                                     string vin = resultData.OpData as string;
                                     // ReSharper disable once AssignNullToNotNullAttribute
@@ -865,23 +890,23 @@ namespace BmwFileReader
                 {
                     string typeSnr = detectedVin.Substring(3, 4);
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type SNR: {0}", typeSnr);
-                    foreach (Tuple<string, string, string> job in ReadIdentJobsDs2)
+                    foreach (JobInfo jobInfo in ReadIdentJobsDs2)
                     {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read vehicle type job: {0},{1}", job.Item1, job.Item2);
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read vehicle type job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
                         try
                         {
-                            ActivityCommon.ResolveSgbdFile(_ediabas, job.Item1);
+                            ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                             _ediabas.ArgString = typeSnr;
                             _ediabas.ArgBinaryStd = null;
                             _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob(job.Item2);
+                            _ediabas.ExecuteJob(jobInfo.JobName);
 
                             resultSets = _ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
                                 Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                                if (resultDict.TryGetValue(job.Item3, out EdiabasNet.ResultData resultData))
+                                if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
                                 {
                                     string detectedSeries = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(detectedSeries) &&
