@@ -56,7 +56,6 @@ namespace BmwFileReader
                 GroupSgdb = detectVehicleBmw.GroupSgdb;
                 ModelSeries = detectVehicleBmw.ModelSeries;
                 Series = detectVehicleBmw.Series;
-                ProductLine = detectVehicleBmw.ProductLine;
                 BnType = detectVehicleBmw.BnType;
                 BrandList = detectVehicleBmw.BrandList;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
@@ -88,7 +87,6 @@ namespace BmwFileReader
                 detectVehicleBmw.GroupSgdb = GroupSgdb;
                 detectVehicleBmw.ModelSeries = ModelSeries;
                 detectVehicleBmw.Series = Series;
-                detectVehicleBmw.ProductLine = ProductLine;
                 detectVehicleBmw.BnType = BnType;
                 detectVehicleBmw.BrandList = BrandList;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
@@ -115,7 +113,6 @@ namespace BmwFileReader
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
             [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
-            [XmlElement("ProductLine")] public string ProductLine { get; private set; }
             [XmlElement("BnType")] public string BnType { get; private set; }
             [XmlElement("BrandList"), DefaultValue(null)] public List<string> BrandList { get; set; }
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
@@ -165,7 +162,6 @@ namespace BmwFileReader
         public string GroupSgdb { get; private set; }
         public string ModelSeries { get; private set; }
         public string Series { get; private set; }
-        public string ProductLine { get; private set; }
         public string BnType { get; private set; }
         public List<string> BrandList { get; private set; }
         public string Ds2GroupFiles { get; private set; }
@@ -556,12 +552,12 @@ namespace BmwFileReader
                         }
                     }
 
-                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.ProductLineName, out string productLineProp))
+                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.BrandName, out string brandProp))
                     {
-                        if (!string.IsNullOrEmpty(productLineProp))
+                        if (!string.IsNullOrEmpty(brandProp))
                         {
-                            ProductLine = productLineProp;
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Product line: {0}", ProductLine);
+                            BrandList = new List<string> { brandProp };
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Brand: {0}", brandProp);
                         }
                     }
                 }
@@ -580,7 +576,10 @@ namespace BmwFileReader
 
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
                 BnType = vehicleSeriesInfo.BnType;
-                BrandList = vehicleSeriesInfo.BrandList;
+                if (BrandList == null || BrandList.Count == 0)
+                {
+                    BrandList = vehicleSeriesInfo.BrandList;
+                }
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
 
                 string iLevelShip = null;
@@ -955,12 +954,12 @@ namespace BmwFileReader
                         }
                     }
 
-                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.ProductLineName, out string productLineProp))
+                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.BrandName, out string brandProp))
                     {
-                        if (!string.IsNullOrEmpty(productLineProp))
+                        if (!string.IsNullOrEmpty(brandProp))
                         {
-                            ProductLine = productLineProp;
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Product line: {0}", ProductLine);
+                            BrandList = new List<string> { brandProp };
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Brand: {0}", brandProp);
                         }
                     }
                 }
@@ -969,7 +968,10 @@ namespace BmwFileReader
                 if (vehicleSeriesInfo != null)
                 {
                     BnType = vehicleSeriesInfo.BnType;
-                    BrandList = vehicleSeriesInfo.BrandList;
+                    if (BrandList == null || BrandList.Count == 0)
+                    {
+                        BrandList = vehicleSeriesInfo.BrandList;
+                    }
                 }
 
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BnType: {0}", BnType ?? string.Empty);
@@ -1108,7 +1110,6 @@ namespace BmwFileReader
             GroupSgdb = null;
             ModelSeries = null;
             Series = null;
-            ProductLine = null;
             BnType = null;
             BrandList = null;
             Ds2GroupFiles = null;
