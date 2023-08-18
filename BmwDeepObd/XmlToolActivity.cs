@@ -359,7 +359,7 @@ namespace BmwDeepObd
                 TraceActive = true;
                 SgbdFunctional = string.Empty;
                 Vin = string.Empty;
-                VehicleType = string.Empty;
+                VehicleSeries = string.Empty;
                 DetectMotorbikes = false;
                 CommErrorsOccurred = false;
                 ShownServiceMenuHint = false;
@@ -381,7 +381,7 @@ namespace BmwDeepObd
             public bool TraceAppend { get; set; }
             public string SgbdFunctional { get; set; }
             public string Vin { get; set; }
-            public string VehicleType { get; set; }
+            public string VehicleSeries { get; set; }
             public string CDate { get; set; }
             public bool DetectMotorbikes { get; set; }
             public bool CommErrorsOccurred { get; set; }
@@ -1557,7 +1557,7 @@ namespace BmwDeepObd
         {
             _instanceData.SgbdFunctional = string.Empty;
             _instanceData.Vin = string.Empty;
-            _instanceData.VehicleType = string.Empty;
+            _instanceData.VehicleSeries = string.Empty;
             _instanceData.CDate = string.Empty;
         }
 
@@ -1713,10 +1713,10 @@ namespace BmwDeepObd
                     sb.Append(GetString(Resource.String.xml_tool_info_vin));
                     sb.Append(": ");
                     sb.Append(_instanceData.Vin);
-                    if (!string.IsNullOrEmpty(_instanceData.VehicleType))
+                    if (!string.IsNullOrEmpty(_instanceData.VehicleSeries))
                     {
                         sb.Append("/");
-                        sb.Append(_instanceData.VehicleType);
+                        sb.Append(_instanceData.VehicleSeries);
                     }
                     if (!string.IsNullOrEmpty(_instanceData.CDate))
                     {
@@ -1977,9 +1977,9 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraAppDataDir, _appDataDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuName, ecuInfo.Name);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraEcuDir, _ecuDir);
-                if (!string.IsNullOrEmpty(_instanceData.VehicleType))
+                if (!string.IsNullOrEmpty(_instanceData.VehicleSeries))
                 {
-                    serverIntent.PutExtra(XmlToolEcuActivity.ExtraVehicleType, _instanceData.VehicleType);
+                    serverIntent.PutExtra(XmlToolEcuActivity.ExtraVehicleSeries, _instanceData.VehicleSeries);
                 }
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraBmwServiceFunctions, bmwServiceFunctions);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceDir, _instanceData.TraceDir);
@@ -2634,7 +2634,7 @@ namespace BmwDeepObd
                     _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
                     bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
 
-                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(_instanceData.VehicleType, null, null, _ediabas);
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(_instanceData.VehicleSeries, null, null, _ediabas);
                     if (vehicleSeriesInfo != null)
                     {
                         VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, ecuInfo.Grp);
@@ -3399,7 +3399,7 @@ namespace BmwDeepObd
                 {
                     groupSgbd = detectVehicleBmw.GroupSgdb;
                     detectedVin = detectVehicleBmw.Vin;
-                    _instanceData.VehicleType = detectVehicleBmw.Series;
+                    _instanceData.VehicleSeries = detectVehicleBmw.Series;
                     _instanceData.CDate = null;
                     if (detectVehicleBmw.ConstructYear != null && detectVehicleBmw.ConstructMonth != null)
                     {
@@ -3790,7 +3790,7 @@ namespace BmwDeepObd
                     {
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        _instanceData.VehicleType = detectVehicleBmw.Series;
+                        _instanceData.VehicleSeries = detectVehicleBmw.Series;
                         _instanceData.CDate = null;
                         if (detectVehicleBmw.ConstructYear != null)
                         {
@@ -8152,9 +8152,9 @@ namespace BmwDeepObd
 
                 XAttribute attrVehicleSeries = errorsNodeNew.Attribute("vehicle_series");
                 attrVehicleSeries?.Remove();
-                if (!string.IsNullOrEmpty(_instanceData.VehicleType))
+                if (!string.IsNullOrEmpty(_instanceData.VehicleSeries))
                 {
-                    errorsNodeNew.Add(new XAttribute("vehicle_series", _instanceData.VehicleType));
+                    errorsNodeNew.Add(new XAttribute("vehicle_series", _instanceData.VehicleSeries));
                 }
 
                 foreach (EcuInfo ecuInfo in _ecuList)
@@ -8576,9 +8576,9 @@ namespace BmwDeepObd
                     globalNode.Add(new XAttribute("search_abort_index", _instanceData.EcuSearchAbortIndex));
                 }
 
-                if (!string.IsNullOrEmpty(_instanceData.VehicleType))
+                if (!string.IsNullOrEmpty(_instanceData.VehicleSeries))
                 {
-                    globalNode.Add(new XAttribute("vehicle_series", _instanceData.VehicleType));
+                    globalNode.Add(new XAttribute("vehicle_series", _instanceData.VehicleSeries));
                 }
 
                 XElement includeNode = document.Root.Element(ns + "include");
