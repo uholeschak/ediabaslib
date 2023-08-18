@@ -150,6 +150,17 @@ namespace PsdzClient
 
             try
             {
+                List<JobInfo> readVinJobsBmwFast = new List<JobInfo>(ReadVinJobsBmwFast);
+                List<JobInfo> readIdentJobsBmwFast = new List<JobInfo>(ReadIdentJobsBmwFast);
+                List<JobInfo> readILevelJobsBmwFast = new List<JobInfo>(ReadILevelJobsBmwFast);
+
+                if (!detectMotorbikes)
+                {
+                    readVinJobsBmwFast.RemoveAll(x => x.Motorbike);
+                    readIdentJobsBmwFast.RemoveAll(x => x.Motorbike);
+                    readILevelJobsBmwFast.RemoveAll(x => x.Motorbike);
+                }
+
                 _abortFunc = abortFunc;
                 if (!Connect())
                 {
@@ -159,7 +170,7 @@ namespace PsdzClient
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
                 string detectedVin = null;
-                foreach (JobInfo jobInfo in ReadVinJobsBmwFast)
+                foreach (JobInfo jobInfo in readVinJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
@@ -168,12 +179,6 @@ namespace PsdzClient
 
                     try
                     {
-                        if (!detectMotorbikes && jobInfo.Motorbike)
-                        {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Motorbike ignored: {0}", jobInfo.SgdbName);
-                            continue;
-                        }
-
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
@@ -224,7 +229,7 @@ namespace PsdzClient
                 }
 
                 Vin = detectedVin;
-                foreach (JobInfo jobInfo in ReadIdentJobsBmwFast)
+                foreach (JobInfo jobInfo in readIdentJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
@@ -232,12 +237,6 @@ namespace PsdzClient
                     }
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
-                    if (!detectMotorbikes && jobInfo.Motorbike)
-                    {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Motorbike ignored: {0}", jobInfo.SgdbName);
-                        continue;
-                    }
-
                     if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", jobInfo.SgdbName);
@@ -539,7 +538,7 @@ namespace PsdzClient
                 string iLevelShip = null;
                 string iLevelCurrent = null;
                 string iLevelBackup = null;
-                foreach (JobInfo jobInfo in ReadILevelJobsBmwFast)
+                foreach (JobInfo jobInfo in readILevelJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
