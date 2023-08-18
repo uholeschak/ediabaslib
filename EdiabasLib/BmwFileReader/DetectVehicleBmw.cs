@@ -260,14 +260,25 @@ namespace BmwFileReader
 
             try
             {
+                List<JobInfo> readVinJobsBmwFast = new List<JobInfo>(ReadVinJobsBmwFast);
+                List<JobInfo> readIdentJobsBmwFast = new List<JobInfo>(ReadIdentJobsBmwFast);
+                List<JobInfo> readILevelJobsBmwFast = new List<JobInfo>(ReadILevelJobsBmwFast);
+
+                if (!detectMotorbikes)
+                {
+                    readVinJobsBmwFast.RemoveAll(x => x.Motorbike);
+                    readIdentJobsBmwFast.RemoveAll(x => x.Motorbike);
+                    readILevelJobsBmwFast.RemoveAll(x => x.Motorbike);
+                }
+
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
 
                 ProgressFunc?.Invoke(0);
 
                 string detectedVin = null;
-                int jobCount = ReadVinJobsBmwFast.Count + ReadIdentJobsBmwFast.Count + ReadILevelJobsBmwFast.Count;
+                int jobCount = readVinJobsBmwFast.Count + readIdentJobsBmwFast.Count + readILevelJobsBmwFast.Count;
                 int index = 0;
-                foreach (JobInfo jobInfo in ReadVinJobsBmwFast)
+                foreach (JobInfo jobInfo in readVinJobsBmwFast)
                 {
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
                     try
@@ -278,13 +289,6 @@ namespace BmwFileReader
                         }
 
                         ProgressFunc?.Invoke(100 * index / jobCount);
-
-                        if (!detectMotorbikes && jobInfo.Motorbike)
-                        {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motorbike ignored: {0}", jobInfo.SgdbName);
-                            index++;
-                            continue;
-                        }
 
                         ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
@@ -343,7 +347,7 @@ namespace BmwFileReader
                     ConstructMonth = vinRangeInfo.ProdMonth;
                 }
 
-                foreach (JobInfo jobInfo in ReadIdentJobsBmwFast)
+                foreach (JobInfo jobInfo in readIdentJobsBmwFast)
                 {
                     if (AbortFunc != null && AbortFunc())
                     {
@@ -355,13 +359,6 @@ namespace BmwFileReader
                     try
                     {
                         ProgressFunc?.Invoke(100 * index / jobCount);
-
-                        if (!detectMotorbikes && jobInfo.Motorbike)
-                        {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motorbike ignored: {0}", jobInfo.SgdbName);
-                            index++;
-                            continue;
-                        }
 
                         if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                         {
@@ -585,7 +582,7 @@ namespace BmwFileReader
                 string iLevelShip = null;
                 string iLevelCurrent = null;
                 string iLevelBackup = null;
-                foreach (JobInfo jobInfo in ReadILevelJobsBmwFast)
+                foreach (JobInfo jobInfo in readILevelJobsBmwFast)
                 {
                     if (AbortFunc != null && AbortFunc())
                     {
@@ -593,13 +590,6 @@ namespace BmwFileReader
                     }
 
                     ProgressFunc?.Invoke(100 * index / jobCount);
-
-                    if (!detectMotorbikes && jobInfo.Motorbike)
-                    {
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motorbike ignored: {0}", jobInfo.SgdbName);
-                        index++;
-                        continue;
-                    }
 
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read ILevel job: {0},{1}", jobInfo.SgdbName, jobInfo.JobName);
                     if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
