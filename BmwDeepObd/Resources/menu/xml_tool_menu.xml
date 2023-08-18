@@ -22,6 +22,10 @@
             android:icon="@android:drawable/ic_menu_manage"
             android:title="@string/menu_xml_tool_add_errors_page"
             android:checkable="true" />
+      <item android:id="@+id/menu_xml_tool_detect_motorbikes"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="@string/menu_xml_tool_detect_motorbikes"
+            android:checkable="true" />
       <item android:id="@+id/menu_xml_tool_submenu_cfg_type"
             android:icon="@android:drawable/ic_menu_manage"
             android:title="@string/menu_xml_tool_cfg_type" />

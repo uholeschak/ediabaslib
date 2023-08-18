@@ -563,7 +563,6 @@
   <string name="button_xml_tool_read">Lesen</string>
   <string name="button_xml_tool_edit">Bearbeiten</string>
   <string name="button_xml_tool_save">Speichern</string>
-  <string name="check_xml_tool_motorbike">Motorrad</string>
   <string name="xml_tool_analyze">Fahrzeugdaten lesen</string>
   <string name="xml_tool_continue_search">Wollen Sie den letzten abgebrochenen Suchvorgang fortsetzen?</string>
   <string name="xml_tool_clear_ecus">Sollen die bestehenden ECUs gelöscht werden?</string>
@@ -605,6 +604,7 @@
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Fehlerseite hinzufügen</string>
+  <string name="menu_xml_tool_detect_motorbikes">Motorräder erkennen</string>
   <string name="menu_xml_tool_cfg_type">Konfiguration</string>
 
   <!-- XML Tool Edit Menu -->

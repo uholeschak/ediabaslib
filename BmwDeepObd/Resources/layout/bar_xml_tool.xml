@@ -17,11 +17,4 @@
         android:text="@string/button_xml_tool_save"
         android:layout_gravity="center"
         android:layout_weight="1" />
-    <CheckBox
-        android:id="@+id/checkBoxMotorbike"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/check_xml_tool_motorbike"
-        android:layout_gravity="center"
-        android:layout_weight="1" />
 </LinearLayout>
