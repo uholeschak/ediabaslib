@@ -561,7 +561,6 @@
   <string name="button_xml_tool_read">Считать</string>
   <string name="button_xml_tool_edit">Редактировать</string>
   <string name="button_xml_tool_save">Сохранить</string>
-  <string name="check_xml_tool_motorbike">мотоцикл</string>
   <string name="xml_tool_analyze">Считать данные автомобиля</string>
   <string name="xml_tool_continue_search">Хотите продолжить последний прерванный поиск?</string>
   <string name="xml_tool_clear_ecus">Удалить существующие ECU файлы?</string>
@@ -603,6 +602,8 @@
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Добавить страницу ошибок</string>
+  <!--Translate-->
+  <string name="menu_xml_tool_detect_motorbikes">Обнаружение мотоциклов</string>
   <string name="menu_xml_tool_cfg_type">Конфигурация</string>
 
   <!-- XML Tool Edit Menu -->
