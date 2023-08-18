@@ -858,9 +858,10 @@ namespace BmwDeepObd
 
                             if (!detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
                             {
+                                bool detectMotorbike = ActivityCommon.JobReader.IsMotorbike;
                                 if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
                                 {
-                                    detectVehicleBmw.DetectVehicleBmwFast();
+                                    detectVehicleBmw.DetectVehicleBmwFast(detectMotorbike);
                                 }
                                 else
                                 {
