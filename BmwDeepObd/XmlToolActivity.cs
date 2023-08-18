@@ -360,6 +360,9 @@ namespace BmwDeepObd
                 SgbdFunctional = string.Empty;
                 Vin = string.Empty;
                 VehicleSeries = string.Empty;
+                CDate = string.Empty;
+                BnType = string.Empty;
+                BrandName = string.Empty;
                 DetectMotorbikes = false;
                 CommErrorsOccurred = false;
                 ShownServiceMenuHint = false;
@@ -383,6 +386,8 @@ namespace BmwDeepObd
             public string Vin { get; set; }
             public string VehicleSeries { get; set; }
             public string CDate { get; set; }
+            public string BnType { get; set; }
+            public string BrandName { get; set; }
             public bool DetectMotorbikes { get; set; }
             public bool CommErrorsOccurred { get; set; }
             public bool ShownServiceMenuHint { get; set; }
@@ -1559,6 +1564,8 @@ namespace BmwDeepObd
             _instanceData.Vin = string.Empty;
             _instanceData.VehicleSeries = string.Empty;
             _instanceData.CDate = string.Empty;
+            _instanceData.BnType = string.Empty;
+            _instanceData.BrandName = string.Empty;
         }
 
         private void ClearEcuList()
@@ -3400,10 +3407,17 @@ namespace BmwDeepObd
                     groupSgbd = detectVehicleBmw.GroupSgdb;
                     detectedVin = detectVehicleBmw.Vin;
                     _instanceData.VehicleSeries = detectVehicleBmw.Series;
-                    _instanceData.CDate = null;
+                    _instanceData.CDate = string.Empty;
                     if (detectVehicleBmw.ConstructYear != null && detectVehicleBmw.ConstructMonth != null)
                     {
                         _instanceData.CDate = detectVehicleBmw.ConstructYear + "-" + detectVehicleBmw.ConstructMonth;
+                    }
+
+                    _instanceData.BnType = detectVehicleBmw.BnType;
+                    _instanceData.BrandName = string.Empty;
+                    if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
+                    {
+                        _instanceData.BrandName = detectVehicleBmw.BrandList[0];
                     }
                 }
 
@@ -3791,10 +3805,17 @@ namespace BmwDeepObd
                         _ecuList.AddRange(ecuListBest.OrderBy(x => x.Name));
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                         _instanceData.VehicleSeries = detectVehicleBmw.Series;
-                        _instanceData.CDate = null;
+                        _instanceData.CDate = string.Empty;
                         if (detectVehicleBmw.ConstructYear != null)
                         {
                             _instanceData.CDate = detectVehicleBmw.ConstructYear;
+                        }
+
+                        _instanceData.BnType = detectVehicleBmw.BnType;
+                        _instanceData.BrandName = string.Empty;
+                        if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
+                        {
+                            _instanceData.BrandName = detectVehicleBmw.BrandList[0];
                         }
 
                         if (!string.IsNullOrEmpty(detectedVinDs2))
@@ -8514,6 +8535,10 @@ namespace BmwDeepObd
                     attr?.Remove();
                     attr = globalNode.Attribute("vehicle_series");
                     attr?.Remove();
+                    attr = globalNode.Attribute("bn_type");
+                    attr?.Remove();
+                    attr = globalNode.Attribute("brand_name");
+                    attr?.Remove();
                 }
 
                 XAttribute logPathAttr = globalNode.Attribute("log_path");
@@ -8579,6 +8604,16 @@ namespace BmwDeepObd
                 if (!string.IsNullOrEmpty(_instanceData.VehicleSeries))
                 {
                     globalNode.Add(new XAttribute("vehicle_series", _instanceData.VehicleSeries));
+                }
+
+                if (!string.IsNullOrEmpty(_instanceData.BnType))
+                {
+                    globalNode.Add(new XAttribute("bn_type", _instanceData.BnType));
+                }
+
+                if (!string.IsNullOrEmpty(_instanceData.BrandName))
+                {
+                    globalNode.Add(new XAttribute("brand_name", _instanceData.BrandName));
                 }
 
                 XElement includeNode = document.Root.Element(ns + "include");
