@@ -16,6 +16,24 @@ namespace BmwFileReader
         public const string RulesCsFile = "RulesInfo.cs";
         public const string HashPrefix = "HASH_";
 
+        public enum BNType
+        {
+            BN2000,
+            BN2020,
+            IBUS,
+            BN2000_MOTORBIKE,
+            BN2020_MOTORBIKE,
+            BNK01X_MOTORBIKE,
+            BEV2010,
+            BN2000_MORGAN,
+            BN2000_WIESMANN,
+            BN2000_RODING,
+            BN2000_PGO,
+            BN2000_GIBBS,
+            BN2020_CAMPAGNA,
+            UNKNOWN
+        }
+
         [XmlType("VEI")]
         public class VehicleEcuInfo
         {
@@ -58,6 +76,21 @@ namespace BmwFileReader
             {
                 Date = null;
                 DateCompare = null;
+            }
+
+            public BNType GetBnType()
+            {
+                if (string.IsNullOrEmpty(BnType))
+                {
+                    return BNType.UNKNOWN;
+                }
+
+                if (!Enum.TryParse(BnType, out BNType bnType))
+                {
+                    return BNType.UNKNOWN;
+                }
+
+                return bnType;
             }
 
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
