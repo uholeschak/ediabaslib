@@ -222,7 +222,7 @@ namespace BmwDeepObd
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
-        public const string ExtraVehicleType = "vehicle_type";
+        public const string ExtraVehicleSeries = "vehicle_series";
         public const string ExtraBmwServiceFunctions = "bmw_service_functions";
         public const string ExtraTraceDir = "trace_dir";
         public const string ExtraTraceAppend = "trace_append";
@@ -312,7 +312,7 @@ namespace BmwDeepObd
         private bool _ediabasJobAbort;
         private string _appDataDir;
         private string _ecuDir;
-        private string _vehicleType;
+        private string _vehicleSeries;
         private bool _bmwServiceFunctions;
         private string _traceDir;
         private bool _traceAppend;
@@ -374,7 +374,7 @@ namespace BmwDeepObd
 
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
-            _vehicleType = Intent.GetStringExtra(ExtraVehicleType);
+            _vehicleSeries = Intent.GetStringExtra(ExtraVehicleSeries);
             _bmwServiceFunctions = Intent.GetBooleanExtra(ExtraBmwServiceFunctions, false);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
             _traceAppend = Intent.GetBooleanExtra(ExtraTraceAppend, true);
@@ -705,7 +705,7 @@ namespace BmwDeepObd
             bool bmwCodingEnabled = false;
             if (_activityCommon.IsBmwCodingInterface(_deviceAddress))
             {
-                if (ActivityCommon.IsBmwCodingSeries(_vehicleType))
+                if (ActivityCommon.IsBmwCodingSeries(_vehicleSeries))
                 {
                     bmwCodingEnabled = true;
                 }
