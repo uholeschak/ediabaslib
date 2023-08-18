@@ -195,6 +195,7 @@ namespace BmwFileReader
 
         public const string ResultUnknown = "UNBEK";
         public const string VehicleTypeName = "E-Bezeichnung";
+        public const string ProductLineName = "Produktlinie";
 
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
         private static VehicleStructsBmw.RulesInfoData _rulesInfoData;
