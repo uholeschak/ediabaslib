@@ -7586,6 +7586,7 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
                 serverIntent.PutExtra(XmlToolActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
                 serverIntent.PutExtra(XmlToolActivity.ExtraFileName, _instanceData.ConfigFileName);
+                serverIntent.PutExtra(XmlToolActivity.ExtraMotorbikes, ActivityCommon.JobReader.IsMotorbike);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
             }
             catch (Exception)

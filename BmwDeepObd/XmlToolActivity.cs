@@ -597,6 +597,7 @@ namespace BmwDeepObd
         public const string ExtraElmWifiIp = "elmwifi_ip";
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public const string ExtraFileName = "file_name";
+        public const string ExtraMotorbikes = "motorbikes";
         public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
 
         public delegate void MwTabFileSelected(string fileName);
@@ -788,6 +789,7 @@ namespace BmwDeepObd
             {
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
                 _instanceData.DeviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
+                _instanceData.DetectMotorbikes = Intent.GetBooleanExtra(ExtraMotorbikes, false);
             }
             _activityCommon.SelectedEnetIp = Intent.GetStringExtra(ExtraEnetIp);
             _activityCommon.SelectedElmWifiIp = Intent.GetStringExtra(ExtraElmWifiIp);
@@ -796,12 +798,6 @@ namespace BmwDeepObd
             _datUkdDir = ActivityCommon.GetVagDatUkdDir(_ecuDir);
 
             ViewStates visibility = IsPageSelectionActive() ? ViewStates.Gone : ViewStates.Visible;
-            ViewStates visibilityMotorbike = visibility;
-            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
-            {
-                visibilityMotorbike = ViewStates.Gone;
-            }
-
             _buttonRead.Visibility = visibility;
             _buttonSafe.Visibility = visibility;
             _textViewCarInfo.Visibility = visibility;
