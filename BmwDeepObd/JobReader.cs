@@ -301,6 +301,8 @@ namespace BmwDeepObd
         private string _sgbdFunctional = string.Empty;
         private string _interfaceName = string.Empty;
         private string _vehicleSeries = string.Empty;
+        private string _bnType = string.Empty;
+        private string _brandName = string.Empty;
         private string _manufacturerName = string.Empty;
         private string _xmlFileNamePages = string.Empty;
         private string _xmlFileName = string.Empty;
@@ -329,6 +331,10 @@ namespace BmwDeepObd
 
         public string VehicleSeries => _vehicleSeries;
 
+        public string BnType => _bnType;
+
+        public string BrandName => _brandName;
+
         public string XmlFileNamePages => _xmlFileNamePages;
 
         public string XmlFileName => _xmlFileName;
@@ -336,6 +342,29 @@ namespace BmwDeepObd
         public ActivityCommon.ManufacturerType Manufacturer => _manufacturerType;
 
         public ActivityCommon.InterfaceType Interface => _interfaceType;
+
+        public bool IsMotorbike {
+            get
+            {
+                if (!string.IsNullOrEmpty(_bnType))
+                {
+                    if (_bnType.Contains("MOTORBIKE", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(_brandName))
+                {
+                    if (_brandName.Contains("MOTORRAD", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
 
         public JobReader()
         {
@@ -358,6 +387,8 @@ namespace BmwDeepObd
             _manufacturerName = string.Empty;
             _interfaceName = string.Empty;
             _vehicleSeries = string.Empty;
+            _bnType = string.Empty;
+            _brandName = string.Empty;
             _xmlFileNamePages = string.Empty;
             _xmlFileName = null;
         }
@@ -438,6 +469,18 @@ namespace BmwDeepObd
                     if (attrib != null)
                     {
                         _vehicleSeries = attrib.Value;
+                    }
+
+                    attrib = xnodeGlobal.Attributes["bn_type"];
+                    if (attrib != null)
+                    {
+                        _bnType = attrib.Value;
+                    }
+
+                    attrib = xnodeGlobal.Attributes["brand_name"];
+                    if (attrib != null)
+                    {
+                        _brandName = attrib.Value;
                     }
                 }
 

@@ -249,6 +249,20 @@
           </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="bn_type" type="string1-type" use="optional">
+        <xs:annotation>
+            <xs:documentation>
+                BMW board net type
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="brand_name" type="string1-type" use="optional">
+        <xs:annotation>
+            <xs:documentation>
+                BMW brand name
+            </xs:documentation>
+        </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="display-type">
