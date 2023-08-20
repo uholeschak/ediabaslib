@@ -1038,6 +1038,13 @@ namespace PsdzClient.Programming
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
+
+                string saString = PsdzContext.GetLocalizedSaString();
+                if (!string.IsNullOrEmpty(saString))
+                {
+                    log.Info("Localized SaLaPa:");
+                    log.Info(saString);
+                }
 #if false
                 for (int type = 0; type < 1; type++)
                 {

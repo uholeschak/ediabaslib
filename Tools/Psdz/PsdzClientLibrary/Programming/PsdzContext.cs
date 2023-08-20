@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
@@ -924,6 +925,24 @@ namespace PsdzClient.Programming
             }
 
             return true;
+        }
+
+
+        public string GetLocalizedSaString()
+        {
+            StringBuilder sb = new StringBuilder();
+            if (VecInfo.FA != null && VecInfo.FA.SaLocalizedItems.Count > 0)
+            {
+                foreach (LocalizedSAItem saLocalized in VecInfo.FA.SaLocalizedItems)
+                {
+                    if (saLocalized != null)
+                    {
+                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "SA={0}, Title='{1}'", saLocalized.Id, saLocalized.Title));
+                    }
+                }
+            }
+
+            return sb.ToString();
         }
 
         private bool _disposed;
