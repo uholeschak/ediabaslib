@@ -898,6 +898,16 @@ namespace BmwDeepObd
                         {
                             _sgbdFunctional = pageInfo.ErrorsInfo.SgbdFunctional;
                         }
+
+                        if (string.IsNullOrEmpty(_bnType))
+                        {
+                            _bnType = pageInfo.ErrorsInfo.BnType;
+                        }
+
+                        if (string.IsNullOrEmpty(_brandName))
+                        {
+                            _brandName = pageInfo.ErrorsInfo.BrandName;
+                        }
                     }
                 }
 
