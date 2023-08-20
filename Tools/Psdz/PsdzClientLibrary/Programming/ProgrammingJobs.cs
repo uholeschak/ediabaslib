@@ -1042,8 +1042,7 @@ namespace PsdzClient.Programming
                 string saString = PsdzContext.GetLocalizedSaString();
                 if (!string.IsNullOrEmpty(saString))
                 {
-                    log.Info("Localized SaLaPa:");
-                    log.Info(saString);
+                    log.Info("Localized SaLaPa:" + Environment.NewLine + saString);
                 }
 #if false
                 for (int type = 0; type < 1; type++)
