@@ -8174,6 +8174,20 @@ namespace BmwDeepObd
                     errorsNodeNew.Add(new XAttribute("vehicle_series", _instanceData.VehicleSeries));
                 }
 
+                XAttribute attrBnType = errorsNodeNew.Attribute("bn_type");
+                attrBnType?.Remove();
+                if (!string.IsNullOrEmpty(_instanceData.BnType))
+                {
+                    errorsNodeNew.Add(new XAttribute("bn_type", _instanceData.BnType));
+                }
+
+                XAttribute attrBrandName = errorsNodeNew.Attribute("brand_name");
+                attrBrandName?.Remove();
+                if (!string.IsNullOrEmpty(_instanceData.BrandName))
+                {
+                    errorsNodeNew.Add(new XAttribute("brand_name", _instanceData.BrandName));
+                }
+
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
                     XElement ecuNode = null;
