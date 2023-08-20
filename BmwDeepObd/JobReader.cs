@@ -153,16 +153,22 @@ namespace BmwDeepObd
 
         public class ErrorsInfo
         {
-            public ErrorsInfo(string sgbdFunctional, string vehicleSeries, List<EcuInfo> ecuList)
+            public ErrorsInfo(string sgbdFunctional, string vehicleSeries, string bnType, string brandName, List<EcuInfo> ecuList)
             {
                 SgbdFunctional = sgbdFunctional;
                 VehicleSeries = vehicleSeries;
+                BnType = bnType;
+                BrandName = brandName;
                 EcuList = ecuList;
             }
 
             public string SgbdFunctional { get; }
 
             public string VehicleSeries { get; }
+
+            public string BnType { get; }
+
+            public string BrandName { get; }
 
             public List<EcuInfo> EcuList { get; }
         }
@@ -781,11 +787,20 @@ namespace BmwDeepObd
                             {
                                 string sgbdFunctional = string.Empty;
                                 string vehicleSeries = string.Empty;
+                                string bnType = string.Empty;
+                                string brandName = string.Empty;
+
                                 attrib = xnodePageChild.Attributes["sgbd_functional"];
                                 if (attrib != null) sgbdFunctional = attrib.Value;
 
                                 attrib = xnodePageChild.Attributes["vehicle_series"];
                                 if (attrib != null) vehicleSeries = attrib.Value;
+
+                                attrib = xnodePageChild.Attributes["bn_type"];
+                                if (attrib != null) bnType = attrib.Value;
+
+                                attrib = xnodePageChild.Attributes["brand_name"];
+                                if (attrib != null) brandName = attrib.Value;
 
                                 List<EcuInfo> ecuList = new List<EcuInfo>();
                                 foreach (XmlNode xnodeErrorsChild in xnodePageChild.ChildNodes)
@@ -813,7 +828,7 @@ namespace BmwDeepObd
                                         ecuList.Add(new EcuInfo(ecuName, sgbd, vagDataFileName, vagUdsFileName, results));
                                     }
                                 }
-                                errorsInfo = new ErrorsInfo(sgbdFunctional, vehicleSeries, ecuList);
+                                errorsInfo = new ErrorsInfo(sgbdFunctional, vehicleSeries, bnType, brandName, ecuList);
                             }
                             if (string.Compare(xnodePageChild.Name, "code", StringComparison.OrdinalIgnoreCase) == 0)
                             {
