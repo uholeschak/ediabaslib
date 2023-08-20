@@ -617,7 +617,6 @@ namespace PsdzClient.Programming
             VecInfo.Ereihe = DetectVehicle.Series;
 
             ClientContext clientContext = ClientContext.GetClientContext(VecInfo);
-            UpdateFa(programmingService, clientContext);
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             if (VecInfo.IsMotorcycle())
             {
@@ -673,6 +672,8 @@ namespace PsdzClient.Programming
                     return false;
                 }
             }
+
+            UpdateFa(programmingService, clientContext);
 
             IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
             VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
