@@ -616,62 +616,14 @@ namespace PsdzClient.Programming
 
             VecInfo.Ereihe = DetectVehicle.Series;
 
-            if (!VecInfo.FA.AlreadyDone)
-            {
-                if (string.IsNullOrEmpty(VecInfo.FA.LACK))
-                {
-                    VecInfo.FA.LACK = DetectVehicle.Paint;
-                }
-
-                if (string.IsNullOrEmpty(VecInfo.FA.POLSTER))
-                {
-                    VecInfo.FA.POLSTER = DetectVehicle.Upholstery;
-                }
-
-                if (string.IsNullOrEmpty(VecInfo.FA.STANDARD_FA))
-                {
-                    VecInfo.FA.STANDARD_FA = DetectVehicle.StandardFa;
-                }
-
-                if (string.IsNullOrEmpty(VecInfo.FA.TYPE))
-                {
-                    VecInfo.FA.TYPE = DetectVehicle.TypeKey;
-                }
-
-                if (VecInfo.FA.SA.Count == 0 && VecInfo.FA.HO_WORT.Count == 0 &&
-                    VecInfo.FA.E_WORT.Count == 0 && VecInfo.FA.ZUSBAU_WORT.Count == 0)
-                {
-                    foreach (string salapa in DetectVehicle.Salapa)
-                    {
-                        VecInfo.FA.SA.AddIfNotContains(salapa);
-                    }
-
-                    foreach (string hoWord in DetectVehicle.HoWords)
-                    {
-                        VecInfo.FA.HO_WORT.AddIfNotContains(hoWord);
-                    }
-
-                    foreach (string eWord in DetectVehicle.EWords)
-                    {
-                        VecInfo.FA.E_WORT.AddIfNotContains(eWord);
-                    }
-
-                    foreach (string zbWord in DetectVehicle.ZbWords)
-                    {
-                        VecInfo.FA.ZUSBAU_WORT.AddIfNotContains(zbWord);
-                    }
-
-                    OverrideVehicleCharacteristics(programmingService);
-                }
-            }
-
+            ClientContext clientContext = ClientContext.GetClientContext(VecInfo);
+            UpdateFa(programmingService, clientContext);
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             if (VecInfo.IsMotorcycle())
             {
                 brand = CharacteristicExpression.EnumBrand.BMWMotorrad;
             }
 
-            ClientContext clientContext = ClientContext.GetClientContext(VecInfo);
             if (clientContext != null)
             {
                 clientContext.SelectedBrand = brand;
@@ -791,6 +743,117 @@ namespace PsdzClient.Programming
             }
 
             return ecuList;
+        }
+
+        public bool UpdateFa(ProgrammingService programmingService, ClientContext clientContext)
+        {
+            try
+            {
+                if (VecInfo.FA.AlreadyDone)
+                {
+                    return true;
+                }
+
+                if (clientContext == null)
+                {
+                    return false;
+                }
+
+                string langauge = clientContext.Language;
+                string prodArt = PdszDatabase.GetProdArt(VecInfo);
+
+                if (string.IsNullOrEmpty(VecInfo.FA.LACK))
+                {
+                    VecInfo.FA.LACK = DetectVehicle.Paint;
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.FA.POLSTER))
+                {
+                    VecInfo.FA.POLSTER = DetectVehicle.Upholstery;
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.FA.STANDARD_FA))
+                {
+                    VecInfo.FA.STANDARD_FA = DetectVehicle.StandardFa;
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.FA.TYPE))
+                {
+                    VecInfo.FA.TYPE = DetectVehicle.TypeKey;
+                }
+
+                if (VecInfo.FA.SA.Count == 0 && VecInfo.FA.HO_WORT.Count == 0 &&
+                    VecInfo.FA.E_WORT.Count == 0 && VecInfo.FA.ZUSBAU_WORT.Count == 0)
+                {
+                    foreach (string salapa in DetectVehicle.Salapa)
+                    {
+                        VecInfo.FA.SA.AddIfNotContains(salapa);
+
+                        string saKey = FormatConverter.FillWithZeros(salapa, 4);
+                        if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == saKey) == null)
+                        {
+                            PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, saKey);
+                            if (saLaPa != null)
+                            {
+                                VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(saKey, saLaPa.EcuTranslation.GetTitle(langauge)));
+                            }
+                        }
+                    }
+
+                    foreach (string hoWord in DetectVehicle.HoWords)
+                    {
+                        VecInfo.FA.HO_WORT.AddIfNotContains(hoWord);
+
+                        string hoKey = FormatConverter.FillWithZeros(hoWord, 4);
+                        if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == hoKey) == null)
+                        {
+                            PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, hoKey);
+                            if (saLaPa != null)
+                            {
+                                VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(hoKey, saLaPa.EcuTranslation.GetTitle(langauge)));
+                            }
+                        }
+                    }
+
+                    foreach (string eWord in DetectVehicle.EWords)
+                    {
+                        VecInfo.FA.E_WORT.AddIfNotContains(eWord);
+
+                        string ewKey = FormatConverter.FillWithZeros(eWord, 4);
+                        if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == ewKey) == null)
+                        {
+                            PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, ewKey);
+                            if (saLaPa != null)
+                            {
+                                VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(ewKey, saLaPa.EcuTranslation.GetTitle(langauge)));
+                            }
+                        }
+                    }
+
+                    foreach (string zbWord in DetectVehicle.ZbWords)
+                    {
+                        VecInfo.FA.ZUSBAU_WORT.AddIfNotContains(zbWord);
+
+                        string zbKey = FormatConverter.FillWithZeros(zbWord, 4);
+                        if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == zbKey) == null)
+                        {
+                            PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, zbKey);
+                            if (saLaPa != null)
+                            {
+                                VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(zbKey, saLaPa.EcuTranslation.GetTitle(langauge)));
+                            }
+                        }
+                    }
+
+                    OverrideVehicleCharacteristics(programmingService);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public bool OverrideVehicleCharacteristics(ProgrammingService programmingService)
