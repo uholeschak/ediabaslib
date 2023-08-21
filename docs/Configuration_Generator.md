@@ -5,6 +5,7 @@ The generator options menu has the following entries:
 * _Adapter_: With this menu the [Bluetooth adapter](Deep_OBD_for_BMW_and_VAG.md#supported-adapters) could be selected. If the device is not coupled already, searching for new devices is possible. This menu is only enabled if interface type _BLUETOOTH_ has been selected.
 * _Adapter configuration_: When using a FTDI USB, Bluetooth or WiFi (with the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md)) adapter this menu allows the adapter configuration. Depending on the adapter type only the CAN baudrate/K-Line interface or more specific parameters could be specified.
 * _Add errors page_: When this checkbox is selected (which is the default) and _Errors_ page will be generated when writing the configuration file. This page will read the error memory of all detected ECUs.
+* _Detect motorbikes_: Activates special detection telegrams for motorbikes. This is not enabled by default and slows down normal car detection.
 * _Configuration_: With this submenu you could select if the configuration is created automatically or manually:
 	* _Automatic_: The ECU configuration will be read from the vehicle with the _Read_ button. This option is only available in BMW mode.
 	* _Manual X_: A manual configuration is stored in the storage with the number X. The ECUs for the configuration have to be added manually with the submenu from the _Edit_ button. Therefore you have to identify the required `.GRP` or `.PRG` files on the info page of each ECU in INPA.
