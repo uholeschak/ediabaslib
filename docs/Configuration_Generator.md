@@ -18,7 +18,7 @@ The generator options menu has the following entries:
 	* _Append trace file_: If this checkbox is enabled the trace file is always appended. Otherwise the trace file will be overridden after selection of a vehicle type.
 * _Translations_: (Only for non German languages and BMW mode) This menu opens a submenu that allows configuration of automatic ECU text translation with Yandex.Translate:
 	* _Translate ECU text_: If this menu item is checked, automatic ECU text translation is active.
-	* _Yandex API Key_: For automatic translation with Yantex.Translate a free API Key is required, that allows a limited amount of translations per day. To get this key, a Yandex account is required. This menu provides a GUI that assists in obtaining the API Key.
+	* _Translation configuration_: For automatic translation with various translation providers. For translation a (free) API Key is required. This menu assists to select and configure a translation provider.
 	* _Clear translation cache_: The translations are stored together with the ECU configuration files. To enforce a new translation this menu resets the translation cache.
 * _Online help_: Displays this help page.
 The vehicle type is detected automatically when pressing the _Read_ button (_automatic mode_).  

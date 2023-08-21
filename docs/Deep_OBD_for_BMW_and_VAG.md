@@ -85,7 +85,7 @@ If the port is ommitted in the IP settings, the default port is 23 in hotspot mo
 	* _Log data_: This checkbox enables logging of the display data to a log file. Only those lines are logged, that have a _log_tag_ property in the [configuration file](Page_specification.md). The _logfile_ property in the _page_ node has to be specified as well to activate logging. When using the [configuration generator](#ConfigurationGenerator) _log_tag_ is set by default to the job name and _logfile_ to the ECU name. Data will be logged in the _Log_ subdirectory.
 * _Translations_: (Only for non German languages) This menu opens a submenu that allows configuration of automatic ECU text translation with Yandex.Translate:
 	* _Translate ECU text_: If this menu item is checked, automatic ECU text translation is active.
-	* _Yandex API Key_: For automatic translation with Yantex.Translate a free API Key is required, that allows a limited amount of translations per day. To get this key, a Yandex account is required. This menu provides a GUI that assists in obtaining the API Key.
+	* _Translation configuration_: For automatic translation with various translation providers. For translation a (free) API Key is required. This menu assists to select and configure a translation provider.
 	* _Clear translation cache_: To enforce a new translation this menu resets the translation cache.
 * _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
 	* _Send trace file_: Send the trace file from the last vehicle communication.
