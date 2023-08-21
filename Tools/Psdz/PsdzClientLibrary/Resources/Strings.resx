@@ -276,6 +276,9 @@ Probably you have selected a chargable option.</value>
   <data name="SoftwareFailures" xml:space="preserve">
     <value>Detected {0} software failures.</value>
   </data>
+  <data name="SwiVersion" xml:space="preserve">
+    <value>SWI Version: {0}</value>
+  </data>
   <data name="SwtAction" xml:space="preserve">
     <value>Requesting SWT action ...</value>
   </data>

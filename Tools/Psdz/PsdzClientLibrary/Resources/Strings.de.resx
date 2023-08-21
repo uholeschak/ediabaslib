@@ -276,6 +276,9 @@ Vermutlich haben Sie eine kostenpflichtig Option ausgewählt.</value>
   <data name="SoftwareFailures" xml:space="preserve">
     <value>{0} Softwarefehler erkannt.</value>
   </data>
+  <data name="SwiVersion" xml:space="preserve">
+    <value>SWI Version: {0}</value>
+  </data>
   <data name="SwtAction" xml:space="preserve">
     <value>SWT Aktionen abrufen ...</value>
   </data>

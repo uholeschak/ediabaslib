@@ -514,6 +514,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die SWI Version: {0} ähnelt.
+        /// </summary>
+        internal static string SwiVersion {
+            get {
+                return ResourceManager.GetString("SwiVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Requesting SWT action ... ähnelt.
         /// </summary>
         internal static string SwtAction {

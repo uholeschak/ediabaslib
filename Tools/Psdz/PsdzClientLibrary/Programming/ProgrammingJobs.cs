@@ -855,6 +855,15 @@ namespace PsdzClient.Programming
                     UpdateStatus(sbResult.ToString());
                 }
 
+                string swiVersion = ProgrammingService.PdszDatabase.GetSwiVersion();
+                if (!string.IsNullOrEmpty(swiVersion))
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SWI Version: {0}", swiVersion);
+
+                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.SwiVersion, swiVersion));
+                    UpdateStatus(sbResult.ToString());
+                }
+
                 log.InfoFormat(CultureInfo.InvariantCulture, "Connecting to: Host={0}, ICOM={1}", remoteHost, useIcom);
                 string[] hostParts = remoteHost.Split(':');
                 if (hostParts.Length < 1)

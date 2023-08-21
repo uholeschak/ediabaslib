@@ -21,6 +21,7 @@ using HarmonyLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using log4net;
+using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClientLibrary;
@@ -4860,6 +4861,33 @@ namespace PsdzClient
             }
 
             return dbInfo;
+        }
+
+        public string GetSwiVersion()
+        {
+            log.InfoFormat("GetSwiVersion");
+            string swiVersion = string.Empty;
+            try
+            {
+                RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+                RegistryKey istaKey = baseKey.OpenSubKey(@"SOFTWARE\BMWGroup\ISPI\ISTA");
+                if (istaKey != null)
+                {
+                    string swiData = istaKey.GetValue("SWIData") as string;
+                    if (!string.IsNullOrEmpty(swiData))
+                    {
+                        swiVersion = swiData;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetSwiVersion Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            log.InfoFormat("GetSwiVersion Ver: {0}", swiVersion);
+            return swiVersion;
         }
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
