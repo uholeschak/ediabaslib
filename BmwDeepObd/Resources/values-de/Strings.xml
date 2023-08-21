@@ -574,7 +574,7 @@
   <string name="xml_tool_no_mwtab">Es wurden keine Datentabellen für diese ECU gefunden</string>
   <string name="xml_tool_select_sgbd">Fahrzeugtyp auswählen</string>
   <string name="xml_tool_no_response">Keine Antwort vom Fahrzeug</string>
-  <string name="xml_tool_no_response_manual">Keine Antwort vom Fahrzeug.\nBei Motorrädern sollten Sie die Motorräder erkennen Option im Memü aktivieren.\nBei K-LINE Fahrzeugen wird ein USB oder Deep OBD Adapter benötigt.\nHier finden Sie eine Liste der <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>unterstützten Adapter</a>.\nWollen Sie auf <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>manuelle Konfiguration</a> umschalten?</string>
+  <string name="xml_tool_no_response_manual">Keine Antwort vom Fahrzeug.\nBei Motorrädern sollten Sie die Motorräder erkennen Option im Menü aktivieren.\nBei K-LINE Fahrzeugen wird ein USB oder Deep OBD Adapter benötigt.\nHier finden Sie eine Liste der <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>unterstützten Adapter</a>.\nWollen Sie auf <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>manuelle Konfiguration</a> umschalten?</string>
   <string name="xml_tool_no_response_adapter">Keine Antwort vom Fahrzeug.\nWollen Sie die Adapter-Verbindung überprüfen?</string>
   <string name="xml_tool_no_response_raw">Keine Antwort vom Fahrzeug.\nDer direkte Kommunikationsmodus is aktiv und könnte die Ursache des Problems sein.\nWollen sie einen anderen Adapter wählen?</string>
   <string name="xml_tool_read_jobs_failed">Jobs lesen fehlgeschlagen</string>
