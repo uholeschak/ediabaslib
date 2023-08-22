@@ -75,7 +75,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Добавлена опция обнаружения мотоцикла.\n- DeepL перевод.\n- Добавлены первые простые сервисные функции BMW.\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Добавлена опция распознавания мотоцикла.\n- DeepL перевод.\n- Добавлены первые простые сервисные функции BMW.\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -572,8 +572,7 @@
   <string name="xml_tool_no_mwtab">Не обнаружено таблиц данных для этого ECU файла</string>
   <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
   <string name="xml_tool_no_response">Автомобиль не отвечает</string>
-  <!--Translate-->
-  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nДля мотоциклов вы должны включить опцию обнаружения мотоциклов в меню.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB адаптер.\nЗдесь приведён список <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>поддерживаемых адаптеров</a>.\nПерейти к <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>ручной настройке</a>?</string>
+  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nДля распознавания мотоциклов вы должны включить соответствующую опцию в меню.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB адаптер.\nЗдесь приведён список <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>поддерживаемых адаптеров</a>.\nПерейти к <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>ручной настройке</a>?</string>
   <string name="xml_tool_no_response_adapter">Автомобиль не отвечает.\nХотите проверить соединение адаптера?</string>
   <string name="xml_tool_no_response_raw">Автомобиль не отвечает.\nАктивен режим прямой связи, это может служить источником проблемы.\nВыбрать другой адаптер?</string>
   <string name="xml_tool_read_jobs_failed">Не удалось считать задания</string>
@@ -603,7 +602,6 @@
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Добавить страницу ошибок</string>
-  <!--Translate-->
   <string name="menu_xml_tool_detect_motorbikes">Обнаружение мотоциклов</string>
   <string name="menu_xml_tool_cfg_type">Конфигурация</string>
 
