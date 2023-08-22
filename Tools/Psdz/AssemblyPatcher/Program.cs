@@ -267,7 +267,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("'ENET::remotehost=' seems to be already patched");
+                                    Console.WriteLine("'ENET::remotehost=' appears to have already been patched");
                                 }
                             }
                         }
