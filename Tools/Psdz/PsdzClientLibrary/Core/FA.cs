@@ -670,82 +670,78 @@ namespace PsdzClient.Core
 			});
 		}
 
-		public string ExtractEreihe()
-		{
-			try
-			{
-				if (!string.IsNullOrEmpty(this.BR) && this.BR.Length == 4)
-				{
-					if (this.BR.EndsWith("_", StringComparison.Ordinal))
-					{
-						string text = this.BR.TrimEnd(new char[]
-						{
-							'_'
-						});
-						if (Regex.Match(text, "[ERKHM]\\d\\d").Success)
-						{
-							return text;
-						}
-					}
-					if (this.BR.StartsWith("RR", StringComparison.OrdinalIgnoreCase))
-					{
-						string text2 = this.BR.TrimEnd(new char[]
-						{
-							'_'
-						});
-						if (Regex.Match(text2, "^RR\\d$").Success)
-						{
-							return text2;
-						}
-						if (Regex.Match(text2, "^RR0\\d$").Success)
-						{
-							return "RR" + this.BR.Substring(3, 1);
-						}
-						if (Regex.Match(text2, "^RR1\\d$").Success)
-						{
-							return text2;
-						}
-					}
-					string str = this.BR.Substring(0, 1);
-					string str2 = this.BR.Substring(2, 2);
-					return str + str2;
-				}
-			}
-			catch (Exception)
-			{
-				//Log.WarningException("FA.ExtractEreihe()", exception);
-			}
-			return null;
-		}
+        // ToDo: Check on update
+        public string ExtractEreihe()
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(BR) && BR.Length == 4)
+                {
+                    if (BR.EndsWith("_", StringComparison.Ordinal))
+                    {
+                        string text = BR.TrimEnd('_');
+                        if (Regex.Match(text, "[ERKHM]\\d\\d").Success)
+                        {
+                            return text;
+                        }
+                    }
+                    if (BR.StartsWith("RR", StringComparison.OrdinalIgnoreCase))
+                    {
+                        string text2 = BR.TrimEnd('_');
+                        if (Regex.Match(text2, "^RR\\d$").Success)
+                        {
+                            return text2;
+                        }
+                        if (Regex.Match(text2, "^RR0\\d$").Success)
+                        {
+                            return "RR" + BR.Substring(3, 1);
+                        }
+                        if (Regex.Match(text2, "^RR1\\d$").Success)
+                        {
+                            return text2;
+                        }
+                    }
+                    string text3 = BR.Substring(0, 1);
+                    string text4 = BR.Substring(2, 2);
+                    return text3 + text4;
+                }
+            }
+            catch (Exception)
+            {
+                //Log.WarningException("FA.ExtractEreihe()", exception);
+            }
+            return null;
+        }
 
-		public string ExtractType()
-		{
-			if (!string.IsNullOrEmpty(this.STANDARD_FA))
-			{
-				Match match = Regex.Match(this.STANDARD_FA, "\\*(?<TYPE>\\w{4})");
-				if (match.Success)
-				{
-					return match.Groups["TYPE"]?.Value;
-				}
-			}
-			return null;
-		}
+        // ToDo: Check on update
+        public string ExtractType()
+        {
+            if (!string.IsNullOrEmpty(STANDARD_FA))
+            {
+                Match match = Regex.Match(STANDARD_FA, "\\*(?<TYPE>\\w{4})");
+                if (match.Success)
+                {
+                    return match.Groups["TYPE"].Value;
+                }
+            }
+            return null;
+        }
 
-		public static string ConcatStrElems(IEnumerable<string> elems, string sep)
-		{
-			if (elems != null && elems.Any<string>())
-			{
-				string text = new List<string>(elems).Aggregate((string intermediate, string elem) => intermediate + sep + elem);
-				if (!string.IsNullOrEmpty(text))
-				{
-					text = sep + text;
-				}
-				return text;
-			}
-			return string.Empty;
-		}
+        public static string ConcatStrElems(IEnumerable<string> elems, string sep)
+        {
+            if (elems != null && elems.Any())
+            {
+                string text = new List<string>(elems).Aggregate((string intermediate, string elem) => intermediate + sep + elem);
+                if (!string.IsNullOrEmpty(text))
+                {
+                    text = sep + text;
+                }
+                return text;
+            }
+            return string.Empty;
+        }
 
-		[XmlIgnore]
+        [XmlIgnore]
 		ICollection<LocalizedSAItem> IFa.SaLocalizedItems
 		{
 			get
