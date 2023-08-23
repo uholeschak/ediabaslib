@@ -89,10 +89,10 @@ namespace PsdzClient.Core
                                     return "E70";
                                 case "PL3-ALT":
                                     return "ZCS_ALL";
-                                case "PL5-ALT":
-                                    return "RR1";
                                 default:
                                     return "F01";
+                                case "PL5-ALT":
+                                    return "RR1";
                             }
                             if (vecInfo.Ereihe == "E38" || vecInfo.Ereihe == "E46" || vecInfo.Ereihe == "E83" || vecInfo.Ereihe == "E85" || vecInfo.Ereihe == "E86" || vecInfo.Ereihe == "E36" || vecInfo.Ereihe == "E39" || vecInfo.Ereihe == "E52" || vecInfo.Ereihe == "E53")
                             {
