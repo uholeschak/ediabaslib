@@ -618,7 +618,7 @@ namespace PsdzClient.Programming
             VecInfo.Ereihe = DetectVehicle.Series;
 
             ClientContext clientContext = ClientContext.GetClientContext(VecInfo);
-            UpdateFa(programmingService);
+            SetFa(programmingService);
             CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
             if (VecInfo.IsMotorcycle())
             {
@@ -675,7 +675,7 @@ namespace PsdzClient.Programming
                 }
             }
 
-            UpdateFaTranslation(programmingService, clientContext);
+            UpdateSALocalizedItems(programmingService, clientContext);
 
             IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
             VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
@@ -748,7 +748,7 @@ namespace PsdzClient.Programming
             return ecuList;
         }
 
-        public bool UpdateFa(ProgrammingService programmingService)
+        public bool SetFa(ProgrammingService programmingService)
         {
             try
             {
@@ -811,7 +811,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public bool UpdateFaTranslation(ProgrammingService programmingService, ClientContext clientContext)
+        public bool UpdateSALocalizedItems(ProgrammingService programmingService, ClientContext clientContext)
         {
             try
             {
@@ -825,60 +825,13 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                string langauge = clientContext.Language;
+                string language = clientContext.Language;
                 string prodArt = PdszDatabase.GetProdArt(VecInfo);
 
-                foreach (string salapa in DetectVehicle.Salapa)
-                {
-                    string saKey = FormatConverter.FillWithZeros(salapa, 4);
-                    if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == saKey) == null)
-                    {
-                        PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, saKey);
-                        if (saLaPa != null)
-                        {
-                            VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(saKey, saLaPa.EcuTranslation.GetTitle(langauge)));
-                        }
-                    }
-                }
-
-                foreach (string hoWord in DetectVehicle.HoWords)
-                {
-                    string hoKey = FormatConverter.FillWithZeros(hoWord, 4);
-                    if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == hoKey) == null)
-                    {
-                        PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, hoKey);
-                        if (saLaPa != null)
-                        {
-                            VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(hoKey, saLaPa.EcuTranslation.GetTitle(langauge)));
-                        }
-                    }
-                }
-
-                foreach (string eWord in DetectVehicle.EWords)
-                {
-                    string ewKey = FormatConverter.FillWithZeros(eWord, 4);
-                    if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == ewKey) == null)
-                    {
-                        PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, ewKey);
-                        if (saLaPa != null)
-                        {
-                            VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(ewKey, saLaPa.EcuTranslation.GetTitle(langauge)));
-                        }
-                    }
-                }
-
-                foreach (string zbWord in DetectVehicle.ZbWords)
-                {
-                    string zbKey = FormatConverter.FillWithZeros(zbWord, 4);
-                    if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == zbKey) == null)
-                    {
-                        PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, zbKey);
-                        if (saLaPa != null)
-                        {
-                            VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(zbKey, saLaPa.EcuTranslation.GetTitle(langauge)));
-                        }
-                    }
-                }
+                FillSaLocalizedItems(programmingService, language, DetectVehicle.Salapa, prodArt);
+                FillSaLocalizedItems(programmingService, language, DetectVehicle.HoWords, prodArt);
+                FillSaLocalizedItems(programmingService, language, DetectVehicle.EWords, prodArt);
+                FillSaLocalizedItems(programmingService, language, DetectVehicle.ZbWords, prodArt);
             }
             catch (Exception)
             {
@@ -886,6 +839,22 @@ namespace PsdzClient.Programming
             }
 
             return true;
+        }
+
+        public void FillSaLocalizedItems(ProgrammingService programmingService, string language, List<string> source, string prodArt)
+        {
+            foreach (string text in source)
+            {
+                string key = FormatConverter.FillWithZeros(text, 4);
+                if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == key) == null)
+                {
+                    PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, key);
+                    if (saLaPa != null)
+                    {
+                        VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(key, saLaPa.EcuTranslation.GetTitle(language)));
+                    }
+                }
+            }
         }
 
         public bool OverrideVehicleCharacteristics(ProgrammingService programmingService)
