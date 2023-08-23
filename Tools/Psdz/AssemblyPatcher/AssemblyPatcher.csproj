@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ScriptyContinueOnError>false</ScriptyContinueOnError>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="dnlib, Version=3.6.0.0, Culture=neutral, PublicKeyToken=50e96378b6e77999, processorArchitecture=MSIL">
       <HintPath>..\packages\dnlib.3.6.0\lib\net45\dnlib.dll</HintPath>
