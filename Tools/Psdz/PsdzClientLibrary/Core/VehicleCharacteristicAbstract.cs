@@ -252,7 +252,7 @@ namespace PsdzClient.Core
                 goto IL_0521;
             }
             return false;
-            IL_0521:
+        IL_0521:
             return ComputeDefault(param);
         }
 
