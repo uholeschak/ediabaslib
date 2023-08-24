@@ -67,6 +67,7 @@ namespace PsdzClient.Core
             MISSING_VARIANT
         }
 
+        // ToDo: Check on update
         public enum ESymbolType
         {
             Unknown,
@@ -87,6 +88,7 @@ namespace PsdzClient.Core
             VariableExpression
         }
 
+        // [UH] vec added
         // ToDo: Check on update
         public static RuleExpression Deserialize(Stream ms, Vehicle vec)
         {

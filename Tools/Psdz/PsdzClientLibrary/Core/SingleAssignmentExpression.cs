@@ -18,6 +18,7 @@ namespace PsdzClient.Core
 			}
 		}
 
+        // [UH] vec added
         // ToDo: Check on update
         public static RuleExpression Deserialize(Stream ms, EExpressionType type, Vehicle vec)
         {

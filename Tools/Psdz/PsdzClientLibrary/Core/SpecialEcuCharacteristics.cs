@@ -24,6 +24,9 @@ namespace PsdzClient.Core
             HashSet<int> hashSet2 = new HashSet<int>();
             switch (vecInfo.Motor)
             {
+                default:
+                    hashSet.Add(18);
+                    break;
                 case "M73":
                     hashSet.Add(16);
                     hashSet.Add(20);
@@ -34,9 +37,6 @@ namespace PsdzClient.Core
                     hashSet.Add(19);
                     break;
                 case "M57":
-                    hashSet.Add(18);
-                    break;
-                default:
                     hashSet.Add(18);
                     break;
             }
