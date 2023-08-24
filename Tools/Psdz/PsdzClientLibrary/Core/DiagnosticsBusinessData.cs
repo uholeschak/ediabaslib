@@ -463,6 +463,8 @@ namespace PsdzClient.Core
                         case "E89X":
                         case "RR01":
                             return BNType.BN2000;
+                        default:
+                            return BNType.BN2020;
                         case "U006":
                         case "M013":
                         case "F010":
@@ -480,13 +482,14 @@ namespace PsdzClient.Core
                         case "I020":
                         case "RR21":
                             return BNType.BN2020;
-                        default:
-                            return BNType.BN2020;
                     }
                 }
                 //Log.Warning(Log.CurrentMethod(), "Baureihenverbund is null or empty. BNType will be determined by Ereihe!");
                 switch (vecInfo.Ereihe)
                 {
+                    default:
+                        //Log.Warning(Log.CurrentMethod(), "Ereihe is null or empty. No BNType can be determined!");
+                        return BNType.UNKNOWN;
                     case "E38":
                     case "E39":
                     case "E32":
@@ -498,9 +501,6 @@ namespace PsdzClient.Core
                     case "E53":
                     case "E36":
                         return BNType.IBUS;
-                    default:
-                        //Log.Warning(Log.CurrentMethod(), "Ereihe is null or empty. No BNType can be determined!");
-                        return BNType.UNKNOWN;
                 }
             }
             if (vecInfo.Prodart == "M")
@@ -518,10 +518,10 @@ namespace PsdzClient.Core
                         case "K024":
                         case "KH24":
                             return BNType.BN2000_MOTORBIKE;
-                        case "K01X":
-                            return BNType.BNK01X_MOTORBIKE;
                         default:
                             return BNType.BN2020_MOTORBIKE;
+                        case "K01X":
+                            return BNType.BNK01X_MOTORBIKE;
                     }
                 }
                 //Log.Info(Log.CurrentMethod(), "Baureihenverbund was empty, returning default value.");
