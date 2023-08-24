@@ -379,5 +379,28 @@ namespace PsdzClient.Core
 			string format = DateTimeFormatInfo.CurrentInfo.ShortDatePattern + " " + Regex.Replace(DateTimeFormatInfo.CurrentInfo.LongTimePattern, "(:ss|:s)", "$1.fff");
 			return dateTime.ToString(format);
 		}
-	}
+
+        public static string ToMileageDisplayFormat(this decimal? mileage, bool newFaultMemory)
+        {
+            if (!mileage.HasValue)
+            {
+                return null;
+            }
+            if (newFaultMemory && mileage.Value != -1m)
+            {
+                return mileage.Value.ToString("0.0");
+            }
+            return ((int)mileage.Value).ToString();
+        }
+
+        public static string ToMileageDisplayFormat(this double mileage, bool newFaultMemory)
+        {
+            return ToMileageDisplayFormat(System.Convert.ToDecimal(mileage), newFaultMemory);
+        }
+
+        public static string ToStringWithSeparator(this IEnumerable<string> enumerable, string separator)
+        {
+            return string.Join(separator, enumerable.ToArray());
+        }
+    }
 }

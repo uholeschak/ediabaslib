@@ -168,18 +168,11 @@ namespace PsdzClient.Core
             }
             set
             {
-                if (serialGearBoxField != null)
-                {
-                    if (!serialGearBoxField.Equals(value))
-                    {
-                        serialGearBoxField = value;
-                        OnPropertyChanged("SerialGearBox");
-                    }
-                }
-                else
+                if (serialGearBoxField != value)
                 {
                     serialGearBoxField = value;
                     OnPropertyChanged("SerialGearBox");
+                    OnPropertyChanged("SerialGearBox7");
                 }
             }
         }
@@ -1068,18 +1061,11 @@ namespace PsdzClient.Core
             }
             set
             {
-                if (gwszField.HasValue)
-                {
-                    if (!gwszField.Equals(value))
-                    {
-                        gwszField = value;
-                        OnPropertyChanged("Gwsz");
-                    }
-                }
-                else
+                if (!(gwszField == value))
                 {
                     gwszField = value;
                     OnPropertyChanged("Gwsz");
+                    OnPropertyChanged("DisplayGwsz");
                 }
             }
         }
