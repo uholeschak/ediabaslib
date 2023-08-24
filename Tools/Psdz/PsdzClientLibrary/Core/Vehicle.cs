@@ -841,6 +841,8 @@ namespace PsdzClient.Core
         {
             switch (base.Ereihe)
             {
+                default:
+                    return false;
                 case "247":
                 case "K599":
                 case "248":
@@ -859,8 +861,6 @@ namespace PsdzClient.Core
                 case "E189":
                 case "K589":
                     return true;
-                default:
-                    return false;
             }
         }
 
@@ -1596,6 +1596,8 @@ namespace PsdzClient.Core
                 case "PL5-ALT":
                 case "PL3-ALT":
                     return false;
+                default:
+                    return null;
                 case "PL5":
                 case "PL2":
                 case "PL3":
@@ -1606,8 +1608,6 @@ namespace PsdzClient.Core
                 case "PLLI":
                 case "PLLU":
                     return true;
-                default:
-                    return null;
             }
         }
 
@@ -1692,6 +1692,9 @@ namespace PsdzClient.Core
                                 obj = text2;
                                 break;
                             }
+                        default:
+                            //Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", resultName);
+                            break;
                         case "/Result/EWortListe":
                             {
                                 string text = string.Empty;
@@ -1703,9 +1706,6 @@ namespace PsdzClient.Core
                                 obj = text;
                                 break;
                             }
-                        default:
-                            //Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", resultName);
-                            break;
                     }
                     if (obj != null)
                     {
