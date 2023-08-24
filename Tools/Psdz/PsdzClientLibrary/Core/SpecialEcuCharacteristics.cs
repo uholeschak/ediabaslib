@@ -860,7 +860,7 @@ namespace PsdzClient.Core
             }
             HashSet<int> sgList = new HashSet<int>();
             HashSet<int> hashSet = new HashSet<int>();
-            if (vecInfo.BrandName == BrandName.ROSENBAUER || "A67".Equals(vecInfo.Ereihe) || "V98".Equals(vecInfo.Ereihe))
+            if ("A67".Equals(vecInfo.Ereihe) || "V98".Equals(vecInfo.Ereihe))
             {
                 hashSet.Add(96);
             }
@@ -913,6 +913,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
+                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -1034,6 +1035,9 @@ namespace PsdzClient.Core
             }
             switch (vecInfo.Motor)
             {
+                default:
+                    hashSet.Add(18);
+                    break;
                 case "M73":
                     hashSet.Add(16);
                     hashSet.Add(20);
@@ -1044,9 +1048,6 @@ namespace PsdzClient.Core
                     hashSet.Add(19);
                     break;
                 case "M57":
-                    hashSet.Add(18);
-                    break;
-                default:
                     hashSet.Add(18);
                     break;
             }
