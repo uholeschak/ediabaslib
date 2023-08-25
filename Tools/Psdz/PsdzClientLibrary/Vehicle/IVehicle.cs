@@ -39,6 +39,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
+    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BrandName
     {
@@ -54,24 +55,9 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         BMWMGmbHPKW,
         [XmlEnum("BMW USA PKW")]
         BMWUSAPKW,
-        HUSQVARNA,
-        WIESMANN,
-        MORGAN,
-        RODING,
-        PGO,
-        GIBBS,
         [XmlEnum("BMW i")]
         BMWi,
-        TOYOTA,
-        CAMPAGNA,
-        ZINORO,
-        YANMAR,
-        BRILLIANCE,
-        VAILLANT,
-        ROSENBAUER,
-        KARMA,
-        TORQEEDO,
-        WORKHORSE
+        TOYOTA
     }
 
     [AuthorAPI(SelectableTypeDeclaration = true)]

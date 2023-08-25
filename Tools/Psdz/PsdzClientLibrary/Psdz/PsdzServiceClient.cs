@@ -51,7 +51,7 @@ namespace BMW.Rheingold.Psdz.Client
         private readonly KdsServiceClient kdsService;
 
         // ToDo: Check on update
-        public PsdzServiceClient(string clientLogDir)
+        public PsdzServiceClient(string clientLogDir, int istaProcessId = 0)
         {
             NetNamedPipeBinding netNamedPipeBinding = new NetNamedPipeBinding
             {
@@ -60,25 +60,50 @@ namespace BMW.Rheingold.Psdz.Client
             };
             netNamedPipeBinding.MaxReceivedMessageSize = 2147483647L;
             string clientId = Guid.NewGuid().ToString();
-            objectBuilderServiceClient = new ObjectBuilderServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ObjectBuilderService", clientId, clientLogDir));
-            connectionFactoryService = new ConnectionFactoryServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionFactoryService", clientId, clientLogDir));
-            connectionManagerService = new ConnectionManagerServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionManagerService", clientId, clientLogDir));
-            logicService = new LogicServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogicService", clientId, clientLogDir));
-            configurationService = new ConfigurationServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConfigurationService", clientId, clientLogDir));
-            psdzEventService = new PsdzEventService(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
-            vcmService = new VcmServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
-            programmingService = new ProgrammingServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
-            ecuService = new EcuServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
-            talExecutionService = new TalExecutionServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
-            logService = new LogServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogService", clientId, clientLogDir));
-            macrosService = new MacrosServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
-            cbbTlsConfiguratorService = new CbbTlsConfiguratorServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CbbTlsConfiguratorService", clientId, clientLogDir));
-            certificateManagementService = new CertificateManagementServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CertificateManagementService", clientId, clientLogDir));
-            secureFeatureActivationService = new SecureFeatureActivationServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureFeatureActivationService", clientId, clientLogDir));
-            kdsService = new KdsServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/KdsService", clientId, clientLogDir));
-            securityManagementService = new SecurityManagementServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecurityManagementService", clientId, clientLogDir));
-            secureCodingService = new SecureCodingServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
-            individualDataRestoreService = new IndividualDataRestoreServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
+            if (istaProcessId == 0)
+            {
+                objectBuilderServiceClient = new ObjectBuilderServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ObjectBuilderService", clientId, clientLogDir));
+                connectionFactoryService = new ConnectionFactoryServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionFactoryService", clientId, clientLogDir));
+                connectionManagerService = new ConnectionManagerServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConnectionManagerService", clientId, clientLogDir));
+                logicService = new LogicServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogicService", clientId, clientLogDir));
+                configurationService = new ConfigurationServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ConfigurationService", clientId, clientLogDir));
+                psdzEventService = new PsdzEventService(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EventManagerService", clientId, clientLogDir));
+                vcmService = new VcmServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/VcmService", clientId, clientLogDir));
+                programmingService = new ProgrammingServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/ProgrammingService", clientId, clientLogDir));
+                ecuService = new EcuServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/EcuService", clientId, clientLogDir));
+                talExecutionService = new TalExecutionServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
+                logService = new LogServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogService", clientId, clientLogDir));
+                macrosService = new MacrosServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
+                cbbTlsConfiguratorService = new CbbTlsConfiguratorServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CbbTlsConfiguratorService", clientId, clientLogDir));
+                certificateManagementService = new CertificateManagementServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CertificateManagementService", clientId, clientLogDir));
+                secureFeatureActivationService = new SecureFeatureActivationServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureFeatureActivationService", clientId, clientLogDir));
+                kdsService = new KdsServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/KdsService", clientId, clientLogDir));
+                securityManagementService = new SecurityManagementServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecurityManagementService", clientId, clientLogDir));
+                secureCodingService = new SecureCodingServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
+                individualDataRestoreService = new IndividualDataRestoreServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
+            }
+            else
+            {
+                objectBuilderServiceClient = new ObjectBuilderServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/ObjectBuilderService", clientId, clientLogDir));
+                connectionFactoryService = new ConnectionFactoryServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/ConnectionFactoryService", clientId, clientLogDir));
+                connectionManagerService = new ConnectionManagerServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/ConnectionManagerService", clientId, clientLogDir));
+                logicService = new LogicServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/LogicService", clientId, clientLogDir));
+                configurationService = new ConfigurationServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/ConfigurationService", clientId, clientLogDir));
+                psdzEventService = new PsdzEventService(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/EventManagerService", clientId, clientLogDir));
+                vcmService = new VcmServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/VcmService", clientId, clientLogDir));
+                programmingService = new ProgrammingServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/ProgrammingService", clientId, clientLogDir));
+                ecuService = new EcuServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/EcuService", clientId, clientLogDir));
+                talExecutionService = new TalExecutionServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/TalExecutionService", clientId, clientLogDir));
+                logService = new LogServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/LogService", clientId, clientLogDir));
+                macrosService = new MacrosServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/MacrosService", clientId, clientLogDir));
+                cbbTlsConfiguratorService = new CbbTlsConfiguratorServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/CbbTlsConfiguratorService", clientId, clientLogDir));
+                certificateManagementService = new CertificateManagementServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/CertificateManagementService", clientId, clientLogDir));
+                secureFeatureActivationService = new SecureFeatureActivationServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/SecureFeatureActivationService", clientId, clientLogDir));
+                kdsService = new KdsServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/KdsService", clientId, clientLogDir));
+                securityManagementService = new SecurityManagementServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/SecurityManagementService", clientId, clientLogDir));
+                secureCodingService = new SecureCodingServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/SecureCodingService", clientId, clientLogDir));
+                individualDataRestoreService = new IndividualDataRestoreServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/IndividualDataRestoreService", clientId, clientLogDir));
+            }
         }
 
         public IConfigurationService ConfigurationService => configurationService;
