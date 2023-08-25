@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,18 +14,25 @@ namespace BMW.Rheingold.Programming
 {
 	public class PsdzServiceWrapper : IPsdz, IPsdzService, IPsdzInfo, IDisposable
 	{
-		public PsdzServiceWrapper(PsdzConfig psdzConfig)
-		{
-			if (psdzConfig == null)
-			{
-				throw new ArgumentNullException("psdzConfig");
-			}
-			this.psdzHostPath = psdzConfig.HostPath;
-			this.psdzServiceArgs = psdzConfig.PsdzServiceArgs;
-			this.psdzServiceHostLogDir = psdzConfig.PsdzServiceHostLogDir;
-			this.psdzServiceClient = new PsdzServiceClient(psdzConfig.ClientLogPath);
-			this.ObjectBuilder = new PsdzObjectBuilder(this.psdzServiceClient.ObjectBuilderService);
-		}
+        public PsdzServiceWrapper(PsdzConfig psdzConfig, bool multiSession = false)
+        {
+            if (psdzConfig == null)
+            {
+                throw new ArgumentNullException("psdzConfig");
+            }
+            psdzHostPath = psdzConfig.HostPath;
+            psdzServiceArgs = psdzConfig.PsdzServiceArgs;
+            psdzServiceHostLogDir = psdzConfig.PsdzServiceHostLogDir;
+            if (multiSession)
+            {
+                psdzServiceClient = new PsdzServiceClient(psdzConfig.ClientLogPath, Process.GetCurrentProcess().Id);
+            }
+            else
+            {
+                psdzServiceClient = new PsdzServiceClient(psdzConfig.ClientLogPath);
+            }
+            ObjectBuilder = new PsdzObjectBuilder(psdzServiceClient.ObjectBuilderService);
+        }
 
 		public IConfigurationService ConfigurationService
 		{
