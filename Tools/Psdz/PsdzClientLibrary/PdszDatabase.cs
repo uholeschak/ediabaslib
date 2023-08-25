@@ -2794,7 +2794,7 @@ namespace PsdzClient
         public static string GetProdArt(Vehicle vecInfo)
         {
             string result = "P";
-            if (vecInfo != null && ("M".Equals(vecInfo.Prodart) || vecInfo.BrandName == BrandName.HUSQVARNA || vecInfo.BrandName == BrandName.BMWMOTORRAD || vecInfo.BrandName == BrandName.ROSENBAUER))
+            if (vecInfo != null && ("M".Equals(vecInfo.Prodart) || vecInfo.BrandName == BrandName.BMWMOTORRAD))
             {
                 result = "M";
             }
