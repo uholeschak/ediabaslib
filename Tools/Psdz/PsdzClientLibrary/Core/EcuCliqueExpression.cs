@@ -64,12 +64,8 @@ namespace PsdzClient.Core
 				return flag;
 			}
 			foreach (PdszDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
-			{
-				if (!(flag = (vec.getECUbyECU_SGBD(ecuVar.Name) != null)) && "EWS3".Equals(ecuVar.Name, StringComparison.OrdinalIgnoreCase) && vec.BNType == BNType.BN2000_PGO)
-				{
-					//Log.Info("EcuCliqueExpression.Evaluate()", "check for EWS3 => EWS3P", Array.Empty<object>());
-					flag = true;
-				}
+            {
+                flag = vec.getECUbyECU_SGBD(ecuVar.Name) != null;
 				if (flag)
 				{
 					break;

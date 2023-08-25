@@ -20,6 +20,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
+    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BNType
     {
@@ -30,12 +31,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         BN2020_MOTORBIKE,
         BNK01X_MOTORBIKE,
         BEV2010,
-        BN2000_MORGAN,
-        BN2000_WIESMANN,
-        BN2000_RODING,
-        BN2000_PGO,
-        BN2000_GIBBS,
-        BN2020_CAMPAGNA,
         UNKNOWN
     }
 

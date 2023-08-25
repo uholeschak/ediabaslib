@@ -88,13 +88,9 @@ namespace PsdzClient.Core
 				{
 					return true;
 				}
-				bool flag;
-				if (!(flag = (vec.getECUbyECU_SGBD(this.VariantName) != null)) && "EWS3".Equals(this.VariantName, StringComparison.OrdinalIgnoreCase) && vec.BNType == BNType.BN2000_PGO)
-				{
-					//Log.Info("EcuVariantExpression.Evaluate()", "check for EWS3 => EWS3P", Array.Empty<object>());
-					flag = true;
-				}
-				return flag;
+                bool flag = vec.getECUbyECU_SGBD(VariantName) != null;
+                // Log.Debug("EcuVariantExpression.Evaluate()", "EcuVariantId: {0} (original rule: {1})  result: {2}", value, VariantName, flag);
+                return flag;
 			}
 		}
 
