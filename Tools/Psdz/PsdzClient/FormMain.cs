@@ -740,6 +740,7 @@ namespace PsdzClient
                 return;
             }
 
+            StoreSettings();    // required for sub process
             bool useIcom = checkBoxIcom.Checked;
             _cts = new CancellationTokenSource();
             ConnectVehicleTask(textBoxIstaFolder.Text, ipAddressControlVehicleIp.Text, useIcom).ContinueWith(task =>
