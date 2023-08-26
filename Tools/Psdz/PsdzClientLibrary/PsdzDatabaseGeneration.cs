@@ -3797,7 +3797,8 @@ namespace PsdzClient
         {
             try
             {
-                Regex seriesFormulaRegex = new Regex(@"IsValidRuleString\(""(Baureihenverbund|E-Bezeichnung)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex seriesFormulaRegex = new Regex(@"IsValidRuleString\(""(E-Bezeichnung)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex brFormulaRegex = new Regex(@"IsValidRuleString\(""(Baureihenverbund)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex brandFormulaRegex = new Regex(@"IsValidRuleString\(""(Marke)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
@@ -3821,6 +3822,7 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: {0}", ruleFormula);
 
                             HashSet<string> seriesHash = new HashSet<string>();
+                            HashSet<string> brHash = new HashSet<string>();
                             HashSet<string> brandHash = new HashSet<string>();
                             string date = null;
                             string dateCompare = null;
@@ -3839,6 +3841,15 @@ namespace PsdzClient
                                     if (match.Groups.Count == 3 && match.Groups[2].Success)
                                     {
                                         seriesHash.Add(match.Groups[2].Value.Trim());
+                                    }
+                                }
+
+                                MatchCollection brMatches = brFormulaRegex.Matches(formulaPart);
+                                foreach (Match match in brMatches)
+                                {
+                                    if (match.Groups.Count == 3 && match.Groups[2].Success)
+                                    {
+                                        brHash.Add(match.Groups[2].Value.Trim());
                                     }
                                 }
 
@@ -3877,6 +3888,17 @@ namespace PsdzClient
                                 }
                             }
 
+                            vehicleSeries = new Vehicle(clientContext);
+                            foreach (string br in brHash)
+                            {
+                                vehicleSeries.Baureihenverbund = br;
+                                BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
+                                if (bnType != BNType.UNKNOWN)
+                                {
+                                    bnTypes.Add(bnType);
+                                }
+                            }
+
                             BNType? bnTypeSeries = null;
                             if (bnTypes.Count == 1)
                             {
@@ -3885,7 +3907,7 @@ namespace PsdzClient
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, Date: {4} {5}",
                                 baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), bnTypeSeries, dateCompare ?? string.Empty, date ?? string.Empty);
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), bnTypeSeries, brandHash.ToList(), date, dateCompare));
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), brHash.ToList(), bnTypeSeries, brandHash.ToList(), date, dateCompare));
                         }
                     }
                 }
