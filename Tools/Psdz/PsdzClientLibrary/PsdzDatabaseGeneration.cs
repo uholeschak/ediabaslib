@@ -3876,8 +3876,18 @@ namespace PsdzClient
                             }
 
                             // detect bn type
+                            string prodArt = "P";
+                            foreach (string brand in brandHash)
+                            {
+                                if (brand.ToUpperInvariant().Contains("MOTORRAD"))
+                                {
+                                    prodArt = "M";
+                                }
+                            }
+
                             HashSet<BNType> bnTypes = new HashSet<BNType>();
                             Vehicle vehicleSeries = new Vehicle(clientContext);
+                            vehicleSeries.Prodart = prodArt;
                             foreach (string series in seriesHash)
                             {
                                 vehicleSeries.Ereihe = series;
@@ -3888,7 +3898,7 @@ namespace PsdzClient
                                 }
                             }
 
-                            vehicleSeries = new Vehicle(clientContext);
+                            vehicleSeries.Ereihe = null;
                             foreach (string modelSeries in modelSeriesHash)
                             {
                                 vehicleSeries.Baureihenverbund = modelSeries;
