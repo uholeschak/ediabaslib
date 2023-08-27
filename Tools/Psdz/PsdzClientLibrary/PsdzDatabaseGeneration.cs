@@ -3934,10 +3934,30 @@ namespace PsdzClient
                         }
                     }
 
+                    List<KeyValuePair<string, string>> seriesPair = new List<KeyValuePair<string, string>>();
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
-                        string key = series.ToUpperInvariant();
-                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, brSgbd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
+                        seriesPair.AddIfNotContains(new KeyValuePair<string, string>(series, null));
+                    }
+
+                    foreach (string modelSeries in ecuCharacteristicsInfo.ModelSeriesList)
+                    {
+                        string series = VehicleInfoBmw.GetVehicleSeriesFromBrName(modelSeries, null);
+                        if (string.IsNullOrEmpty(series))
+                        {
+                            continue;
+                        }
+
+                        seriesPair.AddIfNotContains(new KeyValuePair<string, string>(series, modelSeries));
+                    }
+
+                    foreach (KeyValuePair<string, string> keyValuePair in seriesPair)
+                    {
+                        string series = keyValuePair.Key;
+                        string modelSeries = keyValuePair.Value;
+                        string key = series;
+
+                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, modelSeries, brSgbd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
 
                         if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                         {
