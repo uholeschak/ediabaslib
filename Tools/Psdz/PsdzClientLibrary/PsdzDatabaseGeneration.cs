@@ -3798,7 +3798,7 @@ namespace PsdzClient
             try
             {
                 Regex seriesFormulaRegex = new Regex(@"IsValidRuleString\(""(E-Bezeichnung)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex brFormulaRegex = new Regex(@"IsValidRuleString\(""(Baureihenverbund)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex modelSeriesFormulaRegex = new Regex(@"IsValidRuleString\(""(Baureihenverbund)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex brandFormulaRegex = new Regex(@"IsValidRuleString\(""(Marke)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
@@ -3822,7 +3822,7 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: {0}", ruleFormula);
 
                             HashSet<string> seriesHash = new HashSet<string>();
-                            HashSet<string> brHash = new HashSet<string>();
+                            HashSet<string> modelSeriesHash = new HashSet<string>();
                             HashSet<string> brandHash = new HashSet<string>();
                             string date = null;
                             string dateCompare = null;
@@ -3844,12 +3844,12 @@ namespace PsdzClient
                                     }
                                 }
 
-                                MatchCollection brMatches = brFormulaRegex.Matches(formulaPart);
-                                foreach (Match match in brMatches)
+                                MatchCollection modelSeriesMatches = modelSeriesFormulaRegex.Matches(formulaPart);
+                                foreach (Match match in modelSeriesMatches)
                                 {
                                     if (match.Groups.Count == 3 && match.Groups[2].Success)
                                     {
-                                        brHash.Add(match.Groups[2].Value.Trim());
+                                        modelSeriesHash.Add(match.Groups[2].Value.Trim());
                                     }
                                 }
 
@@ -3889,9 +3889,9 @@ namespace PsdzClient
                             }
 
                             vehicleSeries = new Vehicle(clientContext);
-                            foreach (string br in brHash)
+                            foreach (string modelSeries in modelSeriesHash)
                             {
-                                vehicleSeries.Baureihenverbund = br;
+                                vehicleSeries.Baureihenverbund = modelSeries;
                                 BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
                                 if (bnType != BNType.UNKNOWN)
                                 {
@@ -3905,9 +3905,9 @@ namespace PsdzClient
                                 bnTypeSeries = bnTypes.First();
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BR: {3} , BnType: {4}, Date: {5} {6}",
-                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), brHash.ToStringItems(), bnTypeSeries, dateCompare ?? string.Empty, date ?? string.Empty);
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), brHash.ToList(), bnTypeSeries, brandHash.ToList(), date, dateCompare));
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, ModelSeries: {3} , BnType: {4}, Date: {5} {6}",
+                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), modelSeriesHash.ToStringItems(), bnTypeSeries, dateCompare ?? string.Empty, date ?? string.Empty);
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), modelSeriesHash.ToList(), bnTypeSeries, brandHash.ToList(), date, dateCompare));
                         }
                     }
                 }
@@ -3934,8 +3934,7 @@ namespace PsdzClient
                         }
                     }
 
-                    List<string> seriesList = ecuCharacteristicsInfo.SeriesList.Concat(ecuCharacteristicsInfo.BrList).ToList();
-                    foreach (string series in seriesList)
+                    foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string key = series.ToUpperInvariant();
                         VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, brSgbd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);

@@ -1344,11 +1344,11 @@ namespace PsdzClient
 
         public class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, List<string> brList, BNType? bnType, List<string> brandList, string date, string dateCompare)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, List<string> modelSeriesList, BNType? bnType, List<string> brandList, string date, string dateCompare)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 SeriesList = seriesList;
-                BrList = brList;
+                ModelSeriesList = modelSeriesList;
                 BnType = bnType;
                 BrandList = brandList;
                 Date = date;
@@ -1357,7 +1357,7 @@ namespace PsdzClient
 
             public BaseEcuCharacteristics EcuCharacteristics { get; set; }
             public List<string> SeriesList { get; set; }
-            public List<string> BrList { get; set; }
+            public List<string> ModelSeriesList { get; set; }
             public BNType? BnType { get; set; }
             public List<string> BrandList { get; set; }
             public string Date { get; set; }
