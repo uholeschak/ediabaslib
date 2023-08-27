@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <VehicleSeriesInfoDataXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <TimeStamp>2023-08-25 17:05:13</TimeStamp>
+  <TimeStamp>2023-08-28 00:05:22</TimeStamp>
   <Version>
     <Version>4.39.20</Version>
     <Date>2022-11-30T09:17:30</Date>
@@ -1047,6 +1047,7 @@
           <VSI>
             <Series>E90</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1061,6 +1062,7 @@
           <VSI>
             <Series>E93</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1075,6 +1077,7 @@
           <VSI>
             <Series>E84</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1089,6 +1092,7 @@
           <VSI>
             <Series>E87</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1103,6 +1107,7 @@
           <VSI>
             <Series>E81</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1117,6 +1122,7 @@
           <VSI>
             <Series>E92</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1131,6 +1137,7 @@
           <VSI>
             <Series>E82</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1145,6 +1152,7 @@
           <VSI>
             <Series>E91</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1159,6 +1167,7 @@
           <VSI>
             <Series>E88</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1173,20 +1182,7 @@
           <VSI>
             <Series>E89</Series>
             <BrSgbd>E89X</BrSgbd>
-            <BrandList>BMW PKW</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>E89X</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>E89X</Series>
-            <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1201,6 +1197,23 @@
           <VSI>
             <Series>M12</Series>
             <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
+            <BrandList>BMW PKW</BrandList>
+          </VSI>
+        </ArrayOfVSI>
+      </value>
+    </item>
+    <item>
+      <key>
+        <string>E9X</string>
+      </key>
+      <value>
+        <ArrayOfVSI>
+          <VSI>
+            <Series>E9X</Series>
+            <ModelSeries>E89X</ModelSeries>
+            <BrSgbd>E89X</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3844,41 +3857,15 @@
     </item>
     <item>
       <key>
-        <string>K001</string>
+        <string>K01</string>
       </key>
       <value>
         <ArrayOfVSI>
           <VSI>
-            <Series>K001</Series>
+            <Series>K01</Series>
+            <ModelSeries>K001</ModelSeries>
             <BrSgbd>X_K001</BrSgbd>
-            <BrandList>BMW MOTORRAD</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>KS01</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>KS01</Series>
-            <BrSgbd>X_K001</BrSgbd>
-            <BrandList>BMW MOTORRAD</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>KE01</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>KE01</Series>
-            <BrSgbd>X_K001</BrSgbd>
+            <BnType>BN2020_MOTORBIKE</BnType>
             <BrandList>BMW MOTORRAD</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3984,13 +3971,15 @@
     </item>
     <item>
       <key>
-        <string>K024</string>
+        <string>K24</string>
       </key>
       <value>
         <ArrayOfVSI>
           <VSI>
-            <Series>K024</Series>
+            <Series>K24</Series>
+            <ModelSeries>K024</ModelSeries>
             <BrSgbd>MRK24</BrSgbd>
+            <BnType>BN2000_MOTORBIKE</BnType>
             <BrandList>BMW MOTORRAD</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3998,27 +3987,15 @@
     </item>
     <item>
       <key>
-        <string>KH24</string>
+        <string>K1x</string>
       </key>
       <value>
         <ArrayOfVSI>
           <VSI>
-            <Series>KH24</Series>
+            <Series>K1x</Series>
+            <ModelSeries>K01x</ModelSeries>
             <BrSgbd>MRK24</BrSgbd>
-            <BrandList>BMW MOTORRAD</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>K01X</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>K01X</Series>
-            <BrSgbd>MRK24</BrSgbd>
+            <BnType>BNK01X_MOTORBIKE</BnType>
             <BrandList>BMW MOTORRAD</BrandList>
           </VSI>
         </ArrayOfVSI>
