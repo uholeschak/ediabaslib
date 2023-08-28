@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
@@ -12,20 +13,42 @@ namespace PsdzClient.Programming
 {
 	public class ProgrammingService : IDisposable
 	{
-		public ProgrammingService(string istaFolder, string dealerId, bool multiSession = false)
+        public ProgrammingService(string istaFolder, string dealerId, bool enableMultiSession = false)
         {
-			this.PsdzLoglevel = PsdzLoglevel.FINE;
+            bool multiSession = false;
+            if (enableMultiSession)
+            {
+                string swiVersion = PdszDatabase.GetSwiVersion();
+                if (!string.IsNullOrEmpty(swiVersion))
+                {
+                    string[] swiParts = swiVersion.Split('.');
+                    if (swiParts.Length >= 2)
+                    {
+                        if (int.TryParse(swiParts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int value1) &&
+                            int.TryParse(swiParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int value2))
+                        {
+                            int version = value1 * 1000 + value2;
+                            if (version >= 4039)
+                            {
+                                multiSession = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            this.PsdzLoglevel = PsdzLoglevel.FINE;
             this.ProdiasLoglevel = ProdiasLoglevel.ERROR;
-			this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
-			this.psdz = new PsdzServiceWrapper(this.psdzConfig, multiSession);
-			this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
+            this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
+            this.psdz = new PsdzServiceWrapper(this.psdzConfig, multiSession);
+            this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
 
             this.EventManager = new ProgrammingEventManager();
             this.PdszDatabase = new PdszDatabase(istaFolder);
-			PreparePsdzBackupDataPath(istaFolder);
-		}
+            PreparePsdzBackupDataPath(istaFolder);
+        }
 
-		public bool CollectPsdzLog(string targetLogFilePath)
+        public bool CollectPsdzLog(string targetLogFilePath)
 		{
 			if (!this.psdz.IsPsdzInitialized)
 			{
