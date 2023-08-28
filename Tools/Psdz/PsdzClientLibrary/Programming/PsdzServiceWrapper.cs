@@ -14,7 +14,7 @@ namespace BMW.Rheingold.Programming
 {
 	public class PsdzServiceWrapper : IPsdz, IPsdzService, IPsdzInfo, IDisposable
 	{
-        public PsdzServiceWrapper(PsdzConfig psdzConfig, bool multiSession = false)
+        public PsdzServiceWrapper(PsdzConfig psdzConfig, bool multiSession)
         {
             if (psdzConfig == null)
             {

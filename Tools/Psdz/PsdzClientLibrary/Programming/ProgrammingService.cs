@@ -12,12 +12,12 @@ namespace PsdzClient.Programming
 {
 	public class ProgrammingService : IDisposable
 	{
-		public ProgrammingService(string istaFolder, string dealerId)
+		public ProgrammingService(string istaFolder, string dealerId, bool multiSession = false)
         {
 			this.PsdzLoglevel = PsdzLoglevel.FINE;
             this.ProdiasLoglevel = ProdiasLoglevel.ERROR;
 			this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
-			this.psdz = new PsdzServiceWrapper(this.psdzConfig);
+			this.psdz = new PsdzServiceWrapper(this.psdzConfig, multiSession);
 			this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
 
             this.EventManager = new ProgrammingEventManager();
