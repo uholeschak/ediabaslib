@@ -4865,7 +4865,7 @@ namespace PsdzClient
             return dbInfo;
         }
 
-        public string GetSwiVersion()
+        public static string GetSwiVersion()
         {
             log.InfoFormat("GetSwiVersion");
             string swiVersion = string.Empty;

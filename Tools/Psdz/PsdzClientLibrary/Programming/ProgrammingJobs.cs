@@ -855,7 +855,7 @@ namespace PsdzClient.Programming
                     UpdateStatus(sbResult.ToString());
                 }
 
-                string swiVersion = ProgrammingService.PdszDatabase.GetSwiVersion();
+                string swiVersion = PdszDatabase.GetSwiVersion();
                 if (!string.IsNullOrEmpty(swiVersion))
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "SWI Version: {0}", swiVersion);
