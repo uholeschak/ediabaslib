@@ -8,13 +8,14 @@ using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
+using PsdzClient;
 using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Programming
 {
 	public class PsdzServiceWrapper : IPsdz, IPsdzService, IPsdzInfo, IDisposable
 	{
-        public PsdzServiceWrapper(PsdzConfig psdzConfig, bool multiSession)
+        public PsdzServiceWrapper(PsdzConfig psdzConfig)
         {
             if (psdzConfig == null)
             {
@@ -23,7 +24,7 @@ namespace BMW.Rheingold.Programming
             psdzHostPath = psdzConfig.HostPath;
             psdzServiceArgs = psdzConfig.PsdzServiceArgs;
             psdzServiceHostLogDir = psdzConfig.PsdzServiceHostLogDir;
-            if (multiSession)
+            if (ClientContext.EnablePsdzMultiSession())
             {
                 psdzServiceClient = new PsdzServiceClient(psdzConfig.ClientLogPath, Process.GetCurrentProcess().Id);
             }
@@ -76,13 +77,13 @@ namespace BMW.Rheingold.Programming
 
 		public string ExpectedPsdzVersion { get; private set; }
 
-		public bool IsPsdzInitialized
-		{
-			get
-			{
-				return PsdzServiceStarter.IsServerInstanceRunning();
-			}
-		}
+        public bool IsPsdzInitialized
+        {
+            get
+            {
+                return PsdzServiceStarter.IsProcessServerInstanceRunning();
+            }
+        }
 
         public bool IsValidPsdzVersion
         {
@@ -270,8 +271,9 @@ namespace BMW.Rheingold.Programming
 				}
 				else
 				{
-					PsdzServiceStarter.PsdzServiceStartResult psdzServiceStartResult = new PsdzServiceStarter(this.psdzHostPath, this.psdzServiceHostLogDir, this.psdzServiceArgs).StartIfNotRunning();
-					switch (psdzServiceStartResult)
+                    PsdzServiceStarter psdzServiceStarter = new PsdzServiceStarter(psdzHostPath, psdzServiceHostLogDir, psdzServiceArgs);
+                    PsdzServiceStarter.PsdzServiceStartResult psdzServiceStartResult = !ClientContext.EnablePsdzMultiSession() ? psdzServiceStarter.StartIfNotRunning() : psdzServiceStarter.StartIfNotRunning(Process.GetCurrentProcess().Id);
+                    switch (psdzServiceStartResult)
 					{
 						case PsdzServiceStarter.PsdzServiceStartResult.PsdzStillRunning:
 						case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartOk:

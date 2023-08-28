@@ -430,10 +430,7 @@ namespace PsdzClient.Programming
                 }
                 else
                 {
-                    bool multiSession = PdszDatabase.HasPdszMultiSessionService();
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Creating programming service multi session: {0}", multiSession);
-
-                    ProgrammingService = new ProgrammingService(istaFolder, _dealerId, multiSession);
+                    ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
                     ClientContext.Database = ProgrammingService.PdszDatabase;
                     if (ServiceInitializedEvent != null)
                     {
@@ -744,7 +741,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                if (!PsdzServiceStarter.IsServerInstanceRunning())
+                if (!PsdzServiceStarter.IsProcessServerInstanceRunning())
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Starting host");
                     if (!ProgrammingService.StartPsdzServiceHost())
@@ -773,7 +770,7 @@ namespace PsdzClient.Programming
             }
             finally
             {
-                if (!PsdzServiceStarter.IsServerInstanceRunning())
+                if (!PsdzServiceStarter.IsProcessServerInstanceRunning())
                 {
                     if (ProgrammingService != null)
                     {
@@ -792,7 +789,7 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.HostStopping);
                 UpdateStatus(sbResult.ToString());
 
-                if (ProgrammingService == null && PsdzServiceStarter.IsServerInstanceRunning())
+                if (ProgrammingService == null && PsdzServiceStarter.IsProcessServerInstanceRunning())
                 {
                     ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
                 }

@@ -3,8 +3,10 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Threading;
 using BMW.Rheingold.Psdz;
+using PsdzClient;
 
 namespace BMW.Rheingold.Psdz.Client
 {
@@ -53,7 +55,17 @@ namespace BMW.Rheingold.Psdz.Client
             this.psdzServiceArgs = psdzServiceArgs;
         }
 
-        public static bool IsServerInstanceRunning()
+        // [UH] added
+        public static bool IsProcessServerInstanceRunning()
+        {
+            if (ClientContext.EnablePsdzMultiSession())
+            {
+                return IsServerInstanceRunning(Process.GetCurrentProcess().Id);
+            }
+            return IsServerInstanceRunning();
+        }
+
+        public static bool IsServerInstanceRunning(int istaProcessId = 0)
         {
             bool result;
             using (Mutex mutex = new Mutex(false, PsdzServiceStarterMutex))
@@ -61,7 +73,7 @@ namespace BMW.Rheingold.Psdz.Client
                 try
                 {
                     mutex.WaitOne();
-                    result = IsPsdzServiceHostRunning();
+                    result = IsPsdzServiceHostRunning(istaProcessId);
                 }
                 finally
                 {
@@ -71,12 +83,29 @@ namespace BMW.Rheingold.Psdz.Client
             return result;
         }
 
-        private static bool IsPsdzServiceHostRunning()
+        private static bool IsPsdzServiceHostRunning(int istaProcessId)
         {
-            return Process.GetProcessesByName(PsdzServiceHostProcessName).Any<Process>();
+            Process[] processesByName = Process.GetProcessesByName(PsdzServiceHostProcessName);
+            if (istaProcessId == 0)
+            {
+                return processesByName.Any();
+            }
+            foreach (ManagementObject item in new ManagementObjectSearcher(string.Format("select CommandLine from Win32_Process where Name='{0}.exe'", PsdzServiceHostProcessName)).Get())
+            {
+                string[] array = item["CommandLine"].ToString().Split(' ');
+                if (array.Length == 3)
+                {
+                    int num2 = int.Parse(array[2]);
+                    if (istaProcessId == num2)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
-        public PsdzServiceStartResult StartIfNotRunning()
+        public PsdzServiceStartResult StartIfNotRunning(int istaProcessId = 0)
         {
             PsdzServiceStartResult result;
             using (Mutex mutex = new Mutex(false, PsdzServiceStarterMutex))
@@ -84,13 +113,13 @@ namespace BMW.Rheingold.Psdz.Client
                 try
                 {
                     mutex.WaitOne();
-                    if (PsdzServiceStarter.IsPsdzServiceHostRunning())
+                    if (PsdzServiceStarter.IsPsdzServiceHostRunning(istaProcessId))
                     {
                         result = PsdzServiceStartResult.PsdzStillRunning;
                     }
                     else
                     {
-                        result = this.StartServerInstance();
+                        result = this.StartServerInstance(istaProcessId);
                     }
                 }
                 finally
@@ -101,7 +130,7 @@ namespace BMW.Rheingold.Psdz.Client
             return result;
         }
 
-        private PsdzServiceStartResult StartServerInstance()
+        private PsdzServiceStartResult StartServerInstance(int istaProcessId)
         {
             string tempFileName = Path.GetTempFileName();
             PsdzServiceArgs.Serialize(tempFileName, psdzServiceArgs);
@@ -114,7 +143,14 @@ namespace BMW.Rheingold.Psdz.Client
             processStartInfo.RedirectStandardError = false;
             processStartInfo.CreateNoWindow = true;
             processStartInfo.Environment["PSDZSERVICEHOST_LOGDIR"] = psdzServiceHostLogDir;
-            processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\"", tempFileName);
+            if (istaProcessId == 0)
+            {
+                processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\"", tempFileName);
+            }
+            else
+            {
+                processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\" {1}", tempFileName, istaProcessId);
+            }
             EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, HostReadyEventName);
             EventWaitHandle eventWaitHandle2 = new EventWaitHandle(false, EventResetMode.AutoReset, HostFailedEventName);
             EventWaitHandle eventWaitHandle3 = new EventWaitHandle(false, EventResetMode.AutoReset, HostFailedEventMemErrorName);

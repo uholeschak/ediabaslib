@@ -127,7 +127,7 @@ namespace PsdzClient
             bool talPresent = false;
             if (!active)
             {
-                hostRunning = PsdzServiceStarter.IsServerInstanceRunning();
+                hostRunning = PsdzServiceStarter.IsProcessServerInstanceRunning();
             }
 
             if (_programmingJobs.PsdzContext?.Connection != null)

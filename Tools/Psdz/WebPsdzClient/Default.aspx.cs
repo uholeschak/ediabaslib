@@ -467,7 +467,7 @@ namespace WebPsdzClient
                 bool talPresent = false;
                 if (!active)
                 {
-                    hostRunning = PsdzServiceStarter.IsServerInstanceRunning();
+                    hostRunning = PsdzServiceStarter.IsProcessServerInstanceRunning();
                 }
 
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;

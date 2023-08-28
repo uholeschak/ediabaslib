@@ -4892,29 +4892,6 @@ namespace PsdzClient
             return swiVersion;
         }
 
-        public static bool HasPdszMultiSessionService()
-        {
-            string swiVersion = GetSwiVersion();
-            if (!string.IsNullOrEmpty(swiVersion))
-            {
-                string[] swiParts = swiVersion.Split('.');
-                if (swiParts.Length >= 2)
-                {
-                    if (long.TryParse(swiParts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value1) &&
-                        long.TryParse(swiParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value2))
-                    {
-                        long version = value1 * 10000 + value2;
-                        if (version >= 40039)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }
-
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
             // objectId is only required for patch rules

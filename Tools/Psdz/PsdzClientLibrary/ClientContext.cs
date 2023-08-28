@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -132,6 +133,29 @@ namespace PsdzClient
             }
 
             return clientContext.Language;
+        }
+
+        public static bool EnablePsdzMultiSession()
+        {
+            string swiVersion = PdszDatabase.GetSwiVersion();
+            if (!string.IsNullOrEmpty(swiVersion))
+            {
+                string[] swiParts = swiVersion.Split('.');
+                if (swiParts.Length >= 2)
+                {
+                    if (long.TryParse(swiParts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value1) &&
+                        long.TryParse(swiParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value2))
+                    {
+                        long version = value1 * 10000 + value2;
+                        if (version >= 40039)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
 
         public void Dispose()
