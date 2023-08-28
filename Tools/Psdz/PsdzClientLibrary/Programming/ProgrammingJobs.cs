@@ -430,7 +430,10 @@ namespace PsdzClient.Programming
                 }
                 else
                 {
-                    ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
+                    bool multiSession = PdszDatabase.HasPdszMultiSessionService();
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Creating programming service multi session: {0}", multiSession);
+
+                    ProgrammingService = new ProgrammingService(istaFolder, _dealerId, multiSession);
                     ClientContext.Database = ProgrammingService.PdszDatabase;
                     if (ServiceInitializedEvent != null)
                     {

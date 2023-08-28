@@ -13,30 +13,8 @@ namespace PsdzClient.Programming
 {
 	public class ProgrammingService : IDisposable
 	{
-        public ProgrammingService(string istaFolder, string dealerId, bool enableMultiSession = false)
+        public ProgrammingService(string istaFolder, string dealerId, bool multiSession = false)
         {
-            bool multiSession = false;
-            if (enableMultiSession)
-            {
-                string swiVersion = PdszDatabase.GetSwiVersion();
-                if (!string.IsNullOrEmpty(swiVersion))
-                {
-                    string[] swiParts = swiVersion.Split('.');
-                    if (swiParts.Length >= 2)
-                    {
-                        if (int.TryParse(swiParts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int value1) &&
-                            int.TryParse(swiParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int value2))
-                        {
-                            int version = value1 * 1000 + value2;
-                            if (version >= 4039)
-                            {
-                                multiSession = true;
-                            }
-                        }
-                    }
-                }
-            }
-
             this.PsdzLoglevel = PsdzLoglevel.FINE;
             this.ProdiasLoglevel = ProdiasLoglevel.ERROR;
             this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
