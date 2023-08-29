@@ -136,7 +136,7 @@ namespace PsdzClient
                 talPresent = _programmingJobs.PsdzContext?.Tal != null;
             }
 
-            Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+            Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
             bool ipEnabled = !active && !vehicleConnected;
             bool modifyTal = !active && hostRunning && vehicleConnected && optionsDict != null;
 
@@ -284,7 +284,7 @@ namespace PsdzClient
             ProgrammingJobs.SetupLog4Net(logFile);
         }
 
-        private void UpdateCurrentOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum = null)
+        private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
         {
             if (InvokeRequired)
             {
@@ -298,7 +298,7 @@ namespace PsdzClient
             try
             {
                 _ignoreChange = true;
-                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
                 int selectedIndex = comboBoxOptionType.SelectedIndex;
                 comboBoxOptionType.BeginUpdate();
                 comboBoxOptionType.Items.Clear();
@@ -351,7 +351,7 @@ namespace PsdzClient
             }
         }
 
-        private void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
+        private void UpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
         {
             if (InvokeRequired)
             {
@@ -366,7 +366,7 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private void UpdateOptionSelections(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             if (InvokeRequired)
             {
@@ -410,7 +410,7 @@ namespace PsdzClient
             return true;
         }
 
-        private void SelectOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private void SelectOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             if (InvokeRequired)
             {
@@ -432,17 +432,17 @@ namespace PsdzClient
                 bool replacement = false;
                 if (swiRegisterEnum.HasValue)
                 {
-                    switch (PdszDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
+                    switch (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
                     {
-                        case PdszDatabase.SwiRegisterGroup.HwDeinstall:
-                        case PdszDatabase.SwiRegisterGroup.HwInstall:
+                        case PsdzDatabase.SwiRegisterGroup.HwDeinstall:
+                        case PsdzDatabase.SwiRegisterGroup.HwInstall:
                             replacement = true;
                             break;
                     }
                 }
 
-                List<PdszDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
-                List<PdszDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PdszDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext?.VecInfo, null);
+                List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
+                List<PsdzDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext?.VecInfo, null);
                 ProgrammingJobs.OptionsItem topItemCurrent = null;
                 int topIndexCurrent = checkedListBoxOptions.TopIndex;
                 if (topIndexCurrent >= 0 && topIndexCurrent < checkedListBoxOptions.Items.Count)
@@ -451,7 +451,7 @@ namespace PsdzClient
                 }
 
                 _ignoreCheck = true;
-                Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
                 checkedListBoxOptions.BeginUpdate();
                 checkedListBoxOptions.Items.Clear();
                 if (optionsDict != null && _programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
@@ -501,7 +501,7 @@ namespace PsdzClient
                                         }
                                         else
                                         {
-                                            if (!_programmingJobs.ProgrammingService.PdszDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext?.VecInfo, null))
+                                            if (!_programmingJobs.ProgrammingService.PsdzDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext?.VecInfo, null))
                                             {
                                                 addItem = false;
                                             }
@@ -548,14 +548,14 @@ namespace PsdzClient
             }
         }
 
-        private List<PdszDatabase.SwiAction> GetSelectedSwiActions()
+        private List<PsdzDatabase.SwiAction> GetSelectedSwiActions()
         {
             if (_programmingJobs.PsdzContext?.Connection == null || _programmingJobs.SelectedOptions == null)
             {
                 return null;
             }
 
-            List<PdszDatabase.SwiAction> selectedSwiActions = new List<PdszDatabase.SwiAction>();
+            List<PsdzDatabase.SwiAction> selectedSwiActions = new List<PsdzDatabase.SwiAction>();
             foreach (ProgrammingJobs.OptionsItem optionsItem in _programmingJobs.SelectedOptions)
             {
                 if (optionsItem.SwiAction != null)
@@ -663,7 +663,7 @@ namespace PsdzClient
             _ignoreChange = true;
             comboBoxLanguage.BeginUpdate();
             comboBoxLanguage.Items.Clear();
-            List<string> langList = PdszDatabase.EcuTranslation.GetLanguages();
+            List<string> langList = PsdzDatabase.EcuTranslation.GetLanguages();
             foreach (string lang in langList)
             {
                 comboBoxLanguage.Items.Add(lang);
@@ -997,17 +997,17 @@ namespace PsdzClient
                 return;
             }
 
-            Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+            Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
             bool modified = false;
             if (e.Index >= 0 && e.Index < checkedListBoxOptions.Items.Count)
             {
                 if (checkedListBoxOptions.Items[e.Index] is ProgrammingJobs.OptionsItem optionsItem)
                 {
-                    PdszDatabase.SwiRegisterEnum swiRegisterEnum = optionsItem.SwiRegisterEnum;
+                    PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionsItem.SwiRegisterEnum;
                     if (_programmingJobs.SelectedOptions.Count > 0)
                     {
-                        PdszDatabase.SwiRegisterEnum swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
-                        if (PdszDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PdszDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
+                        PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
+                        if (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
                         {
                             _programmingJobs.SelectedOptions.Clear();
                         }

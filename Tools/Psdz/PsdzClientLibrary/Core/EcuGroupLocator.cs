@@ -9,7 +9,7 @@ namespace PsdzClient.Core
 {
 	public class EcuGroupLocator : ISPELocator, IEcuGroupLocator
 	{
-		public EcuGroupLocator(PdszDatabase.EcuGroup ecuGroup)
+		public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup)
 		{
 			this.ecuGroup = ecuGroup;
 			//this.children = new ISPELocator[0];
@@ -25,7 +25,7 @@ namespace PsdzClient.Core
 			this.ffmResolver = ffmResolver;
 		}
 
-		public EcuGroupLocator(PdszDatabase.EcuGroup ecuGroup, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+		public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
 		{
 			this.ecuGroup = ecuGroup;
 			//this.children = new ISPELocator[0];
@@ -38,7 +38,7 @@ namespace PsdzClient.Core
         {
 	        get
 	        {
-                PdszDatabase database = ClientContext.GetDatabase(this.vecInfo);
+                PsdzDatabase database = ClientContext.GetDatabase(this.vecInfo);
                 if (database == null)
                 {
                     return null;
@@ -52,7 +52,7 @@ namespace PsdzClient.Core
 		        ECU eCUbyECU_GRUPPE = vecInfo.getECUbyECU_GRUPPE(ecuGroup.Name);
 		        if (eCUbyECU_GRUPPE != null && !string.IsNullOrEmpty(eCUbyECU_GRUPPE.VARIANTE))
 		        {
-                    PdszDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(eCUbyECU_GRUPPE.VARIANTE);
+                    PsdzDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(eCUbyECU_GRUPPE.VARIANTE);
                     if (ecuVariantByName != null)
                     {
                         list.Add(new EcuVariantLocator(ecuVariantByName));
@@ -83,7 +83,7 @@ namespace PsdzClient.Core
 	        }
         }
 #endif
-		public string Id
+        public string Id
 		{
 			get
 			{
@@ -232,7 +232,7 @@ namespace PsdzClient.Core
 			throw new NotImplementedException();
 		}
 
-		private readonly PdszDatabase.EcuGroup ecuGroup;
+		private readonly PsdzDatabase.EcuGroup ecuGroup;
 
 		private readonly Vehicle vecInfo;
 

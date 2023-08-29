@@ -22,7 +22,7 @@ namespace PsdzClient.Programming
             this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
 
             this.EventManager = new ProgrammingEventManager();
-            this.PdszDatabase = new PdszDatabase(istaFolder);
+            this.PsdzDatabase = new PsdzDatabase(istaFolder);
             PreparePsdzBackupDataPath(istaFolder);
         }
 
@@ -192,10 +192,10 @@ namespace PsdzClient.Programming
         {
             RemoveListener();
 			this.psdz.Dispose();
-            if (this.PdszDatabase != null)
+            if (this.PsdzDatabase != null)
             {
-                this.PdszDatabase.Dispose();
-                this.PdszDatabase = null;
+                this.PsdzDatabase.Dispose();
+                this.PsdzDatabase = null;
             }
 		}
 
@@ -207,7 +207,7 @@ namespace PsdzClient.Programming
 
         public EcuProgrammingInfos ProgrammingInfos { get; private set; }
 
-        public PdszDatabase PdszDatabase { get; private set; }
+        public PsdzDatabase PsdzDatabase { get; private set; }
 
         public PsdzServiceWrapper Psdz => psdz;
 

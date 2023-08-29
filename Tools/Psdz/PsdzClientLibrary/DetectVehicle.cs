@@ -90,13 +90,13 @@ namespace PsdzClient
 
         public delegate bool AbortDelegate();
 
-        private PdszDatabase _pdszDatabase;
+        private PsdzDatabase _pdszDatabase;
         private bool _disposed;
         private EdiabasNet _ediabas;
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
 
-        public List<PdszDatabase.EcuInfo> EcuList { get; private set; }
+        public List<PsdzDatabase.EcuInfo> EcuList { get; private set; }
         public string Vin { get; private set; }
         public string TypeKey { get; private set; }
         public string GroupSgdb { get; private set; }
@@ -116,7 +116,7 @@ namespace PsdzClient
         public string ILevelCurrent { get; private set; }
         public string ILevelBackup { get; private set; }
 
-        public DetectVehicle(PdszDatabase pdszDatabase, string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
+        public DetectVehicle(PsdzDatabase pdszDatabase, string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
         {
             _pdszDatabase = pdszDatabase;
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
@@ -137,7 +137,7 @@ namespace PsdzClient
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.IcomAllocate = icomAllocate;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
-            EcuList = new List<PdszDatabase.EcuInfo>();
+            EcuList = new List<PsdzDatabase.EcuInfo>();
 
             ResetValues();
         }
@@ -422,7 +422,7 @@ namespace PsdzClient
                     return DetectResult.InvalidDatabase;
                 }
 
-                PdszDatabase.DbInfo dbInfo = _pdszDatabase.GetDbInfo();
+                PsdzDatabase.DbInfo dbInfo = _pdszDatabase.GetDbInfo();
                 if (dbInfo == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast no DbInfo");
@@ -521,7 +521,7 @@ namespace PsdzClient
 
                             if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                             {
-                                PdszDatabase.EcuInfo ecuInfo = new PdszDatabase.EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
+                                PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
                                 EcuList.Add(ecuInfo);
                             }
 

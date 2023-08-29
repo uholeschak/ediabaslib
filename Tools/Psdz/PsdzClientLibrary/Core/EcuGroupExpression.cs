@@ -27,7 +27,7 @@ namespace PsdzClient.Core
 				//Log.Warning("EcuGroupExpression.Evaluate()", "vec was null", Array.Empty<object>());
 				return false;
 			}
-			PdszDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(vec)?.GetEcuGroupById(this.value.ToString(CultureInfo.InvariantCulture));
+			PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(vec)?.GetEcuGroupById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (ecuGroupById == null || string.IsNullOrEmpty(ecuGroupById.Name))
 			{
 				return false;
@@ -76,7 +76,7 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
-            PdszDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.value.ToString(CultureInfo.InvariantCulture));
             
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));

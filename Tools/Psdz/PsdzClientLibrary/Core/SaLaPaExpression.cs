@@ -28,7 +28,7 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
-            PdszDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(this.vecInfo)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(this.vecInfo)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
             
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
@@ -65,7 +65,7 @@ namespace PsdzClient.Core
 			{
 				return false;
 			}
-			PdszDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
+			PsdzDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (saLaPaById == null)
 			{
 				return false;

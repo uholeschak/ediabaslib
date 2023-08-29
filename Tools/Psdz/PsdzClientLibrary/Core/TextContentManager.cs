@@ -15,7 +15,7 @@ namespace PsdzClient.Core
     {
         private IList<string> lang;
 
-        private readonly PdszDatabase db;
+        private readonly PsdzDatabase db;
 
         private readonly bool old;
 
@@ -25,7 +25,7 @@ namespace PsdzClient.Core
 
         private IList<XElement> serviceProgramCollectionRoot;
 
-        private readonly PdszDatabase.SwiInfoObj xepInfoObj;
+        private readonly PsdzDatabase.SwiInfoObj xepInfoObj;
 
         private const string DefaultParameterValue = "";
 
@@ -43,7 +43,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public static ITextContentManager Create(PdszDatabase databaseProvider, IList<string> lang, PdszDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
+        public static ITextContentManager Create(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
             {
@@ -61,7 +61,7 @@ namespace PsdzClient.Core
             return new TextContentManagerDummy();
         }
 
-        private TextContentManager(PdszDatabase databaseProvider, IList<string> lang, PdszDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
+        private TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
             {
@@ -90,7 +90,7 @@ namespace PsdzClient.Core
             //Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identifikator, xepInfoObj.ControlId);
         }
 
-        internal TextContentManager(PdszDatabase databaseProvider, IList<string> lang, string textCollection)
+        internal TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, string textCollection)
         {
             if (databaseProvider == null)
             {
@@ -112,7 +112,7 @@ namespace PsdzClient.Core
             serviceProgramCollection = new TextLocator(list);
         }
 
-        internal TextContentManager(PdszDatabase databaseProvider, IList<string> lang)
+        internal TextContentManager(PsdzDatabase databaseProvider, IList<string> lang)
         {
             if (databaseProvider == null)
             {
@@ -132,7 +132,7 @@ namespace PsdzClient.Core
             IList<LocalizedText> list = new List<LocalizedText>();
             try
             {
-                PdszDatabase.EcuTranslation o = db.GetSpTextItemsByControlId(value);
+                PsdzDatabase.EcuTranslation o = db.GetSpTextItemsByControlId(value);
                 if (o != null)
                 {
                     list.AddRange(lang.Select((string x) => new LocalizedText(o.GetTitle(x), x)));
@@ -235,7 +235,7 @@ namespace PsdzClient.Core
             }
         }
 
-        private XElement ParseSpeXml(string xml, string language, PdszDatabase database)
+        private XElement ParseSpeXml(string xml, string language, PsdzDatabase database)
         {
             XElement xElement = ParseXml(xml);
             AppendStandardText(xElement, namespaceManager, database, language, 0);
@@ -429,7 +429,7 @@ namespace PsdzClient.Core
             }
         }
 
-        private void AppendDiagcode(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PdszDatabase db)
+        private void AppendDiagcode(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PsdzDatabase db)
         {
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:DIAGCODE[not(spe:CONTENT)]", namespaceManager);
             if (enumerable == null)
@@ -449,7 +449,7 @@ namespace PsdzClient.Core
             }
         }
 
-        private void AppendStandardText(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PdszDatabase db, string language, int repeat)
+        private void AppendStandardText(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PsdzDatabase db, string language, int repeat)
         {
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:STANDARDTEXT[not(spe:CONTENT)]", namespaceManager);
             if (enumerable != null)
@@ -458,7 +458,7 @@ namespace PsdzClient.Core
                 foreach (XElement item in enumerable)
                 {
                     string value = item.Attribute(XName.Get("ID")).Value;
-                    PdszDatabase.EcuTranslation ecuTranslation = db.GetSpTextItemsByControlId(value);
+                    PsdzDatabase.EcuTranslation ecuTranslation = db.GetSpTextItemsByControlId(value);
                     string localizedXmlValue = null;
                     if (ecuTranslation != null)
                     {

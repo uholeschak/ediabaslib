@@ -92,7 +92,7 @@ namespace PsdzClient.Core
             return true;
         }
 
-        public static void SetGearboxTypeFromCharacteristics(Vehicle vehicle, PdszDatabase.Characteristics gearboxCharacteristic)
+        public static void SetGearboxTypeFromCharacteristics(Vehicle vehicle, PsdzDatabase.Characteristics gearboxCharacteristic)
         {
             string name = gearboxCharacteristic.Name;
             //Log.Info("GearboxUtility.SetGearboxTypeFromCharacteristics()", "Gearbox type: '" + name + "' found in the xep_characteristics table.");

@@ -15,7 +15,7 @@ namespace PsdzClient
         private static bool _enablePsdzMultiSession;
         private bool _disposed;
 
-        public PdszDatabase Database { get; set; }
+        public PsdzDatabase Database { get; set; }
         public CharacteristicExpression.EnumBrand SelectedBrand { get; set; }
         public string OutletCountry { get; set; }
         public string Language { get; set; }
@@ -24,7 +24,7 @@ namespace PsdzClient
         static ClientContext()
         {
             _enablePsdzMultiSession = false;
-            string swiVersion = PdszDatabase.GetSwiVersion();
+            string swiVersion = PsdzDatabase.GetSwiVersion();
             if (!string.IsNullOrEmpty(swiVersion))
             {
                 string[] swiParts = swiVersion.Split('.');
@@ -75,7 +75,7 @@ namespace PsdzClient
             return null;
         }
 
-        public static PdszDatabase GetDatabase(Vehicle vehicle)
+        public static PsdzDatabase GetDatabase(Vehicle vehicle)
         {
             ClientContext clientContext = GetClientContext(vehicle);
             if (clientContext == null)

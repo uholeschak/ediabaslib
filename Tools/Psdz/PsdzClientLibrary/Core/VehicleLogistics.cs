@@ -30,13 +30,13 @@ namespace PsdzClient.Core
 
         public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
 		{
-            PdszDatabase database = ClientContext.GetDatabase(vecInfo);
+            PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
             if (database == null)
             {
                 return null;
             }
 
-            PdszDatabase.BordnetsData bordnetsData = database.GetBordnetFromDatabase(vecInfo);
+            PsdzDatabase.BordnetsData bordnetsData = database.GetBordnetFromDatabase(vecInfo);
             if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
             {
                 BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
@@ -277,14 +277,14 @@ namespace PsdzClient.Core
             GetCharacteristics(vecInfo)?.ShapeECUConfiguration(vecInfo);
         }
 
-        public static ObservableCollectionEx<PdszDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
+        public static ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
             {
                 return characteristics.GetAvailableSALAPAs(vecInfo);
             }
-            return new ObservableCollectionEx<PdszDatabase.SaLaPa>();
+            return new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
         }
 
         // ToDo: Check on update
@@ -726,7 +726,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo != null && !string.IsNullOrEmpty(grp))
             {
-                PdszDatabase.EcuGroup ecuGroupByName = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupByName(grp);
+                PsdzDatabase.EcuGroup ecuGroupByName = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupByName(grp);
                 if (ecuGroupByName != null)
                 {
                     Int64 diagAddrValue = ecuGroupByName.DiagAddr.ConvertToInt();

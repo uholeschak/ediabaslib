@@ -206,8 +206,8 @@ namespace WebPsdzClient.App_Data
 
         }
 
-        private PdszDatabase.SwiRegisterEnum? _selectedSwiRegister;
-        public PdszDatabase.SwiRegisterEnum? SelectedSwiRegister
+        private PsdzDatabase.SwiRegisterEnum? _selectedSwiRegister;
+        public PsdzDatabase.SwiRegisterEnum? SelectedSwiRegister
         {
             get
             {
@@ -455,7 +455,7 @@ namespace WebPsdzClient.App_Data
 
         public void SetLanguage(string language)
         {
-            List<string> langList = PdszDatabase.EcuTranslation.GetLanguages();
+            List<string> langList = PsdzDatabase.EcuTranslation.GetLanguages();
             bool matched = false;
 
             foreach (string lang in langList)
@@ -2448,13 +2448,13 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public void UpdateOptions(Dictionary<PdszDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
+        public void UpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
         {
             ProgrammingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
             UpdateCurrentOptions();
         }
 
-        public void UpdateOptionSelections(PdszDatabase.SwiRegisterEnum? swiRegisterEnum)
+        public void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             UpdateCurrentOptions(swiRegisterEnum);
         }
@@ -2499,7 +2499,7 @@ namespace WebPsdzClient.App_Data
             return ShowMessageModalResult;
         }
 
-        private void UpdateCurrentOptions(PdszDatabase.SwiRegisterEnum? swiRegisterEnum = null)
+        private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
         {
             try
             {

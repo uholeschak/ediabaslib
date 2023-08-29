@@ -188,10 +188,10 @@ namespace PsdzClient.Core
 
         public string SetVINRangeTypeFromVINRanges()
         {
-            PdszDatabase database = ClientContext.GetDatabase(this);
+            PsdzDatabase database = ClientContext.GetDatabase(this);
             if (database != null && !"XXXXXXX".Equals(this.VIN7) && !string.IsNullOrEmpty(this.VIN7) && !this.VIN7.Equals(this.vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
             {
-                PdszDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(this.VINType, this.VIN7, IsVehicleWithOnlyVin7());
+                PsdzDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(this.VINType, this.VIN7, IsVehicleWithOnlyVin7());
 				if (vinRangesByVin != null)
 				{
                     this.vinRangeTypeLastResolvedType = this.VIN7;
@@ -726,7 +726,7 @@ namespace PsdzClient.Core
         public ITransmissionDataType TransmissionDataType { get; private set; }
 
         [XmlIgnore]
-        public PdszDatabase.BatteryEnum BatteryType
+        public PsdzDatabase.BatteryEnum BatteryType
         {
             get
             {
@@ -1433,7 +1433,7 @@ namespace PsdzClient.Core
 
         public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
 		{
-            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
 			if (characteristicRootsById != null)
 			{
 				return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById, out value, id, this, datavalueId, internalResult);
@@ -2150,7 +2150,7 @@ namespace PsdzClient.Core
 
 		private bool withLfpBattery;
 
-        private PdszDatabase.BatteryEnum batteryType;
+        private PsdzDatabase.BatteryEnum batteryType;
 
         private bool isClosingOperationActive;
 

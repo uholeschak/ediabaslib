@@ -26,7 +26,7 @@ namespace PsdzClient.Core
 			{
 				if (string.IsNullOrEmpty(this.variantName))
 				{
-                    PdszDatabase.EcuVar ecuVariantById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+                    PsdzDatabase.EcuVar ecuVariantById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
 					if (ecuVariantById != null)
 					{
 						this.variantName = ecuVariantById.Name;
@@ -44,12 +44,12 @@ namespace PsdzClient.Core
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
         {
             this.vecInfo = vec;
-            PdszDatabase database = ClientContext.GetDatabase(this.vecInfo);
+            PsdzDatabase database = ClientContext.GetDatabase(this.vecInfo);
             if (database == null)
             {
                 return false;
             }
-            PdszDatabase.EcuVar ecuVariantById = database.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.EcuVar ecuVariantById = database.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (ecuVariantById == null)
 			{
 				return false;
@@ -125,7 +125,7 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
-            PdszDatabase.EcuVar ecuVariantById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.EcuVar ecuVariantById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
             
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));

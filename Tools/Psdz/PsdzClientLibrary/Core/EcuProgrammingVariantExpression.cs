@@ -61,10 +61,10 @@ namespace PsdzClient.Core
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            PdszDatabase database = ClientContext.GetDatabase(this.vecInfo);
+            PsdzDatabase database = ClientContext.GetDatabase(this.vecInfo);
 
-            PdszDatabase.EcuPrgVar ecuPrgVar = database.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), null, null);
-            PdszDatabase.EcuVar ecuVar = null;
+            PsdzDatabase.EcuPrgVar ecuPrgVar = database.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), null, null);
+            PsdzDatabase.EcuVar ecuVar = null;
             if (ecuPrgVar != null)
             {
                 ecuVar = database?.GetEcuVariantById(ecuPrgVar.EcuVarId);
@@ -110,8 +110,8 @@ namespace PsdzClient.Core
 			return string.Format("EcuProgrammingVariant: ID= {0}", this.value);
 		}
 
-		private PdszDatabase.EcuPrgVar programmingVariant;
+		private PsdzDatabase.EcuPrgVar programmingVariant;
 
-		private PdszDatabase.EcuVar ecuVariant;
+		private PsdzDatabase.EcuVar ecuVariant;
 	}
 }

@@ -587,7 +587,7 @@ namespace PsdzClient.Programming
                 }
             }
 
-            PdszDatabase.VinRanges vinRangesByVin = programmingService.PdszDatabase.GetVinRangesByVin17(VecInfo.VINType, VecInfo.VIN7, VecInfo.IsVehicleWithOnlyVin7());
+            PsdzDatabase.VinRanges vinRangesByVin = programmingService.PsdzDatabase.GetVinRangesByVin17(VecInfo.VINType, VecInfo.VIN7, VecInfo.IsVehicleWithOnlyVin7());
             if (vinRangesByVin != null)
             {
                 VecInfo.VINRangeType = vinRangesByVin.TypeKey;
@@ -633,7 +633,7 @@ namespace PsdzClient.Programming
             for (int i = 0; i < 2; i++)
             {
                 ObservableCollection<ECU> EcuList = new ObservableCollection<ECU>();
-                foreach (PdszDatabase.EcuInfo ecuInfo in DetectVehicle.EcuList)
+                foreach (PsdzDatabase.EcuInfo ecuInfo in DetectVehicle.EcuList)
                 {
                     IEcuObj ecuObj = programmingObjectBuilder.Build(ecuInfo.PsdzEcu);
                     ECU ecu = programmingObjectBuilder.Build(ecuObj);
@@ -660,14 +660,14 @@ namespace PsdzClient.Programming
                 VecInfo.ECU = EcuList;
             }
 
-            List<PdszDatabase.Characteristics> characteristicsList = programmingService.PdszDatabase.GetVehicleCharacteristics(VecInfo);
+            List<PsdzDatabase.Characteristics> characteristicsList = programmingService.PsdzDatabase.GetVehicleCharacteristics(VecInfo);
             if (characteristicsList == null)
             {
                 return false;
             }
             VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
 
-            foreach (PdszDatabase.Characteristics characteristics in characteristicsList)
+            foreach (PsdzDatabase.Characteristics characteristics in characteristicsList)
             {
                 if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, VecInfo, characteristics))
                 {
@@ -690,8 +690,8 @@ namespace PsdzClient.Programming
             }
 
             VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
-            VecInfo.BatteryType = PdszDatabase.ResolveBatteryType(VecInfo);
-            VecInfo.WithLfpBattery = VecInfo.BatteryType == PdszDatabase.BatteryEnum.LFP;
+            VecInfo.BatteryType = PsdzDatabase.ResolveBatteryType(VecInfo);
+            VecInfo.WithLfpBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP;
             VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
@@ -720,12 +720,12 @@ namespace PsdzClient.Programming
             }
         }
 
-        public List<PdszDatabase.EcuInfo> GetEcuList(bool individualOnly = false)
+        public List<PsdzDatabase.EcuInfo> GetEcuList(bool individualOnly = false)
         {
-            List<PdszDatabase.EcuInfo> ecuList = new List<PdszDatabase.EcuInfo>();
+            List<PsdzDatabase.EcuInfo> ecuList = new List<PsdzDatabase.EcuInfo>();
             try
             {
-                foreach (PdszDatabase.EcuInfo ecuInfo in DetectVehicle.EcuList)
+                foreach (PsdzDatabase.EcuInfo ecuInfo in DetectVehicle.EcuList)
                 {
                     if (individualOnly)
                     {
@@ -826,7 +826,7 @@ namespace PsdzClient.Programming
                 }
 
                 string language = clientContext.Language;
-                string prodArt = PdszDatabase.GetProdArt(VecInfo);
+                string prodArt = PsdzDatabase.GetProdArt(VecInfo);
 
                 FillSaLocalizedItems(programmingService, language, DetectVehicle.Salapa, prodArt);
                 FillSaLocalizedItems(programmingService, language, DetectVehicle.HoWords, prodArt);
@@ -848,7 +848,7 @@ namespace PsdzClient.Programming
                 string key = FormatConverter.FillWithZeros(text, 4);
                 if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == key) == null)
                 {
-                    PdszDatabase.SaLaPa saLaPa = programmingService.PdszDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, key);
+                    PsdzDatabase.SaLaPa saLaPa = programmingService.PsdzDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, key);
                     if (saLaPa != null)
                     {
                         VecInfo.FA.SaLocalizedItems.Add(new LocalizedSAItem(key, saLaPa.EcuTranslation.GetTitle(language)));
@@ -868,7 +868,7 @@ namespace PsdzClient.Programming
 
                 if (!string.IsNullOrEmpty(VecInfo.VINRangeType))
                 {
-                    List<Tuple<string, string>> transmissionSaByTypeKey = programmingService.PdszDatabase.GetTransmissionSaByTypeKey(VecInfo.VINRangeType);
+                    List<Tuple<string, string>> transmissionSaByTypeKey = programmingService.PsdzDatabase.GetTransmissionSaByTypeKey(VecInfo.VINRangeType);
                     if (transmissionSaByTypeKey == null)
                     {
                         return false;

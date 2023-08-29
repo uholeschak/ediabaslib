@@ -251,24 +251,24 @@ namespace BMW.Rheingold.Programming.API
             ecuObj.EcuDetailInfo = ((ecuInput.EcuDetailInfo != null) ? new EcuObjDetailInfo(ecuInput.EcuDetailInfo.ByteValue) : null);
             ecuObj.EcuStatusInfo = ((ecuInput.EcuStatusInfo != null) ? new EcuObjStatusInfo(ecuInput.EcuStatusInfo.ByteValue, ecuInput.EcuStatusInfo.HasIndividualData) : null);
             ecuObj.EcuPdxInfo = Build(ecuInput.PsdzEcuPdxInfo);
-            PdszDatabase database = ClientContext.GetDatabase(this.vehicle);
+            PsdzDatabase database = ClientContext.GetDatabase(this.vehicle);
             if (database != null)
             {
                 string bnTnName = ecuInput.BnTnName;
                 IEcuIdentifier ecuIdentifier = ecuObj.EcuIdentifier;
-                PdszDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int?(ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
+                PsdzDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int?(ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
                 if (ecuVar != null && !string.IsNullOrEmpty(ecuVar.Name))
                 {
                     //ecuObj.XepEcuVariant = xep_ECUVARIANTS;
                     ecuObj.EcuVariant = ecuVar.Name.ToUpper(CultureInfo.InvariantCulture);
-                    PdszDatabase.EcuClique ecuClique = database.FindEcuClique(ecuVar);
+                    PsdzDatabase.EcuClique ecuClique = database.FindEcuClique(ecuVar);
                     //ecuObj.XepEcuClique = ecuClique;
-                    PdszDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
+                    PsdzDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
                     if (ecuGroup != null)
                     {
                         ecuObj.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
                     }
-                    PdszDatabase.EcuReps ecuReps = database.FindEcuRep(ecuClique);
+                    PsdzDatabase.EcuReps ecuReps = database.FindEcuRep(ecuClique);
                     if (ecuReps != null)
                     {
                         ecuObj.EcuRep = ecuReps.EcuShortcut;

@@ -121,12 +121,12 @@ namespace PsdzClient.Core
                             text += "9";
                             break;
                     }
-                    List<PdszDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
+                    List<PsdzDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
                     if (vehicleIdentByTypeKey != null)
                     {
                         BasicFeaturesVci basicFeaturesVci = new BasicFeaturesVci();
                         VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
-                        foreach (PdszDatabase.Characteristics xep_CHARACTERISTICS in vehicleIdentByTypeKey)
+                        foreach (PsdzDatabase.Characteristics xep_CHARACTERISTICS in vehicleIdentByTypeKey)
                         {
                             vehicleCharacteristicVCIDeviceHelper.AssignBasicFeaturesVciCharacteristic(xep_CHARACTERISTICS.RootNodeClass, basicFeaturesVci, xep_CHARACTERISTICS);
                         }

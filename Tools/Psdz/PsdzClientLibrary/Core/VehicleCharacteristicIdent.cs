@@ -11,7 +11,7 @@ namespace PsdzClient.Core
 {
 	public class VehicleCharacteristicIdent : VehicleCharacteristicAbstract
 	{
-        public bool AssignVehicleCharacteristic(string vehicleCode, Vehicle vehicle, PdszDatabase.Characteristics characteristic)
+        public bool AssignVehicleCharacteristic(string vehicleCode, Vehicle vehicle, PsdzDatabase.Characteristics characteristic)
         {
             return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
         }
@@ -513,7 +513,7 @@ namespace PsdzClient.Core
         private void GetIdentParameters(params object[] parameters)
         {
             vecInfo = (Vehicle)parameters[0];
-            characteristic = (PdszDatabase.Characteristics)parameters[1];
+            characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
 
         private HeatMotor GetHeatMotorByDriveId(string driveId)
@@ -535,6 +535,6 @@ namespace PsdzClient.Core
 
 		private Vehicle vecInfo;
 
-		private PdszDatabase.Characteristics characteristic;
+		private PsdzDatabase.Characteristics characteristic;
 	}
 }

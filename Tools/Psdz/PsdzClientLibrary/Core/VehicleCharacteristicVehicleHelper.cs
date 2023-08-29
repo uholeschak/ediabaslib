@@ -19,7 +19,7 @@ namespace PsdzClient.Core
             internalResult = new ValidationRuleInternalResults();
         }
 
-        public bool GetISTACharacteristics(PdszDatabase.CharacteristicRoots characteristicRoots, out string value, decimal id, Vehicle vec, long dataValueId, ValidationRuleInternalResults internalResult)
+        public bool GetISTACharacteristics(PsdzDatabase.CharacteristicRoots characteristicRoots, out string value, decimal id, Vehicle vec, long dataValueId, ValidationRuleInternalResults internalResult)
         {
             this.characteristicRoots = characteristicRoots;
             characteristicId = id;
@@ -451,11 +451,11 @@ namespace PsdzClient.Core
         }
 
         //private IDatabaseProvider dbConnector;
-        PdszDatabase database;
+        PsdzDatabase database;
 
 		private string characteristicValue;
 
-		private PdszDatabase.CharacteristicRoots characteristicRoots;
+		private PsdzDatabase.CharacteristicRoots characteristicRoots;
 
 		private decimal characteristicId;
 

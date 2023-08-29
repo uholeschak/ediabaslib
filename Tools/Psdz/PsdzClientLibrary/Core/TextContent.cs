@@ -340,7 +340,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public static string ReplaceTextReferences(string xmlText, PdszDatabase database, string language)
+        public static string ReplaceTextReferences(string xmlText, PsdzDatabase database, string language)
         {
             string result = xmlText;
             XDocument xDocument = null;
@@ -395,7 +395,7 @@ namespace PsdzClient.Core
                         {
                             string value = xAttribute.Value;
                             //Log.Info("TextContentOld.ReplaceTextReferences()", "Found referenced text: {0} Path: {1}", xElement, xAttribute.Value);
-                            PdszDatabase.EcuTranslation ecuTranslation = database.GetSpTextItemsByControlId(value);
+                            PsdzDatabase.EcuTranslation ecuTranslation = database.GetSpTextItemsByControlId(value);
                             string localizedXmlValue = null;
                             if (ecuTranslation != null)
                             {

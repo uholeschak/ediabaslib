@@ -13,7 +13,7 @@ namespace PsdzClient.Core
             _clientContext = clientContext;
         }
 
-		public bool AssignBasicFeaturesVciCharacteristic(string vehicleCode, BasicFeaturesVci vehicle, PdszDatabase.Characteristics characteristic)
+		public bool AssignBasicFeaturesVciCharacteristic(string vehicleCode, BasicFeaturesVci vehicle, PsdzDatabase.Characteristics characteristic)
 		{
 			return base.ComputeCharacteristic(vehicleCode, new object[]
 			{
@@ -329,12 +329,12 @@ namespace PsdzClient.Core
 		private void GetVCIDeviceParameters(params object[] parameters)
 		{
 			this.basicFeatures = (BasicFeaturesVci)parameters[0];
-			this.characteristic = (PdszDatabase.Characteristics)parameters[1];
+			this.characteristic = (PsdzDatabase.Characteristics)parameters[1];
 		}
 
 		private BasicFeaturesVci basicFeatures;
 
-		private PdszDatabase.Characteristics characteristic;
+		private PsdzDatabase.Characteristics characteristic;
 
         private ClientContext _clientContext;
     }

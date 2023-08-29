@@ -28,7 +28,7 @@ using PsdzClientLibrary;
 
 namespace PsdzClient
 {
-    public partial class PdszDatabase : IDisposable
+    public partial class PsdzDatabase : IDisposable
     {
         public const string DiagObjServiceRoot = "DiagnosticObjectServicefunctionRoot";
         public const string AblFilter = "ABL";
@@ -1371,7 +1371,7 @@ namespace PsdzClient
         private const string EcuCharacteristicsXmFile = "EcuCharacteristics.xml";
         private const string EcuCharacteristicsZipFile = "EcuCharacteristics.zip";
         private const string ConfigurationContainerXMLPar = "ConfigurationContainerXML";
-        private static readonly ILog log = LogManager.GetLogger(typeof(PdszDatabase));
+        private static readonly ILog log = LogManager.GetLogger(typeof(PsdzDatabase));
 
         // ToDo: Check on update
         private static List<string> engineRootNodeClasses = new List<string>
@@ -1421,18 +1421,18 @@ namespace PsdzClient
         public bool UseIsAtLeastOnePathToRootValid { get; set; }
         public static bool RestartRequired { get; private set; }
 
-        public PdszDatabase(string istaFolder)
+        public PsdzDatabase(string istaFolder)
         {
             if (!Directory.Exists(istaFolder))
             {
-                log.ErrorFormat("PdszDatabase: ISTA path not existing: {0}", istaFolder);
+                log.ErrorFormat("PsdzDatabase: ISTA path not existing: {0}", istaFolder);
                 throw new Exception(string.Format("ISTA path not existing: {0}", istaFolder));
             }
 
             _databasePath = Path.Combine(istaFolder, "SQLiteDBs");
             if (!Directory.Exists(_databasePath))
             {
-                log.ErrorFormat("PdszDatabase: ISTA database path not existing: {0}", _databasePath);
+                log.ErrorFormat("PsdzDatabase: ISTA database path not existing: {0}", _databasePath);
                 throw new Exception(string.Format("ISTA database path not existing: {0}", _databasePath));
             }
 
@@ -1445,14 +1445,14 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.InfoFormat("PdszDatabase CreateDirectory Exception: {0}", e.Message);
+                    log.InfoFormat("PsdzDatabase CreateDirectory Exception: {0}", e.Message);
                 }
             }
 
             _testModulePath = Path.Combine(istaFolder, "Testmodule");
             if (!Directory.Exists(_testModulePath))
             {
-                log.ErrorFormat("PdszDatabase: ISTA testmodule path not existing: {0}", _testModulePath);
+                log.ErrorFormat("PsdzDatabase: ISTA testmodule path not existing: {0}", _testModulePath);
                 throw new Exception(string.Format("ISTA testmodule path not existing: {0}", _testModulePath));
             }
 
@@ -1464,11 +1464,11 @@ namespace PsdzClient
 
             if (!Directory.Exists(_frameworkPath))
             {
-                log.ErrorFormat("PdszDatabase: ISTA framework path not existing: {0}", _frameworkPath);
+                log.ErrorFormat("PsdzDatabase: ISTA framework path not existing: {0}", _frameworkPath);
                 throw new Exception(string.Format("ISTA framework path not existing: {0}", _frameworkPath));
             }
 
-            log.InfoFormat("PdszDatabase: ISTA framework path: {0}", _frameworkPath);
+            log.InfoFormat("PsdzDatabase: ISTA framework path: {0}", _frameworkPath);
 
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
             string connection = "Data Source=\"" + databaseFile + "\";";

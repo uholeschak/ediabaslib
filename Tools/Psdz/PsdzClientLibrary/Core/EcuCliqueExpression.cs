@@ -23,13 +23,13 @@ namespace PsdzClient.Core
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
 			bool flag = false;
-			PdszDatabase database = ClientContext.GetDatabase(vec);
+			PsdzDatabase database = ClientContext.GetDatabase(vec);
             if (database == null)
             {
                 return false;
             }
 
-            PdszDatabase.EcuClique ecuClique = database.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.EcuClique ecuClique = database.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (vec == null)
 			{
 				return false;
@@ -42,14 +42,14 @@ namespace PsdzClient.Core
 			{
 				return false;
 			}
-            List<PdszDatabase.EcuVar> ecuVariantsByEcuCliquesId = ClientContext.GetDatabase(vec)?.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
+            List<PsdzDatabase.EcuVar> ecuVariantsByEcuCliquesId = ClientContext.GetDatabase(vec)?.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
 			if (ecuVariantsByEcuCliquesId == null || ecuVariantsByEcuCliquesId.Count == 0)
 			{
 				return false;
 			}
 			if (vec.VCI != null && vec.VCI.VCIType == VCIDeviceType.INFOSESSION && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && (vec.ECU == null || (vec.ECU != null && vec.ECU.Count == 0))) || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
 			{
-				foreach (PdszDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
+				foreach (PsdzDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
 				{
 					flag = database.EvaluateXepRulesById(ecuVar.Id, vec, ffmResolver, null);
 					if (flag && !string.IsNullOrEmpty(ecuVar.EcuGroupId))
@@ -63,7 +63,7 @@ namespace PsdzClient.Core
 				}
 				return flag;
 			}
-			foreach (PdszDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
+			foreach (PsdzDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
             {
                 flag = vec.getECUbyECU_SGBD(ecuVar.Name) != null;
 				if (flag)
@@ -105,7 +105,7 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
-            PdszDatabase.EcuClique ecuClique = ClientContext.GetDatabase(this.vecInfo)?.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.EcuClique ecuClique = ClientContext.GetDatabase(this.vecInfo)?.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));

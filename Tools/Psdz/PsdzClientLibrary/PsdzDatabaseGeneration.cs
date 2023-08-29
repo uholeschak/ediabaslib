@@ -28,7 +28,7 @@ using PsdzClientLibrary;
 
 namespace PsdzClient
 {
-    public partial class PdszDatabase
+    public partial class PsdzDatabase
     {
         [XmlInclude(typeof(TestModuleData))]
         [XmlType("TestModules")]
@@ -1594,7 +1594,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodWriteFaPrefix = typeof(PdszDatabase).GetMethod("CallWriteFaPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodWriteFaPrefix = typeof(PsdzDatabase).GetMethod("CallWriteFaPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodWriteFaPrefix == null)
                 {
                     log.ErrorFormat("ReadTestModule CallWriteFaPrefix not found");
@@ -1739,7 +1739,7 @@ namespace PsdzClient
                     return false;
                 }
 
-                MethodInfo methodGetDatabasePrefix = typeof(PdszDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodGetDatabasePrefix = typeof(PsdzDatabase).GetMethod("CallGetDatabaseProviderSQLitePrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodGetDatabasePrefix == null)
                 {
                     log.ErrorFormat("PatchCommonMethods CallGetDatabaseProviderSQLitePrefix not found");
@@ -1753,7 +1753,7 @@ namespace PsdzClient
                     return false;
                 }
 
-                MethodInfo methodModuleRefPrefix = typeof(PdszDatabase).GetMethod("CallModuleRefPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModuleRefPrefix = typeof(PsdzDatabase).GetMethod("CallModuleRefPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleRefPrefix == null)
                 {
                     log.ErrorFormat("PatchCommonMethods CallModuleRefPrefix not found");
@@ -2408,7 +2408,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodCreateServiceDialogPrefix = typeof(PdszDatabase).GetMethod("CreateServiceDialogPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodCreateServiceDialogPrefix = typeof(PsdzDatabase).GetMethod("CreateServiceDialogPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodCreateServiceDialogPrefix == null)
                 {
                     log.ErrorFormat("ReadServiceModule CreateServiceDialogPrefix not found");
@@ -2429,7 +2429,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodServiceDialogCmdBaseInvokePrefix = typeof(PdszDatabase).GetMethod("ServiceDialogCmdBaseInvokePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodServiceDialogCmdBaseInvokePrefix = typeof(PsdzDatabase).GetMethod("ServiceDialogCmdBaseInvokePrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodServiceDialogCmdBaseInvokePrefix == null)
                 {
                     log.ErrorFormat("ReadServiceModule ServiceDialogCmdBaseInvokePrefix not found");
@@ -2450,14 +2450,14 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodConfigurationContainerDeserializePrefix = typeof(PdszDatabase).GetMethod("ConfigurationContainerDeserializePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodConfigurationContainerDeserializePrefix = typeof(PsdzDatabase).GetMethod("ConfigurationContainerDeserializePrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodConfigurationContainerDeserializePrefix == null)
                 {
                     log.ErrorFormat("ReadServiceModule ConfigurationContainerDeserializePrefix not found");
                     return null;
                 }
 
-                MethodInfo methodConfigurationContainerDeserializePostfix = typeof(PdszDatabase).GetMethod("ConfigurationContainerDeserializePostfix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodConfigurationContainerDeserializePostfix = typeof(PsdzDatabase).GetMethod("ConfigurationContainerDeserializePostfix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodConfigurationContainerDeserializePostfix == null)
                 {
                     log.ErrorFormat("ReadServiceModule methodConfigurationContainerDeserializePostfix not found");
@@ -2498,14 +2498,14 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodIstaResultAsTypePrefix = typeof(PdszDatabase).GetMethod("GetIstaResultAsTypePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodIstaResultAsTypePrefix = typeof(PsdzDatabase).GetMethod("GetIstaResultAsTypePrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodIstaResultAsTypePrefix == null)
                 {
                     log.ErrorFormat("ReadServiceModule GetIstaResultAsTypePrefix not found");
                     return null;
                 }
 
-                MethodInfo methodIstaResultAsTypePostfix = typeof(PdszDatabase).GetMethod("GetIstaResultAsTypePostfix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodIstaResultAsTypePostfix = typeof(PsdzDatabase).GetMethod("GetIstaResultAsTypePostfix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodIstaResultAsTypePostfix == null)
                 {
                     log.ErrorFormat("ReadServiceModule GetIstaResultAsTypePostfix not found");
@@ -2540,7 +2540,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodIndirectDocumentPrefix3 = typeof(PdszDatabase).GetMethod("IndirectDocumentPrefix3", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodIndirectDocumentPrefix3 = typeof(PsdzDatabase).GetMethod("IndirectDocumentPrefix3", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodIndirectDocumentPrefix3 == null)
                 {
                     log.ErrorFormat("ReadServiceModule IndirectDocumentPrefix3 not found");
@@ -2555,7 +2555,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodCharacteristicsPrefix = typeof(PdszDatabase).GetMethod("CharacteristicsPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodCharacteristicsPrefix = typeof(PsdzDatabase).GetMethod("CharacteristicsPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodCharacteristicsPrefix == null)
                 {
                     log.ErrorFormat("ReadServiceModule CharacteristicsPrefix not found");
@@ -2592,28 +2592,28 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodModuleParameterPrefix1 = typeof(PdszDatabase).GetMethod("GetModuleParameterPrefix1", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModuleParameterPrefix1 = typeof(PsdzDatabase).GetMethod("GetModuleParameterPrefix1", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleParameterPrefix1 == null)
                 {
                     log.ErrorFormat("ReadServiceModule GetModuleParameterPrefix1 not found");
                     return null;
                 }
 
-                MethodInfo methodModuleParameterPostfix1 = typeof(PdszDatabase).GetMethod("GetModuleParameterPostfix1", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModuleParameterPostfix1 = typeof(PsdzDatabase).GetMethod("GetModuleParameterPostfix1", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleParameterPostfix1 == null)
                 {
                     log.ErrorFormat("ReadServiceModule GetModuleParameterPostfix1 not found");
                     return null;
                 }
 
-                MethodInfo methodModuleParameterPrefix2 = typeof(PdszDatabase).GetMethod("GetModuleParameterPrefix2", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModuleParameterPrefix2 = typeof(PsdzDatabase).GetMethod("GetModuleParameterPrefix2", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleParameterPrefix2 == null)
                 {
                     log.ErrorFormat("ReadServiceModule GetModuleParameterPrefix2 not found");
                     return null;
                 }
 
-                MethodInfo methodModuleParameterPostfix2 = typeof(PdszDatabase).GetMethod("GetModuleParameterPostfix2", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModuleParameterPostfix2 = typeof(PsdzDatabase).GetMethod("GetModuleParameterPostfix2", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleParameterPostfix2 == null)
                 {
                     log.ErrorFormat("ReadServiceModule GetModuleParameterPostfix2 not found");
@@ -2629,7 +2629,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodModuleTextPrefix2 = typeof(PdszDatabase).GetMethod("ModuleTextPrefix2", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModuleTextPrefix2 = typeof(PsdzDatabase).GetMethod("ModuleTextPrefix2", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleTextPrefix2 == null)
                 {
                     log.ErrorFormat("ReadServiceModule ModuleTextPrefix2 not found");
@@ -2643,7 +2643,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodModuleSleepPrefix = typeof(PdszDatabase).GetMethod("ModuleSleepPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModuleSleepPrefix = typeof(PsdzDatabase).GetMethod("ModuleSleepPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleSleepPrefix == null)
                 {
                     log.ErrorFormat("ReadServiceModule ModuleSleepPrefix not found");
@@ -2657,7 +2657,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodModuleClearErrorInfoMemoryPrefix = typeof(PdszDatabase).GetMethod("ModuleClearErrorInfoMemoryPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModuleClearErrorInfoMemoryPrefix = typeof(PsdzDatabase).GetMethod("ModuleClearErrorInfoMemoryPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleClearErrorInfoMemoryPrefix == null)
                 {
                     log.ErrorFormat("ReadServiceModule ModuleClearErrorInfoMemoryPrefix not found");
@@ -2671,7 +2671,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodModuleReadErrorInfoMemoryPrefix = typeof(PdszDatabase).GetMethod("ModuleReadErrorInfoMemoryPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModuleReadErrorInfoMemoryPrefix = typeof(PsdzDatabase).GetMethod("ModuleReadErrorInfoMemoryPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleReadErrorInfoMemoryPrefix == null)
                 {
                     log.ErrorFormat("ReadServiceModule ModuleReadErrorInfoMemoryPrefix not found");
@@ -2856,7 +2856,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodModulePrivateMethodPrefix = typeof(PdszDatabase).GetMethod("ModulePrivateMethodPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo methodModulePrivateMethodPrefix = typeof(PsdzDatabase).GetMethod("ModulePrivateMethodPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModulePrivateMethodPrefix == null)
                 {
                     log.ErrorFormat("ReadServiceModule ModulePrivateMethodPrefix not found");

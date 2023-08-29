@@ -292,7 +292,7 @@ namespace PsdzClient.Core
 		private string GetCharacteristicRootFromDb()
 		{
 			string result = string.Empty;
-            PdszDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this.vecInfo)?.GetCharacteristicRootsById(this.dataclassId.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this.vecInfo)?.GetCharacteristicRootsById(this.dataclassId.ToString(CultureInfo.InvariantCulture));
 			if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
 			{
 				result = characteristicRootsById.EcuTranslation.TextDe;

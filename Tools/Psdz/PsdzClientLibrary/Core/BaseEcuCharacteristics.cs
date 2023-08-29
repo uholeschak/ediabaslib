@@ -175,9 +175,9 @@ namespace PsdzClient.Core
 			CalculateECUConfiguration(vecInfo, ffmResolver, null, null);
 		}
 
-        public virtual ObservableCollectionEx<PdszDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
+        public virtual ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
-            ObservableCollectionEx<PdszDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PdszDatabase.SaLaPa>();
+            ObservableCollectionEx<PsdzDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
             if (vecInfo != null && !string.IsNullOrEmpty(compatibilityInfo))
             {
                 try
@@ -197,7 +197,7 @@ namespace PsdzClient.Core
                                     {
                                         if (!string.IsNullOrEmpty(text2))
                                         {
-                                            PdszDatabase.SaLaPa saLaPaByProductTypeAndSalesKey = ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
+                                            PsdzDatabase.SaLaPa saLaPaByProductTypeAndSalesKey = ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
                                             if (saLaPaByProductTypeAndSalesKey != null)
                                             {
                                                 observableCollectionEx.AddIfNotContains(saLaPaByProductTypeAndSalesKey);
@@ -610,10 +610,10 @@ namespace PsdzClient.Core
 						if (vecInfo.getECU(num2) == null)
 						{
 							string ecuVariant = array2[1];
-                            PdszDatabase database = ClientContext.GetDatabase(vecInfo);
+                            PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
                             if (database != null)
                             {
-                                PdszDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(ecuVariant);
+                                PsdzDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(ecuVariant);
                                 if (ecuVariantByName != null && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && !string.IsNullOrEmpty(ecuVariantByName.EcuGroupId) && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
                                 {
                                     ECU item = CreateECU(num2, array2[2]);
@@ -651,13 +651,13 @@ namespace PsdzClient.Core
 
 		protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
 		{
-            PdszDatabase database = ClientContext.GetDatabase(vecInfo);
+            PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
 			if (database == null)
             {
                 return false;
             }
 
-            PdszDatabase.EcuGroup ecuGroupByName = database.GetEcuGroupByName(groupName);
+            PsdzDatabase.EcuGroup ecuGroupByName = database.GetEcuGroupByName(groupName);
 			if (ecuGroupByName != null)
 			{
 				return database.EvaluateXepRulesById(ecuGroupByName.Id, vecInfo, ffmResolver);

@@ -22,7 +22,7 @@ namespace PsdzClient.Core
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
-            PdszDatabase database = ClientContext.GetDatabase(vec);
+            PsdzDatabase database = ClientContext.GetDatabase(vec);
             if (database == null)
             {
                 return false;
@@ -36,7 +36,7 @@ namespace PsdzClient.Core
 			{
 				return false;
 			}
-            PdszDatabase.Equipment equipmentById = database.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.Equipment equipmentById = database.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
 			if (equipmentById == null)
 			{
 				return false;
@@ -121,7 +121,7 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
-            PdszDatabase.Equipment equipmentById = ClientContext.GetDatabase(this.vecInfo)?.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.Equipment equipmentById = ClientContext.GetDatabase(this.vecInfo)?.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(formulaConfig.RuleValidFunc);
