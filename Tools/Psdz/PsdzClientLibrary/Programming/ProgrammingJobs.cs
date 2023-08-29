@@ -430,6 +430,7 @@ namespace PsdzClient.Programming
                 }
                 else
                 {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Starting programming service MultiSession={0}", ClientContext.EnablePsdzMultiSession());
                     ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
                     ClientContext.Database = ProgrammingService.PsdzDatabase;
                     if (ServiceInitializedEvent != null)
@@ -586,7 +587,7 @@ namespace PsdzClient.Programming
                     }
 #if false
                     List<PsdzDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PsdzDatabase.GetInfoObjectsTreeForNodeclassName(
-                        PsdzDatabase.DiagObjServiceRoot, null, new List<string> { AblFilter });
+                        PsdzDatabase.DiagObjServiceRoot, null, new List<string> { PsdzDatabase.AblFilter });
                     if (diagObjsNodeClass != null)
                     {
                         foreach (PsdzDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
@@ -1058,7 +1059,7 @@ namespace PsdzClient.Programming
                 {
                     ProgrammingService.PsdzDatabase.UseIsAtLeastOnePathToRootValid = type == 0;
                     List<PsdzDatabase.SwiDiagObj> diagObjsNodeClass = ProgrammingService.PsdzDatabase.GetInfoObjectsTreeForNodeclassName(
-                        PsdzDatabase.DiagObjServiceRoot, vehicle, new List<string> { AblFilter }, true);
+                        PsdzDatabase.DiagObjServiceRoot, vehicle, new List<string> { PsdzDatabase.AblFilter }, true);
                     if (diagObjsNodeClass != null)
                     {
                         foreach (PsdzDatabase.SwiDiagObj swiDiagObj in diagObjsNodeClass)
