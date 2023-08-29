@@ -12,6 +12,7 @@ namespace PsdzClient
     public class ClientContext : IDisposable
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(ClientContext));
+        private static bool _enablePsdzMultiSession;
         private bool _disposed;
 
         public PdszDatabase Database { get; set; }
@@ -19,6 +20,28 @@ namespace PsdzClient
         public string OutletCountry { get; set; }
         public string Language { get; set; }
         public bool ProtectionVehicleService { get; set; }
+
+        static ClientContext()
+        {
+            _enablePsdzMultiSession = false;
+            string swiVersion = PdszDatabase.GetSwiVersion();
+            if (!string.IsNullOrEmpty(swiVersion))
+            {
+                string[] swiParts = swiVersion.Split('.');
+                if (swiParts.Length >= 2)
+                {
+                    if (long.TryParse(swiParts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value1) &&
+                        long.TryParse(swiParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value2))
+                    {
+                        long version = value1 * 10000 + value2;
+                        if (version >= 40039)
+                        {
+                            _enablePsdzMultiSession = true;
+                        }
+                    }
+                }
+            }
+        }
 
         public ClientContext()
         {
@@ -137,25 +160,7 @@ namespace PsdzClient
 
         public static bool EnablePsdzMultiSession()
         {
-            string swiVersion = PdszDatabase.GetSwiVersion();
-            if (!string.IsNullOrEmpty(swiVersion))
-            {
-                string[] swiParts = swiVersion.Split('.');
-                if (swiParts.Length >= 2)
-                {
-                    if (long.TryParse(swiParts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value1) &&
-                        long.TryParse(swiParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value2))
-                    {
-                        long version = value1 * 10000 + value2;
-                        if (version >= 40039)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            return false;
+            return _enablePsdzMultiSession;
         }
 
         public void Dispose()
