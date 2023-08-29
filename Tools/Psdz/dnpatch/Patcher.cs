@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Writer;
-using CallingConvention = dnlib.DotNet.CallingConvention;
 
 namespace dnpatch
 {
