@@ -2219,7 +2219,7 @@ namespace PsdzClient.Programming
                         {
                             PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionType.SwiRegisterEnum;
                             optionType.ClientContext = clientContext;
-                            optionType.SwiRegister = ProgrammingService.PsdzDatabase.FindNodeForRegister(swiRegisterEnum);
+                            optionType.SwiRegister = ProgrammingService.PsdzDatabase.FindNodeForRegister(swiRegisterEnum, PsdzContext.VecInfo);
 
                             switch (swiRegisterEnum)
                             {
@@ -2243,7 +2243,7 @@ namespace PsdzClient.Programming
 
                                 default:
                                 {
-                                    List<PsdzDatabase.SwiAction> swiActions = ProgrammingService.PsdzDatabase.GetSwiActionsForRegister(swiRegisterEnum, true);
+                                    List<PsdzDatabase.SwiAction> swiActions = ProgrammingService.PsdzDatabase.GetSwiActionsForRegister(swiRegisterEnum, true, PsdzContext.VecInfo);
                                     if (swiActions != null)
                                     {
                                         log.InfoFormat(CultureInfo.InvariantCulture, "Swi actions: {0}", optionType.Name ?? string.Empty);

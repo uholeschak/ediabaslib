@@ -1507,7 +1507,7 @@ namespace PsdzClient
         }
 
         // ToDo: Check on update
-        public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegister, Vehicle vehicle = null)
+        public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegister, Vehicle vehicle)
         {
             string arg;
             switch (swiRegister)
@@ -1988,9 +1988,9 @@ namespace PsdzClient
             return true;
         }
 
-        public List<SwiAction> GetSwiActionsForRegister(SwiRegisterEnum swiRegisterEnum, bool getChildren)
+        public List<SwiAction> GetSwiActionsForRegister(SwiRegisterEnum swiRegisterEnum, bool getChildren, Vehicle vehicle)
         {
-            SwiRegister swiRegister = FindNodeForRegister(swiRegisterEnum);
+            SwiRegister swiRegister = FindNodeForRegister(swiRegisterEnum, vehicle);
             if (swiRegister == null)
             {
                 return null;
@@ -2027,7 +2027,7 @@ namespace PsdzClient
             return swiActions;
         }
 
-        public SwiRegister FindNodeForRegister(SwiRegisterEnum swiRegisterEnum)
+        public SwiRegister FindNodeForRegister(SwiRegisterEnum swiRegisterEnum, Vehicle vehicle)
         {
             try
             {
@@ -2037,7 +2037,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                string registerId = SwiRegisterEnumerationNameConverter(swiRegisterEnum);
+                string registerId = SwiRegisterEnumerationNameConverter(swiRegisterEnum, vehicle);
                 return FindNodeForRegisterId(SwiRegisterTree, registerId);
             }
             catch (Exception e)
