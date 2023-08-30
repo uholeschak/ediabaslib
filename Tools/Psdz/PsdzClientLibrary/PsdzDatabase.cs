@@ -1507,7 +1507,7 @@ namespace PsdzClient
         }
 
         // ToDo: Check on update
-        public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegister)
+        public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegister, Vehicle vehicle = null)
         {
             string arg;
             switch (swiRegister)
@@ -1551,7 +1551,15 @@ namespace PsdzClient
                     arg = "ALLGEMEIN";
                     break;
                 case SwiRegisterEnum.Immediatactions:
-                    arg = "SOFORTMASSNAHMEN";
+                    if (vehicle != null)
+                    {
+                        if (vehicle.IsMotorcycle())
+                        {
+                            arg = "SOFORTMASSNAHMEN_PROGRAMMIERUNG_MOTORRAD";
+                            break;
+                        }
+                    }
+                    arg = "SOFORTMASSNAHMEN_PROGRAMMIERUNG_PKW";
                     break;
             }
             return $"REG|{arg}";
