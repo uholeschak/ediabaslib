@@ -250,46 +250,44 @@ namespace BMW.Rheingold.Programming
 			this.psdzServiceClient.RemovePsdzProgressListener(progressListener);
 		}
 
-		public void SetLogLevel(PsdzLoglevel psdzLoglevel, ProdiasLoglevel prodiasLoglevel)
-		{
-			this.psdzLoglevel = new PsdzLoglevel?(psdzLoglevel);
-			this.prodiasLoglevel = new ProdiasLoglevel?(prodiasLoglevel);
-			if (this.IsPsdzInitialized)
-			{
-				this.psdzServiceClient.LogService.SetLogLevel(psdzLoglevel);
-				this.psdzServiceClient.ConnectionManagerService.SetProdiasLogLevel(prodiasLoglevel);
-			}
-		}
+        public void SetLogLevel(PsdzLoglevel psdzLoglevel, ProdiasLoglevel prodiasLoglevel)
+        {
+            this.psdzLoglevel = psdzLoglevel;
+            this.prodiasLoglevel = prodiasLoglevel;
+            if (IsPsdzInitialized)
+            {
+                psdzServiceClient.LogService.SetLogLevel(psdzLoglevel);
+                psdzServiceClient.ConnectionManagerService.SetProdiasLogLevel(prodiasLoglevel);
+            }
+        }
 
-		public bool StartHostIfNotRunning(IVehicle vehicle = null)
-		{
-			try
-			{
-				if (this.IsPsdzInitialized)
-				{
-					this.DoSettingsForInitializedPsdz();
-				}
-				else
-				{
-                    PsdzServiceStarter psdzServiceStarter = new PsdzServiceStarter(psdzHostPath, psdzServiceHostLogDir, psdzServiceArgs);
-                    PsdzServiceStarter.PsdzServiceStartResult psdzServiceStartResult = !ClientContext.EnablePsdzMultiSession() ? psdzServiceStarter.StartIfNotRunning() : psdzServiceStarter.StartIfNotRunning(Process.GetCurrentProcess().Id);
-                    switch (psdzServiceStartResult)
-					{
-						case PsdzServiceStarter.PsdzServiceStartResult.PsdzStillRunning:
-						case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartOk:
-							this.DoSettingsForInitializedPsdz();
-							break;
-						default:
-                            return false;
-						case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartFailedMemError:
-                            return false;
-					}
-				}
-			}
-			catch (Exception)
-			{
+        public bool StartHostIfNotRunning(IVehicle vehicle = null)
+        {
+            try
+            {
+                if (IsPsdzInitialized)
+                {
+                    DoSettingsForInitializedPsdz();
+                    return true;
+                }
+                PsdzServiceStarter psdzServiceStarter = new PsdzServiceStarter(psdzHostPath, psdzServiceHostLogDir, psdzServiceArgs);
+                PsdzServiceStarter.PsdzServiceStartResult psdzServiceStartResult = !ClientContext.EnablePsdzMultiSession() ? psdzServiceStarter.StartIfNotRunning() : psdzServiceStarter.StartIfNotRunning(Process.GetCurrentProcess().Id);
+                switch (psdzServiceStartResult)
+                {
+                    case PsdzServiceStarter.PsdzServiceStartResult.PsdzStillRunning:
+                    case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartOk:
+                        DoSettingsForInitializedPsdz();
+                        break;
+                    default:
+                        return false;
+                    case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartFailedMemError:
+                        return false;
+                }
+            }
+            catch (Exception)
+            {
                 return false;
-			}
+            }
 
             return true;
         }
