@@ -1506,11 +1506,14 @@ namespace PsdzClient
             };
         }
 
-        public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegisterEnum)
+        // ToDo: Check on update
+        public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegister)
         {
             string arg;
-            switch (swiRegisterEnum)
+            switch (swiRegister)
             {
+                default:
+                    throw new ArgumentException("Unknown SWI Register!");
                 case SwiRegisterEnum.SoftwareUpdateExtended:
                     arg = "ERWEITERT";
                     break;
@@ -1550,10 +1553,8 @@ namespace PsdzClient
                 case SwiRegisterEnum.Immediatactions:
                     arg = "SOFORTMASSNAHMEN";
                     break;
-                default:
-                    throw new ArgumentException("Unknown SWI Register!");
             }
-            return string.Format(CultureInfo.InvariantCulture, "REG|{0}", arg);
+            return $"REG|{arg}";
         }
 
         public static SwiRegisterGroup GetSwiRegisterGroup(SwiRegisterEnum swiRegisterEnum)
