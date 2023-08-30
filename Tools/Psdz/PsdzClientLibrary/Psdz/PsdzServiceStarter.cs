@@ -56,7 +56,7 @@ namespace BMW.Rheingold.Psdz.Client
         }
 
         // [UH] added
-        public static bool IsProcessServerInstanceRunning()
+        public static bool IsThisServerInstanceRunning()
         {
             if (ClientContext.EnablePsdzMultiSession())
             {

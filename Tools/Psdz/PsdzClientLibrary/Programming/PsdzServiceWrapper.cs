@@ -81,7 +81,7 @@ namespace BMW.Rheingold.Programming
         {
             get
             {
-                return PsdzServiceStarter.IsProcessServerInstanceRunning();
+                return PsdzServiceStarter.IsThisServerInstanceRunning();
             }
         }
 

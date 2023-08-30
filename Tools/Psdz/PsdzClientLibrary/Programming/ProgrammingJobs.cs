@@ -742,7 +742,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                if (!PsdzServiceStarter.IsProcessServerInstanceRunning())
+                if (!PsdzServiceStarter.IsThisServerInstanceRunning())
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Starting host");
                     if (!ProgrammingService.StartPsdzServiceHost())
@@ -771,7 +771,7 @@ namespace PsdzClient.Programming
             }
             finally
             {
-                if (!PsdzServiceStarter.IsProcessServerInstanceRunning())
+                if (!PsdzServiceStarter.IsThisServerInstanceRunning())
                 {
                     if (ProgrammingService != null)
                     {
@@ -790,7 +790,7 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.HostStopping);
                 UpdateStatus(sbResult.ToString());
 
-                if (ProgrammingService == null && PsdzServiceStarter.IsProcessServerInstanceRunning())
+                if (ProgrammingService == null && PsdzServiceStarter.IsThisServerInstanceRunning())
                 {
                     ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
                 }
