@@ -87,7 +87,14 @@ namespace BMW.Rheingold.Programming
 
         public bool IsValidPsdzVersion
         {
-            get { return true; }
+            get
+            {
+                if (!string.Equals(ExpectedPsdzVersion, PsdzVersion, StringComparison.Ordinal))
+                {
+                    return false;
+                }
+                return true;
+            }
         }
 
 		public ILogService LogService
