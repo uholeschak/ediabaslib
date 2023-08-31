@@ -2367,8 +2367,9 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             EcuPrgVar ecuPrgVarTemp = ReadXepEcuPrgVar(reader);
-                            bool valid = ecuPrgVarTemp != null;
-                            if (vehicle != null && ecuPrgVarTemp != null)
+                            bool valid = true;
+
+                            if (vehicle != null)
                             {
                                 if (!EvaluateXepRulesById(ecuPrgVarTemp.EcuVarId, vehicle, ffmDynamicResolver))
                                 {
