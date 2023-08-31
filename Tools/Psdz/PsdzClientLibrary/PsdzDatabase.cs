@@ -2236,35 +2236,39 @@ namespace PsdzClient
             {
                 return null;
             }
+
+            if (vehicle == null)
+            {
+                return null;
+            }
+
             List<EcuVar> ecuVars = FindEcuVariantsFromBntn(bnTnName, vehicle, ffmResolver);
             if (ecuVars == null || ecuVars.Count == 0)
             {
                 return null;
             }
 
-            EcuVar ecuVar = ecuVars.FirstOrDefault((EcuVar x) => vehicle.ECU != null && vehicle.ECU.Any((ECU i) => string.Compare(x.Name, i.ECU_SGBD, StringComparison.InvariantCultureIgnoreCase) == 0));
-            if (ecuVar != null)
+            EcuVar ecuVar;
+            if (ecuVars.Count == 1)
             {
-                return ecuVar;
+                ecuVar = ecuVars.FirstOrDefault();
             }
-
-            if (diagAddrAsInt == null)
+            else
             {
-                return null;
-            }
+                ecuVar = ecuVars.FirstOrDefault(x => vehicle.ECU != null && vehicle.ECU.Any(i => string.Compare(x.Name, i.ECU_SGBD, StringComparison.InvariantCultureIgnoreCase) == 0));
+                if (ecuVar == null)
+                {
+                    if (diagAddrAsInt == null)
+                    {
+                        return null;
+                    }
 
-            ObservableCollection<ECU> ecu = vehicle.ECU;
-            ECU ecu2 = (ecu != null) ? ecu.FirstOrDefault(delegate (ECU v)
-            {
-                long id_SG_ADR = v.ID_SG_ADR;
-                int? diagAddrAsInt2 = diagAddrAsInt;
-                long? num = (diagAddrAsInt2 != null) ? new long?((long)diagAddrAsInt2.GetValueOrDefault()) : null;
-                return id_SG_ADR == num.GetValueOrDefault() & num != null;
-            }) : null;
-
-            if (ecu2 != null && !string.IsNullOrEmpty(ecu2.ECU_SGBD))
-            {
-                ecuVar = GetEcuVariantByName(ecu2.ECU_SGBD);
+                    ECU eCU = vehicle.ECU?.FirstOrDefault(v => v.ID_SG_ADR == diagAddrAsInt);
+                    if (eCU != null && !string.IsNullOrEmpty(eCU.ECU_SGBD))
+                    {
+                        ecuVar = GetEcuVariantByName(eCU.ECU_SGBD);
+                    }
+                }
             }
 
             return ecuVar;
