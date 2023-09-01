@@ -3972,9 +3972,9 @@ namespace PsdzClient
                                     break;
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, ModelSeries: {3} , BnType: {4}, Date: {5} {6}",
-                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), modelSeriesHash.ToStringItems(), bnTypeSeries, dateCompare ?? string.Empty, date ?? string.Empty);
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), modelSeriesHash.ToList(), bnTypeSeries, brandHash.ToList(), date, dateCompare));
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, Date: {4} {5}",
+                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), bnTypeSeries, dateCompare ?? string.Empty, date ?? string.Empty);
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), bnTypeSeries, brandHash.ToList(), date, dateCompare));
                         }
                     }
                 }
@@ -4004,15 +4004,10 @@ namespace PsdzClient
                     List<KeyValuePair<string, string>> seriesPair = new List<KeyValuePair<string, string>>();
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
-                        seriesPair.AddIfNotContains(new KeyValuePair<string, string>(series, null));
-                    }
-
-                    foreach (string modelSeries in ecuCharacteristicsInfo.ModelSeriesList)
-                    {
-                        string series = VehicleInfoBmw.GetVehicleSeriesFromBrName(modelSeries, null);
-                        if (string.IsNullOrEmpty(series))
+                        string modelSeries = null;
+                        if (seriesDict.TryGetValue(series.ToUpperInvariant(), out string value))
                         {
-                            continue;
+                            modelSeries = value;
                         }
 
                         seriesPair.AddIfNotContains(new KeyValuePair<string, string>(series, modelSeries));
