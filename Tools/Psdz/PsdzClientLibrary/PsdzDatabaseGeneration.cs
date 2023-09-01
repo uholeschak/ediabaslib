@@ -3923,6 +3923,15 @@ namespace PsdzClient
                                 }
                             }
 
+                            // add missing model series
+                            foreach (string series in seriesHash)
+                            {
+                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out string modelSeries))
+                                {
+                                    modelSeriesHash.Add(modelSeries);
+                                }
+                            }
+
                             HashSet<BNType> bnTypes = new HashSet<BNType>();
                             Vehicle vehicleSeries = new Vehicle(clientContext);
                             vehicleSeries.Prodart = prodArt;
@@ -3944,24 +3953,6 @@ namespace PsdzClient
                                 if (bnType != BNType.UNKNOWN)
                                 {
                                     bnTypes.Add(bnType);
-                                }
-                            }
-
-                            if (bnTypes.Count == 0)
-                            {
-                                foreach (string series in seriesHash)
-                                {
-                                    if (!seriesDict.TryGetValue(series.ToUpperInvariant(), out string modelSeries))
-                                    {
-                                        continue;
-                                    }
-
-                                    vehicleSeries.Baureihenverbund = modelSeries;
-                                    BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
-                                    if (bnType != BNType.UNKNOWN)
-                                    {
-                                        bnTypes.Add(bnType);
-                                    }
                                 }
                             }
 
