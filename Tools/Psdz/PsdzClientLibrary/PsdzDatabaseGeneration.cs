@@ -3951,13 +3951,12 @@ namespace PsdzClient
                             {
                                 foreach (string series in seriesHash)
                                 {
-                                    if (series.Length != 3)
+                                    if (!seriesDict.TryGetValue(series.ToUpperInvariant(), out string modelSeries))
                                     {
                                         continue;
                                     }
 
-                                    // convert series to BR
-                                    vehicleSeries.Baureihenverbund = series[0] + "0" + series[1] + series[2];
+                                    vehicleSeries.Baureihenverbund = modelSeries;
                                     BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
                                     if (bnType != BNType.UNKNOWN)
                                     {
