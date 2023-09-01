@@ -3803,6 +3803,44 @@ namespace PsdzClient
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
 
+                List<string> typeKeys = GetAllTypeKeys();
+                if (typeKeys == null)
+                {
+                    log.ErrorFormat("ExtractEcuCharacteristicsVehicles No TypeKeys");
+                    return null;
+                }
+
+                Dictionary<string, string> seriesDict = new Dictionary<string, string>();
+                foreach (string typeKey in typeKeys)
+                {
+                    List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
+                    if (characteristicsList != null)
+                    {
+                        string series = null;
+                        string modelSeries = null;
+                        foreach (Characteristics characteristics in characteristicsList)
+                        {
+                            if (string.Compare(characteristics.NodeClass, "40128130", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                series = characteristics.EcuTranslation.TextDe;
+                            }
+                            else if (string.Compare(characteristics.NodeClass, "99999999951", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                modelSeries = characteristics.EcuTranslation.TextDe;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(series) && !string.IsNullOrEmpty(modelSeries))
+                        {
+                            string key = series.ToUpperInvariant();
+                            if (!seriesDict.ContainsKey(key))
+                            {
+                                seriesDict.Add(key, modelSeries);
+                            }
+                        }
+                    }
+                }
+
                 Vehicle vehicle = new Vehicle(clientContext);
                 List<EcuCharacteristicsInfo> vehicleSeriesList = new List<EcuCharacteristicsInfo>();
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();

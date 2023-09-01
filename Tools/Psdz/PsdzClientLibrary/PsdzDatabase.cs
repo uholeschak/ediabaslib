@@ -2772,6 +2772,34 @@ namespace PsdzClient
             return null;
         }
 
+        public List<string> GetAllTypeKeys()
+        {
+            log.InfoFormat("GetAllTypeKeys");
+            List<string> typeKeys = new List<string>();
+            try
+            {
+                string sql = @"SELECT DISTINCT(TYPSCHLUESSEL) FROM VINRANGES";
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string typeKey = reader["TYPSCHLUESSEL"].ToString().Trim();
+                            typeKeys.AddIfNotContains(typeKey);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetAllTypeKeys Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return typeKeys;
+        }
+
         public List<Characteristics> GetVehicleCharacteristics(Vehicle vehicle)
         {
             List<Characteristics> characteristicsList = GetVehicleCharacteristicsFromDatabase(vehicle, false);
