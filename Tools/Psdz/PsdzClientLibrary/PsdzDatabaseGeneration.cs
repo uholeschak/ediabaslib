@@ -3910,14 +3910,13 @@ namespace PsdzClient
                             }
 
                             BNType? bnTypeSeries = null;
-                            if (bnTypes.Count > 1)
-                            {
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple BnTypes: {0}", bnTypes.Count);
-                            }
-
-                            if (bnTypes.Count >= 1)
+                            if (bnTypes.Count == 1)
                             {
                                 bnTypeSeries = bnTypes.First();
+                            }
+                            else if (bnTypes.Count > 1)
+                            {
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0}, BnTypes: {1}", seriesHash.ToStringItems(), bnTypes.ToStringItems());
                             }
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, ModelSeries: {3} , BnType: {4}, Date: {5} {6}",
