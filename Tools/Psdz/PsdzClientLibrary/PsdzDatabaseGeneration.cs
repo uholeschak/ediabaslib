@@ -3909,6 +3909,25 @@ namespace PsdzClient
                                 }
                             }
 
+                            if (bnTypes.Count == 0)
+                            {
+                                foreach (string series in seriesHash)
+                                {
+                                    if (series.Length != 3)
+                                    {
+                                        continue;
+                                    }
+
+                                    // convert series to BR
+                                    vehicleSeries.Baureihenverbund = series[0] + "0" + series[1] + series[2];
+                                    BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
+                                    if (bnType != BNType.UNKNOWN)
+                                    {
+                                        bnTypes.Add(bnType);
+                                    }
+                                }
+                            }
+
                             BNType? bnTypeSeries = null;
                             switch (bnTypes.Count)
                             {
