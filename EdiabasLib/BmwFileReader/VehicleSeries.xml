@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <VehicleSeriesInfoDataXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <TimeStamp>2023-08-28 00:05:22</TimeStamp>
+  <TimeStamp>2023-09-02 01:03:12</TimeStamp>
   <Version>
     <Version>4.39.20</Version>
     <Date>2022-11-30T09:17:30</Date>
@@ -14,7 +14,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G05</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -28,7 +30,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F96</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -42,7 +46,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F95</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -56,7 +62,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G06</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -70,7 +78,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G07</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -84,7 +94,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G18</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -98,7 +110,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>I12</Series>
+            <ModelSeries>I001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -112,7 +126,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>I15</Series>
+            <ModelSeries>I001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -126,7 +142,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>I01</Series>
+            <ModelSeries>I001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -154,7 +172,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F40</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -168,7 +188,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F44</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -182,7 +204,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR11</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -196,7 +220,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR12</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -210,7 +236,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR21</Series>
+            <ModelSeries>RR21</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -224,7 +252,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR22</Series>
+            <ModelSeries>RR21</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -238,7 +268,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR31</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -252,7 +284,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F20</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -266,7 +300,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F21</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -280,7 +316,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F22</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -294,7 +332,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F23</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -308,7 +348,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F30</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -322,7 +364,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F31</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -336,7 +380,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F32</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -350,7 +396,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F33</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -364,7 +412,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F34</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -378,7 +428,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F35</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -392,7 +444,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F36</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -406,7 +460,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F80</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -420,7 +476,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F82</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -434,7 +492,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F83</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -448,7 +508,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F87</Series>
+            <ModelSeries>F020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -462,7 +524,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F52</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -478,7 +542,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F60</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -494,7 +560,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F46</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -510,7 +578,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F45</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -526,7 +596,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F55</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -542,7 +614,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F48</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -558,7 +632,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F54</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -574,7 +650,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F57</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -590,7 +668,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F49</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -606,7 +686,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F39</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -622,7 +704,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>M13</Series>
+            <ModelSeries>M013</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -638,7 +722,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F56</Series>
+            <ModelSeries>F056</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
             <BrandList>ZINORO</BrandList>
@@ -654,7 +740,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G32</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -668,7 +756,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G30</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -682,7 +772,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G11</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -696,7 +788,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G12</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -710,7 +804,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G31</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -724,7 +820,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G38</Series>
+            <ModelSeries>S15C</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -738,7 +836,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F90</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -752,7 +852,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G14</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -766,7 +868,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G15</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -780,7 +884,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F91</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -794,7 +900,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F92</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -808,7 +916,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F93</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -822,7 +932,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G16</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -836,7 +948,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G01</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -850,7 +964,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G02</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -864,7 +980,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F97</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -878,7 +996,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G08</Series>
+            <ModelSeries>S15C</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -892,7 +1012,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F98</Series>
+            <ModelSeries>S15A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -906,7 +1028,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G29</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -920,7 +1044,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F15</Series>
+            <ModelSeries>F025</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -934,7 +1060,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F16</Series>
+            <ModelSeries>F025</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -948,7 +1076,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F85</Series>
+            <ModelSeries>F025</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -962,7 +1092,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F86</Series>
+            <ModelSeries>F025</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -976,7 +1108,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F26</Series>
+            <ModelSeries>F025</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -990,7 +1124,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F25</Series>
+            <ModelSeries>F025</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1004,7 +1140,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR4</Series>
+            <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1018,7 +1156,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR5</Series>
+            <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1032,7 +1172,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR6</Series>
+            <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1046,8 +1188,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E90</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1061,8 +1203,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E93</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1076,8 +1218,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E84</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1091,8 +1233,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E87</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1106,8 +1248,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E81</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1121,8 +1263,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E92</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1136,8 +1278,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E82</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1151,8 +1293,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E91</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1166,8 +1308,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E88</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1181,8 +1323,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E89</Series>
+            <ModelSeries>E89X</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1196,24 +1338,8 @@
         <ArrayOfVSI>
           <VSI>
             <Series>M12</Series>
+            <ModelSeries>M012</ModelSeries>
             <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
-            <BrandList>BMW PKW</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>E9X</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>E9X</Series>
-            <ModelSeries>E89X</ModelSeries>
-            <BrSgbd>E89X</BrSgbd>
-            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1227,7 +1353,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E60</Series>
+            <ModelSeries>E060</ModelSeries>
             <BrSgbd>E60</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1241,7 +1369,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E61</Series>
+            <ModelSeries>E060</ModelSeries>
             <BrSgbd>E60</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1255,7 +1385,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E63</Series>
+            <ModelSeries>E060</ModelSeries>
             <BrSgbd>E60</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1269,7 +1401,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E64</Series>
+            <ModelSeries>E060</ModelSeries>
             <BrSgbd>E60</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1283,7 +1417,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R55</Series>
+            <ModelSeries>R056</ModelSeries>
             <BrSgbd>R56</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>MINI PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1297,7 +1433,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R56</Series>
+            <ModelSeries>R056</ModelSeries>
             <BrSgbd>R56</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>MINI PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1311,7 +1449,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R57</Series>
+            <ModelSeries>R056</ModelSeries>
             <BrSgbd>R56</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>MINI PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1325,7 +1465,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R58</Series>
+            <ModelSeries>R056</ModelSeries>
             <BrSgbd>R56</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>MINI PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1339,7 +1481,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R59</Series>
+            <ModelSeries>R056</ModelSeries>
             <BrSgbd>R56</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>MINI PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1353,7 +1497,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R60</Series>
+            <ModelSeries>R056</ModelSeries>
             <BrSgbd>R56</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>MINI PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1367,7 +1513,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R61</Series>
+            <ModelSeries>R056</ModelSeries>
             <BrSgbd>R56</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>MINI PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1381,7 +1529,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E72</Series>
+            <ModelSeries>E070</ModelSeries>
             <BrSgbd>E70</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1395,7 +1545,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E65</Series>
+            <ModelSeries>E065</ModelSeries>
             <BrSgbd>E65</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1409,7 +1561,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E66</Series>
+            <ModelSeries>E065</ModelSeries>
             <BrSgbd>E65</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1423,7 +1577,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E67</Series>
+            <ModelSeries>E065</ModelSeries>
             <BrSgbd>E65</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1437,7 +1593,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E68</Series>
+            <ModelSeries>E065</ModelSeries>
             <BrSgbd>E65</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -1451,8 +1609,275 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E83</Series>
+            <ModelSeries>E083</ModelSeries>
             <BrSgbd>ZCS_ALL</BrSgbd>
+            <BnType>IBUS</BnType>
             <BrandList>BMW PKW</BrandList>
+            <EcuList>
+              <DiagAddr>128</DiagAddr>
+              <Name>KOMBI</Name>
+              <GroupSgbd>D_0080|D_KOMBI</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>129</DiagAddr>
+              <Name>RIP</Name>
+              <GroupSgbd>D_0081</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>70</DiagAddr>
+              <Name>CID</Name>
+              <GroupSgbd>D_CID</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>106</DiagAddr>
+              <Name>DSP</Name>
+              <GroupSgbd>D_006A</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>112</DiagAddr>
+              <Name>RDC</Name>
+              <GroupSgbd>D_0070</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>59</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_003b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>200</DiagAddr>
+              <Name>TELEFON</Name>
+              <GroupSgbd>D_00c8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>245</DiagAddr>
+              <Name>LKM</Name>
+              <GroupSgbd>D_00f5|d_SZM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>127</DiagAddr>
+              <Name>NAVI</Name>
+              <GroupSgbd>D_007f</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>118</DiagAddr>
+              <Name>CDC</Name>
+              <GroupSgbd>D_0076</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>68</DiagAddr>
+              <Name>EWS</Name>
+              <GroupSgbd>D_0044</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>0</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0000|D_ZKE_GM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>91</DiagAddr>
+              <Name>IHKA</Name>
+              <GroupSgbd>D_005B</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>208</DiagAddr>
+              <Name>LM</Name>
+              <GroupSgbd>D_00d0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>80</DiagAddr>
+              <Name>MFL</Name>
+              <GroupSgbd>D_0050</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>176</DiagAddr>
+              <Name>SES</Name>
+              <GroupSgbd>D_00b0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>96</DiagAddr>
+              <Name>PDC</Name>
+              <GroupSgbd>D_0060</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>104</DiagAddr>
+              <Name>RADIO</Name>
+              <GroupSgbd>D_0068</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>116</DiagAddr>
+              <Name>OC</Name>
+              <GroupSgbd>D_0074</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>114</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_0072|D_0072b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>102</DiagAddr>
+              <Name>ALC</Name>
+              <GroupSgbd>D_0066</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>8</DiagAddr>
+              <Name>SHD</Name>
+              <GroupSgbd>D_0008</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>164</DiagAddr>
+              <Name>ZAE</Name>
+              <GroupSgbd>D_00a4|D_SIM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>232</DiagAddr>
+              <Name>RLS</Name>
+              <GroupSgbd>D_00e8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>41</DiagAddr>
+              <Name>ABS/DSC</Name>
+              <GroupSgbd>D_ABSKWP</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>194</DiagAddr>
+              <Name>SVT</Name>
+              <GroupSgbd>D_00c2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>87</DiagAddr>
+              <Name>LWS</Name>
+              <GroupSgbd>D_0057</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>101</DiagAddr>
+              <Name>EKP</Name>
+              <GroupSgbd>D_0065</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>16</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0010</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>18</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_MOTOR|D_0012</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>19</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0013</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>24</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_EGS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>25</DiagAddr>
+              <Name>VGSG</Name>
+              <GroupSgbd>D_VGSG</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>49</DiagAddr>
+              <Name>EHPS</Name>
+              <GroupSgbd>D_0031</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>17</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0011</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>237</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_00ed</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>21</DiagAddr>
+              <Name>DDSHD</Name>
+              <GroupSgbd>D_0015</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>34</DiagAddr>
+              <Name>EML</Name>
+              <GroupSgbd>D_0022</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>187</DiagAddr>
+              <Name>JNAV</Name>
+              <GroupSgbd>D_00bb</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>48</DiagAddr>
+              <Name>CCM</Name>
+              <GroupSgbd>D_0030</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>50</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_0032</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>154</DiagAddr>
+              <Name>LWR</Name>
+              <GroupSgbd>D_009a</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>53</DiagAddr>
+              <Name>LSM/EPS</Name>
+              <GroupSgbd>D_0035|D_EPS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>64</DiagAddr>
+              <Name>FBZV</Name>
+              <GroupSgbd>D_0040</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>86</DiagAddr>
+              <Name>DSC</Name>
+              <GroupSgbd>D_0056</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>240</DiagAddr>
+              <Name>CIDB</Name>
+              <GroupSgbd>D_00f0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>107</DiagAddr>
+              <Name>STH</Name>
+              <GroupSgbd>D_ZUHEIZ</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>158</DiagAddr>
+              <Name>UEB</Name>
+              <GroupSgbd>D_009e</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>172</DiagAddr>
+              <Name>EHC2</Name>
+              <GroupSgbd>D_00AC</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>192</DiagAddr>
+              <Name>ZIS</Name>
+              <GroupSgbd>D_00c0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>205</DiagAddr>
+              <Name>BC</Name>
+              <GroupSgbd>D_00cd</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>218</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_00da</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>156</DiagAddr>
+              <Name>CVM</Name>
+              <GroupSgbd>D_009c</GroupSgbd>
+            </EcuList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -1765,8 +2190,305 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E85</Series>
+            <ModelSeries>E085</ModelSeries>
             <BrSgbd>ZCS_ALL</BrSgbd>
+            <BnType>IBUS</BnType>
             <BrandList>BMW PKW</BrandList>
+            <EcuList>
+              <DiagAddr>0</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0000|D_ZKE_GM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>8</DiagAddr>
+              <Name>SHD</Name>
+              <GroupSgbd>D_0008</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>16</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0010</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>17</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0011</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>18</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_MOTOR|D_0012</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>19</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0013</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>20</DiagAddr>
+              <Name>DME2</Name>
+              <GroupSgbd>D_0014</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>21</DiagAddr>
+              <Name>DDSHD</Name>
+              <GroupSgbd>D_0015</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>24</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_EGS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>34</DiagAddr>
+              <Name>EML</Name>
+              <GroupSgbd>D_0022</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>70</DiagAddr>
+              <Name>CID</Name>
+              <GroupSgbd>D_CID</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>48</DiagAddr>
+              <Name>CCM</Name>
+              <GroupSgbd>D_0030</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>49</DiagAddr>
+              <Name>EHPS</Name>
+              <GroupSgbd>D_0031</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>50</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_0032</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>52</DiagAddr>
+              <Name>VGSG</Name>
+              <GroupSgbd>D_VGSG</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>53</DiagAddr>
+              <Name>LSM/EPS</Name>
+              <GroupSgbd>D_0035|D_EPS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>59</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_003b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>64</DiagAddr>
+              <Name>FBZV</Name>
+              <GroupSgbd>D_0040</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>68</DiagAddr>
+              <Name>EWS</Name>
+              <GroupSgbd>D_0044</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>41</DiagAddr>
+              <Name>DSC/DXC</Name>
+              <GroupSgbd>D_ABSKWP</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>80</DiagAddr>
+              <Name>MFL</Name>
+              <GroupSgbd>D_0050</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>86</DiagAddr>
+              <Name>DSC</Name>
+              <GroupSgbd>D_0056</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>87</DiagAddr>
+              <Name>LWS</Name>
+              <GroupSgbd>D_0057</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>91</DiagAddr>
+              <Name>IHKA</Name>
+              <GroupSgbd>D_005B</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>96</DiagAddr>
+              <Name>PDC</Name>
+              <GroupSgbd>D_0060</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>101</DiagAddr>
+              <Name>EKP</Name>
+              <GroupSgbd>D_0065</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>102</DiagAddr>
+              <Name>ALC</Name>
+              <GroupSgbd>D_0066</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>104</DiagAddr>
+              <Name>RADIO</Name>
+              <GroupSgbd>D_0068</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>106</DiagAddr>
+              <Name>DSP</Name>
+              <GroupSgbd>D_006A</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>107</DiagAddr>
+              <Name>STH</Name>
+              <GroupSgbd>D_ZUHEIZ</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>112</DiagAddr>
+              <Name>RDC</Name>
+              <GroupSgbd>D_0070</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>114</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_0072|D_0072b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>116</DiagAddr>
+              <Name>OC</Name>
+              <GroupSgbd>D_0074</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>118</DiagAddr>
+              <Name>CDC</Name>
+              <GroupSgbd>D_0076</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>127</DiagAddr>
+              <Name>NAVI</Name>
+              <GroupSgbd>D_007f</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>128</DiagAddr>
+              <Name>KOMBI</Name>
+              <GroupSgbd>D_0080|D_KOMBI</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>129</DiagAddr>
+              <Name>RIP</Name>
+              <GroupSgbd>D_0081</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>154</DiagAddr>
+              <Name>LWR</Name>
+              <GroupSgbd>D_009a</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>156</DiagAddr>
+              <Name>CVM</Name>
+              <GroupSgbd>D_009c</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>158</DiagAddr>
+              <Name>UEB</Name>
+              <GroupSgbd>D_009e</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>161</DiagAddr>
+              <Name>SBSL</Name>
+              <GroupSgbd>D_SBSL2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>162</DiagAddr>
+              <Name>SBSR</Name>
+              <GroupSgbd>D_SBSR2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>164</DiagAddr>
+              <Name>ZAE</Name>
+              <GroupSgbd>D_00a4|D_SIM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>166</DiagAddr>
+              <Name>GR</Name>
+              <GroupSgbd>D_00a6</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>172</DiagAddr>
+              <Name>EHC2</Name>
+              <GroupSgbd>D_00AC</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>173</DiagAddr>
+              <Name>STVL</Name>
+              <GroupSgbd>D_STVL2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>174</DiagAddr>
+              <Name>STVR</Name>
+              <GroupSgbd>D_STVR2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>192</DiagAddr>
+              <Name>ZIS</Name>
+              <GroupSgbd>D_00c0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>194</DiagAddr>
+              <Name>SVT</Name>
+              <GroupSgbd>D_00c2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>200</DiagAddr>
+              <Name>TELEFON</Name>
+              <GroupSgbd>D_00c8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>205</DiagAddr>
+              <Name>BC</Name>
+              <GroupSgbd>D_00cd</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>208</DiagAddr>
+              <Name>LM</Name>
+              <GroupSgbd>D_00d0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>218</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_00da</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>232</DiagAddr>
+              <Name>RLS</Name>
+              <GroupSgbd>D_00e8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>237</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_00ed</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>240</DiagAddr>
+              <Name>CIDB</Name>
+              <GroupSgbd>D_00f0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>245</DiagAddr>
+              <Name>LKM</Name>
+              <GroupSgbd>D_00f5|d_szm</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>1</DiagAddr>
+              <Name>ACSM</Name>
+              <GroupSgbd>D_SIM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>115</DiagAddr>
+              <Name>CID</Name>
+              <GroupSgbd>D_CID</GroupSgbd>
+            </EcuList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -1779,8 +2501,305 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E86</Series>
+            <ModelSeries>E085</ModelSeries>
             <BrSgbd>ZCS_ALL</BrSgbd>
+            <BnType>IBUS</BnType>
             <BrandList>BMW PKW</BrandList>
+            <EcuList>
+              <DiagAddr>0</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0000|D_ZKE_GM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>8</DiagAddr>
+              <Name>SHD</Name>
+              <GroupSgbd>D_0008</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>16</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0010</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>17</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0011</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>18</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_MOTOR|D_0012</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>19</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0013</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>20</DiagAddr>
+              <Name>DME2</Name>
+              <GroupSgbd>D_0014</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>21</DiagAddr>
+              <Name>DDSHD</Name>
+              <GroupSgbd>D_0015</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>24</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_EGS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>34</DiagAddr>
+              <Name>EML</Name>
+              <GroupSgbd>D_0022</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>70</DiagAddr>
+              <Name>CID</Name>
+              <GroupSgbd>D_CID</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>48</DiagAddr>
+              <Name>CCM</Name>
+              <GroupSgbd>D_0030</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>49</DiagAddr>
+              <Name>EHPS</Name>
+              <GroupSgbd>D_0031</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>50</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_0032</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>52</DiagAddr>
+              <Name>VGSG</Name>
+              <GroupSgbd>D_VGSG</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>53</DiagAddr>
+              <Name>LSM/EPS</Name>
+              <GroupSgbd>D_0035|D_EPS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>59</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_003b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>64</DiagAddr>
+              <Name>FBZV</Name>
+              <GroupSgbd>D_0040</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>68</DiagAddr>
+              <Name>EWS</Name>
+              <GroupSgbd>D_0044</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>41</DiagAddr>
+              <Name>DSC/DXC</Name>
+              <GroupSgbd>D_ABSKWP</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>80</DiagAddr>
+              <Name>MFL</Name>
+              <GroupSgbd>D_0050</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>86</DiagAddr>
+              <Name>DSC</Name>
+              <GroupSgbd>D_0056</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>87</DiagAddr>
+              <Name>LWS</Name>
+              <GroupSgbd>D_0057</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>91</DiagAddr>
+              <Name>IHKA</Name>
+              <GroupSgbd>D_005B</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>96</DiagAddr>
+              <Name>PDC</Name>
+              <GroupSgbd>D_0060</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>101</DiagAddr>
+              <Name>EKP</Name>
+              <GroupSgbd>D_0065</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>102</DiagAddr>
+              <Name>ALC</Name>
+              <GroupSgbd>D_0066</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>104</DiagAddr>
+              <Name>RADIO</Name>
+              <GroupSgbd>D_0068</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>106</DiagAddr>
+              <Name>DSP</Name>
+              <GroupSgbd>D_006A</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>107</DiagAddr>
+              <Name>STH</Name>
+              <GroupSgbd>D_ZUHEIZ</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>112</DiagAddr>
+              <Name>RDC</Name>
+              <GroupSgbd>D_0070</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>114</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_0072|D_0072b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>116</DiagAddr>
+              <Name>OC</Name>
+              <GroupSgbd>D_0074</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>118</DiagAddr>
+              <Name>CDC</Name>
+              <GroupSgbd>D_0076</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>127</DiagAddr>
+              <Name>NAVI</Name>
+              <GroupSgbd>D_007f</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>128</DiagAddr>
+              <Name>KOMBI</Name>
+              <GroupSgbd>D_0080|D_KOMBI</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>129</DiagAddr>
+              <Name>RIP</Name>
+              <GroupSgbd>D_0081</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>154</DiagAddr>
+              <Name>LWR</Name>
+              <GroupSgbd>D_009a</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>156</DiagAddr>
+              <Name>CVM</Name>
+              <GroupSgbd>D_009c</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>158</DiagAddr>
+              <Name>UEB</Name>
+              <GroupSgbd>D_009e</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>161</DiagAddr>
+              <Name>SBSL</Name>
+              <GroupSgbd>D_SBSL2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>162</DiagAddr>
+              <Name>SBSR</Name>
+              <GroupSgbd>D_SBSR2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>164</DiagAddr>
+              <Name>ZAE</Name>
+              <GroupSgbd>D_00a4|D_SIM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>166</DiagAddr>
+              <Name>GR</Name>
+              <GroupSgbd>D_00a6</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>172</DiagAddr>
+              <Name>EHC2</Name>
+              <GroupSgbd>D_00AC</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>173</DiagAddr>
+              <Name>STVL</Name>
+              <GroupSgbd>D_STVL2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>174</DiagAddr>
+              <Name>STVR</Name>
+              <GroupSgbd>D_STVR2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>192</DiagAddr>
+              <Name>ZIS</Name>
+              <GroupSgbd>D_00c0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>194</DiagAddr>
+              <Name>SVT</Name>
+              <GroupSgbd>D_00c2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>200</DiagAddr>
+              <Name>TELEFON</Name>
+              <GroupSgbd>D_00c8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>205</DiagAddr>
+              <Name>BC</Name>
+              <GroupSgbd>D_00cd</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>208</DiagAddr>
+              <Name>LM</Name>
+              <GroupSgbd>D_00d0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>218</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_00da</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>232</DiagAddr>
+              <Name>RLS</Name>
+              <GroupSgbd>D_00e8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>237</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_00ed</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>240</DiagAddr>
+              <Name>CIDB</Name>
+              <GroupSgbd>D_00f0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>245</DiagAddr>
+              <Name>LKM</Name>
+              <GroupSgbd>D_00f5|d_szm</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>1</DiagAddr>
+              <Name>ACSM</Name>
+              <GroupSgbd>D_SIM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>115</DiagAddr>
+              <Name>CID</Name>
+              <GroupSgbd>D_CID</GroupSgbd>
+            </EcuList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -3223,8 +4242,265 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R50</Series>
+            <ModelSeries>R050</ModelSeries>
             <BrSgbd>ZCS_ALL</BrSgbd>
+            <BnType>IBUS</BnType>
             <BrandList>MINI PKW</BrandList>
+            <EcuList>
+              <DiagAddr>128</DiagAddr>
+              <Name>KOMBI</Name>
+              <GroupSgbd>D_0080|D_KOMBI</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>129</DiagAddr>
+              <Name>RIP</Name>
+              <GroupSgbd>D_0081</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>0</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0000|D_ZKE_GM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>41</DiagAddr>
+              <Name>ABS/DSC</Name>
+              <GroupSgbd>D_ABSKWP</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>16</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0010</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>18</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_MOTOR|D_0012</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>19</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0013</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>87</DiagAddr>
+              <Name>LWS</Name>
+              <GroupSgbd>D_0057</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>49</DiagAddr>
+              <Name>EHPS</Name>
+              <GroupSgbd>D_0031</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>24</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_EGS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>154</DiagAddr>
+              <Name>LWR</Name>
+              <GroupSgbd>D_009a</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>68</DiagAddr>
+              <Name>EWS</Name>
+              <GroupSgbd>D_0044</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>96</DiagAddr>
+              <Name>PDC</Name>
+              <GroupSgbd>D_0060</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>91</DiagAddr>
+              <Name>IHKA</Name>
+              <GroupSgbd>D_005B</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>156</DiagAddr>
+              <Name>CVM</Name>
+              <GroupSgbd>D_009c</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>112</DiagAddr>
+              <Name>RDC</Name>
+              <GroupSgbd>D_0070</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>164</DiagAddr>
+              <Name>ZAE</Name>
+              <GroupSgbd>D_00a4|D_SIM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>8</DiagAddr>
+              <Name>SHD</Name>
+              <GroupSgbd>D_0008</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>232</DiagAddr>
+              <Name>RLS</Name>
+              <GroupSgbd>D_00e8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>116</DiagAddr>
+              <Name>OC</Name>
+              <GroupSgbd>D_0074</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>240</DiagAddr>
+              <Name>CIDB</Name>
+              <GroupSgbd>D_00f0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>59</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_003b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>237</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_00ed</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>118</DiagAddr>
+              <Name>CDC</Name>
+              <GroupSgbd>D_0076</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>106</DiagAddr>
+              <Name>DSP</Name>
+              <GroupSgbd>D_006A</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>104</DiagAddr>
+              <Name>RADIO</Name>
+              <GroupSgbd>D_0068</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>80</DiagAddr>
+              <Name>MFL</Name>
+              <GroupSgbd>D_0050</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>127</DiagAddr>
+              <Name>NAVI</Name>
+              <GroupSgbd>D_007f</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>187</DiagAddr>
+              <Name>JNAV</Name>
+              <GroupSgbd>D_00bb</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>200</DiagAddr>
+              <Name>TELEFON</Name>
+              <GroupSgbd>D_00c8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>17</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0011</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>21</DiagAddr>
+              <Name>DDSHD</Name>
+              <GroupSgbd>D_0015</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>34</DiagAddr>
+              <Name>EML</Name>
+              <GroupSgbd>D_0022</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>48</DiagAddr>
+              <Name>CCM</Name>
+              <GroupSgbd>D_0030</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>50</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_0032</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>52</DiagAddr>
+              <Name>VGSG</Name>
+              <GroupSgbd>D_VGSG</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>53</DiagAddr>
+              <Name>LSM/EPS</Name>
+              <GroupSgbd>D_0035|D_EPS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>64</DiagAddr>
+              <Name>FBZV</Name>
+              <GroupSgbd>D_0040</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>86</DiagAddr>
+              <Name>DSC</Name>
+              <GroupSgbd>D_0056</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>101</DiagAddr>
+              <Name>EKP</Name>
+              <GroupSgbd>D_0065</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>102</DiagAddr>
+              <Name>ALC</Name>
+              <GroupSgbd>D_0066</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>107</DiagAddr>
+              <Name>STH</Name>
+              <GroupSgbd>D_ZUHEIZ</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>114</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_0072|D_0072b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>158</DiagAddr>
+              <Name>UEB</Name>
+              <GroupSgbd>D_009e</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>172</DiagAddr>
+              <Name>EHC2</Name>
+              <GroupSgbd>D_00AC</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>192</DiagAddr>
+              <Name>ZIS</Name>
+              <GroupSgbd>D_00c0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>194</DiagAddr>
+              <Name>SVT</Name>
+              <GroupSgbd>D_00c2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>205</DiagAddr>
+              <Name>BC</Name>
+              <GroupSgbd>D_00cd</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>208</DiagAddr>
+              <Name>LM</Name>
+              <GroupSgbd>D_00d0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>218</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_00da</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>245</DiagAddr>
+              <Name>LKM</Name>
+              <GroupSgbd>D_00f5|d_szm</GroupSgbd>
+            </EcuList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -3237,8 +4513,265 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R52</Series>
+            <ModelSeries>R050</ModelSeries>
             <BrSgbd>ZCS_ALL</BrSgbd>
+            <BnType>IBUS</BnType>
             <BrandList>MINI PKW</BrandList>
+            <EcuList>
+              <DiagAddr>128</DiagAddr>
+              <Name>KOMBI</Name>
+              <GroupSgbd>D_0080|D_KOMBI</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>129</DiagAddr>
+              <Name>RIP</Name>
+              <GroupSgbd>D_0081</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>0</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0000|D_ZKE_GM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>41</DiagAddr>
+              <Name>ABS/DSC</Name>
+              <GroupSgbd>D_ABSKWP</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>16</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0010</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>18</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_MOTOR|D_0012</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>19</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0013</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>87</DiagAddr>
+              <Name>LWS</Name>
+              <GroupSgbd>D_0057</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>49</DiagAddr>
+              <Name>EHPS</Name>
+              <GroupSgbd>D_0031</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>24</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_EGS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>154</DiagAddr>
+              <Name>LWR</Name>
+              <GroupSgbd>D_009a</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>68</DiagAddr>
+              <Name>EWS</Name>
+              <GroupSgbd>D_0044</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>96</DiagAddr>
+              <Name>PDC</Name>
+              <GroupSgbd>D_0060</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>91</DiagAddr>
+              <Name>IHKA</Name>
+              <GroupSgbd>D_005B</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>156</DiagAddr>
+              <Name>CVM</Name>
+              <GroupSgbd>D_009c</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>112</DiagAddr>
+              <Name>RDC</Name>
+              <GroupSgbd>D_0070</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>164</DiagAddr>
+              <Name>ZAE</Name>
+              <GroupSgbd>D_00a4|D_SIM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>8</DiagAddr>
+              <Name>SHD</Name>
+              <GroupSgbd>D_0008</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>232</DiagAddr>
+              <Name>RLS</Name>
+              <GroupSgbd>D_00e8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>116</DiagAddr>
+              <Name>OC</Name>
+              <GroupSgbd>D_0074</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>240</DiagAddr>
+              <Name>CIDB</Name>
+              <GroupSgbd>D_00f0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>59</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_003b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>237</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_00ed</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>118</DiagAddr>
+              <Name>CDC</Name>
+              <GroupSgbd>D_0076</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>106</DiagAddr>
+              <Name>DSP</Name>
+              <GroupSgbd>D_006A</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>104</DiagAddr>
+              <Name>RADIO</Name>
+              <GroupSgbd>D_0068</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>80</DiagAddr>
+              <Name>MFL</Name>
+              <GroupSgbd>D_0050</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>127</DiagAddr>
+              <Name>NAVI</Name>
+              <GroupSgbd>D_007f</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>187</DiagAddr>
+              <Name>JNAV</Name>
+              <GroupSgbd>D_00bb</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>200</DiagAddr>
+              <Name>TELEFON</Name>
+              <GroupSgbd>D_00c8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>17</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0011</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>21</DiagAddr>
+              <Name>DDSHD</Name>
+              <GroupSgbd>D_0015</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>34</DiagAddr>
+              <Name>EML</Name>
+              <GroupSgbd>D_0022</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>48</DiagAddr>
+              <Name>CCM</Name>
+              <GroupSgbd>D_0030</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>50</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_0032</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>52</DiagAddr>
+              <Name>VGSG</Name>
+              <GroupSgbd>D_VGSG</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>53</DiagAddr>
+              <Name>LSM/EPS</Name>
+              <GroupSgbd>D_0035|D_EPS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>64</DiagAddr>
+              <Name>FBZV</Name>
+              <GroupSgbd>D_0040</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>86</DiagAddr>
+              <Name>DSC</Name>
+              <GroupSgbd>D_0056</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>101</DiagAddr>
+              <Name>EKP</Name>
+              <GroupSgbd>D_0065</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>102</DiagAddr>
+              <Name>ALC</Name>
+              <GroupSgbd>D_0066</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>107</DiagAddr>
+              <Name>STH</Name>
+              <GroupSgbd>D_ZUHEIZ</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>114</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_0072|D_0072b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>158</DiagAddr>
+              <Name>UEB</Name>
+              <GroupSgbd>D_009e</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>172</DiagAddr>
+              <Name>EHC2</Name>
+              <GroupSgbd>D_00AC</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>192</DiagAddr>
+              <Name>ZIS</Name>
+              <GroupSgbd>D_00c0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>194</DiagAddr>
+              <Name>SVT</Name>
+              <GroupSgbd>D_00c2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>205</DiagAddr>
+              <Name>BC</Name>
+              <GroupSgbd>D_00cd</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>208</DiagAddr>
+              <Name>LM</Name>
+              <GroupSgbd>D_00d0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>218</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_00da</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>245</DiagAddr>
+              <Name>LKM</Name>
+              <GroupSgbd>D_00f5|d_szm</GroupSgbd>
+            </EcuList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -3251,8 +4784,265 @@
         <ArrayOfVSI>
           <VSI>
             <Series>R53</Series>
+            <ModelSeries>R050</ModelSeries>
             <BrSgbd>ZCS_ALL</BrSgbd>
+            <BnType>IBUS</BnType>
             <BrandList>MINI PKW</BrandList>
+            <EcuList>
+              <DiagAddr>128</DiagAddr>
+              <Name>KOMBI</Name>
+              <GroupSgbd>D_0080|D_KOMBI</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>129</DiagAddr>
+              <Name>RIP</Name>
+              <GroupSgbd>D_0081</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>0</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0000|D_ZKE_GM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>41</DiagAddr>
+              <Name>ABS/DSC</Name>
+              <GroupSgbd>D_ABSKWP</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>16</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0010</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>18</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_MOTOR|D_0012</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>19</DiagAddr>
+              <Name>DME</Name>
+              <GroupSgbd>D_0013</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>87</DiagAddr>
+              <Name>LWS</Name>
+              <GroupSgbd>D_0057</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>49</DiagAddr>
+              <Name>EHPS</Name>
+              <GroupSgbd>D_0031</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>24</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_EGS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>154</DiagAddr>
+              <Name>LWR</Name>
+              <GroupSgbd>D_009a</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>68</DiagAddr>
+              <Name>EWS</Name>
+              <GroupSgbd>D_0044</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>96</DiagAddr>
+              <Name>PDC</Name>
+              <GroupSgbd>D_0060</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>91</DiagAddr>
+              <Name>IHKA</Name>
+              <GroupSgbd>D_005B</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>156</DiagAddr>
+              <Name>CVM</Name>
+              <GroupSgbd>D_009c</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>112</DiagAddr>
+              <Name>RDC</Name>
+              <GroupSgbd>D_0070</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>164</DiagAddr>
+              <Name>ZAE</Name>
+              <GroupSgbd>D_00a4|D_SIM</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>8</DiagAddr>
+              <Name>SHD</Name>
+              <GroupSgbd>D_0008</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>232</DiagAddr>
+              <Name>RLS</Name>
+              <GroupSgbd>D_00e8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>116</DiagAddr>
+              <Name>OC</Name>
+              <GroupSgbd>D_0074</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>240</DiagAddr>
+              <Name>CIDB</Name>
+              <GroupSgbd>D_00f0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>59</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_003b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>237</DiagAddr>
+              <Name>VIDEO</Name>
+              <GroupSgbd>D_00ed</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>118</DiagAddr>
+              <Name>CDC</Name>
+              <GroupSgbd>D_0076</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>106</DiagAddr>
+              <Name>DSP</Name>
+              <GroupSgbd>D_006A</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>104</DiagAddr>
+              <Name>RADIO</Name>
+              <GroupSgbd>D_0068</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>80</DiagAddr>
+              <Name>MFL</Name>
+              <GroupSgbd>D_0050</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>127</DiagAddr>
+              <Name>NAVI</Name>
+              <GroupSgbd>D_007f</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>187</DiagAddr>
+              <Name>JNAV</Name>
+              <GroupSgbd>D_00bb</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>200</DiagAddr>
+              <Name>TELEFON</Name>
+              <GroupSgbd>D_00c8</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>17</DiagAddr>
+              <Name>ZKE</Name>
+              <GroupSgbd>D_0011</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>21</DiagAddr>
+              <Name>DDSHD</Name>
+              <GroupSgbd>D_0015</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>34</DiagAddr>
+              <Name>EML</Name>
+              <GroupSgbd>D_0022</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>48</DiagAddr>
+              <Name>CCM</Name>
+              <GroupSgbd>D_0030</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>50</DiagAddr>
+              <Name>EGS</Name>
+              <GroupSgbd>D_0032</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>52</DiagAddr>
+              <Name>VGSG</Name>
+              <GroupSgbd>D_VGSG</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>53</DiagAddr>
+              <Name>LSM/EPS</Name>
+              <GroupSgbd>D_0035|D_EPS</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>64</DiagAddr>
+              <Name>FBZV</Name>
+              <GroupSgbd>D_0040</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>86</DiagAddr>
+              <Name>DSC</Name>
+              <GroupSgbd>D_0056</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>101</DiagAddr>
+              <Name>EKP</Name>
+              <GroupSgbd>D_0065</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>102</DiagAddr>
+              <Name>ALC</Name>
+              <GroupSgbd>D_0066</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>107</DiagAddr>
+              <Name>STH</Name>
+              <GroupSgbd>D_ZUHEIZ</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>114</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_0072|D_0072b</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>158</DiagAddr>
+              <Name>UEB</Name>
+              <GroupSgbd>D_009e</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>172</DiagAddr>
+              <Name>EHC2</Name>
+              <GroupSgbd>D_00AC</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>192</DiagAddr>
+              <Name>ZIS</Name>
+              <GroupSgbd>D_00c0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>194</DiagAddr>
+              <Name>SVT</Name>
+              <GroupSgbd>D_00c2</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>205</DiagAddr>
+              <Name>BC</Name>
+              <GroupSgbd>D_00cd</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>208</DiagAddr>
+              <Name>LM</Name>
+              <GroupSgbd>D_00d0</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>218</DiagAddr>
+              <Name>SM</Name>
+              <GroupSgbd>D_00da</GroupSgbd>
+            </EcuList>
+            <EcuList>
+              <DiagAddr>245</DiagAddr>
+              <Name>LKM</Name>
+              <GroupSgbd>D_00f5|d_szm</GroupSgbd>
+            </EcuList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -3265,14 +5055,18 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR1</Series>
+            <ModelSeries>RR01</ModelSeries>
             <BrSgbd>RR1</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
             <Date>201205</Date>
             <DateCompare>&lt;=</DateCompare>
           </VSI>
           <VSI>
             <Series>RR1</Series>
+            <ModelSeries>RR01</ModelSeries>
             <BrSgbd>RR1_2020</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
             <Date>201206</Date>
             <DateCompare>&gt;=</DateCompare>
@@ -3288,14 +5082,18 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR2</Series>
+            <ModelSeries>RR01</ModelSeries>
             <BrSgbd>RR1</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
             <Date>201205</Date>
             <DateCompare>&lt;=</DateCompare>
           </VSI>
           <VSI>
             <Series>RR2</Series>
+            <ModelSeries>RR01</ModelSeries>
             <BrSgbd>RR1_2020</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
             <Date>201206</Date>
             <DateCompare>&gt;=</DateCompare>
@@ -3311,14 +5109,18 @@
         <ArrayOfVSI>
           <VSI>
             <Series>RR3</Series>
+            <ModelSeries>RR01</ModelSeries>
             <BrSgbd>RR1</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
             <Date>201205</Date>
             <DateCompare>&lt;=</DateCompare>
           </VSI>
           <VSI>
             <Series>RR3</Series>
+            <ModelSeries>RR01</ModelSeries>
             <BrSgbd>RR1_2020</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
             <Date>201206</Date>
             <DateCompare>&gt;=</DateCompare>
@@ -3334,7 +5136,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F01</Series>
+            <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3348,7 +5152,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F02</Series>
+            <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3362,7 +5168,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F03</Series>
+            <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3376,7 +5184,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F04</Series>
+            <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3390,7 +5200,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F06</Series>
+            <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3404,7 +5216,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F07</Series>
+            <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3418,7 +5232,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F10</Series>
+            <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3432,7 +5248,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F11</Series>
+            <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3446,7 +5264,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F12</Series>
+            <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3460,7 +5280,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F13</Series>
+            <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3474,7 +5296,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>F18</Series>
+            <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3488,7 +5312,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G20</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3502,7 +5328,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G21</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3516,7 +5344,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G22</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3530,7 +5360,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G23</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3544,7 +5376,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G42</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3558,7 +5392,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G28</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3572,7 +5408,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G26</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3586,7 +5424,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G80</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3600,7 +5440,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G82</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3614,7 +5456,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G83</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3628,7 +5472,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G87</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3642,7 +5488,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G81</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3656,7 +5504,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>I20</Series>
+            <ModelSeries>I020</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW i</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3671,6 +5521,7 @@
           <VSI>
             <Series>F70</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3686,6 +5537,7 @@
           <VSI>
             <Series>F74</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3701,6 +5553,7 @@
           <VSI>
             <Series>F78</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3715,7 +5568,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>U06</Series>
+            <ModelSeries>U006</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3730,7 +5585,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>U11</Series>
+            <ModelSeries>U006</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3745,7 +5602,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>U12</Series>
+            <ModelSeries>U006</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3761,6 +5620,7 @@
           <VSI>
             <Series>U10</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3776,6 +5636,7 @@
           <VSI>
             <Series>U25</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3791,6 +5652,7 @@
           <VSI>
             <Series>F66</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3806,6 +5668,7 @@
           <VSI>
             <Series>F65</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3821,6 +5684,7 @@
           <VSI>
             <Series>F67</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
             <BrandList>MINI PKW</BrandList>
           </VSI>
@@ -3835,7 +5699,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E70</Series>
+            <ModelSeries>E070</ModelSeries>
             <BrSgbd>E70</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3849,24 +5715,10 @@
         <ArrayOfVSI>
           <VSI>
             <Series>E71</Series>
+            <ModelSeries>E070</ModelSeries>
             <BrSgbd>E70</BrSgbd>
+            <BnType>BN2000</BnType>
             <BrandList>BMW PKW</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>K01</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>K01</Series>
-            <ModelSeries>K001</ModelSeries>
-            <BrSgbd>X_K001</BrSgbd>
-            <BnType>BN2020_MOTORBIKE</BnType>
-            <BrandList>BMW MOTORRAD</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -3879,7 +5731,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G70</Series>
+            <ModelSeries>G070</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3894,6 +5748,7 @@
           <VSI>
             <Series>G73</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3908,6 +5763,7 @@
           <VSI>
             <Series>G60</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3922,6 +5778,7 @@
           <VSI>
             <Series>G68</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3936,6 +5793,7 @@
           <VSI>
             <Series>G90</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3950,6 +5808,7 @@
           <VSI>
             <Series>G99</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
@@ -3964,39 +5823,8 @@
           <VSI>
             <Series>G61</Series>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>K24</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>K24</Series>
-            <ModelSeries>K024</ModelSeries>
-            <BrSgbd>MRK24</BrSgbd>
-            <BnType>BN2000_MOTORBIKE</BnType>
-            <BrandList>BMW MOTORRAD</BrandList>
-          </VSI>
-        </ArrayOfVSI>
-      </value>
-    </item>
-    <item>
-      <key>
-        <string>K1x</string>
-      </key>
-      <value>
-        <ArrayOfVSI>
-          <VSI>
-            <Series>K1x</Series>
-            <ModelSeries>K01x</ModelSeries>
-            <BrSgbd>MRK24</BrSgbd>
-            <BnType>BNK01X_MOTORBIKE</BnType>
-            <BrandList>BMW MOTORRAD</BrandList>
           </VSI>
         </ArrayOfVSI>
       </value>
@@ -4009,7 +5837,9 @@
         <ArrayOfVSI>
           <VSI>
             <Series>G09</Series>
+            <ModelSeries>S18A</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
         </ArrayOfVSI>
