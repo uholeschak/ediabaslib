@@ -3541,6 +3541,8 @@ namespace BmwDeepObd
 
                                         if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
                                         {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU found: Name={0}, Addr={1}, Desc={2}, Sgdb={3}, Group={4}, Date={5}",
+                                                ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup, dateYear);
                                             if (ecuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                             {
                                                 // address not existing
