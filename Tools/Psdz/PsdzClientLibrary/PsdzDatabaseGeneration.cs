@@ -3810,7 +3810,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                Dictionary<string, Tuple<string, string>> seriesDict = new Dictionary<string, Tuple<string, string>>();
+                Dictionary<string, Tuple<string, string, string>> seriesDict = new Dictionary<string, Tuple<string, string, string>>();
                 foreach (string typeKey in typeKeys)
                 {
                     List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
@@ -3819,6 +3819,7 @@ namespace PsdzClient
                         string series = null;
                         string modelSeries = null;
                         string productType = null;
+                        string productLine = null;
                         foreach (Characteristics characteristics in characteristicsList)
                         {
                             if (string.Compare(characteristics.NodeClass, "40128130", StringComparison.OrdinalIgnoreCase) == 0)
@@ -3833,6 +3834,10 @@ namespace PsdzClient
                             {
                                 productType = characteristics.EcuTranslation.TextDe;
                             }
+                            else if (string.Compare(characteristics.NodeClass, "40039952514", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                productLine = characteristics.EcuTranslation.TextDe;
+                            }
                         }
 
                         if (!string.IsNullOrEmpty(series) && !string.IsNullOrEmpty(modelSeries) && !string.IsNullOrEmpty(productType))
@@ -3840,7 +3845,7 @@ namespace PsdzClient
                             string key = series.ToUpperInvariant();
                             if (!seriesDict.ContainsKey(key))
                             {
-                                seriesDict.Add(key, new Tuple<string, string>(modelSeries, productType));
+                                seriesDict.Add(key, new Tuple<string, string, string>(modelSeries, productType, productLine));
                             }
                         }
                     }
@@ -3922,7 +3927,7 @@ namespace PsdzClient
                             // add missing model series
                             foreach (string series in seriesHash)
                             {
-                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out Tuple<string, string> seriesTuple))
+                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out Tuple<string, string, string> seriesTuple))
                                 {
                                     modelSeriesHash.Add(seriesTuple.Item1);
                                     prodType = seriesTuple.Item2;
@@ -3930,6 +3935,7 @@ namespace PsdzClient
                             }
 
                             HashSet<BNType> bnTypes = new HashSet<BNType>();
+                            HashSet<string> sgbdAddHash = new HashSet<string>();
                             Vehicle vehicleSeries = new Vehicle(clientContext);
                             vehicleSeries.Prodart = prodType;
                             foreach (string series in seriesHash)
@@ -3953,6 +3959,23 @@ namespace PsdzClient
                                 }
                             }
 
+                            foreach (string series in seriesHash)
+                            {
+                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out Tuple<string, string, string> seriesTuple))
+                                {
+                                    vehicleSeries.Ereihe = series;
+                                    vehicleSeries.Produktlinie = seriesTuple.Item3;
+                                    if (!string.IsNullOrEmpty(vehicleSeries.Produktlinie))
+                                    {
+                                        string sgbdAdditional = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleSeries);
+                                        if (!string.IsNullOrEmpty(sgbdAdditional))
+                                        {
+                                            sgbdAddHash.Add(sgbdAdditional);
+                                        }
+                                    }
+                                }
+                            }
+
                             BNType? bnTypeSeries = null;
                             switch (bnTypes.Count)
                             {
@@ -3969,9 +3992,9 @@ namespace PsdzClient
                                     break;
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, Date: {4} {5}",
-                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), bnTypeSeries, dateCompare ?? string.Empty, date ?? string.Empty);
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), bnTypeSeries, brandHash.ToList(), date, dateCompare));
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, SgdbAdd: {4}, Date: {5} {6}",
+                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), bnTypeSeries, sgbdAddHash.ToStringItems(), dateCompare ?? string.Empty, date ?? string.Empty);
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), bnTypeSeries, brandHash.ToList(), sgbdAddHash.ToList(), date, dateCompare));
                         }
                     }
                 }
@@ -4002,7 +4025,7 @@ namespace PsdzClient
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string modelSeries = null;
-                        if (seriesDict.TryGetValue(series.ToUpperInvariant(), out Tuple<string, string> seriesTuple))
+                        if (seriesDict.TryGetValue(series.ToUpperInvariant(), out Tuple<string, string, string> seriesTuple))
                         {
                             modelSeries = seriesTuple.Item1;
                         }
@@ -4015,8 +4038,9 @@ namespace PsdzClient
                         string series = keyValuePair.Key;
                         string modelSeries = keyValuePair.Value;
                         string key = series;
+                        List<string> sgdbAdd = ecuCharacteristicsInfo.SgdbAddList.Count > 0 ? ecuCharacteristicsInfo.SgdbAddList : null;
 
-                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, modelSeries, brSgbd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
+                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, modelSeries, brSgbd, sgdbAdd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
 
                         if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                         {
