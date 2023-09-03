@@ -4038,7 +4038,20 @@ namespace PsdzClient
                         string series = keyValuePair.Key;
                         string modelSeries = keyValuePair.Value;
                         string key = series;
-                        List<string> sgdbAdd = ecuCharacteristicsInfo.SgdbAddList.Count > 0 ? ecuCharacteristicsInfo.SgdbAddList : null;
+
+                        List<string> sgdbAdd = new List<string>();
+                        foreach (string sgdb in ecuCharacteristicsInfo.SgdbAddList)
+                        {
+                            if (string.Compare(brSgbd, sgdb, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                sgdbAdd.Add(sgdb);
+                            }
+                        }
+
+                        if (sgdbAdd.Count == 0)
+                        {
+                            sgdbAdd = null;
+                        }
 
                         VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, modelSeries, brSgbd, sgdbAdd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
 
