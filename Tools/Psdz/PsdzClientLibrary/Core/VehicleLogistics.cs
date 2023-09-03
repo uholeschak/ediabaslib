@@ -705,7 +705,8 @@ namespace PsdzClient.Core
         {
             IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
             string text = service.GetMainSeriesSgbd(vecInfo);
-            if (string.IsNullOrEmpty(text))
+            // [UH] check for invalid series -
+            if (string.IsNullOrEmpty(text) || text == "-")
             {
                 text = GetCharacteristics(vecInfo)?.brSgbd;
             }
