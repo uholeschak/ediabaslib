@@ -54,6 +54,7 @@ namespace BmwFileReader
                 Vin = detectVehicleBmw.Vin;
                 TypeKey = detectVehicleBmw.TypeKey;
                 GroupSgdb = detectVehicleBmw.GroupSgdb;
+                SgdbAddList = detectVehicleBmw.SgdbAddList;
                 ModelSeries = detectVehicleBmw.ModelSeries;
                 Series = detectVehicleBmw.Series;
                 ProductType = detectVehicleBmw.ProductType;
@@ -86,6 +87,7 @@ namespace BmwFileReader
                 detectVehicleBmw.Vin = Vin;
                 detectVehicleBmw.TypeKey = TypeKey;
                 detectVehicleBmw.GroupSgdb = GroupSgdb;
+                detectVehicleBmw.SgdbAddList = SgdbAddList;
                 detectVehicleBmw.ModelSeries = ModelSeries;
                 detectVehicleBmw.Series = Series;
                 detectVehicleBmw.ProductType = ProductType;
@@ -113,6 +115,7 @@ namespace BmwFileReader
             [XmlElement("Vin"), DefaultValue(null)] public string Vin { get; set; }
             [XmlElement("TypeKey"), DefaultValue(null)] public string TypeKey { get; set; }
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
+            [XmlElement("SgdbAddList"), DefaultValue(null)] public List<string> SgdbAddList { get; set; }
             [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
             [XmlElement("ProductType"), DefaultValue(null)] public string ProductType { get; set; }
@@ -163,6 +166,7 @@ namespace BmwFileReader
         public string TypeKey { get; private set; }
         public Dictionary<string, string> TypeKeyProperties;
         public string GroupSgdb { get; private set; }
+        public List<string> SgdbAddList { get; private set; }
         public string ModelSeries { get; private set; }
         public string Series { get; private set; }
         public string ProductType { get; private set; }
@@ -585,6 +589,7 @@ namespace BmwFileReader
                 }
 
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
+                SgdbAddList = vehicleSeriesInfo.SgdbAdd;
                 BnType = vehicleSeriesInfo.BnType;
                 if (BrandList == null || BrandList.Count == 0)
                 {
@@ -979,6 +984,7 @@ namespace BmwFileReader
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo != null)
                 {
+                    SgdbAddList = vehicleSeriesInfo.SgdbAdd;
                     BnType = vehicleSeriesInfo.BnType;
                     if (BrandList == null || BrandList.Count == 0)
                     {
@@ -1120,6 +1126,7 @@ namespace BmwFileReader
             TypeKey = null;
             TypeKeyProperties = null;
             GroupSgdb = null;
+            SgdbAddList = null;
             ModelSeries = null;
             Series = null;
             ProductType = null;
