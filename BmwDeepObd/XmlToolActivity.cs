@@ -419,7 +419,7 @@ namespace BmwDeepObd
         private const string UnknownVinConfigName = "Unknown";
         private static readonly string[] EcuFileNames =
         {
-            "e60", "e65", "e70", "e81", "e87", "e89X", "e90", "m12", "r56", "f01", "f01bn2k", "rr01"
+            "e60", "e65", "e70", "e81", "e87", "e89X", "e90", "m12", "r56", "f01", "f01bn2k", "rr1", "rr1_2020"
         };
         private static readonly string[] ReadVinJobs =
         {
@@ -3397,10 +3397,12 @@ namespace BmwDeepObd
                 };
 
                 string groupSgbd = null;
+                List<string> sgdbAddList = null;
                 string detectedVin = null;
                 if (detectVehicleBmw.DetectVehicleBmwFast(_instanceData.DetectMotorbikes))
                 {
                     groupSgbd = detectVehicleBmw.GroupSgdb;
+                    sgdbAddList = detectVehicleBmw.SgdbAddList;
                     detectedVin = detectVehicleBmw.Vin;
                     _instanceData.VehicleSeries = detectVehicleBmw.Series;
                     _instanceData.CDate = string.Empty;
@@ -3439,7 +3441,7 @@ namespace BmwDeepObd
                 {
                     for (int retries = 0; retries < 2; retries++)
                     {
-                        _ediabas.EdInterfaceClass.EnableTransmitCache = true;
+                        _ediabas.EdInterfaceClass.EnableTransmitCache = ecuFileNameList.Count > 1;
                         int index = 0;
                         foreach (string fileName in ecuFileNameList)
                         {
@@ -3577,19 +3579,23 @@ namespace BmwDeepObd
                                             {
                                                 if (!ecuName.StartsWith("VIRTSG", StringComparison.OrdinalIgnoreCase) && (dateYear != 0))
                                                 {
-                                                    invalidAddrList.Add(ecuAdr);
+                                                    if (!invalidAddrList.Contains(ecuAdr))
+                                                    {
+                                                        invalidAddrList.Add(ecuAdr);
+                                                    }
                                                 }
                                             }
                                         }
                                         dictIndex++;
                                     }
-                                    // ReSharper disable once LoopCanBeConvertedToQuery
-                                    foreach (long addr in invalidAddrList)
+                                }
+
+                                // ReSharper disable once LoopCanBeConvertedToQuery
+                                foreach (long addr in invalidAddrList)
+                                {
+                                    if (ecuList.All(ecuInfo => ecuInfo.Address != addr))
                                     {
-                                        if (ecuList.All(ecuInfo => ecuInfo.Address != addr))
-                                        {
-                                            invalidEcuCount++;
-                                        }
+                                        invalidEcuCount++;
                                     }
                                 }
 
