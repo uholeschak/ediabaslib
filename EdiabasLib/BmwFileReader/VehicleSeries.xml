@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <VehicleSeriesInfoDataXml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <TimeStamp>2023-09-02 01:03:12</TimeStamp>
+  <TimeStamp>2023-09-03 23:11:56</TimeStamp>
   <Version>
     <Version>4.39.20</Version>
     <Date>2022-11-30T09:17:30</Date>
@@ -5057,6 +5057,7 @@
             <Series>RR1</Series>
             <ModelSeries>RR01</ModelSeries>
             <BrSgbd>RR1</BrSgbd>
+            <SgdbAdd>RR1_2020</SgdbAdd>
             <BnType>BN2000</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
             <Date>201205</Date>
@@ -5084,6 +5085,7 @@
             <Series>RR2</Series>
             <ModelSeries>RR01</ModelSeries>
             <BrSgbd>RR1</BrSgbd>
+            <SgdbAdd>RR1_2020</SgdbAdd>
             <BnType>BN2000</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
             <Date>201205</Date>
@@ -5111,6 +5113,7 @@
             <Series>RR3</Series>
             <ModelSeries>RR01</ModelSeries>
             <BrSgbd>RR1</BrSgbd>
+            <SgdbAdd>RR1_2020</SgdbAdd>
             <BnType>BN2000</BnType>
             <BrandList>ROLLS-ROYCE PKW</BrandList>
             <Date>201205</Date>
@@ -5138,6 +5141,7 @@
             <Series>F01</Series>
             <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5154,6 +5158,7 @@
             <Series>F02</Series>
             <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5170,6 +5175,7 @@
             <Series>F03</Series>
             <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5186,6 +5192,7 @@
             <Series>F04</Series>
             <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5202,6 +5209,7 @@
             <Series>F06</Series>
             <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5218,6 +5226,7 @@
             <Series>F07</Series>
             <ModelSeries>F001</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5234,6 +5243,7 @@
             <Series>F10</Series>
             <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5250,6 +5260,7 @@
             <Series>F11</Series>
             <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5266,6 +5277,7 @@
             <Series>F12</Series>
             <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5282,6 +5294,7 @@
             <Series>F13</Series>
             <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
@@ -5298,6 +5311,7 @@
             <Series>F18</Series>
             <ModelSeries>F010</ModelSeries>
             <BrSgbd>F01</BrSgbd>
+            <SgdbAdd>F01BN2K</SgdbAdd>
             <BnType>BN2020</BnType>
             <BrandList>BMW PKW</BrandList>
           </VSI>
