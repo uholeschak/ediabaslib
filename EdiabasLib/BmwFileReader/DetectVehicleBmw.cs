@@ -164,7 +164,8 @@ namespace BmwFileReader
         public bool Ds2Vehicle { get; private set; }
         public string Vin { get; private set; }
         public string TypeKey { get; private set; }
-        public Dictionary<string, string> TypeKeyProperties;
+        public Dictionary<string, string> TypeKeyProperties { get; private set; }
+        public VehicleStructsBmw.VehicleSeriesInfo VehicleSeriesInfo { get; private set; }
         public string GroupSgdb { get; private set; }
         public List<string> SgdbAddList { get; private set; }
         public string ModelSeries { get; private set; }
@@ -588,6 +589,7 @@ namespace BmwFileReader
                     return false;
                 }
 
+                VehicleSeriesInfo = vehicleSeriesInfo;
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
                 SgdbAddList = vehicleSeriesInfo.SgdbAdd;
                 BnType = vehicleSeriesInfo.BnType;
@@ -984,6 +986,7 @@ namespace BmwFileReader
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo != null)
                 {
+                    VehicleSeriesInfo = vehicleSeriesInfo;
                     SgdbAddList = vehicleSeriesInfo.SgdbAdd;
                     BnType = vehicleSeriesInfo.BnType;
                     if (BrandList == null || BrandList.Count == 0)
@@ -1125,6 +1128,7 @@ namespace BmwFileReader
             Vin = null;
             TypeKey = null;
             TypeKeyProperties = null;
+            VehicleSeriesInfo = null;
             GroupSgdb = null;
             SgdbAddList = null;
             ModelSeries = null;
