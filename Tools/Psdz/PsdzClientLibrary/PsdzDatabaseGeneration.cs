@@ -4006,6 +4006,19 @@ namespace PsdzClient
                     string brSgbd = ecuCharacteristics.brSgbd.Trim().ToUpperInvariant();
                     BNType? bnType = ecuCharacteristicsInfo.BnType;
 
+                    bool addEcuList = false;
+                    if (ecuCharacteristicsInfo.BrandList != null)
+                    {
+                        foreach (string brandName in ecuCharacteristicsInfo.BrandList)
+                        {
+                            if (brandName.IndexOf("MINI", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
+                                addEcuList = true;
+                                break;
+                            }
+                        }
+                    }
+
                     string bnTypeName = null;
                     List<VehicleStructsBmw.VehicleEcuInfo> ecuList = null;
                     if (bnType.HasValue)
@@ -4013,11 +4026,16 @@ namespace PsdzClient
                         bnTypeName = bnType.Value.ToString();
                         if (bnType.Value == BNType.IBUS)
                         {
-                            ecuList = new List<VehicleStructsBmw.VehicleEcuInfo>();
-                            foreach (IEcuLogisticsEntry ecuLogisticsEntry in ecuCharacteristics.ecuTable)
-                            {
-                                ecuList.Add(new VehicleStructsBmw.VehicleEcuInfo(ecuLogisticsEntry.DiagAddress, ecuLogisticsEntry.Name, ecuLogisticsEntry.GroupSgbd));
-                            }
+                            addEcuList = true;
+                        }
+                    }
+
+                    if (addEcuList)
+                    {
+                        ecuList = new List<VehicleStructsBmw.VehicleEcuInfo>();
+                        foreach (IEcuLogisticsEntry ecuLogisticsEntry in ecuCharacteristics.ecuTable)
+                        {
+                            ecuList.Add(new VehicleStructsBmw.VehicleEcuInfo(ecuLogisticsEntry.DiagAddress, ecuLogisticsEntry.Name, ecuLogisticsEntry.GroupSgbd));
                         }
                     }
 
