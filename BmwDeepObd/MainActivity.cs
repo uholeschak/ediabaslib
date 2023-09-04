@@ -1328,7 +1328,7 @@ namespace BmwDeepObd
 
             bool commActive = IsCommActive();
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
-            bool pageSgdb = !string.IsNullOrEmpty(GetSelectedPageSgdb());
+            bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
@@ -1424,14 +1424,14 @@ namespace BmwDeepObd
             if (cfgPageFuncMenu != null)
             {
                 cfgPageFuncMenu.SetEnabled(interfaceAvailable && !commActive);
-                cfgPageFuncMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+                cfgPageFuncMenu.SetVisible(pageSgbd && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
             }
 
             IMenuItem cfgPageEdiabasMenu = menu.FindItem(Resource.Id.menu_cfg_page_ediabas);
             if (cfgPageEdiabasMenu != null)
             {
                 cfgPageEdiabasMenu.SetEnabled(interfaceAvailable && !commActive);
-                cfgPageEdiabasMenu.SetVisible(pageSgdb && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
+                cfgPageEdiabasMenu.SetVisible(pageSgbd && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
             }
 
             bool bmwVisible = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && selectedPageFuncAvail && !string.IsNullOrEmpty(_instanceData.ConfigFileName);
@@ -3996,7 +3996,7 @@ namespace BmwDeepObd
             }
         }
 
-        private string GetSelectedPageSgdb()
+        private string GetSelectedPageSgbd()
         {
             JobReader.PageInfo pageInfo = GetSelectedPage();
             if (pageInfo?.JobsInfo == null)
@@ -4009,25 +4009,25 @@ namespace BmwDeepObd
                 return null;
             }
 
-            string sgdb = pageInfo.JobsInfo.Sgbd;
-            if (string.IsNullOrEmpty(sgdb))
+            string sgbd = pageInfo.JobsInfo.Sgbd;
+            if (string.IsNullOrEmpty(sgbd))
             {
                 foreach (JobReader.JobInfo jobInfo in pageInfo.JobsInfo.JobList)
                 {
-                    sgdb = jobInfo.Sgbd;
-                    if (!string.IsNullOrEmpty(sgdb))
+                    sgbd = jobInfo.Sgbd;
+                    if (!string.IsNullOrEmpty(sgbd))
                     {
                         break;
                     }
                 }
             }
 
-            if (string.IsNullOrEmpty(sgdb))
+            if (string.IsNullOrEmpty(sgbd))
             {
                 return null;
             }
 
-            return sgdb;
+            return sgbd;
         }
 
         private bool SelectedPageFunctionsAvailable()
@@ -7607,13 +7607,13 @@ namespace BmwDeepObd
                 string sgdbFile = null;
                 if (currentPage)
                 {
-                    string sgdb = GetSelectedPageSgdb();
-                    if (string.IsNullOrEmpty(sgdb))
+                    string sgbd = GetSelectedPageSgbd();
+                    if (string.IsNullOrEmpty(sgbd))
                     {
                         return;
                     }
 
-                    sgdbFile = Path.Combine(_instanceData.EcuPath, sgdb);
+                    sgdbFile = Path.Combine(_instanceData.EcuPath, sgbd);
                 }
 
                 Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
