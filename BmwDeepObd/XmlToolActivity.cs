@@ -3422,10 +3422,10 @@ namespace BmwDeepObd
 
                 if (ecuFileNameList.Count > 0 && detectedVin != null && !_ediabasJobAbort)
                 {
-                    _ediabas.EdInterfaceClass.EnableTransmitCache = false;
                     List<EcuInfo> ecuList = new List<EcuInfo>();
                     List<long> invalidAddrList = new List<long>();
-                    int index = 0;
+                    int maxSteps = ecuFileNameList.Count;
+                    int currentStep = 0;
                     foreach (string fileName in ecuFileNameList)
                     {
                         try
@@ -3436,25 +3436,26 @@ namespace BmwDeepObd
                                 break;
                             }
 
-                            int localIndex = index;
-                            int fileNameListCount = ecuFileNameList.Count;
-                            RunOnUiThread(() =>
-                            {
-                                if (_activityCommon == null)
-                                {
-                                    return;
-                                }
-                                if (progress != null && fileNameListCount > 1)
-                                {
-                                    progress.Progress = 100 * localIndex / fileNameListCount;
-                                }
-                            });
-
                             ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
 
                             for (int identRetry = 0; identRetry < 10; identRetry++)
                             {
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu ident retry: {0}", identRetry + 1);
+
+                                int localMaxSteps = maxSteps;
+                                int localStep = currentStep;
+                                RunOnUiThread(() =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+
+                                    if (progress != null && localMaxSteps > 1)
+                                    {
+                                        progress.Progress = 100 * localStep / localMaxSteps;
+                                    }
+                                });
 
                                 int lastEcuListSize = ecuList.Count;
 
@@ -3582,13 +3583,15 @@ namespace BmwDeepObd
                                 {
                                     break;
                                 }
+
+                                maxSteps++;
+                                currentStep++;
                             }
                         }
                         catch (Exception)
                         {
                             // ignored
                         }
-                        index++;
 
                         if (ecuList.Count > 0)
                         {
@@ -3626,7 +3629,7 @@ namespace BmwDeepObd
                             _ediabas.ArgString = string.Empty;
                             _ediabas.ArgBinaryStd = null;
                             _ediabas.ResultsRequests = string.Empty;
-                            bool readVinOk = false;
+                            string vinJobUsed = null;
                             foreach (string vinJob in ReadVinJobs)
                             {
                                 try
@@ -3636,7 +3639,7 @@ namespace BmwDeepObd
                                         break;
                                     }
                                     _ediabas.ExecuteJob(vinJob);
-                                    readVinOk = true;
+                                    vinJobUsed = vinJob;
                                     break;
                                 }
                                 catch (Exception)
@@ -3644,7 +3647,8 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             }
-                            if (!readVinOk)
+
+                            if (string.IsNullOrEmpty(vinJobUsed))
                             {
                                 throw new Exception("Read VIN failed");
                             }
@@ -3660,10 +3664,19 @@ namespace BmwDeepObd
                                         dictIndex++;
                                         continue;
                                     }
+
+                                    string ecuName = string.Empty;
                                     Int64 ecuAdr = -1;
                                     string ecuVin = string.Empty;
                                     // ReSharper disable once InlineOutVariableDeclaration
                                     EdiabasNet.ResultData resultData;
+                                    if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
+                                    {
+                                        if (resultData.OpData is string)
+                                        {
+                                            ecuName = (string)resultData.OpData;
+                                        }
+                                    }
                                     if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
                                     {
                                         if (resultData.OpData is Int64)
@@ -3692,17 +3705,33 @@ namespace BmwDeepObd
                                             ecuVin = (string)resultData.OpData;
                                         }
                                     }
-                                    if (!string.IsNullOrEmpty(ecuVin) && DetectVehicleBmw.VinRegex.IsMatch(ecuVin))
+
+                                    EcuInfo ecuInfoMatch = null;
+                                    foreach (EcuInfo ecuInfo in _ecuList)
                                     {
-                                        foreach (EcuInfo ecuInfo in _ecuList)
+                                        if (ecuInfo.Address == ecuAdr)
                                         {
-                                            if (ecuInfo.Address == ecuAdr)
-                                            {
-                                                ecuInfo.Vin = ecuVin;
-                                                break;
-                                            }
+                                            ecuInfoMatch = ecuInfo;
+                                            break;
                                         }
                                     }
+
+                                    if (ecuInfoMatch != null)
+                                    {
+                                        if (!string.IsNullOrEmpty(ecuVin) && DetectVehicleBmw.VinRegex.IsMatch(ecuVin))
+                                        {
+                                            ecuInfoMatch.Vin = ecuVin;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0)
+                                        {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Extra ECU found: Name={1}, Addr={2}",
+                                                vinJobUsed, ecuName, ecuAdr);
+                                        }
+                                    }
+
                                     dictIndex++;
                                 }
                             }
@@ -3724,10 +3753,19 @@ namespace BmwDeepObd
                         _instanceData.Vin = GetBestVin(_ecuList);
                     }
 
+                    RunOnUiThread(() =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        progress.Progress = 100;
+                    });
+
                     UpdateBmwEcuInfo(detectVehicleBmw);
                     ReadAllXml();
                 }
-                _ediabas.EdInterfaceClass.EnableTransmitCache = false;
 
                 bool pin78ConnRequire = false;
                 if (!_ediabasJobAbort && ecuListUse == null && !elmDevice)
