@@ -3372,6 +3372,7 @@ namespace BmwDeepObd
                 int ecuInvalidCount = 0;
                 List<EcuInfo> ecuListUse = null;
                 string ecuFileNameUse = null;
+                bool unstableIdent = false;
                 List<string> ecuFileNameList = new List<string>();
 
                 DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(_ediabas, _bmwDir);
@@ -3584,6 +3585,7 @@ namespace BmwDeepObd
                                     break;
                                 }
 
+                                unstableIdent = true;
                                 maxSteps++;
                                 currentStep++;
                             }
@@ -3621,7 +3623,7 @@ namespace BmwDeepObd
                     _ecuList.AddRange(ecuListUse.OrderBy(x => x.Name));
                     _instanceData.SgbdFunctional = ecuFileNameUse;
 
-                    if (!elmDevice || string.IsNullOrEmpty(detectedVin))
+                    if (!elmDevice || unstableIdent || string.IsNullOrEmpty(detectedVin))
                     {
                         try
                         {
@@ -3732,7 +3734,7 @@ namespace BmwDeepObd
                                             string groupSgbd = null;
                                             if (detectVehicleBmw.VehicleSeriesInfo?.EcuList != null)
                                             {
-                                                foreach (VehicleEcuInfo vehicleEcuInfo in detectVehicleBmw.VehicleSeriesInfo?.EcuList)
+                                                foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in detectVehicleBmw.VehicleSeriesInfo?.EcuList)
                                                 {
                                                     if (vehicleEcuInfo.DiagAddr == ecuAdr)
                                                     {
@@ -3748,20 +3750,23 @@ namespace BmwDeepObd
                                                 {
                                                     ActivityCommon.ResolveSgbdFile(_ediabas, groupSgbd);
                                                     string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Resolved Group={1}, Sgbd={2}",
-                                                        vinJobUsed, groupSgbd, ecuSgbd);
+                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved Group={0}, Sgbd={1}", groupSgbd, ecuSgbd);
 
                                                     EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, string.Empty, ecuSgbd, groupSgbd);
                                                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                                     {
                                                         string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
                                                         EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-                                                        if (ecuVariant != null)
+                                                        if (ecuVariant == null)
+                                                        {
+                                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU variant not found for: Sgbd={0}", ecuSgbdName);
+                                                        }
+                                                        else
                                                         {
                                                             string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
                                                             if (!string.IsNullOrEmpty(title))
                                                             {
-                                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} ECU variant found for: Sgbd={0}, Title={1}", vinJobUsed, ecuSgbdName, title);
+                                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
                                                                 ecuInfo.PageName = title;
                                                                 ecuInfo.Description = title;
                                                                 ecuInfo.DescriptionTransRequired = false;
@@ -3773,8 +3778,7 @@ namespace BmwDeepObd
                                                 }
                                                 catch (Exception)
                                                 {
-                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Failed to resolve Group {1}",
-                                                        vinJobUsed, groupSgbd);
+                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Failed to resolve Group {0}", groupSgbd);
                                                 }
                                             }
                                         }
