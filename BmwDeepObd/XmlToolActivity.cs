@@ -3372,7 +3372,7 @@ namespace BmwDeepObd
                 int ecuInvalidCount = 0;
                 List<EcuInfo> ecuListUse = null;
                 string ecuFileNameUse = null;
-                List<string> ecuFileNameList = null;
+                List<string> ecuFileNameList = new List<string>();
 
                 DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(_ediabas, _bmwDir);
                 detectVehicleBmw.AbortFunc = () => _ediabasJobAbort;
@@ -3391,13 +3391,19 @@ namespace BmwDeepObd
                     });
                 };
 
-                string groupSgbd = null;
-                List<string> sgdbAddList = null;
                 string detectedVin = null;
                 if (detectVehicleBmw.DetectVehicleBmwFast(_instanceData.DetectMotorbikes))
                 {
-                    groupSgbd = detectVehicleBmw.GroupSgdb;
-                    sgdbAddList = detectVehicleBmw.SgdbAddList;
+                    if (detectVehicleBmw.SgdbAddList != null && detectVehicleBmw.SgdbAddList.Count > 0)
+                    {
+                        ecuFileNameList.AddRange(detectVehicleBmw.SgdbAddList);
+                    }
+
+                    if (!string.IsNullOrEmpty(detectVehicleBmw.GroupSgdb))
+                    {
+                        ecuFileNameList.Add(detectVehicleBmw.GroupSgdb);
+                    }
+
                     detectedVin = detectVehicleBmw.Vin;
                     _instanceData.VehicleSeries = detectVehicleBmw.Series;
                     _instanceData.CDate = string.Empty;
@@ -3414,15 +3420,11 @@ namespace BmwDeepObd
                     }
                 }
 
-                // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                if (!string.IsNullOrEmpty(groupSgbd))
-                {
-                    ecuFileNameList = new List<string> { groupSgbd };
-                }
-
-                if (ecuFileNameList != null && detectedVin != null && !_ediabasJobAbort)
+                if (ecuFileNameList.Count > 0 && detectedVin != null && !_ediabasJobAbort)
                 {
                     _ediabas.EdInterfaceClass.EnableTransmitCache = false;
+                    List<EcuInfo> ecuList = new List<EcuInfo>();
+                    List<long> invalidAddrList = new List<long>();
                     int index = 0;
                     foreach (string fileName in ecuFileNameList)
                     {
@@ -3450,8 +3452,6 @@ namespace BmwDeepObd
 
                             ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
 
-                            List<EcuInfo> ecuList = new List<EcuInfo>();
-                            List<long> invalidAddrList = new List<long>();
                             for (int identRetry = 0; identRetry < 10; identRetry++)
                             {
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu ident retry: {0}", identRetry + 1);
@@ -3583,7 +3583,15 @@ namespace BmwDeepObd
                                     break;
                                 }
                             }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                        index++;
 
+                        if (ecuList.Count > 0)
+                        {
                             ecuInvalidCount = 0;
                             // ReSharper disable once LoopCanBeConvertedToQuery
                             foreach (long addr in invalidAddrList)
@@ -3596,17 +3604,15 @@ namespace BmwDeepObd
 
                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect result: count={0}, invalid={1}", ecuList.Count, ecuInvalidCount);
                             ecuListUse = ecuList;
-                            ecuFileNameUse = fileName;
+                            if (string.IsNullOrEmpty(ecuFileNameUse))
+                            {
+                                ecuFileNameUse = fileName;
+                            }
                         }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                        index++;
                     }
                 }
 
-                if (ecuListUse != null)
+                if (ecuListUse != null && !string.IsNullOrEmpty(ecuFileNameUse))
                 {
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected Ecu file: {0}", ecuFileNameUse);
                     _ecuList.AddRange(ecuListUse.OrderBy(x => x.Name));
