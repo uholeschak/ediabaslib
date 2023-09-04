@@ -3729,6 +3729,54 @@ namespace BmwDeepObd
                                         {
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Extra ECU found: Name={1}, Addr={2}",
                                                 vinJobUsed, ecuName, ecuAdr);
+                                            string groupSgbd = null;
+                                            if (detectVehicleBmw.VehicleSeriesInfo?.EcuList != null)
+                                            {
+                                                foreach (VehicleEcuInfo vehicleEcuInfo in detectVehicleBmw.VehicleSeriesInfo?.EcuList)
+                                                {
+                                                    if (vehicleEcuInfo.DiagAddr == ecuAdr)
+                                                    {
+                                                        groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            if (!string.IsNullOrEmpty(groupSgbd))
+                                            {
+                                                try
+                                                {
+                                                    ActivityCommon.ResolveSgbdFile(_ediabas, groupSgbd);
+                                                    string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Resolved Group={1}, Sgbd={2}",
+                                                        vinJobUsed, groupSgbd, ecuSgbd);
+
+                                                    EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, string.Empty, ecuSgbd, groupSgbd);
+                                                    if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                                    {
+                                                        string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                                                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                                        if (ecuVariant != null)
+                                                        {
+                                                            string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                            if (!string.IsNullOrEmpty(title))
+                                                            {
+                                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} ECU variant found for: Sgbd={0}, Title={1}", vinJobUsed, ecuSgbdName, title);
+                                                                ecuInfo.PageName = title;
+                                                                ecuInfo.Description = title;
+                                                                ecuInfo.DescriptionTransRequired = false;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    _ecuList.Add(ecuInfo);
+                                                }
+                                                catch (Exception)
+                                                {
+                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Failed to resolve Group {1}",
+                                                        vinJobUsed, groupSgbd);
+                                                }
+                                            }
                                         }
                                     }
 
