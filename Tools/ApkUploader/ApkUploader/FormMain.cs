@@ -861,57 +861,61 @@ namespace ApkUploader
                                     sb.AppendLine();
                                 }
                                 sb.AppendLine($"Track: {track.TrackValue}");
-                                foreach (TrackRelease trackRelease in track.Releases)
+
+                                if (track.Releases != null)
                                 {
-                                    if (trackRelease != null)
+                                    foreach (TrackRelease trackRelease in track.Releases)
                                     {
-                                        if (trackRelease.Name != null)
+                                        if (trackRelease != null)
                                         {
-                                            sb.AppendLine($"Name: {trackRelease.Name}");
-                                        }
-                                        if (trackRelease.Status != null)
-                                        {
-                                            sb.AppendLine($"Status: {trackRelease.Status}");
-                                        }
-
-                                        if (trackRelease.ReleaseNotes != null)
-                                        {
-                                            foreach (LocalizedText localizedText in trackRelease.ReleaseNotes)
+                                            if (trackRelease.Name != null)
                                             {
-                                                if (localizedText != null)
+                                                sb.AppendLine($"Name: {trackRelease.Name}");
+                                            }
+                                            if (trackRelease.Status != null)
+                                            {
+                                                sb.AppendLine($"Status: {trackRelease.Status}");
+                                            }
+
+                                            if (trackRelease.ReleaseNotes != null)
+                                            {
+                                                foreach (LocalizedText localizedText in trackRelease.ReleaseNotes)
                                                 {
-                                                    sb.AppendLine($"Note ({localizedText.Language}): {localizedText.Text}");
+                                                    if (localizedText != null)
+                                                    {
+                                                        sb.AppendLine($"Note ({localizedText.Language}): {localizedText.Text}");
+                                                    }
                                                 }
                                             }
-                                        }
 
-                                        if (trackRelease.VersionCodes != null)
-                                        {
-                                            foreach (long? version in trackRelease.VersionCodes)
+                                            if (trackRelease.VersionCodes != null)
                                             {
-                                                if (version.HasValue)
+                                                foreach (long? version in trackRelease.VersionCodes)
                                                 {
-                                                    sb.AppendLine($"Version: {version.Value}");
-                                                    await PrintExpansion(sb, edits, appEdit, (int)version.Value);
+                                                    if (version.HasValue)
+                                                    {
+                                                        sb.AppendLine($"Version: {version.Value}");
+                                                        await PrintExpansion(sb, edits, appEdit, (int)version.Value);
+                                                    }
                                                 }
                                             }
-                                        }
 
-                                        try
-                                        {
-                                            Testers testers = await edits.Testers.Get(PackageName, appEdit.Id, track.TrackValue).ExecuteAsync(_cts.Token);
-                                            sb.AppendLine("Test active");
-                                            if (testers.GoogleGroups != null)
+                                            try
                                             {
-                                                foreach (string group in testers.GoogleGroups)
+                                                Testers testers = await edits.Testers.Get(PackageName, appEdit.Id, track.TrackValue).ExecuteAsync(_cts.Token);
+                                                sb.AppendLine("Test active");
+                                                if (testers.GoogleGroups != null)
                                                 {
-                                                    sb.AppendLine($"Tester group: {group}");
+                                                    foreach (string group in testers.GoogleGroups)
+                                                    {
+                                                        sb.AppendLine($"Tester group: {group}");
+                                                    }
                                                 }
                                             }
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
+                                            catch (Exception)
+                                            {
+                                                // ignored
+                                            }
                                         }
                                     }
                                 }
