@@ -3655,6 +3655,7 @@ namespace BmwDeepObd
                                 throw new Exception("Read VIN failed");
                             }
 
+                            List<EcuInfo> ecuInfoAdd = new List<EcuInfo>();
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
@@ -3746,45 +3747,59 @@ namespace BmwDeepObd
 
                                             if (!string.IsNullOrEmpty(groupSgbd))
                                             {
-                                                try
-                                                {
-                                                    ActivityCommon.ResolveSgbdFile(_ediabas, groupSgbd);
-                                                    string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved Group={0}, Sgbd={1}", groupSgbd, ecuSgbd);
-
-                                                    EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, string.Empty, ecuSgbd, groupSgbd);
-                                                    if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
-                                                    {
-                                                        string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                                                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-                                                        if (ecuVariant == null)
-                                                        {
-                                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU variant not found for: Sgbd={0}", ecuSgbdName);
-                                                        }
-                                                        else
-                                                        {
-                                                            string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
-                                                            if (!string.IsNullOrEmpty(title))
-                                                            {
-                                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
-                                                                ecuInfo.PageName = title;
-                                                                ecuInfo.Description = title;
-                                                                ecuInfo.DescriptionTransRequired = false;
-                                                            }
-                                                        }
-                                                    }
-
-                                                    _ecuList.Add(ecuInfo);
-                                                }
-                                                catch (Exception)
-                                                {
-                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Failed to resolve Group {0}", groupSgbd);
-                                                }
+                                                ecuInfoAdd.Add(new EcuInfo(ecuName, ecuAdr, string.Empty, string.Empty, groupSgbd));
                                             }
                                         }
                                     }
 
                                     dictIndex++;
+                                }
+                            }
+
+                            foreach (EcuInfo ecuInfo in ecuInfoAdd)
+                            {
+                                string groupSgbd = ecuInfo.Grp;
+                                try
+                                {
+                                    ActivityCommon.ResolveSgbdFile(_ediabas, groupSgbd);
+
+                                    _ediabas.ArgString = string.Empty;
+                                    _ediabas.ArgBinaryStd = null;
+                                    _ediabas.ResultsRequests = string.Empty;
+                                    _ediabas.ExecuteJob("_VERSIONINFO");
+
+                                    string ecuDesc = GetEcuName(_ediabas.ResultSets);
+                                    string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved Group={0}, Sgbd={1}", groupSgbd, ecuSgbd);
+                                    ecuInfo.Sgbd = ecuSgbd;
+                                    ecuInfo.Description = ecuDesc;
+
+                                    if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                    {
+                                        string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                        if (ecuVariant == null)
+                                        {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU variant not found for: Sgbd={0}", ecuSgbdName);
+                                        }
+                                        else
+                                        {
+                                            string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                            if (!string.IsNullOrEmpty(title))
+                                            {
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
+                                                ecuInfo.PageName = title;
+                                                ecuInfo.Description = title;
+                                                ecuInfo.DescriptionTransRequired = false;
+                                            }
+                                        }
+                                    }
+
+                                    _ecuList.Add(ecuInfo);
+                                }
+                                catch (Exception)
+                                {
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Failed to resolve Group {0}", groupSgbd);
                                 }
                             }
                         }
@@ -4282,7 +4297,7 @@ namespace BmwDeepObd
                 _ediabas.ResultsRequests = string.Empty;
                 _ediabas.ExecuteJob("_JOBS");    // force to load file
 
-                string ecuName = _ediabas.SgbdFileName;
+                string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                 EcuInfo ecuInfoMot = new EcuInfo(ecuName.ToUpperInvariant(), 1, string.Empty, ecuName, string.Empty);
                 if (!GetVagEcuDetailInfo(ecuInfoMot, progress))
                 {
@@ -4320,7 +4335,7 @@ namespace BmwDeepObd
                 _ediabas.ResultsRequests = string.Empty;
                 _ediabas.ExecuteJob("_JOBS");    // force to load file
 
-                string ecuName = _ediabas.SgbdFileName;
+                string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                 EcuInfo ecuInfoDid = new EcuInfo(ecuName.ToUpperInvariant(), 19, string.Empty, ecuName, string.Empty);
                 if (!GetVagEcuDetailInfo(ecuInfoDid, progress))
                 {
@@ -7214,6 +7229,35 @@ namespace BmwDeepObd
                 }
             }
             return stringBuilder.ToString();
+        }
+
+        private string GetEcuName(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            string ecuName = string.Empty;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                int dictIndex = 0;
+                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                {
+                    if (dictIndex == 0)
+                    {
+                        dictIndex++;
+                        continue;
+                    }
+
+                    if (resultDict.TryGetValue("ECU", out EdiabasNet.ResultData resultData))
+                    {
+                        if (resultData.OpData is string)
+                        {
+                            ecuName = (string) resultData.OpData;
+                        }
+                    }
+
+                    dictIndex++;
+                }
+            }
+
+            return ecuName;
         }
 
         private void EcuCheckChanged(EcuInfo ecuInfo, View view)
