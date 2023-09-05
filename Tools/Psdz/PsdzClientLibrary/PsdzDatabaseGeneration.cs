@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
@@ -25,6 +26,7 @@ using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClientLibrary;
+using static BmwFileReader.EcuFunctionStructs;
 
 namespace PsdzClient
 {
@@ -3780,7 +3782,15 @@ namespace PsdzClient
                     log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo Saving: {0}", vehicleSeriesFile);
                     using (FileStream fileStream = File.Create(vehicleSeriesFile))
                     {
-                        serializer.Serialize(fileStream, vehicleSeriesInfoData);
+                        XmlWriterSettings settings = new XmlWriterSettings
+                        {
+                            Indent = true,
+                            IndentChars = "\t"
+                        };
+                        using (XmlWriter writer = XmlWriter.Create(fileStream, settings))
+                        {
+                            serializer.Serialize(writer, vehicleSeriesInfoData);
+                        }
                     }
                 }
             }
