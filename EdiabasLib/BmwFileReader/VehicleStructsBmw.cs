@@ -30,9 +30,9 @@ namespace BmwFileReader
                 GroupSgbd = groupSgbd;
             }
 
-            [XmlElement("DiagAddr")] public int DiagAddr { get; set; }
-            [XmlElement("Name"), DefaultValue(null)] public string Name { get; set; }
-            [XmlElement("GroupSgbd"), DefaultValue(null)] public string GroupSgbd { get; set; }
+            [XmlElement("DA")] public int DiagAddr { get; set; }
+            [XmlElement("Nm"), DefaultValue(null)] public string Name { get; set; }
+            [XmlElement("GS"), DefaultValue(null)] public string GroupSgbd { get; set; }
         }
 
         [XmlInclude(typeof(VehicleEcuInfo))]
@@ -62,15 +62,15 @@ namespace BmwFileReader
                 DateCompare = null;
             }
 
-            [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
-            [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
-            [XmlElement("BrSgbd"), DefaultValue(null)] public string BrSgbd { get; set; }
-            [XmlElement("SgdbAdd"), DefaultValue(null)] public List<string> SgdbAdd { get; set; }
-            [XmlElement("BnType"), DefaultValue(null)] public string BnType { get; set; }
-            [XmlElement("BrandList"), DefaultValue(null)] public List<string> BrandList { get; set; }
-            [XmlElement("EcuList"), DefaultValue(null)] public List<VehicleEcuInfo> EcuList { get; set; }
-            [XmlElement("Date"), DefaultValue(null)] public string Date { get; set; }
-            [XmlElement("DateCompare"), DefaultValue(null)] public string DateCompare { get; set; }
+            [XmlElement("Sr"), DefaultValue(null)] public string Series { get; set; }
+            [XmlElement("MS"), DefaultValue(null)] public string ModelSeries { get; set; }
+            [XmlElement("BS"), DefaultValue(null)] public string BrSgbd { get; set; }
+            [XmlElement("SA"), DefaultValue(null)] public List<string> SgdbAdd { get; set; }
+            [XmlElement("BT"), DefaultValue(null)] public string BnType { get; set; }
+            [XmlElement("BL"), DefaultValue(null)] public List<string> BrandList { get; set; }
+            [XmlElement("EL"), DefaultValue(null)] public List<VehicleEcuInfo> EcuList { get; set; }
+            [XmlElement("Dt"), DefaultValue(null)] public string Date { get; set; }
+            [XmlElement("DtC"), DefaultValue(null)] public string DateCompare { get; set; }
         }
 
         [XmlType("VersionInfo")]
