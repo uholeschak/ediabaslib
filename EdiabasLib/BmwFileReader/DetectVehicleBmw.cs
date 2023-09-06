@@ -286,6 +286,7 @@ namespace BmwFileReader
 
                 string detectedVin = null;
                 int jobCount = readVinJobsBmwFast.Count + readIdentJobsBmwFast.Count + readILevelJobsBmwFast.Count;
+                int indexOffset = 0;
                 int index = 0;
                 foreach (JobInfo jobInfo in readVinJobsBmwFast)
                 {
@@ -342,6 +343,8 @@ namespace BmwFileReader
                     index++;
                 }
 
+                indexOffset += readVinJobsBmwFast.Count;
+                index = indexOffset;
                 if (string.IsNullOrEmpty(detectedVin))
                 {
                     return false;
@@ -546,8 +549,8 @@ namespace BmwFileReader
                     index++;
                 }
 
-                ProgressFunc?.Invoke(100);
-
+                indexOffset += readIdentJobsBmwFast.Count;
+                index = indexOffset;
                 if (TypeKeyProperties != null)
                 {
                     if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.VehicleSeriesName, out string vehicleSeriesProp))
@@ -686,6 +689,10 @@ namespace BmwFileReader
 
                     index++;
                 }
+
+                indexOffset += readILevelJobsBmwFast.Count;
+                index = indexOffset;
+                ProgressFunc?.Invoke(100 * index / jobCount);
 
                 if (string.IsNullOrEmpty(iLevelShip))
                 {
