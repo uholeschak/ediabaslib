@@ -417,9 +417,12 @@ namespace BmwDeepObd
         private const string DisplayNameEcuPrefix = "!ECU#";
         private const string ManualConfigName = "Manual";
         private const string UnknownVinConfigName = "Unknown";
-        private static readonly string[] ReadVinJobs =
+
+        private static readonly Tuple<string, string>[] ReadVinJobs =
         {
-            "C_FG_LESEN_FUNKTIONAL", "PROG_FG_NR_LESEN_FUNKTIONAL", "AIF_LESEN_FUNKTIONAL"
+            new Tuple<string, string>("C_FG_LESEN_FUNKTIONAL", ""),
+            new Tuple<string, string>("PROG_FG_NR_LESEN_FUNKTIONAL", "18"),
+            new Tuple<string, string>("AIF_LESEN_FUNKTIONAL", ""),
         };
 
         private static readonly Tuple<VagUdsS22DataType, int>[] VagUdsS22Data =
@@ -3628,11 +3631,8 @@ namespace BmwDeepObd
                         try
                         {
                             ActivityCommon.ResolveSgbdFile(_ediabas, ecuFileNameUse);
-                            _ediabas.ArgString = string.Empty;
-                            _ediabas.ArgBinaryStd = null;
-                            _ediabas.ResultsRequests = string.Empty;
                             string vinJobUsed = null;
-                            foreach (string vinJob in ReadVinJobs)
+                            foreach (Tuple<string, string> vinJob in ReadVinJobs)
                             {
                                 try
                                 {
@@ -3640,8 +3640,19 @@ namespace BmwDeepObd
                                     {
                                         break;
                                     }
-                                    _ediabas.ExecuteJob(vinJob);
-                                    vinJobUsed = vinJob;
+
+                                    string jobName = vinJob.Item1;
+                                    if (!_ediabas.IsJobExisting(jobName))
+                                    {
+                                        continue;
+                                    }
+
+                                    _ediabas.ArgString = vinJob.Item2;
+                                    _ediabas.ArgBinaryStd = null;
+                                    _ediabas.ResultsRequests = string.Empty;
+                                    _ediabas.ExecuteJob(jobName);
+
+                                    vinJobUsed = jobName;
                                     break;
                                 }
                                 catch (Exception)
@@ -3770,7 +3781,7 @@ namespace BmwDeepObd
 
                                     string ecuDesc = GetEcuName(_ediabas.ResultSets);
                                     string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved Group={0}, Sgbd={1}", groupSgbd, ecuSgbd);
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved Group={0}, Sgbd={1}, Desc={2}", groupSgbd, ecuSgbd, ecuDesc);
                                     ecuInfo.Sgbd = ecuSgbd;
                                     ecuInfo.Description = ecuDesc;
 
