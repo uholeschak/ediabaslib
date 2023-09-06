@@ -3781,7 +3781,7 @@ namespace BmwDeepObd
 
                                     string ecuDesc = GetEcuName(_ediabas.ResultSets);
                                     string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved Group={0}, Sgbd={1}", groupSgbd, ecuSgbd);
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved Group={0}, Sgbd={1}, Desc={2}", groupSgbd, ecuSgbd, ecuDesc);
                                     ecuInfo.Sgbd = ecuSgbd;
                                     ecuInfo.Description = ecuDesc;
 
