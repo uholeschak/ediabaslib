@@ -8,6 +8,7 @@ namespace BmwFileReader
 {
     public static class VehicleStructsBmw
     {
+        public const string VehicleSeriesZipFile = "VehicleSeries.zip";
         public const string VehicleSeriesXmlFile = "VehicleSeries.xml";
         public const string ServiceDataXmlFile = "ServiceData.xml";
         public const string ServiceDataZipFile = "ServiceData.zip";

@@ -3735,20 +3735,46 @@ namespace PsdzClient
             {
                 VehicleStructsBmw.VehicleSeriesInfoData vehicleSeriesInfoData = null;
                 XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
-                string vehicleSeriesFile = Path.Combine(_databaseExtractPath, VehicleStructsBmw.VehicleSeriesXmlFile);
-                try
+                string vehicleSeriesZipFile = Path.Combine(_databaseExtractPath, VehicleStructsBmw.VehicleSeriesZipFile);
+                if (File.Exists(vehicleSeriesZipFile))
                 {
-                    if (File.Exists(vehicleSeriesFile))
+                    try
                     {
-                        using (FileStream fileStream = new FileStream(vehicleSeriesFile, FileMode.Open))
+                        ZipFile zf = null;
+                        try
                         {
-                            vehicleSeriesInfoData = serializer.Deserialize(fileStream) as VehicleStructsBmw.VehicleSeriesInfoData;
+                            FileStream fs = File.OpenRead(vehicleSeriesZipFile);
+                            zf = new ZipFile(fs);
+                            foreach (ZipEntry zipEntry in zf)
+                            {
+                                if (!zipEntry.IsFile)
+                                {
+                                    continue; // Ignore directories
+                                }
+
+                                if (string.Compare(zipEntry.Name, VehicleStructsBmw.VehicleSeriesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    Stream zipStream = zf.GetInputStream(zipEntry);
+                                    using (TextReader reader = new StreamReader(zipStream))
+                                    {
+                                        vehicleSeriesInfoData = serializer.Deserialize(reader) as VehicleStructsBmw.VehicleSeriesInfoData;
+                                    }
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            if (zf != null)
+                            {
+                                zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                                zf.Close(); // Ensure we release resources
+                            }
                         }
                     }
-                }
-                catch (Exception e)
-                {
-                    log.ErrorFormat("SaveVehicleSeriesInfo Deserialize Exception: '{0}'", e.Message);
+                    catch (Exception e)
+                    {
+                        log.ErrorFormat("SaveVehicleSeriesInfo Deserialize Exception: '{0}'", e.Message);
+                    }
                 }
 
                 bool dataValid = true;
@@ -3771,17 +3797,41 @@ namespace PsdzClient
                         return false;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo Saving: {0}", vehicleSeriesFile);
-                    using (FileStream fileStream = File.Create(vehicleSeriesFile))
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo Saving: {0}", vehicleSeriesZipFile);
+                    using (MemoryStream memStream = new MemoryStream())
                     {
                         XmlWriterSettings settings = new XmlWriterSettings
                         {
                             Indent = true,
                             IndentChars = "\t"
                         };
-                        using (XmlWriter writer = XmlWriter.Create(fileStream, settings))
+                        using (XmlWriter writer = XmlWriter.Create(memStream, settings))
                         {
                             serializer.Serialize(writer, vehicleSeriesInfoData);
+                        }
+                        memStream.Seek(0, SeekOrigin.Begin);
+
+                        FileStream fsOut = File.Create(vehicleSeriesZipFile);
+                        ZipOutputStream zipStream = new ZipOutputStream(fsOut);
+                        zipStream.SetLevel(3);
+
+                        try
+                        {
+                            ZipEntry newEntry = new ZipEntry(VehicleStructsBmw.VehicleSeriesXmlFile)
+                            {
+                                DateTime = DateTime.Now,
+                                Size = memStream.Length
+                            };
+                            zipStream.PutNextEntry(newEntry);
+
+                            byte[] buffer = new byte[4096];
+                            StreamUtils.Copy(memStream, zipStream, buffer);
+                            zipStream.CloseEntry();
+                        }
+                        finally
+                        {
+                            zipStream.IsStreamOwner = true;
+                            zipStream.Close();
                         }
                     }
                 }
