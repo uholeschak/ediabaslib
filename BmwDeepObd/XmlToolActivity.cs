@@ -3455,7 +3455,7 @@ namespace BmwDeepObd
                                         return;
                                     }
 
-                                    if (progress != null && localMaxSteps > 1)
+                                    if (progress != null)
                                     {
                                         progress.Progress = 100 * localStep / localMaxSteps;
                                     }
