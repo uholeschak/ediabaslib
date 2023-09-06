@@ -4058,37 +4058,17 @@ namespace PsdzClient
                     string brSgbd = ecuCharacteristics.brSgbd.Trim().ToUpperInvariant();
                     BNType? bnType = ecuCharacteristicsInfo.BnType;
 
-                    bool addEcuList = false;
-                    if (ecuCharacteristicsInfo.BrandList != null)
-                    {
-                        foreach (string brandName in ecuCharacteristicsInfo.BrandList)
-                        {
-                            if (brandName.IndexOf("MINI", StringComparison.OrdinalIgnoreCase) >= 0)
-                            {
-                                addEcuList = true;
-                                break;
-                            }
-                        }
-                    }
 
                     string bnTypeName = null;
-                    List<VehicleStructsBmw.VehicleEcuInfo> ecuList = null;
                     if (bnType.HasValue)
                     {
                         bnTypeName = bnType.Value.ToString();
-                        if (bnType.Value == BNType.IBUS)
-                        {
-                            addEcuList = true;
-                        }
                     }
 
-                    if (addEcuList)
+                    List<VehicleStructsBmw.VehicleEcuInfo> ecuList = new List<VehicleStructsBmw.VehicleEcuInfo>();
+                    foreach (IEcuLogisticsEntry ecuLogisticsEntry in ecuCharacteristics.ecuTable)
                     {
-                        ecuList = new List<VehicleStructsBmw.VehicleEcuInfo>();
-                        foreach (IEcuLogisticsEntry ecuLogisticsEntry in ecuCharacteristics.ecuTable)
-                        {
-                            ecuList.Add(new VehicleStructsBmw.VehicleEcuInfo(ecuLogisticsEntry.DiagAddress, ecuLogisticsEntry.Name, ecuLogisticsEntry.GroupSgbd));
-                        }
+                        ecuList.Add(new VehicleStructsBmw.VehicleEcuInfo(ecuLogisticsEntry.DiagAddress, ecuLogisticsEntry.Name, ecuLogisticsEntry.GroupSgbd));
                     }
 
                     List<KeyValuePair<string, string>> seriesPair = new List<KeyValuePair<string, string>>();
