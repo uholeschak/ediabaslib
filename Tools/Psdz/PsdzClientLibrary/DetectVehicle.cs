@@ -452,80 +452,95 @@ namespace PsdzClient
 
                 try
                 {
+                    EcuList.Clear();
                     _ediabas.ResolveSgbdFile(GroupSgdb);
 
-                    _ediabas.ArgString = string.Empty;
-                    _ediabas.ArgBinaryStd = null;
-                    _ediabas.ResultsRequests = string.Empty;
-                    _ediabas.ExecuteJob("IDENT_FUNKTIONAL");
-
-                    EcuList.Clear();
-                    resultSets = _ediabas.ResultSets;
-                    if (resultSets != null && resultSets.Count >= 2)
+                    for (int identRetry = 0; identRetry < 10; identRetry++)
                     {
-                        int dictIndex = 0;
-                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+
+                        int lastEcuListSize = EcuList.Count;
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("IDENT_FUNKTIONAL");
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
                         {
-                            if (dictIndex == 0)
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                             {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
+
+                                string ecuName = string.Empty;
+                                Int64 ecuAdr = -1;
+                                string ecuDesc = string.Empty;
+                                string ecuSgbd = string.Empty;
+                                string ecuGroup = string.Empty;
+                                // ReSharper disable once InlineOutVariableDeclaration
+                                EdiabasNet.ResultData resultData;
+                                if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        ecuName = (string)resultData.OpData;
+                                    }
+                                }
+
+                                if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
+                                {
+                                    if (resultData.OpData is Int64)
+                                    {
+                                        ecuAdr = (Int64)resultData.OpData;
+                                    }
+                                }
+
+                                if (resultDict.TryGetValue("ECU_NAME", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        ecuDesc = (string)resultData.OpData;
+                                    }
+                                }
+
+                                if (resultDict.TryGetValue("ECU_SGBD", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        ecuSgbd = (string)resultData.OpData;
+                                    }
+                                }
+
+                                if (resultDict.TryGetValue("ECU_GRUPPE", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        ecuGroup = (string)resultData.OpData;
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
+                                {
+                                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                                    {
+                                        PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
+                                        EcuList.Add(ecuInfo);
+                                    }
+                                }
+
                                 dictIndex++;
-                                continue;
                             }
+                        }
 
-                            string ecuName = string.Empty;
-                            Int64 ecuAdr = -1;
-                            string ecuDesc = string.Empty;
-                            string ecuSgbd = string.Empty;
-                            string ecuGroup = string.Empty;
-                            // ReSharper disable once InlineOutVariableDeclaration
-                            EdiabasNet.ResultData resultData;
-                            if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
-                            {
-                                if (resultData.OpData is string)
-                                {
-                                    ecuName = (string)resultData.OpData;
-                                }
-                            }
-
-                            if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
-                            {
-                                if (resultData.OpData is Int64)
-                                {
-                                    ecuAdr = (Int64)resultData.OpData;
-                                }
-                            }
-
-                            if (resultDict.TryGetValue("ECU_NAME", out resultData))
-                            {
-                                if (resultData.OpData is string)
-                                {
-                                    ecuDesc = (string)resultData.OpData;
-                                }
-                            }
-
-                            if (resultDict.TryGetValue("ECU_SGBD", out resultData))
-                            {
-                                if (resultData.OpData is string)
-                                {
-                                    ecuSgbd = (string)resultData.OpData;
-                                }
-                            }
-
-                            if (resultDict.TryGetValue("ECU_GRUPPE", out resultData))
-                            {
-                                if (resultData.OpData is string)
-                                {
-                                    ecuGroup = (string)resultData.OpData;
-                                }
-                            }
-
-                            if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
-                            {
-                                PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
-                                EcuList.Add(ecuInfo);
-                            }
-
-                            dictIndex++;
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Detect EcuListSize={0}, EcuListSizeOld={1}", EcuList.Count, lastEcuListSize);
+                        if (EcuList.Count == lastEcuListSize)
+                        {
+                            break;
                         }
                     }
                 }

@@ -881,7 +881,7 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.VehicleDetecting);
                 UpdateStatus(sbResult.ToString());
 
-                CacheResponseType = CacheType.FuncAddress;
+                CacheResponseType = CacheType.NoResponse;
                 string ecuPath = Path.Combine(istaFolder, @"Ecu");
                 bool icomConnection = useIcom;
                 if (hostParts.Length > 1)
@@ -935,6 +935,7 @@ namespace PsdzClient.Programming
                 });
                 cts?.Token.ThrowIfCancellationRequested();
 
+                CacheResponseType = CacheType.FuncAddress;
                 string series = PsdzContext.DetectVehicle.Series;
                 if (string.IsNullOrEmpty(series))
                 {
