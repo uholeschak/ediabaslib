@@ -12,21 +12,13 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
 using BmwFileReader;
 using HarmonyLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-using log4net;
-using PsdzClient;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
-using PsdzClientLibrary;
-using static BmwFileReader.EcuFunctionStructs;
 
 namespace PsdzClient
 {
