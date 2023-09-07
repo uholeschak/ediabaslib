@@ -710,6 +710,9 @@
     <Compile Include="Core\VehicleLogistics.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="..\..\..\EdiabasLib\BmwFileReader\VehicleSeries.zip">
+      <Link>Resources\VehicleSeries.zip</Link>
+    </EmbeddedResource>
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="PsdzClientLibrary.snk" />
@@ -734,11 +737,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\..\EdiabasLib\BmwFileReader\VehicleSeries.xml">
-      <Link>Resources\VehicleSeries.xml</Link>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
