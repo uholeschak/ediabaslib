@@ -2,8 +2,8 @@ Package
 *.suo
 *.opensdf
 *.sdf
-*.zip
 *.VC.opendb
+/*.zip
 /.vs/
 *.VC.db
 /packages/

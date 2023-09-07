@@ -464,6 +464,9 @@
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\hc04\production\ELM327V15.X.production.hex">
       <Link>HexFiles\Type4\ELM327V15.X.production.hex</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\EdiabasLib\BmwFileReader\VehicleSeries.zip">
+      <Link>VehicleInfo\VehicleSeries.zip</Link>
+    </EmbeddedResource>
     <None Include=".editorconfig" />
     <None Include="Assets\Ecu.bin" />
     <None Include="packages.config" />
@@ -845,11 +848,6 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\EdiabasLib\BmwFileReader\VehicleSeries.xml">
-      <Link>VehicleInfo\VehicleSeries.xml</Link>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\backup_rules.xml">

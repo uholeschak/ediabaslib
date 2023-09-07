@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -248,7 +247,7 @@ namespace BmwFileReader
                     return _vehicleSeriesInfoData;
                 }
 
-                string resourceName = FindResourceName(VehicleStructsBmw.VehicleSeriesXmlFile);
+                string resourceName = FindResourceName(VehicleStructsBmw.VehicleSeriesZipFile);
                 if (string.IsNullOrEmpty(resourceName))
                 {
                     ResourceFailure = FailureSource.Resource;
@@ -260,8 +259,36 @@ namespace BmwFileReader
                 {
                     if (stream != null)
                     {
-                        XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
-                        _vehicleSeriesInfoData = serializer.Deserialize(stream) as VehicleStructsBmw.VehicleSeriesInfoData;
+                        ZipFile zf = null;
+                        try
+                        {
+                            zf = new ZipFile(stream);
+                            foreach (ZipEntry zipEntry in zf)
+                            {
+                                if (!zipEntry.IsFile)
+                                {
+                                    continue; // Ignore directories
+                                }
+
+                                if (string.Compare(zipEntry.Name, VehicleStructsBmw.VehicleSeriesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    Stream zipStream = zf.GetInputStream(zipEntry);
+                                    using (TextReader reader = new StreamReader(zipStream))
+                                    {
+                                        XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
+                                        _vehicleSeriesInfoData = serializer.Deserialize(reader) as VehicleStructsBmw.VehicleSeriesInfoData;
+                                    }
+                                }
+                            }
+                        }
+                        finally
+                        {
+                            if (zf != null)
+                            {
+                                zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                                zf.Close(); // Ensure we release resources
+                            }
+                        }
                     }
                 }
 
