@@ -2140,7 +2140,15 @@ namespace PsdzClient
 
                     using (MemoryStream memStream = new MemoryStream())
                     {
-                        serializer.Serialize(memStream, serviceModules);
+                        XmlWriterSettings settings = new XmlWriterSettings
+                        {
+                            Indent = true,
+                            IndentChars = "\t"
+                        };
+                        using (XmlWriter writer = XmlWriter.Create(memStream, settings))
+                        {
+                            serializer.Serialize(writer, serviceModules);
+                        }
                         memStream.Seek(0, SeekOrigin.Begin);
 
                         FileStream fsOut = File.Create(serviceModulesZipFile);
@@ -3439,7 +3447,15 @@ namespace PsdzClient
 
                     using (MemoryStream memStream = new MemoryStream())
                     {
-                        serializer.Serialize(memStream, testModules);
+                        XmlWriterSettings settings = new XmlWriterSettings
+                        {
+                            Indent = true,
+                            IndentChars = "\t"
+                        };
+                        using (XmlWriter writer = XmlWriter.Create(memStream, settings))
+                        {
+                            serializer.Serialize(writer, testModules);
+                        }
                         memStream.Seek(0, SeekOrigin.Begin);
 
                         FileStream fsOut = File.Create(testModulesZipFile);
@@ -3632,7 +3648,15 @@ namespace PsdzClient
 
                     using (MemoryStream memStream = new MemoryStream())
                     {
-                        serializer.Serialize(memStream, ecuCharacteristicsData);
+                        XmlWriterSettings settings = new XmlWriterSettings
+                        {
+                            Indent = true,
+                            IndentChars = "\t"
+                        };
+                        using (XmlWriter writer = XmlWriter.Create(memStream, settings))
+                        {
+                            serializer.Serialize(writer, ecuCharacteristicsData);
+                        }
                         memStream.Seek(0, SeekOrigin.Begin);
 
                         FileStream fsOut = File.Create(ecuCharacteristicsZipFile);
