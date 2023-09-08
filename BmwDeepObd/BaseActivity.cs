@@ -745,7 +745,12 @@ namespace BmwDeepObd
                 XmlSerializer xmlSerializer = new XmlSerializer(instanceData.GetType());
                 using (StringWriter sw = new StringWriter())
                 {
-                    using (XmlWriter writer = XmlWriter.Create(sw))
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        Indent = true,
+                        IndentChars = "\t"
+                    };
+                    using (XmlWriter writer = XmlWriter.Create(sw, settings))
                     {
                         xmlSerializer.Serialize(writer, instanceData);
                         string xml = sw.ToString();
