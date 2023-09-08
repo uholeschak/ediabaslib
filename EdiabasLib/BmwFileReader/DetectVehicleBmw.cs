@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Serialization;
 using BmwDeepObd;
 using EdiabasLib;
@@ -1035,7 +1036,15 @@ namespace BmwFileReader
                 XmlSerializer serializer = new XmlSerializer(typeof(VehicleDataBmw));
                 using (FileStream fileStream = File.Create(fileName))
                 {
-                    serializer.Serialize(fileStream, vehicleDataBmw);
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        Indent = true,
+                        IndentChars = "\t"
+                    };
+                    using (XmlWriter writer = XmlWriter.Create(fileStream, settings))
+                    {
+                        serializer.Serialize(writer, vehicleDataBmw);
+                    }
                 }
             }
             catch (Exception ex)
