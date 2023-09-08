@@ -89,6 +89,7 @@ namespace PsdzClient
         };
 
         public delegate bool AbortDelegate();
+        public delegate void ProgressDelegate(string message);
 
         private PsdzDatabase _pdszDatabase;
         private bool _disposed;
@@ -142,7 +143,7 @@ namespace PsdzClient
             ResetValues();
         }
 
-        public DetectResult DetectVehicleBmwFast(AbortDelegate abortFunc, bool detectMotorbikes = false)
+        public DetectResult DetectVehicleBmwFast(AbortDelegate abortFunc, ProgressDelegate progressFunc = null, bool detectMotorbikes = false)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Start");
             ResetValues();
@@ -179,6 +180,7 @@ namespace PsdzClient
 
                     try
                     {
+                        progressFunc?.Invoke(".");
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
@@ -247,6 +249,7 @@ namespace PsdzClient
                     {
                         bool statVcm = string.Compare(jobInfo.JobName, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
 
+                        progressFunc?.Invoke(".");
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
@@ -457,9 +460,11 @@ namespace PsdzClient
 
                     for (int identRetry = 0; identRetry < 10; identRetry++)
                     {
-
                         int lastEcuListSize = EcuList.Count;
 
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Ecu ident retry: {0}", identRetry + 1);
+
+                        progressFunc?.Invoke(".");
                         _ediabas.ArgString = string.Empty;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
@@ -569,6 +574,7 @@ namespace PsdzClient
 
                     try
                     {
+                        progressFunc?.Invoke(".");
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;

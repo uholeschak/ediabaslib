@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -878,7 +879,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                sbResult.AppendLine(Strings.VehicleDetecting);
+                sbResult.Append(Strings.VehicleDetecting);
                 UpdateStatus(sbResult.ToString());
 
                 CacheResponseType = CacheType.NoResponse;
@@ -932,7 +933,17 @@ namespace PsdzClient.Programming
                         return cts.Token.IsCancellationRequested;
                     }
                     return false;
+                }, message =>
+                {
+                    if (!string.IsNullOrEmpty(message))
+                    {
+                        sbResult.Append(message);
+                        UpdateStatus(sbResult.ToString());
+                    }
                 });
+
+                sbResult.AppendLine();
+                UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
 
                 CacheResponseType = CacheType.FuncAddress;

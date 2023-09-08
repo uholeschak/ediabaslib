@@ -810,7 +810,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Detecting vehicle ... ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Detecting vehicle. ähnelt.
         /// </summary>
         internal static string VehicleDetecting {
             get {
