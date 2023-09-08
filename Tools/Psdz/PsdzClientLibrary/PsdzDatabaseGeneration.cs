@@ -1978,7 +1978,15 @@ namespace PsdzClient
 
                     using (MemoryStream memStream = new MemoryStream())
                     {
-                        serializer.Serialize(memStream, serviceData);
+                        XmlWriterSettings settings = new XmlWriterSettings
+                        {
+                            Indent = true,
+                            IndentChars = "\t"
+                        };
+                        using (XmlWriter writer = XmlWriter.Create(memStream, settings))
+                        {
+                            serializer.Serialize(writer, serviceData);
+                        }
                         memStream.Seek(0, SeekOrigin.Begin);
 
                         FileStream fsOut = File.Create(serviceDataZipFile);
@@ -4226,7 +4234,15 @@ namespace PsdzClient
                 using (MemoryStream memStream = new MemoryStream())
                 {
                     XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.RulesInfoData));
-                    serializer.Serialize(memStream, rulesInfoData);
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        Indent = true,
+                        IndentChars = "\t"
+                    };
+                    using (XmlWriter writer = XmlWriter.Create(memStream, settings))
+                    {
+                        serializer.Serialize(writer, rulesInfoData);
+                    }
                     memStream.Seek(0, SeekOrigin.Begin);
 
                     FileStream fsOut = File.Create(rulesZipFile);
