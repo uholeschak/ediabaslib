@@ -3311,7 +3311,15 @@ namespace BmwDeepObd
                     string tempFileName = tempFile.AbsolutePath;
                     using (StreamWriter sw = new StreamWriter(tempFileName))
                     {
-                        xmlSerializer.Serialize(sw, storageData);
+                        XmlWriterSettings settings = new XmlWriterSettings
+                        {
+                            Indent = true,
+                            IndentChars = "\t"
+                        };
+                        using (XmlWriter writer = XmlWriter.Create(sw, settings))
+                        {
+                            xmlSerializer.Serialize(writer, storageData);
+                        }
                     }
 
                     File.Copy(tempFileName, fileName, true);
