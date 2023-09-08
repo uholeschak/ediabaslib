@@ -381,7 +381,7 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
     <value>Fahrzeugdatenbank ungültig oder zu alt.</value>
   </data>
   <data name="VehicleDetecting" xml:space="preserve">
-    <value>Fahrzeug erkennen.</value>
+    <value>Fahrzeug erkennen ...</value>
   </data>
   <data name="VehicleDetectionFailed" xml:space="preserve">
     <value>Fahrzeug erkennen fehlgeschlagen.</value>

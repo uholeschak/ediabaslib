@@ -879,7 +879,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                sbResult.Append(Strings.VehicleDetecting);
+                sbResult.AppendLine(Strings.VehicleDetecting);
                 UpdateStatus(sbResult.ToString());
 
                 CacheResponseType = CacheType.NoResponse;
@@ -933,17 +933,13 @@ namespace PsdzClient.Programming
                         return cts.Token.IsCancellationRequested;
                     }
                     return false;
-                }, message =>
+                }, percent =>
                 {
-                    if (!string.IsNullOrEmpty(message))
-                    {
-                        sbResult.Append(message);
-                        UpdateStatus(sbResult.ToString());
-                    }
+                    string message = string.Format(CultureInfo.InvariantCulture, "{0}%", percent);
+                    ProgressEvent?.Invoke(percent, false, message);
                 });
 
-                sbResult.AppendLine();
-                UpdateStatus(sbResult.ToString());
+                ProgressEvent?.Invoke(0, true);
                 cts?.Token.ThrowIfCancellationRequested();
 
                 CacheResponseType = CacheType.FuncAddress;

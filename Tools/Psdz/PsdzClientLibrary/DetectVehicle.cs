@@ -89,7 +89,7 @@ namespace PsdzClient
         };
 
         public delegate bool AbortDelegate();
-        public delegate void ProgressDelegate(string message);
+        public delegate void ProgressDelegate(int percent);
 
         private PsdzDatabase _pdszDatabase;
         private bool _disposed;
@@ -169,6 +169,10 @@ namespace PsdzClient
                     return DetectResult.NoResponse;
                 }
 
+                int jobCount = readVinJobsBmwFast.Count + readIdentJobsBmwFast.Count + readILevelJobsBmwFast.Count + 1;
+                int indexOffset = 0;
+                int index = 0;
+
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
                 string detectedVin = null;
                 foreach (JobInfo jobInfo in readVinJobsBmwFast)
@@ -180,7 +184,7 @@ namespace PsdzClient
 
                     try
                     {
-                        progressFunc?.Invoke(".");
+                        progressFunc?.Invoke(index * 100 / jobCount);
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
@@ -222,7 +226,12 @@ namespace PsdzClient
                         log.ErrorFormat(CultureInfo.InvariantCulture, "No VIN response");
                         // ignored
                     }
+
+                    index++;
                 }
+
+                indexOffset += readVinJobsBmwFast.Count;
+                index = indexOffset;
 
                 if (string.IsNullOrEmpty(detectedVin))
                 {
@@ -242,6 +251,7 @@ namespace PsdzClient
                     if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", jobInfo.SgdbName);
+                        index++;
                         continue;
                     }
 
@@ -249,7 +259,7 @@ namespace PsdzClient
                     {
                         bool statVcm = string.Compare(jobInfo.JobName, "STATUS_VCM_GET_FA", StringComparison.OrdinalIgnoreCase) == 0;
 
-                        progressFunc?.Invoke(".");
+                        progressFunc?.Invoke(index * 100 / jobCount);
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
@@ -416,7 +426,12 @@ namespace PsdzClient
                         log.ErrorFormat(CultureInfo.InvariantCulture, "No BR response");
                         // ignored
                     }
+
+                    index++;
                 }
+
+                indexOffset += readIdentJobsBmwFast.Count;
+                index = indexOffset;
 
                 VehicleStructsBmw.VersionInfo versionInfo = VehicleInfoBmw.GetVehicleSeriesInfoVersion();
                 if (versionInfo == null)
@@ -464,7 +479,7 @@ namespace PsdzClient
 
                         log.InfoFormat(CultureInfo.InvariantCulture, "Ecu ident retry: {0}", identRetry + 1);
 
-                        progressFunc?.Invoke(".");
+                        progressFunc?.Invoke(index * 100 / jobCount);
                         _ediabas.ArgString = string.Empty;
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
@@ -547,6 +562,10 @@ namespace PsdzClient
                         {
                             break;
                         }
+
+                        indexOffset++;
+                        jobCount++;
+                        index++;
                     }
                 }
                 catch (Exception)
@@ -574,7 +593,7 @@ namespace PsdzClient
 
                     try
                     {
-                        progressFunc?.Invoke(".");
+                        progressFunc?.Invoke(index * 100 / jobCount);
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
@@ -639,6 +658,9 @@ namespace PsdzClient
                         // ignored
                     }
                 }
+
+                indexOffset += readILevelJobsBmwFast.Count;
+                progressFunc?.Invoke(100);
 
                 if (string.IsNullOrEmpty(iLevelShip))
                 {
