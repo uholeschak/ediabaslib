@@ -935,7 +935,7 @@ namespace PsdzClient.Programming
                     return false;
                 }, percent =>
                 {
-                    string message = string.Format(CultureInfo.InvariantCulture, "{0}%", percent);
+                    string message = string.Format(CultureInfo.InvariantCulture, Strings.VehicleDetectingProgress, percent);
                     ProgressEvent?.Invoke(percent, false, message);
                 });
 

@@ -383,6 +383,9 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
   <data name="VehicleDetecting" xml:space="preserve">
     <value>Fahrzeug erkennen ...</value>
   </data>
+  <data name="VehicleDetectingProgress" xml:space="preserve">
+    <value>Fahrzeug erkennen: {0}%</value>
+  </data>
   <data name="VehicleDetectionFailed" xml:space="preserve">
     <value>Fahrzeug erkennen fehlgeschlagen.</value>
   </data>

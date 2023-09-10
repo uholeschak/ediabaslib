@@ -383,6 +383,9 @@ Possibly the software is not consistent in all ECUs.</value>
   <data name="VehicleDetecting" xml:space="preserve">
     <value>Detecting vehicle ...</value>
   </data>
+  <data name="VehicleDetectingProgress" xml:space="preserve">
+    <value>Detecting vehicle: {0}%</value>
+  </data>
   <data name="VehicleDetectionFailed" xml:space="preserve">
     <value>Vehicle detection failed.</value>
   </data>

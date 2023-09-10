@@ -819,6 +819,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Detecting vehicle: {0}% ähnelt.
+        /// </summary>
+        internal static string VehicleDetectingProgress {
+            get {
+                return ResourceManager.GetString("VehicleDetectingProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle detection failed. ähnelt.
         /// </summary>
         internal static string VehicleDetectionFailed {
