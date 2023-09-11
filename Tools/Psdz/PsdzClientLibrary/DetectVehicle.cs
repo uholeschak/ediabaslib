@@ -47,8 +47,8 @@ namespace PsdzClient
 
         private static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
-            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN"),
-            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN"),
+            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
+            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
             new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNR17_WERT"),
             new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "FGNUMMER"),
             // motorbikes BN2000
@@ -475,9 +475,10 @@ namespace PsdzClient
                     return DetectResult.Aborted;
                 }
 
+                EcuList.Clear();
+
                 try
                 {
-                    EcuList.Clear();
                     _ediabas.ResolveSgbdFile(GroupSgdb);
 
                     for (int identRetry = 0; identRetry < 10; identRetry++)
@@ -579,6 +580,83 @@ namespace PsdzClient
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "No ident response");
                     return DetectResult.NoResponse;
+                }
+
+                if (jobInfoEcuList != null)
+                {
+                    if (_abortRequest)
+                    {
+                        return DetectResult.Aborted;
+                    }
+
+                    try
+                    {
+                        progressFunc?.Invoke(index * 100 / jobCount);
+                        _ediabas.ResolveSgbdFile(jobInfoEcuList.SgdbName);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(jobInfoEcuList.EcuListJob);
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                            {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
+
+                                string ecuName = string.Empty;
+                                Int64 ecuAdr = -1;
+                                // ReSharper disable once InlineOutVariableDeclaration
+                                EdiabasNet.ResultData resultData;
+                                if (resultDict.TryGetValue("STAT_SG_NAME_TEXT", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        ecuName = (string)resultData.OpData;
+                                    }
+                                }
+
+                                if (resultDict.TryGetValue("STAT_SG_DIAG_ADRESSE", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        string ecuAdrStr = (string)resultData.OpData;
+                                        if (!string.IsNullOrEmpty(ecuAdrStr) && ecuAdrStr.Length > 1)
+                                        {
+                                            string hexString = ecuAdrStr.Trim().Substring(2);
+                                            if (Int32.TryParse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out Int32 addrValue))
+                                            {
+                                                ecuAdr = addrValue;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0)
+                                {
+                                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                                    {
+                                        PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, null, null, null);
+                                        EcuList.Add(ecuInfo);
+                                    }
+                                }
+
+                                dictIndex++;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "No ecu list response");
+                        // ignored
+                    }
                 }
 
                 string iLevelShip = null;
