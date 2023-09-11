@@ -592,7 +592,7 @@ namespace PsdzClient
                         return DetectResult.Aborted;
                     }
 
-                    List<PsdzDatabase.EcuInfo> ecuInfoAdd = new List<PsdzDatabase.EcuInfo>();
+                    List<PsdzDatabase.EcuInfo> ecuInfoAddList = new List<PsdzDatabase.EcuInfo>();
                     try
                     {
                         progressFunc?.Invoke(index * 100 / jobCount);
@@ -645,7 +645,8 @@ namespace PsdzClient
 
                                 if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0)
                                 {
-                                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr) &&
+                                        ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                     {
                                         string groupSgbd = null;
                                         if (vehicleSeriesInfo.EcuList != null)
@@ -663,7 +664,7 @@ namespace PsdzClient
                                         if (!string.IsNullOrEmpty(groupSgbd))
                                         {
                                             PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, null, null, groupSgbd);
-                                            ecuInfoAdd.Add(ecuInfo);
+                                            ecuInfoAddList.Add(ecuInfo);
                                         }
                                     }
                                 }
@@ -672,9 +673,9 @@ namespace PsdzClient
                             }
                         }
 
-                        foreach (PsdzDatabase.EcuInfo ecuInfo in ecuInfoAdd)
+                        foreach (PsdzDatabase.EcuInfo ecuInfoAdd in ecuInfoAddList)
                         {
-                            string groupSgbd = ecuInfo.Grp;
+                            string groupSgbd = ecuInfoAdd.Grp;
                             try
                             {
                                 _ediabas.ResolveSgbdFile(groupSgbd);
@@ -686,10 +687,10 @@ namespace PsdzClient
 
                                 string ecuDesc = GetEcuName(_ediabas.ResultSets);
                                 string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                                ecuInfo.Sgbd = ecuSgbd;
-                                ecuInfo.Description = ecuDesc;
+                                ecuInfoAdd.Sgbd = ecuSgbd;
+                                ecuInfoAdd.Description = ecuDesc;
 
-                                EcuList.Add(ecuInfo);
+                                EcuList.Add(ecuInfoAdd);
                             }
                             catch (Exception)
                             {
