@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -139,13 +140,14 @@ namespace BmwFileReader
 
         private class JobInfo
         {
-            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, bool motorbike = false)
+            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, bool motorbike = false, string ecuListJob = null)
             {
                 SgdbName = sgdbName;
                 JobName = jobName;
                 JobArgs = jobArgs;
                 JobResult = jobResult;
                 Motorbike = motorbike;
+                EcuListJob = ecuListJob;
             }
 
             public string SgdbName { get; }
@@ -153,6 +155,23 @@ namespace BmwFileReader
             public string JobArgs { get; }
             public string JobResult { get; }
             public bool Motorbike { get; }
+            public string EcuListJob { get; }
+        }
+
+        public class EcuInfo
+        {
+            public EcuInfo(string name, Int64 address, string grp)
+            {
+                Name = name;
+                Address = address;
+                Grp = grp;
+            }
+
+            public string Name { get; set; }
+
+            public Int64 Address { get; set; }
+
+            public string Grp { get; set; }
         }
 
         public delegate bool AbortDelegate();
@@ -174,6 +193,7 @@ namespace BmwFileReader
         public string ProductType { get; private set; }
         public string BnType { get; private set; }
         public List<string> BrandList { get; private set; }
+        public List<EcuInfo> EcuList { get; private set; }
         public string Ds2GroupFiles { get; private set; }
         public string ConstructYear { get; private set; }
         public string ConstructMonth { get; private set; }
@@ -201,8 +221,8 @@ namespace BmwFileReader
 
         private static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
-            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN"),
-            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN"),
+            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
+            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
             new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNR17_WERT"),
             new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "FGNUMMER"),
             // motorbikes BN2000
@@ -286,6 +306,7 @@ namespace BmwFileReader
                 ProgressFunc?.Invoke(0);
 
                 string detectedVin = null;
+                JobInfo jobInfoEcuList = null;
                 int jobCount = readVinJobsBmwFast.Count + readIdentJobsBmwFast.Count + readILevelJobsBmwFast.Count;
                 int indexOffset = 0;
                 int index = 0;
@@ -314,6 +335,11 @@ namespace BmwFileReader
                         _ediabas.ExecuteJob(jobInfo.JobName);
 
                         invalidSgbdSet.Remove(jobInfo.SgdbName.ToUpperInvariant());
+                        if (!string.IsNullOrEmpty(jobInfo.EcuListJob))
+                        {
+                            jobInfoEcuList = jobInfo;
+                        }
+
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
@@ -602,6 +628,105 @@ namespace BmwFileReader
                     BrandList = vehicleSeriesInfo.BrandList;
                 }
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
+
+                if (jobInfoEcuList != null)
+                {
+                    if (AbortFunc != null && AbortFunc())
+                    {
+                        return false;
+                    }
+
+                    EcuList = new List<EcuInfo>();
+                    try
+                    {
+                        ProgressFunc?.Invoke(100 * index / jobCount);
+                        _ediabas.ResolveSgbdFile(jobInfoEcuList.SgdbName);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(jobInfoEcuList.EcuListJob);
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                            {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
+
+                                string ecuName = string.Empty;
+                                Int64 ecuAdr = -1;
+                                // ReSharper disable once InlineOutVariableDeclaration
+                                EdiabasNet.ResultData resultData;
+                                if (resultDict.TryGetValue("STAT_SG_NAME_TEXT", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        ecuName = (string)resultData.OpData;
+                                    }
+                                }
+
+                                if (resultDict.TryGetValue("STAT_SG_DIAG_ADRESSE", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        string ecuAdrStr = (string)resultData.OpData;
+                                        if (!string.IsNullOrEmpty(ecuAdrStr) && ecuAdrStr.Length > 1)
+                                        {
+                                            string hexString = ecuAdrStr.Trim().Substring(2);
+                                            if (Int32.TryParse(hexString, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out Int32 addrValue))
+                                            {
+                                                ecuAdr = addrValue;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0)
+                                {
+                                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                                    {
+                                        string groupSgbd = null;
+                                        if (vehicleSeriesInfo.EcuList != null)
+                                        {
+                                            foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in vehicleSeriesInfo.EcuList)
+                                            {
+                                                if (vehicleEcuInfo.DiagAddr == ecuAdr)
+                                                {
+                                                    groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (!string.IsNullOrEmpty(groupSgbd))
+                                        {
+                                            EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd);
+                                            EcuList.Add(ecuInfo);
+                                        }
+                                    }
+                                }
+
+                                dictIndex++;
+                            }
+                        }
+
+                    }
+                    catch (Exception)
+                    {
+                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No ecu list response");
+                        // ignored
+                    }
+
+                    indexOffset++;
+                    jobCount++;
+                    index++;
+                }
 
                 string iLevelShip = null;
                 string iLevelCurrent = null;
@@ -1152,6 +1277,7 @@ namespace BmwFileReader
             ProductType = null;
             BnType = null;
             BrandList = null;
+            EcuList = null;
             Ds2GroupFiles = null;
             ConstructYear = null;
             ConstructMonth = null;
