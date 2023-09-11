@@ -3666,7 +3666,7 @@ namespace BmwDeepObd
                                 throw new Exception("Read VIN failed");
                             }
 
-                            List<EcuInfo> ecuInfoAdd = new List<EcuInfo>();
+                            List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
@@ -3741,24 +3741,27 @@ namespace BmwDeepObd
                                     {
                                         if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0)
                                         {
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Extra ECU found: Name={1}, Addr={2}",
-                                                vinJobUsed, ecuName, ecuAdr);
-                                            string groupSgbd = null;
-                                            if (detectVehicleBmw.VehicleSeriesInfo?.EcuList != null)
+                                            if (ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                             {
-                                                foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in detectVehicleBmw.VehicleSeriesInfo?.EcuList)
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Extra ECU found: Name={1}, Addr={2}",
+                                                    vinJobUsed, ecuName, ecuAdr);
+                                                string groupSgbd = null;
+                                                if (detectVehicleBmw.VehicleSeriesInfo?.EcuList != null)
                                                 {
-                                                    if (vehicleEcuInfo.DiagAddr == ecuAdr)
+                                                    foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in detectVehicleBmw.VehicleSeriesInfo?.EcuList)
                                                     {
-                                                        groupSgbd = vehicleEcuInfo.GroupSgbd;
-                                                        break;
+                                                        if (vehicleEcuInfo.DiagAddr == ecuAdr)
+                                                        {
+                                                            groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                                            break;
+                                                        }
                                                     }
                                                 }
-                                            }
 
-                                            if (!string.IsNullOrEmpty(groupSgbd))
-                                            {
-                                                ecuInfoAdd.Add(new EcuInfo(ecuName, ecuAdr, string.Empty, string.Empty, groupSgbd));
+                                                if (!string.IsNullOrEmpty(groupSgbd))
+                                                {
+                                                    ecuInfoAddList.Add(new EcuInfo(ecuName, ecuAdr, string.Empty, string.Empty, groupSgbd));
+                                                }
                                             }
                                         }
                                     }
@@ -3767,9 +3770,9 @@ namespace BmwDeepObd
                                 }
                             }
 
-                            foreach (EcuInfo ecuInfo in ecuInfoAdd)
+                            foreach (EcuInfo ecuInfoAdd in ecuInfoAddList)
                             {
-                                string groupSgbd = ecuInfo.Grp;
+                                string groupSgbd = ecuInfoAdd.Grp;
                                 try
                                 {
                                     ActivityCommon.ResolveSgbdFile(_ediabas, groupSgbd);
@@ -3782,12 +3785,12 @@ namespace BmwDeepObd
                                     string ecuDesc = GetEcuName(_ediabas.ResultSets);
                                     string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved Group={0}, Sgbd={1}, Desc={2}", groupSgbd, ecuSgbd, ecuDesc);
-                                    ecuInfo.Sgbd = ecuSgbd;
-                                    ecuInfo.Description = ecuDesc;
+                                    ecuInfoAdd.Sgbd = ecuSgbd;
+                                    ecuInfoAdd.Description = ecuDesc;
 
                                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                     {
-                                        string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                                        string ecuSgbdName = ecuInfoAdd.Sgbd ?? string.Empty;
                                         EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
                                         if (ecuVariant == null)
                                         {
@@ -3799,14 +3802,14 @@ namespace BmwDeepObd
                                             if (!string.IsNullOrEmpty(title))
                                             {
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
-                                                ecuInfo.PageName = title;
-                                                ecuInfo.Description = title;
-                                                ecuInfo.DescriptionTransRequired = false;
+                                                ecuInfoAdd.PageName = title;
+                                                ecuInfoAdd.Description = title;
+                                                ecuInfoAdd.DescriptionTransRequired = false;
                                             }
                                         }
                                     }
 
-                                    _ecuList.Add(ecuInfo);
+                                    _ecuList.Add(ecuInfoAdd);
                                 }
                                 catch (Exception)
                                 {
