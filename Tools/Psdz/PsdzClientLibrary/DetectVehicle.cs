@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -584,11 +585,13 @@ namespace PsdzClient
 
                 if (jobInfoEcuList != null)
                 {
+                    //EcuList.Clear();
                     if (_abortRequest)
                     {
                         return DetectResult.Aborted;
                     }
 
+                    List<PsdzDatabase.EcuInfo> ecuInfoAdd = new List<PsdzDatabase.EcuInfo>();
                     try
                     {
                         progressFunc?.Invoke(index * 100 / jobCount);
@@ -643,12 +646,53 @@ namespace PsdzClient
                                 {
                                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                     {
-                                        PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, null, null, null);
-                                        EcuList.Add(ecuInfo);
+                                        string groupSgbd = null;
+                                        if (vehicleSeriesInfo.EcuList != null)
+                                        {
+                                            foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in vehicleSeriesInfo.EcuList)
+                                            {
+                                                if (vehicleEcuInfo.DiagAddr == ecuAdr)
+                                                {
+                                                    groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (!string.IsNullOrEmpty(groupSgbd))
+                                        {
+                                            PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, null, null, groupSgbd);
+                                            ecuInfoAdd.Add(ecuInfo);
+                                        }
                                     }
                                 }
 
                                 dictIndex++;
+                            }
+                        }
+
+                        foreach (PsdzDatabase.EcuInfo ecuInfo in ecuInfoAdd)
+                        {
+                            string groupSgbd = ecuInfo.Grp;
+                            try
+                            {
+                                _ediabas.ResolveSgbdFile(groupSgbd);
+
+                                _ediabas.ArgString = string.Empty;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob("_VERSIONINFO");
+
+                                string ecuDesc = GetEcuName(_ediabas.ResultSets);
+                                string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                                ecuInfo.Sgbd = ecuSgbd;
+                                ecuInfo.Description = ecuDesc;
+
+                                EcuList.Add(ecuInfo);
+                            }
+                            catch (Exception)
+                            {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Failed to resolve Group {0}", groupSgbd);
                             }
                         }
                     }
@@ -1383,6 +1427,35 @@ namespace PsdzClient
                 log.ErrorFormat(CultureInfo.InvariantCulture, "SetInfoFromStdFa Exception: {0}", ex.Message);
                 return false;
             }
+        }
+
+        private string GetEcuName(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            string ecuName = string.Empty;
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                int dictIndex = 0;
+                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                {
+                    if (dictIndex == 0)
+                    {
+                        dictIndex++;
+                        continue;
+                    }
+
+                    if (resultDict.TryGetValue("ECU", out EdiabasNet.ResultData resultData))
+                    {
+                        if (resultData.OpData is string)
+                        {
+                            ecuName = (string)resultData.OpData;
+                        }
+                    }
+
+                    dictIndex++;
+                }
+            }
+
+            return ecuName;
         }
 
         public void Dispose()
