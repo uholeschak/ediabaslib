@@ -24,13 +24,14 @@ namespace PsdzClient
 
         private class JobInfo
         {
-            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, bool motorbike = false)
+            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, bool motorbike = false, string ecuListJob = null)
             {
                 SgdbName = sgdbName;
                 JobName = jobName;
                 JobArgs = jobArgs;
                 JobResult = jobResult;
                 Motorbike = motorbike;
+                EcuListJob = ecuListJob;
             }
 
             public string SgdbName { get; }
@@ -38,6 +39,7 @@ namespace PsdzClient
             public string JobArgs { get; }
             public string JobResult { get; }
             public bool Motorbike { get; }
+            public string EcuListJob { get; }
         }
 
         private static readonly ILog log = LogManager.GetLogger(typeof(DetectVehicle));
@@ -175,6 +177,7 @@ namespace PsdzClient
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
                 string detectedVin = null;
+                JobInfo jobInfoEcuList = null;
                 foreach (JobInfo jobInfo in readVinJobsBmwFast)
                 {
                     if (_abortRequest)
@@ -215,6 +218,10 @@ namespace PsdzClient
                                 {
                                     detectedVin = vin;
                                     log.InfoFormat(CultureInfo.InvariantCulture, "Detected VIN: {0}", detectedVin);
+                                    if (!string.IsNullOrEmpty(jobInfo.EcuListJob))
+                                    {
+                                        jobInfoEcuList = jobInfo;
+                                    }
                                     break;
                                 }
                             }
