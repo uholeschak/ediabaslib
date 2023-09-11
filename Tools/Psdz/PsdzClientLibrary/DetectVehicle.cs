@@ -702,6 +702,10 @@ namespace PsdzClient
                         log.ErrorFormat(CultureInfo.InvariantCulture, "No ecu list response");
                         // ignored
                     }
+
+                    indexOffset++;
+                    jobCount++;
+                    index++;
                 }
 
                 string iLevelShip = null;
