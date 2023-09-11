@@ -3667,6 +3667,17 @@ namespace BmwDeepObd
                             }
 
                             List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
+                            if (detectVehicleBmw.EcuList != null)
+                            {
+                                foreach (DetectVehicleBmw.EcuInfo ecuInfoAdd in detectVehicleBmw.EcuList)
+                                {
+                                    if (_ecuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
+                                    {
+                                        ecuInfoAddList.Add(new EcuInfo(ecuInfoAdd.Name, ecuInfoAdd.Address, string.Empty, string.Empty, ecuInfoAdd.Grp));
+                                    }
+                                }
+                            }
+
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
