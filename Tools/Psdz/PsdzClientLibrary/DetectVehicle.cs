@@ -202,6 +202,11 @@ namespace PsdzClient
                         _ediabas.ExecuteJob(jobInfo.JobName);
 
                         invalidSgbdSet.Remove(jobInfo.SgdbName.ToUpperInvariant());
+                        if (!string.IsNullOrEmpty(jobInfo.EcuListJob))
+                        {
+                            jobInfoEcuList = jobInfo;
+                        }
+
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
@@ -219,10 +224,6 @@ namespace PsdzClient
                                 {
                                     detectedVin = vin;
                                     log.InfoFormat(CultureInfo.InvariantCulture, "Detected VIN: {0}", detectedVin);
-                                    if (!string.IsNullOrEmpty(jobInfo.EcuListJob))
-                                    {
-                                        jobInfoEcuList = jobInfo;
-                                    }
                                     break;
                                 }
                             }
