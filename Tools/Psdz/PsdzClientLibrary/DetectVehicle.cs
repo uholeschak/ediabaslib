@@ -663,7 +663,10 @@ namespace PsdzClient
 
                                         if (!string.IsNullOrEmpty(groupSgbd))
                                         {
-                                            PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, null, null, groupSgbd);
+                                            PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, null, null, groupSgbd)
+                                            {
+                                                DetectFailure = true
+                                            };
                                             ecuInfoAddList.Add(ecuInfo);
                                         }
                                     }

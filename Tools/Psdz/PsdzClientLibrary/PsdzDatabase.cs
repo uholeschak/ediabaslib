@@ -254,6 +254,7 @@ namespace PsdzClient
                 Name = name;
                 Address = address;
                 Description = description;
+                DetectFailure = false;
                 Sgbd = sgbd;
                 Grp = grp;
                 EcuVar = null;
@@ -267,6 +268,8 @@ namespace PsdzClient
             public Int64 Address { get; set; }
 
             public string Description { get; set; }
+
+            public bool DetectFailure { get; set; }
 
             public string Sgbd { get; set; }
 
