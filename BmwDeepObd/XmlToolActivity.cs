@@ -3536,7 +3536,7 @@ namespace BmwDeepObd
                                             }
                                         }
 
-                                        if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
+                                        if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr && !string.IsNullOrEmpty(ecuSgbd))
                                         {
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU found: Name={0}, Addr={1}, Desc={2}, Sgdb={3}, Group={4}, Date={5}",
                                                 ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup, dateYear);
@@ -3750,7 +3750,7 @@ namespace BmwDeepObd
                                     }
                                     else
                                     {
-                                        if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0)
+                                        if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr)
                                         {
                                             if (ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                             {

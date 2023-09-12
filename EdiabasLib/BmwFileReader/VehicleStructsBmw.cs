@@ -16,6 +16,7 @@ namespace BmwFileReader
         public const string RulesXmlFile = "RulesInfo.xml";
         public const string RulesCsFile = "RulesInfo.cs";
         public const string HashPrefix = "HASH_";
+        public const int MaxEcuAddr = 240;
 
         [XmlType("VEI")]
         public class VehicleEcuInfo

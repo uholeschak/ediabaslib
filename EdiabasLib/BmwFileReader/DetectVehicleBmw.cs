@@ -687,7 +687,7 @@ namespace BmwFileReader
                                     }
                                 }
 
-                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0)
+                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr)
                                 {
                                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                     {
@@ -764,9 +764,7 @@ namespace BmwFileReader
                             if (resultDict.TryGetValue("STAT_I_STUFE_WERK", out EdiabasNet.ResultData resultData))
                             {
                                 string iLevel = resultData.OpData as string;
-                                if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
-                                    string.Compare(iLevel, VehicleInfoBmw.ResultUnknown,
-                                        StringComparison.OrdinalIgnoreCase) != 0)
+                                if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 && string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                 {
                                     iLevelShip = iLevel;
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel ship: {0}", iLevelShip);
@@ -778,8 +776,7 @@ namespace BmwFileReader
                                 if (resultDict.TryGetValue("STAT_I_STUFE_HO", out resultData))
                                 {
                                     string iLevel = resultData.OpData as string;
-                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
-                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 && string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelCurrent = iLevel;
                                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel current: {0}", iLevelCurrent);
@@ -794,12 +791,10 @@ namespace BmwFileReader
                                 if (resultDict.TryGetValue("STAT_I_STUFE_HO_BACKUP", out resultData))
                                 {
                                     string iLevel = resultData.OpData as string;
-                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
-                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 && string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelBackup = iLevel;
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel backup: {0}",
-                                            iLevelBackup);
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel backup: {0}", iLevelBackup);
                                     }
                                 }
 

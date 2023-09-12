@@ -554,7 +554,7 @@ namespace PsdzClient
                                     }
                                 }
 
-                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && !string.IsNullOrEmpty(ecuSgbd))
+                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr && !string.IsNullOrEmpty(ecuSgbd))
                                 {
                                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                     {
@@ -643,7 +643,7 @@ namespace PsdzClient
                                     }
                                 }
 
-                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0)
+                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr)
                                 {
                                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr) &&
                                         ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
