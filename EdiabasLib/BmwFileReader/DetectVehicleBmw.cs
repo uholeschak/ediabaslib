@@ -829,6 +829,8 @@ namespace BmwFileReader
                     ILevelBackup = iLevelBackup;
                 }
 
+                HandleSpecialEcus();
+
                 Ds2Vehicle = false;
                 Valid = true;
 
@@ -1569,6 +1571,22 @@ namespace BmwFileReader
             {
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SetInfoFromStdFa Exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
+            }
+        }
+
+        // from: Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.HandleECUGroups
+        private void HandleSpecialEcus()
+        {
+            if (string.Compare(GroupSgdb, "E89X", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                EcuInfo ecuInfoAdd = new EcuInfo("RLS", 86, "D_RLS");
+                if (EcuList.All(ecuInfo => string.Compare(ecuInfo.Grp, ecuInfoAdd.Grp, StringComparison.OrdinalIgnoreCase) != 0))
+                {
+                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
+                    {
+                        EcuList.Add(ecuInfoAdd);
+                    }
+                }
             }
         }
     }
