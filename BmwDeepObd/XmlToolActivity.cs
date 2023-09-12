@@ -108,6 +108,7 @@ namespace BmwDeepObd
                 Description = description;
                 DescriptionTrans = null;
                 DescriptionTransRequired = true;
+                DetectFailure = false;
                 Sgbd = sgbd;
                 Grp = grp;
                 Selected = false;
@@ -229,6 +230,8 @@ namespace BmwDeepObd
             public string DescriptionTrans { get; set; }
 
             public bool DescriptionTransRequired { get; set; }
+
+            public bool DetectFailure { get; set; }
 
             public string Sgbd { get; set; }
 
@@ -3795,6 +3798,7 @@ namespace BmwDeepObd
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved Group={0}, Sgbd={1}, Desc={2}", groupSgbd, ecuSgbd, ecuDesc);
                                     ecuInfoAdd.Sgbd = ecuSgbd;
                                     ecuInfoAdd.Description = ecuDesc;
+                                    ecuInfoAdd.DetectFailure = true;
 
                                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                     {
