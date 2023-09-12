@@ -629,6 +629,7 @@ namespace BmwFileReader
                 }
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
 
+                EcuList.Clear();
                 if (jobInfoEcuList != null)
                 {
                     if (AbortFunc != null && AbortFunc())
@@ -636,7 +637,6 @@ namespace BmwFileReader
                         return false;
                     }
 
-                    EcuList = new List<EcuInfo>();
                     try
                     {
                         ProgressFunc?.Invoke(100 * index / jobCount);
@@ -1277,7 +1277,7 @@ namespace BmwFileReader
             ProductType = null;
             BnType = null;
             BrandList = null;
-            EcuList = null;
+            EcuList = new List<EcuInfo>();
             Ds2GroupFiles = null;
             ConstructYear = null;
             ConstructMonth = null;
