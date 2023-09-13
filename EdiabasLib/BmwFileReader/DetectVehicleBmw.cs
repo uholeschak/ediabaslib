@@ -1586,7 +1586,7 @@ namespace BmwFileReader
                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
                     {
                         bool addEcu = false;
-                        if (Salapa.Contains("521", StringComparer.OrdinalIgnoreCase))
+                        if (HasSa("521"))
                         {
                             addEcu = true;
                         }
@@ -1645,6 +1645,54 @@ namespace BmwFileReader
             }
 
             return null;
+        }
+
+        private bool HasSa(string checkSA)
+        {
+            if (string.IsNullOrEmpty(checkSA))
+            {
+                return false; 
+            }
+
+            if (Salapa != null)
+            {
+                foreach (string item in Salapa)
+                {
+                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        if (item.Length == 4 && string.Compare(item.Substring(1), checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                        continue;
+                    }
+                    return true;
+                }
+            }
+
+            if (EWords != null)
+            {
+                foreach (string item in EWords)
+                {
+                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if (HoWords != null)
+            {
+                foreach (string item in HoWords)
+                {
+                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }
