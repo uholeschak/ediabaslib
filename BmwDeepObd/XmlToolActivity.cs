@@ -3540,7 +3540,7 @@ namespace BmwDeepObd
                                         {
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU found: Name={0}, Addr={1}, Desc={2}, Sgdb={3}, Group={4}, Date={5}",
                                                 ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup, dateYear);
-                                            if (ecuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                                            if (!EcuListContainsAddr(ecuList, ecuAdr))
                                             {
                                                 // address not existing
                                                 EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
@@ -3607,7 +3607,7 @@ namespace BmwDeepObd
                             // ReSharper disable once LoopCanBeConvertedToQuery
                             foreach (long addr in invalidAddrList)
                             {
-                                if (ecuList.All(ecuInfo => ecuInfo.Address != addr))
+                                if (!EcuListContainsAddr(ecuList, addr))
                                 {
                                     ecuInvalidCount++;
                                 }
@@ -3672,7 +3672,7 @@ namespace BmwDeepObd
                             List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
                             foreach (DetectVehicleBmw.EcuInfo ecuInfoAdd in detectVehicleBmw.EcuList)
                             {
-                                if (_ecuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
+                                if (!EcuListContainsAddr(_ecuList, ecuInfoAdd.Address))
                                 {
                                     ecuInfoAddList.Add(new EcuInfo(ecuInfoAdd.Name, ecuInfoAdd.Address, string.Empty, string.Empty, ecuInfoAdd.Grp));
                                 }
@@ -3752,7 +3752,7 @@ namespace BmwDeepObd
                                     {
                                         if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr)
                                         {
-                                            if (ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                                            if (!EcuListContainsAddr(ecuInfoAddList, ecuAdr))
                                             {
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Extra ECU found: Name={1}, Addr={2}",
                                                     vinJobUsed, ecuName, ecuAdr);
@@ -4309,6 +4309,11 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        private bool EcuListContainsAddr(List<EcuInfo> ecuList, long ecuAdr)
+        {
+            return ecuList.Any(ecuInfo => ecuInfo.Address == ecuAdr);
         }
 
         private bool IsMwTabEmpty(string mwTabFileName)
