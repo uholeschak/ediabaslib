@@ -1632,7 +1632,7 @@ namespace BmwFileReader
                 {
                     if (!string.IsNullOrEmpty(ecuInfo.Grp))
                     {
-                        string[] ecuGroups = groups.Split('|');
+                        string[] ecuGroups = ecuInfo.Grp.Split('|');
                         foreach (string ecuGroup in ecuGroups)
                         {
                             if (string.Compare(ecuGroup, group, StringComparison.OrdinalIgnoreCase) == 0)
