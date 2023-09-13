@@ -1651,7 +1651,7 @@ namespace BmwFileReader
         {
             if (string.IsNullOrEmpty(checkSA))
             {
-                return false; 
+                return false;
             }
 
             if (Salapa != null)
