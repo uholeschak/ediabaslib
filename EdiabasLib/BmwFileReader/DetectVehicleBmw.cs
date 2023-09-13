@@ -1584,7 +1584,34 @@ namespace BmwFileReader
                 {
                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
                     {
-                        EcuList.Add(ecuInfoAdd);
+                        bool addEcu = false;
+                        if (Salapa.Contains("521", StringComparer.OrdinalIgnoreCase))
+                        {
+                            addEcu = true;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                ActivityCommon.ResolveSgbdFile(_ediabas, ecuInfoAdd.Grp);
+
+                                _ediabas.ArgString = string.Empty;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob("IDENT");
+
+                                addEcu = true;
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+
+                        if (addEcu)
+                        {
+                            EcuList.Add(ecuInfoAdd);
+                        }
                     }
                 }
             }
