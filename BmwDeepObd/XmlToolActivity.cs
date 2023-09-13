@@ -3783,10 +3783,33 @@ namespace BmwDeepObd
 
                             foreach (EcuInfo ecuInfoAdd in ecuInfoAddList)
                             {
-                                string groupSgbd = ecuInfoAdd.Grp;
+                                if (string.IsNullOrEmpty(ecuInfoAdd.Grp))
+                                {
+                                    continue;
+                                }
+
+                                string[] groups = ecuInfoAdd.Grp.Split('|');
                                 try
                                 {
-                                    ActivityCommon.ResolveSgbdFile(_ediabas, groupSgbd);
+                                    string groupSgbd = null;
+                                    foreach (string group in groups)
+                                    {
+                                        try
+                                        {
+                                            ActivityCommon.ResolveSgbdFile(_ediabas, group);
+                                            groupSgbd = group;
+                                            break;
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
+                                    }
+
+                                    if (string.IsNullOrEmpty(groupSgbd))
+                                    {
+                                        continue;
+                                    }
 
                                     _ediabas.ArgString = string.Empty;
                                     _ediabas.ArgBinaryStd = null;
@@ -3825,7 +3848,7 @@ namespace BmwDeepObd
                                 }
                                 catch (Exception)
                                 {
-                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Failed to resolve Group {0}", groupSgbd);
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Failed to resolve Groups: {0}", ecuInfoAdd.Grp);
                                 }
                             }
                         }
