@@ -1585,7 +1585,7 @@ namespace BmwFileReader
                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
                     {
                         bool addEcu = false;
-                        if (Salapa.Contains("521"))
+                        if (Salapa.Contains("521", StringComparer.OrdinalIgnoreCase))
                         {
                             addEcu = true;
                         }
