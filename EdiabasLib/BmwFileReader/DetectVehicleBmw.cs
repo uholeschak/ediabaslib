@@ -1580,7 +1580,8 @@ namespace BmwFileReader
             if (string.Compare(GroupSgdb, "E89X", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 EcuInfo ecuInfoAdd = new EcuInfo("RLS", 86, "D_RLS");
-                if (EcuList.All(ecuInfo => string.Compare(ecuInfo.Grp, ecuInfoAdd.Grp, StringComparison.OrdinalIgnoreCase) != 0))
+                EcuInfo ecuInfoRls = GetEcuByEcuGroup(ecuInfoAdd.Grp);
+                if (ecuInfoRls == null)
                 {
                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
                     {
@@ -1615,6 +1616,35 @@ namespace BmwFileReader
                     }
                 }
             }
+        }
+
+        private EcuInfo GetEcuByEcuGroup(string groups)
+        {
+            if (string.IsNullOrEmpty(groups))
+            {
+                return null;
+            }
+
+            string[] groupArray = groups.Split('|');
+            foreach (string group in groupArray)
+            {
+                foreach (EcuInfo ecuInfo in EcuList)
+                {
+                    if (!string.IsNullOrEmpty(ecuInfo.Grp))
+                    {
+                        string[] ecuGroups = groups.Split('|');
+                        foreach (string ecuGroup in ecuGroups)
+                        {
+                            if (string.Compare(ecuGroup, group, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                return ecuInfo; 
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
