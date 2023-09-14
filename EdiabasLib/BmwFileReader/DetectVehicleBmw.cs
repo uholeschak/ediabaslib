@@ -1318,6 +1318,11 @@ namespace BmwFileReader
                     string saStr = resultDataSa.OpData as string;
                     if (!string.IsNullOrEmpty(saStr))
                     {
+                        if (saStr.Length == 4)
+                        {
+                            saStr = saStr.Substring(1);
+                        }
+
                         if (!Salapa.Contains(saStr))
                         {
                             Salapa.Add(saStr);
@@ -1370,6 +1375,11 @@ namespace BmwFileReader
                             string saStr = resultDataSa.OpData as string;
                             if (!string.IsNullOrEmpty(saStr))
                             {
+                                if (saStr.Length == 4)
+                                {
+                                    saStr = saStr.Substring(1);
+                                }
+
                                 if (!Salapa.Contains(saStr))
                                 {
                                     Salapa.Add(saStr);
@@ -1658,15 +1668,10 @@ namespace BmwFileReader
             {
                 foreach (string item in Salapa)
                 {
-                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        if (item.Length == 4 && string.Compare(item.Substring(1), checkSA, StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            return true;
-                        }
-                        continue;
+                        return true;
                     }
-                    return true;
                 }
             }
 
