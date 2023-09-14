@@ -1180,13 +1180,7 @@ namespace PsdzClient
                 if (resultDict.TryGetValue("STAT_SALAPA", out EdiabasNet.ResultData resultDataSa))
                 {
                     string saStr = resultDataSa.OpData as string;
-                    if (!string.IsNullOrEmpty(saStr))
-                    {
-                        if (!Salapa.Contains(saStr))
-                        {
-                            Salapa.Add(saStr);
-                        }
-                    }
+                    AddSalapa(saStr);
                 }
 
                 if (resultDict.TryGetValue("STAT_HO_WORTE", out EdiabasNet.ResultData resultDataHo))
@@ -1232,13 +1226,7 @@ namespace PsdzClient
                         if (resultDict.TryGetValue(saName, out EdiabasNet.ResultData resultDataSa))
                         {
                             string saStr = resultDataSa.OpData as string;
-                            if (!string.IsNullOrEmpty(saStr))
-                            {
-                                if (!Salapa.Contains(saStr))
-                                {
-                                    Salapa.Add(saStr);
-                                }
-                            }
+                            AddSalapa(saStr);
                         }
                     }
                 }
@@ -1388,13 +1376,7 @@ namespace PsdzClient
                     if (match.Success)
                     {
                         string saStr = match.Groups["SA"]?.Value;
-                        if (!string.IsNullOrEmpty(saStr))
-                        {
-                            if (!Salapa.Contains(saStr))
-                            {
-                                Salapa.Add(saStr);
-                            }
-                        }
+                        AddSalapa(saStr);
                     }
                 }
 
@@ -1465,6 +1447,28 @@ namespace PsdzClient
             }
 
             return ecuName;
+        }
+
+        private bool AddSalapa(string salapa)
+        {
+            if (string.IsNullOrEmpty(salapa))
+            {
+                return false;
+            }
+
+            string saStr = salapa;
+            if (saStr.Length == 4)
+            {
+                saStr = saStr.Substring(1);
+            }
+
+            if (!Salapa.Contains(saStr))
+            {
+                Salapa.Add(saStr);
+                return true;
+            }
+
+            return false;
         }
 
         public void Dispose()
