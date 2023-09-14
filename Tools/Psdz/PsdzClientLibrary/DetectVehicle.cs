@@ -813,6 +813,8 @@ namespace PsdzClient
                 ILevelCurrent = iLevelCurrent;
                 ILevelBackup = iLevelBackup;
 
+                HandleSpecialEcus();
+
                 if (_abortRequest)
                 {
                     return DetectResult.Aborted;
@@ -1449,6 +1451,79 @@ namespace PsdzClient
             return ecuName;
         }
 
+        // from: Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.HandleECUGroups
+        private void HandleSpecialEcus()
+        {
+            if (string.Compare(GroupSgdb, "E89X", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                PsdzDatabase.EcuInfo ecuInfoAdd = new PsdzDatabase.EcuInfo("RLS", 86, null, null, "D_RLS");
+                PsdzDatabase.EcuInfo ecuInfoRls = GetEcuByEcuGroup(ecuInfoAdd.Grp);
+                if (ecuInfoRls == null)
+                {
+                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
+                    {
+                        bool addEcu = false;
+                        if (HasSa("521"))
+                        {
+                            addEcu = true;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                _ediabas.ResolveSgbdFile(ecuInfoAdd.Grp);
+
+                                _ediabas.ArgString = string.Empty;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob("IDENT");
+
+                                addEcu = true;
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+
+                        if (addEcu)
+                        {
+                            EcuList.Add(ecuInfoAdd);
+                        }
+                    }
+                }
+            }
+        }
+
+        private PsdzDatabase.EcuInfo GetEcuByEcuGroup(string groups)
+        {
+            if (string.IsNullOrEmpty(groups))
+            {
+                return null;
+            }
+
+            string[] groupArray = groups.Split('|');
+            foreach (string group in groupArray)
+            {
+                foreach (PsdzDatabase.EcuInfo ecuInfo in EcuList)
+                {
+                    if (!string.IsNullOrEmpty(ecuInfo.Grp))
+                    {
+                        string[] ecuGroups = ecuInfo.Grp.Split('|');
+                        foreach (string ecuGroup in ecuGroups)
+                        {
+                            if (string.Compare(ecuGroup, group, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                return ecuInfo;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
         private bool AddSalapa(string salapa)
         {
             if (string.IsNullOrEmpty(salapa))
@@ -1466,6 +1541,49 @@ namespace PsdzClient
             {
                 Salapa.Add(saStr);
                 return true;
+            }
+
+            return false;
+        }
+
+        private bool HasSa(string checkSA)
+        {
+            if (string.IsNullOrEmpty(checkSA))
+            {
+                return false;
+            }
+
+            if (Salapa != null)
+            {
+                foreach (string item in Salapa)
+                {
+                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if (EWords != null)
+            {
+                foreach (string item in EWords)
+                {
+                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if (HoWords != null)
+            {
+                foreach (string item in HoWords)
+                {
+                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
             }
 
             return false;
