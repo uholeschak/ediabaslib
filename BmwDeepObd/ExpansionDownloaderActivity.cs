@@ -512,50 +512,35 @@ namespace BmwDeepObd
                 return false;
             }
 
+#if !DEBUG
             if (!checkMd5)
             {
-                try
-                {
-                    using (FileStream stream = File.OpenRead(obbFile))
-                    {
-                    }
-                }
-                catch (Exception)
-                {
-#if DEBUG
-                    Android.Util.Log.Debug(Tag, string.Format("Reading OBB file failed: {0}", obbFile));
-#endif
-                    return false;
-                }
-#if !DEBUG
                 return true;
-#endif
             }
-            else
-            {
-                byte[] md5 = CalculateMd5(obbFile);
-                if (md5 != null)
-                {
-#if DEBUG
-                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                    sb.Append("MD5: {");
-                    int index = 0;
-                    foreach (byte value in md5)
-                    {
-                        if (index > 0)
-                        {
-                            sb.Append(", ");
-                        }
-                        sb.Append(string.Format("0x{0:X02}", value));
-                        index++;
-                    }
-                    sb.Append("};");
-                    Android.Util.Log.Debug(Tag, sb.ToString());
 #endif
-                    if (md5.SequenceEqual(ObbMd5))
+
+            byte[] md5 = CalculateMd5(obbFile);
+            if (md5 != null)
+            {
+#if DEBUG
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append("MD5: {");
+                int index = 0;
+                foreach (byte value in md5)
+                {
+                    if (index > 0)
                     {
-                        return true;
+                        sb.Append(", ");
                     }
+                    sb.Append(string.Format("0x{0:X02}", value));
+                    index++;
+                }
+                sb.Append("};");
+                Android.Util.Log.Debug(Tag, sb.ToString());
+#endif
+                if (md5.SequenceEqual(ObbMd5))
+                {
+                    return true;
                 }
             }
 
@@ -609,8 +594,26 @@ namespace BmwDeepObd
                                     FileInfo fileInfo = new FileInfo(file);
                                     if (fileInfo.Exists && fileInfo.Length == ObbFileSize)
                                     {
-                                        obbFile = file;
-                                        break;
+                                        try
+                                        {
+                                            using (FileStream stream = File.OpenRead(file))
+                                            {
+                                            }
+
+                                            obbFile = file;
+                                            break;
+                                        }
+                                        catch (Exception)
+                                        {
+                                            try
+                                            {
+                                                File.Delete(obbFile);
+                                            }
+                                            catch (Exception)
+                                            {
+                                                // ignored
+                                            }
+                                        }
                                     }
                                 }
                             }
