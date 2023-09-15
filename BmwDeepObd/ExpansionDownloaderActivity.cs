@@ -594,8 +594,26 @@ namespace BmwDeepObd
                                     FileInfo fileInfo = new FileInfo(file);
                                     if (fileInfo.Exists && fileInfo.Length == ObbFileSize)
                                     {
-                                        obbFile = file;
-                                        break;
+                                        try
+                                        {
+                                            using (FileStream stream = File.OpenRead(file))
+                                            {
+                                            }
+
+                                            obbFile = file;
+                                            break;
+                                        }
+                                        catch (Exception)
+                                        {
+                                            try
+                                            {
+                                                File.Delete(obbFile);
+                                            }
+                                            catch (Exception)
+                                            {
+                                                // ignored
+                                            }
+                                        }
                                     }
                                 }
                             }
