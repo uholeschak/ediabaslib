@@ -65,6 +65,7 @@ namespace BmwDeepObd
         private bool? _expansionFileDelivered;
         private bool _downloadStarted;
         private bool _activityActive;
+        private string _invalidObbFileName;
 
         /// <summary>
         /// The downloader service.
@@ -284,6 +285,7 @@ namespace BmwDeepObd
             _notificationGranted = false;
             _googlePlayErrorShown = false;
             _expansionFileDelivered = null;
+            _invalidObbFileName = null;
 
             CustomDownloadNotification.RegisterNotificationChannels(this);
         }
@@ -296,6 +298,8 @@ namespace BmwDeepObd
             _storageAccessRequested = false;
             _googlePlayErrorShown = false;
             _expansionFileDelivered = null;
+            _invalidObbFileName = null;
+
             if (IsAssetPresent(this))
             {
                 try
@@ -612,6 +616,14 @@ namespace BmwDeepObd
                                             catch (Exception)
                                             {
                                                 // ignored
+                                            }
+
+                                            if (context is ExpansionDownloaderActivity downloaderActivity)
+                                            {
+                                                if (File.Exists(file))
+                                                {
+                                                    downloaderActivity._invalidObbFileName = file;
+                                                }
                                             }
                                         }
                                     }
@@ -1095,6 +1107,29 @@ namespace BmwDeepObd
         {
             if (!_storageAccessGranted)
             {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(_invalidObbFileName))
+            {
+                string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.obb_not_readable), _invalidObbFileName);
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                    .SetMessage(message)
+                    .SetTitle(Resource.String.alert_title_error)
+                    .SetNeutralButton(Resource.String.button_ok, (s, e) => { })
+                    .Show();
+                if (alertDialog != null)
+                {
+                    alertDialog.DismissEvent += (sender, args) =>
+                    {
+                        if (!_activityActive)
+                        {
+                            return;
+                        }
+
+                        Finish();
+                    };
+                }
                 return;
             }
 

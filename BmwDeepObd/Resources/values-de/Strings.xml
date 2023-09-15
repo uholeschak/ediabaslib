@@ -101,6 +101,7 @@
   <string name="exp_down_obb_missing">Die App wurde nicht von Google Play heruntergeladen und die Erweiterungsdatei fehlt.\nLaden Sie die OBB-Datei mit einem APK Downloader von Google Play herunter und kopieren Sie diese mit dem Namen:\n\'{0}\'\nin eines der Verzeichnisse:\n{1}\nEs gibt dafür keinen Support, die Verwendung von Google Play ist der einzige empfohlene Weg.</string>
   <string name="exp_down_time_remaining">Verbleibende Zeit: {0}</string>
   <string name="obb_missing_restart">Die Erweiterungsdatei wurde nicht gefunden,\ndie App muss neu gestartet werden..</string>
+  <string name="obb_not_readable">Die Erweiterungsdatei:\n{0}\nist nicht lesbar.\nPrüfen Sie die Zugriffsrechte oder löschen sie die Datei.</string>
 
   <!-- Downloader library -->
   <string name="notification_download_complete">Download abgeschlossen</string>
