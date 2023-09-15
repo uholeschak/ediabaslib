@@ -100,6 +100,8 @@
   <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.\nЗагрузите OBB-файл при помощи APK-загрузчика и скопируйте его с именем:\n\'{0}\'\nв папку:\n{1}\nВ данном случае поддержка отсутствует, использование Google Play - единственный рекомендуемый способ.</string>
   <string name="exp_down_time_remaining">Необходимое время: {0}</string>
   <string name="obb_missing_restart">Файл расширения не найден,\nнеобходимо перезапустить приложение.</string>
+  <!--Translate-->
+  <string name="obb_not_readable">Файл расширения:\n{0}\nне читается.\nПроверьте права доступа или удалите файл.</string>
 
   <!-- Downloader library -->
   <string name="notification_download_complete">Загрузка завершена</string>

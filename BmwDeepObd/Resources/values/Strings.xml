@@ -100,6 +100,7 @@
   <string name="exp_down_obb_missing">The app has not been downloaded from Google Play and the expansion file is missing.\nDownload the OBB file with an APK downloader from Google Play and copy it with the name:\n\'{0}\'\nin one of the directories:\n{1}\nThere is no support, the usage of Google Play is the only recommend way.</string>
   <string name="exp_down_time_remaining">Time remaining: {0}</string>
   <string name="obb_missing_restart">The expansion file has not been found,\nthe app has to be restarted.</string>
+  <string name="obb_not_readable">The expansion file:\n{0}\nis not readable.\nCheck the access permissions or delete the file.</string>
 
   <!-- Downloader library (modfications) -->
   <string name="state_failed_unlicensed">Download failed because the app may not be downloaded from Google Play</string>
