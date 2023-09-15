@@ -512,35 +512,50 @@ namespace BmwDeepObd
                 return false;
             }
 
-#if !DEBUG
             if (!checkMd5)
             {
-                return true;
-            }
-#endif
-
-            byte[] md5 = CalculateMd5(obbFile);
-            if (md5 != null)
-            {
-#if DEBUG
-                System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                sb.Append("MD5: {");
-                int index = 0;
-                foreach (byte value in md5)
+                try
                 {
-                    if (index > 0)
+                    using (FileStream stream = File.OpenRead(obbFile))
                     {
-                        sb.Append(", ");
                     }
-                    sb.Append(string.Format("0x{0:X02}", value));
-                    index++;
                 }
-                sb.Append("};");
-                Android.Util.Log.Debug(Tag, sb.ToString());
-#endif
-                if (md5.SequenceEqual(ObbMd5))
+                catch (Exception)
                 {
-                    return true;
+#if DEBUG
+                    Android.Util.Log.Debug(Tag, string.Format("Reading OBB file failed: {0}", obbFile));
+#endif
+                    return false;
+                }
+#if !DEBUG
+                return true;
+#endif
+            }
+            else
+            {
+                byte[] md5 = CalculateMd5(obbFile);
+                if (md5 != null)
+                {
+#if DEBUG
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    sb.Append("MD5: {");
+                    int index = 0;
+                    foreach (byte value in md5)
+                    {
+                        if (index > 0)
+                        {
+                            sb.Append(", ");
+                        }
+                        sb.Append(string.Format("0x{0:X02}", value));
+                        index++;
+                    }
+                    sb.Append("};");
+                    Android.Util.Log.Debug(Tag, sb.ToString());
+#endif
+                    if (md5.SequenceEqual(ObbMd5))
+                    {
+                        return true;
+                    }
                 }
             }
 
