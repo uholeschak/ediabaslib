@@ -1618,15 +1618,18 @@ namespace BmwFileReader
                 }
             }
 
-            const string groupFdi = "D_FBI";
-            EcuInfo ecuInfoFdi = GetEcuByEcuGroup(groupFdi);
-            if (ecuInfoFdi != null)
+            if (!string.IsNullOrEmpty(BnType) && string.Compare(BnType, "BEV2010", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                if (HasSa("8AA") && string.IsNullOrEmpty(GetEcuNameByIdent(groupFdi)))
+                const string groupFdi = "D_FBI";
+                EcuInfo ecuInfoFdi = GetEcuByEcuGroup(groupFdi);
+                if (ecuInfoFdi != null)
                 {
-                    if (!ecuRemoveList.Contains(ecuInfoFdi))
+                    if (HasSa("8AA") && string.IsNullOrEmpty(GetEcuNameByIdent(groupFdi)))
                     {
-                        ecuRemoveList.Add(ecuInfoFdi);
+                        if (!ecuRemoveList.Contains(ecuInfoFdi))
+                        {
+                            ecuRemoveList.Add(ecuInfoFdi);
+                        }
                     }
                 }
             }
