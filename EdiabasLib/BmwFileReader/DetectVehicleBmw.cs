@@ -1559,6 +1559,7 @@ namespace BmwFileReader
         // from: Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.HandleECUGroups
         private void HandleSpecialEcus()
         {
+            List<EcuInfo> ecusToRemove = new List<EcuInfo>();
             if (string.Compare(GroupSgdb, "E89X", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 EcuInfo ecuInfoAdd = new EcuInfo("RLS", 86, "D_RLS");
@@ -1567,30 +1568,7 @@ namespace BmwFileReader
                 {
                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
                     {
-                        bool addEcu = false;
-                        if (HasSa("521"))
-                        {
-                            addEcu = true;
-                        }
-                        else
-                        {
-                            try
-                            {
-                                ActivityCommon.ResolveSgbdFile(_ediabas, ecuInfoAdd.Grp);
-
-                                _ediabas.ArgString = string.Empty;
-                                _ediabas.ArgBinaryStd = null;
-                                _ediabas.ResultsRequests = string.Empty;
-                                _ediabas.ExecuteJob("IDENT");
-
-                                addEcu = true;
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                        }
-
+                        bool addEcu = HasSa("521") || CheckEcuIdent(ecuInfoAdd.Grp);
                         if (addEcu)
                         {
                             EcuList.Add(ecuInfoAdd);
@@ -1598,6 +1576,53 @@ namespace BmwFileReader
                     }
                 }
             }
+
+            const string groupIspd = "D_ISPB";
+            EcuInfo ecuInfoIspd = GetEcuByEcuGroup(groupIspd);
+            if (ecuInfoIspd != null)
+            {
+                if (!CheckEcuIdent(groupIspd))
+                {
+                    const string groupMmi = "D_MMI";
+                    EcuInfo ecuInfoMmi = GetEcuByEcuGroup(groupMmi);
+                    if (ecuInfoMmi != null)
+                    {
+                        if (!CheckEcuIdent(groupMmi))
+                        {
+                            if (!ecusToRemove.Contains(ecuInfoIspd))
+                            {
+                                ecusToRemove.Add(ecuInfoIspd);
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (EcuInfo ecuInfoRemove in ecusToRemove)
+            {
+                ecusToRemove.Remove(ecuInfoRemove);
+            }
+        }
+
+        private bool CheckEcuIdent(string sgbd)
+        {
+            try
+            {
+                ActivityCommon.ResolveSgbdFile(_ediabas, sgbd);
+
+                _ediabas.ArgString = string.Empty;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.ExecuteJob("IDENT");
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         private EcuInfo GetEcuByEcuGroup(string groups)
