@@ -1557,9 +1557,14 @@ namespace BmwFileReader
         }
 
         // from: Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.HandleECUGroups
-        private void HandleSpecialEcus()
+        private void HandleSpecialEcus(List<EcuInfo> ecusToRemove = null)
         {
-            List<EcuInfo> ecusToRemove = new List<EcuInfo>();
+            List<EcuInfo> ecuRemoveList = new List<EcuInfo>();
+            if (ecusToRemove != null)
+            {
+                ecuRemoveList.AddRange(ecusToRemove);
+            }
+
             if (string.Compare(GroupSgdb, "E89X", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 EcuInfo ecuInfoAdd = new EcuInfo("RLS", 86, "D_RLS");
@@ -1589,18 +1594,18 @@ namespace BmwFileReader
                     {
                         if (!CheckEcuIdent(groupMmi))
                         {
-                            if (!ecusToRemove.Contains(ecuInfoIspd))
+                            if (!ecuRemoveList.Contains(ecuInfoIspd))
                             {
-                                ecusToRemove.Add(ecuInfoIspd);
+                                ecuRemoveList.Add(ecuInfoIspd);
                             }
                         }
                     }
                 }
             }
 
-            foreach (EcuInfo ecuInfoRemove in ecusToRemove)
+            foreach (EcuInfo ecuInfoRemove in ecuRemoveList)
             {
-                ecusToRemove.Remove(ecuInfoRemove);
+                ecuRemoveList.Remove(ecuInfoRemove);
             }
         }
 
