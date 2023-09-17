@@ -1573,7 +1573,7 @@ namespace BmwFileReader
                 {
                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
                     {
-                        bool addEcu = HasSa("521") || CheckEcuIdent(ecuInfoAdd.Grp);
+                        bool addEcu = HasSa("521") || !string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoAdd.Grp));
                         if (addEcu)
                         {
                             EcuList.Add(ecuInfoAdd);
@@ -1586,18 +1586,33 @@ namespace BmwFileReader
             EcuInfo ecuInfoIspd = GetEcuByEcuGroup(groupIspd);
             if (ecuInfoIspd != null)
             {
-                if (!CheckEcuIdent(groupIspd))
+                if (string.IsNullOrEmpty(GetEcuNameByIdent(groupIspd)))
                 {
-                    const string groupMmi = "D_MMI";
-                    EcuInfo ecuInfoMmi = GetEcuByEcuGroup(groupMmi);
-                    if (ecuInfoMmi != null)
+                    bool removeEcu = false;
+                    if (HasSa("6VC") || GetEcuByEcuGroup("CMEDIAR") != null)
                     {
-                        if (!CheckEcuIdent(groupMmi))
+                        removeEcu = true;
+                    }
+                    else
+                    {
+                        const string groupMmi = "D_MMI";
+                        EcuInfo ecuInfoMmi = GetEcuByEcuGroup(groupMmi);
+                        if (ecuInfoMmi != null)
                         {
-                            if (!ecuRemoveList.Contains(ecuInfoIspd))
+                            string ecuMmiName = GetEcuNameByIdent(groupMmi);
+                            if (!string.IsNullOrEmpty(ecuMmiName) && string.Compare(ecuMmiName, "RAD2", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                ecuRemoveList.Add(ecuInfoIspd);
+                                removeEcu = true;
                             }
+                        }
+                    }
+
+                    if (removeEcu)
+                    {
+                        // found RAD2 with built-in USB/audio (SA 6FL/6ND/6NE)
+                        if (!ecuRemoveList.Contains(ecuInfoIspd))
+                        {
+                            ecuRemoveList.Add(ecuInfoIspd);
                         }
                     }
                 }
@@ -1609,7 +1624,7 @@ namespace BmwFileReader
             }
         }
 
-        private bool CheckEcuIdent(string sgbd)
+        private string GetEcuNameByIdent(string sgbd)
         {
             try
             {
@@ -1620,14 +1635,15 @@ namespace BmwFileReader
                 _ediabas.ResultsRequests = string.Empty;
                 _ediabas.ExecuteJob("IDENT");
 
-                return true;
+                string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                return ecuName.ToUpperInvariant();
             }
             catch (Exception)
             {
                 // ignored
             }
 
-            return false;
+            return null;
         }
 
         private EcuInfo GetEcuByEcuGroup(string groups)
