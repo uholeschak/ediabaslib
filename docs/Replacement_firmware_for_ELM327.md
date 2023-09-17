@@ -38,10 +38,10 @@ If the firmware updated failed, use [firmware update failure](#firmware-update-f
 You could use the Bluetooth adapter on a windows (10 or higher) PC (with INPA, Tool32 or ISTA-D as a replacement for an OBD or ADS adapter. The following steps are required to establish the connection:
 * Install [.NET framework 4.7.2](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472) or higher and [VS C++ runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [VS C++ runtime 32 bit](https://aka.ms/vs/17/release/vc_redist.x86.exe) (recommended, but not required).
 * Download the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package and extract the .zip file. Start `Api32\EdiabasLibConfigTool.exe` and follow the instructions in the status window: Search the adapter, select it, click `Check Connection` and patch the required EDIABAS installations.
-* For ISTA-D: You have to select the `EDIABAS\bin` directory inside ISTA-D first.
-* For ISTA-D: In _Administration_ -> `VCI Config` select as `Interface type`: `Ediabas default settings (ediabas.ini)`
-
+* For ISTA-D: You have to select the `EDIABAS\bin` directory inside ISTA-D first.  
 ![EdiabasLib Config Tool](Replacement_firmware_for_ELM327_ConfigToolBluetoothSmall.png)
+* For ISTA-D: In _Administration_ -> `VCI Config` select as `Interface type`: `Ediabas default settings (ediabas.ini)`  
+![EdiabasLib Config Tool](Replacement_firmware_for_ELM327_IstaSettings.png)
 
 ## Programming ELM327 adapter with Deep OBD firmware
 First programming of PIC18F25K80 microcontroller should be done with a PICkit 3 programmer. Here is instruction for [flashing ELM327 adapter with Deep OBD firmware](Replace_ELM327_HC04_Firmware.md).
