@@ -1128,5 +1128,10 @@ namespace BmwFileReader
 
             return null;
         }
+
+        protected override void LogFormat(string format, params object[] args)
+        {
+            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, format, args);
+        }
     }
 }
