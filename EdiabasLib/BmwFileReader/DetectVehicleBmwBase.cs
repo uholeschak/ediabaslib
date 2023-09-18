@@ -51,27 +51,27 @@ namespace BmwFileReader
             public string Grp { get; set; }
         }
 
-        public string Vin { get; private set; }
-        public string TypeKey { get; private set; }
-        public string GroupSgdb { get; private set; }
-        public string ModelSeries { get; private set; }
-        public string Series { get; private set; }
-        public string ProductType { get; private set; }
-        public string BnType { get; private set; }
-        public List<string> BrandList { get; private set; }
-        public List<EcuInfo> EcuList { get; private set; }
-        public string ConstructYear { get; private set; }
-        public string ConstructMonth { get; private set; }
-        public string Paint { get; private set; }
-        public string Upholstery { get; private set; }
-        public string StandardFa { get; private set; }
-        public List<string> Salapa { get; private set; }
-        public List<string> HoWords { get; private set; }
-        public List<string> EWords { get; private set; }
-        public List<string> ZbWords { get; private set; }
-        public string ILevelShip { get; private set; }
-        public string ILevelCurrent { get; private set; }
-        public string ILevelBackup { get; private set; }
+        public string Vin { get; protected set; }
+        public string TypeKey { get; protected set; }
+        public string GroupSgdb { get; protected set; }
+        public string ModelSeries { get; protected set; }
+        public string Series { get; protected set; }
+        public string ProductType { get; protected set; }
+        public string BnType { get; protected set; }
+        public List<string> BrandList { get; protected set; }
+        public List<EcuInfo> EcuList { get; protected set; }
+        public string ConstructYear { get; protected set; }
+        public string ConstructMonth { get; protected set; }
+        public string Paint { get; protected set; }
+        public string Upholstery { get; protected set; }
+        public string StandardFa { get; protected set; }
+        public List<string> Salapa { get; protected set; }
+        public List<string> HoWords { get; protected set; }
+        public List<string> EWords { get; protected set; }
+        public List<string> ZbWords { get; protected set; }
+        public string ILevelShip { get; protected set; }
+        public string ILevelCurrent { get; protected set; }
+        public string ILevelBackup { get; protected set; }
 
         protected EdiabasNet _ediabas;
 
@@ -129,6 +129,13 @@ namespace BmwFileReader
             new JobInfo("FZGIDENT", "STRINGS_LESEN", null, "BR_TXT"),
         };
 
+        protected static readonly string[] ReadMotorJobsDs2 =
+        {
+            "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
+        };
+
+        public const string AllDs2GroupFiles = "d_0000,d_0008,d_000d,d_0010,d_0011,d_0012,d_motor,d_0013,d_0014,d_0015,d_0016,d_0020,d_0021,d_0022,d_0024,d_0028,d_002c,d_002e,d_0030,d_0032,d_0035,d_0036,d_003b,d_0040,d_0044,d_0045,d_0050,d_0056,d_0057,d_0059,d_005a,d_005b,d_0060,d_0068,d_0069,d_006a,d_006c,d_0070,d_0071,d_0072,d_007f,d_0080,d_0086,d_0099,d_009a,d_009b,d_009c,d_009d,d_009e,d_00a0,d_00a4,d_00a6,d_00a7,d_00ac,d_00b0,d_00b9,d_00bb,d_00c0,d_00c8,d_00cd,d_00d0,d_00da,d_00e0,d_00e8,d_00ed,d_00f0,d_00f5,d_00ff,d_b8_d0,,d_m60_10,d_m60_12,d_spmbt,d_spmft,d_szm,d_zke3bt,d_zke3ft,d_zke3pm,d_zke3sb,d_zke3sd,d_zke_gm,d_zuheiz,d_sitz_f,d_sitz_b,d_0047,d_0048,d_00ce,d_00ea,d_abskwp,d_0031,d_0019,d_smac,d_0081,d_xen_l,d_xen_r";
+
         public DetectVehicleBmwBase(EdiabasNet ediabas)
         {
             _ediabas = ediabas;
@@ -162,6 +169,21 @@ namespace BmwFileReader
             }
 
             return sb.ToString();
+        }
+
+        public bool IsDs2GroupSgbd(string name)
+        {
+            string nameTrim = name.Trim();
+            string[] groupArray = AllDs2GroupFiles.Split(',');
+            foreach (string group in groupArray)
+            {
+                if (string.Compare(group, nameTrim, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         protected virtual void ResetValues()
@@ -538,25 +560,8 @@ namespace BmwFileReader
             }
         }
 
-        protected string GetEcuNameByIdent(string sgbd)
+        protected virtual string GetEcuNameByIdent(string sgbd)
         {
-            try
-            {
-                ActivityCommon.ResolveSgbdFile(_ediabas, sgbd);
-
-                _ediabas.ArgString = string.Empty;
-                _ediabas.ArgBinaryStd = null;
-                _ediabas.ResultsRequests = string.Empty;
-                _ediabas.ExecuteJob("IDENT");
-
-                string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                return ecuName.ToUpperInvariant();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
             return null;
         }
 
