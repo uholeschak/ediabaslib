@@ -103,6 +103,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\EdiabasLib\BmwFileReader\DetectVehicleBmwBase.cs">
+      <Link>DetectVehicleBmwBase.cs</Link>
+    </Compile>
     <Compile Include="..\..\..\EdiabasLib\BmwFileReader\EcuFunctionStructs.cs">
       <Link>EcuFunctionStructs.cs</Link>
     </Compile>
