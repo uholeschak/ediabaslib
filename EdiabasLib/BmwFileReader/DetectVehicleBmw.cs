@@ -164,7 +164,7 @@ namespace BmwFileReader
 
         public bool DetectVehicleBmwFast(bool detectMotorbikes = false)
         {
-            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Try to detect vehicle BMW fast, Motorbikes: {0}", detectMotorbikes);
+            LogFormat("Try to detect vehicle BMW fast, Motorbikes: {0}", detectMotorbikes);
             ResetValues();
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
@@ -192,7 +192,7 @@ namespace BmwFileReader
                 int index = 0;
                 foreach (JobInfo jobInfo in readVinJobsBmwFast)
                 {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
+                    LogFormat("Read VIN job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
                     try
                     {
                         if (AbortFunc != null && AbortFunc())
@@ -235,7 +235,7 @@ namespace BmwFileReader
                                 if (!string.IsNullOrEmpty(vin) && VinRegex.IsMatch(vin))
                                 {
                                     detectedVin = vin;
-                                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected VIN: {0}", detectedVin);
+                                    LogFormat("Detected VIN: {0}", detectedVin);
                                     break;
                                 }
                             }
@@ -244,7 +244,7 @@ namespace BmwFileReader
                     catch (Exception)
                     {
                         invalidSgbdSet.Add(jobInfo.SgdbName.ToUpperInvariant());
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
+                        LogFormat("No VIN response");
                         // ignored
                     }
                     index++;
@@ -273,7 +273,7 @@ namespace BmwFileReader
                         return false;
                     }
 
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
+                    LogFormat("Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
 
                     try
                     {
@@ -281,7 +281,7 @@ namespace BmwFileReader
 
                         if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                         {
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", jobInfo.SgdbName);
+                            LogFormat("Job ignored: {0}", jobInfo.SgdbName);
                             index++;
                             continue;
                         }
@@ -336,11 +336,11 @@ namespace BmwFileReader
                                                 string br = resultDataBa.OpData as string;
                                                 if (!string.IsNullOrEmpty(br))
                                                 {
-                                                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
+                                                    LogFormat("Detected BR: {0}", br);
                                                     string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
                                                     if (!string.IsNullOrEmpty(vSeries))
                                                     {
-                                                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
+                                                        LogFormat("Detected vehicle series: {0}", vSeries);
                                                         ModelSeries = br;
                                                         Series = vSeries;
                                                     }
@@ -352,7 +352,7 @@ namespace BmwFileReader
                                                     DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
                                                     if (dateTime != null)
                                                     {
-                                                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected construction date: {0}",
+                                                        LogFormat("Detected construction date: {0}",
                                                             dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                                                         SetConstructDate(dateTime);
                                                     }
@@ -390,11 +390,11 @@ namespace BmwFileReader
                                     string br = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(br))
                                     {
-                                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected BR: {0}", br);
+                                        LogFormat("Detected BR: {0}", br);
                                         string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
                                         if (!string.IsNullOrEmpty(vSeries))
                                         {
-                                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
+                                            LogFormat("Detected vehicle series: {0}", vSeries);
                                             ModelSeries = br;
                                             Series = vSeries;
                                         }
@@ -405,7 +405,7 @@ namespace BmwFileReader
                                             DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
                                             if (dateTime != null)
                                             {
-                                                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected construction date: {0}",
+                                                LogFormat("Detected construction date: {0}",
                                                     dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                                                 SetConstructDate(dateTime);
                                             }
@@ -473,7 +473,7 @@ namespace BmwFileReader
                         if (!string.IsNullOrEmpty(productTypeProp))
                         {
                             ProductType = productTypeProp;
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Product type: {0}", ProductType);
+                            LogFormat("Product type: {0}", ProductType);
                         }
                     }
 
@@ -482,20 +482,20 @@ namespace BmwFileReader
                         if (!string.IsNullOrEmpty(brandProp))
                         {
                             BrandList = new List<string> { brandProp };
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Brand: {0}", brandProp);
+                            LogFormat("Brand: {0}", brandProp);
                         }
                     }
                 }
 
                 if (!string.IsNullOrEmpty(ConstructYear) && !string.IsNullOrEmpty(ConstructMonth))
                 {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Construct date: {0}.{1}", ConstructYear, ConstructMonth);
+                    LogFormat("Construct date: {0}.{1}", ConstructYear, ConstructMonth);
                 }
 
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo == null)
                 {
-                    _ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info not found");
+                    LogFormat("Vehicle series info not found");
                     return false;
                 }
 
@@ -507,7 +507,7 @@ namespace BmwFileReader
                 {
                     BrandList = vehicleSeriesInfo.BrandList;
                 }
-                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
+                LogFormat("Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
 
                 EcuList.Clear();
                 if (jobInfoEcuList != null)
@@ -620,10 +620,10 @@ namespace BmwFileReader
 
                     ProgressFunc?.Invoke(100 * index / jobCount);
 
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read ILevel job: {0},{1}", jobInfo.SgdbName, jobInfo.JobName);
+                    LogFormat("Read ILevel job: {0},{1}", jobInfo.SgdbName, jobInfo.JobName);
                     if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                     {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job ignored: {0}", jobInfo.SgdbName);
+                        LogFormat("Job ignored: {0}", jobInfo.SgdbName);
                         index++;
                         continue;
                     }
@@ -647,7 +647,7 @@ namespace BmwFileReader
                                 if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 && string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                 {
                                     iLevelShip = iLevel;
-                                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel ship: {0}", iLevelShip);
+                                    LogFormat("Detected ILevel ship: {0}", iLevelShip);
                                 }
                             }
 
@@ -659,7 +659,7 @@ namespace BmwFileReader
                                     if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 && string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelCurrent = iLevel;
-                                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel current: {0}", iLevelCurrent);
+                                        LogFormat("Detected ILevel current: {0}", iLevelCurrent);
                                     }
                                 }
 
@@ -674,7 +674,7 @@ namespace BmwFileReader
                                     if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 && string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelBackup = iLevel;
-                                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected ILevel backup: {0}", iLevelBackup);
+                                        LogFormat("Detected ILevel backup: {0}", iLevelBackup);
                                     }
                                 }
 
@@ -701,7 +701,7 @@ namespace BmwFileReader
                 }
                 else
                 {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ILevel: Ship={0}, Current={1}, Backup={2}",
+                    LogFormat("ILevel: Ship={0}, Current={1}, Backup={2}",
                         iLevelShip, iLevelCurrent, iLevelBackup);
 
                     ILevelShip = iLevelShip;
@@ -799,7 +799,7 @@ namespace BmwFileReader
                                 if (resultData.OpData is string)
                                 {
                                     groupFiles = (string)resultData.OpData;
-                                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "KD group files: {0}", groupFiles);
+                                    LogFormat("KD group files: {0}", groupFiles);
                                 }
                             }
                         }
@@ -824,7 +824,7 @@ namespace BmwFileReader
                     int index = 0;
                     foreach (JobInfo jobInfo in ReadVinJobsDs2)
                     {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read VIN job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
+                        LogFormat("Read VIN job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
                         try
                         {
                             ProgressFunc?.Invoke(100 * index / ReadVinJobsDs2.Count);
@@ -846,7 +846,7 @@ namespace BmwFileReader
                                     if (!string.IsNullOrEmpty(vin) && VinRegex.IsMatch(vin))
                                     {
                                         detectedVin = vin;
-                                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected VIN: {0}", detectedVin);
+                                        LogFormat("Detected VIN: {0}", detectedVin);
                                         break;
                                     }
                                 }
@@ -867,7 +867,7 @@ namespace BmwFileReader
                     {
                         try
                         {
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read motor job: {0}", fileName);
+                            LogFormat("Read motor job: {0}", fileName);
 
                             ProgressFunc?.Invoke(100 * index / ReadMotorJobsDs2.Length);
                             ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
@@ -885,7 +885,7 @@ namespace BmwFileReader
                                 {
                                     groupFiles = fileName;
                                     Pin78ConnectRequire = true;
-                                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Motor ECUs detected: {0}", groupFiles);
+                                    LogFormat("Motor ECUs detected: {0}", groupFiles);
                                     break;
                                 }
                             }
@@ -912,7 +912,7 @@ namespace BmwFileReader
                     int modelYear = VehicleInfoBmw.GetModelYearFromVin(detectedVin);
                     if (modelYear >= 0)
                     {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Model year: {0}", modelYear);
+                        LogFormat("Model year: {0}", modelYear);
                         ConstructYear = string.Format(CultureInfo.InvariantCulture, "{0:0000}", modelYear);
                         ConstructMonth = "01";
                     }
@@ -920,16 +920,16 @@ namespace BmwFileReader
 
                 if (!string.IsNullOrEmpty(ConstructYear) && !string.IsNullOrEmpty(ConstructMonth))
                 {
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Construct date: {0}.{1}", ConstructYear, ConstructMonth);
+                    LogFormat("Construct date: {0}.{1}", ConstructYear, ConstructMonth);
                 }
 
                 if (!string.IsNullOrEmpty(detectedVin) && detectedVin.Length == 17)
                 {
                     string typeSnr = detectedVin.Substring(3, 4);
-                    _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type SNR: {0}", typeSnr);
+                    LogFormat("Type SNR: {0}", typeSnr);
                     foreach (JobInfo jobInfo in ReadIdentJobsDs2)
                     {
-                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Read vehicle type job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
+                        LogFormat("Read vehicle type job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
                         try
                         {
                             ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
@@ -950,7 +950,7 @@ namespace BmwFileReader
                                         string.Compare(detectedSeries, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         Series = detectedSeries;
-                                        _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected Vehicle series: {0}", Series);
+                                        LogFormat("Detected Vehicle series: {0}", Series);
                                         break;
                                     }
                                 }
@@ -979,7 +979,7 @@ namespace BmwFileReader
                         if (!string.IsNullOrEmpty(productTypeProp))
                         {
                             ProductType = productTypeProp;
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Product type: {0}", ProductType);
+                            LogFormat("Product type: {0}", ProductType);
                         }
                     }
 
@@ -988,7 +988,7 @@ namespace BmwFileReader
                         if (!string.IsNullOrEmpty(brandProp))
                         {
                             BrandList = new List<string> { brandProp };
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Brand: {0}", brandProp);
+                            LogFormat("Brand: {0}", brandProp);
                         }
                     }
                 }
@@ -1005,7 +1005,7 @@ namespace BmwFileReader
                     }
                 }
 
-                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BnType: {0}", BnType ?? string.Empty);
+                LogFormat("BnType: {0}", BnType ?? string.Empty);
                 Ds2GroupFiles = groupFiles;
 
                 if (string.IsNullOrEmpty(groupFiles))
@@ -1051,7 +1051,7 @@ namespace BmwFileReader
             }
             catch (Exception ex)
             {
-                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SaveDataToFile Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                LogFormat("SaveDataToFile Exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
 
@@ -1087,7 +1087,7 @@ namespace BmwFileReader
             }
             catch (Exception ex)
             {
-                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadDataFromFile Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                LogFormat("LoadDataFromFile Exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
 
