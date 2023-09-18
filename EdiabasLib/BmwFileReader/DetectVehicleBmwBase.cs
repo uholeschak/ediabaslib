@@ -266,7 +266,7 @@ namespace BmwFileReader
                 dictIndex++;
             }
 
-            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected FA: {0}", GetFaInfo());
+            LogFormat("Detected FA: {0}", GetFaInfo());
         }
 
         protected void SetFaSalpaInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
@@ -357,7 +357,7 @@ namespace BmwFileReader
                 }
             }
 
-            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected FA: {0}", GetFaInfo());
+            LogFormat("Detected FA: {0}", GetFaInfo());
         }
 
         protected bool SetInfoFromStdFa(string stdFaStr)
@@ -389,7 +389,7 @@ namespace BmwFileReader
                         string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
                         if (!string.IsNullOrEmpty(vSeries))
                         {
-                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
+                            LogFormat("Detected vehicle series: {0}", vSeries);
                             ModelSeries = br;
                             Series = vSeries;
                         }
@@ -466,12 +466,12 @@ namespace BmwFileReader
                     }
                 }
 
-                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected FA: {0}", GetFaInfo());
+                LogFormat("Detected FA: {0}", GetFaInfo());
                 return true;
             }
             catch (Exception ex)
             {
-                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SetInfoFromStdFa Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                LogFormat("SetInfoFromStdFa Exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
@@ -558,11 +558,6 @@ namespace BmwFileReader
             {
                 ecuRemoveList.Remove(ecuInfoRemove);
             }
-        }
-
-        protected virtual string GetEcuNameByIdent(string sgbd)
-        {
-            return null;
         }
 
         protected EcuInfo GetEcuByEcuGroup(string groups)
@@ -657,6 +652,15 @@ namespace BmwFileReader
             }
 
             return false;
+        }
+
+        protected virtual string GetEcuNameByIdent(string sgbd)
+        {
+            return null;
+        }
+
+        protected virtual void LogFormat(string format, params object[] args)
+        {
         }
     }
 }
