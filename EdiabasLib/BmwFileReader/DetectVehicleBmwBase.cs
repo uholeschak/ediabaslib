@@ -37,13 +37,15 @@ namespace BmwFileReader
                 Name = name;
                 Address = address;
                 Grp = grp;
+                Sgbd = null;
+                Description = null;
             }
 
             public string Name { get; set; }
-
             public Int64 Address { get; set; }
-
             public string Grp { get; set; }
+            public string Sgbd { get; set; }
+            public string Description { get; set; }
         }
 
         public string Vin { get; protected set; }

@@ -633,7 +633,7 @@ namespace PsdzClient.Programming
             for (int i = 0; i < 2; i++)
             {
                 ObservableCollection<ECU> EcuList = new ObservableCollection<ECU>();
-                foreach (PsdzDatabase.EcuInfo ecuInfo in DetectVehicle.EcuList)
+                foreach (PsdzDatabase.EcuInfo ecuInfo in DetectVehicle.EcuListPsdz)
                 {
                     IEcuObj ecuObj = programmingObjectBuilder.Build(ecuInfo.PsdzEcu);
                     ECU ecu = programmingObjectBuilder.Build(ecuObj);
@@ -725,7 +725,7 @@ namespace PsdzClient.Programming
             List<PsdzDatabase.EcuInfo> ecuList = new List<PsdzDatabase.EcuInfo>();
             try
             {
-                foreach (PsdzDatabase.EcuInfo ecuInfo in DetectVehicle.EcuList)
+                foreach (PsdzDatabase.EcuInfo ecuInfo in DetectVehicle.EcuListPsdz)
                 {
                     if (individualOnly)
                     {

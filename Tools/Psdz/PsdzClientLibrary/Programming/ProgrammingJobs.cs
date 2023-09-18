@@ -994,8 +994,8 @@ namespace PsdzClient.Programming
                     PsdzContext.DetectVehicle.ILevelShip ?? string.Empty,
                     PsdzContext.DetectVehicle.ILevelCurrent ?? string.Empty));
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "Ecus: {0}", PsdzContext.DetectVehicle.EcuList.Count());
-                foreach (PsdzDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
+                log.InfoFormat(CultureInfo.InvariantCulture, "Ecus: {0}", PsdzContext.DetectVehicle.EcuListPsdz.Count());
+                foreach (PsdzDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuListPsdz)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, " Ecu: Name={0}, Addr={1}, Sgdb={2}, Group={3}",
                         ecuInfo.Name, ecuInfo.Address, ecuInfo.Sgbd, ecuInfo.Grp);
@@ -2174,7 +2174,7 @@ namespace PsdzClient.Programming
                 PsdzContext.SetSvtActual(psdzSvt);
                 cts?.Token.ThrowIfCancellationRequested();
 
-                ProgrammingService.PsdzDatabase.LinkSvtEcus(PsdzContext.DetectVehicle.EcuList, psdzSvt);
+                ProgrammingService.PsdzDatabase.LinkSvtEcus(PsdzContext.DetectVehicle.EcuListPsdz, psdzSvt);
                 List<PsdzDatabase.EcuInfo> individualEcus = PsdzContext.GetEcuList(true);
                 if (individualEcus != null)
                 {
@@ -2188,7 +2188,7 @@ namespace PsdzClient.Programming
                     }
                 }
 
-                ProgrammingService.PsdzDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuList);
+                ProgrammingService.PsdzDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuListPsdz);
                 if (!PsdzContext.UpdateVehicle(ProgrammingService))
                 {
                     sbResult.AppendLine(Strings.UpdateVehicleDataFailed);
@@ -2198,9 +2198,9 @@ namespace PsdzClient.Programming
 
                 ProgrammingService.PsdzDatabase.ResetXepRules();
                 log.InfoFormat(CultureInfo.InvariantCulture, "Getting ECU variants");
-                ProgrammingService.PsdzDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuList, PsdzContext.VecInfo);
-                log.InfoFormat(CultureInfo.InvariantCulture, "Ecu variants: {0}", PsdzContext.DetectVehicle.EcuList.Count());
-                foreach (PsdzDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuList)
+                ProgrammingService.PsdzDatabase.GetEcuVariants(PsdzContext.DetectVehicle.EcuListPsdz, PsdzContext.VecInfo);
+                log.InfoFormat(CultureInfo.InvariantCulture, "Ecu variants: {0}", PsdzContext.DetectVehicle.EcuListPsdz.Count());
+                foreach (PsdzDatabase.EcuInfo ecuInfo in PsdzContext.DetectVehicle.EcuListPsdz)
                 {
                     if (ecuInfo != null)
                     {

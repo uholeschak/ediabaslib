@@ -13,7 +13,7 @@ using PsdzClient.Core.Container;
 
 namespace PsdzClient
 {
-    public class DetectVehicle : IDisposable
+    public class DetectVehicle : DetectVehicleBmwBase, IDisposable
     {
         public enum DetectResult
         {
@@ -23,67 +23,7 @@ namespace PsdzClient
             InvalidDatabase
         }
 
-        private class JobInfo
-        {
-            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, bool motorbike = false, string ecuListJob = null)
-            {
-                SgdbName = sgdbName;
-                JobName = jobName;
-                JobArgs = jobArgs;
-                JobResult = jobResult;
-                Motorbike = motorbike;
-                EcuListJob = ecuListJob;
-            }
-
-            public string SgdbName { get; }
-            public string JobName { get; }
-            public string JobArgs { get; }
-            public string JobResult { get; }
-            public bool Motorbike { get; }
-            public string EcuListJob { get; }
-        }
-
         private static readonly ILog log = LogManager.GetLogger(typeof(DetectVehicle));
-        private readonly Regex _vinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
-
-        private static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
-        {
-            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
-            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
-            new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNR17_WERT"),
-            new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "FGNUMMER"),
-            // motorbikes BN2000
-            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNUMMER", true),
-            new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
-            // motorbikes BN2020
-            new JobInfo("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
-            new JobInfo("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
-            new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", true),
-        };
-
-        private static readonly List<JobInfo> ReadIdentJobsBmwFast = new List<JobInfo>
-        {
-            new JobInfo("G_ZGW", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE"),
-            new JobInfo("ZGW_01", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE"),
-            new JobInfo("G_CAS", "STATUS_FAHRZEUGAUFTRAG", string.Empty, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT"),
-            new JobInfo("D_CAS", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG"),
-            new JobInfo("D_LM", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG"),
-            new JobInfo("D_KBM", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG"),
-            // motorbikes BN2000
-            new JobInfo("D_MRMOT", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
-            new JobInfo("D_MRKOMB", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
-            new JobInfo("D_MRZFE", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
-            // motorbikes BN2020
-            new JobInfo("X_K001", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
-            new JobInfo("X_KS01", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", true),
-        };
-
-        private static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
-        {
-            new JobInfo("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
-            new JobInfo("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
-            new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
-        };
 
         private static List<JobInfo> ReadVoltageJobsBmwFast = new List<JobInfo>
         {
@@ -96,29 +36,10 @@ namespace PsdzClient
 
         private PsdzDatabase _pdszDatabase;
         private bool _disposed;
-        private EdiabasNet _ediabas;
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
 
-        public List<PsdzDatabase.EcuInfo> EcuList { get; private set; }
-        public string Vin { get; private set; }
-        public string TypeKey { get; private set; }
-        public string GroupSgdb { get; private set; }
-        public string ModelSeries { get; private set; }
-        public string Series { get; private set; }
-        public string ConstructYear { get; private set; }
-        public string ConstructMonth { get; private set; }
-        public DateTime? ConstructDate { get; private set; }
-        public string Paint { get; private set; }
-        public string Upholstery { get; private set; }
-        public string StandardFa { get; private set; }
-        public List<string> Salapa { get; private set; }
-        public List<string> HoWords { get; private set; }
-        public List<string> EWords { get; private set; }
-        public List<string> ZbWords { get; private set; }
-        public string ILevelShip { get; private set; }
-        public string ILevelCurrent { get; private set; }
-        public string ILevelBackup { get; private set; }
+        public List<PsdzDatabase.EcuInfo> EcuListPsdz { get; private set; }
 
         public DetectVehicle(PsdzDatabase pdszDatabase, string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
         {
@@ -141,7 +62,6 @@ namespace PsdzClient
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.IcomAllocate = icomAllocate;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
-            EcuList = new List<PsdzDatabase.EcuInfo>();
 
             ResetValues();
         }
@@ -220,7 +140,7 @@ namespace PsdzClient
                             {
                                 string vin = resultData.OpData as string;
                                 // ReSharper disable once AssignNullToNotNullAttribute
-                                if (!string.IsNullOrEmpty(vin) && _vinRegex.IsMatch(vin))
+                                if (!string.IsNullOrEmpty(vin) && VinRegex.IsMatch(vin))
                                 {
                                     detectedVin = vin;
                                     log.InfoFormat(CultureInfo.InvariantCulture, "Detected VIN: {0}", detectedVin);
@@ -558,7 +478,7 @@ namespace PsdzClient
                                 {
                                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                     {
-                                        PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
+                                        EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuGroup);
                                         EcuList.Add(ecuInfo);
                                     }
                                 }
@@ -592,7 +512,7 @@ namespace PsdzClient
                         return DetectResult.Aborted;
                     }
 
-                    List<PsdzDatabase.EcuInfo> ecuInfoAddList = new List<PsdzDatabase.EcuInfo>();
+                    List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
                     try
                     {
                         progressFunc?.Invoke(index * 100 / jobCount);
@@ -663,10 +583,7 @@ namespace PsdzClient
 
                                         if (!string.IsNullOrEmpty(groupSgbd))
                                         {
-                                            PsdzDatabase.EcuInfo ecuInfo = new PsdzDatabase.EcuInfo(ecuName, ecuAdr, null, null, groupSgbd)
-                                            {
-                                                DetectFailure = true
-                                            };
+                                            EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd);
                                             ecuInfoAddList.Add(ecuInfo);
                                         }
                                     }
@@ -676,7 +593,7 @@ namespace PsdzClient
                             }
                         }
 
-                        foreach (PsdzDatabase.EcuInfo ecuInfoAdd in ecuInfoAddList)
+                        foreach (EcuInfo ecuInfoAdd in ecuInfoAddList)
                         {
                             string groupSgbd = ecuInfoAdd.Grp;
                             try
@@ -814,6 +731,7 @@ namespace PsdzClient
                 ILevelBackup = iLevelBackup;
 
                 HandleSpecialEcus();
+                ConvertEcuList();
 
                 if (_abortRequest)
                 {
@@ -1104,324 +1022,6 @@ namespace PsdzClient
             return _abortRequest;
         }
 
-        public string GetFaInfo()
-        {
-            StringBuilder sb = new StringBuilder();
-            foreach (string item in Salapa)
-            {
-                sb.Append("$");
-                sb.Append(item);
-            }
-
-            foreach (string item in EWords)
-            {
-                sb.Append("-");
-                sb.Append(item);
-            }
-
-            foreach (string item in HoWords)
-            {
-                sb.Append("+");
-                sb.Append(item);
-            }
-
-            foreach (string item in ZbWords)
-            {
-                sb.Append(";");
-                sb.Append(item);
-            }
-
-            return sb.ToString();
-        }
-
-        private void ResetValues()
-        {
-            _abortRequest = false;
-            _abortFunc = null;
-            EcuList.Clear();
-            Vin = null;
-            TypeKey = null;
-            GroupSgdb = null;
-            ModelSeries = null;
-            Series = null;
-            ConstructDate = null;
-            ConstructYear = null;
-            ConstructMonth = null;
-            Paint = null;
-            Upholstery = null;
-            StandardFa = null;
-            Salapa = new List<string>();
-            HoWords = new List<string>();
-            EWords = new List<string>();
-            ZbWords = new List<string>();
-        }
-
-        private void SetConstructDate(DateTime? dateTime)
-        {
-            if (dateTime == null)
-            {
-                return;
-            }
-
-            ConstructDate = dateTime.Value;
-            ConstructYear = dateTime.Value.ToString("yyyy", CultureInfo.InvariantCulture);
-            ConstructMonth = dateTime.Value.ToString("MM", CultureInfo.InvariantCulture);
-        }
-
-        private void SetStatVcmSalpaInfo(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
-        {
-            int dictIndex = 0;
-            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-            {
-                if (dictIndex == 0)
-                {
-                    dictIndex++;
-                    continue;
-                }
-
-                if (resultDict.TryGetValue("STAT_SALAPA", out EdiabasNet.ResultData resultDataSa))
-                {
-                    string saStr = resultDataSa.OpData as string;
-                    AddSalapa(saStr);
-                }
-
-                if (resultDict.TryGetValue("STAT_HO_WORTE", out EdiabasNet.ResultData resultDataHo))
-                {
-                    string hoStr = resultDataHo.OpData as string;
-                    if (!string.IsNullOrEmpty(hoStr))
-                    {
-                        if (!HoWords.Contains(hoStr))
-                        {
-                            HoWords.Add(hoStr);
-                        }
-                    }
-                }
-
-                if (resultDict.TryGetValue("STAT_E_WORTE", out EdiabasNet.ResultData resultDataEw))
-                {
-                    string ewStr = resultDataEw.OpData as string;
-                    if (!string.IsNullOrEmpty(ewStr))
-                    {
-                        if (!EWords.Contains(ewStr))
-                        {
-                            EWords.Add(ewStr);
-                        }
-                    }
-                }
-
-                dictIndex++;
-            }
-
-            log.InfoFormat(CultureInfo.InvariantCulture, "Detected FA: {0}", GetFaInfo());
-        }
-
-        private void SetFaSalpaInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
-        {
-            if (resultDict.TryGetValue("SA_ANZ", out EdiabasNet.ResultData resultDataSaCount))
-            {
-                Int64? saCount = resultDataSaCount.OpData as Int64?;
-                if (saCount != null)
-                {
-                    for (int index = 0; index < saCount.Value; index++)
-                    {
-                        string saName = string.Format(CultureInfo.InvariantCulture, "SA_{0}", index + 1);
-                        if (resultDict.TryGetValue(saName, out EdiabasNet.ResultData resultDataSa))
-                        {
-                            string saStr = resultDataSa.OpData as string;
-                            AddSalapa(saStr);
-                        }
-                    }
-                }
-            }
-
-            if (resultDict.TryGetValue("HO_WORT_ANZ", out EdiabasNet.ResultData resultDataHoCount))
-            {
-                Int64? haCount = resultDataHoCount.OpData as Int64?;
-                if (haCount != null)
-                {
-                    for (int index = 0; index < haCount.Value; index++)
-                    {
-                        string hoName = string.Format(CultureInfo.InvariantCulture, "HO_WORT_{0}", index + 1);
-                        if (resultDict.TryGetValue(hoName, out EdiabasNet.ResultData resultDataHo))
-                        {
-                            string hoStr = resultDataHo.OpData as string;
-                            if (!string.IsNullOrEmpty(hoStr))
-                            {
-                                if (!HoWords.Contains(hoStr))
-                                {
-                                    HoWords.Add(hoStr);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (resultDict.TryGetValue("E_WORT_ANZ", out EdiabasNet.ResultData resultDataEwCount))
-            {
-                Int64? ewCount = resultDataEwCount.OpData as Int64?;
-                if (ewCount != null)
-                {
-                    for (int index = 0; index < ewCount.Value; index++)
-                    {
-                        string ewName = string.Format(CultureInfo.InvariantCulture, "E_WORT_{0}", index + 1);
-                        if (resultDict.TryGetValue(ewName, out EdiabasNet.ResultData resultDataEw))
-                        {
-                            string ewStr = resultDataEw.OpData as string;
-                            if (!string.IsNullOrEmpty(ewStr))
-                            {
-                                if (!EWords.Contains(ewStr))
-                                {
-                                    EWords.Add(ewStr);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (resultDict.TryGetValue("ZUSBAU_ANZ", out EdiabasNet.ResultData resultDataZbCount))
-            {
-                Int64? zbCount = resultDataZbCount.OpData as Int64?;
-                if (zbCount != null)
-                {
-                    for (int index = 0; index < zbCount.Value; index++)
-                    {
-                        string zbName = string.Format(CultureInfo.InvariantCulture, "ZUSBAU_{0}", index + 1);
-                        if (resultDict.TryGetValue(zbName, out EdiabasNet.ResultData resultDataEw))
-                        {
-                            string zbStr = resultDataEw.OpData as string;
-                            if (!string.IsNullOrEmpty(zbStr))
-                            {
-                                if (!ZbWords.Contains(zbStr))
-                                {
-                                    ZbWords.Add(zbStr);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            log.InfoFormat(CultureInfo.InvariantCulture, "Detected FA: {0}", GetFaInfo());
-        }
-
-        private bool SetInfoFromStdFa(string stdFaStr)
-        {
-            if (string.IsNullOrEmpty(stdFaStr))
-            {
-                return false;
-            }
-
-            try
-            {
-                string vehicleType = VehicleInfoBmw.GetVehicleTypeFromStdFa(stdFaStr, _ediabas);
-                if (!string.IsNullOrEmpty(vehicleType))
-                {
-                    TypeKey = vehicleType;
-                }
-
-                Match matchBr = Regex.Match(stdFaStr, "^(?<BR>\\w+)[^\\w]");
-                if (!matchBr.Success)
-                {
-                    matchBr = Regex.Match(stdFaStr, "(?<BR>\\w{4})[^\\w]");
-                }
-
-                if (matchBr.Success)
-                {
-                    string br = matchBr.Groups["BR"]?.Value;
-                    if (!string.IsNullOrEmpty(br))
-                    {
-                        string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
-                        if (!string.IsNullOrEmpty(vSeries))
-                        {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle series: {0}", vSeries);
-                            ModelSeries = br;
-                            Series = vSeries;
-                        }
-                    }
-                }
-
-                Match matchDate = Regex.Match(stdFaStr, "#(?<C_DATE>\\d{4})");
-                if (matchDate.Success)
-                {
-                    string dateStr = matchDate.Groups["C_DATE"]?.Value;
-                    if (!string.IsNullOrEmpty(dateStr))
-                    {
-                        DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(dateStr);
-                        SetConstructDate(dateTime);
-                    }
-                }
-
-                Match matchPaint = Regex.Match(stdFaStr, "%(?<LACK>\\w{4})");
-                if (matchPaint.Success)
-                {
-                    string paintStr = matchPaint.Groups["LACK"]?.Value;
-                    if (!string.IsNullOrEmpty(paintStr))
-                    {
-                        Paint = paintStr;
-                    }
-                }
-
-                Match matchUpholstery = Regex.Match(stdFaStr, "&(?<POLSTER>\\w{4})");
-                if (matchUpholstery.Success)
-                {
-                    string upholsteryStr = matchUpholstery.Groups["POLSTER"]?.Value;
-                    if (!string.IsNullOrEmpty(upholsteryStr))
-                    {
-                        Upholstery = upholsteryStr;
-                    }
-                }
-
-                foreach (Match match in Regex.Matches(stdFaStr, "\\$(?<SA>\\w{3})"))
-                {
-                    if (match.Success)
-                    {
-                        string saStr = match.Groups["SA"]?.Value;
-                        AddSalapa(saStr);
-                    }
-                }
-
-                foreach (Match match in Regex.Matches(stdFaStr, "\\+(?<HOWORT>\\w{4})"))
-                {
-                    if (match.Success)
-                    {
-                        string hoStr = match.Groups["HOWORT"]?.Value;
-                        if (!string.IsNullOrEmpty(hoStr))
-                        {
-                            if (!HoWords.Contains(hoStr))
-                            {
-                                HoWords.Add(hoStr);
-                            }
-                        }
-                    }
-                }
-
-                foreach (Match match in Regex.Matches(stdFaStr, "\\-(?<EWORT>\\w{4})"))
-                {
-                    if (match.Success)
-                    {
-                        string ewStr = match.Groups["EWORT"]?.Value;
-                        if (!string.IsNullOrEmpty(ewStr))
-                        {
-                            if (!EWords.Contains(ewStr))
-                            {
-                                EWords.Add(ewStr);
-                            }
-                        }
-                    }
-                }
-
-                log.InfoFormat(CultureInfo.InvariantCulture, "Detected FA: {0}", GetFaInfo());
-                return true;
-            }
-            catch (Exception ex)
-            {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "SetInfoFromStdFa Exception: {0}", ex.Message);
-                return false;
-            }
-        }
-
         private string GetEcuName(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
             string ecuName = string.Empty;
@@ -1451,142 +1051,48 @@ namespace PsdzClient
             return ecuName;
         }
 
-        // from: Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.HandleECUGroups
-        private void HandleSpecialEcus()
+        private void ConvertEcuList()
         {
-            if (string.Compare(GroupSgdb, "E89X", StringComparison.OrdinalIgnoreCase) == 0)
+            EcuListPsdz.Clear();
+            foreach (EcuInfo ecuInfo in EcuList)
             {
-                PsdzDatabase.EcuInfo ecuInfoAdd = new PsdzDatabase.EcuInfo("RLS", 86, null, null, "D_RLS");
-                PsdzDatabase.EcuInfo ecuInfoRls = GetEcuByEcuGroup(ecuInfoAdd.Grp);
-                if (ecuInfoRls == null)
-                {
-                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
-                    {
-                        bool addEcu = false;
-                        if (HasSa("521"))
-                        {
-                            addEcu = true;
-                        }
-                        else
-                        {
-                            try
-                            {
-                                _ediabas.ResolveSgbdFile(ecuInfoAdd.Grp);
-
-                                _ediabas.ArgString = string.Empty;
-                                _ediabas.ArgBinaryStd = null;
-                                _ediabas.ResultsRequests = string.Empty;
-                                _ediabas.ExecuteJob("IDENT");
-
-                                addEcu = true;
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-                        }
-
-                        if (addEcu)
-                        {
-                            EcuList.Add(ecuInfoAdd);
-                        }
-                    }
-                }
+                EcuListPsdz.Add(new PsdzDatabase.EcuInfo(ecuInfo.Name, ecuInfo.Address, ecuInfo.Description, ecuInfo.Sgbd, ecuInfo.Grp));
             }
         }
 
-        private PsdzDatabase.EcuInfo GetEcuByEcuGroup(string groups)
+        protected override void ResetValues()
         {
-            if (string.IsNullOrEmpty(groups))
-            {
-                return null;
-            }
+            base.ResetValues();
+            _abortRequest = false;
+            _abortFunc = null;
+            EcuListPsdz = new List<PsdzDatabase.EcuInfo>();
+        }
 
-            string[] groupArray = groups.Split('|');
-            foreach (string group in groupArray)
+        protected override string GetEcuNameByIdent(string sgbd)
+        {
+            try
             {
-                foreach (PsdzDatabase.EcuInfo ecuInfo in EcuList)
-                {
-                    if (!string.IsNullOrEmpty(ecuInfo.Grp))
-                    {
-                        string[] ecuGroups = ecuInfo.Grp.Split('|');
-                        foreach (string ecuGroup in ecuGroups)
-                        {
-                            if (string.Compare(ecuGroup, group, StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                return ecuInfo;
-                            }
-                        }
-                    }
-                }
+                _ediabas.ResolveSgbdFile(sgbd);
+
+                _ediabas.ArgString = string.Empty;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.ExecuteJob("IDENT");
+
+                string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                return ecuName.ToUpperInvariant();
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             return null;
         }
 
-        private bool AddSalapa(string salapa)
+        protected override void LogFormat(string format, params object[] args)
         {
-            if (string.IsNullOrEmpty(salapa))
-            {
-                return false;
-            }
-
-            string saStr = salapa;
-            if (saStr.Length == 4)
-            {
-                saStr = saStr.Substring(1);
-            }
-
-            if (!Salapa.Contains(saStr))
-            {
-                Salapa.Add(saStr);
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool HasSa(string checkSA)
-        {
-            if (string.IsNullOrEmpty(checkSA))
-            {
-                return false;
-            }
-
-            if (Salapa != null)
-            {
-                foreach (string item in Salapa)
-                {
-                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            if (EWords != null)
-            {
-                foreach (string item in EWords)
-                {
-                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            if (HoWords != null)
-            {
-                foreach (string item in HoWords)
-                {
-                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            log.InfoFormat(CultureInfo.InvariantCulture, format, args);
         }
 
         public void Dispose()
