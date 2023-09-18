@@ -389,7 +389,7 @@ namespace BmwFileReader
                         string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
                         if (!string.IsNullOrEmpty(vSeries))
                         {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
+                            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detected vehicle series: {0}", vSeries);
                             ModelSeries = br;
                             Series = vSeries;
                         }
