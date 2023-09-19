@@ -3670,7 +3670,7 @@ namespace BmwDeepObd
                             }
 
                             List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
-                            foreach (DetectVehicleBmw.EcuInfo ecuInfoAdd in detectVehicleBmw.EcuList)
+                            foreach (DetectVehicleBmwBase.EcuInfo ecuInfoAdd in detectVehicleBmw.EcuList)
                             {
                                 if (!EcuListContainsAddr(_ecuList, ecuInfoAdd.Address))
                                 {
