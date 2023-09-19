@@ -3591,7 +3591,10 @@ namespace BmwDeepObd
                                     break;
                                 }
 
-                                unstableIdent = true;
+                                if (identRetry > 0)
+                                {
+                                    unstableIdent = true;
+                                }
                                 maxSteps++;
                                 currentStep++;
                             }
