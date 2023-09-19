@@ -3634,7 +3634,14 @@ namespace BmwDeepObd
                     _ecuList.AddRange(ecuListUse.OrderBy(x => x.Name));
                     _instanceData.SgbdFunctional = ecuFileNameUse;
 
-                    if ((!elmDevice && unstableIdent) || string.IsNullOrEmpty(detectedVin))
+                    bool forceFullDetect = ecuListUse.Count < 5;
+                    if (detectVehicleBmw.BrandList.Contains("MINI PKW", StringComparer.OrdinalIgnoreCase))
+                    {
+                        forceFullDetect = true;
+                    }
+
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Force full detect: {0}", forceFullDetect);
+                    if ((!elmDevice && unstableIdent) || forceFullDetect || string.IsNullOrEmpty(detectedVin))
                     {
                         try
                         {
