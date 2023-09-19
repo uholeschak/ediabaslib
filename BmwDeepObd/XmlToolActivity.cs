@@ -3595,6 +3595,7 @@ namespace BmwDeepObd
                                 {
                                     unstableIdent = true;
                                 }
+
                                 maxSteps++;
                                 currentStep++;
                             }
@@ -3604,6 +3605,7 @@ namespace BmwDeepObd
                             // ignored
                         }
 
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect UnstableIdent={0}, ElmDevice={1}", unstableIdent, elmDevice);
                         if (ecuList.Count > 0)
                         {
                             ecuInvalidCount = 0;

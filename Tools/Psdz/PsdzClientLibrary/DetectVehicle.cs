@@ -68,7 +68,7 @@ namespace PsdzClient
 
         public DetectResult DetectVehicleBmwFast(AbortDelegate abortFunc, ProgressDelegate progressFunc = null, bool detectMotorbikes = false)
         {
-            log.InfoFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Start");
+            LogFormat("DetectVehicleBmwFast Start");
             ResetValues();
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
@@ -143,7 +143,7 @@ namespace PsdzClient
                                 if (!string.IsNullOrEmpty(vin) && VinRegex.IsMatch(vin))
                                 {
                                     detectedVin = vin;
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected VIN: {0}", detectedVin);
+                                    LogFormat("Detected VIN: {0}", detectedVin);
                                     break;
                                 }
                             }
@@ -176,10 +176,10 @@ namespace PsdzClient
                         return DetectResult.Aborted;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
+                    LogFormat("Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
                     if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", jobInfo.SgdbName);
+                        LogFormat("Job ignored: {0}", jobInfo.SgdbName);
                         index++;
                         continue;
                     }
@@ -238,11 +238,11 @@ namespace PsdzClient
                                                 string br = resultDataBa.OpData as string;
                                                 if (!string.IsNullOrEmpty(br))
                                                 {
-                                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected BR: {0}", br);
+                                                    LogFormat("Detected BR: {0}", br);
                                                     string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
                                                     if (!string.IsNullOrEmpty(vSeries))
                                                     {
-                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle series: {0}", vSeries);
+                                                        LogFormat("Detected vehicle series: {0}", vSeries);
                                                         ModelSeries = br;
                                                         Series = vSeries;
                                                     }
@@ -254,7 +254,7 @@ namespace PsdzClient
                                                     DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
                                                     if (dateTime != null)
                                                     {
-                                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
+                                                        LogFormat("Detected construction date: {0}",
                                                             dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                                                         SetConstructDate(dateTime);
                                                     }
@@ -292,11 +292,11 @@ namespace PsdzClient
                                     string br = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(br))
                                     {
-                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected BR: {0}", br);
+                                        LogFormat("Detected BR: {0}", br);
                                         string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
                                         if (!string.IsNullOrEmpty(vSeries))
                                         {
-                                            log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle series: {0}", vSeries);
+                                            LogFormat("Detected vehicle series: {0}", vSeries);
                                             ModelSeries = br;
                                             Series = vSeries;
                                         }
@@ -307,7 +307,7 @@ namespace PsdzClient
                                             DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
                                             if (dateTime != null)
                                             {
-                                                log.InfoFormat(CultureInfo.InvariantCulture, "Detected construction date: {0}",
+                                                LogFormat("Detected construction date: {0}",
                                                     dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                                                 SetConstructDate(dateTime);
                                             }
@@ -389,7 +389,7 @@ namespace PsdzClient
                     return DetectResult.InvalidDatabase;
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "Group SGBD: {0}", vehicleSeriesInfo.BrSgbd);
+                LogFormat("Group SGBD: {0}", vehicleSeriesInfo.BrSgbd);
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
 
                 if (_abortRequest)
@@ -407,7 +407,7 @@ namespace PsdzClient
                     {
                         int lastEcuListSize = EcuList.Count;
 
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Ecu ident retry: {0}", identRetry + 1);
+                        LogFormat("Ecu ident retry: {0}", identRetry + 1);
 
                         progressFunc?.Invoke(index * 100 / jobCount);
                         _ediabas.ArgString = string.Empty;
@@ -487,7 +487,7 @@ namespace PsdzClient
                             }
                         }
 
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Detect EcuListSize={0}, EcuListSizeOld={1}", EcuList.Count, lastEcuListSize);
+                        LogFormat("Detect EcuListSize={0}, EcuListSizeOld={1}", EcuList.Count, lastEcuListSize);
                         if (EcuList.Count == lastEcuListSize)
                         {
                             break;
@@ -639,10 +639,10 @@ namespace PsdzClient
                         return DetectResult.Aborted;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Read ILevel job: {0},{1}", jobInfo.SgdbName, jobInfo.JobName);
+                    LogFormat("Read ILevel job: {0},{1}", jobInfo.SgdbName, jobInfo.JobName);
                     if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                     {
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Job ignored: {0}", jobInfo.SgdbName);
+                        LogFormat("Job ignored: {0}", jobInfo.SgdbName);
                         continue;
                     }
 
@@ -667,7 +667,7 @@ namespace PsdzClient
                                     string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                 {
                                     iLevelShip = iLevel;
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel ship: {0}",
+                                    LogFormat("Detected ILevel ship: {0}",
                                         iLevelShip);
                                 }
                             }
@@ -681,7 +681,7 @@ namespace PsdzClient
                                         string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelCurrent = iLevel;
-                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel current: {0}",
+                                        LogFormat("Detected ILevel current: {0}",
                                             iLevelCurrent);
                                     }
                                 }
@@ -698,7 +698,7 @@ namespace PsdzClient
                                         string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         iLevelBackup = iLevel;
-                                        log.InfoFormat(CultureInfo.InvariantCulture, "Detected ILevel backup: {0}",
+                                        LogFormat("Detected ILevel backup: {0}",
                                             iLevelBackup);
                                     }
                                 }
@@ -723,7 +723,7 @@ namespace PsdzClient
                     return DetectResult.NoResponse;
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "ILevel: Ship={0}, Current={1}, Backup={2}", iLevelShip,
+                LogFormat("ILevel: Ship={0}, Current={1}, Backup={2}", iLevelShip,
                     iLevelCurrent, iLevelBackup);
 
                 ILevelShip = iLevelShip;
@@ -738,7 +738,7 @@ namespace PsdzClient
                     return DetectResult.Aborted;
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Finish");
+                LogFormat("DetectVehicleBmwFast Finish");
                 return DetectResult.Ok;
             }
             catch (Exception ex)
@@ -772,7 +772,7 @@ namespace PsdzClient
                         return -1;
                     }
 
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Read voltage job: {0}, {1}, {2}",
+                    LogFormat("Read voltage job: {0}, {1}, {2}",
                         jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
 
                     try
@@ -880,7 +880,7 @@ namespace PsdzClient
                     return stringResult;
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "ExecuteContainerXml Job OK: {0}", jobOk);
+                LogFormat("ExecuteContainerXml Job OK: {0}", jobOk);
                 string jobStatus = diagnosticDeviceResult.getISTAResultAsType("/Result/Status/JOB_STATUS", typeof(string)) as string;
                 if (jobStatus != null)
                 {
