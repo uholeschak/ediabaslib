@@ -3629,7 +3629,7 @@ namespace BmwDeepObd
                     _ecuList.AddRange(ecuListUse.OrderBy(x => x.Name));
                     _instanceData.SgbdFunctional = ecuFileNameUse;
 
-                    if (!elmDevice || unstableIdent || string.IsNullOrEmpty(detectedVin))
+                    if ((!elmDevice && unstableIdent) || string.IsNullOrEmpty(detectedVin))
                     {
                         try
                         {
