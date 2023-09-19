@@ -184,32 +184,6 @@ namespace BmwFileReader
             return false;
         }
 
-        protected virtual void ResetValues()
-        {
-            Vin = null;
-            TypeKey = null;
-            GroupSgdb = null;
-            ModelSeries = null;
-            Series = null;
-            ProductType = null;
-            BnType = null;
-            BrandList = null;
-            EcuList = new List<EcuInfo>();
-            ConstructDate = null;
-            ConstructYear = null;
-            ConstructMonth = null;
-            Paint = null;
-            Upholstery = null;
-            StandardFa = null;
-            Salapa = new List<string>();
-            HoWords = new List<string>();
-            EWords = new List<string>();
-            ZbWords = new List<string>();
-            ILevelShip = null;
-            ILevelCurrent = null;
-            ILevelBackup = null;
-        }
-
         protected void SetConstructDate(DateTime? dateTime)
         {
             if (dateTime == null)
@@ -266,7 +240,7 @@ namespace BmwFileReader
                 dictIndex++;
             }
 
-            LogFormat("Detected FA: {0}", GetFaInfo());
+            LogInfoFormat("Detected FA: {0}", GetFaInfo());
         }
 
         protected void SetFaSalpaInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
@@ -357,7 +331,7 @@ namespace BmwFileReader
                 }
             }
 
-            LogFormat("Detected FA: {0}", GetFaInfo());
+            LogInfoFormat("Detected FA: {0}", GetFaInfo());
         }
 
         protected bool SetInfoFromStdFa(string stdFaStr)
@@ -389,7 +363,7 @@ namespace BmwFileReader
                         string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
                         if (!string.IsNullOrEmpty(vSeries))
                         {
-                            LogFormat("Detected vehicle series: {0}", vSeries);
+                            LogInfoFormat("Detected vehicle series: {0}", vSeries);
                             ModelSeries = br;
                             Series = vSeries;
                         }
@@ -466,12 +440,12 @@ namespace BmwFileReader
                     }
                 }
 
-                LogFormat("Detected FA: {0}", GetFaInfo());
+                LogInfoFormat("Detected FA: {0}", GetFaInfo());
                 return true;
             }
             catch (Exception ex)
             {
-                LogFormat("SetInfoFromStdFa Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                LogErrorFormat("SetInfoFromStdFa Exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
@@ -654,12 +628,41 @@ namespace BmwFileReader
             return false;
         }
 
+        protected virtual void ResetValues()
+        {
+            Vin = null;
+            TypeKey = null;
+            GroupSgdb = null;
+            ModelSeries = null;
+            Series = null;
+            ProductType = null;
+            BnType = null;
+            BrandList = null;
+            EcuList = new List<EcuInfo>();
+            ConstructDate = null;
+            ConstructYear = null;
+            ConstructMonth = null;
+            Paint = null;
+            Upholstery = null;
+            StandardFa = null;
+            Salapa = new List<string>();
+            HoWords = new List<string>();
+            EWords = new List<string>();
+            ZbWords = new List<string>();
+            ILevelShip = null;
+            ILevelCurrent = null;
+            ILevelBackup = null;
+        }
+
         protected virtual string GetEcuNameByIdent(string sgbd)
         {
             return null;
         }
 
-        protected virtual void LogFormat(string format, params object[] args)
+        protected virtual void LogInfoFormat(string format, params object[] args)
+        {
+        }
+        protected virtual void LogErrorFormat(string format, params object[] args)
         {
         }
     }
