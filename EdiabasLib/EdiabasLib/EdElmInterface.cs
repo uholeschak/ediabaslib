@@ -302,6 +302,17 @@ namespace EdiabasLib
             if (stnVers.ToUpperInvariant().Contains("STN"))
             {
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "STN Version: {0}", stnVers);
+                if (!Elm327SendCommand("STIX", false))
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Sending STIX failed");
+                    return false;
+                }
+
+                string stnVersExt = Elm327ReceiveAnswer(Elm327CommandTimeout);
+                if (!string.IsNullOrEmpty(stnVersExt))
+                {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "STN Ext Version: {0}", stnVers);
+                }
             }
 
             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM transport type: {0}", _elm327TransportType);
