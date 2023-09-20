@@ -17,6 +17,7 @@ using Google.Apis.AndroidPublisher.v3.Data;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Upload;
+using Google.Apis.Util;
 using Google.Apis.Util.Store;
 
 namespace ApkUploader
@@ -349,17 +350,24 @@ namespace ApkUploader
             return true;
         }
 
-        private async Task<UserCredential> GetCredatials()
+        private UserCredential GetCredatials()
         {
             UserCredential credential;
             using (var stream = new FileStream(Path.Combine(_apkPath, "client_secrets.json"), FileMode.Open, FileAccess.Read))
             {
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.FromStream(stream).Secrets,
                     new[] { AndroidPublisherService.Scope.Androidpublisher },
-                    "ApkUploader", _cts.Token, new FileDataStore("ApkUploader"));
+                    "ApkUploader", _cts.Token, new FileDataStore("ApkUploader")).Result;
             }
 
+            if (credential.Token.IsExpired(SystemClock.Default))
+            {
+                if (!credential.RefreshTokenAsync(_cts.Token).Result)
+                {
+                    throw new Exception("Refresh token failed");
+                }
+            }
             return credential;
         }
 
@@ -779,7 +787,7 @@ namespace ApkUploader
                     StringBuilder sb = new StringBuilder();
                     try
                     {
-                        UserCredential credential = await GetCredatials();
+                        UserCredential credential = GetCredatials();
                         using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
                         {
                             EditsResource edits = service.Edits;
@@ -854,7 +862,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    UserCredential credential = await GetCredatials();
+                    UserCredential credential = GetCredatials();
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
                     {
                         EditsResource edits = service.Edits;
@@ -974,7 +982,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    UserCredential credential = await GetCredatials();
+                    UserCredential credential = GetCredatials();
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
                     {
                         EditsResource edits = service.Edits;
@@ -1081,7 +1089,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    UserCredential credential = await GetCredatials();
+                    UserCredential credential = GetCredatials();
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
                     {
                         EditsResource edits = service.Edits;
@@ -1230,7 +1238,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
                     }
 
-                    UserCredential credential = await GetCredatials();
+                    UserCredential credential = GetCredatials();
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
                     {
                         EditsResource edits = service.Edits;
@@ -1390,7 +1398,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
                     }
 
-                    UserCredential credential = await GetCredatials();
+                    UserCredential credential = GetCredatials();
                     using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
                     {
                         EditsResource edits = service.Edits;
