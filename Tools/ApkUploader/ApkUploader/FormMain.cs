@@ -132,7 +132,12 @@ namespace ApkUploader
                 string[] files = Directory.GetFiles(resourceDir, "Strings.xml", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
-                    string parentName = Directory.GetParent(file).Name;
+                    string parentName = Directory.GetParent(file)?.Name;
+                    if (string.IsNullOrEmpty(parentName))
+                    {
+                        continue;
+                    }
+
                     MatchCollection matchesFile = regex.Matches(parentName);
                     if ((matchesFile.Count == 1) && (matchesFile[0].Groups.Count == 2))
                     {
@@ -209,7 +214,12 @@ namespace ApkUploader
             versionCode = null;
             try
             {
-                string parentDir = Directory.GetParent(resourceDir).FullName;
+                string parentDir = Directory.GetParent(resourceDir)?.FullName;
+                if (string.IsNullOrEmpty(parentDir))
+                {
+                    return string.Empty;
+                }
+
                 string propertiesDir = Path.Combine(parentDir, "Properties");
                 string manifestFile = Path.Combine(propertiesDir, "AndroidManifest.xml");
                 if (!File.Exists(manifestFile))
