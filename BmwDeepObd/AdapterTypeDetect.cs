@@ -851,8 +851,11 @@ public class AdapterTypeDetect
                         case 2100:
                         case 2120:
                         case 2230:  // OBDLink EX
+                            minVer = 50801;
+                            break;
+
                         case 2255:  // OBDLink MX+
-                            minVer = 50701;
+                            minVer = 50904;
                             break;
                     }
 
