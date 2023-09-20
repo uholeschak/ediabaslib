@@ -350,7 +350,7 @@ namespace ApkUploader
             return true;
         }
 
-        private UserCredential GetCredatials()
+        private UserCredential GetCredential()
         {
             UserCredential credential;
             using (var stream = new FileStream(Path.Combine(_apkPath, "client_secrets.json"), FileMode.Open, FileAccess.Read))
@@ -787,8 +787,7 @@ namespace ApkUploader
                     StringBuilder sb = new StringBuilder();
                     try
                     {
-                        UserCredential credential = GetCredatials();
-                        using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
+                        using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
                         {
                             EditsResource edits = service.Edits;
                             EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
@@ -862,8 +861,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    UserCredential credential = GetCredatials();
-                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
                     {
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
@@ -982,8 +980,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    UserCredential credential = GetCredatials();
-                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
                     {
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
@@ -1089,8 +1086,7 @@ namespace ApkUploader
                 StringBuilder sb = new StringBuilder();
                 try
                 {
-                    UserCredential credential = GetCredatials();
-                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
                     {
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
@@ -1238,8 +1234,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
                     }
 
-                    UserCredential credential = GetCredatials();
-                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
                     {
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
@@ -1398,8 +1393,7 @@ namespace ApkUploader
                         UpdateStatus(sb.ToString());
                     }
 
-                    UserCredential credential = GetCredatials();
-                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(credential)))
+                    using (AndroidPublisherService service = new AndroidPublisherService(GetInitializer(GetCredential())))
                     {
                         EditsResource edits = service.Edits;
                         EditsResource.InsertRequest editRequest = edits.Insert(null, PackageName);
