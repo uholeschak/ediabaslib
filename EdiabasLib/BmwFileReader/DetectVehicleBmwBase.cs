@@ -213,6 +213,43 @@ namespace BmwFileReader
             return ecuName;
         }
 
+        public static string GetEcuComment(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            if (resultSets != null && resultSets.Count >= 2)
+            {
+                int dictIndex = 0;
+                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                {
+                    if (dictIndex == 0)
+                    {
+                        dictIndex++;
+                        continue;
+                    }
+                    for (int i = 0; ; i++)
+                    {
+                        if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(CultureInfo.InvariantCulture), out EdiabasNet.ResultData resultData))
+                        {
+                            if (resultData.OpData is string)
+                            {
+                                if (stringBuilder.Length > 0)
+                                {
+                                    stringBuilder.Append(";");
+                                }
+                                stringBuilder.Append((string)resultData.OpData);
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    dictIndex++;
+                }
+            }
+            return stringBuilder.ToString();
+        }
+
         protected void SetConstructDate(DateTime? dateTime)
         {
             if (dateTime == null)
