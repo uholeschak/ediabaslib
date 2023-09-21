@@ -1022,35 +1022,6 @@ namespace PsdzClient
             return _abortRequest;
         }
 
-        private string GetEcuName(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
-        {
-            string ecuName = string.Empty;
-            if (resultSets != null && resultSets.Count >= 2)
-            {
-                int dictIndex = 0;
-                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                {
-                    if (dictIndex == 0)
-                    {
-                        dictIndex++;
-                        continue;
-                    }
-
-                    if (resultDict.TryGetValue("ECU", out EdiabasNet.ResultData resultData))
-                    {
-                        if (resultData.OpData is string)
-                        {
-                            ecuName = (string)resultData.OpData;
-                        }
-                    }
-
-                    dictIndex++;
-                }
-            }
-
-            return ecuName;
-        }
-
         private void ConvertEcuList()
         {
             EcuListPsdz.Clear();
