@@ -604,8 +604,8 @@ namespace BmwFileReader
                 EcuInfo ecuInfoEgs = GetEcuByAddr(24);
                 if (ecuInfoEgs != null)
                 {
-                    if (string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoEgs.Grp)))
-                    {   // EGS not found
+                    if (!HasGearBoxEcu() && string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoEgs.Grp)))
+                    {   // EGS in MECH gear E84 found
                         if (!ecuRemoveList.Contains(ecuInfoEgs))
                         {
                             ecuRemoveList.Add(ecuInfoEgs);
@@ -725,6 +725,11 @@ namespace BmwFileReader
             }
 
             return false;
+        }
+
+        protected bool HasGearBoxEcu()
+        {
+            return HasSa("205") || HasSa("206") || HasSa("2TB") || HasSa("2TC") || HasSa("2MK");
         }
 
         protected virtual void ResetValues()
