@@ -4156,7 +4156,7 @@ namespace BmwDeepObd
 
                                     if (string.IsNullOrEmpty(title))
                                     {
-                                        ecuInfo.Description = GetEcuComment(_ediabas.ResultSets);
+                                        ecuInfo.Description = DetectVehicleBmwBase.GetEcuComment(_ediabas.ResultSets);
                                     }
                                     else
                                     {
@@ -4240,7 +4240,7 @@ namespace BmwDeepObd
                             _ediabas.NoInitForVJobs = true;
                             _ediabas.ExecuteJob("_VERSIONINFO");
 
-                            ecuDesc = GetEcuComment(_ediabas.ResultSets);
+                            ecuDesc = DetectVehicleBmwBase.GetEcuComment(_ediabas.ResultSets);
 
                             _ediabas.ExecuteJob("IDENT");
 
@@ -7147,7 +7147,7 @@ namespace BmwDeepObd
 
                             if (string.IsNullOrEmpty(title))
                             {
-                                ecuInfo.Description = GetEcuComment(_ediabas.ResultSets);
+                                ecuInfo.Description = DetectVehicleBmwBase.GetEcuComment(_ediabas.ResultSets);
                             }
                             else
                             {
@@ -7258,43 +7258,6 @@ namespace BmwDeepObd
                 });
             });
             _jobThread.Start();
-        }
-
-        private string GetEcuComment(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            if (resultSets != null && resultSets.Count >= 2)
-            {
-                int dictIndex = 0;
-                foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                {
-                    if (dictIndex == 0)
-                    {
-                        dictIndex++;
-                        continue;
-                    }
-                    for (int i = 0; ; i++)
-                    {
-                        if (resultDict.TryGetValue("ECUCOMMENT" + i.ToString(Culture), out EdiabasNet.ResultData resultData))
-                        {
-                            if (resultData.OpData is string)
-                            {
-                                if (stringBuilder.Length > 0)
-                                {
-                                    stringBuilder.Append(";");
-                                }
-                                stringBuilder.Append((string)resultData.OpData);
-                            }
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    dictIndex++;
-                }
-            }
-            return stringBuilder.ToString();
         }
 
         private void EcuCheckChanged(EcuInfo ecuInfo, View view)
