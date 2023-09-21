@@ -393,6 +393,7 @@ namespace PsdzClient
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
                 SgdbAddList = vehicleSeriesInfo.SgdbAdd;
                 BnType = vehicleSeriesInfo.BnType;
+                BrandList = vehicleSeriesInfo.BrandList;
 
                 if (_abortRequest)
                 {
