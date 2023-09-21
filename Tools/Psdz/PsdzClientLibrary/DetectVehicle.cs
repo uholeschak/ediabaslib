@@ -391,6 +391,8 @@ namespace PsdzClient
 
                 LogInfoFormat("Group SGBD: {0}", vehicleSeriesInfo.BrSgbd);
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
+                SgdbAddList = vehicleSeriesInfo.SgdbAdd;
+                BnType = vehicleSeriesInfo.BnType;
 
                 if (_abortRequest)
                 {
