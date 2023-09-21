@@ -51,6 +51,7 @@ namespace BmwFileReader
         public string Vin { get; protected set; }
         public string TypeKey { get; protected set; }
         public string GroupSgdb { get; protected set; }
+        public List<string> SgdbAddList { get; protected set; }
         public string ModelSeries { get; protected set; }
         public string Series { get; protected set; }
         public string ProductType { get; protected set; }
@@ -596,6 +597,22 @@ namespace BmwFileReader
                 }
             }
 
+            if (string.Compare(TypeKey, "VZ91", StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(TypeKey, "VN91", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                EcuInfo ecuInfoEgs = GetEcuByAddr(24);
+                if (ecuInfoEgs != null)
+                {
+                    if (string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoEgs.Grp)))
+                    {   // EGS not found
+                        if (!ecuRemoveList.Contains(ecuInfoEgs))
+                        {
+                            ecuRemoveList.Add(ecuInfoEgs);
+                        }
+                    }
+                }
+            }
+
             foreach (EcuInfo ecuInfoRemove in ecuRemoveList)
             {
                 ecuRemoveList.Remove(ecuInfoRemove);
@@ -625,6 +642,19 @@ namespace BmwFileReader
                             }
                         }
                     }
+                }
+            }
+
+            return null;
+        }
+
+        protected EcuInfo GetEcuByAddr(long sgAddr)
+        {
+            foreach (EcuInfo ecuInfo in EcuList)
+            {
+                if (ecuInfo.Address == sgAddr)
+                {
+                    return ecuInfo; 
                 }
             }
 
@@ -701,6 +731,7 @@ namespace BmwFileReader
             Vin = null;
             TypeKey = null;
             GroupSgdb = null;
+            SgdbAddList = null;
             ModelSeries = null;
             Series = null;
             ProductType = null;
