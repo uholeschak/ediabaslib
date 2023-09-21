@@ -597,8 +597,9 @@ namespace BmwFileReader
                 }
             }
 
-            if (string.Compare(TypeKey, "VZ91", StringComparison.OrdinalIgnoreCase) == 0 ||
-                string.Compare(TypeKey, "VN91", StringComparison.OrdinalIgnoreCase) == 0)
+            if (!string.IsNullOrEmpty(TypeKey) &&
+                (string.Compare(TypeKey, "VZ91", StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(TypeKey, "VN91", StringComparison.OrdinalIgnoreCase) == 0))
             {
                 EcuInfo ecuInfoEgs = GetEcuByAddr(24);
                 if (ecuInfoEgs != null)
