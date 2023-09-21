@@ -461,15 +461,17 @@ namespace BmwFileReader
 
             if (string.Compare(GroupSgdb, "E89X", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                EcuInfo ecuInfoAdd = new EcuInfo("RLS", 86, "D_RLS");
-                EcuInfo ecuInfoRls = GetEcuByEcuGroup(ecuInfoAdd.Grp);
+                const string groupRls = "D_RLS";
+                EcuInfo ecuInfoRls = GetEcuByEcuGroup(groupRls);
                 if (ecuInfoRls == null)
                 {
-                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuInfoAdd.Address))
+                    const int addressRls = 86;
+                    if (EcuList.All(ecuInfo => ecuInfo.Address != addressRls))
                     {
-                        bool addEcu = HasSa("521") || !string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoAdd.Grp));
+                        bool addEcu = HasSa("521") || !string.IsNullOrEmpty(GetEcuNameByIdent(groupRls));
                         if (addEcu)
                         {
+                            EcuInfo ecuInfoAdd = new EcuInfo("RLS", addressRls, groupRls);
                             EcuList.Add(ecuInfoAdd);
                         }
                     }
