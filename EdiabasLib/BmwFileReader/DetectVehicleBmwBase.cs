@@ -596,6 +596,22 @@ namespace BmwFileReader
                 }
             }
 
+            if (string.Compare(TypeKey, "VZ91", StringComparison.OrdinalIgnoreCase) == 0 ||
+                string.Compare(TypeKey, "VN91", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                EcuInfo ecuInfoEgs = GetEcuByAddr(24);
+                if (ecuInfoEgs != null)
+                {
+                    if (string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoEgs.Grp)))
+                    {   // EGS not found
+                        if (!ecuRemoveList.Contains(ecuInfoEgs))
+                        {
+                            ecuRemoveList.Add(ecuInfoEgs);
+                        }
+                    }
+                }
+            }
+
             foreach (EcuInfo ecuInfoRemove in ecuRemoveList)
             {
                 ecuRemoveList.Remove(ecuInfoRemove);
@@ -625,6 +641,19 @@ namespace BmwFileReader
                             }
                         }
                     }
+                }
+            }
+
+            return null;
+        }
+
+        protected EcuInfo GetEcuByAddr(long sgAddr)
+        {
+            foreach (EcuInfo ecuInfo in EcuList)
+            {
+                if (ecuInfo.Address == sgAddr)
+                {
+                    return ecuInfo; 
                 }
             }
 
