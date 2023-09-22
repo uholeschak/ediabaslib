@@ -484,6 +484,15 @@ namespace BmwFileReader
                             LogInfoFormat("Brand: {0}", brandProp);
                         }
                     }
+
+                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.TransmisionName, out string transmissionProp))
+                    {
+                        if (!string.IsNullOrEmpty(transmissionProp))
+                        {
+                            TransmissonType = transmissionProp;
+                            LogInfoFormat("Transmission: {0}", brandProp);
+                        }
+                    }
                 }
 
                 if (!string.IsNullOrEmpty(ConstructYear) && !string.IsNullOrEmpty(ConstructMonth))
@@ -988,6 +997,15 @@ namespace BmwFileReader
                         {
                             BrandList = new List<string> { brandProp };
                             LogInfoFormat("Brand: {0}", brandProp);
+                        }
+                    }
+
+                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.TransmisionName, out string transmissionProp))
+                    {
+                        if (!string.IsNullOrEmpty(transmissionProp))
+                        {
+                            TransmissonType = transmissionProp;
+                            LogInfoFormat("Transmission: {0}", brandProp);
                         }
                     }
                 }
