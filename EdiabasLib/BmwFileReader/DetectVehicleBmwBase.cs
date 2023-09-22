@@ -739,6 +739,13 @@ namespace BmwFileReader
 
         protected bool HasGearBoxEcu()
         {
+            if (!string.IsNullOrEmpty(TransmissonType))
+            {
+                if (TransmissonType.StartsWith("A", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
             return HasSa("205") || HasSa("206") || HasSa("2TB") || HasSa("2TC") || HasSa("2MK");
         }
 

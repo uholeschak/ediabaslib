@@ -174,16 +174,7 @@ namespace PsdzClient
                 {
                     if (!string.IsNullOrEmpty(vinRangesByVin.GearboxType))
                     {
-                        switch (vinRangesByVin.GearboxType.ToUpperInvariant())
-                        {
-                            case "A":
-                                TransmissonType = "AUT";
-                                break;
-
-                            case "M":
-                                TransmissonType = "MECH";
-                                break;
-                        }
+                        TransmissonType = vinRangesByVin.GearboxType.ToUpperInvariant();
                     }
                 }
 
