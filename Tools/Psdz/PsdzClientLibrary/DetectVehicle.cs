@@ -172,9 +172,20 @@ namespace PsdzClient
                 PsdzDatabase.VinRanges vinRangesByVin = _pdszDatabase.GetVinRangesByVin17(GetVinType(Vin), GetVin7(Vin), false);
                 if (vinRangesByVin != null)
                 {
-                    if (!string.IsNullOrEmpty(vinRangesByVin.GearboxType))
+                    List<PsdzDatabase.Characteristics> characteristicsList = _pdszDatabase.GetVehicleIdentByTypeKey(vinRangesByVin.TypeKey, false);
+                    if (characteristicsList != null)
                     {
-                        TransmissionType = vinRangesByVin.GearboxType.ToUpperInvariant();
+                        foreach (PsdzDatabase.Characteristics characteristics in characteristicsList)
+                        {
+                            if (string.Compare(characteristics.NodeClass, "40137602", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                TransmissionType = characteristics.EcuTranslation.TextDe;
+                            }
+                            else if (string.Compare(characteristics.NodeClass, "40132226", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                Motor = characteristics.EcuTranslation.TextDe;
+                            }
+                        }
                     }
                 }
 
