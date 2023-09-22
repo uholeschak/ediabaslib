@@ -1072,13 +1072,22 @@ namespace BmwFileReader
                 {
                     if (!string.IsNullOrEmpty(transmissionProp))
                     {
-                        TransmissonType = transmissionProp;
+                        TransmissionType = transmissionProp;
                         LogInfoFormat("Transmission: {0}", brandProp);
                     }
                 }
-            }
 
+                if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.MotorName, out string motorProp))
+                {
+                    if (!string.IsNullOrEmpty(motorProp))
+                    {
+                        Motor = motorProp;
+                        LogInfoFormat("Motor: {0}", brandProp);
+                    }
+                }
+            }
         }
+
         protected override void ResetValues()
         {
             base.ResetValues();

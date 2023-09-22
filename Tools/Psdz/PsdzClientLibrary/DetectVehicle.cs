@@ -174,7 +174,7 @@ namespace PsdzClient
                 {
                     if (!string.IsNullOrEmpty(vinRangesByVin.GearboxType))
                     {
-                        TransmissonType = vinRangesByVin.GearboxType.ToUpperInvariant();
+                        TransmissionType = vinRangesByVin.GearboxType.ToUpperInvariant();
                     }
                 }
 
