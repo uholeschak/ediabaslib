@@ -169,6 +169,24 @@ namespace PsdzClient
                 }
 
                 Vin = detectedVin;
+                PsdzDatabase.VinRanges vinRangesByVin = _pdszDatabase.GetVinRangesByVin17(Vin, GetVin7(Vin), false);
+                if (vinRangesByVin != null)
+                {
+                    if (!string.IsNullOrEmpty(vinRangesByVin.GearboxType))
+                    {
+                        switch (vinRangesByVin.GearboxType.ToUpperInvariant())
+                        {
+                            case "A":
+                                TransmissonType = "AUT";
+                                break;
+
+                            case "M":
+                                TransmissonType = "MECH";
+                                break;
+                        }
+                    }
+                }
+
                 foreach (JobInfo jobInfo in readIdentJobsBmwFast)
                 {
                     if (_abortRequest)
