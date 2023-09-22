@@ -759,7 +759,7 @@ namespace BmwFileReader
 
             if (!string.IsNullOrEmpty(TransmissionType))
             {
-                if (TransmissionType.StartsWith("A", StringComparison.OrdinalIgnoreCase))
+                if (string.Compare(TransmissionType, "AUT", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return true;
                 }
