@@ -197,6 +197,7 @@ namespace BmwFileReader
         public const string ProductTypeName = "Produktart";
         public const string BrandName = "Marke";
         public const string TransmisionName = "Getriebe";
+        public const string MotorName = "Motor";
 
         private static VehicleStructsBmw.VehicleSeriesInfoData _vehicleSeriesInfoData;
         private static VehicleStructsBmw.RulesInfoData _rulesInfoData;

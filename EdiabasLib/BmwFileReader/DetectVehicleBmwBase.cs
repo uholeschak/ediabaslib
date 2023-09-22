@@ -57,7 +57,8 @@ namespace BmwFileReader
         public string ProductType { get; protected set; }
         public string BnType { get; protected set; }
         public List<string> BrandList { get; protected set; }
-        public string TransmissonType { get; protected set; }
+        public string TransmissionType { get; protected set; }
+        public string Motor { get; protected set; }
         public List<EcuInfo> EcuList { get; protected set; }
         public DateTime? ConstructDate { get; protected set; }
         public string ConstructYear { get; protected set; }
@@ -748,13 +749,22 @@ namespace BmwFileReader
 
         protected bool HasGearBoxEcu()
         {
-            if (!string.IsNullOrEmpty(TransmissonType))
+            if (!string.IsNullOrEmpty(Motor))
             {
-                if (TransmissonType.StartsWith("A", StringComparison.OrdinalIgnoreCase))
+                if (string.Compare(Motor, "W10", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return false;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(TransmissionType))
+            {
+                if (TransmissionType.StartsWith("A", StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
             }
+
             return HasSa("205") || HasSa("206") || HasSa("2TB") || HasSa("2TC") || HasSa("2MK");
         }
 
@@ -769,7 +779,8 @@ namespace BmwFileReader
             ProductType = null;
             BnType = null;
             BrandList = null;
-            TransmissonType = null;
+            TransmissionType = null;
+            Motor = null;
             EcuList = new List<EcuInfo>();
             ConstructDate = null;
             ConstructYear = null;
