@@ -457,34 +457,7 @@ namespace BmwFileReader
 
                 indexOffset += readIdentJobsBmwFast.Count;
                 index = indexOffset;
-                if (TypeKeyProperties != null)
-                {
-                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.VehicleSeriesName, out string vehicleSeriesProp))
-                    {
-                        if (!string.IsNullOrEmpty(vehicleSeriesProp))
-                        {
-                            Series = vehicleSeriesProp;
-                        }
-                    }
-
-                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.ProductTypeName, out string productTypeProp))
-                    {
-                        if (!string.IsNullOrEmpty(productTypeProp))
-                        {
-                            ProductType = productTypeProp;
-                            LogInfoFormat("Product type: {0}", ProductType);
-                        }
-                    }
-
-                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.BrandName, out string brandProp))
-                    {
-                        if (!string.IsNullOrEmpty(brandProp))
-                        {
-                            BrandList = new List<string> { brandProp };
-                            LogInfoFormat("Brand: {0}", brandProp);
-                        }
-                    }
-                }
+                UpdateTypeKeyProperties();
 
                 if (!string.IsNullOrEmpty(ConstructYear) && !string.IsNullOrEmpty(ConstructMonth))
                 {
@@ -963,35 +936,7 @@ namespace BmwFileReader
                     }
                 }
 
-                if (TypeKeyProperties != null)
-                {
-                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.VehicleSeriesName, out string vehicleSeriesProp))
-                    {
-                        if (!string.IsNullOrEmpty(vehicleSeriesProp))
-                        {
-                            Series = vehicleSeriesProp;
-                        }
-                    }
-
-                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.ProductTypeName, out string productTypeProp))
-                    {
-                        if (!string.IsNullOrEmpty(productTypeProp))
-                        {
-                            ProductType = productTypeProp;
-                            LogInfoFormat("Product type: {0}", ProductType);
-                        }
-                    }
-
-                    if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.BrandName, out string brandProp))
-                    {
-                        if (!string.IsNullOrEmpty(brandProp))
-                        {
-                            BrandList = new List<string> { brandProp };
-                            LogInfoFormat("Brand: {0}", brandProp);
-                        }
-                    }
-                }
-
+                UpdateTypeKeyProperties();
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo != null)
                 {
@@ -1093,6 +1038,47 @@ namespace BmwFileReader
             return Valid;
         }
 
+        private void UpdateTypeKeyProperties()
+        {
+            if (TypeKeyProperties != null)
+            {
+                if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.VehicleSeriesName, out string vehicleSeriesProp))
+                {
+                    if (!string.IsNullOrEmpty(vehicleSeriesProp))
+                    {
+                        Series = vehicleSeriesProp;
+                    }
+                }
+
+                if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.ProductTypeName, out string productTypeProp))
+                {
+                    if (!string.IsNullOrEmpty(productTypeProp))
+                    {
+                        ProductType = productTypeProp;
+                        LogInfoFormat("Product type: {0}", ProductType);
+                    }
+                }
+
+                if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.BrandName, out string brandProp))
+                {
+                    if (!string.IsNullOrEmpty(brandProp))
+                    {
+                        BrandList = new List<string> { brandProp };
+                        LogInfoFormat("Brand: {0}", brandProp);
+                    }
+                }
+
+                if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.TransmisionName, out string transmissionProp))
+                {
+                    if (!string.IsNullOrEmpty(transmissionProp))
+                    {
+                        TransmissonType = transmissionProp;
+                        LogInfoFormat("Transmission: {0}", brandProp);
+                    }
+                }
+            }
+
+        }
         protected override void ResetValues()
         {
             base.ResetValues();

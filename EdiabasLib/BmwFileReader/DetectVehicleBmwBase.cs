@@ -57,6 +57,7 @@ namespace BmwFileReader
         public string ProductType { get; protected set; }
         public string BnType { get; protected set; }
         public List<string> BrandList { get; protected set; }
+        public string TransmissonType { get; protected set; }
         public List<EcuInfo> EcuList { get; protected set; }
         public DateTime? ConstructDate { get; protected set; }
         public string ConstructYear { get; protected set; }
@@ -212,6 +213,24 @@ namespace BmwFileReader
             }
 
             return ecuName;
+        }
+
+        public static string GetVin7(string vin17)
+        {
+            if (string.IsNullOrEmpty(vin17) || vin17.Length < 17)
+            {
+                return null;
+            }
+            return vin17.Substring(10, 7);
+        }
+
+        public static string GetVinType(string vin17)
+        {
+            if (string.IsNullOrEmpty(vin17) || vin17.Length < 17)
+            {
+                return null;
+            }
+            return vin17.Substring(3, 4);
         }
 
         public static string GetEcuComment(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
@@ -729,6 +748,13 @@ namespace BmwFileReader
 
         protected bool HasGearBoxEcu()
         {
+            if (!string.IsNullOrEmpty(TransmissonType))
+            {
+                if (TransmissonType.StartsWith("A", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
             return HasSa("205") || HasSa("206") || HasSa("2TB") || HasSa("2TC") || HasSa("2MK");
         }
 
@@ -743,6 +769,7 @@ namespace BmwFileReader
             ProductType = null;
             BnType = null;
             BrandList = null;
+            TransmissonType = null;
             EcuList = new List<EcuInfo>();
             ConstructDate = null;
             ConstructYear = null;
