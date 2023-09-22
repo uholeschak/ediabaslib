@@ -217,11 +217,20 @@ namespace BmwFileReader
 
         public static string GetVin7(string vin17)
         {
-            if (string.IsNullOrEmpty(vin17) || vin17.Length != 17)
+            if (string.IsNullOrEmpty(vin17) || vin17.Length < 17)
             {
                 return null;
             }
             return vin17.Substring(10, 7);
+        }
+
+        public static string GetVinType(string vin17)
+        {
+            if (string.IsNullOrEmpty(vin17) || vin17.Length < 17)
+            {
+                return null;
+            }
+            return vin17.Substring(3, 4);
         }
 
         public static string GetEcuComment(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)

@@ -169,7 +169,7 @@ namespace PsdzClient
                 }
 
                 Vin = detectedVin;
-                PsdzDatabase.VinRanges vinRangesByVin = _pdszDatabase.GetVinRangesByVin17(Vin, GetVin7(Vin), false);
+                PsdzDatabase.VinRanges vinRangesByVin = _pdszDatabase.GetVinRangesByVin17(GetVinType(Vin), GetVin7(Vin), false);
                 if (vinRangesByVin != null)
                 {
                     if (!string.IsNullOrEmpty(vinRangesByVin.GearboxType))
