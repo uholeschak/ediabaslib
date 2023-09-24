@@ -243,7 +243,7 @@ namespace BmwFileReader
                     catch (Exception)
                     {
                         invalidSgbdSet.Add(jobInfo.SgdbName.ToUpperInvariant());
-                        LogInfoFormat("No VIN response");
+                        LogErrorFormat("No VIN response");
                         // ignored
                     }
                     index++;
@@ -253,6 +253,7 @@ namespace BmwFileReader
                 index = indexOffset;
                 if (string.IsNullOrEmpty(detectedVin))
                 {
+                    LogErrorFormat("VIN detection failed");
                     return false;
                 }
 
@@ -449,7 +450,7 @@ namespace BmwFileReader
                     }
                     catch (Exception)
                     {
-                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No BR response");
+                        LogErrorFormat("No BR response");
                         // ignored
                     }
                     index++;
@@ -571,7 +572,7 @@ namespace BmwFileReader
                     }
                     catch (Exception)
                     {
-                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No ecu list response");
+                        LogErrorFormat("No ecu list response");
                         // ignored
                     }
 
@@ -656,7 +657,7 @@ namespace BmwFileReader
                     }
                     catch (Exception)
                     {
-                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No ILevel response");
+                        LogErrorFormat("No ILevel response");
                         // ignored
                     }
 
@@ -669,7 +670,7 @@ namespace BmwFileReader
 
                 if (string.IsNullOrEmpty(iLevelShip))
                 {
-                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "ILevel not found");
+                    LogErrorFormat("ILevel not found");
                 }
                 else
                 {
@@ -696,7 +697,7 @@ namespace BmwFileReader
 
         public bool DetectVehicleDs2()
         {
-            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Try to detect DS2 vehicle");
+            LogInfoFormat("Try to detect DS2 vehicle");
             ResetValues();
 
             try
@@ -779,13 +780,13 @@ namespace BmwFileReader
 
                     if (string.IsNullOrEmpty(groupFiles))
                     {
-                        _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "KD data empty, using fallback");
+                        LogErrorFormat("KD data empty, using fallback");
                         groupFiles = AllDs2GroupFiles;
                     }
                 }
                 catch (Exception)
                 {
-                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Read KD data failed");
+                    LogErrorFormat("Read KD data failed");
                     // ignored
                 }
 
@@ -826,7 +827,7 @@ namespace BmwFileReader
                         }
                         catch (Exception)
                         {
-                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No VIN response");
+                            LogErrorFormat("No VIN response");
                             // ignored
                         }
                         index++;
@@ -930,7 +931,7 @@ namespace BmwFileReader
                         }
                         catch (Exception)
                         {
-                            _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "No vehicle type response");
+                            LogErrorFormat("No vehicle type response");
                             // ignored
                         }
                     }
