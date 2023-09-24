@@ -82,9 +82,12 @@ namespace BmwFileReader
         protected static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
             new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
-            new JobInfo("ZGW_01", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
             new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNR17_WERT"),
+            new JobInfo("G_FRM", "STATUS_VCM_VIN", string.Empty, "STAT_VIN_EINH"),
             new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "FGNUMMER"),
+            new JobInfo("D_LM", "READ_FVIN", string.Empty, "FVIN"),
+            new JobInfo("FRM_87", "READ_FVIN", string.Empty, "FVIN"),
+            new JobInfo("D_ZGM", "C_FG_LESEN", string.Empty, "FG_NR"),
             // motorbikes BN2000
             new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNUMMER", true),
             new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", true),
