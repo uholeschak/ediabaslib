@@ -103,16 +103,18 @@ namespace BmwFileReader
 
         protected static readonly List<JobInfo> ReadIdentJobsBmwFast = new List<JobInfo>
         {
+            // BN2020
             new JobInfo("G_ZGW", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE", "BN2020"),
             new JobInfo("ZGW_01", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE", "BN2020"),
             new JobInfo("G_CAS", "STATUS_FAHRZEUGAUFTRAG", string.Empty, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT", "BN2020"),
+            // BN2000
             new JobInfo("D_CAS", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000"),
             new JobInfo("D_LM", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000"),
             new JobInfo("D_KBM", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000"),
             // motorbikes BN2000
-            new JobInfo("D_MRMOT", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE"),
             new JobInfo("D_MRKOMB", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE"),
             new JobInfo("D_MRZFE", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE"),
+            new JobInfo("D_MRMOT", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE"),
             // motorbikes BN2020
             new JobInfo("X_K001", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2020_MOTORBIKE"),
             new JobInfo("X_KS01", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2020_MOTORBIKE"),

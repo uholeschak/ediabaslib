@@ -184,7 +184,6 @@ namespace BmwFileReader
 
                 ProgressFunc?.Invoke(0);
 
-                string detectedVin = null;
                 JobInfo jobInfoEcuList = null;
                 int jobCount = readVinJobsBmwFast.Count + readIdentJobsBmwFast.Count + readILevelJobsBmwFast.Count;
                 int indexOffset = 0;
@@ -222,10 +221,6 @@ namespace BmwFileReader
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
-                            if (detectedVin == null)
-                            {
-                                detectedVin = string.Empty;
-                            }
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
                             {
@@ -233,8 +228,9 @@ namespace BmwFileReader
                                 // ReSharper disable once AssignNullToNotNullAttribute
                                 if (!string.IsNullOrEmpty(vin) && VinRegex.IsMatch(vin))
                                 {
-                                    detectedVin = vin;
-                                    LogInfoFormat("Detected VIN: {0}", detectedVin);
+                                    Vin = vin;
+                                    BnType = jobInfo.BnType;
+                                    LogInfoFormat("Detected VIN: {0}, BnType={1}", Vin, BnType);
                                     break;
                                 }
                             }
@@ -251,14 +247,13 @@ namespace BmwFileReader
 
                 indexOffset += readVinJobsBmwFast.Count;
                 index = indexOffset;
-                if (string.IsNullOrEmpty(detectedVin))
+                if (string.IsNullOrEmpty(Vin))
                 {
                     LogErrorFormat("VIN detection failed");
                     return false;
                 }
 
-                Vin = detectedVin;
-                TypeKeyProperties = VehicleInfoBmw.GetVehiclePropertiesFromVin(detectedVin, _ediabas, _bmwDir, out VehicleInfoBmw.VinRangeInfo vinRangeInfo);
+                TypeKeyProperties = VehicleInfoBmw.GetVehiclePropertiesFromVin(Vin, _ediabas, _bmwDir, out VehicleInfoBmw.VinRangeInfo vinRangeInfo);
                 if (vinRangeInfo != null)
                 {
                     TypeKey = vinRangeInfo.TypeKey;
@@ -279,9 +274,16 @@ namespace BmwFileReader
                     {
                         ProgressFunc?.Invoke(100 * index / jobCount);
 
+                        if (string.Compare(BnType, jobInfo.BnType, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            LogInfoFormat("Invalid BnType job ignored: {0}, BnType={1}", jobInfo.SgdbName, jobInfo.BnType);
+                            index++;
+                            continue;
+                        }
+
                         if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                         {
-                            LogInfoFormat("Job ignored: {0}", jobInfo.SgdbName);
+                            LogInfoFormat("Invalid SGBD job ignored: {0}, BnType={1}", jobInfo.SgdbName, jobInfo.BnType);
                             index++;
                             continue;
                         }
