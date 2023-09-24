@@ -602,34 +602,58 @@ namespace BmwFileReader
                 }
             }
 
-            if (!string.IsNullOrEmpty(BnType) && string.Compare(BnType, "BEV2010", StringComparison.OrdinalIgnoreCase) == 0)
+            if (!string.IsNullOrEmpty(BnType))
             {
-                const string groupFdi = "D_FBI";
-                EcuInfo ecuInfoFdi = GetEcuByEcuGroup(groupFdi);
-                if (ecuInfoFdi != null)
+                // from HandleECUGroups
+                if (string.Compare(BnType, "BEV2010", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    if (HasSa("8AA") && string.IsNullOrEmpty(GetEcuNameByIdent(groupFdi)))
+                    const string groupFdi = "D_FBI";
+                    EcuInfo ecuInfoFdi = GetEcuByEcuGroup(groupFdi);
+                    if (ecuInfoFdi != null)
                     {
-                        if (!ecuRemoveList.Contains(ecuInfoFdi))
+                        if (HasSa("8AA") && string.IsNullOrEmpty(GetEcuNameByIdent(groupFdi)))
                         {
-                            ecuRemoveList.Add(ecuInfoFdi);
+                            if (!ecuRemoveList.Contains(ecuInfoFdi))
+                            {
+                                ecuRemoveList.Add(ecuInfoFdi);
+                            }
                         }
                     }
                 }
-            }
 
-            if (!string.IsNullOrEmpty(TypeKey) &&
-                (string.Compare(TypeKey, "VZ91", StringComparison.OrdinalIgnoreCase) == 0 ||
-                string.Compare(TypeKey, "VN91", StringComparison.OrdinalIgnoreCase) == 0))
-            {
-                EcuInfo ecuInfoEgs = GetEcuByAddr(24);
-                if (ecuInfoEgs != null)
+                // from KMMFix
+                if (string.Compare(BnType, "BN2000", StringComparison.OrdinalIgnoreCase) == 0 ||
+                    string.Compare(BnType, "BEV2010", StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    if (!HasGearBoxEcu() && string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoEgs.Grp)))
-                    {   // EGS in MECH gear E84 found
-                        if (!ecuRemoveList.Contains(ecuInfoEgs))
+                    if (!string.IsNullOrEmpty(TypeKey) &&
+                        (string.Compare(TypeKey, "VZ91", StringComparison.OrdinalIgnoreCase) == 0 ||
+                         string.Compare(TypeKey, "VN91", StringComparison.OrdinalIgnoreCase) == 0))
+                    {
+                        EcuInfo ecuInfoEgs = GetEcuByAddr(24);
+                        if (ecuInfoEgs != null)
                         {
-                            ecuRemoveList.Add(ecuInfoEgs);
+                            if (!HasGearBoxEcu() && string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoEgs.Grp)))
+                            {   // EGS in MECH gear E84 found
+                                if (!ecuRemoveList.Contains(ecuInfoEgs))
+                                {
+                                    ecuRemoveList.Add(ecuInfoEgs);
+                                }
+                            }
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(Series) && string.Compare(Series, "R59", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        EcuInfo ecuInfoCvm = GetEcuByAddr(36);
+                        if (ecuInfoCvm != null)
+                        {
+                            if (string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoCvm.Grp)))
+                            {   // CVM in R59 found
+                                if (!ecuRemoveList.Contains(ecuInfoCvm))
+                                {
+                                    ecuRemoveList.Add(ecuInfoCvm);
+                                }
+                            }
                         }
                     }
                 }
