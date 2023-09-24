@@ -78,6 +78,7 @@ namespace BmwFileReader
 
         public static Regex VinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
+        // from ReadVinForGroupCars
         protected static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
             new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
@@ -117,11 +118,13 @@ namespace BmwFileReader
             new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
         };
 
+        // from ReadVinForGroupCars
         protected static readonly List<JobInfo> ReadVinJobsDs2 = new List<JobInfo>
         {
             new JobInfo("ZCS_ALL", "FGNR_LESEN", null, "FG_NR"),
             new JobInfo("D_0080", "AIF_FG_NR_LESEN", null, "AIF_FG_NR"),
             new JobInfo("D_0010", "AIF_LESEN", null, "AIF_FG_NR"),
+            new JobInfo("EWS3", "FGNR_LESEN", null, "FG_NR"),
         };
 
         protected static readonly List<JobInfo> ReadIdentJobsDs2 = new List<JobInfo>
