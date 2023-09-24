@@ -97,7 +97,6 @@ namespace PsdzClient
                 int index = 0;
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
-                string detectedVin = null;
                 JobInfo jobInfoEcuList = null;
                 foreach (JobInfo jobInfo in readVinJobsBmwFast)
                 {
@@ -130,11 +129,6 @@ namespace PsdzClient
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
-                            if (detectedVin == null)
-                            {
-                                detectedVin = string.Empty;
-                            }
-
                             Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
                             if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
                             {
@@ -142,8 +136,9 @@ namespace PsdzClient
                                 // ReSharper disable once AssignNullToNotNullAttribute
                                 if (!string.IsNullOrEmpty(vin) && VinRegex.IsMatch(vin))
                                 {
-                                    detectedVin = vin;
-                                    LogInfoFormat("Detected VIN: {0}", detectedVin);
+                                    Vin = vin;
+                                    BnType = jobInfo.BnType;
+                                    LogInfoFormat("Detected VIN: {0}, BnType={1}", Vin, BnType);
                                     break;
                                 }
                             }
@@ -162,13 +157,12 @@ namespace PsdzClient
                 indexOffset += readVinJobsBmwFast.Count;
                 index = indexOffset;
 
-                if (string.IsNullOrEmpty(detectedVin))
+                if (string.IsNullOrEmpty(Vin))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "No VIN detected");
                     return DetectResult.NoResponse;
                 }
 
-                Vin = detectedVin;
                 PsdzDatabase.VinRanges vinRangesByVin = _pdszDatabase.GetVinRangesByVin17(GetVinType(Vin), GetVin7(Vin), false);
                 if (vinRangesByVin != null)
                 {
@@ -197,9 +191,16 @@ namespace PsdzClient
                     }
 
                     LogInfoFormat("Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
+                    if (string.Compare(BnType, jobInfo.BnType, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        LogInfoFormat("Invalid BnType job ignored: {0}, BnType={1}", jobInfo.SgdbName, jobInfo.BnType);
+                        index++;
+                        continue;
+                    }
+
                     if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
                     {
-                        LogInfoFormat("Job ignored: {0}", jobInfo.SgdbName);
+                        LogInfoFormat("Invalid SGBD job ignored: {0}, BnType={1}", jobInfo.SgdbName, jobInfo.BnType);
                         index++;
                         continue;
                     }
