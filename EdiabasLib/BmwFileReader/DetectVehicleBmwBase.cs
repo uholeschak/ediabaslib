@@ -12,15 +12,15 @@ namespace BmwFileReader
     {
         protected class JobInfo
         {
-            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, string bnType = null, bool motorbike = false, string ecuListJob = null)
+            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, string bnType = null, string ecuListJob = null)
             {
                 SgdbName = sgdbName;
                 JobName = jobName;
                 JobArgs = jobArgs;
                 JobResult = jobResult;
                 BnType = bnType;
-                Motorbike = motorbike;
                 EcuListJob = ecuListJob;
+                Motorbike = !string.IsNullOrEmpty(bnType) && bnType.ToUpperInvariant().Contains("MOTORBIKE");
             }
 
             public string SgdbName { get; }
@@ -28,8 +28,8 @@ namespace BmwFileReader
             public string JobArgs { get; }
             public string JobResult { get; }
             public string BnType { get; }
-            public bool Motorbike { get; }
             public string EcuListJob { get; }
+            public bool Motorbike { get; }
         }
 
         public class EcuInfo
@@ -84,7 +84,7 @@ namespace BmwFileReader
         protected static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
             // BN2020
-            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", "BN2020", false, "STATUS_VCM_GET_ECU_LIST_ALL"),
+            new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", "BN2020", "STATUS_VCM_GET_ECU_LIST_ALL"),
             new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNR17_WERT", "BN2020"),
             new JobInfo("G_FRM", "STATUS_VCM_VIN", string.Empty, "STAT_VIN_EINH", "BN2020"),
             // BN2000
@@ -93,12 +93,12 @@ namespace BmwFileReader
             new JobInfo("FRM_87", "READ_FVIN", string.Empty, "FVIN", "BN2000"),
             new JobInfo("D_ZGM", "C_FG_LESEN", string.Empty, "FG_NR", "BN2000"),
             // motorbikes BN2000
-            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNUMMER", "BN2000_MOTORBIKE", true),
-            new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", "BN2000_MOTORBIKE", true),
+            new JobInfo("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNUMMER", "BN2000_MOTORBIKE"),
+            new JobInfo("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", "BN2000_MOTORBIKE"),
             // motorbikes BN2020
-            new JobInfo("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", "BN2020_MOTORBIKE", true),
-            new JobInfo("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", "BN2020_MOTORBIKE", true),
-            new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", "BN2020_MOTORBIKE", true),
+            new JobInfo("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", "STAT_FAHRGESTELLNUMMER_TEXT", "BN2020_MOTORBIKE"),
+            new JobInfo("X_K001", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", "BN2020_MOTORBIKE"),
+            new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", "BN2020_MOTORBIKE"),
         };
 
         protected static readonly List<JobInfo> ReadIdentJobsBmwFast = new List<JobInfo>
@@ -110,12 +110,12 @@ namespace BmwFileReader
             new JobInfo("D_LM", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000"),
             new JobInfo("D_KBM", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000"),
             // motorbikes BN2000
-            new JobInfo("D_MRMOT", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE", true),
-            new JobInfo("D_MRKOMB", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE", true),
-            new JobInfo("D_MRZFE", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE", true),
+            new JobInfo("D_MRMOT", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE"),
+            new JobInfo("D_MRKOMB", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE"),
+            new JobInfo("D_MRZFE", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000_MOTORBIKE"),
             // motorbikes BN2020
-            new JobInfo("X_K001", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2020_MOTORBIKE", true),
-            new JobInfo("X_KS01", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2020_MOTORBIKE", true),
+            new JobInfo("X_K001", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2020_MOTORBIKE"),
+            new JobInfo("X_KS01", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2020_MOTORBIKE"),
         };
 
         protected static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
