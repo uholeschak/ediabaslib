@@ -178,11 +178,11 @@ namespace PsdzClient
                         foreach (PsdzDatabase.Characteristics characteristics in characteristicsList)
                         {
                             if (string.Compare(characteristics.NodeClass, "40137602", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
+                            {   // from VehicleCharacteristicVehicleHelper.ComputeGetriebe
                                 TransmissionType = characteristics.EcuTranslation.TextDe;
                             }
                             else if (string.Compare(characteristics.NodeClass, "40132226", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
+                            {   // from VehicleCharacteristicVehicleHelper.ComputeMotor
                                 Motor = characteristics.EcuTranslation.TextDe;
                             }
                         }

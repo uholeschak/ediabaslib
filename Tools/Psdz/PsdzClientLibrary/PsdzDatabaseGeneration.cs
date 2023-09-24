@@ -3907,19 +3907,19 @@ namespace PsdzClient
                         foreach (Characteristics characteristics in characteristicsList)
                         {
                             if (string.Compare(characteristics.NodeClass, "40128130", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
+                            {   // from VehicleCharacteristicVehicleHelper.ComputeEreihe
                                 series = characteristics.EcuTranslation.TextDe;
                             }
                             else if (string.Compare(characteristics.NodeClass, "99999999951", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
+                            {   // from VehicleCharacteristicVehicleHelper.ComputeBaureihenverbund
                                 modelSeries = characteristics.EcuTranslation.TextDe;
                             }
                             else if (string.Compare(characteristics.NodeClass, "40135682", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
+                            {   // from VehicleCharacteristicVehicleHelper.ComputeProdart
                                 productType = characteristics.EcuTranslation.TextDe;
                             }
                             else if (string.Compare(characteristics.NodeClass, "40039952514", StringComparison.OrdinalIgnoreCase) == 0)
-                            {
+                            {   // from VehicleCharacteristicVehicleHelper.ComputeProduktlinie
                                 productLine = characteristics.EcuTranslation.TextDe;
                             }
                         }
