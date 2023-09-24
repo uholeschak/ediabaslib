@@ -559,6 +559,7 @@ namespace BmwFileReader
                         if (addEcu)
                         {
                             EcuInfo ecuInfoAdd = new EcuInfo("RLS", addressRls, groupRls);
+                            LogInfoFormat("HandleSpecialEcus Adding ECU: Name={0}, Address={1}, Group={2}", ecuInfoAdd.Name, ecuInfoAdd.Address, ecuInfoAdd.Grp);
                             EcuList.Add(ecuInfoAdd);
                         }
                     }
@@ -636,6 +637,7 @@ namespace BmwFileReader
 
             foreach (EcuInfo ecuInfoRemove in ecuRemoveList)
             {
+                LogInfoFormat("HandleSpecialEcus Removing ECU: Name={0}, Address={1}, Group={2}", ecuInfoRemove.Name, ecuInfoRemove.Address, ecuInfoRemove.Grp);
                 ecuRemoveList.Remove(ecuInfoRemove);
             }
         }
