@@ -244,65 +244,8 @@ namespace PsdzClient
                                         if (resultSetsFa != null && resultSetsFa.Count >= 2)
                                         {
                                             Dictionary<string, EdiabasNet.ResultData> resultDictFa = resultSetsFa[1];
-                                            if (resultDictFa.TryGetValue("STANDARD_FA", out EdiabasNet.ResultData resultStdFa))
+                                            if (SetStreamToStructInfo(resultDictFa))
                                             {
-                                                string stdFaStr = resultStdFa.OpData as string;
-                                                if (!string.IsNullOrEmpty(stdFaStr))
-                                                {
-                                                    StandardFa = stdFaStr;
-                                                    SetInfoFromStdFa(stdFaStr);
-                                                }
-                                            }
-
-                                            if (resultDictFa.TryGetValue("BR", out EdiabasNet.ResultData resultDataBa))
-                                            {
-                                                string br = resultDataBa.OpData as string;
-                                                if (!string.IsNullOrEmpty(br))
-                                                {
-                                                    LogInfoFormat("Detected BR: {0}", br);
-                                                    string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
-                                                    if (!string.IsNullOrEmpty(vSeries))
-                                                    {
-                                                        LogInfoFormat("Detected vehicle series: {0}", vSeries);
-                                                        ModelSeries = br;
-                                                        Series = vSeries;
-                                                    }
-                                                }
-
-                                                if (resultDictFa.TryGetValue("C_DATE", out EdiabasNet.ResultData resultDataCDate))
-                                                {
-                                                    string cDateStr = resultDataCDate.OpData as string;
-                                                    DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
-                                                    if (dateTime != null)
-                                                    {
-                                                        LogInfoFormat("Detected construction date: {0}",
-                                                            dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                                                        SetConstructDate(dateTime);
-                                                    }
-                                                }
-
-                                                if (resultDictFa.TryGetValue("LACK", out EdiabasNet.ResultData resultPaint))
-                                                {
-                                                    string paintStr = resultPaint.OpData as string;
-                                                    if (!string.IsNullOrEmpty(paintStr))
-                                                    {
-                                                        Paint = paintStr;
-                                                    }
-                                                }
-
-                                                if (resultDictFa.TryGetValue("POLSTER", out EdiabasNet.ResultData resultUpholstery))
-                                                {
-                                                    string upholsteryStr = resultUpholstery.OpData as string;
-                                                    if (!string.IsNullOrEmpty(upholsteryStr))
-                                                    {
-                                                        Upholstery = upholsteryStr;
-                                                    }
-                                                }
-                                            }
-
-                                            if (Series != null)
-                                            {
-                                                SetFaSalpaInfo(resultDictFa);
                                                 break;
                                             }
                                         }

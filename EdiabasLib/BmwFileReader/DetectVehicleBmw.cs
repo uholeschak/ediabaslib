@@ -323,65 +323,8 @@ namespace BmwFileReader
                                         if (resultSetsFa != null && resultSetsFa.Count >= 2)
                                         {
                                             Dictionary<string, EdiabasNet.ResultData> resultDictFa = resultSetsFa[1];
-                                            if (resultDictFa.TryGetValue("STANDARD_FA", out EdiabasNet.ResultData resultStdFa))
+                                            if (SetStreamToStructInfo(resultDictFa))
                                             {
-                                                string stdFaStr = resultStdFa.OpData as string;
-                                                if (!string.IsNullOrEmpty(stdFaStr))
-                                                {
-                                                    StandardFa = stdFaStr;
-                                                    SetInfoFromStdFa(stdFaStr);
-                                                }
-                                            }
-
-                                            if (resultDictFa.TryGetValue("BR", out EdiabasNet.ResultData resultDataBa))
-                                            {
-                                                string br = resultDataBa.OpData as string;
-                                                if (!string.IsNullOrEmpty(br))
-                                                {
-                                                    LogInfoFormat("Detected BR: {0}", br);
-                                                    string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
-                                                    if (!string.IsNullOrEmpty(vSeries))
-                                                    {
-                                                        LogInfoFormat("Detected vehicle series: {0}", vSeries);
-                                                        ModelSeries = br;
-                                                        Series = vSeries;
-                                                    }
-                                                }
-
-                                                if (resultDictFa.TryGetValue("C_DATE", out EdiabasNet.ResultData resultDataCDate))
-                                                {
-                                                    string cDateStr = resultDataCDate.OpData as string;
-                                                    DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
-                                                    if (dateTime != null)
-                                                    {
-                                                        LogInfoFormat("Detected construction date: {0}",
-                                                            dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-                                                        SetConstructDate(dateTime);
-                                                    }
-                                                }
-
-                                                if (resultDictFa.TryGetValue("LACK", out EdiabasNet.ResultData resultPaint))
-                                                {
-                                                    string paintStr = resultPaint.OpData as string;
-                                                    if (!string.IsNullOrEmpty(paintStr))
-                                                    {
-                                                        Paint = paintStr;
-                                                    }
-                                                }
-
-                                                if (resultDictFa.TryGetValue("POLSTER", out EdiabasNet.ResultData resultUpholstery))
-                                                {
-                                                    string upholsteryStr = resultUpholstery.OpData as string;
-                                                    if (!string.IsNullOrEmpty(upholsteryStr))
-                                                    {
-                                                        Upholstery = upholsteryStr;
-                                                    }
-                                                }
-                                            }
-
-                                            if (Series != null)
-                                            {
-                                                SetFaSalpaInfo(resultDictFa);
                                                 break;
                                             }
                                         }
@@ -934,6 +877,68 @@ namespace BmwFileReader
                         catch (Exception)
                         {
                             LogErrorFormat("No vehicle type response");
+                            // ignored
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(groupFiles))
+                {
+                    string[] groupArray = groupFiles.Split(',');
+                    foreach (JobInfo jobInfo in ReadFaJobsDs2)
+                    {
+                        LogInfoFormat("Read vehicle FA job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
+                        if (groupArray.All(x => string.Compare(x, jobInfo.SgdbName, StringComparison.OrdinalIgnoreCase) != 0))
+                        {
+                            LogInfoFormat("Missing FA SGDB ignored: {0}", jobInfo.SgdbName);
+                            continue;
+                        }
+
+                        try
+                        {
+                            ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
+
+                            _ediabas.ArgString = string.Empty;
+                            if (!string.IsNullOrEmpty(jobInfo.JobArgs))
+                            {
+                                _ediabas.ArgString = jobInfo.JobArgs;
+                            }
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob(jobInfo.JobName);
+
+                            resultSets = _ediabas.ResultSets;
+                            if (resultSets != null && resultSets.Count >= 2)
+                            {
+                                Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                                if (resultDict.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData))
+                                {
+                                    string fa = resultData.OpData as string;
+                                    if (!string.IsNullOrEmpty(fa))
+                                    {
+                                        ActivityCommon.ResolveSgbdFile(_ediabas, "FA");
+
+                                        _ediabas.ArgString = "1;" + fa;
+                                        _ediabas.ArgBinaryStd = null;
+                                        _ediabas.ResultsRequests = string.Empty;
+                                        _ediabas.ExecuteJob("FA_STREAM2STRUCT");
+
+                                        List<Dictionary<string, EdiabasNet.ResultData>> resultSetsFa = _ediabas.ResultSets;
+                                        if (resultSetsFa != null && resultSetsFa.Count >= 2)
+                                        {
+                                            Dictionary<string, EdiabasNet.ResultData> resultDictFa = resultSetsFa[1];
+                                            if (SetStreamToStructInfo(resultDictFa))
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            LogErrorFormat("No read FA response");
                             // ignored
                         }
                     }
