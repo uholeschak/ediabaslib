@@ -645,6 +645,10 @@ namespace BmwFileReader
             LogInfoFormat("Try to detect DS2 vehicle");
             ResetValues();
 
+            int jobCount = 1 + ReadVinJobsDs2.Count + ReadIdentJobsDs2.Count + ReadFaJobsDs2.Count;
+            int indexOffset = 0;
+            int index = 0;
+
             try
             {
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
@@ -654,6 +658,7 @@ namespace BmwFileReader
                 string groupFiles = null;
                 try
                 {
+                    ProgressFunc?.Invoke(100 * index / jobCount);
                     ActivityCommon.ResolveSgbdFile(_ediabas, "d_0044");
 
                     _ediabas.ArgString = "6";
@@ -735,17 +740,18 @@ namespace BmwFileReader
                     // ignored
                 }
 
-                string detectedVin = null;
+                indexOffset += 1;
+                index = indexOffset;
 
+                string detectedVin = null;
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
-                    int index = 0;
                     foreach (JobInfo jobInfo in ReadVinJobsDs2)
                     {
                         LogInfoFormat("Read VIN job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
                         try
                         {
-                            ProgressFunc?.Invoke(100 * index / ReadVinJobsDs2.Count);
+                            ProgressFunc?.Invoke(100 * index / jobCount);
                             ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                             _ediabas.ArgString = string.Empty;
@@ -780,14 +786,13 @@ namespace BmwFileReader
                 }
                 else
                 {
-                    int index = 0;
                     foreach (string fileName in ReadMotorJobsDs2)
                     {
                         try
                         {
                             LogInfoFormat("Read motor job: {0}", fileName);
 
-                            ProgressFunc?.Invoke(100 * index / ReadMotorJobsDs2.Length);
+                            ProgressFunc?.Invoke(100 * index / jobCount);
                             ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
 
                             _ediabas.ArgString = string.Empty;
@@ -815,6 +820,9 @@ namespace BmwFileReader
                         index++;
                     }
                 }
+
+                indexOffset += ReadVinJobsDs2.Count;
+                index = indexOffset;
 
                 Vin = detectedVin;
                 TypeKeyProperties = VehicleInfoBmw.GetVehiclePropertiesFromVin(detectedVin, _ediabas, _bmwDir, out VehicleInfoBmw.VinRangeInfo vinRangeInfo);
@@ -850,6 +858,7 @@ namespace BmwFileReader
                         LogInfoFormat("Read vehicle type job: {0} {1}", jobInfo.SgdbName, jobInfo.JobName);
                         try
                         {
+                            ProgressFunc?.Invoke(100 * index / jobCount);
                             ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                             _ediabas.ArgString = typeSnr;
@@ -879,8 +888,13 @@ namespace BmwFileReader
                             LogErrorFormat("No vehicle type response");
                             // ignored
                         }
+
+                        index++;
                     }
                 }
+
+                indexOffset += ReadIdentJobsDs2.Count;
+                index = indexOffset;
 
                 if (!string.IsNullOrEmpty(groupFiles))
                 {
@@ -891,11 +905,13 @@ namespace BmwFileReader
                         if (groupArray.All(x => string.Compare(x, jobInfo.SgdbName, StringComparison.OrdinalIgnoreCase) != 0))
                         {
                             LogInfoFormat("Missing FA SGDB ignored: {0}", jobInfo.SgdbName);
+                            index++;
                             continue;
                         }
 
                         try
                         {
+                            ProgressFunc?.Invoke(100 * index / jobCount);
                             ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
 
                             _ediabas.ArgString = string.Empty;
@@ -941,8 +957,13 @@ namespace BmwFileReader
                             LogErrorFormat("No read FA response");
                             // ignored
                         }
+
+                        index++;
                     }
                 }
+
+                indexOffset += ReadFaJobsDs2.Count;
+                index = indexOffset;
 
                 UpdateTypeKeyProperties();
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
@@ -957,6 +978,7 @@ namespace BmwFileReader
                     }
                 }
 
+                ProgressFunc?.Invoke(100 * index / jobCount);
                 LogInfoFormat("BnType: {0}", BnType ?? string.Empty);
                 Ds2GroupFiles = groupFiles;
 

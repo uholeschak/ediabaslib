@@ -148,7 +148,7 @@ namespace BmwFileReader
             new JobInfo("D_00D0", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", "IBUS"),
         };
 
-        protected static readonly string[] ReadMotorJobsDs2 =
+        protected static readonly List<string> ReadMotorJobsDs2 = new List<string>()
         {
             "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
         };
