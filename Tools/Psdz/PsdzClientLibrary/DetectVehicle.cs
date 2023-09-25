@@ -75,13 +75,13 @@ namespace PsdzClient
             try
             {
                 List<JobInfo> readVinJobsBmwFast = new List<JobInfo>(ReadVinJobsBmwFast);
-                List<JobInfo> readIdentJobsBmwFast = new List<JobInfo>(ReadIdentJobsBmwFast);
+                List<JobInfo> readFaJobsBmwFast = new List<JobInfo>(ReadFaJobsBmwFast);
                 List<JobInfo> readILevelJobsBmwFast = new List<JobInfo>(ReadILevelJobsBmwFast);
 
                 if (!detectMotorbikes)
                 {
                     readVinJobsBmwFast.RemoveAll(x => x.Motorbike);
-                    readIdentJobsBmwFast.RemoveAll(x => x.Motorbike);
+                    readFaJobsBmwFast.RemoveAll(x => x.Motorbike);
                     readILevelJobsBmwFast.RemoveAll(x => x.Motorbike);
                 }
 
@@ -92,7 +92,7 @@ namespace PsdzClient
                     return DetectResult.NoResponse;
                 }
 
-                int jobCount = readVinJobsBmwFast.Count + readIdentJobsBmwFast.Count + readILevelJobsBmwFast.Count + 1;
+                int jobCount = readVinJobsBmwFast.Count + readFaJobsBmwFast.Count + readILevelJobsBmwFast.Count + 1;
                 int indexOffset = 0;
                 int index = 0;
 
@@ -183,14 +183,14 @@ namespace PsdzClient
                     }
                 }
 
-                foreach (JobInfo jobInfo in readIdentJobsBmwFast)
+                foreach (JobInfo jobInfo in readFaJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
                         return DetectResult.Aborted;
                     }
 
-                    LogInfoFormat("Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
+                    LogInfoFormat("Read FA job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
                     if (string.Compare(BnType, jobInfo.BnType, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         LogInfoFormat("Invalid BnType job ignored: {0}, BnType={1}", jobInfo.SgdbName, jobInfo.BnType);
@@ -380,7 +380,7 @@ namespace PsdzClient
                     index++;
                 }
 
-                indexOffset += readIdentJobsBmwFast.Count;
+                indexOffset += readFaJobsBmwFast.Count;
                 index = indexOffset;
 
                 VehicleStructsBmw.VersionInfo versionInfo = VehicleInfoBmw.GetVehicleSeriesInfoVersion();
