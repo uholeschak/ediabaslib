@@ -4180,7 +4180,7 @@ namespace BmwDeepObd
                     if (ActivityCommon.ScanAllEcus)
                     {
                         _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Scan all ECUs requested, ignoring detected groups");
-                        groupFilesUse = DetectVehicleBmw.AllDs2GroupFiles;
+                        groupFilesUse = DetectVehicleBmwBase.AllDs2GroupFiles;
                     }
 
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group files: {0}", groupFilesUse);
