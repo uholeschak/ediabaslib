@@ -170,13 +170,13 @@ namespace BmwFileReader
             try
             {
                 List<JobInfo> readVinJobsBmwFast = new List<JobInfo>(ReadVinJobsBmwFast);
-                List<JobInfo> readIdentJobsBmwFast = new List<JobInfo>(ReadIdentJobsBmwFast);
+                List<JobInfo> readFaJobsBmwFast = new List<JobInfo>(ReadFaJobsBmwFast);
                 List<JobInfo> readILevelJobsBmwFast = new List<JobInfo>(ReadILevelJobsBmwFast);
 
                 if (!detectMotorbikes)
                 {
                     readVinJobsBmwFast.RemoveAll(x => x.Motorbike);
-                    readIdentJobsBmwFast.RemoveAll(x => x.Motorbike);
+                    readFaJobsBmwFast.RemoveAll(x => x.Motorbike);
                     readILevelJobsBmwFast.RemoveAll(x => x.Motorbike);
                 }
 
@@ -185,7 +185,7 @@ namespace BmwFileReader
                 ProgressFunc?.Invoke(0);
 
                 JobInfo jobInfoEcuList = null;
-                int jobCount = readVinJobsBmwFast.Count + readIdentJobsBmwFast.Count + readILevelJobsBmwFast.Count;
+                int jobCount = readVinJobsBmwFast.Count + readFaJobsBmwFast.Count + readILevelJobsBmwFast.Count;
                 int indexOffset = 0;
                 int index = 0;
                 foreach (JobInfo jobInfo in readVinJobsBmwFast)
@@ -261,14 +261,14 @@ namespace BmwFileReader
                     ConstructMonth = vinRangeInfo.ProdMonth;
                 }
 
-                foreach (JobInfo jobInfo in readIdentJobsBmwFast)
+                foreach (JobInfo jobInfo in readFaJobsBmwFast)
                 {
                     if (AbortFunc != null && AbortFunc())
                     {
                         return false;
                     }
 
-                    LogInfoFormat("Read BR job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
+                    LogInfoFormat("Read FA job: {0} {1} {2}", jobInfo.SgdbName, jobInfo.JobName, jobInfo.JobArgs ?? string.Empty);
 
                     try
                     {
@@ -458,7 +458,7 @@ namespace BmwFileReader
                     index++;
                 }
 
-                indexOffset += readIdentJobsBmwFast.Count;
+                indexOffset += readFaJobsBmwFast.Count;
                 index = indexOffset;
                 UpdateTypeKeyProperties();
 

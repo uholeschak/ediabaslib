@@ -101,7 +101,7 @@ namespace BmwFileReader
             new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", "BN2020_MOTORBIKE"),
         };
 
-        protected static readonly List<JobInfo> ReadIdentJobsBmwFast = new List<JobInfo>
+        protected static readonly List<JobInfo> ReadFaJobsBmwFast = new List<JobInfo>
         {
             // BN2020
             new JobInfo("G_ZGW", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE", "BN2020"),
@@ -140,6 +140,12 @@ namespace BmwFileReader
         {
             new JobInfo("FZGIDENT", "GRUNDMERKMALE_LESEN", null, "BR_TXT", "IBUS"),
             new JobInfo("FZGIDENT", "STRINGS_LESEN", null, "BR_TXT", "IBUS"),
+        };
+
+        protected static readonly List<JobInfo> ReadFaJobsDs2 = new List<JobInfo>
+        {
+            new JobInfo("D_0080", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", "IBUS"),
+            new JobInfo("D_00D0", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", "IBUS"),
         };
 
         protected static readonly string[] ReadMotorJobsDs2 =
