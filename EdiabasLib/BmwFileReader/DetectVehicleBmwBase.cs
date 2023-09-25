@@ -439,6 +439,77 @@ namespace BmwFileReader
             LogInfoFormat("Detected FA: {0}", GetFaInfo());
         }
 
+        protected bool SetStreamToStructInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
+        {
+            bool dataValid = false;
+            if (resultDict.TryGetValue("STANDARD_FA", out EdiabasNet.ResultData resultStdFa))
+            {
+                string stdFaStr = resultStdFa.OpData as string;
+                if (!string.IsNullOrEmpty(stdFaStr))
+                {
+                    StandardFa = stdFaStr;
+                    if (SetInfoFromStdFa(stdFaStr))
+                    {
+                        dataValid = true;
+                    }
+                }
+            }
+
+            if (resultDict.TryGetValue("BR", out EdiabasNet.ResultData resultDataBa))
+            {
+                string br = resultDataBa.OpData as string;
+                if (!string.IsNullOrEmpty(br))
+                {
+                    LogInfoFormat("Detected BR: {0}", br);
+                    string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+                    if (!string.IsNullOrEmpty(vSeries))
+                    {
+                        LogInfoFormat("Detected vehicle series: {0}", vSeries);
+                        ModelSeries = br;
+                        Series = vSeries;
+                        dataValid = true;
+                    }
+                }
+
+                if (resultDict.TryGetValue("C_DATE", out EdiabasNet.ResultData resultDataCDate))
+                {
+                    string cDateStr = resultDataCDate.OpData as string;
+                    DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
+                    if (dateTime != null)
+                    {
+                        LogInfoFormat("Detected construction date: {0}",
+                            dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                        SetConstructDate(dateTime);
+                    }
+                }
+
+                if (resultDict.TryGetValue("LACK", out EdiabasNet.ResultData resultPaint))
+                {
+                    string paintStr = resultPaint.OpData as string;
+                    if (!string.IsNullOrEmpty(paintStr))
+                    {
+                        Paint = paintStr;
+                    }
+                }
+
+                if (resultDict.TryGetValue("POLSTER", out EdiabasNet.ResultData resultUpholstery))
+                {
+                    string upholsteryStr = resultUpholstery.OpData as string;
+                    if (!string.IsNullOrEmpty(upholsteryStr))
+                    {
+                        Upholstery = upholsteryStr;
+                    }
+                }
+            }
+
+            if (dataValid)
+            {
+                SetFaSalpaInfo(resultDict);
+            }
+
+            return dataValid;
+        }
+
         protected bool SetInfoFromStdFa(string stdFaStr)
         {
             if (string.IsNullOrEmpty(stdFaStr))
@@ -446,6 +517,7 @@ namespace BmwFileReader
                 return false;
             }
 
+            bool dataValid = false;
             try
             {
                 string vehicleType = VehicleInfoBmw.GetVehicleTypeFromStdFa(stdFaStr, _ediabas);
@@ -471,6 +543,7 @@ namespace BmwFileReader
                             LogInfoFormat("Detected vehicle series: {0}", vSeries);
                             ModelSeries = br;
                             Series = vSeries;
+                            dataValid = true;
                         }
                     }
                 }
@@ -545,8 +618,12 @@ namespace BmwFileReader
                     }
                 }
 
-                LogInfoFormat("Detected FA: {0}", GetFaInfo());
-                return true;
+                if (dataValid)
+                {
+                    LogInfoFormat("Detected FA: {0}", GetFaInfo());
+                }
+
+                return dataValid;
             }
             catch (Exception ex)
             {
