@@ -510,6 +510,48 @@ namespace BmwFileReader
             return dataValid;
         }
 
+        protected void SetStatVcmInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
+        {
+            if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))
+            {
+                string cDateStr = resultDataCDate.OpData as string;
+                DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(cDateStr);
+                if (dateTime != null)
+                {
+                    LogInfoFormat("Detected construction date: {0}",
+                        dateTime.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                    SetConstructDate(dateTime);
+                }
+            }
+
+            if (resultDict.TryGetValue("STAT_LACKCODE", out EdiabasNet.ResultData resultPaint))
+            {
+                string paintStr = resultPaint.OpData as string;
+                if (!string.IsNullOrEmpty(paintStr))
+                {
+                    Paint = paintStr;
+                }
+            }
+
+            if (resultDict.TryGetValue("STAT_POLSTERCODE", out EdiabasNet.ResultData resultUpholstery))
+            {
+                string upholsteryStr = resultUpholstery.OpData as string;
+                if (!string.IsNullOrEmpty(upholsteryStr))
+                {
+                    Upholstery = upholsteryStr;
+                }
+            }
+
+            if (resultDict.TryGetValue("STAT_TYP_SCHLUESSEL", out EdiabasNet.ResultData resultType))
+            {
+                string typeStr = resultType.OpData as string;
+                if (!string.IsNullOrEmpty(typeStr))
+                {
+                    TypeKey = typeStr;
+                }
+            }
+        }
+
         protected bool SetInfoFromStdFa(string stdFaStr)
         {
             if (string.IsNullOrEmpty(stdFaStr))
