@@ -560,7 +560,68 @@ namespace PsdzClient
 
                     if (vinJobUsed != null)
                     {
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            int dictIndex = 0;
+                            foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
+                            {
+                                if (dictIndex == 0)
+                                {
+                                    dictIndex++;
+                                    continue;
+                                }
 
+                                string ecuName = string.Empty;
+                                Int64 ecuAdr = -1;
+                                // ReSharper disable once InlineOutVariableDeclaration
+                                EdiabasNet.ResultData resultData;
+                                if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
+                                {
+                                    if (resultData.OpData is string)
+                                    {
+                                        ecuName = (string)resultData.OpData;
+                                    }
+                                }
+                                if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
+                                {
+                                    if (resultData.OpData is Int64)
+                                    {
+                                        ecuAdr = (Int64)resultData.OpData;
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr)
+                                {
+                                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr) &&
+                                        ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                                    {
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Extra ECU found: Name={1}, Addr={2}",
+                                            vinJobUsed.JobName, ecuName, ecuAdr);
+                                        string groupSgbd = null;
+                                        if (vehicleSeriesInfo.EcuList != null)
+                                        {
+                                            foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in vehicleSeriesInfo.EcuList)
+                                            {
+                                                if (vehicleEcuInfo.DiagAddr == ecuAdr)
+                                                {
+                                                    groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (!string.IsNullOrEmpty(groupSgbd))
+                                        {
+                                            EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd);
+                                            ecuInfoAddList.Add(ecuInfo);
+                                        }
+                                    }
+                                }
+
+                                dictIndex++;
+                            }
+                        }
                     }
                 }
                 catch (Exception)
