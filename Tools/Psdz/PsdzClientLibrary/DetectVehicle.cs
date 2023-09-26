@@ -500,6 +500,11 @@ namespace PsdzClient
                 try
                 {
                     _ediabas.ResolveSgbdFile(GroupSgdb);
+                    _ediabas.ArgString = string.Empty;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+                    _ediabas.ExecuteJob("_JOBS");    // force to load file
+
                     JobInfo vinJobUsed = null;
                     foreach (JobInfo vinJob in ReadVinJobs)
                     {
