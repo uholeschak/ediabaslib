@@ -305,6 +305,7 @@ namespace PsdzClient
                 }
 
                 LogInfoFormat("Group SGBD: {0}", vehicleSeriesInfo.BrSgbd);
+                VehicleSeriesInfo = vehicleSeriesInfo;
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
                 SgdbAddList = vehicleSeriesInfo.SgdbAdd;
                 BnType = vehicleSeriesInfo.BnType;
@@ -480,32 +481,7 @@ namespace PsdzClient
                                     }
                                 }
 
-                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr)
-                                {
-                                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr) &&
-                                        ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
-                                    {
-                                        string groupSgbd = null;
-                                        if (vehicleSeriesInfo.EcuList != null)
-                                        {
-                                            foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in vehicleSeriesInfo.EcuList)
-                                            {
-                                                if (vehicleEcuInfo.DiagAddr == ecuAdr)
-                                                {
-                                                    groupSgbd = vehicleEcuInfo.GroupSgbd;
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        if (!string.IsNullOrEmpty(groupSgbd))
-                                        {
-                                            EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd);
-                                            ecuInfoAddList.Add(ecuInfo);
-                                        }
-                                    }
-                                }
-
+                                AddEcuListEntry(ecuInfoAddList, ecuName, ecuAdr);
                                 dictIndex++;
                             }
                         }
@@ -558,7 +534,11 @@ namespace PsdzClient
                         }
                     }
 
-                    if (vinJobUsed != null)
+                    if (vinJobUsed == null)
+                    {
+                        LogErrorFormat("No VIN job found");
+                    }
+                    else
                     {
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
@@ -591,34 +571,7 @@ namespace PsdzClient
                                     }
                                 }
 
-                                if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr)
-                                {
-                                    if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr) &&
-                                        ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
-                                    {
-                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Extra ECU found: Name={1}, Addr={2}",
-                                            vinJobUsed.JobName, ecuName, ecuAdr);
-                                        string groupSgbd = null;
-                                        if (vehicleSeriesInfo.EcuList != null)
-                                        {
-                                            foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in vehicleSeriesInfo.EcuList)
-                                            {
-                                                if (vehicleEcuInfo.DiagAddr == ecuAdr)
-                                                {
-                                                    groupSgbd = vehicleEcuInfo.GroupSgbd;
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        if (!string.IsNullOrEmpty(groupSgbd))
-                                        {
-                                            EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd);
-                                            ecuInfoAddList.Add(ecuInfo);
-                                        }
-                                    }
-                                }
-
+                                AddEcuListEntry(ecuInfoAddList, ecuName, ecuAdr);
                                 dictIndex++;
                             }
                         }
@@ -1058,6 +1011,35 @@ namespace PsdzClient
             foreach (EcuInfo ecuInfo in EcuList)
             {
                 EcuListPsdz.Add(new PsdzDatabase.EcuInfo(ecuInfo.Name, ecuInfo.Address, ecuInfo.Description, ecuInfo.Sgbd, ecuInfo.Grp));
+            }
+        }
+
+        private void AddEcuListEntry(List<EcuInfo> ecuInfoAddList, string ecuName, long ecuAdr)
+        {
+            if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr)
+            {
+                if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr) &&
+                    ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
+                {
+                    string groupSgbd = null;
+                    if (VehicleSeriesInfo.EcuList != null)
+                    {
+                        foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in VehicleSeriesInfo.EcuList)
+                        {
+                            if (vehicleEcuInfo.DiagAddr == ecuAdr)
+                            {
+                                groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(groupSgbd))
+                    {
+                        EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd);
+                        ecuInfoAddList.Add(ecuInfo);
+                    }
+                }
             }
         }
 
