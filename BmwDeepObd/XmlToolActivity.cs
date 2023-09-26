@@ -3371,7 +3371,6 @@ namespace BmwDeepObd
                 int ecuInvalidCount = 0;
                 List<EcuInfo> ecuListUse = null;
                 string ecuFileNameUse = null;
-                bool unstableIdent = false;
                 List<string> ecuFileNameList = new List<string>();
 
                 DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(_ediabas, _bmwDir);
@@ -3584,11 +3583,6 @@ namespace BmwDeepObd
                                     break;
                                 }
 
-                                if (identRetry > 0)
-                                {
-                                    unstableIdent = true;
-                                }
-
                                 maxSteps++;
                                 currentStep++;
                             }
@@ -3598,7 +3592,6 @@ namespace BmwDeepObd
                             // ignored
                         }
 
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect UnstableIdent={0}, ElmDevice={1}", unstableIdent, elmDevice);
                         if (ecuList.Count > 0)
                         {
                             ecuInvalidCount = 0;
@@ -3627,66 +3620,58 @@ namespace BmwDeepObd
                     _ecuList.AddRange(ecuListUse.OrderBy(x => x.Name));
                     _instanceData.SgbdFunctional = ecuFileNameUse;
 
-                    bool forceFullDetect = ecuListUse.Count < 5;
-                    if (detectVehicleBmw.BrandList.Contains("MINI PKW", StringComparer.OrdinalIgnoreCase))
+                    try
                     {
-                        forceFullDetect = true;
-                    }
-
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Force full detect: {0}", forceFullDetect);
-                    if ((!elmDevice && unstableIdent) || forceFullDetect || string.IsNullOrEmpty(detectedVin))
-                    {
-                        try
+                        List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
+                        foreach (DetectVehicleBmwBase.EcuInfo ecuInfoAdd in detectVehicleBmw.EcuList)
                         {
-                            ActivityCommon.ResolveSgbdFile(_ediabas, ecuFileNameUse);
-                            DetectVehicleBmwBase.JobInfo vinJobUsed = null;
-                            foreach (DetectVehicleBmwBase.JobInfo vinJob in DetectVehicleBmwBase.ReadVinJobs)
+                            if (!EcuListContainsAddr(_ecuList, ecuInfoAdd.Address))
                             {
-                                try
+                                ecuInfoAddList.Add(new EcuInfo(ecuInfoAdd.Name, ecuInfoAdd.Address, string.Empty, string.Empty, ecuInfoAdd.Grp));
+                            }
+                        }
+
+                        ActivityCommon.ResolveSgbdFile(_ediabas, ecuFileNameUse);
+                        DetectVehicleBmwBase.JobInfo vinJobUsed = null;
+                        foreach (DetectVehicleBmwBase.JobInfo vinJob in DetectVehicleBmwBase.ReadVinJobs)
+                        {
+                            try
+                            {
+                                if (_ediabasJobAbort)
                                 {
-                                    if (_ediabasJobAbort)
-                                    {
-                                        break;
-                                    }
-
-                                    if (!_ediabas.IsJobExisting(vinJob.JobName))
-                                    {
-                                        continue;
-                                    }
-
-                                    _ediabas.ArgString = string.Empty;
-                                    if (!string.IsNullOrEmpty(vinJob.JobArgs))
-                                    {
-                                        _ediabas.ArgString = vinJob.JobArgs;
-                                    }
-
-                                    _ediabas.ArgBinaryStd = null;
-                                    _ediabas.ResultsRequests = string.Empty;
-                                    _ediabas.ExecuteJob(vinJob.JobName);
-
-                                    vinJobUsed = vinJob;
                                     break;
                                 }
-                                catch (Exception)
+
+                                if (!_ediabas.IsJobExisting(vinJob.JobName))
                                 {
-                                    // ignored
+                                    continue;
                                 }
-                            }
 
-                            if (vinJobUsed == null)
-                            {
-                                throw new Exception("Read VIN failed");
-                            }
-
-                            List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
-                            foreach (DetectVehicleBmwBase.EcuInfo ecuInfoAdd in detectVehicleBmw.EcuList)
-                            {
-                                if (!EcuListContainsAddr(_ecuList, ecuInfoAdd.Address))
+                                _ediabas.ArgString = string.Empty;
+                                if (!string.IsNullOrEmpty(vinJob.JobArgs))
                                 {
-                                    ecuInfoAddList.Add(new EcuInfo(ecuInfoAdd.Name, ecuInfoAdd.Address, string.Empty, string.Empty, ecuInfoAdd.Grp));
+                                    _ediabas.ArgString = vinJob.JobArgs;
                                 }
-                            }
 
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob(vinJob.JobName);
+
+                                vinJobUsed = vinJob;
+                                break;
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+
+                        if (vinJobUsed == null)
+                        {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No VIN job found");
+                        }
+                        else
+                        {
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
                             if (resultSets != null && resultSets.Count >= 2)
                             {
@@ -3789,7 +3774,10 @@ namespace BmwDeepObd
                                     dictIndex++;
                                 }
                             }
+                        }
 
+                        if (ecuInfoAddList.Count > 0)
+                        {
                             foreach (EcuInfo ecuInfoAdd in ecuInfoAddList)
                             {
                                 if (string.IsNullOrEmpty(ecuInfoAdd.Grp))
@@ -3860,11 +3848,13 @@ namespace BmwDeepObd
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Failed to resolve Groups: {0}", ecuInfoAdd.Grp);
                                 }
                             }
+
+                            detectVehicleBmw.HandleSpecialEcus();
                         }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
                     }
 
                     // get vin

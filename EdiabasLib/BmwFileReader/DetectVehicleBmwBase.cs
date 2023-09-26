@@ -694,7 +694,7 @@ namespace BmwFileReader
         }
 
         // from: Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.HandleECUGroups
-        protected void HandleSpecialEcus(List<EcuInfo> ecusToRemove = null)
+        public void HandleSpecialEcus(List<EcuInfo> ecusToRemove = null)
         {
             List<EcuInfo> ecuRemoveList = new List<EcuInfo>();
             if (ecusToRemove != null)
