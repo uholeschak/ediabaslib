@@ -61,6 +61,7 @@ namespace BmwFileReader
         public List<string> BrandList { get; protected set; }
         public string TransmissionType { get; protected set; }
         public string Motor { get; protected set; }
+        public VehicleStructsBmw.VehicleSeriesInfo VehicleSeriesInfo { get; protected set; }
         public List<EcuInfo> EcuList { get; protected set; }
         public DateTime? ConstructDate { get; protected set; }
         public string ConstructYear { get; protected set; }
@@ -963,6 +964,7 @@ namespace BmwFileReader
             BrandList = null;
             TransmissionType = null;
             Motor = null;
+            VehicleSeriesInfo = null;
             EcuList = new List<EcuInfo>();
             ConstructDate = null;
             ConstructYear = null;

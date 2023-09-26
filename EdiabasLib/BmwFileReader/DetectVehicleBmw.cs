@@ -147,7 +147,6 @@ namespace BmwFileReader
         public bool Valid { get; private set; }
         public bool Ds2Vehicle { get; private set; }
         public Dictionary<string, string> TypeKeyProperties { get; private set; }
-        public VehicleStructsBmw.VehicleSeriesInfo VehicleSeriesInfo { get; private set; }
         public string Ds2GroupFiles { get; private set; }
         public bool Pin78ConnectRequire { get; private set; }
 
@@ -1076,7 +1075,6 @@ namespace BmwFileReader
             Valid = false;
             Ds2Vehicle = false;
             TypeKeyProperties = null;
-            VehicleSeriesInfo = null;
             Ds2GroupFiles = null;
             Pin78ConnectRequire = false;
         }
