@@ -3632,6 +3632,11 @@ namespace BmwDeepObd
                         }
 
                         ActivityCommon.ResolveSgbdFile(_ediabas, ecuFileNameUse);
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("_JOBS");    // force to load file
+
                         DetectVehicleBmwBase.JobInfo vinJobUsed = null;
                         foreach (DetectVehicleBmwBase.JobInfo vinJob in DetectVehicleBmwBase.ReadVinJobs)
                         {
