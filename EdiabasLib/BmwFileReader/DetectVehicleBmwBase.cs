@@ -510,6 +510,18 @@ namespace BmwFileReader
             return dataValid;
         }
 
+        protected void SetBrInfo(string br)
+        {
+            LogInfoFormat("Detected BR: {0}", br);
+            string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+            if (!string.IsNullOrEmpty(vSeries))
+            {
+                LogInfoFormat("Detected vehicle series: {0}", vSeries);
+                ModelSeries = br;
+                Series = vSeries;
+            }
+        }
+
         protected void SetStatVcmInfo(Dictionary<string, EdiabasNet.ResultData> resultDict)
         {
             if (resultDict.TryGetValue("STAT_ZEIT_KRITERIUM", out EdiabasNet.ResultData resultDataCDate))

@@ -256,15 +256,7 @@ namespace PsdzClient
                                     string br = resultData.OpData as string;
                                     if (!string.IsNullOrEmpty(br))
                                     {
-                                        LogInfoFormat("Detected BR: {0}", br);
-                                        string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
-                                        if (!string.IsNullOrEmpty(vSeries))
-                                        {
-                                            LogInfoFormat("Detected vehicle series: {0}", vSeries);
-                                            ModelSeries = br;
-                                            Series = vSeries;
-                                        }
-
+                                        SetBrInfo(br);
                                         SetStatVcmInfo(resultDict);
                                         SetStatVcmSalpaInfo(resultSets);
                                         break;
