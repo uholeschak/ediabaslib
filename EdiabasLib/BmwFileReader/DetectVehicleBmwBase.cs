@@ -10,7 +10,7 @@ namespace BmwFileReader
 {
     public class DetectVehicleBmwBase
     {
-        protected class JobInfo
+        public class JobInfo
         {
             public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, string bnType = null, string ecuListJob = null)
             {
@@ -81,7 +81,7 @@ namespace BmwFileReader
         public static Regex VinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
         // from ReadVinForGroupCars, ReadVinForMotorcycles
-        protected static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
+        public static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
             // BN2020
             new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", "BN2020", "STATUS_VCM_GET_ECU_LIST_ALL"),
@@ -101,7 +101,7 @@ namespace BmwFileReader
             new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", "BN2020_MOTORBIKE"),
         };
 
-        protected static readonly List<JobInfo> ReadFaJobsBmwFast = new List<JobInfo>
+        public static readonly List<JobInfo> ReadFaJobsBmwFast = new List<JobInfo>
         {
             // BN2020
             new JobInfo("G_ZGW", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE", "BN2020"),
@@ -120,15 +120,22 @@ namespace BmwFileReader
             new JobInfo("X_KS01", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2020_MOTORBIKE"),
         };
 
-        protected static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
+        public static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
         {
             new JobInfo("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
             new JobInfo("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
             new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
         };
 
+        public static readonly List<JobInfo> ReadVinJobs = new List<JobInfo>
+        {
+            new JobInfo(string.Empty, "C_FG_LESEN_FUNKTIONAL", string.Empty),
+            new JobInfo(string.Empty, "PROG_FG_NR_LESEN_FUNKTIONAL", "18"),
+            new JobInfo(string.Empty, "AIF_LESEN_FUNKTIONAL", string.Empty),
+        };
+
         // from ReadVinForGroupCars
-        protected static readonly List<JobInfo> ReadVinJobsDs2 = new List<JobInfo>
+        public static readonly List<JobInfo> ReadVinJobsDs2 = new List<JobInfo>
         {
             new JobInfo("ZCS_ALL", "FGNR_LESEN", null, "FG_NR", "IBUS"),
             new JobInfo("D_0080", "AIF_FG_NR_LESEN", null, "AIF_FG_NR", "IBUS"),
@@ -136,19 +143,19 @@ namespace BmwFileReader
             new JobInfo("EWS3", "FGNR_LESEN", null, "FG_NR", "IBUS"),
         };
 
-        protected static readonly List<JobInfo> ReadIdentJobsDs2 = new List<JobInfo>
+        public static readonly List<JobInfo> ReadIdentJobsDs2 = new List<JobInfo>
         {
             new JobInfo("FZGIDENT", "GRUNDMERKMALE_LESEN", null, "BR_TXT", "IBUS"),
             new JobInfo("FZGIDENT", "STRINGS_LESEN", null, "BR_TXT", "IBUS"),
         };
 
-        protected static readonly List<JobInfo> ReadFaJobsDs2 = new List<JobInfo>
+        public static readonly List<JobInfo> ReadFaJobsDs2 = new List<JobInfo>
         {
             new JobInfo("D_0080", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", "IBUS"),
             new JobInfo("D_00D0", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", "IBUS"),
         };
 
-        protected static readonly List<string> ReadMotorJobsDs2 = new List<string>()
+        public static readonly List<string> ReadMotorJobsDs2 = new List<string>()
         {
             "D_0012", "D_MOTOR", "D_0010", "D_0013", "D_0014"
         };

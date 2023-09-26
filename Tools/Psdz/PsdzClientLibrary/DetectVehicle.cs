@@ -422,15 +422,14 @@ namespace PsdzClient
                     return DetectResult.NoResponse;
                 }
 
+                List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
                 if (jobInfoEcuList != null)
                 {
-                    //EcuList.Clear();
                     if (_abortRequest)
                     {
                         return DetectResult.Aborted;
                     }
 
-                    List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
                     try
                     {
                         progressFunc?.Invoke(index * 100 / jobCount);
@@ -510,31 +509,6 @@ namespace PsdzClient
                                 dictIndex++;
                             }
                         }
-
-                        foreach (EcuInfo ecuInfoAdd in ecuInfoAddList)
-                        {
-                            string groupSgbd = ecuInfoAdd.Grp;
-                            try
-                            {
-                                _ediabas.ResolveSgbdFile(groupSgbd);
-
-                                _ediabas.ArgString = string.Empty;
-                                _ediabas.ArgBinaryStd = null;
-                                _ediabas.ResultsRequests = string.Empty;
-                                _ediabas.ExecuteJob("_VERSIONINFO");
-
-                                string ecuDesc = GetEcuName(_ediabas.ResultSets);
-                                string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                                ecuInfoAdd.Sgbd = ecuSgbd;
-                                ecuInfoAdd.Description = ecuDesc;
-
-                                EcuList.Add(ecuInfoAdd);
-                            }
-                            catch (Exception)
-                            {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Failed to resolve Group {0}", groupSgbd);
-                            }
-                        }
                     }
                     catch (Exception)
                     {
@@ -545,6 +519,78 @@ namespace PsdzClient
                     indexOffset++;
                     jobCount++;
                     index++;
+                }
+
+                try
+                {
+                    _ediabas.ResolveSgbdFile(GroupSgdb);
+                    JobInfo vinJobUsed = null;
+                    foreach (JobInfo vinJob in ReadVinJobs)
+                    {
+                        try
+                        {
+                            if (_abortRequest)
+                            {
+                                return DetectResult.Aborted;
+                            }
+
+                            if (!_ediabas.IsJobExisting(vinJob.JobName))
+                            {
+                                continue;
+                            }
+
+                            _ediabas.ArgString = string.Empty;
+                            if (!string.IsNullOrEmpty(vinJob.JobArgs))
+                            {
+                                _ediabas.ArgString = vinJob.JobArgs;
+                            }
+
+                            _ediabas.ArgBinaryStd = null;
+                            _ediabas.ResultsRequests = string.Empty;
+                            _ediabas.ExecuteJob(vinJob.JobName);
+
+                            vinJobUsed = vinJob;
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                foreach (EcuInfo ecuInfoAdd in ecuInfoAddList)
+                {
+                    string groupSgbd = ecuInfoAdd.Grp;
+                    try
+                    {
+                        if (_abortRequest)
+                        {
+                            return DetectResult.Aborted;
+                        }
+
+                        _ediabas.ResolveSgbdFile(groupSgbd);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob("_VERSIONINFO");
+
+                        string ecuDesc = GetEcuName(_ediabas.ResultSets);
+                        string ecuSgbd = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                        ecuInfoAdd.Sgbd = ecuSgbd;
+                        ecuInfoAdd.Description = ecuDesc;
+
+                        EcuList.Add(ecuInfoAdd);
+                    }
+                    catch (Exception)
+                    {
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Failed to resolve Group {0}", groupSgbd);
+                    }
                 }
 
                 string iLevelShip = null;
