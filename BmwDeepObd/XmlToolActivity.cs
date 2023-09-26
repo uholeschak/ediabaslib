@@ -3755,7 +3755,7 @@ namespace BmwDeepObd
 
                                     if (ecuInfoMatch != null)
                                     {
-                                        if (!string.IsNullOrEmpty(ecuVin) && DetectVehicleBmw.VinRegex.IsMatch(ecuVin))
+                                        if (!string.IsNullOrEmpty(ecuVin) && DetectVehicleBmwBase.VinRegex.IsMatch(ecuVin))
                                         {
                                             ecuInfoMatch.Vin = ecuVin;
                                         }
