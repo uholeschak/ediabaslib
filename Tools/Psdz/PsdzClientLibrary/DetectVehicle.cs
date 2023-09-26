@@ -557,6 +557,11 @@ namespace PsdzClient
                             // ignored
                         }
                     }
+
+                    if (vinJobUsed != null)
+                    {
+
+                    }
                 }
                 catch (Exception)
                 {
