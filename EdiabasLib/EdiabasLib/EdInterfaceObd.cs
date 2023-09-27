@@ -1169,7 +1169,7 @@ namespace EdiabasLib
 
         static EdInterfaceObd()
         {
-#if WindowsCE || Android
+#if Android
             _interfaceMutex = new Mutex(false);
 #else
             _interfaceMutex = new Mutex(false, MutexName);
@@ -1257,7 +1257,6 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = null;
             }
-#if !WindowsCE
             else if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
             {   // automtatic hook of bluetooth functions
                 EdBluetoothInterface.Ediabas = Ediabas;
@@ -1336,7 +1335,6 @@ namespace EdiabasLib
                 InterfaceReceiveDataFuncInt = EdCustomWiFiInterface.InterfaceReceiveData;
                 InterfaceSendPulseFuncInt = EdCustomWiFiInterface.InterfaceSendPulse;
             }
-#endif
             else
             {
                 InterfaceConnectFuncInt = null;
