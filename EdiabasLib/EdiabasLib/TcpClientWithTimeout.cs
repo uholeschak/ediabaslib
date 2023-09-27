@@ -23,12 +23,7 @@ namespace EdiabasLib
         private readonly bool? _noDelay;
         private readonly int? _sendBufferSize;
         private TcpClient _connection;
-#if WindowsCE
-        private bool _connected;
-        private Exception _exception;
-#else
         public static readonly long TickResolMs = System.Diagnostics.Stopwatch.Frequency / 1000;
-#endif
 
 #if __ANDROID__
         public class NetworkData
@@ -80,7 +75,6 @@ namespace EdiabasLib
                 _connection.SendBufferSize = _sendBufferSize.Value;
             }
 
-#if !WindowsCE
             using (System.Threading.CancellationTokenSource cts = new System.Threading.CancellationTokenSource())
             {
                 System.Threading.AutoResetEvent threadFinishEvent = null;
@@ -128,59 +122,7 @@ namespace EdiabasLib
             }
 
             return _connection;
-#else
-            // kick off the thread that tries to connect
-            _connected = false;
-            _exception = null;
-            Thread thread = new Thread(BeginConnect)
-            {
-                IsBackground = true
-            };
-            // So that a failed connection attempt
-            // wont prevent the process from terminating while it does the long timeout
-            thread.Start();
-
-            // wait for either the timeout or the thread to finish
-            thread.Join(_timeoutMilliseconds);
-
-            if (_connected)
-            {
-                // it succeeded, so return the connection
-                thread.Abort();
-                return _connection;
-            }
-            if (_exception != null)
-            {
-                // it crashed, so return the exception to the caller
-                thread.Abort();
-                throw _exception;
-            }
-            else
-            {
-                // if it gets here, it timed out, so abort the thread and throw an exception
-                thread.Abort();
-                throw new TimeoutException("Connect timeout");
-            }
-#endif
         }
-
-#if WindowsCE
-        private void BeginConnect()
-        {
-            try
-            {
-                IPEndPoint ipTcp = new IPEndPoint(_host, _port);
-                _connection.Connect(ipTcp);
-                // record that it succeeded, for the main thread to return to the caller
-                _connected = true;
-            }
-            catch (Exception ex)
-            {
-                // record the exception for the main thread to re-throw back to the calling code
-                _exception = ex;
-            }
-        }
-#endif
 
         public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, IPAddress ipAddr, object networkDataObject)
         {
