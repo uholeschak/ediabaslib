@@ -796,12 +796,7 @@ namespace BmwDeepObd
                     try
                     {
                         ActivityCommon.ResolveSgbdFile(Ediabas, errorResetSgbdFunc);
-
-                        Ediabas.ArgString = "ALL";
-                        Ediabas.ArgBinaryStd = null;
-                        Ediabas.ResultsRequests = string.Empty;
-                        Ediabas.NoInitForVJobs = true;
-                        Ediabas.ExecuteJob("_JOBS");    // force to load file
+                        ForceLoadSgbd();
 
                         EdiabasErrorReportReset.ErrorRestState resetState = ResetErrorFunctional(false);
                         bool resetIs = false;
@@ -931,12 +926,7 @@ namespace BmwDeepObd
                             _ruleEvalBmw.SetEvalProperties(_detectVehicleBmw, ecuVariant);
                         }
 
-                        Ediabas.ArgString = "ALL";
-                        Ediabas.ArgBinaryStd = null;
-                        Ediabas.ResultsRequests = string.Empty;
-                        Ediabas.NoInitForVJobs = true;
-                        Ediabas.ExecuteJob("_JOBS");    // force to load file
-
+                        ForceLoadSgbd();
                         if (errorResetList != null && errorResetList.Any(ecu => string.CompareOrdinal(ecu, ecuInfo.Name) == 0))
                         {   // error reset requested
                             EdiabasErrorReportReset.ErrorRestState resetState = ResetError(false);
@@ -2913,6 +2903,14 @@ namespace BmwDeepObd
             }
 
             return false;
+        }
+
+        private void ForceLoadSgbd()
+        {
+            Ediabas.ArgString = string.Empty;
+            Ediabas.ArgBinaryStd = null;
+            Ediabas.ResultsRequests = string.Empty;
+            Ediabas.ExecuteJob("_JOBS");    // force to load file
         }
 
         private void InitProperties(JobReader.PageInfo pageInfo, bool deviceChange = false)
