@@ -131,7 +131,7 @@ namespace BmwFileReader
         public static readonly List<JobInfo> ReadVinJobs = new List<JobInfo>
         {
             new JobInfo(string.Empty, "C_FG_LESEN_FUNKTIONAL", string.Empty),
-            new JobInfo(string.Empty, "PROG_FG_NR_LESEN_FUNKTIONAL", "18"),
+            new JobInfo(string.Empty, "PROG_FG_NR_LESEN_FUNKTIONAL", string.Empty),
             new JobInfo(string.Empty, "AIF_LESEN_FUNKTIONAL", string.Empty),
         };
 
