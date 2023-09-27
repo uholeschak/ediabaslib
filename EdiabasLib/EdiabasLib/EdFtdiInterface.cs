@@ -1,6 +1,4 @@
-﻿#if !WindowsCE
-#define USE_BITBANG
-#endif
+﻿#define USE_BITBANG
 
 using System;
 using System.Diagnostics;
@@ -14,9 +12,6 @@ namespace EdiabasLib
     {
         public const string PortId = "FTDI";
         private const int WriteTimeout = 500;       // write timeout [ms]
-#if WindowsCE
-        private const int ReadTimeoutCeMin = 500;   // min read timeout for CE [ms]
-#endif
         private const int UsbBufferSizeStd = 0x1000;    // standard usb buffer size
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
         private static IntPtr _handleFtdi = (IntPtr)0;
@@ -763,25 +758,13 @@ namespace EdiabasLib
                         return false;
                     }
                     long startTime = Stopwatch.GetTimestamp();
-#if WindowsCE
-                    const int sendBlockSize = 4;
-                    for (int i = 0; i < length; i += sendBlockSize)
-                    {
-                        int sendLength = length - i;
-                        if (sendLength > sendBlockSize) sendLength = sendBlockSize;
-                        ftStatus = Ftd2Xx.FT_WriteWrapper(_handleFtdi, sendData, sendLength, i, out bytesWritten);
-                        if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
-                        {
-                            return false;
-                        }
-                    }
-#else
+
                     ftStatus = Ftd2Xx.FT_WriteWrapper(_handleFtdi, sendData, length, 0, out bytesWritten);
                     if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
                     {
                         return false;
                     }
-#endif
+
                     while ((Stopwatch.GetTimestamp() - startTime) < waitTime)
                     {
                     }
@@ -794,7 +777,6 @@ namespace EdiabasLib
                 else
                 {
                     long waitTime = (long)(byteTime * length);
-#if WindowsCE
                     const int sendBlockSize = 4;
                     for (int i = 0; i < length; i += sendBlockSize)
                     {
@@ -806,13 +788,7 @@ namespace EdiabasLib
                             return false;
                         }
                     }
-#else
-                    ftStatus = Ftd2Xx.FT_WriteWrapper(_handleFtdi, sendData, length, 0, out bytesWritten);
-                    if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
-                    {
-                        return false;
-                    }
-#endif
+
                     if (waitTime > 10)
                     {
                         Thread.Sleep((int)waitTime);
@@ -833,16 +809,7 @@ namespace EdiabasLib
             {
                 return false;
             }
-#if WindowsCE
-            if (timeout < ReadTimeoutCeMin)
-            {
-                timeout = ReadTimeoutCeMin;
-            }
-            if (timeoutTelEnd < ReadTimeoutCeMin)
-            {
-                timeoutTelEnd = ReadTimeoutCeMin;
-            }
-#endif
+
             try
             {
                 int recLen;

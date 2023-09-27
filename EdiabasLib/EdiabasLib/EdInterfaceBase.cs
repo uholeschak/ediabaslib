@@ -88,12 +88,10 @@ namespace EdiabasLib
                     }
                     MutexAquired = true;
                 }
-#if !WindowsCE
                 catch (AbandonedMutexException)
                 {
                     MutexAquired = true;
                 }
-#endif
                 catch (Exception)
                 {
                     return false;
@@ -121,7 +119,7 @@ namespace EdiabasLib
                     {
                         InterfaceMutex.Close();
                         InterfaceMutex.Dispose();
-#if WindowsCE || Android
+#if Android
                         InterfaceMutex = new Mutex(false);
 #else
                         InterfaceMutex = new Mutex(false, InterfaceMutexName);
