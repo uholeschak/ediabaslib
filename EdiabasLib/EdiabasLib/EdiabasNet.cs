@@ -2211,7 +2211,7 @@ namespace EdiabasLib
         private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly byte[] ByteArray0 = new byte[0];
         private static Dictionary<ErrorCodes, UInt32> _trapBitDict;
-#if !Android && !WindowsCE
+#if !Android
         private static List<Assembly> _resourceAssemblies = new List<Assembly>();
 #endif
         private static bool _firstLog = true;
@@ -2742,7 +2742,7 @@ namespace EdiabasLib
             }
         }
 
-#if !Android && !WindowsCE
+#if !Android
         static EdiabasNet()
         {
             LoadAllResourceAssemblies();
@@ -3206,18 +3206,14 @@ namespace EdiabasLib
         {
             get
             {
-#if WindowsCE
-                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase);
-#else
                 string codeBase = Assembly.GetExecutingAssembly().CodeBase;
                 UriBuilder uri = new UriBuilder(codeBase);
                 string path = Uri.UnescapeDataString(uri.Path);
                 return Path.GetDirectoryName(path);
-#endif
             }
         }
 
-#if !Android && !WindowsCE
+#if !Android
         public static bool LoadAllResourceAssemblies()
         {
             if (_resourceAssemblies.Count > 0)
