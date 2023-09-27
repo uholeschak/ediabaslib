@@ -725,7 +725,7 @@ namespace EdiabasLib
 
         static EdInterfaceEnet()
         {
-#if WindowsCE || Android
+#if Android
             _interfaceMutex = new Mutex(false);
 #else
             _interfaceMutex = new Mutex(false, MutexName);
@@ -1173,9 +1173,7 @@ namespace EdiabasLib
             {
 // ReSharper disable once UseObjectOrCollectionInitializer
                 UdpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-#if !WindowsCE
                 UdpSocket.EnableBroadcast = true;
-#endif
                 IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
                 UdpSocket.Bind(ipUdp);
                 lock (UdpRecListLock)
@@ -1190,7 +1188,6 @@ namespace EdiabasLib
                 {
                     UdpEvent.Reset();
                     bool broadcastSend = false;
-#if !WindowsCE
                     string configData = remoteHostConfig.Remove(0, AutoIp.Length);
                     if ((configData.Length > 0) && (configData[0] == ':'))
                     {
@@ -1315,17 +1312,12 @@ namespace EdiabasLib
 #endif
                     }
                     else
-#endif
                     {
                         try
                         {
-#if WindowsCE
-                            IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Broadcast, UdpIdentPort);
-                            IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Broadcast, UdpSrvLocPort);
-#else
                             IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpIdentPort);
                             IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpSrvLocPort);
-#endif
+
                             EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
                             TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                             {
