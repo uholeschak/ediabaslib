@@ -3632,10 +3632,7 @@ namespace BmwDeepObd
                         }
 
                         ActivityCommon.ResolveSgbdFile(_ediabas, ecuFileNameUse);
-                        _ediabas.ArgString = string.Empty;
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob("_JOBS");    // force to load file
+                        EdiabasJobsRead();
 
                         DetectVehicleBmwBase.JobInfo vinJobUsed = null;
                         foreach (DetectVehicleBmwBase.JobInfo vinJob in DetectVehicleBmwBase.ReadVinJobs)
@@ -4349,11 +4346,7 @@ namespace BmwDeepObd
 
                 // for UDS read VIN from motor
                 ActivityCommon.ResolveSgbdFile(_ediabas, "mot_01");
-
-                _ediabas.ArgString = string.Empty;
-                _ediabas.ArgBinaryStd = null;
-                _ediabas.ResultsRequests = string.Empty;
-                _ediabas.ExecuteJob("_JOBS");    // force to load file
+                EdiabasJobsRead();
 
                 string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                 EcuInfo ecuInfoMot = new EcuInfo(ecuName.ToUpperInvariant(), 1, string.Empty, ecuName, string.Empty);
@@ -4387,11 +4380,7 @@ namespace BmwDeepObd
 
                 // for UDS read hw info from did
                 ActivityCommon.ResolveSgbdFile(_ediabas, "did_19");
-
-                _ediabas.ArgString = string.Empty;
-                _ediabas.ArgBinaryStd = null;
-                _ediabas.ResultsRequests = string.Empty;
-                _ediabas.ExecuteJob("_JOBS");    // force to load file
+                EdiabasJobsRead();
 
                 string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                 EcuInfo ecuInfoDid = new EcuInfo(ecuName.ToUpperInvariant(), 19, string.Empty, ecuName, string.Empty);
@@ -4583,11 +4572,7 @@ namespace BmwDeepObd
                         try
                         {
                             ActivityCommon.ResolveSgbdFile(_ediabas, ecuEntry.SysName);
-
-                            _ediabas.ArgString = string.Empty;
-                            _ediabas.ArgBinaryStd = null;
-                            _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob("_JOBS");    // force to load file
+                            EdiabasJobsRead();
 
                             string jobName = JobReadEcuVersion;
                             if (!_ediabas.IsJobExisting(jobName))
@@ -4605,11 +4590,7 @@ namespace BmwDeepObd
 
                             sgbdFileNameOverride = string.Format(CultureInfo.InvariantCulture, VagUdsCommonSgbd + "#0x{0:X02}", ecuEntry.Address);
                             ActivityCommon.ResolveSgbdFile(_ediabas, sgbdFileNameOverride);
-
-                            _ediabas.ArgString = string.Empty;
-                            _ediabas.ArgBinaryStd = null;
-                            _ediabas.ResultsRequests = string.Empty;
-                            _ediabas.ExecuteJob("_JOBS");    // force to load file
+                            EdiabasJobsRead();
 
                             string jobName = JobReadEcuVersion;
                             if (!_ediabas.IsJobExisting(jobName))
@@ -4691,6 +4672,7 @@ namespace BmwDeepObd
                             if (ActivityCommon.CollectDebugInfo)
                             {
                                 // get more ecu infos
+                                EdiabasJobsRead();
                                 string readCommand = GetReadCommand(thisEcuInfo);
                                 foreach (Tuple<string, string> job in EcuInfoVagJobs)
                                 {
@@ -5839,6 +5821,22 @@ namespace BmwDeepObd
             return Is1281Ecu(ecuInfo) ? "WertEinmalLesen" : "LESEN";
         }
 
+        private void EdiabasJobsRead(bool noInit = false)
+        {
+            try
+            {
+                _ediabas.ArgString = string.Empty;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.NoInitForVJobs = noInit;
+                _ediabas.ExecuteJob("_JOBS");    // force to load file
+            }
+            finally
+            {
+                _ediabas.NoInitForVJobs = false;
+            }
+        }
+
         private void SelectMwTabFromListInfo(List<string> fileNames, MwTabFileSelected handler)
         {
             bool handlerCalled = false;
@@ -6395,6 +6393,7 @@ namespace BmwDeepObd
                             codingRequestType = EcuInfo.CodingRequestType.CodingS22;
                             break;
                     }
+
                     if (string.IsNullOrEmpty(jobName) || !_ediabas.IsJobExisting(jobName))
                     {
                         continue;
