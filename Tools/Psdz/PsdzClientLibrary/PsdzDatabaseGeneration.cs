@@ -3940,7 +3940,7 @@ namespace PsdzClient
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(series) && !string.IsNullOrEmpty(modelSeries) && !string.IsNullOrEmpty(productType))
+                        if (!string.IsNullOrEmpty(series))
                         {
                             string key = series.ToUpperInvariant();
                             if (!seriesDict.ContainsKey(key))
@@ -3948,6 +3948,14 @@ namespace PsdzClient
                                 seriesDict.Add(key, new CharacteristicsEntry(series, modelSeries, productType, productLine));
                             }
                         }
+                        else
+                        {
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles Missig parameters for TypeKey: {0}", typeKey);
+                        }
+                    }
+                    else
+                    {
+                        log.ErrorFormat("ExtractEcuCharacteristicsVehicles No ident for TypeKey: {0}", typeKey);
                     }
                 }
 
@@ -4029,8 +4037,15 @@ namespace PsdzClient
                             {
                                 if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
                                 {
-                                    modelSeriesHash.Add(characteristicsEntry.ModelSeries);
-                                    prodType = characteristicsEntry.ProductType;
+                                    if (!string.IsNullOrEmpty(characteristicsEntry.ModelSeries))
+                                    {
+                                        modelSeriesHash.Add(characteristicsEntry.ModelSeries);
+                                    }
+
+                                    if (!string.IsNullOrEmpty(characteristicsEntry.ProductType))
+                                    {
+                                        prodType = characteristicsEntry.ProductType;
+                                    }
                                 }
                             }
 
@@ -4040,9 +4055,13 @@ namespace PsdzClient
                                 {
                                     foreach (KeyValuePair<string, CharacteristicsEntry> keyValuePair in seriesDict)
                                     {
-                                        if (string.Compare(keyValuePair.Value.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
+                                        if (!string.IsNullOrEmpty(keyValuePair.Value.ModelSeries) &&
+                                            string.Compare(keyValuePair.Value.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
                                         {
-                                            prodType = keyValuePair.Value.ProductType;
+                                            if (!string.IsNullOrEmpty(keyValuePair.Value.ProductType))
+                                            {
+                                                prodType = keyValuePair.Value.ProductType;
+                                            }
                                         }
                                     }
                                 }
@@ -4084,9 +4103,9 @@ namespace PsdzClient
                                 if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
                                 {
                                     vehicleSeries.Ereihe = series;
-                                    vehicleSeries.Produktlinie = characteristicsEntry.ProductLine;
                                     if (!string.IsNullOrEmpty(vehicleSeries.Produktlinie))
                                     {
+                                        vehicleSeries.Produktlinie = characteristicsEntry.ProductLine;
                                         string sgbdAdditional = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleSeries);
                                         if (!string.IsNullOrEmpty(sgbdAdditional))
                                         {
@@ -4145,7 +4164,10 @@ namespace PsdzClient
                         string modelSeries = null;
                         if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
                         {
-                            modelSeries = characteristicsEntry.ModelSeries;
+                            if (!string.IsNullOrEmpty(characteristicsEntry.ModelSeries))
+                            {
+                                modelSeries = characteristicsEntry.ModelSeries;
+                            }
                         }
 
                         seriesPair.AddIfNotContains(new KeyValuePair<string, string>(series, modelSeries));
