@@ -3796,6 +3796,7 @@ namespace BmwDeepObd
                                         try
                                         {
                                             ActivityCommon.ResolveSgbdFile(_ediabas, group);
+                                            ForceLoadSgbd();
                                             groupSgbd = group;
                                             break;
                                         }
@@ -5826,6 +5827,7 @@ namespace BmwDeepObd
             _ediabas.ArgString = string.Empty;
             _ediabas.ArgBinaryStd = null;
             _ediabas.ResultsRequests = string.Empty;
+            _ediabas.NoInitForVJobs = false;
             _ediabas.ExecuteJob("_JOBS");    // force to load file
         }
 
