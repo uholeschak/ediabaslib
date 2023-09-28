@@ -540,6 +540,22 @@ namespace PsdzClient
             [XmlElement("EcuXmlDict"), DefaultValue(null)] public SerializableDictionary<string, string> EcuXmlDict { get; set; }
         }
 
+        private class CharacteristicsEntry
+        {
+            public CharacteristicsEntry(string series, string modelSeries, string productType, string productLine)
+            {
+                Series = series;
+                ModelSeries = modelSeries;
+                ProductType = productType;
+                ProductLine = productLine;
+            }
+
+            public string Series { get; private set; }
+            public string ModelSeries { get; private set; }
+            public string ProductType { get; private set; }
+            public string ProductLine { get; private set; }
+        }
+
         private const int MaxCallsLimit = 10;
         private const int MaxCallsStorage = 2;
         private const int MaxResultDataLen = 20;
@@ -3894,7 +3910,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                Dictionary<string, Tuple<string, string, string>> seriesDict = new Dictionary<string, Tuple<string, string, string>>();
+                Dictionary<string, CharacteristicsEntry> seriesDict = new Dictionary<string, CharacteristicsEntry>();
                 foreach (string typeKey in typeKeys)
                 {
                     List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
@@ -3929,7 +3945,7 @@ namespace PsdzClient
                             string key = series.ToUpperInvariant();
                             if (!seriesDict.ContainsKey(key))
                             {
-                                seriesDict.Add(key, new Tuple<string, string, string>(modelSeries, productType, productLine));
+                                seriesDict.Add(key, new CharacteristicsEntry(series, modelSeries, productType, productLine));
                             }
                         }
                     }
@@ -4011,10 +4027,10 @@ namespace PsdzClient
                             // add missing model series
                             foreach (string series in seriesHash)
                             {
-                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out Tuple<string, string, string> seriesTuple))
+                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
                                 {
-                                    modelSeriesHash.Add(seriesTuple.Item1);
-                                    prodType = seriesTuple.Item2;
+                                    modelSeriesHash.Add(characteristicsEntry.ModelSeries);
+                                    prodType = characteristicsEntry.ProductType;
                                 }
                             }
 
@@ -4045,10 +4061,10 @@ namespace PsdzClient
 
                             foreach (string series in seriesHash)
                             {
-                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out Tuple<string, string, string> seriesTuple))
+                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
                                 {
                                     vehicleSeries.Ereihe = series;
-                                    vehicleSeries.Produktlinie = seriesTuple.Item3;
+                                    vehicleSeries.Produktlinie = characteristicsEntry.ProductLine;
                                     if (!string.IsNullOrEmpty(vehicleSeries.Produktlinie))
                                     {
                                         string sgbdAdditional = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleSeries);
@@ -4107,9 +4123,9 @@ namespace PsdzClient
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string modelSeries = null;
-                        if (seriesDict.TryGetValue(series.ToUpperInvariant(), out Tuple<string, string, string> seriesTuple))
+                        if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
                         {
-                            modelSeries = seriesTuple.Item1;
+                            modelSeries = characteristicsEntry.ModelSeries;
                         }
 
                         seriesPair.AddIfNotContains(new KeyValuePair<string, string>(series, modelSeries));
