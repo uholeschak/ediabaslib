@@ -2910,6 +2910,7 @@ namespace BmwDeepObd
             Ediabas.ArgString = string.Empty;
             Ediabas.ArgBinaryStd = null;
             Ediabas.ResultsRequests = string.Empty;
+            Ediabas.NoInitForVJobs = false;
             Ediabas.ExecuteJob("_JOBS");    // force to load file
         }
 

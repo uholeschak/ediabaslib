@@ -1012,6 +1012,7 @@ namespace PsdzClient
             _ediabas.ArgString = string.Empty;
             _ediabas.ArgBinaryStd = null;
             _ediabas.ResultsRequests = string.Empty;
+            _ediabas.NoInitForVJobs = false;
             _ediabas.ExecuteJob("_JOBS");    // force to load file
         }
 
