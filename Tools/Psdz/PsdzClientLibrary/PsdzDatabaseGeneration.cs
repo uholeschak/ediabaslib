@@ -4023,7 +4023,7 @@ namespace PsdzClient
                                 }
                             }
 
-                            string prodType = "P";
+                            string prodType = null;
                             // add missing model series
                             foreach (string series in seriesHash)
                             {
@@ -4032,6 +4032,26 @@ namespace PsdzClient
                                     modelSeriesHash.Add(characteristicsEntry.ModelSeries);
                                     prodType = characteristicsEntry.ProductType;
                                 }
+                            }
+
+                            if (string.IsNullOrEmpty(prodType))
+                            {
+                                foreach (string modelSeries in modelSeriesHash)
+                                {
+                                    foreach (KeyValuePair<string, CharacteristicsEntry> keyValuePair in seriesDict)
+                                    {
+                                        if (string.Compare(keyValuePair.Value.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            prodType = keyValuePair.Value.ProductType;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (string.IsNullOrEmpty(prodType))
+                            {
+                                prodType = "P";
+                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles No ProdType found, using {0}", prodType);
                             }
 
                             HashSet<BNType> bnTypes = new HashSet<BNType>();
@@ -4092,8 +4112,8 @@ namespace PsdzClient
                                     break;
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, SgdbAdd: {4}, Date: {5} {6}",
-                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), bnTypeSeries, sgbdAddHash.ToStringItems(), dateCompare ?? string.Empty, date ?? string.Empty);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, ProdType: {4}, SgdbAdd: {5}, Date: {6} {7}",
+                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), bnTypeSeries, prodType, sgbdAddHash.ToStringItems(), dateCompare ?? string.Empty, date ?? string.Empty);
                             vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), bnTypeSeries, brandHash.ToList(), sgbdAddHash.ToList(), date, dateCompare));
                         }
                     }
