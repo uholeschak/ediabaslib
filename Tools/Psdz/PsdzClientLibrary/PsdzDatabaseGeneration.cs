@@ -4207,7 +4207,10 @@ namespace PsdzClient
                             }
                         }
 
-                        seriesPair.AddIfNotContains(new KeyValuePair<string, string>(series, modelSeries));
+                        if (seriesPair.All(x => string.Compare(x.Key, series, StringComparison.OrdinalIgnoreCase) != 0))
+                        {
+                            seriesPair.Add(new KeyValuePair<string, string>(series, modelSeries));
+                        }
                     }
 
                     foreach (string modelSeries in ecuCharacteristicsInfo.ModelSeriesList)
@@ -4223,7 +4226,10 @@ namespace PsdzClient
                             }
                         }
 
-                        seriesPair.AddIfNotContains(new KeyValuePair<string, string>(series, modelSeries));
+                        if (seriesPair.All(x => string.Compare(x.Value, modelSeries, StringComparison.OrdinalIgnoreCase) != 0))
+                        {
+                            seriesPair.Add(new KeyValuePair<string, string>(series, modelSeries));
+                        }
                     }
 
                     foreach (KeyValuePair<string, string> keyValuePair in seriesPair)
