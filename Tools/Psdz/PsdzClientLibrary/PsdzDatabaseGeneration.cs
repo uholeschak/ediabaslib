@@ -4068,17 +4068,19 @@ namespace PsdzClient
                             {
                                 foreach (string modelSeries in modelSeriesHash)
                                 {
-                                    foreach (KeyValuePair<string, CharacteristicsEntry> keyValuePair in seriesDict)
+                                    List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
+                                    foreach (CharacteristicsEntry characteristics in characteristicsList)
                                     {
-                                        if (!string.IsNullOrEmpty(keyValuePair.Value.ModelSeries) &&
-                                            string.Compare(keyValuePair.Value.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
+                                        if (!string.IsNullOrEmpty(characteristics.ProductType))
                                         {
-                                            if (!string.IsNullOrEmpty(keyValuePair.Value.ProductType))
-                                            {
-                                                prodType = keyValuePair.Value.ProductType;
-                                                break;
-                                            }
+                                            prodType = characteristics.ProductType;
+                                            break;
                                         }
+                                    }
+
+                                    if (!string.IsNullOrEmpty(prodType))
+                                    {
+                                        break;
                                     }
                                 }
                             }
@@ -4211,16 +4213,13 @@ namespace PsdzClient
                     foreach (string modelSeries in ecuCharacteristicsInfo.ModelSeriesList)
                     {
                         string series = null;
-                        foreach (KeyValuePair<string, CharacteristicsEntry> keyValuePair in seriesDict)
+                        List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
+                        foreach (CharacteristicsEntry characteristics in characteristicsList)
                         {
-                            if (!string.IsNullOrEmpty(keyValuePair.Value.ModelSeries) &&
-                                string.Compare(keyValuePair.Value.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
+                            if (!string.IsNullOrEmpty(characteristics.Series))
                             {
-                                if (!string.IsNullOrEmpty(keyValuePair.Value.Series))
-                                {
-                                    series = keyValuePair.Value.Series;
-                                    break;
-                                }
+                                series = characteristics.Series;
+                                break;
                             }
                         }
 
@@ -4418,6 +4417,22 @@ namespace PsdzClient
 
             return true;
         }
+
+        private List<CharacteristicsEntry> GetModelSeriesFromSeriesDict(Dictionary<string, CharacteristicsEntry> seriesDict, string modelSeries)
+        {
+            List<CharacteristicsEntry> characteristicsList = new List<CharacteristicsEntry>();
+            foreach (KeyValuePair<string, CharacteristicsEntry> keyValuePair in seriesDict)
+            {
+                if (!string.IsNullOrEmpty(keyValuePair.Value.ModelSeries) &&
+                    string.Compare(keyValuePair.Value.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    characteristicsList.Add(keyValuePair.Value);
+                }
+            }
+
+            return characteristicsList;
+        }
+
 
         private SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ExtractDiagObjRulesInfo(ClientContext clientContext)
         {
