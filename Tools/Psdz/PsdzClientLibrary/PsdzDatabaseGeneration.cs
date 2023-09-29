@@ -4154,7 +4154,7 @@ namespace PsdzClient
                             switch (bnTypes.Count)
                             {
                                 case 0:
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0}, No BnTypes found", seriesHash.ToStringItems());
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Series={0}, ModelSeries={1}, No BnTypes found", seriesHash.ToStringItems(), modelSeriesHash.ToStringItems());
                                     break;
 
                                 case 1:
