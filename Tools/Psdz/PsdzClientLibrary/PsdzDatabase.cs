@@ -1345,28 +1345,6 @@ namespace PsdzClient
             }
         }
 
-        public class EcuCharacteristicsInfo
-        {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, BNType? bnType, List<string> brandList, List<string> sgdbAddList, string date, string dateCompare)
-            {
-                EcuCharacteristics = ecuCharacteristics;
-                SeriesList = seriesList;
-                BnType = bnType;
-                BrandList = brandList;
-                SgdbAddList = sgdbAddList;
-                Date = date;
-                DateCompare = dateCompare;
-            }
-
-            public BaseEcuCharacteristics EcuCharacteristics { get; set; }
-            public List<string> SeriesList { get; set; }
-            public BNType? BnType { get; set; }
-            public List<string> BrandList { get; set; }
-            public List<string> SgdbAddList { get; set; }
-            public string Date { get; set; }
-            public string DateCompare { get; set; }
-        }
-
         private const string TestModulesXmlFile = "TestModules.xml";
         private const string TestModulesZipFile = "TestModules.zip";
         private const string ServiceModulesXmlFile = "ServiceModules.xml";

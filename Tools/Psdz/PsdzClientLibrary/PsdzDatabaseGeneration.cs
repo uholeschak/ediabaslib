@@ -540,6 +540,30 @@ namespace PsdzClient
             [XmlElement("EcuXmlDict"), DefaultValue(null)] public SerializableDictionary<string, string> EcuXmlDict { get; set; }
         }
 
+        private class EcuCharacteristicsInfo
+        {
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, List<string> modelSeriesList, BNType? bnType, List<string> brandList, List<string> sgdbAddList, string date, string dateCompare)
+            {
+                EcuCharacteristics = ecuCharacteristics;
+                SeriesList = seriesList;
+                ModelSeriesList = modelSeriesList;
+                BnType = bnType;
+                BrandList = brandList;
+                SgdbAddList = sgdbAddList;
+                Date = date;
+                DateCompare = dateCompare;
+            }
+
+            public BaseEcuCharacteristics EcuCharacteristics { get; set; }
+            public List<string> SeriesList { get; set; }
+            public List<string> ModelSeriesList { get; set; }
+            public BNType? BnType { get; set; }
+            public List<string> BrandList { get; set; }
+            public List<string> SgdbAddList { get; set; }
+            public string Date { get; set; }
+            public string DateCompare { get; set; }
+        }
+
         private class CharacteristicsEntry
         {
             public CharacteristicsEntry(string series, string modelSeries, string productType, string productLine)
@@ -4129,9 +4153,9 @@ namespace PsdzClient
                                     break;
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, BnType: {3}, ProdType: {4}, SgdbAdd: {5}, Date: {6} {7}",
-                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), bnTypeSeries, prodType, sgbdAddHash.ToStringItems(), dateCompare ?? string.Empty, date ?? string.Empty);
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), bnTypeSeries, brandHash.ToList(), sgbdAddHash.ToList(), date, dateCompare));
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, ModelSeries: {3}, BnType: {4}, ProdType: {5}, SgdbAdd: {6}, Date: {7} {8}",
+                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), modelSeriesHash.ToStringItems(), bnTypeSeries, prodType, sgbdAddHash.ToStringItems(), dateCompare ?? string.Empty, date ?? string.Empty);
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), modelSeriesHash.ToList(), bnTypeSeries, brandHash.ToList(), sgbdAddHash.ToList(), date, dateCompare));
                         }
                     }
                 }
