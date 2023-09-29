@@ -3953,10 +3953,6 @@ namespace PsdzClient
                             log.ErrorFormat("ExtractEcuCharacteristicsVehicles Missig parameters for TypeKey: {0}", typeKey);
                         }
                     }
-                    else
-                    {
-                        log.ErrorFormat("ExtractEcuCharacteristicsVehicles No ident for TypeKey: {0}", typeKey);
-                    }
                 }
 
                 Vehicle vehicle = new Vehicle(clientContext);
@@ -4049,19 +4045,21 @@ namespace PsdzClient
                                 }
                             }
 
-                            if (string.IsNullOrEmpty(prodType))
+                            foreach (string modelSeries in modelSeriesHash)
                             {
-                                foreach (string modelSeries in modelSeriesHash)
+                                foreach (KeyValuePair<string, CharacteristicsEntry> keyValuePair in seriesDict)
                                 {
-                                    foreach (KeyValuePair<string, CharacteristicsEntry> keyValuePair in seriesDict)
+                                    if (!string.IsNullOrEmpty(keyValuePair.Value.ModelSeries) &&
+                                        string.Compare(keyValuePair.Value.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        if (!string.IsNullOrEmpty(keyValuePair.Value.ModelSeries) &&
-                                            string.Compare(keyValuePair.Value.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
+                                        if (!string.IsNullOrEmpty(keyValuePair.Value.Series))
                                         {
-                                            if (!string.IsNullOrEmpty(keyValuePair.Value.ProductType))
-                                            {
-                                                prodType = keyValuePair.Value.ProductType;
-                                            }
+                                            seriesHash.Add(keyValuePair.Value.Series);
+                                        }
+
+                                        if (!string.IsNullOrEmpty(keyValuePair.Value.ProductType))
+                                        {
+                                            prodType = keyValuePair.Value.ProductType;
                                         }
                                     }
                                 }
@@ -4070,7 +4068,7 @@ namespace PsdzClient
                             if (string.IsNullOrEmpty(prodType))
                             {
                                 prodType = "P";
-                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles No ProdType found, using {0}", prodType);
+                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles ProdType not found, using {0}", prodType);
                             }
 
                             HashSet<BNType> bnTypes = new HashSet<BNType>();
