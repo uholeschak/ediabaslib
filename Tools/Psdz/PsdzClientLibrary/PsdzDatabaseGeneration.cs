@@ -4236,13 +4236,14 @@ namespace PsdzClient
                     {
                         string series = keyValuePair.Key;
                         string modelSeries = keyValuePair.Value;
-                        string key = series;
 
-                        if (string.IsNullOrEmpty(key))
+                        if (string.IsNullOrEmpty(series))
                         {
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles No Series for ModelSeries={0}, No BnTypes found", modelSeries);
                             continue;
                         }
 
+                        string key = series;
                         List<string> sgdbAdd = new List<string>();
                         foreach (string sgdb in ecuCharacteristicsInfo.SgdbAddList)
                         {
