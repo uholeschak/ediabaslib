@@ -4128,6 +4128,7 @@ namespace PsdzClient
                                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
                                             if (bnType != BNType.UNKNOWN)
                                             {
+                                                log.InfoFormat("ExtractEcuCharacteristicsVehicles BnType from ModelSeries: Series={0}, ModelSeries={1}, BnType={2}", series, characteristicsEntry.ModelSeries, bnType);
                                                 bnTypes.Add(bnType);
                                             }
                                         }
@@ -4156,7 +4157,7 @@ namespace PsdzClient
                             switch (bnTypes.Count)
                             {
                                 case 0:
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Series={0}, ModelSeries={1}, No BnTypes found", seriesHash.ToStringItems(), modelSeriesHash.ToStringItems());
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles No BnTypes found: Series={0}, ModelSeries={1}", seriesHash.ToStringItems(), modelSeriesHash.ToStringItems());
                                     break;
 
                                 case 1:
@@ -4164,7 +4165,7 @@ namespace PsdzClient
                                     break;
 
                                 default:
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0}, BnTypes: {1}", seriesHash.ToStringItems(), bnTypes.ToStringItems());
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple BnTypes for: Series: {0}, BnTypes: {1}", seriesHash.ToStringItems(), bnTypes.ToStringItems());
                                     break;
                             }
 
@@ -4237,13 +4238,6 @@ namespace PsdzClient
                         string series = keyValuePair.Key;
                         string modelSeries = keyValuePair.Value;
 
-                        if (string.IsNullOrEmpty(series))
-                        {
-                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles No Series for ModelSeries={0}, No BnTypes found", modelSeries);
-                            continue;
-                        }
-
-                        string key = series;
                         List<string> sgdbAdd = new List<string>();
                         foreach (string sgdb in ecuCharacteristicsInfo.SgdbAddList)
                         {
@@ -4258,7 +4252,20 @@ namespace PsdzClient
                             sgdbAdd = null;
                         }
 
-                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(key, modelSeries, brSgbd, sgdbAdd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
+                        string key = series;
+                        if (string.IsNullOrEmpty(key))
+                        {
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Using ModelsSeries as key: {0}", modelSeries);
+                            key = modelSeries;
+                        }
+
+                        if (string.IsNullOrEmpty(key))
+                        {
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles Series and ModelSeries missing!");
+                            continue;
+                        }
+
+                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, sgdbAdd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
 
                         if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                         {
