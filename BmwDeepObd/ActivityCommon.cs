@@ -430,8 +430,9 @@ namespace BmwDeepObd
         public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string DefaultLang = "en";
+        public const string ZipExt = ".zip";
         public const string TraceFileNameStd = "ifh.trc";
-        public const string TraceFileNameZip = "ifh.trc.zip";
+        public const string TraceFileNameZip = TraceFileNameStd + ZipExt;
         public const string TraceBackupDir = "TraceBackup";
         public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
@@ -745,18 +746,9 @@ namespace BmwDeepObd
         private bool _usbPermissionRequested;
         private bool _usbPermissionRequestDisabled;
 
-        public static string TraceFileName
-        {
-            get
-            {
-                if (CompressTrace)
-                {
-                    return TraceFileNameZip;
-                }
+        public static string TraceFileName => CompressTrace ? TraceFileNameZip : TraceFileNameStd;
 
-                return TraceFileNameStd;
-            }
-        }
+        public static bool IfhTraceBuffering => !CompressTrace;
 
         public bool Emulator { get; }
 
@@ -6234,6 +6226,42 @@ namespace BmwDeepObd
             return true;
         }
 
+        public string CompressTraceFile(string traceFile, out bool compressFailure)
+        {
+            compressFailure = false;
+            try
+            {
+                if (!File.Exists(traceFile))
+                {
+                    return null;
+                }
+
+                string fileExt = Path.GetExtension(traceFile);
+                if (!string.IsNullOrEmpty(fileExt))
+                {
+                    if (string.Compare(fileExt, ZipExt, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return null;
+                    }
+                }
+
+                string compressedTraceFile = traceFile + ZipExt;
+                if (!CreateZipFile(new[] { traceFile }, compressedTraceFile, null))
+                {
+                    compressFailure = true;
+                    return null;
+                }
+
+                return compressedTraceFile;
+            }
+            catch (Exception)
+            {
+                compressFailure = true;
+            }
+
+            return null;
+        }
+
         public bool SendTraceFileInfoDlg(string appDataDir, string traceFile, string message, Type classType, EventHandler<EventArgs> handler, bool deleteFile = false)
         {
             try
@@ -6614,9 +6642,22 @@ namespace BmwDeepObd
                         // ignored
                     }
 
-                    if (!string.IsNullOrEmpty(traceFile))
+                    string sendTraceFile = traceFile;
+                    string compressedTraceFile = CompressTraceFile(traceFile, out bool compressFailure);
+                    if (compressFailure)
                     {
-                        Dictionary<string, int> wordDict = ExtractKeyWords(traceFile, wordRegEx, maxWords, linesRegEx, null);
+                        sb.Append("\nCompressing trace file failed!");
+                        sendTraceFile = string.Empty;
+                    }
+                    else if (!string.IsNullOrEmpty(compressedTraceFile))
+                    {
+                        sb.Append("\nTrace file compressed");
+                        sendTraceFile = compressedTraceFile;
+                    }
+
+                    if (!string.IsNullOrEmpty(sendTraceFile))
+                    {
+                        Dictionary<string, int> wordDict = ExtractKeyWords(sendTraceFile, wordRegEx, maxWords, linesRegEx, null);
                         if (wordDict != null)
                         {
                             sb.Append("\nKeywords:");
@@ -6653,10 +6694,10 @@ namespace BmwDeepObd
                             { new StringContent(sb.ToString()), "info_text" }
                         };
 
-                        if (!string.IsNullOrEmpty(traceFile) && File.Exists(traceFile))
+                        if (!string.IsNullOrEmpty(sendTraceFile) && File.Exists(sendTraceFile))
                         {
-                            FileStream fileStream = new FileStream(traceFile, FileMode.Open);
-                            formUpload.Add(new StreamContent(fileStream), "file", Path.GetFileName(traceFile));
+                            FileStream fileStream = new FileStream(sendTraceFile, FileMode.Open);
+                            formUpload.Add(new StreamContent(fileStream), "file", Path.GetFileName(sendTraceFile));
                         }
 
                         System.Threading.Tasks.Task<HttpResponseMessage> taskUpload = _sendHttpClient.PostAsync(MailInfoDownloadUrl, formUpload);
