@@ -109,6 +109,7 @@ namespace BmwDeepObd
         private TextView _textViewCaptionNotifications;
         private Button _buttonManageNotifications;
         private CheckBox _checkBoxCollectDebugInfo;
+        private CheckBox _checkBoxUncompressedTrace;
         private CheckBox _checkBoxHciSnoopLog;
         private Button _buttonHciSnoopLog;
         private Button _buttonDefaultSettings;
@@ -273,6 +274,7 @@ namespace BmwDeepObd
             _buttonManageNotifications.Visibility = viewStateNotifications;
 
             _checkBoxCollectDebugInfo = FindViewById<CheckBox>(Resource.Id.checkBoxCollectDebugInfo);
+            _checkBoxUncompressedTrace = FindViewById<CheckBox>(Resource.Id.checkBoxUncompressedTrace);
 
             ViewStates viewStateSnoopLog = _activityCommon.GetConfigHciSnoopLog(out bool _) ? ViewStates.Visible : ViewStates.Gone;
             _checkBoxHciSnoopLog = FindViewById<CheckBox>(Resource.Id.checkBoxHciSnoopLog);
@@ -656,6 +658,7 @@ namespace BmwDeepObd
             _checkBoxShowOnlyRelevantErrors.Checked = ActivityCommon.ShowOnlyRelevantErrors;
             _checkBoxScanAllEcus.Checked = ActivityCommon.ScanAllEcus;
             _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
+            _checkBoxUncompressedTrace.Checked = !ActivityCommon.CompressTrace;
             UpdateDisplay();
         }
 
@@ -825,6 +828,7 @@ namespace BmwDeepObd
             ActivityCommon.ShowOnlyRelevantErrors = _checkBoxShowOnlyRelevantErrors.Checked;
             ActivityCommon.ScanAllEcus = _checkBoxScanAllEcus.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
+            ActivityCommon.CompressTrace = !_checkBoxUncompressedTrace.Checked;
         }
 
         private void UpdateDisplay()

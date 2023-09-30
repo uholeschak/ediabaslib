@@ -302,6 +302,7 @@ namespace BmwDeepObd
                 ShowOnlyRelevantErrors = ActivityCommon.ShowOnlyRelevantErrors;
                 ScanAllEcus = ActivityCommon.ScanAllEcus;
                 CollectDebugInfo = ActivityCommon.CollectDebugInfo;
+                CompressTrace = ActivityCommon.CompressTrace;
             }
 
             public void InitData(ActivityMain activityMain, bool storage = false)
@@ -423,6 +424,7 @@ namespace BmwDeepObd
             [XmlElement("ShowOnlyRelevantErrors")] public bool ShowOnlyRelevantErrors { get; set; }
             [XmlElement("ScanAllEcus")] public bool ScanAllEcus { get; set; }
             [XmlElement("CollectDebugInfo")] public bool CollectDebugInfo { get; set; }
+            [XmlElement("CompressTrace")] public bool CompressTrace { get; set; }
         }
 
 #if DEBUG
@@ -3239,6 +3241,7 @@ namespace BmwDeepObd
                     ActivityCommon.ShowOnlyRelevantErrors = storageData.ShowOnlyRelevantErrors;
                     ActivityCommon.ScanAllEcus = storageData.ScanAllEcus;
                     ActivityCommon.CollectDebugInfo = storageData.CollectDebugInfo;
+                    ActivityCommon.CompressTrace = storageData.CompressTrace;
 
                     CheckSettingsVersionChange();
                 }
