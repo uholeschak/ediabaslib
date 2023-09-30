@@ -1210,7 +1210,7 @@ namespace BmwDeepObd
                 _ediabas.SetConfigProperty("TracePath", _instanceData.TraceDir);
                 _ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
                 _ediabas.SetConfigProperty("AppendTrace", _instanceData.TraceAppend ? "1" : "0");
-                _ediabas.SetConfigProperty("CompressTrace", "1");
+                _ediabas.SetConfigProperty("CompressTrace", ActivityCommon.CompressTrace ? "1" : "0");
             }
             else
             {

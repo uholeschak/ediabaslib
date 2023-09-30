@@ -1012,6 +1012,8 @@ namespace BmwDeepObd
 
         public static bool CollectDebugInfo { get; set; }
 
+        public static bool CompressTrace { get; set; }
+
         public static TranslatorType SelectedTranslator => _translatorType;
 
         public TranslatorType Translator
@@ -7368,6 +7370,7 @@ namespace BmwDeepObd
             ShowOnlyRelevantErrors = true;
             ScanAllEcus = false;
             CollectDebugInfo = false;
+            CompressTrace = true;
             Translator = TranslatorType.IbmWatson;
         }
 
