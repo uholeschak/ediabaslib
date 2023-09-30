@@ -4196,7 +4196,7 @@ namespace PsdzClient
                         ecuList.Add(new VehicleStructsBmw.VehicleEcuInfo(ecuLogisticsEntry.DiagAddress, ecuLogisticsEntry.Name, ecuLogisticsEntry.GroupSgbd));
                     }
 
-                    List<KeyValuePair<string, string>> seriesPair = new List<KeyValuePair<string, string>>();
+                    List<Tuple<string, string>> seriesPair = new List<Tuple<string, string>>();
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string modelSeries = null;
@@ -4208,9 +4208,9 @@ namespace PsdzClient
                             }
                         }
 
-                        if (seriesPair.All(x => string.Compare(x.Key, series, StringComparison.OrdinalIgnoreCase) != 0))
+                        if (seriesPair.All(x => string.Compare(x.Item1, series, StringComparison.OrdinalIgnoreCase) != 0))
                         {
-                            seriesPair.Add(new KeyValuePair<string, string>(series, modelSeries));
+                            seriesPair.Add(new Tuple<string, string>(series, modelSeries));
                         }
                     }
 
@@ -4227,16 +4227,16 @@ namespace PsdzClient
                             }
                         }
 
-                        if (seriesPair.All(x => string.Compare(x.Value, modelSeries, StringComparison.OrdinalIgnoreCase) != 0))
+                        if (seriesPair.All(x => string.Compare(x.Item1, modelSeries, StringComparison.OrdinalIgnoreCase) != 0))
                         {
-                            seriesPair.Add(new KeyValuePair<string, string>(series, modelSeries));
+                            seriesPair.Add(new Tuple<string, string>(series, modelSeries));
                         }
                     }
 
-                    foreach (KeyValuePair<string, string> keyValuePair in seriesPair)
+                    foreach (Tuple<string, string> keyValuePair in seriesPair)
                     {
-                        string series = keyValuePair.Key;
-                        string modelSeries = keyValuePair.Value;
+                        string series = keyValuePair.Item1;
+                        string modelSeries = keyValuePair.Item2;
 
                         List<string> sgdbAdd = new List<string>();
                         foreach (string sgdb in ecuCharacteristicsInfo.SgdbAddList)
