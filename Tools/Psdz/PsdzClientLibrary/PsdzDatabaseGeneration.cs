@@ -4280,7 +4280,8 @@ namespace PsdzClient
 
                             if (!sgbdFound)
                             {
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}", series);
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
+                                    series, modelSeries, brSgbd, ecuCharacteristicsInfo.BrandList.ToStringItems());
                                 vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
                             }
                         }
