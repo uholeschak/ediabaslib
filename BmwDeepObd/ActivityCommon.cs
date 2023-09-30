@@ -2406,7 +2406,12 @@ namespace BmwDeepObd
                 {
                     foreach (SerialInfoEntry serialInfo in serialList)
                     {
-                        if (_serialInfoList.Contains(serialInfo))
+                        if (string.IsNullOrEmpty(serialInfo.Serial))
+                        {
+                            continue;
+                        }
+
+                        if (_serialInfoList.Any(x => string.Compare(x.Serial ?? string.Empty, serialInfo.Serial, StringComparison.OrdinalIgnoreCase) == 0))
                         {
                             continue;
                         }

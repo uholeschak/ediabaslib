@@ -501,6 +501,8 @@
   <string name="settings_notification_settings">Настройки уведомлений</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
+  <!--Translate-->
+  <string name="settings_uncompressed_trace">Создание несжатых файлов трассировки (медленно)</string>
   <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
   <string name="settings_hci_snoop_log_config">Настроить журнал отслеживания</string>
   <string name="settings_options">Настройки</string>

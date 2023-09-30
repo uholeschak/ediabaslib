@@ -478,6 +478,7 @@
   <string name="settings_notification_settings">Notification settings</string>
   <string name="settings_caption_debug">Debugging</string>
   <string name="settings_collect_debug_info">Collect debug information for trace files</string>
+  <string name="settings_uncompressed_trace">Create uncompressed trace files (slow)</string>
   <string name="settings_hci_snoop_log">Bluetooth HCI snoop log file:\n{0}</string>
   <string name="settings_hci_snoop_log_config">Configure snoop log</string>
   <string name="settings_options">Settings</string>

@@ -436,6 +436,11 @@
             android:layout_height="wrap_content"
             android:text="@string/settings_collect_debug_info" />
         <CheckBox
+            android:id="@+id/checkBoxUncompressedTrace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_uncompressed_trace" />
+        <CheckBox
             android:id="@+id/checkBoxHciSnoopLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
