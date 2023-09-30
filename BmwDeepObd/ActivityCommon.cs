@@ -430,7 +430,8 @@ namespace BmwDeepObd
         public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string DefaultLang = "en";
-        public const string TraceFileName = "ifh.trc.zip";
+        public const string TraceFileNameStd = "ifh.trc";
+        public const string TraceFileNameZip = "ifh.trc.zip";
         public const string TraceBackupDir = "TraceBackup";
         public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
@@ -743,6 +744,19 @@ namespace BmwDeepObd
         private bool? _lastInerfaceAvailable;
         private bool _usbPermissionRequested;
         private bool _usbPermissionRequestDisabled;
+
+        public static string TraceFileName
+        {
+            get
+            {
+                if (CompressTrace)
+                {
+                    return TraceFileNameZip;
+                }
+
+                return TraceFileNameStd;
+            }
+        }
 
         public bool Emulator { get; }
 
