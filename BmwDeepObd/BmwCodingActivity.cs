@@ -200,6 +200,7 @@ namespace BmwDeepObd
             try
             {
                 ProxyConfig proxyConfig = new ProxyConfig.Builder().Build();
+                ProxyController.Instance.ClearProxyOverride(new ProxyExecutor(), new Java.Lang.Runnable(() => { }));
                 ProxyController.Instance.SetProxyOverride(proxyConfig, new ProxyExecutor(), new Java.Lang.Runnable(() => { }));
             }
             catch (Exception)
