@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
@@ -4183,7 +4184,6 @@ namespace PsdzClient
                     string brSgbd = ecuCharacteristics.brSgbd.Trim().ToUpperInvariant();
                     BNType? bnType = ecuCharacteristicsInfo.BnType;
 
-
                     string bnTypeName = null;
                     if (bnType.HasValue)
                     {
@@ -4238,6 +4238,26 @@ namespace PsdzClient
                         string series = keyValuePair.Item1;
                         string modelSeries = keyValuePair.Item2;
 
+                        if (string.IsNullOrEmpty(series))
+                        {
+                            List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
+                            foreach (CharacteristicsEntry characteristics in characteristicsList)
+                            {
+                                if (!string.IsNullOrEmpty(characteristics.Series))
+                                {
+                                    series = characteristics.Series;
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0} for ModelsSeries: {1} detected", series, modelSeries);
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (string.IsNullOrEmpty(series))
+                        {
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles Series missing for ModelsSeries: {0}", modelSeries);
+                            continue;
+                        }
+
                         List<string> sgdbAdd = new List<string>();
                         foreach (string sgdb in ecuCharacteristicsInfo.SgdbAddList)
                         {
@@ -4253,18 +4273,6 @@ namespace PsdzClient
                         }
 
                         string key = series;
-                        if (string.IsNullOrEmpty(key))
-                        {
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Using ModelsSeries as key: {0}", modelSeries);
-                            key = modelSeries;
-                        }
-
-                        if (string.IsNullOrEmpty(key))
-                        {
-                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles Series and ModelSeries missing!");
-                            continue;
-                        }
-
                         VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, sgdbAdd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
 
                         if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
