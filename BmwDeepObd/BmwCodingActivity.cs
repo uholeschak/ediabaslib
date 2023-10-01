@@ -199,6 +199,16 @@ namespace BmwDeepObd
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
             try
             {
+                try
+                {
+                    ProxyConfig proxyConfig = new ProxyConfig.Builder().Build();
+                    ProxyController.Instance.SetProxyOverride(proxyConfig, new ProxyExecutor(), new Java.Lang.Runnable(() => { }));
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
                 WebSettings webSettings = _webViewCoding?.Settings;
                 if (webSettings != null)
                 {
@@ -1963,5 +1973,13 @@ namespace BmwDeepObd
                 return connectTimeouts;
             }
         }
+
+        private class ProxyExecutor : Java.Lang.Object, Java.Util.Concurrent.IExecutor
+        {
+            public void Execute(Java.Lang.IRunnable command)
+            {
+            }
+        }
+
     }
 }
