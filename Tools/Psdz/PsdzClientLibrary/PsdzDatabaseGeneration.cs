@@ -4214,9 +4214,28 @@ namespace PsdzClient
                         }
                     }
 
+                    string seriesGlobal = null;
                     foreach (string modelSeries in ecuCharacteristicsInfo.ModelSeriesList)
                     {
-                        string series = null;
+                        List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
+                        foreach (CharacteristicsEntry characteristics in characteristicsList)
+                        {
+                            if (!string.IsNullOrEmpty(characteristics.Series))
+                            {
+                                seriesGlobal = characteristics.Series;
+                                break;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(seriesGlobal))
+                        {
+                            break;
+                        }
+                    }
+
+                    foreach (string modelSeries in ecuCharacteristicsInfo.ModelSeriesList)
+                    {
+                        string series = seriesGlobal;
                         List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
                         foreach (CharacteristicsEntry characteristics in characteristicsList)
                         {
@@ -4237,20 +4256,6 @@ namespace PsdzClient
                     {
                         string series = keyValuePair.Item1;
                         string modelSeries = keyValuePair.Item2;
-
-                        if (string.IsNullOrEmpty(series))
-                        {
-                            List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
-                            foreach (CharacteristicsEntry characteristics in characteristicsList)
-                            {
-                                if (!string.IsNullOrEmpty(characteristics.Series))
-                                {
-                                    series = characteristics.Series;
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0} for ModelsSeries: {1} detected", series, modelSeries);
-                                    break;
-                                }
-                            }
-                        }
 
                         if (string.IsNullOrEmpty(series))
                         {
