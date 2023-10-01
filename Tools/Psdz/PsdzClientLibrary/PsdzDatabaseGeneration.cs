@@ -4235,7 +4235,7 @@ namespace PsdzClient
 
                     foreach (string modelSeries in ecuCharacteristicsInfo.ModelSeriesList)
                     {
-                        string series = seriesGlobal;
+                        string series = null;
                         List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
                         foreach (CharacteristicsEntry characteristics in characteristicsList)
                         {
@@ -4244,6 +4244,12 @@ namespace PsdzClient
                                 series = characteristics.Series;
                                 break;
                             }
+                        }
+
+                        if (string.IsNullOrEmpty(series))
+                        {
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles Using global Series {0} for ModelsSeries: {1}", seriesGlobal, modelSeries);
+                            series = seriesGlobal;
                         }
 
                         if (seriesPair.All(x => string.Compare(x.Item1, modelSeries, StringComparison.OrdinalIgnoreCase) != 0))
