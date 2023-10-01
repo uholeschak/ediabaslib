@@ -2411,7 +2411,7 @@ namespace BmwDeepObd
                             continue;
                         }
 
-                        if (_serialInfoList.Any(x => string.Compare(x.Serial ?? string.Empty, serialInfo.Serial, StringComparison.OrdinalIgnoreCase) == 0))
+                        if (_serialInfoList.Contains(serialInfo))
                         {
                             continue;
                         }
@@ -2434,9 +2434,14 @@ namespace BmwDeepObd
         {
             try
             {
+                if (string.IsNullOrEmpty(serialInfo.Serial))
+                {
+                    return false;
+                }
+
                 lock (SerialInfoLockObject)
                 {
-                    if (_serialInfoList.Any(x => string.Compare(x.Serial ?? string.Empty, serialInfo.Serial, StringComparison.OrdinalIgnoreCase) == 0))
+                    if (_serialInfoList.Contains(serialInfo))
                     {
                         _serialInfoList.Remove(serialInfo);
                     }
@@ -2463,14 +2468,10 @@ namespace BmwDeepObd
                 return false;
             }
 
+            SerialInfoEntry serialInfo = new SerialInfoEntry(serialNumber, string.Empty, false, true);
             lock (SerialInfoLockObject)
             {
-                if (_serialInfoList.Any(x => string.Compare(x.Serial ?? string.Empty, serialNumber, StringComparison.OrdinalIgnoreCase) == 0))
-                {
-                    return true;
-                }
-
-                return false;
+                return !_serialInfoList.Contains(serialInfo);
             }
         }
 
