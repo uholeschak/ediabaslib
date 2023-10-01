@@ -6321,7 +6321,8 @@ namespace BmwDeepObd
                 _sendHttpClient = new HttpClient(new HttpClientHandler()
                 {
                     SslProtocols = DefaultSslProtocols,
-                    ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true
+                    ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true,
+                    Proxy = GetProxySettings()
                 });
             }
 
@@ -7195,7 +7196,8 @@ namespace BmwDeepObd
                     _updateHttpClient = new HttpClient(new HttpClientHandler()
                     {
                         SslProtocols = DefaultSslProtocols,
-                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                        ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
+                        Proxy = GetProxySettings()
                     });
                 }
 
@@ -7442,6 +7444,26 @@ namespace BmwDeepObd
         public static string GetCurrentLanguage()
         {
             return Java.Util.Locale.Default.Language ?? DefaultLang;
+        }
+
+        public static WebProxy GetProxySettings()
+        {
+            try
+            {
+                string proxyHost = Java.Lang.JavaSystem.GetProperty("http.proxyHost");
+                string proxyPort = Java.Lang.JavaSystem.GetProperty("http.proxyPort");
+
+                if (!string.IsNullOrEmpty(proxyHost) && !string.IsNullOrEmpty(proxyPort))
+                {
+                    return new WebProxy($"{proxyHost}:{proxyPort}", true);
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return null;
         }
 
         public static bool ReadBatteryVoltage(EdiabasNet ediabas, out double? batteryVoltage, out byte[] adapterSerial)
@@ -8510,7 +8532,8 @@ namespace BmwDeepObd
                 _translateHttpClient = new HttpClient(new HttpClientHandler()
                 {
                     SslProtocols = DefaultSslProtocols,
-                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
+                    Proxy = GetProxySettings()
                 });
             }
 

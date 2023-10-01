@@ -641,7 +641,8 @@ namespace BmwDeepObd
                 _httpClient = new HttpClient(new HttpClientHandler()
                 {
                     SslProtocols = ActivityCommon.DefaultSslProtocols,
-                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true
+                    ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
+                    Proxy = ActivityCommon.GetProxySettings()
                 });
             }
 
