@@ -5500,6 +5500,29 @@ namespace BmwDeepObd
             return false;
         }
 
+        public static bool SetEdiabasConfigProperties(EdiabasNet ediabas, string tracePath, bool appendTrace = false)
+        {
+            if (ediabas == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                ediabas.SetConfigProperty("TracePath", tracePath);
+                ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                ediabas.SetConfigProperty("AppendTrace", appendTrace ? "1" : "0");
+                ediabas.SetConfigProperty("IfhTraceBuffering", ActivityCommon.IfhTraceBuffering ? "1" : "0");
+                ediabas.SetConfigProperty("CompressTrace", ActivityCommon.CompressTrace ? "1" : "0");
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static void ResolveSgbdFile(EdiabasNet ediabas, string fileName)
         {
             if (ediabas == null)
