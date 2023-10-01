@@ -2411,7 +2411,7 @@ namespace BmwDeepObd
                             continue;
                         }
 
-                        if (_serialInfoList.Any(x => string.Compare(x.Serial ?? string.Empty, serialInfo.Serial, StringComparison.OrdinalIgnoreCase) == 0))
+                        if (_serialInfoList.Contains(serialInfo))
                         {
                             continue;
                         }
