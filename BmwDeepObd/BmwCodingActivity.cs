@@ -199,16 +199,16 @@ namespace BmwDeepObd
             _webViewCoding = FindViewById<WebView>(Resource.Id.webViewCoding);
             try
             {
-                try
-                {
-                    ProxyConfig proxyConfig = new ProxyConfig.Builder().Build();
-                    ProxyController.Instance.SetProxyOverride(proxyConfig, new ProxyExecutor(), new Java.Lang.Runnable(() => { }));
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
+                ProxyConfig proxyConfig = new ProxyConfig.Builder().Build();
+                ProxyController.Instance.SetProxyOverride(proxyConfig, new ProxyExecutor(), new Java.Lang.Runnable(() => { }));
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
+            try
+            {
                 WebSettings webSettings = _webViewCoding?.Settings;
                 if (webSettings != null)
                 {
