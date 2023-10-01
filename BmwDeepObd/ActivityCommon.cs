@@ -2434,6 +2434,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (string.IsNullOrEmpty(serialInfo.Serial))
+                {
+                    return false;
+                }
+
                 lock (SerialInfoLockObject)
                 {
                     if (_serialInfoList.Contains(serialInfo))
