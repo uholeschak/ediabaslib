@@ -7490,7 +7490,7 @@ namespace BmwDeepObd
                     string address = string.Empty;
                     foreach (IPAddress ipAddress in hostEntry.AddressList)
                     {
-                        if (ipAddress.GetAddressBytes().Length == 4)
+                        if (ipAddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
                             address = ipAddress.ToString();
                             break;
