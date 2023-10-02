@@ -7486,22 +7486,33 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(proxyHost))
                 {
-                    string address = proxyHost.TrimEnd('/');
-                    int portNum = 0;
-                    if (!string.IsNullOrEmpty(proxyPort))
+                    IPHostEntry hostEntry = Dns.GetHostEntry(proxyHost.TrimEnd('/'));
+                    string address = string.Empty;
+                    foreach (IPAddress ipAddress in hostEntry.AddressList)
                     {
-                        if (!int.TryParse(proxyPort, NumberStyles.Integer, CultureInfo.InvariantCulture, out portNum))
+                        if (ipAddress.GetAddressBytes().Length == 4)
                         {
-                            portNum = 0;
+                            address = ipAddress.ToString();
+                            break;
                         }
                     }
 
-                    if (portNum < 1 || portNum > 0xFFFF)
+                    if (string.IsNullOrEmpty(address))
                     {
                         return null;
                     }
 
-                    address += string.Format(CultureInfo.InvariantCulture, ":{0}", portNum);
+                    if (!string.IsNullOrEmpty(proxyPort))
+                    {
+                        if (int.TryParse(proxyPort, NumberStyles.Integer, CultureInfo.InvariantCulture, out int portNum))
+                        {
+                            if (portNum >= 1 && portNum <= 0xFFFF)
+                            {
+                                address += string.Format(CultureInfo.InvariantCulture, ":{0}", portNum);
+                            }
+                        }
+                    }
+
                     string[] bypassList = Array.Empty<string>();
                     if (!string.IsNullOrEmpty(nonProxyHosts))
                     {
