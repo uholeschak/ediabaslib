@@ -1612,7 +1612,10 @@ namespace EdiabasLib
 
                 if (IcomAllocateDeviceHttpClient == null)
                 {
-                    IcomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler());
+                    IcomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler()
+                    {
+                        UseProxy = false
+                    });
                 }
 
                 MultipartFormDataContent formAllocate = new MultipartFormDataContent();
