@@ -1919,14 +1919,7 @@ namespace BmwDeepObd
                 _instanceData.TraceDir = logDir;
             }
 
-            if (!string.IsNullOrEmpty(_instanceData.TraceDir))
-            {
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
-            }
-            else
-            {
-                _ediabas.SetConfigProperty("IfhTrace", "0");
-            }
+            ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
         }
 
         private void SelectSgbdFile(bool groupFile)

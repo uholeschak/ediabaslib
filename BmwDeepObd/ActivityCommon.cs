@@ -5509,11 +5509,18 @@ namespace BmwDeepObd
 
             try
             {
-                ediabas.SetConfigProperty("TracePath", tracePath);
-                ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
-                ediabas.SetConfigProperty("AppendTrace", appendTrace ? "1" : "0");
-                ediabas.SetConfigProperty("IfhTraceBuffering", ActivityCommon.IfhTraceBuffering ? "1" : "0");
-                ediabas.SetConfigProperty("CompressTrace", ActivityCommon.CompressTrace ? "1" : "0");
+                if (!string.IsNullOrEmpty(tracePath))
+                {
+                    ediabas.SetConfigProperty("TracePath", tracePath);
+                    ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
+                    ediabas.SetConfigProperty("AppendTrace", appendTrace ? "1" : "0");
+                    ediabas.SetConfigProperty("IfhTraceBuffering", ActivityCommon.IfhTraceBuffering ? "1" : "0");
+                    ediabas.SetConfigProperty("CompressTrace", ActivityCommon.CompressTrace ? "1" : "0");
+                }
+                else
+                {
+                    ediabas.SetConfigProperty("IfhTrace", "0");
+                }
             }
             catch (Exception)
             {

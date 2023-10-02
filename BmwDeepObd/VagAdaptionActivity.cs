@@ -464,14 +464,7 @@ namespace BmwDeepObd
                     AbortJobFunc = AbortEdiabasJob
                 };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                if (!string.IsNullOrEmpty(_traceDir))
-                {
-                    ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _traceAppend);
-                }
-                else
-                {
-                    _ediabas.SetConfigProperty("IfhTrace", "0");
-                }
+                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _traceAppend);
             }
 
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);

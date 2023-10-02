@@ -418,15 +418,9 @@ namespace BmwDeepObd
                     }
                 }
                 Ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
-                if (!string.IsNullOrEmpty(traceDir))
-                {
-                    ActivityCommon.SetEdiabasConfigProperties(Ediabas, traceDir, traceAppend);
-                }
-                else
-                {
-                    Ediabas.SetConfigProperty("IfhTrace", "0");
-                }
+                ActivityCommon.SetEdiabasConfigProperties(Ediabas, traceDir, traceAppend);
                 CloseDataLog();
+
                 CommActive = commActive;
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
