@@ -7502,17 +7502,21 @@ namespace BmwDeepObd
                         return null;
                     }
 
+                    int portNum = 0;
                     if (!string.IsNullOrEmpty(proxyPort))
                     {
-                        if (int.TryParse(proxyPort, NumberStyles.Integer, CultureInfo.InvariantCulture, out int portNum))
+                        if (!int.TryParse(proxyPort, NumberStyles.Integer, CultureInfo.InvariantCulture, out portNum))
                         {
-                            if (portNum >= 1 && portNum <= 0xFFFF)
-                            {
-                                address += string.Format(CultureInfo.InvariantCulture, ":{0}", portNum);
-                            }
+                            portNum = 0;
                         }
                     }
 
+                    if (portNum < 1 || portNum > 0xFFFF)
+                    {
+                        return null;
+                    }
+
+                    address += string.Format(CultureInfo.InvariantCulture, ":{0}", portNum);
                     string[] bypassList = Array.Empty<string>();
                     if (!string.IsNullOrEmpty(nonProxyHosts))
                     {
