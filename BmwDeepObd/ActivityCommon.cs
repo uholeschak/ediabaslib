@@ -7482,10 +7482,33 @@ namespace BmwDeepObd
             {
                 string proxyHost = Java.Lang.JavaSystem.GetProperty("http.proxyHost");
                 string proxyPort = Java.Lang.JavaSystem.GetProperty("http.proxyPort");
+                string nonProxyHosts = Java.Lang.JavaSystem.GetProperty("http.nonProxyHosts");
 
-                if (!string.IsNullOrEmpty(proxyHost) && !string.IsNullOrEmpty(proxyPort))
+                if (!string.IsNullOrEmpty(proxyHost))
                 {
-                    return new WebProxy($"{proxyHost}:{proxyPort}", true);
+                    string address = proxyHost.TrimEnd('/');
+                    int portNum = 0;
+                    if (!string.IsNullOrEmpty(proxyPort))
+                    {
+                        if (!int.TryParse(proxyPort, NumberStyles.Integer, CultureInfo.InvariantCulture, out portNum))
+                        {
+                            portNum = 0;
+                        }
+                    }
+
+                    if (portNum < 1 || portNum > 0xFFFF)
+                    {
+                        return null;
+                    }
+
+                    address += string.Format(CultureInfo.InvariantCulture, ":{0}", portNum);
+                    string[] bypassList = Array.Empty<string>();
+                    if (!string.IsNullOrEmpty(nonProxyHosts))
+                    {
+                        bypassList = nonProxyHosts.Split('|');
+                    }
+
+                    return new WebProxy(address, true, bypassList);
                 }
             }
             catch (Exception)
