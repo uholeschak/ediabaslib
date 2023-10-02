@@ -7534,6 +7534,19 @@ namespace BmwDeepObd
             return null;
         }
 
+        public static bool HasProxyHost()
+        {
+            try
+            {
+                string proxyHost = Java.Lang.JavaSystem.GetProperty("http.proxyHost");
+                return !string.IsNullOrEmpty(proxyHost);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public static bool ReadBatteryVoltage(EdiabasNet ediabas, out double? batteryVoltage, out byte[] adapterSerial)
         {
             batteryVoltage = null;
