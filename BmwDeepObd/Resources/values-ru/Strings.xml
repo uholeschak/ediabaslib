@@ -169,6 +169,8 @@
   <string name="select_ecu_zip">Выбрать ECU Zip</string>
   <string name="downloading_file">Скачать файлы</string>
   <string name="download_failed">Не удалось скачать файлы.\nПожалуйста, проверьте подключение к сети.</string>
+  <!--Translate-->
+  <string name="download_proxy_config">В настройках сети настроен прокси.\nЭто может вызвать проблемы с подключением.\nУдалите прокси, если это возможно.</string>
   <string name="obb_offline_extract">Хотите распаковать ECU файлы оффлайн?</string>
   <string name="obb_offline_extract_title">Распаковка оффлайн</string>
   <string name="obb_offline_extract_message">Введите оффлайн-ключ.\nЧтобы получить ключ, нужно отправить электронное письмо с \nверсией приложения: {0}\nи ID: {1}\n на: {2} .\nВы можете вставить ключ через контекстное меню поля ввода.</string>
