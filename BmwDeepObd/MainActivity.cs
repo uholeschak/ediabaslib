@@ -6290,6 +6290,11 @@ namespace BmwDeepObd
             }
 
             string message = GetString(Resource.String.download_failed);
+            if (ActivityCommon.HasValidProxyHost() != null)
+            {
+                message += "\n" + GetString(Resource.String.download_proxy_config);
+            }
+
             if (downloadInfo == null)
             {
                 _activityCommon.ShowAlert(message, Resource.String.alert_title_error);

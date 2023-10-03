@@ -169,6 +169,7 @@
   <string name="select_ecu_zip">ECU Zip auswählen</string>
   <string name="downloading_file">Dateien herunterladen</string>
   <string name="download_failed">Herunterladen der Dateien fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
+  <string name="download_proxy_config">Ein Proxy wurde in den Netzwerkeinstellungen konfiguriert.\nDies kann zu Verbindungsproblemen führen.\nEntfernen sie den Proxy, wenn dies möglich ist.</string>
   <string name="obb_offline_extract">Wollen Sie die ECU Dateien offline extrahieren?</string>
   <string name="obb_offline_extract_title">Offline extrahieren</string>
   <string name="obb_offline_extract_message">Geben Sie den Offline-Key ein.\nUm den Key zu erhalten, senden Sie eine E-Mail mit der\nApp Version: {0}\nund ID: {1}\nan: {2} .\nSie können den Key durch das Kontextmenü des Eingabefeldes einfügen.</string>

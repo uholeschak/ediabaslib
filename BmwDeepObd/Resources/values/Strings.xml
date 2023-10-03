@@ -144,6 +144,7 @@
   <string name="select_ecu_zip">Select ECU Zip</string>
   <string name="downloading_file">Downloading files</string>
   <string name="download_failed">Download files failed.\nPlease check your network connection.</string>
+  <string name="download_proxy_config">A proxy has been configured in the network settings.\nThis could cause connection problems.\nRemove the proxy if possible.</string>
   <string name="obb_offline_extract">Do you want to extract the ECU files offline?</string>
   <string name="obb_offline_extract_title">Offline extract</string>
   <string name="obb_offline_extract_message">Enter the offline key.\nTo get the key, send an e-mail with the\napp version: {0}\nand ID: {1}\nto: {2} .\nYou could paste the key with the context menu of the input field.</string>
