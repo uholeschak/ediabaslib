@@ -308,7 +308,11 @@ namespace PsdzClient
                 VehicleSeriesInfo = vehicleSeriesInfo;
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
                 SgdbAddList = vehicleSeriesInfo.SgdbAdd;
-                BnType = vehicleSeriesInfo.BnType;
+                if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
+                {
+                    BnType = vehicleSeriesInfo.BnType;
+                }
+
                 BrandList = vehicleSeriesInfo.BrandList;
 
                 if (_abortRequest)

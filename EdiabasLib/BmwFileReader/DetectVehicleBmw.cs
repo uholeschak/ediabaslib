@@ -370,7 +370,11 @@ namespace BmwFileReader
                 VehicleSeriesInfo = vehicleSeriesInfo;
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
                 SgdbAddList = vehicleSeriesInfo.SgdbAdd;
-                BnType = vehicleSeriesInfo.BnType;
+                if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
+                {
+                    BnType = vehicleSeriesInfo.BnType;
+                }
+
                 if (BrandList == null || BrandList.Count == 0)
                 {
                     BrandList = vehicleSeriesInfo.BrandList;
@@ -921,7 +925,11 @@ namespace BmwFileReader
                 {
                     VehicleSeriesInfo = vehicleSeriesInfo;
                     SgdbAddList = vehicleSeriesInfo.SgdbAdd;
-                    BnType = vehicleSeriesInfo.BnType;
+                    if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
+                    {
+                        BnType = vehicleSeriesInfo.BnType;
+                    }
+
                     if (BrandList == null || BrandList.Count == 0)
                     {
                         BrandList = vehicleSeriesInfo.BrandList;
