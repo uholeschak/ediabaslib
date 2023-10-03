@@ -3926,6 +3926,7 @@ namespace PsdzClient
                 Regex modelSeriesFormulaRegex = new Regex(@"IsValidRuleString\(""(Baureihenverbund)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex brandFormulaRegex = new Regex(@"IsValidRuleString\(""(Marke)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex operatorFormulaRegex = new Regex(@"([\&\|\! ]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
 
                 List<string> typeKeys = GetAllTypeKeys();
@@ -4001,6 +4002,7 @@ namespace PsdzClient
                             HashSet<string> seriesHash = new HashSet<string>();
                             HashSet<string> modelSeriesHash = new HashSet<string>();
                             HashSet<string> brandHash = new HashSet<string>();
+                            HashSet<string> operatorHash = new HashSet<string>();
                             string date = null;
                             string dateCompare = null;
 
@@ -4047,6 +4049,24 @@ namespace PsdzClient
                                     {
                                         date = match.Groups[3].Value.Trim();
                                         dateCompare = match.Groups[2].Value.Trim();
+                                        break;
+                                    }
+                                }
+
+                                MatchCollection operatorMatches = operatorFormulaRegex.Matches(formulaPart);
+                                foreach (Match match in operatorMatches)
+                                {
+                                    if (match.Groups.Count == 2 && match.Groups[1].Success)
+                                    {
+                                        string opString = match.Groups[1].Value.Trim();
+                                        string[] opArray = opString.Split(' ');
+                                        foreach (string opPart in opArray)
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(opPart))
+                                            {
+                                                operatorHash.Add(opPart.Trim());
+                                            }
+                                        }
                                         break;
                                     }
                                 }
@@ -4170,8 +4190,9 @@ namespace PsdzClient
                                     break;
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, ModelSeries: {3}, BnType: {4}, ProdType: {5}, SgdbAdd: {6}, Date: {7} {8}",
-                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), modelSeriesHash.ToStringItems(), bnTypeSeries, prodType, sgbdAddHash.ToStringItems(), dateCompare ?? string.Empty, date ?? string.Empty);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, ModelSeries: {3}, BnType: {4}, ProdType: {5}, SgdbAdd: {6}, Date: {7} {8}, Operators: {9}",
+                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), modelSeriesHash.ToStringItems(), bnTypeSeries, prodType, sgbdAddHash.ToStringItems(),
+                                dateCompare ?? string.Empty, date ?? string.Empty, operatorHash.ToStringItems());
                             vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), modelSeriesHash.ToList(), bnTypeSeries, brandHash.ToList(), sgbdAddHash.ToList(), date, dateCompare));
                         }
                     }
