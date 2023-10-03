@@ -4053,21 +4053,24 @@ namespace PsdzClient
                                     }
                                 }
 
-                                MatchCollection operatorMatches = operatorFormulaRegex.Matches(formulaPart);
-                                foreach (Match match in operatorMatches)
+                                if (formulaPart.Contains('&') || formulaPart.Contains('|') || formulaPart.Contains('!'))
                                 {
-                                    if (match.Groups.Count == 2 && match.Groups[1].Success)
+                                    MatchCollection operatorMatches = operatorFormulaRegex.Matches(formulaPart);
+                                    foreach (Match match in operatorMatches)
                                     {
-                                        string opString = match.Groups[1].Value.Trim();
-                                        string[] opArray = opString.Split(' ');
-                                        foreach (string opPart in opArray)
+                                        if (match.Groups.Count == 2 && match.Groups[1].Success)
                                         {
-                                            if (!string.IsNullOrWhiteSpace(opPart))
+                                            string opString = match.Groups[1].Value.Trim();
+                                            string[] opArray = opString.Split(' ');
+                                            foreach (string opPart in opArray)
                                             {
-                                                operatorHash.Add(opPart.Trim());
+                                                if (!string.IsNullOrWhiteSpace(opPart))
+                                                {
+                                                    operatorHash.Add(opPart.Trim());
+                                                }
                                             }
+                                            break;
                                         }
-                                        break;
                                     }
                                 }
                             }
