@@ -6494,6 +6494,13 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nEnable translation: {0}", EnableTranslation));
                     sb.Append(string.Format("\nManufacturer: {0}", ManufacturerName()));
                     sb.Append(string.Format("\nClass name: {0}", classType.FullName));
+
+                    bool? validProxyHost = HasValidProxyHost();
+                    if (validProxyHost != null)
+                    {
+                        sb.Append(string.Format("\nValid proxy: {0}", validProxyHost.Value));
+                    }
+
                     if (optionalInfo)
                     {
                         if (!string.IsNullOrWhiteSpace(EmailAddress))
@@ -7534,16 +7541,26 @@ namespace BmwDeepObd
             return null;
         }
 
-        public static bool HasProxyHost()
+        public static bool? HasValidProxyHost()
         {
             try
             {
                 string proxyHost = Java.Lang.JavaSystem.GetProperty("http.proxyHost");
-                return !string.IsNullOrEmpty(proxyHost);
+                if (string.IsNullOrEmpty(proxyHost))
+                {
+                    return null;
+                }
+
+                if (GetProxySettings() == null)
+                {
+                    return false;
+                }
+
+                return true;
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
         }
 
