@@ -4005,6 +4005,8 @@ namespace PsdzClient
                             HashSet<string> operatorHash = new HashSet<string>();
                             string date = null;
                             string dateCompare = null;
+                            int ignoreCount = 0;
+                            List<string> ignoredParts = new List<string>();
 
                             string[] formulaParts = ruleFormula.Split('|');
                             foreach (string formulaPart in formulaParts)
@@ -4014,42 +4016,50 @@ namespace PsdzClient
                                     continue;
                                 }
 
-                                MatchCollection seriesMatches = seriesFormulaRegex.Matches(formulaPart);
-                                foreach (Match match in seriesMatches)
+                                if (ignoreCount > 0)
                                 {
-                                    if (match.Groups.Count == 3 && match.Groups[2].Success)
-                                    {
-                                        seriesHash.Add(match.Groups[2].Value.Trim());
-                                    }
+                                    ignoreCount--;
+                                    ignoredParts.Add(formulaPart);
                                 }
-
-                                MatchCollection modelSeriesMatches = modelSeriesFormulaRegex.Matches(formulaPart);
-                                foreach (Match match in modelSeriesMatches)
+                                else
                                 {
-                                    if (match.Groups.Count == 3 && match.Groups[2].Success)
+                                    MatchCollection seriesMatches = seriesFormulaRegex.Matches(formulaPart);
+                                    foreach (Match match in seriesMatches)
                                     {
-                                        modelSeriesHash.Add(match.Groups[2].Value.Trim());
+                                        if (match.Groups.Count == 3 && match.Groups[2].Success)
+                                        {
+                                            seriesHash.Add(match.Groups[2].Value.Trim());
+                                        }
                                     }
-                                }
 
-                                MatchCollection brandMatches = brandFormulaRegex.Matches(formulaPart);
-                                foreach (Match match in brandMatches)
-                                {
-                                    if (match.Groups.Count == 3 && match.Groups[2].Success)
+                                    MatchCollection modelSeriesMatches = modelSeriesFormulaRegex.Matches(formulaPart);
+                                    foreach (Match match in modelSeriesMatches)
                                     {
-                                        brandHash.Add(match.Groups[2].Value.Trim());
-                                        break;
+                                        if (match.Groups.Count == 3 && match.Groups[2].Success)
+                                        {
+                                            modelSeriesHash.Add(match.Groups[2].Value.Trim());
+                                        }
                                     }
-                                }
 
-                                MatchCollection dateMatches = dateFormulaRegex.Matches(formulaPart);
-                                foreach (Match match in dateMatches)
-                                {
-                                    if (match.Groups.Count == 4 && match.Groups[2].Success && match.Groups[3].Success)
+                                    MatchCollection brandMatches = brandFormulaRegex.Matches(formulaPart);
+                                    foreach (Match match in brandMatches)
                                     {
-                                        date = match.Groups[3].Value.Trim();
-                                        dateCompare = match.Groups[2].Value.Trim();
-                                        break;
+                                        if (match.Groups.Count == 3 && match.Groups[2].Success)
+                                        {
+                                            brandHash.Add(match.Groups[2].Value.Trim());
+                                            break;
+                                        }
+                                    }
+
+                                    MatchCollection dateMatches = dateFormulaRegex.Matches(formulaPart);
+                                    foreach (Match match in dateMatches)
+                                    {
+                                        if (match.Groups.Count == 4 && match.Groups[2].Success && match.Groups[3].Success)
+                                        {
+                                            date = match.Groups[3].Value.Trim();
+                                            dateCompare = match.Groups[2].Value.Trim();
+                                            break;
+                                        }
                                     }
                                 }
 
@@ -4066,6 +4076,10 @@ namespace PsdzClient
                                             {
                                                 if (!string.IsNullOrWhiteSpace(opPart))
                                                 {
+                                                    if (opPart.Contains('!'))
+                                                    {
+                                                        ignoreCount++;
+                                                    }
                                                     operatorHash.Add(opPart.Trim());
                                                 }
                                             }
@@ -4073,6 +4087,11 @@ namespace PsdzClient
                                         }
                                     }
                                 }
+                            }
+
+                            if (ignoredParts.Count > 0)
+                            {
+                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Ignored formula parts: {0}", ignoredParts.ToStringItems());
                             }
 
                             string prodType = null;
