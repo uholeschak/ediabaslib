@@ -248,6 +248,11 @@ namespace BmwDeepObd
                 // ignored
             }
 
+            lock (_ediabasLock)
+            {
+                UpdateLogInfo();
+            }
+
             UpdateConnectTime();
             UpdateOptionsMenu();
         }
@@ -1192,11 +1197,6 @@ namespace BmwDeepObd
 
         private void UpdateLogInfo()
         {
-            if (_ediabas == null)
-            {
-                return;
-            }
-
             string logDir = string.Empty;
             try
             {
@@ -1217,7 +1217,10 @@ namespace BmwDeepObd
                 _instanceData.TraceDir = logDir;
             }
 
-            ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.TraceAppend);
+            if (_ediabas != null)
+            {
+                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.TraceAppend);
+            }
         }
 
         private bool StartEdiabasThread()
@@ -1612,7 +1615,11 @@ namespace BmwDeepObd
                     }
                 }
 
-                UpdateLogInfo();
+                lock (_ediabasLock)
+                {
+                    UpdateLogInfo();
+                }
+
                 UpdateOptionsMenu();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
