@@ -1544,6 +1544,7 @@ namespace BmwDeepObd
                 _ediabas = null;
             }
             _instanceData.ForceAppend = forceAppend;
+            UpdateLogInfo();
             UpdateDisplay();
             UpdateOptionsMenu();
             return true;
@@ -1894,11 +1895,6 @@ namespace BmwDeepObd
 
         private void UpdateLogInfo()
         {
-            if (_ediabas == null)
-            {
-                return;
-            }
-
             string logDir = string.Empty;
             try
             {
@@ -1919,7 +1915,10 @@ namespace BmwDeepObd
                 _instanceData.TraceDir = logDir;
             }
 
-            ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
+            if (_ediabas != null)
+            {
+                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
+            }
         }
 
         private void SelectSgbdFile(bool groupFile)
@@ -3743,9 +3742,9 @@ namespace BmwDeepObd
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Extra ECU found: Name={1}, Addr={2}",
                                                     vinJobUsed.JobName, ecuName, ecuAdr);
                                                 string groupSgbd = null;
-                                                if (detectVehicleBmw.VehicleSeriesInfo?.EcuList != null)
+                                                if (detectVehicleBmw.VehicleSeriesInfo != null && detectVehicleBmw.VehicleSeriesInfo.EcuList != null)
                                                 {
-                                                    foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in detectVehicleBmw.VehicleSeriesInfo?.EcuList)
+                                                    foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in detectVehicleBmw.VehicleSeriesInfo.EcuList)
                                                     {
                                                         if (vehicleEcuInfo.DiagAddr == ecuAdr)
                                                         {
