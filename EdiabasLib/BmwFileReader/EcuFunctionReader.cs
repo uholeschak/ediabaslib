@@ -91,32 +91,36 @@ namespace BmwFileReader
             List<Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList =
                 new List<Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>>();
 
-            if (ecuVariant.RefEcuVariantList != null)
+            if (ecuVariant != null)
             {
-                foreach (EcuFunctionStructs.RefEcuVariant refEcuVariant in ecuVariant.RefEcuVariantList)
+                if (ecuVariant.RefEcuVariantList != null)
                 {
-                    if (refEcuVariant.FixedFuncStructList != null)
+                    foreach (EcuFunctionStructs.RefEcuVariant refEcuVariant in ecuVariant.RefEcuVariantList)
                     {
-                        foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in refEcuVariant.FixedFuncStructList)
+                        if (refEcuVariant.FixedFuncStructList != null)
                         {
-                            fixedFuncStructList.Add(new Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>(ecuFixedFuncStruct, null));
+                            foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in refEcuVariant.FixedFuncStructList)
+                            {
+                                fixedFuncStructList.Add(new Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>(ecuFixedFuncStruct, null));
+                            }
                         }
                     }
                 }
-            }
 
-            if (ecuVariant.EcuFuncStructList != null)
-            {
-                foreach (EcuFunctionStructs.EcuFuncStruct ecuFuncStruct in ecuVariant.EcuFuncStructList)
+                if (ecuVariant.EcuFuncStructList != null)
                 {
-                    if (ecuFuncStruct.FixedFuncStructList != null)
+                    foreach (EcuFunctionStructs.EcuFuncStruct ecuFuncStruct in ecuVariant.EcuFuncStructList)
                     {
-                        foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in ecuFuncStruct.FixedFuncStructList)
+                        if (ecuFuncStruct.FixedFuncStructList != null)
                         {
-                            fixedFuncStructList.Add(new Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>(ecuFixedFuncStruct, ecuFuncStruct));
+                            foreach (EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct in ecuFuncStruct.FixedFuncStructList)
+                            {
+                                fixedFuncStructList.Add(new Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>(ecuFixedFuncStruct, ecuFuncStruct));
+                            }
                         }
                     }
                 }
+
             }
 
             return fixedFuncStructList;
