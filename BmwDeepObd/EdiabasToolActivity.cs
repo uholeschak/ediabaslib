@@ -1085,6 +1085,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+                _instanceData.SgbdFileName = string.Empty;
                 return _activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
@@ -2161,7 +2162,7 @@ namespace BmwDeepObd
             _instanceData.DataLogDir = logDir;
 
             _instanceData.TraceDir = null;
-            if (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.SgbdFileName))
+            if (_instanceData.TraceActive)
             {
                 _instanceData.TraceDir = logDir;
             }
