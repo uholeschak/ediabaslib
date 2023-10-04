@@ -3942,29 +3942,21 @@ namespace PsdzClient
                     List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
                     if (characteristicsList != null)
                     {
-                        string series = null;
-                        string modelSeries = null;
-                        string productType = null;
-                        string productLine = null;
+                        Vehicle vehicleTest = new Vehicle(clientContext);
+                        VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
+
                         foreach (Characteristics characteristics in characteristicsList)
                         {
-                            if (string.Compare(characteristics.NodeClass, "40128130", StringComparison.OrdinalIgnoreCase) == 0)
-                            {   // from VehicleCharacteristicVehicleHelper.ComputeEreihe
-                                series = characteristics.EcuTranslation.TextDe;
-                            }
-                            else if (string.Compare(characteristics.NodeClass, "99999999951", StringComparison.OrdinalIgnoreCase) == 0)
-                            {   // from VehicleCharacteristicVehicleHelper.ComputeBaureihenverbund
-                                modelSeries = characteristics.EcuTranslation.TextDe;
-                            }
-                            else if (string.Compare(characteristics.NodeClass, "40135682", StringComparison.OrdinalIgnoreCase) == 0)
-                            {   // from VehicleCharacteristicVehicleHelper.ComputeProdart
-                                productType = characteristics.EcuTranslation.TextDe;
-                            }
-                            else if (string.Compare(characteristics.NodeClass, "40039952514", StringComparison.OrdinalIgnoreCase) == 0)
-                            {   // from VehicleCharacteristicVehicleHelper.ComputeProduktlinie
-                                productLine = characteristics.EcuTranslation.TextDe;
+                            if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, vehicleTest, characteristics))
+                            {
+                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles AssignVehicleCharacteristic failed");
                             }
                         }
+
+                        string series = vehicleTest.Ereihe;
+                        string modelSeries = vehicleTest.Baureihenverbund;
+                        string productType = vehicleTest.Prodart;
+                        string productLine = vehicleTest.Produktlinie;
 
                         if (!string.IsNullOrEmpty(series))
                         {
@@ -3994,6 +3986,7 @@ namespace PsdzClient
 
                     if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                     {
+                        //bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleTest, null);
                         string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicle, formulaConfig);
                         if (!string.IsNullOrEmpty(ruleFormula))
                         {
