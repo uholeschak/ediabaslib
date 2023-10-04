@@ -3743,9 +3743,9 @@ namespace BmwDeepObd
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Job: {0} Extra ECU found: Name={1}, Addr={2}",
                                                     vinJobUsed.JobName, ecuName, ecuAdr);
                                                 string groupSgbd = null;
-                                                if (detectVehicleBmw.VehicleSeriesInfo?.EcuList != null)
+                                                if (detectVehicleBmw.VehicleSeriesInfo != null && detectVehicleBmw.VehicleSeriesInfo.EcuList != null)
                                                 {
-                                                    foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in detectVehicleBmw.VehicleSeriesInfo?.EcuList)
+                                                    foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in detectVehicleBmw.VehicleSeriesInfo.EcuList)
                                                     {
                                                         if (vehicleEcuInfo.DiagAddr == ecuAdr)
                                                         {
