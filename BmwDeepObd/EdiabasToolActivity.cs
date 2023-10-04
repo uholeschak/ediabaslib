@@ -991,6 +991,7 @@ namespace BmwDeepObd
             _instanceData.ForceAppend = forceAppend;
             ClearLists();
             CloseDataLog();
+            UpdateLogInfo();
             UpdateDisplay();
             UpdateOptionsMenu();
             return true;
@@ -2144,11 +2145,6 @@ namespace BmwDeepObd
 
         private void UpdateLogInfo()
         {
-            if (_ediabas == null)
-            {
-                return;
-            }
-
             string logDir = string.Empty;
             try
             {
@@ -2170,7 +2166,10 @@ namespace BmwDeepObd
                 _instanceData.TraceDir = logDir;
             }
 
-            ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
+            if (_ediabas != null)
+            {
+                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
+            }
         }
 
         private void EdiabasInit()
