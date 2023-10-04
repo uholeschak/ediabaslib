@@ -4305,7 +4305,7 @@ namespace BmwDeepObd
 
         private bool EcuListContainsAddr(List<EcuInfo> ecuList, long ecuAdr)
         {
-            return ecuList.Any(ecuInfo => ecuInfo.Address == ecuAdr);
+            return ecuList.Any(ecuInfo => ecuInfo != null && ecuInfo.Address == ecuAdr);
         }
 
         private bool IsMwTabEmpty(string mwTabFileName)
