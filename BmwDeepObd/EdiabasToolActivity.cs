@@ -1085,6 +1085,7 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+                _instanceData.SgbdFileName = string.Empty;
                 return _activityCommon.SendTraceFile(_appDataDir, _instanceData.TraceDir, GetType(), handler);
             }
             return false;
