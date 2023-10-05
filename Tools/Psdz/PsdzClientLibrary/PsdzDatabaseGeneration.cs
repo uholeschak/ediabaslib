@@ -3943,21 +3943,22 @@ namespace PsdzClient
                     List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
                     if (characteristicsList != null)
                     {
-                        Vehicle vehicleTest = new Vehicle(clientContext);
+                        Vehicle vehicleIdent = new Vehicle(clientContext);
+                        vehicleIdent.VCI.VCIType = VCIDeviceType.ENET;
                         VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
 
                         foreach (Characteristics characteristics in characteristicsList)
                         {
-                            if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, vehicleTest, characteristics))
+                            if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, vehicleIdent, characteristics))
                             {
                                 log.ErrorFormat("ExtractEcuCharacteristicsVehicles AssignVehicleCharacteristic failed");
                             }
                         }
 
-                        string series = vehicleTest.Ereihe;
-                        string modelSeries = vehicleTest.Baureihenverbund;
-                        string productType = vehicleTest.Prodart;
-                        string productLine = vehicleTest.Produktlinie;
+                        string series = vehicleIdent.Ereihe;
+                        string modelSeries = vehicleIdent.Baureihenverbund;
+                        string productType = vehicleIdent.Prodart;
+                        string productLine = vehicleIdent.Produktlinie;
 #if false
                         List<BordnetsData> validBoardnets = new List<BordnetsData>();
 
@@ -3966,14 +3967,15 @@ namespace PsdzClient
                             BaseEcuCharacteristics baseEcuCharacteristics = null;
                             if (bordnetsData.DocData != null)
                             {
-                                baseEcuCharacteristics = VehicleLogistics.CreateCharacteristicsInstance<GenericEcuCharacteristics>(vehicleTest, bordnetsData.DocData, bordnetsData.InfoObjIdent);
+                                baseEcuCharacteristics = VehicleLogistics.CreateCharacteristicsInstance<GenericEcuCharacteristics>(vehicleIdent, bordnetsData.DocData, bordnetsData.InfoObjIdent);
                             }
 
                             if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                             {
                                 bordnetsData.XepRule.ResetResult();
-                                string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleTest);
-                                bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleTest, null);
+                                string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleIdent);
+                                bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
                                 if (ruleValid)
                                 {
@@ -4001,6 +4003,7 @@ namespace PsdzClient
                 }
 
                 Vehicle vehicle = new Vehicle(clientContext);
+                vehicle.VCI.VCIType = VCIDeviceType.ENET;
                 List<EcuCharacteristicsInfo> vehicleSeriesList = new List<EcuCharacteristicsInfo>();
                 foreach (BordnetsData bordnetsData in boardnetsList)
                 {
