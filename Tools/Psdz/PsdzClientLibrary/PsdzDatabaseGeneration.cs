@@ -3936,6 +3936,7 @@ namespace PsdzClient
                     return null;
                 }
 
+                List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 Dictionary<string, CharacteristicsEntry> seriesDict = new Dictionary<string, CharacteristicsEntry>();
                 foreach (string typeKey in typeKeys)
                 {
@@ -3957,7 +3958,32 @@ namespace PsdzClient
                         string modelSeries = vehicleTest.Baureihenverbund;
                         string productType = vehicleTest.Prodart;
                         string productLine = vehicleTest.Produktlinie;
+#if false
+                        List<BordnetsData> validBoardnets = new List<BordnetsData>();
 
+                        foreach (BordnetsData bordnetsData in boardnetsList)
+                        {
+                            BaseEcuCharacteristics baseEcuCharacteristics = null;
+                            if (bordnetsData.DocData != null)
+                            {
+                                baseEcuCharacteristics = VehicleLogistics.CreateCharacteristicsInstance<GenericEcuCharacteristics>(vehicleTest, bordnetsData.DocData, bordnetsData.InfoObjIdent);
+                            }
+
+                            if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
+                            {
+                                bordnetsData.XepRule.ResetResult();
+                                string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleTest);
+                                bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleTest, null);
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
+                                if (ruleValid)
+                                {
+                                    validBoardnets.Add(bordnetsData);
+                                }
+                            }
+                        }
+
+                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets count: {0}", validBoardnets.Count);
+#endif
                         if (!string.IsNullOrEmpty(series))
                         {
                             string key = series.ToUpperInvariant();
@@ -3975,7 +4001,6 @@ namespace PsdzClient
 
                 Vehicle vehicle = new Vehicle(clientContext);
                 List<EcuCharacteristicsInfo> vehicleSeriesList = new List<EcuCharacteristicsInfo>();
-                List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 foreach (BordnetsData bordnetsData in boardnetsList)
                 {
                     BaseEcuCharacteristics baseEcuCharacteristics = null;

@@ -1192,6 +1192,10 @@ namespace PsdzClient
             public void Reset()
             {
                 RuleExpression = null;
+                ResetResult();
+            }
+            public void ResetResult()
+            {
                 RuleResult = null;
             }
 
