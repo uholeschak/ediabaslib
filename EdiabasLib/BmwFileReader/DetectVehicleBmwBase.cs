@@ -260,6 +260,21 @@ namespace BmwFileReader
             return vin17.Substring(3, 4);
         }
 
+        public static bool IsValidEcuName(string ecuName)
+        {
+            if (string.IsNullOrEmpty(ecuName))
+            {
+                return false;
+            }
+
+            if (ecuName.StartsWith("VIRTSG", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static string GetEcuComment(List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
             StringBuilder stringBuilder = new StringBuilder();

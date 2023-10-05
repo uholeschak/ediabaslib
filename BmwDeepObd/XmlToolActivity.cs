@@ -3553,7 +3553,7 @@ namespace BmwDeepObd
                                         {
                                             if (ecuDataPresent)
                                             {
-                                                if (!ecuName.StartsWith("VIRTSG", StringComparison.OrdinalIgnoreCase) && (dateYear != 0))
+                                                if (DetectVehicleBmwBase.IsValidEcuName(ecuName) && (dateYear != 0))
                                                 {
                                                     if (!invalidAddrList.Contains(ecuAdr))
                                                     {
@@ -3748,8 +3748,13 @@ namespace BmwDeepObd
                                                     {
                                                         if (vehicleEcuInfo.DiagAddr == ecuAdr)
                                                         {
-                                                            groupSgbd = vehicleEcuInfo.GroupSgbd;
-                                                            break;
+                                                            if (DetectVehicleBmwBase.IsValidEcuName(vehicleEcuInfo.Name))
+                                                            {
+                                                                groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                                                break;
+                                                            }
+
+                                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ignoring invalid ECU: Name={0}, Addr={1}", ecuName, ecuAdr);
                                                         }
                                                     }
                                                 }
