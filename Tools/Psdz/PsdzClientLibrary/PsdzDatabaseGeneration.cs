@@ -3945,6 +3945,9 @@ namespace PsdzClient
                     {
                         Vehicle vehicleIdent = new Vehicle(clientContext);
                         vehicleIdent.VCI.VCIType = VCIDeviceType.ENET;
+                        vehicleIdent.Modelljahr = "2100";
+                        vehicleIdent.Modellmonat = "01";
+                        vehicleIdent.Modelltag = "01";
                         VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
 
                         foreach (Characteristics characteristics in characteristicsList)
