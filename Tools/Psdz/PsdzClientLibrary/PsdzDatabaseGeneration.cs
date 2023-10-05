@@ -3984,6 +3984,7 @@ namespace PsdzClient
 
                         log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets count: {0}", validBoardnets.Count);
 #endif
+                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: Series={0}, ModelSeries={1}, Type={2}, Line={3}", series, modelSeries, productType, productLine);
                         if (!string.IsNullOrEmpty(series))
                         {
                             string key = series.ToUpperInvariant();
