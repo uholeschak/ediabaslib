@@ -1043,8 +1043,12 @@ namespace PsdzClient
                         {
                             if (vehicleEcuInfo.DiagAddr == ecuAdr)
                             {
-                                groupSgbd = vehicleEcuInfo.GroupSgbd;
-                                break;
+                                if (IsValidEcuName(vehicleEcuInfo.Name))
+                                {
+                                    groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                    ecuName = vehicleEcuInfo.Name;
+                                    break;
+                                }
                             }
                         }
                     }
