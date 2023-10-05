@@ -3975,9 +3975,21 @@ namespace PsdzClient
 
                             if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                             {
-                                bordnetsData.XepRule.ResetResult();
                                 string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleIdent);
+                                vehicleIdent.Modelljahr = "2100";
+                                bordnetsData.XepRule.ResetResult();
                                 bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                if (!ruleValid)
+                                {
+                                    vehicleIdent.Modelljahr = "1970";
+                                    bordnetsData.XepRule.ResetResult();
+                                    ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                    if (ruleValid)
+                                    {
+                                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Old date required: {0}", ruleFormula);
+                                    }
+                                }
+
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
                                 if (ruleValid)
