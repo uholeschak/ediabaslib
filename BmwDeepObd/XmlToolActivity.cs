@@ -3751,6 +3751,7 @@ namespace BmwDeepObd
                                                             if (DetectVehicleBmwBase.IsValidEcuName(vehicleEcuInfo.Name))
                                                             {
                                                                 groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                                                ecuName = vehicleEcuInfo.Name;
                                                                 break;
                                                             }
 
