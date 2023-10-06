@@ -3943,15 +3943,15 @@ namespace PsdzClient
                     List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
                     if (characteristicsList != null)
                     {
-                        List<Tuple<string, string>> prodYearMonth = GetAllProdYearMonthForTypeKey(typeKey);
-                        Tuple<string, string> prodYearMonthFirst = null;
-                        Tuple<string, string> prodYearMonthLast = null;
-                        if (prodYearMonth != null && prodYearMonth.Count > 0)
+                        List<ProductionDate> productionDates = GetAllProductionDatesForTypeKey(typeKey);
+                        ProductionDate productionDateFirst = null;
+                        ProductionDate productionDateLast = null;
+                        if (productionDates != null && productionDates.Count > 0)
                         {
-                            prodYearMonthFirst = prodYearMonth[0];
-                            if (prodYearMonth.Count > 1)
+                            productionDateFirst = productionDates[0];
+                            if (productionDates.Count > 1)
                             {
-                                prodYearMonthLast = prodYearMonth[prodYearMonth.Count - 1];
+                                productionDateLast = productionDates[productionDates.Count - 1];
                             }
                         }
 
@@ -3962,10 +3962,10 @@ namespace PsdzClient
                         vehicleIdent.Modelljahr = "2100";
                         vehicleIdent.Modellmonat = "01";
                         vehicleIdent.Modelltag = "01";
-                        if (prodYearMonthFirst != null)
+                        if (productionDateFirst != null)
                         {
-                            vehicleIdent.Modelljahr = prodYearMonthFirst.Item1;
-                            vehicleIdent.Modellmonat = prodYearMonthFirst.Item2;
+                            vehicleIdent.Modelljahr = productionDateFirst.Year;
+                            vehicleIdent.Modellmonat = productionDateFirst.Month;
                         }
 
                         VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
@@ -3995,24 +3995,24 @@ namespace PsdzClient
                             if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                             {
                                 string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleIdent);
-                                if (prodYearMonthFirst != null)
+                                if (productionDateFirst != null)
                                 {
-                                    vehicleIdent.Modelljahr = prodYearMonthFirst.Item1;
-                                    vehicleIdent.Modellmonat = prodYearMonthFirst.Item2;
+                                    vehicleIdent.Modelljahr = productionDateFirst.Year;
+                                    vehicleIdent.Modellmonat = productionDateFirst.Month;
                                 }
 
                                 bordnetsData.XepRule.ResetResult();
                                 bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
-                                if (!ruleValid && prodYearMonthLast != null)
+                                if (!ruleValid && productionDateLast != null)
                                 {
-                                    vehicleIdent.Modelljahr = prodYearMonthLast.Item1;
-                                    vehicleIdent.Modellmonat = prodYearMonthLast.Item2;
+                                    vehicleIdent.Modelljahr = productionDateLast.Year;
+                                    vehicleIdent.Modellmonat = productionDateLast.Month;
 
                                     bordnetsData.XepRule.ResetResult();
                                     ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
                                     if (ruleValid)
                                     {
-                                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", prodYearMonthLast.Item1, prodYearMonthLast.Item2, ruleFormula);
+                                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", productionDateLast.Year, productionDateLast.Month, ruleFormula);
                                     }
                                 }
 

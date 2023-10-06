@@ -543,6 +543,35 @@ namespace PsdzClient
             }
         }
 
+        public class ProductionDate
+        {
+            public ProductionDate(string year, string month)
+            {
+                Year = year;
+                Month = month;
+            }
+
+            public string Year { get; set; }
+
+            public string Month { get; set; }
+
+            public long GetValue()
+            {
+                if (string.IsNullOrEmpty(Year) || string.IsNullOrEmpty(Month))
+                {
+                    return 0;
+                }
+
+                if (Year.Length != 4 || Month.Length != 2)
+                {
+                    return 0;
+                }
+
+                string date = Year + Month;
+                return date.ConvertToInt();
+            }
+        }
+
         public class CharacteristicRoots
         {
             public CharacteristicRoots(string id, string nodeClass, string motorCycSeq, string vehicleSeq, EcuTranslation ecuTranslation)
@@ -2785,18 +2814,18 @@ namespace PsdzClient
             return typeKeys;
         }
 
-        public List<Tuple<string, string>> GetAllProdYearMonthForTypeKey(string typeKey)
+        public List<ProductionDate> GetAllProductionDatesForTypeKey(string typeKey)
         {
             if (string.IsNullOrEmpty(typeKey))
             {
                 return null;
             }
 
-            log.InfoFormat("GetAllProdYearMonthForTypeKey: {0}", typeKey);
-            List<Tuple<string, string>> prodYearMonthSort = null;
+            log.InfoFormat("GetAllProductionDatesForTypeKey: {0}", typeKey);
+            List<ProductionDate> productionDatesSort = null;
             try
             {
-                List<Tuple<string, string>> prodYearMonth = new List<Tuple<string, string>>();
+                List<ProductionDate> productionDates = new List<ProductionDate>();
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT DISTINCT PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH FROM VINRANGES WHERE TYPSCHLUESSEL = '{0}'", typeKey);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -2808,22 +2837,26 @@ namespace PsdzClient
                             string prodMonth = reader["PRODUCTIONDATEMONTH"].ToString().Trim();
                             if (!string.IsNullOrEmpty(prodYear) && !string.IsNullOrEmpty(prodMonth))
                             {
-                                prodYearMonth.Add(new Tuple<string, string>(prodYear, prodMonth));
+                                ProductionDate productionDate = new ProductionDate(prodYear, prodMonth);
+                                if (productionDate.GetValue() > 0)
+                                {
+                                    productionDates.Add(new ProductionDate(prodYear, prodMonth));
+                                }
                             }
                         }
                     }
                 }
 
                 // sort items
-                prodYearMonthSort = prodYearMonth.OrderBy(x => (x.Item1 + x.Item2).ConvertToInt()).ToList();
+                productionDatesSort = productionDates.OrderBy(x => x.GetValue()).ToList();
             }
             catch (Exception e)
             {
-                log.ErrorFormat("GetAllProdYearMonthForTypeKey Exception: '{0}'", e.Message);
+                log.ErrorFormat("GetAllProductionDatesForTypeKey Exception: '{0}'", e.Message);
                 return null;
             }
 
-            return prodYearMonthSort;
+            return productionDatesSort;
         }
 
         public List<Characteristics> GetVehicleCharacteristics(Vehicle vehicle)
