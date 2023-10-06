@@ -3949,11 +3949,10 @@ namespace PsdzClient
                         if (prodYearMonth != null && prodYearMonth.Count > 0)
                         {
                             prodYearMonthFirst = prodYearMonth[0];
-                        }
-
-                        if (prodYearMonth != null && prodYearMonth.Count > 1)
-                        {
-                            prodYearMonthLast = prodYearMonth[prodYearMonth.Count - 1];
+                            if (prodYearMonth.Count > 1)
+                            {
+                                prodYearMonthLast = prodYearMonth[prodYearMonth.Count - 1];
+                            }
                         }
 
                         Vehicle vehicleIdent = new Vehicle(clientContext);
@@ -3962,16 +3961,14 @@ namespace PsdzClient
                         vehicleIdent.VCI.VCIType = VCIDeviceType.ENET;
                         vehicleIdent.Modelljahr = "2100";
                         vehicleIdent.Modellmonat = "01";
+                        vehicleIdent.Modelltag = "01";
                         if (prodYearMonthFirst != null)
                         {
                             vehicleIdent.Modelljahr = prodYearMonthFirst.Item1;
                             vehicleIdent.Modellmonat = prodYearMonthFirst.Item2;
                         }
 
-                        vehicleIdent.Modelltag = "01";
-
                         VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
-
                         foreach (Characteristics characteristics in characteristicsList)
                         {
                             if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, vehicleIdent, characteristics))

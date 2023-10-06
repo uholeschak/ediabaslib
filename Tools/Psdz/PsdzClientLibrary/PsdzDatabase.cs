@@ -2793,9 +2793,10 @@ namespace PsdzClient
             }
 
             log.InfoFormat("GetAllProdYearMonthForTypeKey: {0}", typeKey);
-            List<Tuple<string, string>> prodYearMonth = new List<Tuple<string, string>>();
+            List<Tuple<string, string>> prodYearMonthSort = null;
             try
             {
+                List<Tuple<string, string>> prodYearMonth = new List<Tuple<string, string>>();
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT DISTINCT PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH FROM VINRANGES WHERE TYPSCHLUESSEL = '{0}'", typeKey);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
@@ -2812,6 +2813,9 @@ namespace PsdzClient
                         }
                     }
                 }
+
+                // sort items
+                prodYearMonthSort = prodYearMonth.OrderBy(x => (x.Item1 + x.Item2).ConvertToInt()).ToList();
             }
             catch (Exception e)
             {
@@ -2819,7 +2823,7 @@ namespace PsdzClient
                 return null;
             }
 
-            return prodYearMonth;
+            return prodYearMonthSort;
         }
 
         public List<Characteristics> GetVehicleCharacteristics(Vehicle vehicle)
