@@ -3944,6 +3944,8 @@ namespace PsdzClient
                     if (characteristicsList != null)
                     {
                         Vehicle vehicleIdent = new Vehicle(clientContext);
+                        vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
+                        vehicleIdent.VINRangeType = typeKey;
                         vehicleIdent.VCI.VCIType = VCIDeviceType.ENET;
                         vehicleIdent.Modelljahr = "2100";
                         vehicleIdent.Modellmonat = "01";
