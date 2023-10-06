@@ -3943,19 +3943,33 @@ namespace PsdzClient
                     List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
                     if (characteristicsList != null)
                     {
-                        List<string> prodYears = GetAllProdYearsForTypeKey(typeKey);
+                        List<Tuple<string, string>> prodYearMonth = GetAllProdYearMonthForTypeKey(typeKey);
+                        Tuple<string, string> prodYearMonthFirst = null;
+                        Tuple<string, string> prodYearMonthLast = null;
+                        if (prodYearMonth != null && prodYearMonth.Count > 0)
+                        {
+                            prodYearMonthFirst = prodYearMonth[0];
+                        }
+
+                        if (prodYearMonth != null && prodYearMonth.Count > 1)
+                        {
+                            prodYearMonthLast = prodYearMonth[prodYearMonth.Count - 1];
+                        }
+
                         Vehicle vehicleIdent = new Vehicle(clientContext);
                         vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
                         vehicleIdent.VINRangeType = typeKey;
                         vehicleIdent.VCI.VCIType = VCIDeviceType.ENET;
                         vehicleIdent.Modelljahr = "2100";
-                        if (prodYears != null && prodYears.Count > 0)
+                        vehicleIdent.Modellmonat = "01";
+                        if (prodYearMonthFirst != null)
                         {
-                            vehicleIdent.Modelljahr = prodYears[0];
+                            vehicleIdent.Modelljahr = prodYearMonthFirst.Item1;
+                            vehicleIdent.Modellmonat = prodYearMonthFirst.Item2;
                         }
 
-                        vehicleIdent.Modellmonat = "01";
                         vehicleIdent.Modelltag = "01";
+
                         VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
 
                         foreach (Characteristics characteristics in characteristicsList)
@@ -3984,17 +3998,24 @@ namespace PsdzClient
                             if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                             {
                                 string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleIdent);
-                                vehicleIdent.Modelljahr = "2100";
+                                if (prodYearMonthFirst != null)
+                                {
+                                    vehicleIdent.Modelljahr = prodYearMonthFirst.Item1;
+                                    vehicleIdent.Modellmonat = prodYearMonthFirst.Item2;
+                                }
+
                                 bordnetsData.XepRule.ResetResult();
                                 bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
-                                if (!ruleValid)
+                                if (!ruleValid && prodYearMonthLast != null)
                                 {
-                                    vehicleIdent.Modelljahr = "1970";
+                                    vehicleIdent.Modelljahr = prodYearMonthLast.Item1;
+                                    vehicleIdent.Modellmonat = prodYearMonthLast.Item2;
+
                                     bordnetsData.XepRule.ResetResult();
                                     ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
                                     if (ruleValid)
                                     {
-                                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Old date required: {0}", ruleFormula);
+                                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", prodYearMonthLast.Item1, prodYearMonthLast.Item2, ruleFormula);
                                     }
                                 }
 

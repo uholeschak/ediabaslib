@@ -2785,18 +2785,18 @@ namespace PsdzClient
             return typeKeys;
         }
 
-        public List<string> GetAllProdYearsForTypeKey(string typeKey)
+        public List<Tuple<string, string>> GetAllProdYearMonthForTypeKey(string typeKey)
         {
             if (string.IsNullOrEmpty(typeKey))
             {
                 return null;
             }
 
-            log.InfoFormat("GetAllProdYearsForTypeKey: {0}", typeKey);
-            List<string> prodYears = new List<string>();
+            log.InfoFormat("GetAllProdYearMonthForTypeKey: {0}", typeKey);
+            List<Tuple<string, string>> prodYearMonth = new List<Tuple<string, string>>();
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT DISTINCT PRODUCTIONDATEYEAR FROM VINRANGES WHERE TYPSCHLUESSEL = '{0}'", typeKey);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT DISTINCT PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH FROM VINRANGES WHERE TYPSCHLUESSEL = '{0}'", typeKey);
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -2804,18 +2804,22 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             string prodYear = reader["PRODUCTIONDATEYEAR"].ToString().Trim();
-                            prodYears.AddIfNotContains(prodYear);
+                            string prodMonth = reader["PRODUCTIONDATEMONTH"].ToString().Trim();
+                            if (!string.IsNullOrEmpty(prodYear) && !string.IsNullOrEmpty(prodMonth))
+                            {
+                                prodYearMonth.Add(new Tuple<string, string>(prodYear, prodMonth));
+                            }
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                log.ErrorFormat("GetAllProdYearsForTypeKeys Exception: '{0}'", e.Message);
+                log.ErrorFormat("GetAllProdYearMonthForTypeKey Exception: '{0}'", e.Message);
                 return null;
             }
 
-            return prodYears;
+            return prodYearMonth;
         }
 
         public List<Characteristics> GetVehicleCharacteristics(Vehicle vehicle)
