@@ -2763,7 +2763,7 @@ namespace PsdzClient
             List<string> typeKeys = new List<string>();
             try
             {
-                string sql = @"SELECT DISTINCT(TYPSCHLUESSEL) FROM VINRANGES";
+                string sql = @"SELECT DISTINCT TYPSCHLUESSEL FROM VINRANGES";
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
@@ -2783,6 +2783,39 @@ namespace PsdzClient
             }
 
             return typeKeys;
+        }
+
+        public List<string> GetAllProdYearsForTypeKey(string typeKey)
+        {
+            if (string.IsNullOrEmpty(typeKey))
+            {
+                return null;
+            }
+
+            log.InfoFormat("GetAllProdYearsForTypeKey: {0}", typeKey);
+            List<string> prodYears = new List<string>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT DISTINCT PRODUCTIONDATEYEAR FROM VINRANGES WHERE TYPSCHLUESSEL = '{0}'", typeKey);
+                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                {
+                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string prodYear = reader["PRODUCTIONDATEYEAR"].ToString().Trim();
+                            prodYears.AddIfNotContains(prodYear);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetAllProdYearsForTypeKeys Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return prodYears;
         }
 
         public List<Characteristics> GetVehicleCharacteristics(Vehicle vehicle)

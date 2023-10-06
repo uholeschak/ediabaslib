@@ -3943,11 +3943,17 @@ namespace PsdzClient
                     List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
                     if (characteristicsList != null)
                     {
+                        List<string> prodYears = GetAllProdYearsForTypeKey(typeKey);
                         Vehicle vehicleIdent = new Vehicle(clientContext);
                         vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
                         vehicleIdent.VINRangeType = typeKey;
                         vehicleIdent.VCI.VCIType = VCIDeviceType.ENET;
                         vehicleIdent.Modelljahr = "2100";
+                        if (prodYears != null && prodYears.Count > 0)
+                        {
+                            vehicleIdent.Modelljahr = prodYears[0];
+                        }
+
                         vehicleIdent.Modellmonat = "01";
                         vehicleIdent.Modelltag = "01";
                         VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
