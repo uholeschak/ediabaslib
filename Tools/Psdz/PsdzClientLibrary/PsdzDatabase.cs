@@ -2832,13 +2832,15 @@ namespace PsdzClient
                 {
                     if (sbSql.Length > 0)
                     {
-                        sbSql.Append(" OR");
+                        sbSql.Append(", ");
                     }
 
-                    sbSql.Append(string.Format(CultureInfo.InvariantCulture, @" TYPSCHLUESSEL = '{0}'", typeKey));
+                    sbSql.Append("'");
+                    sbSql.Append(typeKey);
+                    sbSql.Append("'");
                 }
 
-                string sql = @"SELECT DISTINCT PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH FROM VINRANGES WHERE" + sbSql;
+                string sql = @"SELECT DISTINCT PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH FROM VINRANGES WHERE TYPSCHLUESSEL IN(" + sbSql + ")";
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())
