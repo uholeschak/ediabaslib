@@ -3938,23 +3938,12 @@ namespace PsdzClient
 
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 Dictionary<string, CharacteristicsEntry> seriesDict = new Dictionary<string, CharacteristicsEntry>();
+                HashSet<string> vehicleHashSet = new HashSet<string>();
                 foreach (string typeKey in typeKeys)
                 {
                     List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
                     if (characteristicsList != null)
                     {
-                        List<ProductionDate> productionDates = GetAllProductionDatesForTypeKey(typeKey);
-                        ProductionDate productionDateFirst = null;
-                        ProductionDate productionDateLast = null;
-                        if (productionDates != null && productionDates.Count > 0)
-                        {
-                            productionDateFirst = productionDates[0];
-                            if (productionDates.Count > 1)
-                            {
-                                productionDateLast = productionDates[productionDates.Count - 1];
-                            }
-                        }
-
                         Vehicle vehicleIdent = new Vehicle(clientContext);
                         vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
                         vehicleIdent.VINRangeType = typeKey;
@@ -3962,11 +3951,6 @@ namespace PsdzClient
                         vehicleIdent.Modelljahr = "2100";
                         vehicleIdent.Modellmonat = "01";
                         vehicleIdent.Modelltag = "01";
-                        if (productionDateFirst != null)
-                        {
-                            vehicleIdent.Modelljahr = productionDateFirst.Year;
-                            vehicleIdent.Modellmonat = productionDateFirst.Month;
-                        }
 
                         VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
                         foreach (Characteristics characteristics in characteristicsList)
@@ -3981,52 +3965,74 @@ namespace PsdzClient
                         string modelSeries = vehicleIdent.Baureihenverbund;
                         string productType = vehicleIdent.Prodart;
                         string productLine = vehicleIdent.Produktlinie;
-#if false
-                        List<BordnetsData> validBoardnets = new List<BordnetsData>();
 
-                        foreach (BordnetsData bordnetsData in boardnetsList)
+                        string vehicleHash = (series ?? string.Empty) + ";" + (modelSeries ?? string.Empty) + ";" + (productType ?? string.Empty) + ";" + (productLine ?? string.Empty);
+                        if (!vehicleHashSet.Contains(vehicleHash))
                         {
-                            BaseEcuCharacteristics baseEcuCharacteristics = null;
-                            if (bordnetsData.DocData != null)
+                            List<BordnetsData> validBoardnets = new List<BordnetsData>();
+
+                            List<ProductionDate> productionDates = GetAllProductionDatesForTypeKey(typeKey);
+                            ProductionDate productionDateFirst = null;
+                            ProductionDate productionDateLast = null;
+
+                            if (productionDates != null && productionDates.Count > 0)
                             {
-                                baseEcuCharacteristics = VehicleLogistics.CreateCharacteristicsInstance<GenericEcuCharacteristics>(vehicleIdent, bordnetsData.DocData, bordnetsData.InfoObjIdent);
+                                productionDateFirst = productionDates[0];
+                                if (productionDates.Count > 1)
+                                {
+                                    productionDateLast = productionDates[productionDates.Count - 1];
+                                }
                             }
 
-                            if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
+                            foreach (BordnetsData bordnetsData in boardnetsList)
                             {
-                                string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleIdent);
-                                if (productionDateFirst != null)
+                                BaseEcuCharacteristics baseEcuCharacteristics = null;
+                                if (bordnetsData.DocData != null)
                                 {
-                                    vehicleIdent.Modelljahr = productionDateFirst.Year;
-                                    vehicleIdent.Modellmonat = productionDateFirst.Month;
+                                    baseEcuCharacteristics = VehicleLogistics.CreateCharacteristicsInstance<GenericEcuCharacteristics>(vehicleIdent, bordnetsData.DocData, bordnetsData.InfoObjIdent);
                                 }
 
-                                bordnetsData.XepRule.ResetResult();
-                                bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
-                                if (!ruleValid && productionDateLast != null)
+                                if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                                 {
-                                    vehicleIdent.Modelljahr = productionDateLast.Year;
-                                    vehicleIdent.Modellmonat = productionDateLast.Month;
+                                    string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleIdent);
+                                    if (productionDateFirst != null)
+                                    {
+                                        vehicleIdent.Modelljahr = productionDateFirst.Year;
+                                        vehicleIdent.Modellmonat = productionDateFirst.Month;
+                                    }
 
                                     bordnetsData.XepRule.ResetResult();
-                                    ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                    bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                    if (!ruleValid && productionDateLast != null)
+                                    {
+                                        vehicleIdent.Modelljahr = productionDateLast.Year;
+                                        vehicleIdent.Modellmonat = productionDateLast.Month;
+
+                                        bordnetsData.XepRule.ResetResult();
+                                        ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                        if (ruleValid)
+                                        {
+                                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", productionDateLast.Year, productionDateLast.Month, ruleFormula);
+                                        }
+                                    }
+
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
                                     if (ruleValid)
                                     {
-                                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", productionDateLast.Year, productionDateLast.Month, ruleFormula);
+                                        validBoardnets.Add(bordnetsData);
                                     }
                                 }
-
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
-                                if (ruleValid)
-                                {
-                                    validBoardnets.Add(bordnetsData);
-                                }
                             }
+
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets count: {0}", validBoardnets.Count);
+                            vehicleHashSet.Add(vehicleHash);
+                        }
+                        else
+                        {
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Ignoring TypeKey: {0}", typeKey);
                         }
 
-                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets count: {0}", validBoardnets.Count);
-#endif
                         log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: Series={0}, ModelSeries={1}, Type={2}, Line={3}", series, modelSeries, productType, productLine);
                         if (!string.IsNullOrEmpty(series))
                         {
