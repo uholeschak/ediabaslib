@@ -2814,19 +2814,31 @@ namespace PsdzClient
             return typeKeys;
         }
 
-        public List<ProductionDate> GetAllProductionDatesForTypeKey(string typeKey)
+        public List<ProductionDate> GetAllProductionDatesForTypeKeys(List<string> typeKeys)
         {
-            if (string.IsNullOrEmpty(typeKey))
+            if (typeKeys == null || typeKeys.Count == 0)
             {
                 return null;
             }
 
-            log.InfoFormat("GetAllProductionDatesForTypeKey: {0}", typeKey);
+            log.InfoFormat("GetAllProductionDatesForTypeKey: {0}", typeKeys.ToStringItems());
             List<ProductionDate> productionDatesSort = null;
             try
             {
                 List<ProductionDate> productionDates = new List<ProductionDate>();
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT DISTINCT PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH FROM VINRANGES WHERE TYPSCHLUESSEL = '{0}'", typeKey);
+                StringBuilder sbSql = new StringBuilder();
+
+                foreach (string typeKey in typeKeys)
+                {
+                    if (sbSql.Length > 0)
+                    {
+                        sbSql.Append(" OR");
+                    }
+
+                    sbSql.Append(string.Format(CultureInfo.InvariantCulture, @" TYPSCHLUESSEL = '{0}'", typeKey));
+                }
+
+                string sql = @"SELECT DISTINCT PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH FROM VINRANGES WHERE" + sbSql;
                 using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
                 {
                     using (SQLiteDataReader reader = command.ExecuteReader())

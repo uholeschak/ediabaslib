@@ -3939,11 +3939,15 @@ namespace PsdzClient
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 Dictionary<string, CharacteristicsEntry> seriesDict = new Dictionary<string, CharacteristicsEntry>();
                 HashSet<string> vehicleHashSet = new HashSet<string>();
+                List<string> dateTypeKeys = new List<string>();
+
                 foreach (string typeKey in typeKeys)
                 {
                     List<Characteristics> characteristicsList = GetVehicleIdentByTypeKey(typeKey, false);
                     if (characteristicsList != null)
                     {
+                        dateTypeKeys.Add(typeKey);
+
                         Vehicle vehicleIdent = new Vehicle(clientContext);
                         vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
                         vehicleIdent.VINRangeType = typeKey;
@@ -3971,7 +3975,7 @@ namespace PsdzClient
                         {
                             List<BordnetsData> validBoardnets = new List<BordnetsData>();
 
-                            List<ProductionDate> productionDates = GetAllProductionDatesForTypeKey(typeKey);
+                            List<ProductionDate> productionDates = GetAllProductionDatesForTypeKeys(dateTypeKeys);
                             ProductionDate productionDateFirst = null;
                             ProductionDate productionDateLast = null;
 
@@ -4027,6 +4031,7 @@ namespace PsdzClient
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets count: {0}", validBoardnets.Count);
                             vehicleHashSet.Add(vehicleHash);
+                            dateTypeKeys.Clear();
                         }
                         else
                         {
