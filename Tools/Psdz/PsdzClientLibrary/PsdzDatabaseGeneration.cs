@@ -1,8 +1,7 @@
-﻿using System;
+﻿//#define VehicleSeriesByRules
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
@@ -3993,7 +3992,7 @@ namespace PsdzClient
                     }
                 }
 
-                List<EcuCharacteristicsInfo> vehicleSeriesListRules = new List<EcuCharacteristicsInfo>();
+                List<EcuCharacteristicsInfo> vehicleSeriesList = new List<EcuCharacteristicsInfo>();
                 foreach (KeyValuePair<string, Tuple<Vehicle, List<string>>> keyValuePair in vehicleTypeKeyHashes)
                 {
                     Vehicle vehicleIdent = keyValuePair.Value.Item1;
@@ -4044,7 +4043,6 @@ namespace PsdzClient
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
                             if (ruleValid)
                             {
@@ -4053,10 +4051,10 @@ namespace PsdzClient
                         }
                     }
 
-                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics count: {0}", validCharacteristics.Count);
-
-                    if (validCharacteristics.Count == 1)
+#if VehicleSeriesByRules
+                    if (validCharacteristics.Count >= 1)
                     {
+                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}, Count={3}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke, validCharacteristics.Count);
                         foreach (BaseEcuCharacteristics characteristics in validCharacteristics)
                         {
                             string series = vehicleIdent.Ereihe;
@@ -4066,14 +4064,18 @@ namespace PsdzClient
                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
                             string sgbdAdditional = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
 
-                            vehicleSeriesListRules.Add(new EcuCharacteristicsInfo(characteristics, new List<string>() { series }, new List<string>() { modelSeries }, bnType, new List<string>() { brandName }, new List<string>() { sgbdAdditional }));
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristics, new List<string> { series }, new List<string> { modelSeries }, bnType, new List<string>{ brandName }, new List<string> { sgbdAdditional }));
                         }
                     }
+                    else
+                    {
+                        log.ErrorFormat("ExtractEcuCharacteristicsVehicles No characteristics for: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
+                    }
+#endif
                 }
-
+#if !VehicleSeriesByRules
                 Vehicle vehicle = new Vehicle(clientContext);
                 vehicle.VCI.VCIType = VCIDeviceType.ENET;
-                List<EcuCharacteristicsInfo> vehicleSeriesList = new List<EcuCharacteristicsInfo>();
                 foreach (BordnetsData bordnetsData in boardnetsList)
                 {
                     BaseEcuCharacteristics baseEcuCharacteristics = null;
@@ -4310,7 +4312,7 @@ namespace PsdzClient
                         }
                     }
                 }
-
+#endif
                 SerializableDictionary<string, List<VehicleStructsBmw.VehicleSeriesInfo>> sgbdDict = new SerializableDictionary<string, List<VehicleStructsBmw.VehicleSeriesInfo>>();
                 foreach (EcuCharacteristicsInfo ecuCharacteristicsInfo in vehicleSeriesList)
                 {
