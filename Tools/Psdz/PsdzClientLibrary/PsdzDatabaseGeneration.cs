@@ -543,7 +543,7 @@ namespace PsdzClient
 
         private class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, List<string> modelSeriesList, BNType? bnType, List<string> brandList, List<string> sgdbAddList, string date, string dateCompare)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, List<string> modelSeriesList, BNType? bnType, List<string> brandList, List<string> sgdbAddList, string date = null, string dateCompare = null)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 SeriesList = seriesList;
@@ -3993,11 +3993,12 @@ namespace PsdzClient
                     }
                 }
 
+                List<EcuCharacteristicsInfo> vehicleSeriesListRules = new List<EcuCharacteristicsInfo>();
                 foreach (KeyValuePair<string, Tuple<Vehicle, List<string>>> keyValuePair in vehicleTypeKeyHashes)
                 {
                     Vehicle vehicleIdent = keyValuePair.Value.Item1;
                     List<string> dateTypeKeys = keyValuePair.Value.Item2;
-                    List<BordnetsData> validBoardnets = new List<BordnetsData>();
+                    List<BaseEcuCharacteristics> validCharacteristics = new List<BaseEcuCharacteristics>();
                     List<ProductionDate> productionDates = GetAllProductionDatesForTypeKeys(dateTypeKeys);
                     ProductionDate productionDateFirst = null;
                     ProductionDate productionDateLast = null;
@@ -4047,12 +4048,27 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
                             if (ruleValid)
                             {
-                                validBoardnets.Add(bordnetsData);
+                                validCharacteristics.Add(baseEcuCharacteristics);
                             }
                         }
                     }
 
-                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets count: {0}", validBoardnets.Count);
+                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics count: {0}", validCharacteristics.Count);
+
+                    if (validCharacteristics.Count == 1)
+                    {
+                        foreach (BaseEcuCharacteristics characteristics in validCharacteristics)
+                        {
+                            string series = vehicleIdent.Ereihe;
+                            string modelSeries = vehicleIdent.Baureihenverbund;
+                            string brandName = vehicleIdent.BrandName?.ToString();
+
+                            BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
+                            string sgbdAdditional = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
+
+                            vehicleSeriesListRules.Add(new EcuCharacteristicsInfo(characteristics, new List<string>() { series }, new List<string>() { modelSeries }, bnType, new List<string>() { brandName }, new List<string>() { sgbdAdditional }));
+                        }
+                    }
                 }
 
                 Vehicle vehicle = new Vehicle(clientContext);
