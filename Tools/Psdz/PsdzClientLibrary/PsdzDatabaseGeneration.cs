@@ -3945,9 +3945,9 @@ namespace PsdzClient
                     if (characteristicsList != null)
                     {
                         Vehicle vehicleIdent = new Vehicle(clientContext);
-                        vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
+                        vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINBasedFeatures;
                         vehicleIdent.VINRangeType = typeKey;
-                        vehicleIdent.VCI.VCIType = VCIDeviceType.ENET;
+                        vehicleIdent.VCI.VCIType = VCIDeviceType.INFOSESSION;
                         vehicleIdent.Modelljahr = "2100";
                         vehicleIdent.Modellmonat = "01";
                         vehicleIdent.Modelltag = "01";
@@ -4075,7 +4075,8 @@ namespace PsdzClient
                 }
 #if !VehicleSeriesByRules
                 Vehicle vehicle = new Vehicle(clientContext);
-                vehicle.VCI.VCIType = VCIDeviceType.ENET;
+                vehicle.VehicleIdentLevel = IdentificationLevel.BasicFeatures;
+                vehicle.VCI.VCIType = VCIDeviceType.INFOSESSION;
                 foreach (BordnetsData bordnetsData in boardnetsList)
                 {
                     BaseEcuCharacteristics baseEcuCharacteristics = null;
