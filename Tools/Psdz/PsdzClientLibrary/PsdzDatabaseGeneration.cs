@@ -1,6 +1,7 @@
 ﻿//#define VehicleSeriesByRules
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.SQLite;
 using System.Diagnostics;
@@ -3947,7 +3948,7 @@ namespace PsdzClient
                         Vehicle vehicleIdent = new Vehicle(clientContext);
                         vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINBasedFeatures;
                         vehicleIdent.VINRangeType = typeKey;
-                        vehicleIdent.VCI.VCIType = VCIDeviceType.INFOSESSION;
+                        vehicleIdent.VCI.VCIType = VCIDeviceType.EDIABAS;
                         vehicleIdent.Modelljahr = "2100";
                         vehicleIdent.Modellmonat = "01";
                         vehicleIdent.Modelltag = "01";
@@ -4022,6 +4023,35 @@ namespace PsdzClient
                         if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                         {
                             string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleIdent);
+                            ObservableCollection<ECU> EcuList = new ObservableCollection<ECU>();
+                            foreach (IEcuLogisticsEntry ecuLogisticsEntry in baseEcuCharacteristics.ecuTable)
+                            {
+                                ECU ecu = new ECU();
+                                ecu.ID_SG_ADR = ecuLogisticsEntry.DiagAddress;
+                                ecu.ECU_GRUPPE = ecuLogisticsEntry.GroupSgbd;
+
+                                if (!string.IsNullOrEmpty(ecuLogisticsEntry.GroupSgbd) &&
+                                    string.Compare(ecuLogisticsEntry.GroupSgbd, "G_MMI", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    ecu.ECU_SGBD = "enavevo";
+
+                                    ECU ecu2 = new ECU();
+                                    ecu2.ID_SG_ADR = ecu.ID_SG_ADR;
+                                    ecu2.ECU_GRUPPE = ecu.ECU_GRUPPE;
+                                    ecu2.ECU_SGBD = "hu_mgu";
+                                    EcuList.Add(ecu2);
+
+                                    ECU ecu3 = new ECU();
+                                    ecu3.ID_SG_ADR = ecu.ID_SG_ADR;
+                                    ecu3.ECU_GRUPPE = ecu.ECU_GRUPPE;
+                                    ecu3.ECU_SGBD = "nbtevo";
+                                    EcuList.Add(ecu3);
+                                }
+
+                                EcuList.Add(ecu);
+                            }
+                            vehicleIdent.ECU = EcuList;
+
                             if (productionDateFirst != null)
                             {
                                 vehicleIdent.Modelljahr = productionDateFirst.Year;
