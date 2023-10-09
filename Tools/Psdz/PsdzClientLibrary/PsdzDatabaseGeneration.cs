@@ -4115,9 +4115,13 @@ namespace PsdzClient
                                 case "E31":
                                 case "E32":
                                 case "E34":
+                                case "EXX":
+                                case "U06":
                                 // motorbikes
+                                case "246":
                                 case "247":
                                 case "247E":
+                                case "248":
                                 case "259":
                                 case "259C":
                                 case "259R":
@@ -4125,9 +4129,12 @@ namespace PsdzClient
                                 case "C01":
                                 case "E169":
                                 case "R13":
+                                case "R21":
+                                case "R22":
                                 case "R28":
                                 case "K14":
                                 case "K15":
+                                case "K16":
                                 case "K30":
                                 case "K41":
                                 case "K569":
