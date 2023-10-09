@@ -4101,7 +4101,31 @@ namespace PsdzClient
                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
                             string sgbdAdditional = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
 
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristics, new List<string> { series }, new List<string> { modelSeries }, bnType, new List<string>{ brandName }, new List<string> { sgbdAdditional }));
+                            List<string> seriesList = new List<string>();
+                            if (!string.IsNullOrEmpty(series))
+                            {
+                                seriesList.Add(series);
+                            }
+
+                            List<string> modelSeriesList = new List<string>();
+                            if (!string.IsNullOrEmpty(modelSeries))
+                            {
+                                modelSeriesList.Add(modelSeries);
+                            }
+
+                            List<string> brandList = new List<string>();
+                            if (!string.IsNullOrEmpty(brandName))
+                            {
+                                brandList.Add(modelSeries);
+                            }
+
+                            List<string> sgbdAddList = new List<string>();
+                            if (!string.IsNullOrEmpty(sgbdAdditional))
+                            {
+                                sgbdAddList.Add(modelSeries);
+                            }
+
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristics, seriesList, modelSeriesList, bnType, brandList, sgbdAddList));
                         }
                     }
                     else
