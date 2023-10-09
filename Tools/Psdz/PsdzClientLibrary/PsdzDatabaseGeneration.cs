@@ -4030,22 +4030,29 @@ namespace PsdzClient
                                 ecu.ID_SG_ADR = ecuLogisticsEntry.DiagAddress;
                                 ecu.ECU_GRUPPE = ecuLogisticsEntry.GroupSgbd;
 
-                                if (!string.IsNullOrEmpty(ecuLogisticsEntry.GroupSgbd) &&
-                                    string.Compare(ecuLogisticsEntry.GroupSgbd, "G_MMI", StringComparison.OrdinalIgnoreCase) == 0)
+                                if (!string.IsNullOrEmpty(ecuLogisticsEntry.GroupSgbd))
                                 {
-                                    ecu.ECU_SGBD = "enavevo";
+                                    if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_MMI", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        ecu.ECU_SGBD = "enavevo";
 
-                                    ECU ecu2 = new ECU();
-                                    ecu2.ID_SG_ADR = ecu.ID_SG_ADR;
-                                    ecu2.ECU_GRUPPE = ecu.ECU_GRUPPE;
-                                    ecu2.ECU_SGBD = "hu_mgu";
-                                    EcuList.Add(ecu2);
+                                        ECU ecu2 = new ECU();
+                                        ecu2.ID_SG_ADR = ecu.ID_SG_ADR;
+                                        ecu2.ECU_GRUPPE = ecu.ECU_GRUPPE;
+                                        ecu2.ECU_SGBD = "hu_mgu";
+                                        EcuList.Add(ecu2);
 
-                                    ECU ecu3 = new ECU();
-                                    ecu3.ID_SG_ADR = ecu.ID_SG_ADR;
-                                    ecu3.ECU_GRUPPE = ecu.ECU_GRUPPE;
-                                    ecu3.ECU_SGBD = "nbtevo";
-                                    EcuList.Add(ecu3);
+                                        ECU ecu3 = new ECU();
+                                        ecu3.ID_SG_ADR = ecu.ID_SG_ADR;
+                                        ecu3.ECU_GRUPPE = ecu.ECU_GRUPPE;
+                                        ecu3.ECU_SGBD = "nbtevo";
+                                        EcuList.Add(ecu3);
+                                    }
+
+                                    if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_ACC", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        ecu.ECU_SGBD = "mrr_30";
+                                    }
                                 }
 
                                 EcuList.Add(ecu);
