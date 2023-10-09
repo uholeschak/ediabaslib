@@ -1,4 +1,4 @@
-﻿//#define VehicleSeriesByRules
+﻿#define VehicleSeriesByRules
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -4099,7 +4099,23 @@ namespace PsdzClient
                     }
                     else
                     {
-                        log.ErrorFormat("ExtractEcuCharacteristicsVehicles No characteristics for: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
+                        bool ignoreMissing = false;
+                        if (!string.IsNullOrEmpty(vehicleIdent.Ereihe))
+                        {
+                            switch (vehicleIdent.Ereihe.ToUpperInvariant())
+                            {
+                                case "E30":
+                                case "E31":
+                                case "E34":
+                                    ignoreMissing = true;
+                                    break;
+                            }
+                        }
+
+                        if (!ignoreMissing)
+                        {
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles No characteristics for: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
+                        }
                     }
 #endif
                 }
