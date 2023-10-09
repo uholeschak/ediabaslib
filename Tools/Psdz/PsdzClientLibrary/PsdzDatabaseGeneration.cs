@@ -4116,10 +4116,22 @@ namespace PsdzClient
                                 case "E32":
                                 case "E34":
                                 // motorbikes
+                                case "247":
+                                case "247E":
+                                case "259":
+                                case "259C":
                                 case "259R":
+                                case "259S":
                                 case "C01":
                                 case "E169":
+                                case "R13":
+                                case "R28":
+                                case "K14":
                                 case "K15":
+                                case "K30":
+                                case "K41":
+                                case "K569":
+                                case "K589":
                                     ignoreMissing = true;
                                     break;
                             }
