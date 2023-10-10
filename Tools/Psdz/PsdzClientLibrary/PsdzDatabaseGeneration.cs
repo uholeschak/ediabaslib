@@ -4012,6 +4012,7 @@ namespace PsdzClient
                         }
                     }
 
+                    ProductionDate productionDateUsed = productionDateFirst;
                     foreach (BordnetsData bordnetsData in boardnetsList)
                     {
                         BaseEcuCharacteristics baseEcuCharacteristics = null;
@@ -4076,7 +4077,8 @@ namespace PsdzClient
                                 ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
                                 if (ruleValid)
                                 {
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", productionDateLast.Year, productionDateLast.Month, ruleFormula);
+                                    productionDateUsed = productionDateLast;
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", productionDateUsed.Year, productionDateUsed.Month, ruleFormula);
                                 }
                             }
 
@@ -4125,7 +4127,17 @@ namespace PsdzClient
                                 sgbdAddList.Add(modelSeries);
                             }
 
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristics, seriesList, modelSeriesList, bnType, brandList, sgbdAddList));
+                            string date = null;
+                            if (productionDateUsed != null)
+                            {
+                                long dateValue = productionDateUsed.GetValue();
+                                if (dateValue > 0)
+                                {
+                                    date = string.Format(CultureInfo.InvariantCulture, "{0:000000}", dateValue);
+                                }
+                            }
+
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristics, seriesList, modelSeriesList, bnType, brandList, sgbdAddList, date));
                         }
                     }
                     else
@@ -4135,12 +4147,13 @@ namespace PsdzClient
                         {
                             switch (vehicleIdent.Ereihe.ToUpperInvariant())
                             {
+                                // cars
                                 case "E30":
                                 case "E31":
                                 case "E32":
                                 case "E34":
-                                case "EXX":
                                 case "U06":
+
                                 // motorbikes
                                 case "246":
                                 case "247":
@@ -4151,6 +4164,7 @@ namespace PsdzClient
                                 case "259R":
                                 case "259S":
                                 case "C01":
+                                case "EXX":
                                 case "E169":
                                 case "R13":
                                 case "R21":
