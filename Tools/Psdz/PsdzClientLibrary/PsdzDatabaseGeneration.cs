@@ -3937,8 +3937,10 @@ namespace PsdzClient
                 }
 
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
-                Dictionary<string, CharacteristicsEntry> seriesDict = new Dictionary<string, CharacteristicsEntry>();
                 Dictionary<string, Tuple<Vehicle, List<string>>> vehicleTypeKeyHashes = new Dictionary<string, Tuple<Vehicle, List<string>>>();
+#if !VehicleSeriesByRules
+                Dictionary<string, CharacteristicsEntry> seriesDict = new Dictionary<string, CharacteristicsEntry>();
+#endif
 
                 foreach (string typeKey in typeKeys)
                 {
@@ -3967,6 +3969,12 @@ namespace PsdzClient
                         string productType = vehicleIdent.Prodart;
                         string productLine = vehicleIdent.Produktlinie;
 
+                        if (string.IsNullOrEmpty(series))
+                        {
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles Vehicle series missing");
+                            continue;
+                        }
+
                         string vehicleHash = (series ?? string.Empty) + ";" + (modelSeries ?? string.Empty) + ";" + (productType ?? string.Empty) + ";" + (productLine ?? string.Empty);
                         if (!vehicleTypeKeyHashes.TryGetValue(vehicleHash, out Tuple<Vehicle, List<string>> typeKeyTuple))
                         {
@@ -3977,6 +3985,7 @@ namespace PsdzClient
                             typeKeyTuple.Item2.Add(typeKey);
                         }
 
+#if !VehicleSeriesByRules
                         log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: Series={0}, ModelSeries={1}, Type={2}, Line={3}", series, modelSeries, productType, productLine);
                         if (!string.IsNullOrEmpty(series))
                         {
@@ -3990,6 +3999,7 @@ namespace PsdzClient
                         {
                             log.ErrorFormat("ExtractEcuCharacteristicsVehicles Missing parameters for TypeKey: {0}", typeKey);
                         }
+#endif
                     }
                 }
 
@@ -4450,6 +4460,22 @@ namespace PsdzClient
                     }
 
                     List<Tuple<string, string>> seriesPair = new List<Tuple<string, string>>();
+#if VehicleSeriesByRules
+                    if (ecuCharacteristicsInfo.SeriesList.Count > 0)
+                    {
+                        string series = ecuCharacteristicsInfo.SeriesList[0];
+                        string modelSeries = null;
+                        if (ecuCharacteristicsInfo.ModelSeriesList.Count > 0)
+                        {
+                            modelSeries = ecuCharacteristicsInfo.ModelSeriesList[0];
+                        }
+
+                        if (seriesPair.All(x => string.Compare(x.Item1, series, StringComparison.OrdinalIgnoreCase) != 0))
+                        {
+                            seriesPair.Add(new Tuple<string, string>(series, modelSeries));
+                        }
+                    }
+#else
                     foreach (string series in ecuCharacteristicsInfo.SeriesList)
                     {
                         string modelSeries = null;
@@ -4510,6 +4536,7 @@ namespace PsdzClient
                             seriesPair.Add(new Tuple<string, string>(series, modelSeries));
                         }
                     }
+#endif
 
                     foreach (Tuple<string, string> keyValuePair in seriesPair)
                     {
