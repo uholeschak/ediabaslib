@@ -135,9 +135,9 @@ namespace BmwFileReader
                     }
                     _propertiesDict.TryAdd("Country".ToUpperInvariant(), new List<string> { language.ToUpperInvariant() });
 
-                    if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
+                    if (!string.IsNullOrEmpty(detectVehicleBmw.Brand))
                     {
-                        _propertiesDict.TryAdd("Marke".ToUpperInvariant(), detectVehicleBmw.BrandList);
+                        _propertiesDict.TryAdd("Marke".ToUpperInvariant(), new List<string> { detectVehicleBmw.Brand.Trim() });
                     }
 
                     if (!string.IsNullOrWhiteSpace(detectVehicleBmw.TypeKey))

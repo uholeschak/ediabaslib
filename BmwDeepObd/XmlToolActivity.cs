@@ -3382,9 +3382,9 @@ namespace BmwDeepObd
                 string detectedVin = null;
                 if (detectVehicleBmw.DetectVehicleBmwFast(_instanceData.DetectMotorbikes))
                 {
-                    if (detectVehicleBmw.SgdbAddList != null && detectVehicleBmw.SgdbAddList.Count > 0)
+                    if (!string.IsNullOrEmpty(detectVehicleBmw.SgdbAdd))
                     {
-                        ecuFileNameList.AddRange(detectVehicleBmw.SgdbAddList);
+                        ecuFileNameList.Add(detectVehicleBmw.SgdbAdd);
                     }
 
                     if (!string.IsNullOrEmpty(detectVehicleBmw.GroupSgdb))
@@ -3401,11 +3401,7 @@ namespace BmwDeepObd
                     }
 
                     _instanceData.BnType = detectVehicleBmw.BnType;
-                    _instanceData.BrandName = string.Empty;
-                    if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
-                    {
-                        _instanceData.BrandName = detectVehicleBmw.BrandList[0];
-                    }
+                    _instanceData.BrandName = detectVehicleBmw.Brand;
                 }
 
                 if (ecuFileNameList.Count > 0 && detectedVin != null && !_ediabasJobAbort)
@@ -3907,11 +3903,7 @@ namespace BmwDeepObd
                         }
 
                         _instanceData.BnType = detectVehicleBmw.BnType;
-                        _instanceData.BrandName = string.Empty;
-                        if (detectVehicleBmw.BrandList != null && detectVehicleBmw.BrandList.Count > 0)
-                        {
-                            _instanceData.BrandName = detectVehicleBmw.BrandList[0];
-                        }
+                        _instanceData.BrandName = detectVehicleBmw.Brand;
 
                         if (!string.IsNullOrEmpty(detectedVinDs2))
                         {
