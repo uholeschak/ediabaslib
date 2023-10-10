@@ -4175,14 +4175,13 @@ namespace PsdzClient
 
                     string series = ecuCharacteristicsInfo.Series;
                     string modelSeries = ecuCharacteristicsInfo.ModelSeries;
-                    
                     if (string.IsNullOrEmpty(series))
                     {
                         log.ErrorFormat("ExtractEcuCharacteristicsVehicles Series missing for ModelsSeries: {0}", modelSeries);
                         continue;
                     }
 
-                    string key = series;
+                    string key = series.Trim().ToUpperInvariant();
                     VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
 
                     if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
