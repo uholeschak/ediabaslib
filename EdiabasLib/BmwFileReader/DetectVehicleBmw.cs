@@ -56,12 +56,12 @@ namespace BmwFileReader
                 Vin = detectVehicleBmw.Vin;
                 TypeKey = detectVehicleBmw.TypeKey;
                 GroupSgdb = detectVehicleBmw.GroupSgdb;
-                SgdbAddList = detectVehicleBmw.SgdbAddList;
+                SgdbAdd = detectVehicleBmw.SgdbAdd;
                 ModelSeries = detectVehicleBmw.ModelSeries;
                 Series = detectVehicleBmw.Series;
                 ProductType = detectVehicleBmw.ProductType;
                 BnType = detectVehicleBmw.BnType;
-                BrandList = detectVehicleBmw.BrandList;
+                Brand = detectVehicleBmw.Brand;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
                 ConstructYear = detectVehicleBmw.ConstructYear;
                 ConstructMonth = detectVehicleBmw.ConstructMonth;
@@ -89,12 +89,12 @@ namespace BmwFileReader
                 detectVehicleBmw.Vin = Vin;
                 detectVehicleBmw.TypeKey = TypeKey;
                 detectVehicleBmw.GroupSgdb = GroupSgdb;
-                detectVehicleBmw.SgdbAddList = SgdbAddList;
+                detectVehicleBmw.SgdbAdd = SgdbAdd;
                 detectVehicleBmw.ModelSeries = ModelSeries;
                 detectVehicleBmw.Series = Series;
                 detectVehicleBmw.ProductType = ProductType;
                 detectVehicleBmw.BnType = BnType;
-                detectVehicleBmw.BrandList = BrandList;
+                detectVehicleBmw.Brand = Brand;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
                 detectVehicleBmw.ConstructYear = ConstructYear;
                 detectVehicleBmw.ConstructMonth = ConstructMonth;
@@ -117,12 +117,12 @@ namespace BmwFileReader
             [XmlElement("Vin"), DefaultValue(null)] public string Vin { get; set; }
             [XmlElement("TypeKey"), DefaultValue(null)] public string TypeKey { get; set; }
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
-            [XmlElement("SgdbAddList"), DefaultValue(null)] public List<string> SgdbAddList { get; set; }
+            [XmlElement("SgdbAdd"), DefaultValue(null)] string SgdbAdd { get; set; }
             [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
             [XmlElement("ProductType"), DefaultValue(null)] public string ProductType { get; set; }
             [XmlElement("BnType")] public string BnType { get; private set; }
-            [XmlElement("BrandList"), DefaultValue(null)] public List<string> BrandList { get; set; }
+            [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
             [XmlElement("ConstructYear"), DefaultValue(null)] public string ConstructYear { get; set; }
             [XmlElement("ConstructMonth"), DefaultValue(null)] public string ConstructMonth { get; set; }
@@ -369,16 +369,13 @@ namespace BmwFileReader
 
                 VehicleSeriesInfo = vehicleSeriesInfo;
                 GroupSgdb = vehicleSeriesInfo.BrSgbd;
-                SgdbAddList = vehicleSeriesInfo.SgdbAdd;
+                SgdbAdd = vehicleSeriesInfo.SgdbAdd;
                 if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
                 {
                     BnType = vehicleSeriesInfo.BnType;
                 }
 
-                if (BrandList == null || BrandList.Count == 0)
-                {
-                    BrandList = vehicleSeriesInfo.BrandList;
-                }
+                Brand = vehicleSeriesInfo.Brand;
                 LogInfoFormat("Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
 
                 EcuList.Clear();
@@ -924,16 +921,12 @@ namespace BmwFileReader
                 if (vehicleSeriesInfo != null)
                 {
                     VehicleSeriesInfo = vehicleSeriesInfo;
-                    SgdbAddList = vehicleSeriesInfo.SgdbAdd;
+                    SgdbAdd = vehicleSeriesInfo.SgdbAdd;
                     if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
                     {
                         BnType = vehicleSeriesInfo.BnType;
                     }
-
-                    if (BrandList == null || BrandList.Count == 0)
-                    {
-                        BrandList = vehicleSeriesInfo.BrandList;
-                    }
+                    Brand = vehicleSeriesInfo.Brand;
                 }
 
                 ProgressFunc?.Invoke(100 * index / jobCount);
@@ -1051,7 +1044,7 @@ namespace BmwFileReader
                 {
                     if (!string.IsNullOrEmpty(brandProp))
                     {
-                        BrandList = new List<string> { brandProp };
+                        Brand = brandProp;
                         LogInfoFormat("Brand: {0}", brandProp);
                     }
                 }

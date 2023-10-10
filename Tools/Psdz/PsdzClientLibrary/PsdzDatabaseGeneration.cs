@@ -1,5 +1,4 @@
-﻿#define VehicleSeriesByRules
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -543,24 +542,24 @@ namespace PsdzClient
 
         private class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, List<string> seriesList, List<string> modelSeriesList, BNType? bnType, List<string> brandList, List<string> sgdbAddList, string date = null, string dateCompare = null)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, string series, string modelSeries, BNType? bnType, string brand, string sgbdAdd, string date = null, string dateCompare = null)
             {
                 EcuCharacteristics = ecuCharacteristics;
-                SeriesList = seriesList;
-                ModelSeriesList = modelSeriesList;
+                Series = series;
+                ModelSeries = modelSeries;
                 BnType = bnType;
-                BrandList = brandList;
-                SgdbAddList = sgdbAddList;
+                Brand = brand;
+                SgbdAdd = sgbdAdd;
                 Date = date;
                 DateCompare = dateCompare;
             }
 
             public BaseEcuCharacteristics EcuCharacteristics { get; set; }
-            public List<string> SeriesList { get; set; }
-            public List<string> ModelSeriesList { get; set; }
+            public string Series { get; set; }
+            public string ModelSeries { get; set; }
             public BNType? BnType { get; set; }
-            public List<string> BrandList { get; set; }
-            public List<string> SgdbAddList { get; set; }
+            public string Brand { get; set; }
+            public string SgbdAdd { get; set; }
             public string Date { get; set; }
             public string DateCompare { get; set; }
         }
@@ -3938,9 +3937,6 @@ namespace PsdzClient
 
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 Dictionary<string, Tuple<Vehicle, List<string>>> vehicleTypeKeyHashes = new Dictionary<string, Tuple<Vehicle, List<string>>>();
-#if !VehicleSeriesByRules
-                Dictionary<string, CharacteristicsEntry> seriesDict = new Dictionary<string, CharacteristicsEntry>();
-#endif
 
                 foreach (string typeKey in typeKeys)
                 {
@@ -3984,22 +3980,6 @@ namespace PsdzClient
                         {
                             typeKeyTuple.Item2.Add(typeKey);
                         }
-
-#if !VehicleSeriesByRules
-                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: Series={0}, ModelSeries={1}, Type={2}, Line={3}", series, modelSeries, productType, productLine);
-                        if (!string.IsNullOrEmpty(series))
-                        {
-                            string key = series.ToUpperInvariant();
-                            if (!seriesDict.ContainsKey(key))
-                            {
-                                seriesDict.Add(key, new CharacteristicsEntry(series, modelSeries, productType, productLine));
-                            }
-                        }
-                        else
-                        {
-                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles Missing parameters for TypeKey: {0}", typeKey);
-                        }
-#endif
                     }
                 }
 
@@ -4100,7 +4080,6 @@ namespace PsdzClient
                         }
                     }
 
-#if VehicleSeriesByRules
                     if (validCharacteristics.Count >= 1)
                     {
                         log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}, Count={3}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke, validCharacteristics.Count);
@@ -4111,31 +4090,7 @@ namespace PsdzClient
                             string brandName = vehicleIdent.BrandName?.ToString();
 
                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
-                            string sgbdAdditional = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
-
-                            List<string> seriesList = new List<string>();
-                            if (!string.IsNullOrEmpty(series))
-                            {
-                                seriesList.Add(series);
-                            }
-
-                            List<string> modelSeriesList = new List<string>();
-                            if (!string.IsNullOrEmpty(modelSeries))
-                            {
-                                modelSeriesList.Add(modelSeries);
-                            }
-
-                            List<string> brandList = new List<string>();
-                            if (!string.IsNullOrEmpty(brandName))
-                            {
-                                brandList.Add(modelSeries);
-                            }
-
-                            List<string> sgbdAddList = new List<string>();
-                            if (!string.IsNullOrEmpty(sgbdAdditional))
-                            {
-                                sgbdAddList.Add(modelSeries);
-                            }
+                            string sgbdAdd = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
 
                             string date = null;
                             if (characteristicsTuple.Item2 != null)
@@ -4147,7 +4102,7 @@ namespace PsdzClient
                                 }
                             }
 
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristicsTuple.Item1, seriesList, modelSeriesList, bnType, brandList, sgbdAddList, date));
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristicsTuple.Item1, series, modelSeries, bnType, brandName, sgbdAdd, date));
                         }
                     }
                     else
@@ -4197,249 +4152,8 @@ namespace PsdzClient
                             log.ErrorFormat("ExtractEcuCharacteristicsVehicles No characteristics for: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
                         }
                     }
-#endif
                 }
-#if !VehicleSeriesByRules
-                Vehicle vehicle = new Vehicle(clientContext);
-                vehicle.VehicleIdentLevel = IdentificationLevel.BasicFeatures;
-                vehicle.VCI.VCIType = VCIDeviceType.INFOSESSION;
-                foreach (BordnetsData bordnetsData in boardnetsList)
-                {
-                    BaseEcuCharacteristics baseEcuCharacteristics = null;
-                    if (bordnetsData.DocData != null)
-                    {
-                        baseEcuCharacteristics = VehicleLogistics.CreateCharacteristicsInstance<GenericEcuCharacteristics>(vehicle, bordnetsData.DocData, bordnetsData.InfoObjIdent);
-                    }
 
-                    if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
-                    {
-                        //bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleTest, null);
-                        string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicle, formulaConfig);
-                        if (!string.IsNullOrEmpty(ruleFormula))
-                        {
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: {0}", ruleFormula);
-
-                            HashSet<string> seriesHash = new HashSet<string>();
-                            HashSet<string> modelSeriesHash = new HashSet<string>();
-                            HashSet<string> brandHash = new HashSet<string>();
-                            HashSet<string> operatorHash = new HashSet<string>();
-                            string date = null;
-                            string dateCompare = null;
-                            int ignoreCount = 0;
-                            List<string> ignoredParts = new List<string>();
-
-                            string[] formulaParts = ruleFormula.Split('|');
-                            foreach (string formulaPart in formulaParts)
-                            {
-                                if (string.IsNullOrWhiteSpace(formulaPart))
-                                {
-                                    continue;
-                                }
-
-                                if (ignoreCount > 0)
-                                {
-                                    ignoreCount--;
-                                    ignoredParts.Add(formulaPart);
-                                }
-                                else
-                                {
-                                    MatchCollection seriesMatches = seriesFormulaRegex.Matches(formulaPart);
-                                    foreach (Match match in seriesMatches)
-                                    {
-                                        if (match.Groups.Count == 3 && match.Groups[2].Success)
-                                        {
-                                            seriesHash.Add(match.Groups[2].Value.Trim());
-                                        }
-                                    }
-
-                                    MatchCollection modelSeriesMatches = modelSeriesFormulaRegex.Matches(formulaPart);
-                                    foreach (Match match in modelSeriesMatches)
-                                    {
-                                        if (match.Groups.Count == 3 && match.Groups[2].Success)
-                                        {
-                                            modelSeriesHash.Add(match.Groups[2].Value.Trim());
-                                        }
-                                    }
-
-                                    MatchCollection brandMatches = brandFormulaRegex.Matches(formulaPart);
-                                    foreach (Match match in brandMatches)
-                                    {
-                                        if (match.Groups.Count == 3 && match.Groups[2].Success)
-                                        {
-                                            brandHash.Add(match.Groups[2].Value.Trim());
-                                            break;
-                                        }
-                                    }
-
-                                    MatchCollection dateMatches = dateFormulaRegex.Matches(formulaPart);
-                                    foreach (Match match in dateMatches)
-                                    {
-                                        if (match.Groups.Count == 4 && match.Groups[2].Success && match.Groups[3].Success)
-                                        {
-                                            date = match.Groups[3].Value.Trim();
-                                            dateCompare = match.Groups[2].Value.Trim();
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                if (formulaPart.Contains('&') || formulaPart.Contains('|') || formulaPart.Contains('!'))
-                                {
-                                    MatchCollection operatorMatches = operatorFormulaRegex.Matches(formulaPart);
-                                    foreach (Match match in operatorMatches)
-                                    {
-                                        if (match.Groups.Count == 2 && match.Groups[1].Success)
-                                        {
-                                            string opString = match.Groups[1].Value.Trim();
-                                            string[] opArray = opString.Split(' ');
-                                            foreach (string opPart in opArray)
-                                            {
-                                                if (!string.IsNullOrWhiteSpace(opPart))
-                                                {
-                                                    if (opPart.Contains('!'))
-                                                    {
-                                                        ignoreCount++;
-                                                    }
-                                                    operatorHash.Add(opPart.Trim());
-                                                }
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (ignoredParts.Count > 0)
-                            {
-                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Ignored formula parts: {0}", ignoredParts.ToStringItems());
-                            }
-
-                            string prodType = null;
-                            // add missing model series
-                            foreach (string series in seriesHash)
-                            {
-                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
-                                {
-                                    if (!string.IsNullOrEmpty(characteristicsEntry.ProductType))
-                                    {
-                                        prodType = characteristicsEntry.ProductType;
-                                    }
-                                }
-                            }
-
-                            if (string.IsNullOrEmpty(prodType))
-                            {
-                                foreach (string modelSeries in modelSeriesHash)
-                                {
-                                    List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
-                                    foreach (CharacteristicsEntry characteristics in characteristicsList)
-                                    {
-                                        if (!string.IsNullOrEmpty(characteristics.ProductType))
-                                        {
-                                            prodType = characteristics.ProductType;
-                                            break;
-                                        }
-                                    }
-
-                                    if (!string.IsNullOrEmpty(prodType))
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (string.IsNullOrEmpty(prodType))
-                            {
-                                prodType = "P";
-                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles ProdType not found, using {0}", prodType);
-                            }
-
-                            HashSet<BNType> bnTypes = new HashSet<BNType>();
-                            HashSet<string> sgbdAddHash = new HashSet<string>();
-                            Vehicle vehicleSeries = new Vehicle(clientContext);
-                            vehicleSeries.Prodart = prodType;
-                            foreach (string series in seriesHash)
-                            {
-                                vehicleSeries.Ereihe = series;
-                                BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
-                                if (bnType != BNType.UNKNOWN)
-                                {
-                                    bnTypes.Add(bnType);
-                                }
-                            }
-
-                            vehicleSeries.Ereihe = null;
-                            foreach (string modelSeries in modelSeriesHash)
-                            {
-                                vehicleSeries.Baureihenverbund = modelSeries;
-                                BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
-                                if (bnType != BNType.UNKNOWN)
-                                {
-                                    bnTypes.Add(bnType);
-                                }
-                            }
-
-                            if (bnTypes.Count == 0)
-                            {
-                                foreach (string series in seriesHash)
-                                {
-                                    if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
-                                    {
-                                        if (!string.IsNullOrEmpty(characteristicsEntry.ModelSeries))
-                                        {
-                                            vehicleSeries.Baureihenverbund = characteristicsEntry.ModelSeries;
-                                            BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleSeries);
-                                            if (bnType != BNType.UNKNOWN)
-                                            {
-                                                log.InfoFormat("ExtractEcuCharacteristicsVehicles BnType from ModelSeries: Series={0}, ModelSeries={1}, BnType={2}", series, characteristicsEntry.ModelSeries, bnType);
-                                                bnTypes.Add(bnType);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            foreach (string series in seriesHash)
-                            {
-                                if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
-                                {
-                                    vehicleSeries.Ereihe = series;
-                                    if (!string.IsNullOrEmpty(vehicleSeries.Produktlinie))
-                                    {
-                                        vehicleSeries.Produktlinie = characteristicsEntry.ProductLine;
-                                        string sgbdAdditional = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleSeries);
-                                        if (!string.IsNullOrEmpty(sgbdAdditional))
-                                        {
-                                            sgbdAddHash.Add(sgbdAdditional);
-                                        }
-                                    }
-                                }
-                            }
-
-                            BNType? bnTypeSeries = null;
-                            switch (bnTypes.Count)
-                            {
-                                case 0:
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles No BnTypes found: Series={0}, ModelSeries={1}", seriesHash.ToStringItems(), modelSeriesHash.ToStringItems());
-                                    break;
-
-                                case 1:
-                                    bnTypeSeries = bnTypes.First();
-                                    break;
-
-                                default:
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple BnTypes for: Series: {0}, BnTypes: {1}", seriesHash.ToStringItems(), bnTypes.ToStringItems());
-                                    break;
-                            }
-
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Sgbd: {0}, Brand: {1}, Series: {2}, ModelSeries: {3}, BnType: {4}, ProdType: {5}, SgdbAdd: {6}, Date: {7} {8}, Operators: {9}",
-                                baseEcuCharacteristics.brSgbd, brandHash.ToStringItems(), seriesHash.ToStringItems(), modelSeriesHash.ToStringItems(), bnTypeSeries, prodType, sgbdAddHash.ToStringItems(),
-                                dateCompare ?? string.Empty, date ?? string.Empty, operatorHash.ToStringItems());
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(baseEcuCharacteristics, seriesHash.ToList(), modelSeriesHash.ToList(), bnTypeSeries, brandHash.ToList(), sgbdAddHash.ToList(), date, dateCompare));
-                        }
-                    }
-                }
-#endif
                 SerializableDictionary<string, List<VehicleStructsBmw.VehicleSeriesInfo>> sgbdDict = new SerializableDictionary<string, List<VehicleStructsBmw.VehicleSeriesInfo>>();
                 foreach (EcuCharacteristicsInfo ecuCharacteristicsInfo in vehicleSeriesList)
                 {
@@ -4459,135 +4173,39 @@ namespace PsdzClient
                         ecuList.Add(new VehicleStructsBmw.VehicleEcuInfo(ecuLogisticsEntry.DiagAddress, ecuLogisticsEntry.Name, ecuLogisticsEntry.GroupSgbd));
                     }
 
-                    List<Tuple<string, string>> seriesPair = new List<Tuple<string, string>>();
-#if VehicleSeriesByRules
-                    if (ecuCharacteristicsInfo.SeriesList.Count > 0)
+                    string series = ecuCharacteristicsInfo.Series;
+                    string modelSeries = ecuCharacteristicsInfo.ModelSeries;
+                    
+                    if (string.IsNullOrEmpty(series))
                     {
-                        string series = ecuCharacteristicsInfo.SeriesList[0];
-                        string modelSeries = null;
-                        if (ecuCharacteristicsInfo.ModelSeriesList.Count > 0)
-                        {
-                            modelSeries = ecuCharacteristicsInfo.ModelSeriesList[0];
-                        }
-
-                        if (seriesPair.All(x => string.Compare(x.Item1, series, StringComparison.OrdinalIgnoreCase) != 0))
-                        {
-                            seriesPair.Add(new Tuple<string, string>(series, modelSeries));
-                        }
-                    }
-#else
-                    foreach (string series in ecuCharacteristicsInfo.SeriesList)
-                    {
-                        string modelSeries = null;
-                        if (seriesDict.TryGetValue(series.ToUpperInvariant(), out CharacteristicsEntry characteristicsEntry))
-                        {
-                            if (!string.IsNullOrEmpty(characteristicsEntry.ModelSeries))
-                            {
-                                modelSeries = characteristicsEntry.ModelSeries;
-                            }
-                        }
-
-                        if (seriesPair.All(x => string.Compare(x.Item1, series, StringComparison.OrdinalIgnoreCase) != 0))
-                        {
-                            seriesPair.Add(new Tuple<string, string>(series, modelSeries));
-                        }
+                        log.ErrorFormat("ExtractEcuCharacteristicsVehicles Series missing for ModelsSeries: {0}", modelSeries);
+                        continue;
                     }
 
-                    string seriesGlobal = null;
-                    foreach (string modelSeries in ecuCharacteristicsInfo.ModelSeriesList)
+                    string key = series;
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
+
+                    if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                     {
-                        List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
-                        foreach (CharacteristicsEntry characteristics in characteristicsList)
+                        bool sgbdFound = false;
+                        foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                         {
-                            if (!string.IsNullOrEmpty(characteristics.Series))
+                            if (string.Compare(vehicleSeriesInfo.BrSgbd, brSgbd, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                seriesGlobal = characteristics.Series;
-                                break;
+                                sgbdFound = true;
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(seriesGlobal))
+                        if (!sgbdFound)
                         {
-                            break;
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
+                                series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
+                            vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
                         }
                     }
-
-                    foreach (string modelSeries in ecuCharacteristicsInfo.ModelSeriesList)
+                    else
                     {
-                        string series = null;
-                        List<CharacteristicsEntry> characteristicsList = GetModelSeriesFromSeriesDict(seriesDict, modelSeries);
-                        foreach (CharacteristicsEntry characteristics in characteristicsList)
-                        {
-                            if (!string.IsNullOrEmpty(characteristics.Series))
-                            {
-                                series = characteristics.Series;
-                                break;
-                            }
-                        }
-
-                        if (string.IsNullOrEmpty(series))
-                        {
-                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles Using global Series {0} for ModelsSeries: {1}", seriesGlobal, modelSeries);
-                            series = seriesGlobal;
-                        }
-
-                        if (seriesPair.All(x => string.Compare(x.Item1, modelSeries, StringComparison.OrdinalIgnoreCase) != 0))
-                        {
-                            seriesPair.Add(new Tuple<string, string>(series, modelSeries));
-                        }
-                    }
-#endif
-
-                    foreach (Tuple<string, string> keyValuePair in seriesPair)
-                    {
-                        string series = keyValuePair.Item1;
-                        string modelSeries = keyValuePair.Item2;
-
-                        if (string.IsNullOrEmpty(series))
-                        {
-                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles Series missing for ModelsSeries: {0}", modelSeries);
-                            continue;
-                        }
-
-                        List<string> sgdbAdd = new List<string>();
-                        foreach (string sgdb in ecuCharacteristicsInfo.SgdbAddList)
-                        {
-                            if (string.Compare(brSgbd, sgdb, StringComparison.OrdinalIgnoreCase) != 0)
-                            {
-                                sgdbAdd.Add(sgdb);
-                            }
-                        }
-
-                        if (sgdbAdd.Count == 0)
-                        {
-                            sgdbAdd = null;
-                        }
-
-                        string key = series;
-                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, sgdbAdd, bnTypeName, ecuCharacteristicsInfo.BrandList, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
-
-                        if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
-                        {
-                            bool sgbdFound = false;
-                            foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
-                            {
-                                if (string.Compare(vehicleSeriesInfo.BrSgbd, brSgbd, StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    sgbdFound = true;
-                                }
-                            }
-
-                            if (!sgbdFound)
-                            {
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
-                                    series, modelSeries, brSgbd, ecuCharacteristicsInfo.BrandList.ToStringItems());
-                                vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
-                            }
-                        }
-                        else
-                        {
-                            sgbdDict.Add(key, new List<VehicleStructsBmw.VehicleSeriesInfo> { vehicleSeriesInfoAdd });
-                        }
+                        sgbdDict.Add(key, new List<VehicleStructsBmw.VehicleSeriesInfo> { vehicleSeriesInfoAdd });
                     }
                 }
 
@@ -4611,7 +4229,7 @@ namespace PsdzClient
                     foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                     {
                         sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "[{0}, {1}, '{2}' {3} {4}]",
-                            vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.BrandList.ToStringItems(), vehicleSeriesInfo.DateCompare ?? string.Empty, vehicleSeriesInfo.Date ?? string.Empty));
+                            vehicleSeriesInfo.BrSgbd, vehicleSeriesInfo.Series, vehicleSeriesInfo.Brand, vehicleSeriesInfo.DateCompare ?? string.Empty, vehicleSeriesInfo.Date ?? string.Empty));
                     }
                 }
 
@@ -4731,22 +4349,6 @@ namespace PsdzClient
 
             return true;
         }
-
-        private List<CharacteristicsEntry> GetModelSeriesFromSeriesDict(Dictionary<string, CharacteristicsEntry> seriesDict, string modelSeries)
-        {
-            List<CharacteristicsEntry> characteristicsList = new List<CharacteristicsEntry>();
-            foreach (KeyValuePair<string, CharacteristicsEntry> keyValuePair in seriesDict)
-            {
-                if (!string.IsNullOrEmpty(keyValuePair.Value.ModelSeries) &&
-                    string.Compare(keyValuePair.Value.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    characteristicsList.Add(keyValuePair.Value);
-                }
-            }
-
-            return characteristicsList;
-        }
-
 
         private SerializableDictionary<string, VehicleStructsBmw.RuleInfo> ExtractDiagObjRulesInfo(ClientContext clientContext)
         {
