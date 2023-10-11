@@ -573,6 +573,27 @@ namespace PsdzClient
             public string Date { get; set; }
 
             public string DateCompare { get; set; }
+
+            public long GetValue(long yearOffset = 0)
+            {
+                if (string.IsNullOrEmpty(Date))
+                {
+                    return 0;
+                }
+
+                if (Date.Length != 6)
+                {
+                    return 0;
+                }
+
+                long dateValue = Date.ConvertToInt();
+                if (dateValue == 0)
+                {
+                    return 0;
+                }
+
+                return dateValue + (yearOffset * 100);
+            }
         }
 
         private const int MaxCallsLimit = 10;
@@ -3980,6 +4001,7 @@ namespace PsdzClient
                     Vehicle vehicleIdent = keyValuePair.Value.Item1;
                     List<string> dateTypeKeys = keyValuePair.Value.Item2;
                     List<Tuple<BaseEcuCharacteristics, RuleDate>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, RuleDate>>();
+#if false
                     List<ProductionDate> productionDates = GetAllProductionDatesForTypeKeys(dateTypeKeys);
                     ProductionDate productionDateFirst = null;
                     ProductionDate productionDateLast = null;
@@ -3992,7 +4014,7 @@ namespace PsdzClient
                             productionDateLast = productionDates[productionDates.Count - 1];
                         }
                     }
-
+#endif
                     foreach (BordnetsData bordnetsData in boardnetsList)
                     {
                         string date = null;
@@ -4057,26 +4079,35 @@ namespace PsdzClient
                                 EcuList.Add(ecu);
                             }
                             vehicleIdent.ECU = EcuList;
-
+#if false
                             if (productionDateFirst != null)
                             {
                                 vehicleIdent.Modelljahr = productionDateFirst.Year;
                                 vehicleIdent.Modellmonat = productionDateFirst.Month;
                             }
-
+#endif
                             RuleDate ruleDate = new RuleDate(date, dateCompare);
+                            long ruleDatePrev = ruleDate.GetValue(-1);
+                            long ruleDateNext = ruleDate.GetValue(1);
+
+                            if (ruleDatePrev != 0)
+                            {
+                                vehicleIdent.Modelljahr = string.Format(CultureInfo.InvariantCulture, "{0:0000}", ruleDatePrev / 100);
+                                vehicleIdent.Modellmonat = string.Format(CultureInfo.InvariantCulture, "{0:00}", ruleDatePrev % 100);
+                            }
+
                             bordnetsData.XepRule.ResetResult();
                             bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
-                            if (!ruleValid && productionDateLast != null)
+                            if (!ruleValid && ruleDateNext != 0)
                             {
-                                vehicleIdent.Modelljahr = productionDateLast.Year;
-                                vehicleIdent.Modellmonat = productionDateLast.Month;
+                                vehicleIdent.Modelljahr = string.Format(CultureInfo.InvariantCulture, "{0:0000}", ruleDateNext / 100);
+                                vehicleIdent.Modellmonat = string.Format(CultureInfo.InvariantCulture, "{0:00}", ruleDateNext % 100);
 
                                 bordnetsData.XepRule.ResetResult();
                                 ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
                                 if (ruleValid)
                                 {
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", productionDateLast.Year, productionDateLast.Month, ruleFormula);
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", vehicleIdent.Modelljahr, vehicleIdent.Modellmonat, ruleFormula);
                                 }
                             }
 
