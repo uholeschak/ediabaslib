@@ -3999,9 +3999,9 @@ namespace PsdzClient
                 foreach (KeyValuePair<string, Tuple<Vehicle, List<string>>> keyValuePair in vehicleTypeKeyHashes)
                 {
                     Vehicle vehicleIdent = keyValuePair.Value.Item1;
-                    List<string> dateTypeKeys = keyValuePair.Value.Item2;
                     List<Tuple<BaseEcuCharacteristics, RuleDate>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, RuleDate>>();
 #if false
+                    List<string> dateTypeKeys = keyValuePair.Value.Item2;
                     List<ProductionDate> productionDates = GetAllProductionDatesForTypeKeys(dateTypeKeys);
                     ProductionDate productionDateFirst = null;
                     ProductionDate productionDateLast = null;
@@ -4017,8 +4017,7 @@ namespace PsdzClient
 #endif
                     foreach (BordnetsData bordnetsData in boardnetsList)
                     {
-                        string date = null;
-                        string dateCompare = null;
+                        List<RuleDate> ruleDates = new List<RuleDate>();
                         BaseEcuCharacteristics baseEcuCharacteristics = null;
                         if (bordnetsData.DocData != null)
                         {
@@ -4037,9 +4036,16 @@ namespace PsdzClient
                                 {
                                     if (match.Groups.Count == 4 && match.Groups[2].Success && match.Groups[3].Success)
                                     {
-                                        date = match.Groups[3].Value.Trim();
-                                        dateCompare = match.Groups[2].Value.Trim();
-                                        break;
+                                        string date = match.Groups[3].Value.Trim();
+                                        string dateCompare = match.Groups[2].Value.Trim();
+                                        if (!string.IsNullOrEmpty(date) && date.Length == 6 && !string.IsNullOrEmpty(dateCompare))
+                                        {
+                                            RuleDate ruleDate = new RuleDate(date, dateCompare);
+                                            if (ruleDate.GetValue() != 0)
+                                            {
+                                                ruleDates.Add(ruleDate);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -4086,9 +4092,33 @@ namespace PsdzClient
                                 vehicleIdent.Modellmonat = productionDateFirst.Month;
                             }
 #endif
-                            RuleDate ruleDate = new RuleDate(date, dateCompare);
-                            long ruleDatePrev = ruleDate.GetValue(-1);
-                            long ruleDateNext = ruleDate.GetValue(1);
+                            long ruleDatePrev = 0;
+                            long ruleDateNext = 0;
+                            RuleDate ruleDateUse = null;
+                            if (ruleDates.Count > 0)
+                            {
+                                ruleDateUse = ruleDates[0];
+                                if (ruleDates.Count > 1)
+                                {
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple rule dates: {0}", ruleDates.Count);
+                                }
+
+                                foreach (RuleDate ruleDate in ruleDates)
+                                {
+                                    long datePrev = ruleDate.GetValue(-1);
+                                    long dateNext = ruleDate.GetValue(1);
+
+                                    if (ruleDatePrev == 0 || datePrev < ruleDatePrev)
+                                    {
+                                        ruleDatePrev = datePrev;
+                                    }
+
+                                    if (ruleDateNext == 0 || dateNext > ruleDateNext)
+                                    {
+                                        ruleDateNext = dateNext;
+                                    }
+                                }
+                            }
 
                             if (ruleDatePrev != 0)
                             {
@@ -4114,7 +4144,7 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
                             if (ruleValid)
                             {
-                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate>(baseEcuCharacteristics, ruleDate));
+                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate>(baseEcuCharacteristics, ruleDateUse));
                             }
                         }
                     }
