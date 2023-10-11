@@ -542,7 +542,7 @@ namespace PsdzClient
 
         private class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, string series, string modelSeries, BNType? bnType, string brand, string sgbdAdd, string date = null, string dateCompare = null)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, string series, string modelSeries, BNType? bnType, string brand, string sgbdAdd, RuleDate ruleDate = null)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 Series = series;
@@ -550,8 +550,7 @@ namespace PsdzClient
                 BnType = bnType;
                 Brand = brand;
                 SgbdAdd = sgbdAdd;
-                Date = date;
-                DateCompare = dateCompare;
+                RuleDate = ruleDate;
             }
 
             public BaseEcuCharacteristics EcuCharacteristics { get; set; }
@@ -560,24 +559,20 @@ namespace PsdzClient
             public BNType? BnType { get; set; }
             public string Brand { get; set; }
             public string SgbdAdd { get; set; }
-            public string Date { get; set; }
-            public string DateCompare { get; set; }
+            public RuleDate RuleDate { get; set; }
         }
 
-        private class CharacteristicsEntry
+        private class RuleDate
         {
-            public CharacteristicsEntry(string series, string modelSeries, string productType, string productLine)
+            public RuleDate(string date, string dateCompare)
             {
-                Series = series;
-                ModelSeries = modelSeries;
-                ProductType = productType;
-                ProductLine = productLine;
+                Date = date;
+                DateCompare = dateCompare;
             }
 
-            public string Series { get; private set; }
-            public string ModelSeries { get; private set; }
-            public string ProductType { get; private set; }
-            public string ProductLine { get; private set; }
+            public string Date { get; set; }
+
+            public string DateCompare { get; set; }
         }
 
         private const int MaxCallsLimit = 10;
@@ -3921,11 +3916,7 @@ namespace PsdzClient
         {
             try
             {
-                Regex seriesFormulaRegex = new Regex(@"IsValidRuleString\(""(E-Bezeichnung)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex modelSeriesFormulaRegex = new Regex(@"IsValidRuleString\(""(Baureihenverbund)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex brandFormulaRegex = new Regex(@"IsValidRuleString\(""(Marke)"",\s*""([a-z0-9\- ]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex operatorFormulaRegex = new Regex(@"([\&\|\! ]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
 
                 List<string> typeKeys = GetAllTypeKeys();
@@ -3988,7 +3979,7 @@ namespace PsdzClient
                 {
                     Vehicle vehicleIdent = keyValuePair.Value.Item1;
                     List<string> dateTypeKeys = keyValuePair.Value.Item2;
-                    List<Tuple<BaseEcuCharacteristics, ProductionDate>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, ProductionDate>>();
+                    List<Tuple<BaseEcuCharacteristics, RuleDate>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, RuleDate>>();
                     List<ProductionDate> productionDates = GetAllProductionDatesForTypeKeys(dateTypeKeys);
                     ProductionDate productionDateFirst = null;
                     ProductionDate productionDateLast = null;
@@ -4004,6 +3995,8 @@ namespace PsdzClient
 
                     foreach (BordnetsData bordnetsData in boardnetsList)
                     {
+                        string date = null;
+                        string dateCompare = null;
                         BaseEcuCharacteristics baseEcuCharacteristics = null;
                         if (bordnetsData.DocData != null)
                         {
@@ -4012,7 +4005,23 @@ namespace PsdzClient
 
                         if (baseEcuCharacteristics != null && bordnetsData.XepRule != null)
                         {
-                            string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleIdent);
+                            string ruleFormula = bordnetsData.XepRule.GetRuleFormula(vehicleIdent, formulaConfig);
+                            string[] formulaParts = ruleFormula.Split('|');
+
+                            foreach (string formulaPart in formulaParts)
+                            {
+                                MatchCollection dateMatches = dateFormulaRegex.Matches(formulaPart);
+                                foreach (Match match in dateMatches)
+                                {
+                                    if (match.Groups.Count == 4 && match.Groups[2].Success && match.Groups[3].Success)
+                                    {
+                                        date = match.Groups[3].Value.Trim();
+                                        dateCompare = match.Groups[2].Value.Trim();
+                                        break;
+                                    }
+                                }
+                            }
+
                             ObservableCollection<ECU> EcuList = new ObservableCollection<ECU>();
                             foreach (IEcuLogisticsEntry ecuLogisticsEntry in baseEcuCharacteristics.ecuTable)
                             {
@@ -4055,7 +4064,7 @@ namespace PsdzClient
                                 vehicleIdent.Modellmonat = productionDateFirst.Month;
                             }
 
-                            ProductionDate productionDateUsed = productionDateFirst;
+                            RuleDate ruleDate = new RuleDate(date, dateCompare);
                             bordnetsData.XepRule.ResetResult();
                             bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
                             if (!ruleValid && productionDateLast != null)
@@ -4067,15 +4076,14 @@ namespace PsdzClient
                                 ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
                                 if (ruleValid)
                                 {
-                                    productionDateUsed = productionDateLast;
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", productionDateUsed.Year, productionDateUsed.Month, ruleFormula);
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", productionDateLast.Year, productionDateLast.Month, ruleFormula);
                                 }
                             }
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
                             if (ruleValid)
                             {
-                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, ProductionDate>(baseEcuCharacteristics, productionDateUsed));
+                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate>(baseEcuCharacteristics, ruleDate));
                             }
                         }
                     }
@@ -4083,26 +4091,17 @@ namespace PsdzClient
                     if (validCharacteristics.Count >= 1)
                     {
                         log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}, Count={3}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke, validCharacteristics.Count);
-                        foreach (Tuple<BaseEcuCharacteristics, ProductionDate> characteristicsTuple in validCharacteristics)
+                        foreach (Tuple<BaseEcuCharacteristics, RuleDate> characteristicsTuple in validCharacteristics)
                         {
                             string series = vehicleIdent.Ereihe;
                             string modelSeries = vehicleIdent.Baureihenverbund;
                             string brandName = vehicleIdent.BrandName?.ToString();
+                            RuleDate ruleDate = characteristicsTuple.Item2;
 
                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
                             string sgbdAdd = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
 
-                            string date = null;
-                            if (characteristicsTuple.Item2 != null)
-                            {
-                                long dateValue = characteristicsTuple.Item2.GetValue();
-                                if (dateValue > 0)
-                                {
-                                    date = string.Format(CultureInfo.InvariantCulture, "{0:000000}", dateValue);
-                                }
-                            }
-
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristicsTuple.Item1, series, modelSeries, bnType, brandName, sgbdAdd, date));
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristicsTuple.Item1, series, modelSeries, bnType, brandName, sgbdAdd, ruleDate));
                         }
                     }
                     else
@@ -4182,7 +4181,7 @@ namespace PsdzClient
                     }
 
                     string key = series.Trim().ToUpperInvariant();
-                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ecuList, ecuCharacteristicsInfo.Date, ecuCharacteristicsInfo.DateCompare);
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ecuList, ecuCharacteristicsInfo.RuleDate?.Date, ecuCharacteristicsInfo.RuleDate?.DateCompare);
 
                     if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                     {
