@@ -4072,6 +4072,8 @@ namespace PsdzClient
                                 }
                             }
 
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule date count: {0}", ruleDates.Count);
+
                             ObservableCollection<ECU> EcuList = new ObservableCollection<ECU>();
                             foreach (IEcuLogisticsEntry ecuLogisticsEntry in baseEcuCharacteristics.ecuTable)
                             {
@@ -4115,34 +4117,48 @@ namespace PsdzClient
                             }
 #endif
                             RuleDate ruleDateUse = null;
-                            if (ruleDates.Count > 0)
+                            int ruleDateIndex = 0;
+                            bool ruleValid;
+                            for (;;)
                             {
-                                ruleDateUse = ruleDates[0];
-                                if (ruleDates.Count > 1)
+                                if (ruleDates.Count > ruleDateIndex)
                                 {
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple rule dates: {0}", ruleDates.Count);
+                                    ruleDateUse = ruleDates[ruleDateIndex];
                                 }
-                            }
 
-                            if (ruleDateUse != null)
-                            {
-                                vehicleIdent.Modelljahr = ruleDateUse.GetYear(-1);
-                                vehicleIdent.Modellmonat = ruleDateUse.GetMonth(-1);
-                            }
-
-                            bordnetsData.XepRule.ResetResult();
-                            bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
-                            if (!ruleValid && ruleDateUse != null)
-                            {
-                                vehicleIdent.Modelljahr = ruleDateUse.GetYear(1);
-                                vehicleIdent.Modellmonat = ruleDateUse.GetMonth(1);
+                                if (ruleDateUse != null)
+                                {
+                                    vehicleIdent.Modelljahr = ruleDateUse.GetYear(-1);
+                                    vehicleIdent.Modellmonat = ruleDateUse.GetMonth(-1);
+                                }
 
                                 bordnetsData.XepRule.ResetResult();
                                 ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                if (!ruleValid && ruleDateUse != null)
+                                {
+                                    vehicleIdent.Modelljahr = ruleDateUse.GetYear(1);
+                                    vehicleIdent.Modellmonat = ruleDateUse.GetMonth(1);
+
+                                    bordnetsData.XepRule.ResetResult();
+                                    ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                    if (ruleValid)
+                                    {
+                                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", vehicleIdent.Modelljahr, vehicleIdent.Modellmonat, ruleFormula);
+                                    }
+                                }
+
                                 if (ruleValid)
                                 {
-                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0} {1} for formula: {2}", vehicleIdent.Modelljahr, vehicleIdent.Modellmonat, ruleFormula);
+                                    break;
                                 }
+
+                                ruleDateIndex++;
+                                if (ruleDateIndex >= ruleDates.Count)
+                                {
+                                    break;
+                                }
+
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Trying date index: {0}", ruleDateIndex);
                             }
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
