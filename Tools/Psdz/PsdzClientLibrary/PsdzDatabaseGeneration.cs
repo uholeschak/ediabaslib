@@ -594,6 +594,28 @@ namespace PsdzClient
 
                 return dateValue + (yearOffset * 100);
             }
+
+            public string GetYear(long yearOffset = 0)
+            {
+                long dateValue = GetValue(yearOffset);
+                if (dateValue == 0)
+                {
+                    return string.Empty;
+                }
+
+                return string.Format(CultureInfo.InvariantCulture, "{0:0000}", dateValue / 100);
+            }
+
+            public string GetMonth(long yearOffset = 0)
+            {
+                long dateValue = GetValue(yearOffset);
+                if (dateValue == 0)
+                {
+                    return string.Empty;
+                }
+
+                return string.Format(CultureInfo.InvariantCulture, "{0:00}", dateValue % 100);
+            }
         }
 
         private const int MaxCallsLimit = 10;
@@ -4092,8 +4114,6 @@ namespace PsdzClient
                                 vehicleIdent.Modellmonat = productionDateFirst.Month;
                             }
 #endif
-                            long ruleDatePrev = 0;
-                            long ruleDateNext = 0;
                             RuleDate ruleDateUse = null;
                             if (ruleDates.Count > 0)
                             {
@@ -4102,36 +4122,20 @@ namespace PsdzClient
                                 {
                                     log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple rule dates: {0}", ruleDates.Count);
                                 }
-
-                                foreach (RuleDate ruleDate in ruleDates)
-                                {
-                                    long datePrev = ruleDate.GetValue(-1);
-                                    long dateNext = ruleDate.GetValue(1);
-
-                                    if (ruleDatePrev == 0 || datePrev < ruleDatePrev)
-                                    {
-                                        ruleDatePrev = datePrev;
-                                    }
-
-                                    if (ruleDateNext == 0 || dateNext > ruleDateNext)
-                                    {
-                                        ruleDateNext = dateNext;
-                                    }
-                                }
                             }
 
-                            if (ruleDatePrev != 0)
+                            if (ruleDateUse != null)
                             {
-                                vehicleIdent.Modelljahr = string.Format(CultureInfo.InvariantCulture, "{0:0000}", ruleDatePrev / 100);
-                                vehicleIdent.Modellmonat = string.Format(CultureInfo.InvariantCulture, "{0:00}", ruleDatePrev % 100);
+                                vehicleIdent.Modelljahr = ruleDateUse.GetYear(-1);
+                                vehicleIdent.Modellmonat = ruleDateUse.GetMonth(-1);
                             }
 
                             bordnetsData.XepRule.ResetResult();
                             bool ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
-                            if (!ruleValid && ruleDateNext != 0)
+                            if (!ruleValid && ruleDateUse != null)
                             {
-                                vehicleIdent.Modelljahr = string.Format(CultureInfo.InvariantCulture, "{0:0000}", ruleDateNext / 100);
-                                vehicleIdent.Modellmonat = string.Format(CultureInfo.InvariantCulture, "{0:00}", ruleDateNext % 100);
+                                vehicleIdent.Modelljahr = ruleDateUse.GetYear(1);
+                                vehicleIdent.Modellmonat = ruleDateUse.GetMonth(1);
 
                                 bordnetsData.XepRule.ResetResult();
                                 ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
