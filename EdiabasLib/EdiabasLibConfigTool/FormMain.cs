@@ -739,6 +739,8 @@ namespace EdiabasLibConfigTool
 
             bool istadValid = Patch.IsValid(_ediabasDirIstad);
             groupBoxIstad.Enabled = true;
+            textBoxIstaLocation.Enabled = true;
+            textBoxIstaLocation.Text = _ediabasDirIstad ?? string.Empty;
             buttonDirIstad.Enabled = allowRestore;
             buttonPatchIstad.Enabled = istadValid && allowPatch;
             buttonRestoreIstad.Enabled = istadValid && allowRestore && Patch.IsPatched(_ediabasDirIstad);
