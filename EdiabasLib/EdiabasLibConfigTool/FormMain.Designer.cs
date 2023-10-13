@@ -245,6 +245,7 @@
             resources.ApplyResources(this.textBoxIstaLocation, "textBoxIstaLocation");
             this.textBoxIstaLocation.Name = "textBoxIstaLocation";
             this.textBoxIstaLocation.ReadOnly = true;
+            this.textBoxIstaLocation.TabStop = false;
             // 
             // FormMain
             // 
