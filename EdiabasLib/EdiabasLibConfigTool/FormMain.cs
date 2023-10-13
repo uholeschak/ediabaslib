@@ -205,56 +205,61 @@ namespace EdiabasLibConfigTool
 
             try
             {
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Softing\EDIS-VW2"))
+                using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
                 {
-                    string path = key?.GetValue("EDIABASPath", null) as string;
-                    if (!string.IsNullOrEmpty(path))
+                    using (RegistryKey key = localMachine32.OpenSubKey(@"SOFTWARE\Softing\EDIS-VW2"))
                     {
-                        string dirVag = Path.Combine(path, @"bin");
-                        if (Patch.IsValid(dirVag))
+                        string path = key?.GetValue("EDIABASPath", null) as string;
+                        if (!string.IsNullOrEmpty(path))
                         {
-                            _ediabasDirVag = dirVag;
+                            string dirVag = Path.Combine(path, @"bin");
+                            if (Patch.IsValid(dirVag))
+                            {
+                                _ediabasDirVag = dirVag;
+                            }
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(_ediabasDirVag))
+                    {
+                        using (RegistryKey key = localMachine32.OpenSubKey(@"Software\SIDIS\ENV"))
+                        {
+                            string dirVag = key?.GetValue("FLASHINIPATH", null) as string;
+                            if (Patch.IsValid(dirVag))
+                            {
+                                _ediabasDirVag = dirVag;
+                            }
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(_ediabasDirVag))
+                    {
+                        using (RegistryKey currentUser32 = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32))
+                        {
+                            using (RegistryKey key = currentUser32.OpenSubKey(@"Software\Softing\VASEGD2"))
+                            {
+                                string dirVag = key?.GetValue("strEdiabasApi32Path", null) as string;
+                                if (Patch.IsValid(dirVag))
+                                {
+                                    _ediabasDirVag = dirVag;
+                                }
+                            }
+                        }
+                    }
+
+                    using (RegistryKey key = localMachine32.OpenSubKey(@"SOFTWARE\BMWGroup\ISPI\ISTA"))
+                    {
+                        string path = key?.GetValue("InstallLocation", null) as string;
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            string dirIstad = Path.Combine(path, @"Ediabas", @"BIN");
+                            if (Patch.IsValid(dirIstad))
+                            {
+                                _ediabasDirIstad = dirIstad;
+                            }
                         }
                     }
                 }
-
-                if (string.IsNullOrEmpty(_ediabasDirVag))
-                {
-                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\SIDIS\ENV"))
-                    {
-                        string dirVag = key?.GetValue("FLASHINIPATH", null) as string;
-                        if (Patch.IsValid(dirVag))
-                        {
-                            _ediabasDirVag = dirVag;
-                        }
-                    }
-                }
-
-                if (string.IsNullOrEmpty(_ediabasDirVag))
-                {
-                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Softing\VASEGD2"))
-                    {
-                        string dirVag = key?.GetValue("strEdiabasApi32Path", null) as string;
-                        if (Patch.IsValid(dirVag))
-                        {
-                            _ediabasDirVag = dirVag;
-                        }
-                    }
-                }
-
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\BMWGroup\ISPI\ISTA"))
-                {
-                    string path = key?.GetValue("InstallLocation", null) as string;
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        string dirIstad = Path.Combine(path, @"Ediabas", @"BIN");
-                        if (Patch.IsValid(dirIstad))
-                        {
-                            _ediabasDirIstad = dirIstad;
-                        }
-                    }
-                }
-
             }
             catch (Exception)
             {
