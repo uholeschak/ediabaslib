@@ -55,6 +55,7 @@
             this.buttonRestoreIstad = new System.Windows.Forms.Button();
             this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
             this.labelLanguage = new System.Windows.Forms.Label();
+            this.textBoxIstaLocation = new System.Windows.Forms.TextBox();
             this.groupBoxEdiabas.SuspendLayout();
             this.groupBoxVasPc.SuspendLayout();
             this.groupBoxIstad.SuspendLayout();
@@ -197,6 +198,7 @@
             // 
             // groupBoxIstad
             // 
+            this.groupBoxIstad.Controls.Add(this.textBoxIstaLocation);
             this.groupBoxIstad.Controls.Add(this.buttonDirIstad);
             this.groupBoxIstad.Controls.Add(this.buttonPatchIstad);
             this.groupBoxIstad.Controls.Add(this.buttonRestoreIstad);
@@ -238,6 +240,12 @@
             resources.ApplyResources(this.labelLanguage, "labelLanguage");
             this.labelLanguage.Name = "labelLanguage";
             // 
+            // textBoxIstaLocation
+            // 
+            resources.ApplyResources(this.textBoxIstaLocation, "textBoxIstaLocation");
+            this.textBoxIstaLocation.Name = "textBoxIstaLocation";
+            this.textBoxIstaLocation.ReadOnly = true;
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -267,6 +275,7 @@
             this.groupBoxEdiabas.ResumeLayout(false);
             this.groupBoxVasPc.ResumeLayout(false);
             this.groupBoxIstad.ResumeLayout(false);
+            this.groupBoxIstad.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -300,6 +309,7 @@
         private System.Windows.Forms.Button buttonDirIstad;
         private System.Windows.Forms.ComboBox comboBoxLanguage;
         private System.Windows.Forms.Label labelLanguage;
+        private System.Windows.Forms.TextBox textBoxIstaLocation;
     }
 }
 
