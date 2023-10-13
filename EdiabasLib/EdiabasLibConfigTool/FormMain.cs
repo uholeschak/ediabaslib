@@ -217,6 +217,7 @@ namespace EdiabasLibConfigTool
                         }
                     }
                 }
+
                 if (string.IsNullOrEmpty(_ediabasDirVag))
                 {
                     using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"Software\SIDIS\ENV"))
@@ -228,6 +229,7 @@ namespace EdiabasLibConfigTool
                         }
                     }
                 }
+
                 if (string.IsNullOrEmpty(_ediabasDirVag))
                 {
                     using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Softing\VASEGD2"))
@@ -239,6 +241,20 @@ namespace EdiabasLibConfigTool
                         }
                     }
                 }
+
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\BMWGroup\ISPI\ISTA"))
+                {
+                    string path = key?.GetValue("InstallLocation", null) as string;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        string dirIstad = Path.Combine(path, @"Ediabas", @"BIN");
+                        if (Patch.IsValid(dirIstad))
+                        {
+                            _ediabasDirIstad = dirIstad;
+                        }
+                    }
+                }
+
             }
             catch (Exception)
             {
