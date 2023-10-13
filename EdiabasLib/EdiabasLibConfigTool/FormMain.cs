@@ -205,6 +205,15 @@ namespace EdiabasLibConfigTool
 
             try
             {
+                _ediabasDirIstad = Properties.Settings.Default.IstadDir;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            try
+            {
                 using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
                 {
                     using (RegistryKey key = localMachine32.OpenSubKey(@"SOFTWARE\Softing\EDIS-VW2"))
@@ -260,14 +269,6 @@ namespace EdiabasLibConfigTool
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-            try
-            {
-                _ediabasDirIstad = Properties.Settings.Default.IstadDir;
             }
             catch (Exception)
             {
