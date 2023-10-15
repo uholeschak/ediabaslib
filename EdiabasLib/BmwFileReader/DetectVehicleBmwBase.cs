@@ -709,6 +709,16 @@ namespace BmwFileReader
             }
         }
 
+        public bool IsMotorbike()
+        {
+            if (!string.IsNullOrEmpty(ProductType))
+            {
+                return string.Compare(ProductType, "M", StringComparison.OrdinalIgnoreCase) == 0;
+            }
+
+            return false;
+        }
+
         // from: Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.HandleECUGroups
         public void HandleSpecialEcus(List<EcuInfo> ecusToRemove = null)
         {
