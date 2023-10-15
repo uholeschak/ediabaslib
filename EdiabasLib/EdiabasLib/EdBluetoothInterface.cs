@@ -99,21 +99,54 @@ namespace EdiabasLib
                     {
                         InTheHand.Net.BluetoothAddress btAddress = InTheHand.Net.BluetoothAddress.Parse(stringList[0]);
                         string pin = stringList[1];
-                        InTheHand.Net.Sockets.BluetoothDeviceInfo device = new InTheHand.Net.Sockets.BluetoothDeviceInfo(btAddress);
-                        long startTimeDisconnect = Stopwatch.GetTimestamp();
-                        for (; ; )
+                        InTheHand.Net.Sockets.BluetoothDeviceInfo device = null;
+#if true
+                        System.Reflection.Assembly inTheHandAssembly = typeof(InTheHand.Net.BluetoothAddress).Assembly;
+                        Type btDeviceInfoType = inTheHandAssembly.GetType("InTheHand.Net.Sockets.BluetoothDeviceInfo");
+                        if (btDeviceInfoType != null)
                         {
-                            device.Refresh();
-                            if (!device.Connected)
+                            System.Reflection.ConstructorInfo[] btDeviceInfoConstructors = btDeviceInfoType.GetConstructors(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+                            if (btDeviceInfoConstructors.Length == 1)
                             {
-                                break;
+                                System.Reflection.ParameterInfo[] btDeviceInfoConstructorParameters = btDeviceInfoConstructors[0].GetParameters();
+                                if (btDeviceInfoConstructorParameters.Length == 1)
+                                {
+                                    object[] args = new object[] { btAddress };
+                                    try
+                                    {
+                                        device = btDeviceInfoConstructors[0].Invoke(args) as InTheHand.Net.Sockets.BluetoothDeviceInfo;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** BluetoothDeviceInfo constructor exception: {0}", EdiabasNet.GetExceptionText(ex));
+                                    }
+                                }
                             }
+                        }
+#else
+                        device = new InTheHand.Net.Sockets.BluetoothDeviceInfo(btAddress);
+#endif
+                        if (device != null)
+                        {
+                            long startTimeDisconnect = Stopwatch.GetTimestamp();
+                            for (; ; )
+                            {
+                                device.Refresh();
+                                if (!device.Connected)
+                                {
+                                    break;
+                                }
 
-                            if ((Stopwatch.GetTimestamp() - startTimeDisconnect) / EdCustomAdapterCommon.TickResolMs > BtDisconnectTimeout)
-                            {
-                                break;
+                                if ((Stopwatch.GetTimestamp() - startTimeDisconnect) / EdCustomAdapterCommon.TickResolMs > BtDisconnectTimeout)
+                                {
+                                    break;
+                                }
+                                Thread.Sleep(100);
                             }
-                            Thread.Sleep(100);
+                        }
+                        else
+                        {
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** BluetoothDeviceInfo is null");
                         }
 #if BT3
                         InTheHand.Net.Bluetooth.BluetoothSecurity.SetPin(btAddress, pin);
@@ -122,10 +155,14 @@ namespace EdiabasLib
                         BtClient = new InTheHand.Net.Sockets.BluetoothClient();
                         BtClient.SetPin(pin);
 #else
-                        if (!device.Authenticated)
+                        if (device != null)
                         {
-                            InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
+                            if (!device.Authenticated)
+                            {
+                                InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
+                            }
                         }
+
                         InTheHand.Net.BluetoothEndPoint ep =
                             new InTheHand.Net.BluetoothEndPoint(btAddress, InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
                         BtClient = new InTheHand.Net.Sockets.BluetoothClient();
@@ -139,10 +176,14 @@ namespace EdiabasLib
                             Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Connect failed, removing device");
                             InTheHand.Net.Bluetooth.BluetoothSecurity.RemoveDevice(btAddress);
                             Thread.Sleep(1000);
-                            device.Refresh();
-                            if (!device.Authenticated)
+
+                            if (device != null)
                             {
-                                InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
+                                device.Refresh();
+                                if (!device.Authenticated)
+                                {
+                                    InTheHand.Net.Bluetooth.BluetoothSecurity.PairRequest(btAddress, pin);
+                                }
                             }
 
                             BtClient.Connect(ep);
@@ -152,7 +193,7 @@ namespace EdiabasLib
                         Thread.Sleep(BtConnectDelay);
                     }
 #endif
-                    else
+                        else
                     {
                         InterfaceDisconnect(true);
                         return false;
@@ -166,7 +207,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Connect failure: {0}", ex.Message);
+                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Connect failure: {0}", EdiabasNet.GetExceptionText(ex));
                 InterfaceDisconnect(true);
                 return false;
             }
