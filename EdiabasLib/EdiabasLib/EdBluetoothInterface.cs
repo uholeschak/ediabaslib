@@ -102,7 +102,12 @@ namespace EdiabasLib
                         InTheHand.Net.Sockets.BluetoothDeviceInfo device = null;
 #if true
                         System.Reflection.Assembly inTheHandAssembly = typeof(InTheHand.Net.BluetoothAddress).Assembly;
-                        Type btDeviceInfoType = inTheHandAssembly.GetType("InTheHand.Net.Sockets.BluetoothDeviceInfo");
+                        Type btDeviceInfoType = inTheHandAssembly.GetType("InTheHand.Net.Sockets.Win32BluetoothDeviceInfo");
+                        if (btDeviceInfoType == null)
+                        {   // old type
+                            btDeviceInfoType = inTheHandAssembly.GetType("InTheHand.Net.Sockets.BluetoothDeviceInfo");
+                        }
+
                         if (btDeviceInfoType != null)
                         {
                             System.Reflection.ConstructorInfo[] btDeviceInfoConstructors = btDeviceInfoType.GetConstructors(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
