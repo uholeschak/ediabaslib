@@ -52,7 +52,6 @@ namespace BmwFileReader
 
         public string Vin { get; protected set; }
         public string TypeKey { get; protected set; }
-        public string VinSgdb { get; protected set; }
         public string GroupSgdb { get; protected set; }
         public string SgdbAdd { get; protected set; }
         public string ModelSeries { get; protected set; }
@@ -981,7 +980,6 @@ namespace BmwFileReader
         {
             Vin = null;
             TypeKey = null;
-            VinSgdb = null;
             GroupSgdb = null;
             SgdbAdd = null;
             ModelSeries = null;

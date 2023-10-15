@@ -97,6 +97,7 @@ namespace PsdzClient
                 int index = 0;
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets;
+                JobInfo jobInfoVin = null;
                 JobInfo jobInfoEcuList = null;
                 foreach (JobInfo jobInfo in readVinJobsBmwFast)
                 {
@@ -136,10 +137,10 @@ namespace PsdzClient
                                 // ReSharper disable once AssignNullToNotNullAttribute
                                 if (!string.IsNullOrEmpty(vin) && VinRegex.IsMatch(vin))
                                 {
+                                    jobInfoVin = jobInfo;
                                     Vin = vin;
-                                    VinSgdb = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                                     BnType = jobInfo.BnType;
-                                    LogInfoFormat("Detected VIN: {0}, VinSgdb={1}, BnType={2}", Vin, VinSgdb, BnType);
+                                    LogInfoFormat("Detected VIN: {0}, BnType={1}", Vin, BnType);
                                     break;
                                 }
                             }

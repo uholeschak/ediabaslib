@@ -183,6 +183,7 @@ namespace BmwFileReader
 
                 ProgressFunc?.Invoke(0);
 
+                JobInfo jobInfoVin = null;
                 JobInfo jobInfoEcuList = null;
                 int jobCount = readVinJobsBmwFast.Count + readFaJobsBmwFast.Count + readILevelJobsBmwFast.Count;
                 int indexOffset = 0;
@@ -227,10 +228,10 @@ namespace BmwFileReader
                                 // ReSharper disable once AssignNullToNotNullAttribute
                                 if (!string.IsNullOrEmpty(vin) && VinRegex.IsMatch(vin))
                                 {
+                                    jobInfoVin = jobInfo;
                                     Vin = vin;
-                                    VinSgdb = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                                     BnType = jobInfo.BnType;
-                                    LogInfoFormat("Detected VIN: {0}, VinSgdb={1}, BnType={2}", Vin, VinSgdb, BnType);
+                                    LogInfoFormat("Detected VIN: {0}, BnType={1}", Vin, BnType);
                                     break;
                                 }
                             }
@@ -364,13 +365,14 @@ namespace BmwFileReader
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo == null)
                 {
-                    if (!IsMotorbike())
+                    if (!jobInfoVin.Motorbike)
                     {
                         LogInfoFormat("Vehicle series info not found, aborting");
                         return false;
                     }
 
-                    LogInfoFormat("Vehicle series info not found but motorbike");
+                    GroupSgdb = jobInfoVin.SgdbName;
+                    LogInfoFormat("Vehicle series info not found, using motorbike group SGBD: {0}", GroupSgdb);
                 }
                 else
                 {
