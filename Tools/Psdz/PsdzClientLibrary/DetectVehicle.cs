@@ -137,8 +137,9 @@ namespace PsdzClient
                                 if (!string.IsNullOrEmpty(vin) && VinRegex.IsMatch(vin))
                                 {
                                     Vin = vin;
+                                    VinSgdb = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                                     BnType = jobInfo.BnType;
-                                    LogInfoFormat("Detected VIN: {0}, BnType={1}", Vin, BnType);
+                                    LogInfoFormat("Detected VIN: {0}, VinSgdb={1}, BnType={2}", Vin, VinSgdb, BnType);
                                     break;
                                 }
                             }
