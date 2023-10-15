@@ -363,19 +363,27 @@ namespace BmwFileReader
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo == null)
                 {
-                    LogInfoFormat("Vehicle series info not found");
-                    return false;
-                }
+                    if (!IsMotorbike())
+                    {
+                        LogInfoFormat("Vehicle series info not found, aborting");
+                        return false;
+                    }
 
-                VehicleSeriesInfo = vehicleSeriesInfo;
-                GroupSgdb = vehicleSeriesInfo.BrSgbd;
-                SgdbAdd = vehicleSeriesInfo.SgdbAdd;
-                if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
+                    LogInfoFormat("Vehicle series info not found but motorbike");
+                }
+                else
                 {
-                    BnType = vehicleSeriesInfo.BnType;
+                    VehicleSeriesInfo = vehicleSeriesInfo;
+                    GroupSgdb = vehicleSeriesInfo.BrSgbd;
+                    SgdbAdd = vehicleSeriesInfo.SgdbAdd;
+                    if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
+                    {
+                        BnType = vehicleSeriesInfo.BnType;
+                    }
+
+                    Brand = vehicleSeriesInfo.Brand;
                 }
 
-                Brand = vehicleSeriesInfo.Brand;
                 LogInfoFormat("Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
 
                 EcuList.Clear();
@@ -441,7 +449,7 @@ namespace BmwFileReader
                                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                     {
                                         string groupSgbd = null;
-                                        if (vehicleSeriesInfo.EcuList != null)
+                                        if (vehicleSeriesInfo != null && vehicleSeriesInfo.EcuList != null)
                                         {
                                             foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in vehicleSeriesInfo.EcuList)
                                             {
