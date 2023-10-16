@@ -3421,155 +3421,203 @@ namespace BmwDeepObd
                             }
 
                             ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
+                            ForceLoadSgbd();
 
-                            for (int identRetry = 0; identRetry < 10; identRetry++)
+                            if (_ediabas.IsJobExisting("IDENT_FUNKTIONAL"))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu ident retry: {0}", identRetry + 1);
-
-                                int localMaxSteps = maxSteps;
-                                int localStep = currentStep;
-                                RunOnUiThread(() =>
+                                for (int identRetry = 0; identRetry < 10; identRetry++)
                                 {
-                                    if (_activityCommon == null)
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu ident retry: {0}", identRetry + 1);
+
+                                    int localMaxSteps = maxSteps;
+                                    int localStep = currentStep;
+                                    RunOnUiThread(() =>
                                     {
-                                        return;
-                                    }
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
 
-                                    if (progress != null)
+                                        if (progress != null)
+                                        {
+                                            progress.Progress = 100 * localStep / localMaxSteps;
+                                        }
+                                    });
+
+                                    int lastEcuListSize = ecuList.Count;
+
+                                    _ediabas.ArgString = string.Empty;
+                                    _ediabas.ArgBinaryStd = null;
+                                    _ediabas.ResultsRequests = string.Empty;
+                                    _ediabas.ExecuteJob("IDENT_FUNKTIONAL");
+
+                                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                                    if (resultSets != null && resultSets.Count >= 2)
                                     {
-                                        progress.Progress = 100 * localStep / localMaxSteps;
-                                    }
-                                });
-
-                                int lastEcuListSize = ecuList.Count;
-
-                                _ediabas.ArgString = string.Empty;
-                                _ediabas.ArgBinaryStd = null;
-                                _ediabas.ResultsRequests = string.Empty;
-                                _ediabas.ExecuteJob("IDENT_FUNKTIONAL");
-
-                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                                if (resultSets != null && resultSets.Count >= 2)
-                                {
-                                    int dictIndex = 0;
-                                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
-                                    {
-                                        if (dictIndex == 0)
+                                        int dictIndex = 0;
+                                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDict in resultSets)
                                         {
-                                            dictIndex++;
-                                            continue;
-                                        }
-                                        bool ecuDataPresent = false;
-                                        string ecuName = string.Empty;
-                                        Int64 ecuAdr = -1;
-                                        string ecuDesc = string.Empty;
-                                        string ecuSgbd = string.Empty;
-                                        string ecuGroup = string.Empty;
-                                        Int64 dateYear = 0;
-                                        // ReSharper disable once InlineOutVariableDeclaration
-                                        EdiabasNet.ResultData resultData;
-                                        if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
-                                        {
-                                            if (resultData.OpData is string)
+                                            if (dictIndex == 0)
                                             {
-                                                ecuName = (string)resultData.OpData;
+                                                dictIndex++;
+                                                continue;
                                             }
-                                        }
-                                        if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
-                                        {
-                                            if (resultData.OpData is Int64)
+                                            bool ecuDataPresent = false;
+                                            string ecuName = string.Empty;
+                                            Int64 ecuAdr = -1;
+                                            string ecuDesc = string.Empty;
+                                            string ecuSgbd = string.Empty;
+                                            string ecuGroup = string.Empty;
+                                            Int64 dateYear = 0;
+                                            // ReSharper disable once InlineOutVariableDeclaration
+                                            EdiabasNet.ResultData resultData;
+                                            if (resultDict.TryGetValue("ECU_GROBNAME", out resultData))
                                             {
-                                                ecuAdr = (Int64)resultData.OpData;
-                                            }
-                                        }
-                                        if (resultDict.TryGetValue("ECU_NAME", out resultData))
-                                        {
-                                            if (resultData.OpData is string)
-                                            {
-                                                ecuDesc = (string)resultData.OpData;
-                                            }
-                                        }
-                                        if (resultDict.TryGetValue("ECU_SGBD", out resultData))
-                                        {
-                                            ecuDataPresent = true;
-                                            if (resultData.OpData is string)
-                                            {
-                                                ecuSgbd = (string)resultData.OpData;
-                                            }
-                                        }
-                                        if (resultDict.TryGetValue("ECU_GRUPPE", out resultData))
-                                        {
-                                            ecuDataPresent = true;
-                                            if (resultData.OpData is string)
-                                            {
-                                                ecuGroup = (string)resultData.OpData;
-                                            }
-                                        }
-                                        if (resultDict.TryGetValue("ID_DATUM_JAHR", out resultData))
-                                        {
-                                            if (resultData.OpData is Int64)
-                                            {
-                                                dateYear = (Int64)resultData.OpData;
-                                            }
-                                        }
-
-                                        if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr && !string.IsNullOrEmpty(ecuSgbd))
-                                        {
-                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU found: Name={0}, Addr={1}, Desc={2}, Sgdb={3}, Group={4}, Date={5}",
-                                                ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup, dateYear);
-                                            if (!EcuListContainsAddr(ecuList, ecuAdr))
-                                            {
-                                                // address not existing
-                                                EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
-                                                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                                if (resultData.OpData is string)
                                                 {
-                                                    string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
-                                                    EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
-                                                    if (ecuVariant == null)
+                                                    ecuName = (string)resultData.OpData;
+                                                }
+                                            }
+                                            if (resultDict.TryGetValue("ID_SG_ADR", out resultData))
+                                            {
+                                                if (resultData.OpData is Int64)
+                                                {
+                                                    ecuAdr = (Int64)resultData.OpData;
+                                                }
+                                            }
+                                            if (resultDict.TryGetValue("ECU_NAME", out resultData))
+                                            {
+                                                if (resultData.OpData is string)
+                                                {
+                                                    ecuDesc = (string)resultData.OpData;
+                                                }
+                                            }
+                                            if (resultDict.TryGetValue("ECU_SGBD", out resultData))
+                                            {
+                                                ecuDataPresent = true;
+                                                if (resultData.OpData is string)
+                                                {
+                                                    ecuSgbd = (string)resultData.OpData;
+                                                }
+                                            }
+                                            if (resultDict.TryGetValue("ECU_GRUPPE", out resultData))
+                                            {
+                                                ecuDataPresent = true;
+                                                if (resultData.OpData is string)
+                                                {
+                                                    ecuGroup = (string)resultData.OpData;
+                                                }
+                                            }
+                                            if (resultDict.TryGetValue("ID_DATUM_JAHR", out resultData))
+                                            {
+                                                if (resultData.OpData is Int64)
+                                                {
+                                                    dateYear = (Int64)resultData.OpData;
+                                                }
+                                            }
+
+                                            if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr && !string.IsNullOrEmpty(ecuSgbd))
+                                            {
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU found: Name={0}, Addr={1}, Desc={2}, Sgdb={3}, Group={4}, Date={5}",
+                                                    ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup, dateYear);
+                                                if (!EcuListContainsAddr(ecuList, ecuAdr))
+                                                {
+                                                    // address not existing
+                                                    EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
+                                                    if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                                     {
-                                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL No ECU variant found for: Sgbd={0}, Addr={1}, Group={2}", ecuSgbdName, ecuInfo.Address, ecuInfo.Grp);
-                                                    }
-                                                    else
-                                                    {
-                                                        string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
-                                                        if (!string.IsNullOrEmpty(title))
+                                                        string ecuSgbdName = ecuInfo.Sgbd ?? string.Empty;
+                                                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                                        if (ecuVariant == null)
                                                         {
-                                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
-                                                            ecuInfo.PageName = title;
-                                                            ecuInfo.Description = title;
-                                                            ecuInfo.DescriptionTransRequired = false;
+                                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL No ECU variant found for: Sgbd={0}, Addr={1}, Group={2}", ecuSgbdName, ecuInfo.Address, ecuInfo.Grp);
+                                                        }
+                                                        else
+                                                        {
+                                                            string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                            if (!string.IsNullOrEmpty(title))
+                                                            {
+                                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
+                                                                ecuInfo.PageName = title;
+                                                                ecuInfo.Description = title;
+                                                                ecuInfo.DescriptionTransRequired = false;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    ecuList.Add(ecuInfo);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (ecuDataPresent)
+                                                {
+                                                    if (DetectVehicleBmwBase.IsValidEcuName(ecuName) && (dateYear != 0))
+                                                    {
+                                                        if (!invalidAddrList.Contains(ecuAdr))
+                                                        {
+                                                            invalidAddrList.Add(ecuAdr);
                                                         }
                                                     }
                                                 }
+                                            }
+                                            dictIndex++;
+                                        }
+                                    }
 
-                                                ecuList.Add(ecuInfo);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (ecuDataPresent)
-                                            {
-                                                if (DetectVehicleBmwBase.IsValidEcuName(ecuName) && (dateYear != 0))
-                                                {
-                                                    if (!invalidAddrList.Contains(ecuAdr))
-                                                    {
-                                                        invalidAddrList.Add(ecuAdr);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        dictIndex++;
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect EcuListSize={0}, EcuListSizeOld={1}", ecuList.Count, lastEcuListSize);
+                                    if (ecuList.Count == lastEcuListSize)
+                                    {
+                                        break;
+                                    }
+
+                                    maxSteps++;
+                                    currentStep++;
+                                }
+                            }
+                            else
+                            {
+                                _ediabas.ArgString = string.Empty;
+                                _ediabas.ArgBinaryStd = null;
+                                _ediabas.ResultsRequests = string.Empty;
+                                _ediabas.ExecuteJob("IDENT");
+
+                                string ecuSgbdName = null;
+                                List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
+                                if (resultSets != null && resultSets.Count >= 2)
+                                {
+                                    Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
+                                    if (EdiabasThread.IsJobStatusOk(resultDict))
+                                    {
+                                        ecuSgbdName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Single ECU detected: {0}", ecuSgbdName);
+                                        break;
                                     }
                                 }
 
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect EcuListSize={0}, EcuListSizeOld={1}", ecuList.Count, lastEcuListSize);
-                                if (ecuList.Count == lastEcuListSize)
+                                if (!string.IsNullOrEmpty(ecuSgbdName))
                                 {
-                                    break;
+                                    if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                                    {
+                                        EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
+                                        if (ecuVariant == null)
+                                        {
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT No ECU variant found for: Sgbd={0}", ecuSgbdName);
+                                        }
+                                        else
+                                        {
+                                            string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                            if (!string.IsNullOrEmpty(title))
+                                            {
+                                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT ECU variant found for: Sgbd={0}, Name={1}, Group={2}, Title={3}",
+                                                    ecuSgbdName, ecuVariant.EcuName, ecuVariant.GroupName, title);
+                                                EcuInfo ecuInfo = new EcuInfo(ecuVariant.EcuName, -1, title, ecuSgbdName, ecuVariant.GroupName);
+                                                ecuInfo.DescriptionTransRequired = false;
+                                                ecuList.Add(ecuInfo);
+                                            }
+                                        }
+                                    }
                                 }
-
-                                maxSteps++;
-                                currentStep++;
                             }
                         }
                         catch (Exception)
