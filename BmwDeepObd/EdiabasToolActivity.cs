@@ -2685,7 +2685,7 @@ namespace BmwDeepObd
                             bool jobOk = false;
                             if (resultSets != null && resultSets.Count > 1)
                             {
-                                if (EdiabasThread.IsJobStatusOk(resultSets[resultSets.Count - 1]))
+                                if (EdiabasThread.IsJobStatusOk(resultSets[^1]))
                                 {
                                     jobOk = true;
                                 }
