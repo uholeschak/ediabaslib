@@ -3618,6 +3618,7 @@ namespace BmwDeepObd
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Single ECU detected: {0}", ecuSgbdName);
                                             if (!EcuListContainsAddr(ecuList, ecuAdr))
                                             {
+                                                EcuInfo ecuInfo = new EcuInfo(ecuSgbdName.ToUpperInvariant(), ecuAdr, string.Empty, ecuSgbdName, fileName.ToUpperInvariant());
                                                 if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                                 {
                                                     EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
@@ -3627,17 +3628,25 @@ namespace BmwDeepObd
                                                     }
                                                     else
                                                     {
+                                                        string ecuName = ecuVariant.EcuName ?? string.Empty;
+                                                        string groupName = ecuVariant.GroupName ?? string.Empty;
+                                                        ecuInfo.Name = ecuName.ToUpperInvariant();
+                                                        ecuInfo.EcuName = ecuName.ToUpperInvariant();
+                                                        ecuInfo.Grp = groupName.ToUpperInvariant();
+
                                                         string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
                                                         if (!string.IsNullOrEmpty(title))
                                                         {
                                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT ECU variant found for: Sgbd={0}, Name={1}, Group={2}, Title={3}",
                                                                 ecuSgbdName, ecuVariant.EcuName, ecuVariant.GroupName, title);
-                                                            EcuInfo ecuInfo = new EcuInfo(ecuVariant.EcuName, ecuAdr, title, ecuSgbdName, ecuVariant.GroupName);
+                                                            ecuInfo.PageName = title;
+                                                            ecuInfo.Description = title;
                                                             ecuInfo.DescriptionTransRequired = false;
-                                                            ecuList.Add(ecuInfo);
                                                         }
                                                     }
                                                 }
+
+                                                ecuList.Add(ecuInfo);
                                             }
                                         }
 
