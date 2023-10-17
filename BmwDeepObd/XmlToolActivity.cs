@@ -3413,6 +3413,7 @@ namespace BmwDeepObd
                     foreach (string fileName in ecuFileNameList)
                     {
                         bool singleEcu = false;
+                        bool detetedEcus = false;
 
                         try
                         {
@@ -3522,6 +3523,7 @@ namespace BmwDeepObd
 
                                             if (!string.IsNullOrEmpty(ecuName) && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr && !string.IsNullOrEmpty(ecuSgbd))
                                             {
+                                                detetedEcus = true;
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU found: Name={0}, Addr={1}, Desc={2}, Sgdb={3}, Group={4}, Date={5}",
                                                     ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup, dateYear);
                                                 if (!EcuListContainsAddr(ecuList, ecuAdr))
@@ -3619,6 +3621,7 @@ namespace BmwDeepObd
 
                                         if (jobOk && ecuAdr >= 0 && ecuAdr <= VehicleStructsBmw.MaxEcuAddr)
                                         {
+                                            detetedEcus = true;
                                             string ecuSgbdName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Single ECU detected: {0}", ecuSgbdName);
                                             if (!EcuListContainsAddr(ecuList, ecuAdr))
@@ -3665,25 +3668,29 @@ namespace BmwDeepObd
                             // ignored
                         }
 
-                        if (ecuList.Count > 0)
+                        if (detetedEcus)
                         {
-                            ecuInvalidCount = 0;
-                            // ReSharper disable once LoopCanBeConvertedToQuery
-                            foreach (long addr in invalidAddrList)
-                            {
-                                if (!EcuListContainsAddr(ecuList, addr))
-                                {
-                                    ecuInvalidCount++;
-                                }
-                            }
-
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect result: count={0}, invalid={1}", ecuList.Count, ecuInvalidCount);
-                            ecuListUse = ecuList;
                             if (!singleEcu && string.IsNullOrEmpty(ecuFileNameUse))
                             {
                                 ecuFileNameUse = fileName;
                             }
                         }
+                    }
+
+                    if (ecuList.Count > 0)
+                    {
+                        ecuInvalidCount = 0;
+                        // ReSharper disable once LoopCanBeConvertedToQuery
+                        foreach (long addr in invalidAddrList)
+                        {
+                            if (!EcuListContainsAddr(ecuList, addr))
+                            {
+                                ecuInvalidCount++;
+                            }
+                        }
+
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Detect result: count={0}, invalid={1}", ecuList.Count, ecuInvalidCount);
+                        ecuListUse = ecuList;
                     }
                 }
 
