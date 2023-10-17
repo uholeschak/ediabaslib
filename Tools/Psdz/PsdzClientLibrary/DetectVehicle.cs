@@ -282,48 +282,57 @@ namespace PsdzClient
                 VehicleStructsBmw.VersionInfo versionInfo = VehicleInfoBmw.GetVehicleSeriesInfoVersion();
                 if (versionInfo == null)
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "Vehicle series no version info");
+                    LogErrorFormat("Vehicle series no version info");
                     return DetectResult.InvalidDatabase;
                 }
 
                 PsdzDatabase.DbInfo dbInfo = _pdszDatabase.GetDbInfo();
                 if (dbInfo == null)
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast no DbInfo");
+                    LogErrorFormat("DetectVehicleBmwFast no DbInfo");
                     return DetectResult.InvalidDatabase;
                 }
 
                 if (!versionInfo.IsMinVersion(dbInfo.Version, dbInfo.DateTime))
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "DetectVehicleBmwFast Vehicles series too old");
+                    LogErrorFormat("DetectVehicleBmwFast Vehicles series too old");
                     return DetectResult.InvalidDatabase;
                 }
 
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
                 if (vehicleSeriesInfo == null)
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "Vehicle series info not found");
+                    if (!jobInfoVin.Motorbike)
+                    {
+                        LogErrorFormat("Vehicle series info not found, aborting");
+                        return DetectResult.InvalidDatabase;
+                    }
+
+                    GroupSgdb = jobInfoVin.SgdbName;
+                    LogInfoFormat("Vehicle series info not found, using motorbike group SGBD: {0}", GroupSgdb);
                     return DetectResult.InvalidDatabase;
                 }
-
-                LogInfoFormat("Group SGBD: {0}", vehicleSeriesInfo.BrSgbd);
-                VehicleSeriesInfo = vehicleSeriesInfo;
-                GroupSgdb = vehicleSeriesInfo.BrSgbd;
-                SgdbAdd = vehicleSeriesInfo.SgdbAdd;
-                if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
+                else
                 {
-                    BnType = vehicleSeriesInfo.BnType;
-                }
+                    VehicleSeriesInfo = vehicleSeriesInfo;
+                    GroupSgdb = vehicleSeriesInfo.BrSgbd;
+                    SgdbAdd = vehicleSeriesInfo.SgdbAdd;
+                    if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
+                    {
+                        BnType = vehicleSeriesInfo.BnType;
+                    }
 
-                Brand = vehicleSeriesInfo.Brand;
+                    Brand = vehicleSeriesInfo.Brand;
+                }
 
                 if (_abortRequest)
                 {
                     return DetectResult.Aborted;
                 }
 
-                EcuList.Clear();
+                LogInfoFormat("Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
 
+                EcuList.Clear();
                 try
                 {
                     _ediabas.ResolveSgbdFile(GroupSgdb);
