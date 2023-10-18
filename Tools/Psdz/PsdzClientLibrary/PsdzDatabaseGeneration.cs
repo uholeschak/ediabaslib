@@ -4021,7 +4021,7 @@ namespace PsdzClient
                 foreach (KeyValuePair<string, Tuple<Vehicle, List<string>>> keyValuePair in vehicleTypeKeyHashes)
                 {
                     Vehicle vehicleIdent = keyValuePair.Value.Item1;
-                    List<Tuple<BaseEcuCharacteristics, RuleDate>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, RuleDate>>();
+                    List<Tuple<BaseEcuCharacteristics, RuleDate, string>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, RuleDate, string>>();
 
                     foreach (BordnetsData bordnetsData in boardnetsList)
                     {
@@ -4144,15 +4144,25 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
                             if (ruleValid)
                             {
-                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate>(baseEcuCharacteristics, ruleDateUse));
+                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate, string>(baseEcuCharacteristics, ruleDateUse, ruleFormula));
                             }
                         }
                     }
 
                     if (validCharacteristics.Count >= 1)
                     {
-                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}, Count={3}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke, validCharacteristics.Count);
-                        foreach (Tuple<BaseEcuCharacteristics, RuleDate> characteristicsTuple in validCharacteristics)
+                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Characteristics: ER={0}, BR={1}, Brand={2}", vehicleIdent.Ereihe, vehicleIdent.Baureihenverbund, vehicleIdent.Marke);
+                        if (validCharacteristics.Count > 1)
+                        {
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple characteristicts found: Count={0}", validCharacteristics.Count);
+                            foreach (Tuple<BaseEcuCharacteristics, RuleDate, string> characteristicsTuple in validCharacteristics)
+                            {
+                                string ruleFormula = characteristicsTuple.Item3;
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Match rule: {0}", ruleFormula);
+                            }
+                        }
+
+                        foreach (Tuple<BaseEcuCharacteristics, RuleDate, string> characteristicsTuple in validCharacteristics)
                         {
                             string series = vehicleIdent.Ereihe;
                             string modelSeries = vehicleIdent.Baureihenverbund;
