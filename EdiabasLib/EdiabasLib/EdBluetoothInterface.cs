@@ -99,15 +99,9 @@ namespace EdiabasLib
                     {
                         InTheHand.Net.BluetoothAddress btAddress = InTheHand.Net.BluetoothAddress.Parse(stringList[0]);
                         string pin = stringList[1];
-                        InTheHand.Net.Sockets.BluetoothDeviceInfo device = null;
-#if true
                         System.Reflection.Assembly inTheHandAssembly = typeof(InTheHand.Net.BluetoothAddress).Assembly;
                         Type btDeviceInfoType = inTheHandAssembly.GetType("InTheHand.Net.Sockets.Win32BluetoothDeviceInfo");
-                        if (btDeviceInfoType == null)
-                        {   // old type
-                            btDeviceInfoType = inTheHandAssembly.GetType("InTheHand.Net.Sockets.BluetoothDeviceInfo");
-                        }
-
+                        InTheHand.Net.Sockets.BluetoothDeviceInfo device = null;
                         if (btDeviceInfoType != null)
                         {
                             System.Reflection.ConstructorInfo[] btDeviceInfoConstructors = btDeviceInfoType.GetConstructors(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
@@ -128,9 +122,7 @@ namespace EdiabasLib
                                 }
                             }
                         }
-#else
-                        device = new InTheHand.Net.Sockets.BluetoothDeviceInfo(btAddress);
-#endif
+
                         if (device != null)
                         {
                             long startTimeDisconnect = Stopwatch.GetTimestamp();
@@ -198,7 +190,7 @@ namespace EdiabasLib
                         Thread.Sleep(BtConnectDelay);
                     }
 #endif
-                        else
+                    else
                     {
                         InterfaceDisconnect(true);
                         return false;
