@@ -4021,7 +4021,7 @@ namespace PsdzClient
                 foreach (KeyValuePair<string, Tuple<Vehicle, List<string>>> keyValuePair in vehicleTypeKeyHashes)
                 {
                     Vehicle vehicleIdent = keyValuePair.Value.Item1;
-                    List<Tuple<BaseEcuCharacteristics, RuleDate, string>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, RuleDate, string>>();
+                    List<Tuple<BaseEcuCharacteristics, RuleDate, int, string>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, RuleDate, int, string>>();
 
                     foreach (BordnetsData bordnetsData in boardnetsList)
                     {
@@ -4139,57 +4139,73 @@ namespace PsdzClient
                                 EcuListCollection.Add(EcuList3);
                             }
 
-                            vehicleIdent.ECU = EcuListCollection[0];
-
                             RuleDate ruleDateUse = null;
-                            int ruleDateIndex = 0;
-                            bool ruleValid;
-                            for (;;)
+                            int ecuListIndexUse = -1;
+                            bool ruleValid = false;
+                            for (int ecuListIndex = 0; ecuListIndex < EcuListCollection.Count; ecuListIndex++)
                             {
-                                if (ruleDates.Count > ruleDateIndex)
-                                {
-                                    ruleDateUse = ruleDates[ruleDateIndex];
-                                }
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Trying ecu list index: {0}", ecuListIndex);
+                                vehicleIdent.ECU = EcuListCollection[ecuListIndex];
 
-                                if (ruleDateUse != null)
+                                ruleDateUse = null;
+                                int ruleDateIndex = 0;
+                                for (; ; )
                                 {
-                                    vehicleIdent.Modelljahr = ruleDateUse.GetYear(-1);
-                                    vehicleIdent.Modellmonat = ruleDateUse.GetMonth(-1);
-                                }
+                                    if (ruleDates.Count > ruleDateIndex)
+                                    {
+                                        ruleDateUse = ruleDates[ruleDateIndex];
+                                    }
 
-                                bordnetsData.XepRule.ResetResult();
-                                ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
-                                if (!ruleValid && ruleDateUse != null)
-                                {
-                                    vehicleIdent.Modelljahr = ruleDateUse.GetYear(1);
-                                    vehicleIdent.Modellmonat = ruleDateUse.GetMonth(1);
+                                    if (ruleDateUse != null)
+                                    {
+                                        vehicleIdent.Modelljahr = ruleDateUse.GetYear(-1);
+                                        vehicleIdent.Modellmonat = ruleDateUse.GetMonth(-1);
+                                    }
 
                                     bordnetsData.XepRule.ResetResult();
                                     ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                    if (!ruleValid && ruleDateUse != null)
+                                    {
+                                        vehicleIdent.Modelljahr = ruleDateUse.GetYear(1);
+                                        vehicleIdent.Modellmonat = ruleDateUse.GetMonth(1);
+
+                                        bordnetsData.XepRule.ResetResult();
+                                        ruleValid = bordnetsData.XepRule.EvaluateRule(vehicleIdent, null);
+                                        if (ruleValid)
+                                        {
+                                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0}-{1} for formula: {2}", vehicleIdent.Modelljahr, vehicleIdent.Modellmonat, ruleFormula);
+                                        }
+                                    }
+
                                     if (ruleValid)
                                     {
-                                        log.InfoFormat("ExtractEcuCharacteristicsVehicles Date required: {0}-{1} for formula: {2}", vehicleIdent.Modelljahr, vehicleIdent.Modellmonat, ruleFormula);
+                                        break;
                                     }
+
+                                    ruleDateIndex++;
+                                    if (ruleDateIndex >= ruleDates.Count)
+                                    {
+                                        break;
+                                    }
+
+                                    log.InfoFormat("ExtractEcuCharacteristicsVehicles Trying date index: {0}", ruleDateIndex);
                                 }
 
                                 if (ruleValid)
                                 {
+                                    ecuListIndexUse = ecuListIndex;
                                     break;
                                 }
-
-                                ruleDateIndex++;
-                                if (ruleDateIndex >= ruleDates.Count)
-                                {
-                                    break;
-                                }
-
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Trying date index: {0}", ruleDateIndex);
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: {0}, rule: {1}", ruleValid, ruleFormula);
                             if (ruleValid)
                             {
-                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate, string>(baseEcuCharacteristics, ruleDateUse, ruleFormula));
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: ecu list: {0}, rule: {1}", ecuListIndexUse, ruleFormula);
+                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate, int, string>(baseEcuCharacteristics, ruleDateUse, ecuListIndexUse, ruleFormula));
+                            }
+                            else
+                            {
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule not valid: rule: {0}", ruleFormula);
                             }
                         }
                     }
@@ -4200,19 +4216,20 @@ namespace PsdzClient
                         if (validCharacteristics.Count > 1)
                         {
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple characteristicts found: Count={0}", validCharacteristics.Count);
-                            foreach (Tuple<BaseEcuCharacteristics, RuleDate, string> characteristicsTuple in validCharacteristics)
+                            foreach (Tuple<BaseEcuCharacteristics, RuleDate, int, string> characteristicsTuple in validCharacteristics)
                             {
-                                string ruleFormula = characteristicsTuple.Item3;
+                                string ruleFormula = characteristicsTuple.Item4;
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Match rule: {0}", ruleFormula);
                             }
                         }
 
-                        foreach (Tuple<BaseEcuCharacteristics, RuleDate, string> characteristicsTuple in validCharacteristics)
+                        foreach (Tuple<BaseEcuCharacteristics, RuleDate, int, string> characteristicsTuple in validCharacteristics)
                         {
                             string series = vehicleIdent.Ereihe;
                             string modelSeries = vehicleIdent.Baureihenverbund;
                             string brandName = vehicleIdent.BrandName?.ToString();
                             RuleDate ruleDate = characteristicsTuple.Item2;
+                            int ecuListIndex = characteristicsTuple.Item3;
 
                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
                             string sgbdAdd = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
