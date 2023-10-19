@@ -4060,41 +4060,86 @@ namespace PsdzClient
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule date count: {0}", ruleDates.Count);
 
-                            ObservableCollection<ECU> EcuList = new ObservableCollection<ECU>();
+                            ObservableCollection<ECU> EcuList1 = new ObservableCollection<ECU>();
+                            ObservableCollection<ECU> EcuList2 = new ObservableCollection<ECU>();
+                            ObservableCollection<ECU> EcuList3 = new ObservableCollection<ECU>();
+                            int maxEcuList = 1;
                             foreach (IEcuLogisticsEntry ecuLogisticsEntry in baseEcuCharacteristics.ecuTable)
                             {
-                                ECU ecu = new ECU();
-                                ecu.ID_SG_ADR = ecuLogisticsEntry.DiagAddress;
-                                ecu.ECU_GRUPPE = ecuLogisticsEntry.GroupSgbd;
+                                ECU ecu1 = new ECU();
+                                ecu1.ID_SG_ADR = ecuLogisticsEntry.DiagAddress;
+                                ecu1.ECU_GRUPPE = ecuLogisticsEntry.GroupSgbd;
+
+                                ECU ecu2 = null;
+                                ECU ecu3 = null;
 
                                 if (!string.IsNullOrEmpty(ecuLogisticsEntry.GroupSgbd))
                                 {
                                     if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_MMI", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        ecu.ECU_SGBD = "enavevo";
+                                        ecu1.ECU_SGBD = "enavevo";
 
-                                        ECU ecu2 = new ECU();
-                                        ecu2.ID_SG_ADR = ecu.ID_SG_ADR;
-                                        ecu2.ECU_GRUPPE = ecu.ECU_GRUPPE;
+                                        ecu2 = new ECU();
+                                        ecu2.ID_SG_ADR = ecu1.ID_SG_ADR;
+                                        ecu2.ECU_GRUPPE = ecu1.ECU_GRUPPE;
                                         ecu2.ECU_SGBD = "hu_mgu";
-                                        EcuList.Add(ecu2);
 
-                                        ECU ecu3 = new ECU();
-                                        ecu3.ID_SG_ADR = ecu.ID_SG_ADR;
-                                        ecu3.ECU_GRUPPE = ecu.ECU_GRUPPE;
+                                        ecu3 = new ECU();
+                                        ecu3.ID_SG_ADR = ecu1.ID_SG_ADR;
+                                        ecu3.ECU_GRUPPE = ecu1.ECU_GRUPPE;
                                         ecu3.ECU_SGBD = "nbtevo";
-                                        EcuList.Add(ecu3);
                                     }
 
                                     if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_ACC", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        ecu.ECU_SGBD = "mrr_30";
+                                        ecu1.ECU_SGBD = "mrr_30";
                                     }
                                 }
 
-                                EcuList.Add(ecu);
+                                EcuList1.Add(ecu1);
+                                if (ecu2 != null)
+                                {
+                                    EcuList2.Add(ecu2);
+                                    if (maxEcuList < 2)
+                                    {
+                                        maxEcuList = 2;
+                                    }
+                                }
+                                else
+                                {
+                                    EcuList2.Add(ecu1);
+                                }
+
+                                if (ecu3 != null)
+                                {
+                                    EcuList3.Add(ecu3);
+                                    if (maxEcuList < 3)
+                                    {
+                                        maxEcuList = 3;
+                                    }
+                                }
+                                else
+                                {
+                                    EcuList2.Add(ecu1);
+                                }
                             }
-                            vehicleIdent.ECU = EcuList;
+
+                            List<ObservableCollection<ECU>> EcuListCollection = new List<ObservableCollection<ECU>>
+                            {
+                                EcuList1 
+                            };
+
+                            if (maxEcuList >= 2)
+                            {
+                                EcuListCollection.Add(EcuList2);
+                            }
+
+                            if (maxEcuList >= 3)
+                            {
+                                EcuListCollection.Add(EcuList3);
+                            }
+
+                            vehicleIdent.ECU = EcuListCollection[0];
 
                             RuleDate ruleDateUse = null;
                             int ruleDateIndex = 0;
