@@ -4021,7 +4021,7 @@ namespace PsdzClient
                 foreach (KeyValuePair<string, Tuple<Vehicle, List<string>>> keyValuePair in vehicleTypeKeyHashes)
                 {
                     Vehicle vehicleIdent = keyValuePair.Value.Item1;
-                    List<Tuple<BaseEcuCharacteristics, RuleDate, int, string>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, RuleDate, int, string>>();
+                    List<Tuple<BaseEcuCharacteristics, RuleDate, string, string>> validCharacteristics = new List<Tuple<BaseEcuCharacteristics, RuleDate, string, string>>();
 
                     foreach (BordnetsData bordnetsData in boardnetsList)
                     {
@@ -4060,9 +4060,9 @@ namespace PsdzClient
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule date count: {0}", ruleDates.Count);
 
-                            ObservableCollection<ECU> EcuList1 = new ObservableCollection<ECU>();
-                            ObservableCollection<ECU> EcuList2 = new ObservableCollection<ECU>();
-                            ObservableCollection<ECU> EcuList3 = new ObservableCollection<ECU>();
+                            ObservableCollection<ECU> ecuList1 = new ObservableCollection<ECU>();
+                            ObservableCollection<ECU> ecuList2 = new ObservableCollection<ECU>();
+                            ObservableCollection<ECU> ecuList3 = new ObservableCollection<ECU>();
                             int maxEcuList = 1;
                             foreach (IEcuLogisticsEntry ecuLogisticsEntry in baseEcuCharacteristics.ecuTable)
                             {
@@ -4096,10 +4096,10 @@ namespace PsdzClient
                                     }
                                 }
 
-                                EcuList1.Add(ecu1);
+                                ecuList1.Add(ecu1);
                                 if (ecu2 != null)
                                 {
-                                    EcuList2.Add(ecu2);
+                                    ecuList2.Add(ecu2);
                                     if (maxEcuList < 2)
                                     {
                                         maxEcuList = 2;
@@ -4107,12 +4107,12 @@ namespace PsdzClient
                                 }
                                 else
                                 {
-                                    EcuList2.Add(ecu1);
+                                    ecuList2.Add(ecu1);
                                 }
 
                                 if (ecu3 != null)
                                 {
-                                    EcuList3.Add(ecu3);
+                                    ecuList3.Add(ecu3);
                                     if (maxEcuList < 3)
                                     {
                                         maxEcuList = 3;
@@ -4120,32 +4120,32 @@ namespace PsdzClient
                                 }
                                 else
                                 {
-                                    EcuList2.Add(ecu1);
+                                    ecuList2.Add(ecu1);
                                 }
                             }
 
-                            List<ObservableCollection<ECU>> EcuListCollection = new List<ObservableCollection<ECU>>
+                            List<ObservableCollection<ECU>> ecuListCollection = new List<ObservableCollection<ECU>>
                             {
-                                EcuList1 
+                                ecuList1 
                             };
 
                             if (maxEcuList >= 2)
                             {
-                                EcuListCollection.Add(EcuList2);
+                                ecuListCollection.Add(ecuList2);
                             }
 
                             if (maxEcuList >= 3)
                             {
-                                EcuListCollection.Add(EcuList3);
+                                ecuListCollection.Add(ecuList3);
                             }
 
                             RuleDate ruleDateUse = null;
-                            int ecuListIndexUse = -1;
+                            ObservableCollection<ECU> ecuListUse = null;
                             bool ruleValid = false;
-                            for (int ecuListIndex = 0; ecuListIndex < EcuListCollection.Count; ecuListIndex++)
+                            for (int ecuListIndex = 0; ecuListIndex < ecuListCollection.Count; ecuListIndex++)
                             {
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Trying ecu list index: {0}", ecuListIndex);
-                                vehicleIdent.ECU = EcuListCollection[ecuListIndex];
+                                vehicleIdent.ECU = ecuListCollection[ecuListIndex];
 
                                 ruleDateUse = null;
                                 int ruleDateIndex = 0;
@@ -4193,15 +4193,30 @@ namespace PsdzClient
 
                                 if (ruleValid)
                                 {
-                                    ecuListIndexUse = ecuListIndex;
+                                    ecuListUse = vehicleIdent.ECU;
                                     break;
                                 }
                             }
 
                             if (ruleValid)
                             {
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: ecu list: {0}, rule: {1}", ecuListIndexUse, ruleFormula);
-                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate, int, string>(baseEcuCharacteristics, ruleDateUse, ecuListIndexUse, ruleFormula));
+                                StringBuilder sbEcus = new StringBuilder();
+                                if (ecuListUse != null)
+                                {
+                                    foreach (ECU ecu in ecuListUse)
+                                    {
+                                        if (!string.IsNullOrEmpty(ecu.ECU_SGBD))
+                                        {
+                                            if (sbEcus.Length > 0)
+                                            {
+                                                sbEcus.Append("|");
+                                            }
+                                            sbEcus.Append(ecu.ECU_SGBD);
+                                        }
+                                    }
+                                }
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: ECUs: {0}, rule: {1}", sbEcus, ruleFormula);
+                                validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate, string, string>(baseEcuCharacteristics, ruleDateUse, sbEcus.ToString(), ruleFormula));
                             }
                             else
                             {
@@ -4216,20 +4231,21 @@ namespace PsdzClient
                         if (validCharacteristics.Count > 1)
                         {
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple characteristicts found: Count={0}", validCharacteristics.Count);
-                            foreach (Tuple<BaseEcuCharacteristics, RuleDate, int, string> characteristicsTuple in validCharacteristics)
+                            foreach (Tuple<BaseEcuCharacteristics, RuleDate, string, string> characteristicsTuple in validCharacteristics)
                             {
+                                string ecus = characteristicsTuple.Item3;
                                 string ruleFormula = characteristicsTuple.Item4;
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Match rule: {0}", ruleFormula);
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Match ECUs: {0}, Rule: {1}", ecus, ruleFormula);
                             }
                         }
 
-                        foreach (Tuple<BaseEcuCharacteristics, RuleDate, int, string> characteristicsTuple in validCharacteristics)
+                        foreach (Tuple<BaseEcuCharacteristics, RuleDate, string, string> characteristicsTuple in validCharacteristics)
                         {
                             string series = vehicleIdent.Ereihe;
                             string modelSeries = vehicleIdent.Baureihenverbund;
                             string brandName = vehicleIdent.BrandName?.ToString();
                             RuleDate ruleDate = characteristicsTuple.Item2;
-                            int ecuListIndex = characteristicsTuple.Item3;
+                            string ecus = characteristicsTuple.Item3;
 
                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
                             string sgbdAdd = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
