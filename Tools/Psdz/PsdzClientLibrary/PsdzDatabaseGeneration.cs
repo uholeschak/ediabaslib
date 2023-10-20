@@ -4203,18 +4203,25 @@ namespace PsdzClient
                                 StringBuilder sbEcus = new StringBuilder();
                                 if (ecuListUse != null)
                                 {
+                                    HashSet<string> hashEcus = new HashSet<string>();
                                     foreach (ECU ecu in ecuListUse)
                                     {
                                         if (!string.IsNullOrEmpty(ecu.ECU_SGBD))
                                         {
-                                            if (sbEcus.Length > 0)
-                                            {
-                                                sbEcus.Append("|");
-                                            }
-                                            sbEcus.Append(ecu.ECU_SGBD);
+                                            hashEcus.Add(ecu.ECU_SGBD);
                                         }
                                     }
+
+                                    foreach (string ecuName in hashEcus)
+                                    {
+                                        if (sbEcus.Length > 0)
+                                        {
+                                            sbEcus.Append("|");
+                                        }
+                                        sbEcus.Append(ecuName);
+                                    }
                                 }
+
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: ECUs: {0}, rule: {1}", sbEcus, ruleFormula);
                                 validCharacteristics.Add(new Tuple<BaseEcuCharacteristics, RuleDate, string, string>(baseEcuCharacteristics, ruleDateUse, sbEcus.ToString(), ruleFormula));
                             }
