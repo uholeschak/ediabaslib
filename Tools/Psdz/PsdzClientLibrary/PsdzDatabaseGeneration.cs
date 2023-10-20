@@ -559,7 +559,7 @@ namespace PsdzClient
 
         private class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, string series, string modelSeries, BNType? bnType, string brand, string sgbdAdd, RuleDate ruleDate = null)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, string series, string modelSeries, BNType? bnType, string brand, string sgbdAdd, RuleDate ruleDate, string ruleEcus)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 Series = series;
@@ -568,6 +568,7 @@ namespace PsdzClient
                 Brand = brand;
                 SgbdAdd = sgbdAdd;
                 RuleDate = ruleDate;
+                RuleEcus = ruleEcus;
             }
 
             public BaseEcuCharacteristics EcuCharacteristics { get; set; }
@@ -577,6 +578,7 @@ namespace PsdzClient
             public string Brand { get; set; }
             public string SgbdAdd { get; set; }
             public RuleDate RuleDate { get; set; }
+            public string RuleEcus { get; set; }
         }
 
         private class RuleDate
@@ -4275,7 +4277,7 @@ namespace PsdzClient
                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
                             string sgbdAdd = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
 
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristicsMatch.EcuCharacteristics, series, modelSeries, bnType, brandName, sgbdAdd, ruleDate));
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristicsMatch.EcuCharacteristics, series, modelSeries, bnType, brandName, sgbdAdd, ruleDate, ruleEcus));
                         }
                     }
                     else
@@ -4355,7 +4357,7 @@ namespace PsdzClient
                     }
 
                     string key = series.Trim().ToUpperInvariant();
-                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ecuList, ecuCharacteristicsInfo.RuleDate?.Date, ecuCharacteristicsInfo.RuleDate?.DateCompare);
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ecuList, ecuCharacteristicsInfo.RuleDate?.Date, ecuCharacteristicsInfo.RuleDate?.DateCompare, ecuCharacteristicsInfo.RuleEcus);
 
                     if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                     {
