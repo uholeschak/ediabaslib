@@ -4260,9 +4260,10 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple characteristicts found: Count={0}", validCharacteristics.Count);
                             foreach (EcuCharacteristicsMatch characteristicsMatch in validCharacteristics)
                             {
+                                string ruleDateString = characteristicsMatch.RuleDate?.Date ?? string.Empty;
                                 string ruleEcus = characteristicsMatch.RuleEcus;
                                 string ruleFormula = characteristicsMatch.RuleFormula;
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Match ECUs: {0}, Rule: {1}", ruleEcus, ruleFormula);
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Match ECUs: {0}, Date: {1}, Rule: {2}", ruleEcus, ruleDateString, ruleFormula);
                             }
                         }
 
