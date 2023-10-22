@@ -4114,27 +4114,31 @@ namespace PsdzClient
                                 {
                                     if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_MMI", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        if (ruleEcus.Contains("enavevo", StringComparer.OrdinalIgnoreCase))
+                                        const string NameEnavevo = "enavevo";
+                                        if (ruleEcus.Contains(NameEnavevo, StringComparer.OrdinalIgnoreCase))
                                         {
-                                            ecuNamesAdd.Add("enavevo");
+                                            ecuNamesAdd.Add(NameEnavevo);
                                         }
 
-                                        if (ruleEcus.Contains("hu_mgu", StringComparer.OrdinalIgnoreCase))
+                                        const string NameHuMgu = "hu_mgu";
+                                        if (ruleEcus.Contains(NameHuMgu, StringComparer.OrdinalIgnoreCase))
                                         {
-                                            ecuNamesAdd.Add("hu_mgu");
+                                            ecuNamesAdd.Add(NameHuMgu);
                                         }
 
-                                        if (ruleEcus.Contains("nbtevo", StringComparer.OrdinalIgnoreCase))
+                                        const string NameNbtevo = "nbtevo";
+                                        if (ruleEcus.Contains(NameNbtevo, StringComparer.OrdinalIgnoreCase))
                                         {
-                                            ecuNamesAdd.Add("nbtevo");
+                                            ecuNamesAdd.Add(NameNbtevo);
                                         }
                                     }
 
                                     if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_ACC", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        if (ruleEcus.Contains("mrr_30", StringComparer.OrdinalIgnoreCase))
+                                        const string NameMrr30 = "mrr_30";
+                                        if (ruleEcus.Contains(NameMrr30, StringComparer.OrdinalIgnoreCase))
                                         {
-                                            ecuNamesAdd.Add("mrr_30");
+                                            ecuNamesAdd.Add(NameMrr30);
                                         }
                                     }
                                 }
