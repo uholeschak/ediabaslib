@@ -3979,6 +3979,7 @@ namespace PsdzClient
             try
             {
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex ecuCliqueFormulaRegex = new Regex(@"IsValidRuleString\(""EcuClique""\s*,\s*""(\w+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
 
                 List<string> typeKeys = GetAllTypeKeys();
@@ -4045,6 +4046,7 @@ namespace PsdzClient
                     foreach (BordnetsData bordnetsData in boardnetsList)
                     {
                         List<RuleDate> ruleDates = new List<RuleDate>();
+                        List<string> ruleEcus = new List<string>();
                         BaseEcuCharacteristics baseEcuCharacteristics = null;
                         if (bordnetsData.DocData != null)
                         {
@@ -4072,6 +4074,22 @@ namespace PsdzClient
                                             if (ruleDate.GetValue() != 0)
                                             {
                                                 ruleDates.Add(ruleDate);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                MatchCollection ecuCliqueMatches = ecuCliqueFormulaRegex.Matches(formulaPart);
+                                foreach (Match match in ecuCliqueMatches)
+                                {
+                                    if (match.Groups.Count == 2 && match.Groups[1].Success)
+                                    {
+                                        string ecuName = match.Groups[1].Value.Trim();
+                                        if (!string.IsNullOrEmpty(ecuName))
+                                        {
+                                            if (!ruleEcus.Contains(ecuName))
+                                            {
+                                                ruleEcus.Add(ecuName);
                                             }
                                         }
                                     }
