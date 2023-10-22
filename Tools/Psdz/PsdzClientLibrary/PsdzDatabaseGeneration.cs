@@ -4096,7 +4096,7 @@ namespace PsdzClient
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule dates: {0}, Rule ECUS: {1}", ruleDates.Count, ruleEcus);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule dates: {0}, Rule ECUS: {1}", ruleDates.Count, ruleEcus.Count);
 
                             ObservableCollection<ECU> ecuList1 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList2 = new ObservableCollection<ECU>();
@@ -4104,40 +4104,53 @@ namespace PsdzClient
                             int maxEcuList = 1;
                             foreach (IEcuLogisticsEntry ecuLogisticsEntry in baseEcuCharacteristics.ecuTable)
                             {
-                                ECU ecu1 = new ECU();
-                                ecu1.ID_SG_ADR = ecuLogisticsEntry.DiagAddress;
-                                ecu1.ECU_GRUPPE = ecuLogisticsEntry.GroupSgbd;
+                                ECU ecu = new ECU();
+                                ecu.ID_SG_ADR = ecuLogisticsEntry.DiagAddress;
+                                ecu.ECU_GRUPPE = ecuLogisticsEntry.GroupSgbd;
 
-                                ECU ecu2 = null;
-                                ECU ecu3 = null;
-
+                                List<string> ecuNamesAdd = new List<string>();
                                 if (!string.IsNullOrEmpty(ecuLogisticsEntry.GroupSgbd))
                                 {
                                     if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_MMI", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        ecu1.ECU_SGBD = "enavevo";
+                                        if (ruleEcus.Contains("enavevo", StringComparer.OrdinalIgnoreCase))
+                                        {
+                                            ecuNamesAdd.Add("enavevo");
+                                        }
 
-                                        ecu2 = new ECU();
-                                        ecu2.ID_SG_ADR = ecu1.ID_SG_ADR;
-                                        ecu2.ECU_GRUPPE = ecu1.ECU_GRUPPE;
-                                        ecu2.ECU_SGBD = "hu_mgu";
+                                        if (ruleEcus.Contains("hu_mgu", StringComparer.OrdinalIgnoreCase))
+                                        {
+                                            ecuNamesAdd.Add("hu_mgu");
+                                        }
 
-                                        ecu3 = new ECU();
-                                        ecu3.ID_SG_ADR = ecu1.ID_SG_ADR;
-                                        ecu3.ECU_GRUPPE = ecu1.ECU_GRUPPE;
-                                        ecu3.ECU_SGBD = "nbtevo";
+                                        if (ruleEcus.Contains("nbtevo", StringComparer.OrdinalIgnoreCase))
+                                        {
+                                            ecuNamesAdd.Add("nbtevo");
+                                        }
                                     }
 
                                     if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_ACC", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        ecu1.ECU_SGBD = "mrr_30";
+                                        if (ruleEcus.Contains("mrr_30", StringComparer.OrdinalIgnoreCase))
+                                        {
+                                            ecuNamesAdd.Add("mrr_30");
+                                        }
                                     }
                                 }
 
-                                ecuList1.Add(ecu1);
-                                if (ecu2 != null)
+                                if (ecuNamesAdd.Count > 0)
                                 {
-                                    ecuList2.Add(ecu2);
+                                    ecu.ECU_SGBD = ecuNamesAdd[0];
+                                }
+                                ecuList1.Add(ecu);
+
+                                if (ecuNamesAdd.Count > 1)
+                                {
+                                    ECU ecuExtra = new ECU();
+                                    ecuExtra.ID_SG_ADR = ecu.ID_SG_ADR;
+                                    ecuExtra.ECU_GRUPPE = ecu.ECU_GRUPPE;
+                                    ecuExtra.ECU_SGBD = ecuNamesAdd[1];
+                                    ecuList2.Add(ecuExtra);
                                     if (maxEcuList < 2)
                                     {
                                         maxEcuList = 2;
@@ -4145,12 +4158,16 @@ namespace PsdzClient
                                 }
                                 else
                                 {
-                                    ecuList2.Add(ecu1);
+                                    ecuList2.Add(ecu);
                                 }
 
-                                if (ecu3 != null)
+                                if (ecuNamesAdd.Count > 2)
                                 {
-                                    ecuList3.Add(ecu3);
+                                    ECU ecuExtra = new ECU();
+                                    ecuExtra.ID_SG_ADR = ecu.ID_SG_ADR;
+                                    ecuExtra.ECU_GRUPPE = ecu.ECU_GRUPPE;
+                                    ecuExtra.ECU_SGBD = ecuNamesAdd[2];
+                                    ecuList3.Add(ecuExtra);
                                     if (maxEcuList < 3)
                                     {
                                         maxEcuList = 3;
@@ -4158,7 +4175,7 @@ namespace PsdzClient
                                 }
                                 else
                                 {
-                                    ecuList2.Add(ecu1);
+                                    ecuList3.Add(ecu);
                                 }
                             }
 
