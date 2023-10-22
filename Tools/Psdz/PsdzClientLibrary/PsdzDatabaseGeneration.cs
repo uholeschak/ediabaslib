@@ -3979,7 +3979,7 @@ namespace PsdzClient
             try
             {
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex ecuCliqueFormulaRegex = new Regex(@"IsValidRuleString\(""EcuClique""\s*,\s*""(\w+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex ecuCliqueFormulaRegex = new Regex(@"IsValidRuleString\(""EcuClique""\s*,\s*""(^[""]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
 
                 List<string> typeKeys = GetAllTypeKeys();
@@ -4087,7 +4087,7 @@ namespace PsdzClient
                                         string ecuName = match.Groups[1].Value.Trim();
                                         if (!string.IsNullOrEmpty(ecuName))
                                         {
-                                            if (!ruleEcus.Contains(ecuName))
+                                            if (!ruleEcus.Contains(ecuName, StringComparer.OrdinalIgnoreCase))
                                             {
                                                 ruleEcus.Add(ecuName);
                                             }
@@ -4096,7 +4096,7 @@ namespace PsdzClient
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule date count: {0}", ruleDates.Count);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule dates: {0}, Rule ECUS: {1}", ruleDates.Count, ruleEcus);
 
                             ObservableCollection<ECU> ecuList1 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList2 = new ObservableCollection<ECU>();
