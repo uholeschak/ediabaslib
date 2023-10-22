@@ -4101,6 +4101,7 @@ namespace PsdzClient
                             ObservableCollection<ECU> ecuList1 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList2 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList3 = new ObservableCollection<ECU>();
+                            List<string> ruleEcusUsed = new List<string>(ruleEcus);
                             int maxEcuList = 1;
                             foreach (IEcuLogisticsEntry ecuLogisticsEntry in baseEcuCharacteristics.ecuTable)
                             {
@@ -4135,6 +4136,14 @@ namespace PsdzClient
                                         {
                                             ecuNamesAdd.Add("mrr_30");
                                         }
+                                    }
+                                }
+
+                                foreach (string ecuName in ecuNamesAdd)
+                                {
+                                    if (!ruleEcusUsed.Contains(ecuName, StringComparer.OrdinalIgnoreCase))
+                                    {
+                                        ruleEcusUsed.Add(ecuName);
                                     }
                                 }
 
@@ -4177,6 +4186,11 @@ namespace PsdzClient
                                 {
                                     ecuList3.Add(ecu);
                                 }
+                            }
+
+                            if (ruleEcus.Count != ruleEcusUsed.Count)
+                            {
+                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Not all ECUs used: {0}, Used: {1}", ruleEcus.ToStringItems(), ruleEcusUsed.ToStringItems());
                             }
 
                             List<ObservableCollection<ECU>> ecuListCollection = new List<ObservableCollection<ECU>>
