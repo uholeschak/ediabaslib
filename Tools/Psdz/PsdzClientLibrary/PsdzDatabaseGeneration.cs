@@ -3979,7 +3979,7 @@ namespace PsdzClient
             try
             {
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                Regex ecuCliqueFormulaRegex = new Regex(@"IsValidRuleString\(""EcuClique""\s*,\s*""(^[""]+)""\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+                Regex ecuCliqueFormulaRegex = new Regex(@"IsValidRuleString\(""EcuClique""\s*,\s*""([a-zA-Z0-9_\-]+)""\s*\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
 
                 List<string> typeKeys = GetAllTypeKeys();
