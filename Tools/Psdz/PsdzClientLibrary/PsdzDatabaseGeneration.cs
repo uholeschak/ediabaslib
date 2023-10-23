@@ -4430,6 +4430,22 @@ namespace PsdzClient
                                 series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
                             vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
                         }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(ecuCharacteristicsInfo.RuleEcus))
+                            {
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0}, adding rule ECUs: {1}",
+                                    series, ecuCharacteristicsInfo.RuleEcus);
+                                if (string.IsNullOrEmpty(vehicleSeriesInfoMatch.RuleEcus))
+                                {
+                                    vehicleSeriesInfoMatch.RuleEcus = ecuCharacteristicsInfo.RuleEcus;
+                                }
+                                else
+                                {
+                                    vehicleSeriesInfoMatch.RuleEcus += "|" + ecuCharacteristicsInfo.RuleEcus;
+                                }
+                            }
+                        }
                     }
                     else
                     {
