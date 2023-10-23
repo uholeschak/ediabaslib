@@ -4404,6 +4404,9 @@ namespace PsdzClient
 
                     string series = ecuCharacteristicsInfo.Series;
                     string modelSeries = ecuCharacteristicsInfo.ModelSeries;
+                    string ruleDate = ecuCharacteristicsInfo.RuleDate?.Date;
+                    string ruleDateCompare = ecuCharacteristicsInfo.RuleDate?.DateCompare;
+                    string ruleEcus = ecuCharacteristicsInfo.RuleEcus;
                     if (string.IsNullOrEmpty(series))
                     {
                         log.ErrorFormat("ExtractEcuCharacteristicsVehicles Series missing for ModelsSeries: {0}", modelSeries);
@@ -4411,16 +4414,39 @@ namespace PsdzClient
                     }
 
                     string key = series.Trim().ToUpperInvariant();
-                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ecuList, ecuCharacteristicsInfo.RuleDate?.Date, ecuCharacteristicsInfo.RuleDate?.DateCompare, ecuCharacteristicsInfo.RuleEcus);
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ecuList, ruleDate, ruleDateCompare, ruleEcus);
 
                     if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                     {
                         VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoMatch = null;
                         foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                         {
-                            if (string.Compare(vehicleSeriesInfo.BrSgbd, brSgbd, StringComparison.OrdinalIgnoreCase) == 0)
+                            // ReSharper disable once ReplaceWithSingleAssignment.True
+                            bool identical = true;
+                            if (string.Compare(vehicleSeriesInfo.BrSgbd ?? string.Empty, vehicleSeriesInfoAdd.BrSgbd ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                identical = false;
+                            }
+
+                            if (string.Compare(vehicleSeriesInfo.Date ?? string.Empty, vehicleSeriesInfoAdd.Date ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                identical = false;
+                            }
+
+                            if (string.Compare(vehicleSeriesInfo.DateCompare ?? string.Empty, vehicleSeriesInfoAdd.DateCompare ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                identical = false;
+                            }
+
+                            if (string.Compare(vehicleSeriesInfo.RuleEcus ?? string.Empty, vehicleSeriesInfoAdd.Date ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                identical = false;
+                            }
+
+                            if (identical)
                             {
                                 vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                break;
                             }
                         }
 
@@ -4429,22 +4455,6 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
                                 series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
                             vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
-                        }
-                        else
-                        {
-                            if (!string.IsNullOrEmpty(ecuCharacteristicsInfo.RuleEcus))
-                            {
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Series: {0}, adding rule ECUs: {1}",
-                                    series, ecuCharacteristicsInfo.RuleEcus);
-                                if (string.IsNullOrEmpty(vehicleSeriesInfoMatch.RuleEcus))
-                                {
-                                    vehicleSeriesInfoMatch.RuleEcus = ecuCharacteristicsInfo.RuleEcus;
-                                }
-                                else
-                                {
-                                    vehicleSeriesInfoMatch.RuleEcus += "|" + ecuCharacteristicsInfo.RuleEcus;
-                                }
-                            }
                         }
                     }
                     else
