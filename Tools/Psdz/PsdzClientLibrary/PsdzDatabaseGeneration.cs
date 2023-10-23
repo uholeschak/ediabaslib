@@ -4199,7 +4199,7 @@ namespace PsdzClient
 
                             List<ObservableCollection<ECU>> ecuListCollection = new List<ObservableCollection<ECU>>
                             {
-                                ecuList1 
+                                ecuList1
                             };
 
                             if (maxEcuList >= 2)
@@ -4415,16 +4415,16 @@ namespace PsdzClient
 
                     if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                     {
-                        bool sgbdFound = false;
+                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoMatch = null;
                         foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                         {
                             if (string.Compare(vehicleSeriesInfo.BrSgbd, brSgbd, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                sgbdFound = true;
+                                vehicleSeriesInfoMatch = vehicleSeriesInfo;
                             }
                         }
 
-                        if (!sgbdFound)
+                        if (vehicleSeriesInfoMatch == null)
                         {
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
                                 series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
