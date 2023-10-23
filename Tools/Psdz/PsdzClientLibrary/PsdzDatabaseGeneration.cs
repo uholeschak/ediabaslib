@@ -4438,7 +4438,7 @@ namespace PsdzClient
                                 identical = false;
                             }
 
-                            if (string.Compare(vehicleSeriesInfo.RuleEcus ?? string.Empty, vehicleSeriesInfoAdd.Date ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                            if (string.Compare(vehicleSeriesInfo.RuleEcus ?? string.Empty, vehicleSeriesInfoAdd.RuleEcus ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
                             {
                                 identical = false;
                             }
