@@ -4433,19 +4433,35 @@ namespace PsdzClient
                                 identical = false;
                             }
 
-                            if (string.Compare(vehicleSeriesInfo.Date ?? string.Empty, vehicleSeriesInfoAdd.Date ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                            if (vehicleSeriesInfo.EcuList.Count != vehicleSeriesInfoAdd.EcuList.Count)
                             {
                                 identical = false;
                             }
-
-                            if (string.Compare(vehicleSeriesInfo.DateCompare ?? string.Empty, vehicleSeriesInfoAdd.DateCompare ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                            else
                             {
-                                identical = false;
-                            }
+                                for (int ecu = 0; ecu < vehicleSeriesInfo.EcuList.Count; ecu++)
+                                {
+                                    VehicleStructsBmw.VehicleEcuInfo ecuInfo1 = vehicleSeriesInfo.EcuList[ecu];
+                                    VehicleStructsBmw.VehicleEcuInfo ecuInfo2 = vehicleSeriesInfoAdd.EcuList[ecu];
 
-                            if (string.Compare(vehicleSeriesInfo.RuleEcus ?? string.Empty, vehicleSeriesInfoAdd.RuleEcus ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
-                            {
-                                identical = false;
+                                    if (ecuInfo1.DiagAddr != ecuInfo2.DiagAddr)
+                                    {
+                                        identical = false;
+                                        break;
+                                    }
+
+                                    if (string.Compare(ecuInfo1.Name ?? string.Empty, ecuInfo2.Name ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        identical = false;
+                                        break;
+                                    }
+
+                                    if (string.Compare(ecuInfo1.GroupSgbd ?? string.Empty, ecuInfo2.GroupSgbd ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        identical = false;
+                                        break;
+                                    }
+                                }
                             }
 
                             if (identical)
