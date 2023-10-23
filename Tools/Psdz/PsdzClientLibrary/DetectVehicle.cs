@@ -308,15 +308,15 @@ namespace PsdzClient
                         return DetectResult.InvalidDatabase;
                     }
 
-                    GroupSgdb = jobInfoVin.SgdbName;
-                    LogInfoFormat("Vehicle series info not found, using motorbike group SGBD: {0}", GroupSgdb);
+                    GroupSgbd = jobInfoVin.SgdbName;
+                    LogInfoFormat("Vehicle series info not found, using motorbike group SGBD: {0}", GroupSgbd);
                     return DetectResult.InvalidDatabase;
                 }
                 else
                 {
                     VehicleSeriesInfo = vehicleSeriesInfo;
-                    GroupSgdb = vehicleSeriesInfo.BrSgbd;
-                    SgdbAdd = vehicleSeriesInfo.SgdbAdd;
+                    GroupSgbd = vehicleSeriesInfo.BrSgbd;
+                    SgbdAdd = vehicleSeriesInfo.SgbdAdd;
                     if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
                     {
                         BnType = vehicleSeriesInfo.BnType;
@@ -330,12 +330,12 @@ namespace PsdzClient
                     return DetectResult.Aborted;
                 }
 
-                LogInfoFormat("Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
+                LogInfoFormat("Group SGBD: {0}, BnType: {1}", GroupSgbd ?? string.Empty, BnType ?? string.Empty);
 
                 EcuList.Clear();
                 try
                 {
-                    _ediabas.ResolveSgbdFile(GroupSgdb);
+                    _ediabas.ResolveSgbdFile(GroupSgbd);
 
                     for (int identRetry = 0; identRetry < 10; identRetry++)
                     {
@@ -514,7 +514,7 @@ namespace PsdzClient
 
                 try
                 {
-                    _ediabas.ResolveSgbdFile(GroupSgdb);
+                    _ediabas.ResolveSgbdFile(GroupSgbd);
                     ForceLoadSgbd();
 
                     JobInfo vinJobUsed = null;

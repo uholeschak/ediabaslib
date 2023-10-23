@@ -4428,6 +4428,11 @@ namespace PsdzClient
                                 identical = false;
                             }
 
+                            if (string.Compare(vehicleSeriesInfo.SgbdAdd ?? string.Empty, vehicleSeriesInfoAdd.SgbdAdd ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                identical = false;
+                            }
+
                             if (string.Compare(vehicleSeriesInfo.Date ?? string.Empty, vehicleSeriesInfoAdd.Date ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
                             {
                                 identical = false;

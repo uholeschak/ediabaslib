@@ -978,7 +978,7 @@ namespace PsdzClient.Programming
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Detected vehicle: VIN={0}, GroupFile={1}, BR={2}, Series={3}, BuildDate={4}-{5}",
-                    PsdzContext.DetectVehicle.Vin ?? string.Empty, PsdzContext.DetectVehicle.GroupSgdb ?? string.Empty,
+                    PsdzContext.DetectVehicle.Vin ?? string.Empty, PsdzContext.DetectVehicle.GroupSgbd ?? string.Empty,
                     PsdzContext.DetectVehicle.ModelSeries ?? string.Empty,
                     PsdzContext.DetectVehicle.Series ?? string.Empty,
                     PsdzContext.DetectVehicle.ConstructYear ?? string.Empty,

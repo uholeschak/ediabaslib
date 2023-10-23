@@ -3382,14 +3382,14 @@ namespace BmwDeepObd
                 string detectedVin = null;
                 if (detectVehicleBmw.DetectVehicleBmwFast(_instanceData.DetectMotorbikes))
                 {
-                    if (!string.IsNullOrEmpty(detectVehicleBmw.SgdbAdd))
+                    if (!string.IsNullOrEmpty(detectVehicleBmw.SgbdAdd))
                     {
-                        ecuFileNameList.Add(detectVehicleBmw.SgdbAdd);
+                        ecuFileNameList.Add(detectVehicleBmw.SgbdAdd);
                     }
 
-                    if (!string.IsNullOrEmpty(detectVehicleBmw.GroupSgdb))
+                    if (!string.IsNullOrEmpty(detectVehicleBmw.GroupSgbd))
                     {
-                        ecuFileNameList.Add(detectVehicleBmw.GroupSgdb);
+                        ecuFileNameList.Add(detectVehicleBmw.GroupSgbd);
                     }
 
                     detectedVin = detectVehicleBmw.Vin;
