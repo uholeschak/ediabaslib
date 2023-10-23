@@ -55,8 +55,8 @@ namespace BmwFileReader
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Vin = detectVehicleBmw.Vin;
                 TypeKey = detectVehicleBmw.TypeKey;
-                GroupSgdb = detectVehicleBmw.GroupSgdb;
-                SgdbAdd = detectVehicleBmw.SgdbAdd;
+                GroupSgdb = detectVehicleBmw.GroupSgbd;
+                SgdbAdd = detectVehicleBmw.SgbdAdd;
                 ModelSeries = detectVehicleBmw.ModelSeries;
                 Series = detectVehicleBmw.Series;
                 ProductType = detectVehicleBmw.ProductType;
@@ -88,8 +88,8 @@ namespace BmwFileReader
                 detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Vin = Vin;
                 detectVehicleBmw.TypeKey = TypeKey;
-                detectVehicleBmw.GroupSgdb = GroupSgdb;
-                detectVehicleBmw.SgdbAdd = SgdbAdd;
+                detectVehicleBmw.GroupSgbd = GroupSgdb;
+                detectVehicleBmw.SgbdAdd = SgdbAdd;
                 detectVehicleBmw.ModelSeries = ModelSeries;
                 detectVehicleBmw.Series = Series;
                 detectVehicleBmw.ProductType = ProductType;
@@ -371,14 +371,14 @@ namespace BmwFileReader
                         return false;
                     }
 
-                    GroupSgdb = jobInfoVin.SgdbName;
-                    LogInfoFormat("Vehicle series info not found, using motorbike group SGBD: {0}", GroupSgdb);
+                    GroupSgbd = jobInfoVin.SgdbName;
+                    LogInfoFormat("Vehicle series info not found, using motorbike group SGBD: {0}", GroupSgbd);
                 }
                 else
                 {
                     VehicleSeriesInfo = vehicleSeriesInfo;
-                    GroupSgdb = vehicleSeriesInfo.BrSgbd;
-                    SgdbAdd = vehicleSeriesInfo.SgdbAdd;
+                    GroupSgbd = vehicleSeriesInfo.BrSgbd;
+                    SgbdAdd = vehicleSeriesInfo.SgbdAdd;
                     if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
                     {
                         BnType = vehicleSeriesInfo.BnType;
@@ -387,7 +387,7 @@ namespace BmwFileReader
                     Brand = vehicleSeriesInfo.Brand;
                 }
 
-                LogInfoFormat("Group SGBD: {0}, BnType: {1}", GroupSgdb ?? string.Empty, BnType ?? string.Empty);
+                LogInfoFormat("Group SGBD: {0}, BnType: {1}", GroupSgbd ?? string.Empty, BnType ?? string.Empty);
 
                 EcuList.Clear();
                 if (jobInfoEcuList != null)
@@ -932,7 +932,7 @@ namespace BmwFileReader
                 if (vehicleSeriesInfo != null)
                 {
                     VehicleSeriesInfo = vehicleSeriesInfo;
-                    SgdbAdd = vehicleSeriesInfo.SgdbAdd;
+                    SgbdAdd = vehicleSeriesInfo.SgbdAdd;
                     if (!string.IsNullOrEmpty(vehicleSeriesInfo.BnType))
                     {
                         BnType = vehicleSeriesInfo.BnType;

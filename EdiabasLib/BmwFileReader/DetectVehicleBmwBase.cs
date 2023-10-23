@@ -52,8 +52,8 @@ namespace BmwFileReader
 
         public string Vin { get; protected set; }
         public string TypeKey { get; protected set; }
-        public string GroupSgdb { get; protected set; }
-        public string SgdbAdd { get; protected set; }
+        public string GroupSgbd { get; protected set; }
+        public string SgbdAdd { get; protected set; }
         public string ModelSeries { get; protected set; }
         public string Series { get; protected set; }
         public string ProductType { get; protected set; }
@@ -728,7 +728,7 @@ namespace BmwFileReader
                 ecuRemoveList.AddRange(ecusToRemove);
             }
 
-            if (string.Compare(GroupSgdb, "E89X", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Compare(GroupSgbd, "E89X", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 const string groupRls = "D_RLS";
                 EcuInfo ecuInfoRls = GetEcuByEcuGroup(groupRls);
@@ -980,8 +980,8 @@ namespace BmwFileReader
         {
             Vin = null;
             TypeKey = null;
-            GroupSgdb = null;
-            SgdbAdd = null;
+            GroupSgbd = null;
+            SgbdAdd = null;
             ModelSeries = null;
             Series = null;
             ProductType = null;
