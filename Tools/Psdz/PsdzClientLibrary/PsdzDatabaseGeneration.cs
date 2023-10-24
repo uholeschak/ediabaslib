@@ -4128,14 +4128,17 @@ namespace PsdzClient
                                 List<string> ecuNamesAdd = new List<string>();
                                 if (!string.IsNullOrEmpty(ecuLogisticsEntry.GroupSgbd))
                                 {
+                                    string[] groupArray = ecuLogisticsEntry.GroupSgbd.Split('|');
                                     foreach (Tuple<EcuVar, EcuGroup> tupleEcu in ruleEcus)
                                     {
-                                        if (string.Compare(ecuLogisticsEntry.GroupSgbd, tupleEcu.Item2.Name,
-                                                StringComparison.OrdinalIgnoreCase) == 0)
+                                        foreach (string groupName in groupArray)
                                         {
-                                            if (!ecuNamesAdd.Contains(tupleEcu.Item1.Name, StringComparer.OrdinalIgnoreCase))
+                                            if (string.Compare(groupName, tupleEcu.Item2.Name, StringComparison.OrdinalIgnoreCase) == 0)
                                             {
-                                                ecuNamesAdd.Add(tupleEcu.Item1.Name);
+                                                if (!ecuNamesAdd.Contains(tupleEcu.Item1.Name, StringComparer.OrdinalIgnoreCase))
+                                                {
+                                                    ecuNamesAdd.Add(tupleEcu.Item1.Name);
+                                                }
                                             }
                                         }
                                     }
