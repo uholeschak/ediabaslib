@@ -542,7 +542,7 @@ namespace PsdzClient
 
         private class EcuCharacteristicsMatch
         {
-            public EcuCharacteristicsMatch(BaseEcuCharacteristics ecuCharacteristics, RuleDate ruleDate, string ruleEcus, string ruleFormula)
+            public EcuCharacteristicsMatch(BaseEcuCharacteristics ecuCharacteristics, RuleDate ruleDate, List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus, string ruleFormula)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 RuleDate = ruleDate;
@@ -553,13 +553,13 @@ namespace PsdzClient
             public BaseEcuCharacteristics EcuCharacteristics { get; set; }
             public RuleDate RuleDate { get; set; }
             public string Series { get; set; }
-            public string RuleEcus { get; set; }
+            public List<VehicleStructsBmw.VehicleEcuInfo> RuleEcus { get; set; }
             public string RuleFormula { get; set; }
         }
 
         private class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, string series, string modelSeries, BNType? bnType, string brand, string sgbdAdd, RuleDate ruleDate, string ruleEcus)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, string series, string modelSeries, BNType? bnType, string brand, string sgbdAdd, RuleDate ruleDate, List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 Series = series;
@@ -578,7 +578,7 @@ namespace PsdzClient
             public string Brand { get; set; }
             public string SgbdAdd { get; set; }
             public RuleDate RuleDate { get; set; }
-            public string RuleEcus { get; set; }
+            public List<VehicleStructsBmw.VehicleEcuInfo> RuleEcus { get; set; }
         }
 
         private class RuleDate
@@ -4101,7 +4101,7 @@ namespace PsdzClient
                             ObservableCollection<ECU> ecuList1 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList2 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList3 = new ObservableCollection<ECU>();
-                            List<string> ruleEcusUsed = new List<string>(ruleEcus);
+                            List<string> ruleEcusUsed = new List<string>();
                             int maxEcuList = 1;
                             foreach (IEcuLogisticsEntry ecuLogisticsEntry in baseEcuCharacteristics.ecuTable)
                             {
@@ -4273,30 +4273,23 @@ namespace PsdzClient
 
                             if (ruleValid)
                             {
-                                StringBuilder sbEcus = new StringBuilder();
+                                List<VehicleStructsBmw.VehicleEcuInfo> usedEcus = new List<VehicleStructsBmw.VehicleEcuInfo>();
                                 if (ecuListUse != null)
                                 {
-                                    HashSet<string> hashEcus = new HashSet<string>();
                                     foreach (ECU ecu in ecuListUse)
                                     {
                                         if (!string.IsNullOrEmpty(ecu.ECU_SGBD))
                                         {
-                                            hashEcus.Add(ecu.ECU_SGBD);
+                                            if (usedEcus.All(x => string.Compare(x.Name, ecu.ECU_SGBD, StringComparison.OrdinalIgnoreCase) != 0))
+                                            {
+                                                usedEcus.Add(new VehicleStructsBmw.VehicleEcuInfo((int)ecu.ID_SG_ADR, ecu.ECU_NAME, ecu.ECU_GRUPPE, ecu.ECU_SGBD));
+                                            }
                                         }
-                                    }
-
-                                    foreach (string ecuName in hashEcus)
-                                    {
-                                        if (sbEcus.Length > 0)
-                                        {
-                                            sbEcus.Append("|");
-                                        }
-                                        sbEcus.Append(ecuName);
                                     }
                                 }
 
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: ECUs: {0}, rule: {1}", sbEcus, ruleFormulaStd);
-                                validCharacteristics.Add(new EcuCharacteristicsMatch(baseEcuCharacteristics, ruleDateUse, sbEcus.ToString(), ruleFormulaStd));
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: ECUs: {0}, rule: {1}", usedEcus.Count, ruleFormulaStd);
+                                validCharacteristics.Add(new EcuCharacteristicsMatch(baseEcuCharacteristics, ruleDateUse, usedEcus, ruleFormulaStd));
                             }
                             else
                             {
@@ -4314,7 +4307,7 @@ namespace PsdzClient
                             foreach (EcuCharacteristicsMatch characteristicsMatch in validCharacteristics)
                             {
                                 string ruleDateString = characteristicsMatch.RuleDate?.Date ?? string.Empty;
-                                string ruleEcus = characteristicsMatch.RuleEcus;
+                                List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus = characteristicsMatch.RuleEcus;
                                 string ruleFormula = characteristicsMatch.RuleFormula;
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Match ECUs: {0}, Date: {1}, Rule: {2}", ruleEcus, ruleDateString, ruleFormula);
                             }
@@ -4326,7 +4319,7 @@ namespace PsdzClient
                             string modelSeries = vehicleIdent.Baureihenverbund;
                             string brandName = vehicleIdent.BrandName?.ToString();
                             RuleDate ruleDate = characteristicsMatch.RuleDate;
-                            string ruleEcus = characteristicsMatch.RuleEcus;
+                            List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus = characteristicsMatch.RuleEcus;
 
                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
                             string sgbdAdd = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
@@ -4406,7 +4399,7 @@ namespace PsdzClient
                     string modelSeries = ecuCharacteristicsInfo.ModelSeries;
                     string ruleDate = ecuCharacteristicsInfo.RuleDate?.Date;
                     string ruleDateCompare = ecuCharacteristicsInfo.RuleDate?.DateCompare;
-                    string ruleEcus = ecuCharacteristicsInfo.RuleEcus;
+                    List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus = ecuCharacteristicsInfo.RuleEcus;
                     if (string.IsNullOrEmpty(series))
                     {
                         log.ErrorFormat("ExtractEcuCharacteristicsVehicles Series missing for ModelsSeries: {0}", modelSeries);
@@ -4476,7 +4469,7 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
                                 series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Duplicate: Rule ECUs: '{0}'<->'{1}', Rule Date: '{2}'<->'{3}'",
-                                vehicleSeriesInfoList[0].RuleEcus ?? string.Empty, ecuCharacteristicsInfo.RuleEcus ?? string.Empty,
+                                vehicleSeriesInfoList[0].RuleEcus.Count, ecuCharacteristicsInfo.RuleEcus.Count,
                                 vehicleSeriesInfoList[0].Date ?? string.Empty, ecuCharacteristicsInfo.RuleDate?.Date ?? string.Empty);
                             vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
                         }
