@@ -25,16 +25,18 @@ namespace BmwFileReader
             {
             }
 
-            public VehicleEcuInfo(int diagAddr, string name, string groupSgbd)
+            public VehicleEcuInfo(int diagAddr, string name, string groupSgbd, string sgbd = null)
             {
                 DiagAddr = diagAddr;
                 Name = name;
                 GroupSgbd = groupSgbd;
+                Sgbd = sgbd;
             }
 
             [XmlElement("DA")] public int DiagAddr { get; set; }
             [XmlElement("Nm"), DefaultValue(null)] public string Name { get; set; }
             [XmlElement("GS"), DefaultValue(null)] public string GroupSgbd { get; set; }
+            [XmlElement("SG"), DefaultValue(null)] public string Sgbd { get; set; }
         }
 
         [XmlInclude(typeof(VehicleEcuInfo))]
@@ -45,7 +47,7 @@ namespace BmwFileReader
             {
             }
 
-            public VehicleSeriesInfo(string series, string modelSeries, string brSgbd, string sgbdAdd, string bnType, string brand = null, List<VehicleEcuInfo> ecuList = null, string date = null, string dateCompare = null, string ruleEcus = null)
+            public VehicleSeriesInfo(string series, string modelSeries, string brSgbd, string sgbdAdd, string bnType, string brand = null, List<VehicleEcuInfo> ecuList = null, string date = null, string dateCompare = null, List<VehicleEcuInfo> ruleEcus = null)
             {
                 Series = series;
                 ModelSeries = modelSeries;
@@ -74,7 +76,7 @@ namespace BmwFileReader
             [XmlElement("EL"), DefaultValue(null)] public List<VehicleEcuInfo> EcuList { get; set; }
             [XmlElement("Dt"), DefaultValue(null)] public string Date { get; set; }
             [XmlElement("DtC"), DefaultValue(null)] public string DateCompare { get; set; }
-            [XmlElement("RE"), DefaultValue(null)] public string RuleEcus { get; set; }
+            [XmlElement("RE"), DefaultValue(null)] public List<VehicleEcuInfo> RuleEcus { get; set; }
         }
 
         [XmlType("VersionInfo")]
