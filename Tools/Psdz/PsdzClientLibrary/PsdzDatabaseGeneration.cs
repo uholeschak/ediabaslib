@@ -4107,6 +4107,7 @@ namespace PsdzClient
                             {
                                 ECU ecu = new ECU();
                                 ecu.ID_SG_ADR = ecuLogisticsEntry.DiagAddress;
+                                ecu.ECU_NAME = ecuLogisticsEntry.Name;
                                 ecu.ECU_GRUPPE = ecuLogisticsEntry.GroupSgbd;
 
                                 List<string> ecuNamesAdd = new List<string>();
@@ -4161,6 +4162,7 @@ namespace PsdzClient
                                 {
                                     ECU ecuExtra = new ECU();
                                     ecuExtra.ID_SG_ADR = ecu.ID_SG_ADR;
+                                    ecuExtra.ECU_NAME = ecu.ECU_NAME;
                                     ecuExtra.ECU_GRUPPE = ecu.ECU_GRUPPE;
                                     ecuExtra.ECU_SGBD = ecuNamesAdd[1];
                                     ecuList2.Add(ecuExtra);
@@ -4178,6 +4180,7 @@ namespace PsdzClient
                                 {
                                     ECU ecuExtra = new ECU();
                                     ecuExtra.ID_SG_ADR = ecu.ID_SG_ADR;
+                                    ecuExtra.ECU_NAME = ecu.ECU_NAME;
                                     ecuExtra.ECU_GRUPPE = ecu.ECU_GRUPPE;
                                     ecuExtra.ECU_SGBD = ecuNamesAdd[2];
                                     ecuList3.Add(ecuExtra);
