@@ -4046,7 +4046,7 @@ namespace PsdzClient
                     foreach (BordnetsData bordnetsData in boardnetsList)
                     {
                         List<RuleDate> ruleDates = new List<RuleDate>();
-                        List<string> ruleEcus = new List<string>();
+                        List<Tuple<EcuVar, EcuGroup>> ruleEcus = new List<Tuple<EcuVar, EcuGroup>>();
                         BaseEcuCharacteristics baseEcuCharacteristics = null;
                         if (bordnetsData.DocData != null)
                         {
@@ -4087,9 +4087,24 @@ namespace PsdzClient
                                         string ecuName = match.Groups[1].Value.Trim();
                                         if (!string.IsNullOrEmpty(ecuName))
                                         {
-                                            if (!ruleEcus.Contains(ecuName, StringComparer.OrdinalIgnoreCase))
+                                            bool ecuFound = false;
+                                            EcuVar ecuVar = GetEcuVariantByName(ecuName);
+                                            if (ecuVar != null)
                                             {
-                                                ruleEcus.Add(ecuName);
+                                                EcuGroup ecuGroup = GetEcuGroupById(ecuVar.EcuGroupId);
+                                                if (ecuGroup != null)
+                                                {
+                                                    ecuFound = true;
+                                                    if (ruleEcus.All(x => string.Compare(x.Item1.Name, ecuName, StringComparison.OrdinalIgnoreCase) != 0))
+                                                    {
+                                                        ruleEcus.Add(new Tuple<EcuVar, EcuGroup>(ecuVar, ecuGroup));
+                                                    }
+                                                }
+                                            }
+
+                                            if (!ecuFound)
+                                            {
+                                                log.InfoFormat("ExtractEcuCharacteristicsVehicles ECU not found : {0}", ecuName);
                                             }
                                         }
                                     }
@@ -4113,33 +4128,15 @@ namespace PsdzClient
                                 List<string> ecuNamesAdd = new List<string>();
                                 if (!string.IsNullOrEmpty(ecuLogisticsEntry.GroupSgbd))
                                 {
-                                    if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_MMI", StringComparison.OrdinalIgnoreCase) == 0)
+                                    foreach (Tuple<EcuVar, EcuGroup> tupleEcu in ruleEcus)
                                     {
-                                        const string NameEnavevo = "enavevo";
-                                        if (ruleEcus.Contains(NameEnavevo, StringComparer.OrdinalIgnoreCase))
+                                        if (string.Compare(ecuLogisticsEntry.GroupSgbd, tupleEcu.Item2.Name,
+                                                StringComparison.OrdinalIgnoreCase) == 0)
                                         {
-                                            ecuNamesAdd.Add(NameEnavevo);
-                                        }
-
-                                        const string NameHuMgu = "hu_mgu";
-                                        if (ruleEcus.Contains(NameHuMgu, StringComparer.OrdinalIgnoreCase))
-                                        {
-                                            ecuNamesAdd.Add(NameHuMgu);
-                                        }
-
-                                        const string NameNbtevo = "nbtevo";
-                                        if (ruleEcus.Contains(NameNbtevo, StringComparer.OrdinalIgnoreCase))
-                                        {
-                                            ecuNamesAdd.Add(NameNbtevo);
-                                        }
-                                    }
-
-                                    if (string.Compare(ecuLogisticsEntry.GroupSgbd, "G_ACC", StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        const string NameMrr30 = "mrr_30";
-                                        if (ruleEcus.Contains(NameMrr30, StringComparer.OrdinalIgnoreCase))
-                                        {
-                                            ecuNamesAdd.Add(NameMrr30);
+                                            if (!ecuNamesAdd.Contains(tupleEcu.Item1.Name, StringComparer.OrdinalIgnoreCase))
+                                            {
+                                                ecuNamesAdd.Add(tupleEcu.Item1.Name);
+                                            }
                                         }
                                     }
                                 }
@@ -4197,7 +4194,18 @@ namespace PsdzClient
 
                             if (ruleEcus.Count != ruleEcusUsed.Count)
                             {
-                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Not all ECUs used: {0}, Used: {1}", ruleEcus.ToStringItems(), ruleEcusUsed.ToStringItems());
+                                StringBuilder sbEcu = new StringBuilder();
+                                foreach (Tuple<EcuVar, EcuGroup> tupleEcu in ruleEcus)
+                                {
+                                    if (sbEcu.Length > 0)
+                                    {
+                                        sbEcu.Append(", "); 
+                                    }
+                                    sbEcu.Append(tupleEcu.Item1.Name);
+                                    sbEcu.Append("|");
+                                    sbEcu.Append(tupleEcu.Item2.Name);
+                                }
+                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Not all ECUs used: {0}, Used: {1}", sbEcu, ruleEcusUsed.ToStringItems());
                             }
 
                             List<ObservableCollection<ECU>> ecuListCollection = new List<ObservableCollection<ECU>>
