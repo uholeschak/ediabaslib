@@ -3286,7 +3286,11 @@ namespace EdiabasLib
             Exception exIter = ex;
             while (exIter.InnerException != null)
             {
-                sb.Append("\r\n");
+                if (sb.Length > 0)
+                {
+                    sb.Append("\r\n");
+                }
+
                 if (includeTypes)
                 {
                     sb.Append(exIter.InnerException.GetType().Name);
