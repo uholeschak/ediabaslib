@@ -4302,7 +4302,7 @@ namespace PsdzClient
                                     }
                                 }
 
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: ECUs: {0}, rule: {1}", usedEcus.Count, ruleFormulaStd);
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Boardnets rule valid: ECUs: {0}, rule: {1}", usedEcus.ToStringItems(), ruleFormulaStd);
                                 validCharacteristics.Add(new EcuCharacteristicsMatch(baseEcuCharacteristics, ruleDateUse, usedEcus, ruleFormulaStd));
                             }
                             else
@@ -4323,7 +4323,7 @@ namespace PsdzClient
                                 string ruleDateString = characteristicsMatch.RuleDate?.Date ?? string.Empty;
                                 List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus = characteristicsMatch.RuleEcus;
                                 string ruleFormula = characteristicsMatch.RuleFormula;
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Match ECUs: {0}, Date: {1}, Rule: {2}", ruleEcus, ruleDateString, ruleFormula);
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Match ECUs: {0}, Date: {1}, Rule: {2}", ruleEcus.ToStringItems(), ruleDateString, ruleFormula);
                             }
                         }
 
@@ -4483,7 +4483,7 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
                                 series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Duplicate: Rule ECUs: '{0}'<->'{1}', Rule Date: '{2}'<->'{3}'",
-                                vehicleSeriesInfoList[0].RuleEcus.Count, ecuCharacteristicsInfo.RuleEcus.Count,
+                                vehicleSeriesInfoList[0].RuleEcus, ecuCharacteristicsInfo.RuleEcus,
                                 vehicleSeriesInfoList[0].Date ?? string.Empty, ecuCharacteristicsInfo.RuleDate?.Date ?? string.Empty);
                             vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
                         }
