@@ -38,26 +38,26 @@ namespace BmwFileReader
             public override string ToString()
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("D=");
+                sb.Append("Diag: ");
                 sb.Append(DiagAddr.ToString(CultureInfo.InvariantCulture));
 
                 if (!string.IsNullOrEmpty(Name))
                 {
-                    sb.Append(",N='");
+                    sb.Append(", Name: '");
                     sb.Append(Name);
                     sb.Append("'");
                 }
 
                 if (!string.IsNullOrEmpty(GroupSgbd))
                 {
-                    sb.Append(",G='");
+                    sb.Append(", Group: '");
                     sb.Append(GroupSgbd);
                     sb.Append("'");
                 }
 
                 if (!string.IsNullOrEmpty(Sgbd))
                 {
-                    sb.Append(",S='");
+                    sb.Append(", SGBD: '");
                     sb.Append(Sgbd);
                     sb.Append("'");
                 }
