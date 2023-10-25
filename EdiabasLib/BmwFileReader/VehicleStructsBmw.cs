@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace BmwFileReader
@@ -31,6 +33,36 @@ namespace BmwFileReader
                 Name = name;
                 GroupSgbd = groupSgbd;
                 Sgbd = sgbd;
+            }
+
+            public override string ToString()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("D=");
+                sb.Append(DiagAddr.ToString(CultureInfo.InvariantCulture));
+
+                if (!string.IsNullOrEmpty(Name))
+                {
+                    sb.Append(",N='");
+                    sb.Append(Name);
+                    sb.Append("'");
+                }
+
+                if (!string.IsNullOrEmpty(GroupSgbd))
+                {
+                    sb.Append(",G='");
+                    sb.Append(GroupSgbd);
+                    sb.Append("'");
+                }
+
+                if (!string.IsNullOrEmpty(Sgbd))
+                {
+                    sb.Append(",S='");
+                    sb.Append(Sgbd);
+                    sb.Append("'");
+                }
+
+                return sb.ToString();
             }
 
             [XmlElement("DA")] public int DiagAddr { get; set; }
