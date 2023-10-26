@@ -79,7 +79,7 @@ namespace BmwFileReader
             {
             }
 
-            public VehicleSeriesInfo(string series, string modelSeries, string brSgbd, string sgbdAdd, string bnType, string brand = null, List<VehicleEcuInfo> ecuList = null, string date = null, string dateCompare = null, List<VehicleEcuInfo> ruleEcus = null)
+            public VehicleSeriesInfo(string series, string modelSeries, string brSgbd, string sgbdAdd, string bnType, string brand = null, string date = null, string dateCompare = null, List < VehicleEcuInfo> ruleEcus = null, List < VehicleEcuInfo> ecuList = null)
             {
                 Series = series;
                 ModelSeries = modelSeries;
@@ -87,10 +87,10 @@ namespace BmwFileReader
                 SgbdAdd = sgbdAdd;
                 BnType = bnType;
                 Brand = brand;
-                EcuList = ecuList;
                 Date = date;
                 DateCompare = dateCompare;
                 RuleEcus = ruleEcus;
+                EcuList = ecuList;
             }
 
             public void ResetDate()
@@ -105,10 +105,10 @@ namespace BmwFileReader
             [XmlElement("SA"), DefaultValue(null)] public string SgbdAdd { get; set; }
             [XmlElement("BT"), DefaultValue(null)] public string BnType { get; set; }
             [XmlElement("BL"), DefaultValue(null)] public string Brand { get; set; }
-            [XmlElement("EL"), DefaultValue(null)] public List<VehicleEcuInfo> EcuList { get; set; }
             [XmlElement("Dt"), DefaultValue(null)] public string Date { get; set; }
             [XmlElement("DtC"), DefaultValue(null)] public string DateCompare { get; set; }
             [XmlElement("RE"), DefaultValue(null)] public List<VehicleEcuInfo> RuleEcus { get; set; }
+            [XmlElement("EL"), DefaultValue(null)] public List<VehicleEcuInfo> EcuList { get; set; }
         }
 
         [XmlType("VersionInfo")]
