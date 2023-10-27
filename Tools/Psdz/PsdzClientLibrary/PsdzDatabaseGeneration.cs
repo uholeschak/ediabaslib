@@ -635,6 +635,11 @@ namespace PsdzClient
 
                 return string.Format(CultureInfo.InvariantCulture, "{0:00}", dateValue % 100);
             }
+
+            public override string ToString()
+            {
+                return GetYear() + GetMonth();
+            }
         }
 
         private const int MaxCallsLimit = 10;
@@ -4119,12 +4124,15 @@ namespace PsdzClient
                                     sbRuleEcus.Append(", ");
                                 }
 
+                                sbRuleEcus.Append("[Var='");
                                 sbRuleEcus.Append(tupleEcu.Item1.Name);
-                                sbRuleEcus.Append("|");
+                                sbRuleEcus.Append("'");
+                                sbRuleEcus.Append(" Group=");
                                 sbRuleEcus.Append(tupleEcu.Item2.Name);
+                                sbRuleEcus.Append("']");
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule dates: {0}, Rule ECUS: {1}", ruleDates.Count, sbRuleEcus);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule dates: {0}, Rule ECUS: {1}", ruleDates.ToStringItems(), sbRuleEcus);
 
                             ObservableCollection<ECU> ecuList1 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList2 = new ObservableCollection<ECU>();
@@ -4322,7 +4330,7 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple characteristicts found: Count={0}", validCharacteristics.Count);
                             foreach (EcuCharacteristicsMatch characteristicsMatch in validCharacteristics)
                             {
-                                string ruleDateString = characteristicsMatch.RuleDate?.Date ?? string.Empty;
+                                string ruleDateString = characteristicsMatch.RuleDate?.ToString() ?? string.Empty;
                                 List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus = characteristicsMatch.RuleEcus;
                                 string ruleFormula = characteristicsMatch.RuleFormula;
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Match ECUs: {0}, Date: {1}, Rule: {2}", ruleEcus.ToStringItems(), ruleDateString, ruleFormula);
