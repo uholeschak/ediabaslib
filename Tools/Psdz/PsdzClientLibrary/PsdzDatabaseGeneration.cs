@@ -4111,7 +4111,20 @@ namespace PsdzClient
                                 }
                             }
 
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule dates: {0}, Rule ECUS: {1}", ruleDates.Count, ruleEcus.Count);
+                            StringBuilder sbRuleEcus = new StringBuilder();
+                            foreach (Tuple<EcuVar, EcuGroup> tupleEcu in ruleEcus)
+                            {
+                                if (sbRuleEcus.Length > 0)
+                                {
+                                    sbRuleEcus.Append(", ");
+                                }
+
+                                sbRuleEcus.Append(tupleEcu.Item1.Name);
+                                sbRuleEcus.Append("|");
+                                sbRuleEcus.Append(tupleEcu.Item2.Name);
+                            }
+
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule dates: {0}, Rule ECUS: {1}", ruleDates.Count, sbRuleEcus);
 
                             ObservableCollection<ECU> ecuList1 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList2 = new ObservableCollection<ECU>();
@@ -4197,18 +4210,7 @@ namespace PsdzClient
 
                             if (ruleEcus.Count != ruleEcusUsed.Count)
                             {
-                                StringBuilder sbEcu = new StringBuilder();
-                                foreach (Tuple<EcuVar, EcuGroup> tupleEcu in ruleEcus)
-                                {
-                                    if (sbEcu.Length > 0)
-                                    {
-                                        sbEcu.Append(", "); 
-                                    }
-                                    sbEcu.Append(tupleEcu.Item1.Name);
-                                    sbEcu.Append("|");
-                                    sbEcu.Append(tupleEcu.Item2.Name);
-                                }
-                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Not all ECUs used: {0}, Used: {1}", sbEcu, ruleEcusUsed.ToStringItems());
+                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Not all ECUs used: {0}, Used: {1}", sbRuleEcus, ruleEcusUsed.ToStringItems());
                             }
 
                             List<ObservableCollection<ECU>> ecuListCollection = new List<ObservableCollection<ECU>>
