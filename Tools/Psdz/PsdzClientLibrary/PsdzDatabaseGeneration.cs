@@ -4483,9 +4483,13 @@ namespace PsdzClient
                         {
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
                                 series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Duplicate: Rule ECUs: '{0}'<->'{1}', Rule Date: '{2}'<->'{3}'",
-                                vehicleSeriesInfoList[0].RuleEcus.ToStringItems(), ecuCharacteristicsInfo.RuleEcus.ToStringItems(),
-                                vehicleSeriesInfoList[0].Date ?? string.Empty, ecuCharacteristicsInfo.RuleDate?.Date ?? string.Empty);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Add: Rule ECUs: '{0}', Rule Date: '{1}'",
+                                vehicleSeriesInfoAdd.RuleEcus.ToStringItems(), vehicleSeriesInfoAdd.Date ?? string.Empty);
+                            foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoLog in vehicleSeriesInfoList)
+                            {
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Exist: Rule ECUs: '{0}', Rule Date: '{1}'",
+                                    vehicleSeriesInfoLog.RuleEcus.ToStringItems(), vehicleSeriesInfoLog.Date ?? string.Empty);
+                            }
                             vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
                         }
                     }
