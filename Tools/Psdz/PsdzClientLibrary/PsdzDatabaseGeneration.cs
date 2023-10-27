@@ -4484,7 +4484,7 @@ namespace PsdzClient
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
                                 series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Duplicate: Rule ECUs: '{0}'<->'{1}', Rule Date: '{2}'<->'{3}'",
-                                vehicleSeriesInfoList[0].RuleEcus, ecuCharacteristicsInfo.RuleEcus,
+                                vehicleSeriesInfoList[0].RuleEcus.ToStringItems(), ecuCharacteristicsInfo.RuleEcus.ToStringItems(),
                                 vehicleSeriesInfoList[0].Date ?? string.Empty, ecuCharacteristicsInfo.RuleDate?.Date ?? string.Empty);
                             vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
                         }
