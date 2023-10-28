@@ -4134,6 +4134,7 @@ namespace PsdzClient
 
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule dates: {0}, Rule ECUS: {1}", ruleDates.ToStringItems(), sbRuleEcus);
 
+                            ObservableCollection<ECU> ecuListOrg = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList1 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList2 = new ObservableCollection<ECU>();
                             ObservableCollection<ECU> ecuList3 = new ObservableCollection<ECU>();
@@ -4141,10 +4142,16 @@ namespace PsdzClient
                             int maxEcuList = 1;
                             foreach (IEcuLogisticsEntry ecuLogisticsEntry in baseEcuCharacteristics.ecuTable)
                             {
+                                ECU ecuOrg = new ECU();
+                                ecuOrg.ID_SG_ADR = ecuLogisticsEntry.DiagAddress;
+                                ecuOrg.ECU_NAME = ecuLogisticsEntry.Name;
+                                ecuOrg.ECU_GRUPPE = ecuLogisticsEntry.GroupSgbd;
+                                ecuListOrg.Add(ecuOrg);
+
                                 ECU ecu = new ECU();
-                                ecu.ID_SG_ADR = ecuLogisticsEntry.DiagAddress;
-                                ecu.ECU_NAME = ecuLogisticsEntry.Name;
-                                ecu.ECU_GRUPPE = ecuLogisticsEntry.GroupSgbd;
+                                ecu.ID_SG_ADR = ecuOrg.ID_SG_ADR;
+                                ecu.ECU_NAME = ecuOrg.ECU_NAME;
+                                ecu.ECU_GRUPPE = ecuOrg.ECU_GRUPPE;
 
                                 List<string> ecuNamesAdd = new List<string>();
                                 if (!string.IsNullOrEmpty(ecuLogisticsEntry.GroupSgbd))
@@ -4223,7 +4230,7 @@ namespace PsdzClient
 
                             List<ObservableCollection<ECU>> ecuListCollection = new List<ObservableCollection<ECU>>
                             {
-                                ecuList1
+                                ecuListOrg, ecuList1
                             };
 
                             if (maxEcuList >= 2)
