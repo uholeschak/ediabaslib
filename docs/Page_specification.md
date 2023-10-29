@@ -16,7 +16,7 @@ Table of contents:
 * [Special jobs](#special-jobs)
 
 ## Simple jobs
-If only some EDIABAS jobs with fixed arguments are required for one display page, the XML code is relative simple. Below is the example code to display climate data for a E61 vehicle:
+If only some EDIABAS jobs with fixed arguments are required for one display page, the XML code is relatively simple. Below is the example code to display climate data for a E61 vehicle:
 ``` xml
 <?xml version="1.0" encoding="utf-8" ?>
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
@@ -94,7 +94,7 @@ If only some EDIABAS jobs with fixed arguments are required for one display page
 </fragment>
 ```
 The `page name` property specifies the title of the page and is a reference to the `strings` nodes.  
-With the attribute `display-mode` the type of the display could be specified (`list`: normal text list, `grid`: grid wiew for graphical gauge display).  
+With the attribute `display-mode` the type of the display could be specified (`list`: normal text list, `grid`: grid view for graphical gauge display).  
 The attribute `fontsize` allows to specify the font size of the display data in three steps (`small`, `medium` and `large`).  
 The attributes `gauges-portrait` and `gauges-landscape` specify the number of gauges per line in the corresponding display mode.  
 With `logfile` a log file name could be specified, that allows to log the display data. If the symbol `{D}` is used inside the log file name, it will be replaced by the current date and time.  
@@ -111,14 +111,14 @@ Within the `jobs` node multiple `job` nodes specify the EDIABAS jobs to execute.
 * `args`: Allows to specify semicolon separated job arguments. If this is the first call and `args_first` is present `args_first` will be used instead.
 * `result`: Allows to specify the required results. If omitted, all results will be generated, which may require more processing time.
 * `display-order`: Allows to specify the index of the display order. If omitted the default value is 0. If two values are identical, the original order is retained.
-* `grid-type`: If the `display-mode` ist switched to `grid`, the type of display element could be specified here:
+* `grid-type`: If the `display-mode` is switched to `grid`, the type of display element could be specified here:
     * `hidden`: Nothing will be displayed.
     * `text`: Text only, no gauge will be displayed.
     * `simple-gauge-square`: A simple gauge with a square border will be displayed.
     * `simple-gauge-round`: A simple gauge with a round border will be displayed.
     * `simple-gauge-dot`: A simple gauge with a round border and a dot instead of a bar graph will be displayed.
 * `min-value`: For gauge views the minimum value is specified with this attribute.
-* `max-value`: For gauge views the maximim value is specified with this attribute.
+* `max-value`: For gauge views the maximum value is specified with this attribute.
 * `log_tag=<tag name>`: Adding this property allows to log the display data to a log file when activating the _Log data_ menu in the application. The `logfile` property in the `page` node has to be specified as well to activate logging.
 * Each `display` node specifies one line of the display output. `Name` is again a reference to the text translation in the _strings_ nodes. With `result` the EDIABAS job result name is selected, that contains the data. The `format` property allows to format the result with the EDIABAS aspiResultText format specification [EDIABAS result types and formats](EDIABAS_result_types_and_formats.md).
 The `page` node can optionally contain `display` nodes like the `job` node. They will be only used for [User defined code](#user-defined-code).  
@@ -379,7 +379,7 @@ The functions arguments are:
 * `priority`: The notification priority in the range of -2 to 2.
 * `title`: The notification title.
 * `title`: The notification message.
-* `update`: If the notfication is already displayed, it will be not updated by default. When this value is `true` the current notification is updated.
+* `update`: If the notification is already displayed, it will be not updated by default. When this value is `true` the current notification is updated.
 
 ``` xml
     <strings>
@@ -668,7 +668,7 @@ The resulting page will look like this:
 ![Adapter page](Page_specification_AdapterConfigSmall.png)
 
 ## Receiving broadcasts (BroadcastReceived)
-For interaction of the user code with other apps the broadcast `de.holeschak.bmw_deep_obd.Action.Command` could by processed by the function `BroadcastReceived`.  
+For interaction of the user code with other apps the broadcast `de.holeschak.bmw_deep_obd.Action.Command` could be processed by the function `BroadcastReceived`.  
 Here is an example from the axis page, that changes the axis direction with the broadcast.
 ``` xml
     <code show_warnings="true">
@@ -704,7 +704,7 @@ Here is an example from the axis page, that changes the axis direction with the 
 ```
 
 # Grouping pages
-If the same of pages are required in multiple configuration, it's useful to group the together. This could be done with `*.ccpages` files. Simply include the `*.ccpage` files withing the `pages` node. The specifified path is relative to the `*.ccpages` file location. The file has the following layout:
+If the same of pages are required in multiple configuration, it's useful to group the together. This could be done with `*.ccpages` files. Simply include the `*.ccpage` files within the `pages` node. The specified path is relative to the `*.ccpages` file location. The file has the following layout:
 ``` xml
 <?xml version="1.0" encoding="utf-8" ?>
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
