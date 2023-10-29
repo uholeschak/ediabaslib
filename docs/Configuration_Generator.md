@@ -36,10 +36,10 @@ When changing the item type, the search filter is cleared and closed.
 * _Page name_: This is the title (tab) name for the page in the configuration file.
 * _ECU name_: With this field the name of ECU on the _Errors_ page could be changed.
 * _Display type_: With his check box a graphical (gauge) display for the results could be enabled. The result will be only displayed if _Graphical design_ is set to value other than hidden.
-* _Font size_: The font size of the displayed data on the main page could be specifed in 3 steps (_Small_, _Medium_ and _Large_).
+* _Font size_: The font size of the displayed data on the main page could be specified in 3 steps (_Small_, _Medium_ and _Large_).
 * _Job list_: Here all available jobs are listed. Only if the job has a check mark it will be executed later. In the area _Comments for job_ the comments for the selected job will be shown.  
  If the BMW database is used, only the known jobs are listed by default. Activating the option _show all jobs_ will display all jobs.
-* _Job result_: Here one ore more job results could be selected (with a check mark) that will be displayed later on the page) For the currently selected result the data type and comment will be shown below.
+* _Job result_: Here one more more job results could be selected (with a check mark) that will be displayed later on the page) For the currently selected result the data type and comment will be shown below.
 * _Display text_: This is the text that will be displayed on the page beside the job result.
 * _Display order_: Here the index of the display order could be specified. The default value is 0. If two values are identical, the original order is retained.
 * _Graphical design_: If _Display type_ is set to _Graphical display_ this settings will get visible. The following design types are available:

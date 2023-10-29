@@ -29,7 +29,7 @@ The standard ICOM configuration page could be found at: `http://XXXX:58000` (no 
 
 ## Non standard properties
 * `ObdComPort`: COM port name for OBD interface.
-* `AdsComPort`: COM port name for ADS interface (if not specifed ObdComPort will be used).
+* `AdsComPort`: COM port name for ADS interface (if not specified ObdComPort will be used).
 * `AppendTrace`: 0=Override old log file, 1=Always append the logfiles.
 * `LockTrace`: 0=Allow changing `IfhTrace` level from the application, 1=Prevent changing the `IfhTrace` level from the application.
 * `EnetAddRecTimeout`: Additional ENET standard additional receive timeout, default is 1000
