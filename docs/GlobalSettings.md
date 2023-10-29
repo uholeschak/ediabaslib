@@ -34,7 +34,7 @@ This page allows to change some global app settings.
   * _Screen dimmed_: The CPU keeps running but the display will be dimmed.
   * _Screen bright_: The CPU keeps running and the display will stay bright.
 * _Data logging_ options:
-  * _Store log data settings_: Store log data settings (not trace seetings) from the main menu and restore them at app restart.
+  * _Store log data settings_: Store log data settings (not trace settings) from the main menu and restore them at app restart.
 * _App start_ options:
   * _No connection establishment to vehicle_: No automatic connection establishment to vehicle.
   * _Auto connection establishment to vehicle_: If possible auto connect to vehicle. This is only possible if no dialog opens at startup.
@@ -51,7 +51,7 @@ This page allows to change some global app settings.
 * _CPU usage_ options:
   * _Check cpu usage at start_: Check CPU usage at program startup. This requires some time. I high CPU use could cause communication problems.
 * _Check ECU files_ options:
-  * _Check ECU files at startup_: Check if all ECU files are present and have the correct size. This is time consuming. If you are are sure the ECU files will not get damaged you could disable this option.
+  * _Check ECU files at startup_: Check if all ECU files are present and have the correct size. This is time consuming. If you are sure the ECU files will not get damaged you could disable this option.
 * _Battery voltage warning_ options:
   * _Show over voltage warning_: Show adapter overvoltage warning for adapter protection.
 * _VAG mode_ options:
@@ -60,7 +60,7 @@ This page allows to change some global app settings.
   * _Use BMW database_: Use BMW database for job and fault interpretation and translation. When this option is disabled communication startup is faster.
   * _Show only relevant errors_: Show only errors that are marked as relevant in the BMW database.  
   Most info memory entries are hidden and the shadow memory is never read in this mode.  
-  Some entries depend on intergation level and may change after vehicle update.  
+  Some entries depend on integration level and may change after vehicle update.  
 * _ECU detection_ options:
   * _For BMW vehicles with DS2 protocol always scan all ECUs (slow)_: If the vehicle has been retrofitted the car database may be incorrect and not all ECUs may be detected.  
   This option allows to ignore the car database and all ECUs are scanned, which is very time consuming.
