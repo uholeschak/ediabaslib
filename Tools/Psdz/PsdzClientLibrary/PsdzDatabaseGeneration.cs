@@ -4502,16 +4502,15 @@ namespace PsdzClient
 
                         if (vehicleSeriesInfoMatch == null)
                         {
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}, ModelSeries: {1}, Sgbd: {2}, Brand: {3}",
-                                series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Add: Rule ECUs: '{0}', Rule Date: '{1}'",
-                                vehicleSeriesInfoAdd.RuleEcus.ToStringItems(), vehicleSeriesInfoAdd.Date ?? string.Empty);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Multiple entries for Series: {0}", series);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Add: ModelSeries: {0}, Sgbd: {1}, Brand: {2}, Rule ECUs: '{3}', Rule Date: '{4}'",
+                                vehicleSeriesInfoAdd.ModelSeries, vehicleSeriesInfoAdd.BrSgbd, vehicleSeriesInfoAdd.Brand ?? string.Empty, vehicleSeriesInfoAdd.RuleEcus.ToStringItems(), vehicleSeriesInfoAdd.Date ?? string.Empty);
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: '{0}'",
                                 vehicleSeriesInfoAdd.RuleFormula);
                             foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoLog in vehicleSeriesInfoList)
                             {
-                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Exist: Rule ECUs: '{0}', Rule Date: '{1}'",
-                                    vehicleSeriesInfoLog.RuleEcus.ToStringItems(), vehicleSeriesInfoLog.Date ?? string.Empty);
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Exist: ModelSeries: {0}, Sgbd: {1}, Brand: {2}, Rule ECUs: '{3}', Rule Date: '{4}'",
+                                    vehicleSeriesInfoLog.ModelSeries, vehicleSeriesInfoLog.BrSgbd, vehicleSeriesInfoLog.Brand ?? string.Empty, vehicleSeriesInfoLog.RuleEcus.ToStringItems(), vehicleSeriesInfoLog.Date ?? string.Empty);
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: '{0}'",
                                     vehicleSeriesInfoLog.RuleFormula);
                             }
