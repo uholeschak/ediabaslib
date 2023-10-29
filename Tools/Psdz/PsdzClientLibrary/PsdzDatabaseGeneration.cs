@@ -4443,7 +4443,7 @@ namespace PsdzClient
 
                     string key = series.Trim().ToUpperInvariant();
                     VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(
-                        series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ruleDate, ruleDateCompare, ruleEcus, ecuList);
+                        series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ruleDate, ruleDateCompare, ruleEcus, ecuList, ruleFormula);
 
                     if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                     {
@@ -4506,12 +4506,14 @@ namespace PsdzClient
                                 series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Add: Rule ECUs: '{0}', Rule Date: '{1}'",
                                 vehicleSeriesInfoAdd.RuleEcus.ToStringItems(), vehicleSeriesInfoAdd.Date ?? string.Empty);
-                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Add: Rule formula: '{0}'",
-                                ruleFormula);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: '{0}'",
+                                vehicleSeriesInfoAdd.RuleFormula);
                             foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoLog in vehicleSeriesInfoList)
                             {
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Exist: Rule ECUs: '{0}', Rule Date: '{1}'",
                                     vehicleSeriesInfoLog.RuleEcus.ToStringItems(), vehicleSeriesInfoLog.Date ?? string.Empty);
+                                log.InfoFormat("ExtractEcuCharacteristicsVehicles Rule formula: '{0}'",
+                                    vehicleSeriesInfoLog.RuleFormula);
                             }
                             vehicleSeriesInfoList.Add(vehicleSeriesInfoAdd);
                         }
