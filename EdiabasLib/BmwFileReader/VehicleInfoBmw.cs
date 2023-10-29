@@ -918,9 +918,18 @@ namespace BmwFileReader
                     return vehicleSeriesInfoList[0];
                 }
 
+                List<string> brSgbdList = new List<string>();
                 List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoMatches = new List<VehicleStructsBmw.VehicleSeriesInfo>();
                 foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                 {
+                    if (!string.IsNullOrEmpty(vehicleSeriesInfo.BrSgbd))
+                    {
+                        if (!brSgbdList.Contains(vehicleSeriesInfo.BrSgbd, StringComparer.OrdinalIgnoreCase))
+                        {
+                            brSgbdList.Add(vehicleSeriesInfo.BrSgbd);
+                        }
+                    }
+
                     bool matched = false;
                     if (!string.IsNullOrEmpty(modelSeries) && !string.IsNullOrEmpty(vehicleSeriesInfo.ModelSeries))
                     {
@@ -1015,6 +1024,14 @@ namespace BmwFileReader
                 {
                     return vehicleSeriesInfoMatches[0];
                 }
+
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle BrSgbd count: {0}", brSgbdList.Count);
+                if (brSgbdList.Count == 1)
+                {
+                    string brSgbd = brSgbdList[0];
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using detected BrSgbd: {0}", brSgbd);
+                    return new VehicleStructsBmw.VehicleSeriesInfo(series, null, brSgbd, null, null);
+                }
             }
 
             switch (key[0])
@@ -1024,8 +1041,11 @@ namespace BmwFileReader
                 case 'I':
                 case 'J':
                 case 'U':
-                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Using fallback from first letter");
-                    return new VehicleStructsBmw.VehicleSeriesInfo(series, null, "F01", null, "BN2020");
+                {
+                    string brSgbd = "F01";
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using fallback BrSgbd: {0}", brSgbd);
+                    return new VehicleStructsBmw.VehicleSeriesInfo(series, null, brSgbd, null, "BN2020");
+                }
             }
 
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No vehicle series info found");
