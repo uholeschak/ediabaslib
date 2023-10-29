@@ -559,7 +559,7 @@ namespace PsdzClient
 
         private class EcuCharacteristicsInfo
         {
-            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, string series, string modelSeries, BNType? bnType, string brand, string sgbdAdd, RuleDate ruleDate, List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus)
+            public EcuCharacteristicsInfo(BaseEcuCharacteristics ecuCharacteristics, string series, string modelSeries, BNType? bnType, string brand, string sgbdAdd, RuleDate ruleDate, List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus, string ruleFormula)
             {
                 EcuCharacteristics = ecuCharacteristics;
                 Series = series;
@@ -569,6 +569,7 @@ namespace PsdzClient
                 SgbdAdd = sgbdAdd;
                 RuleDate = ruleDate;
                 RuleEcus = ruleEcus;
+                RuleFormula = ruleFormula;
             }
 
             public BaseEcuCharacteristics EcuCharacteristics { get; set; }
@@ -579,6 +580,7 @@ namespace PsdzClient
             public string SgbdAdd { get; set; }
             public RuleDate RuleDate { get; set; }
             public List<VehicleStructsBmw.VehicleEcuInfo> RuleEcus { get; set; }
+            public string RuleFormula { get; set; }
         }
 
         private class RuleDate
@@ -4350,12 +4352,13 @@ namespace PsdzClient
                             string modelSeries = vehicleIdent.Baureihenverbund;
                             string brandName = vehicleIdent.BrandName?.ToString();
                             RuleDate ruleDate = characteristicsMatch.RuleDate;
+                            string ruleFormula = characteristicsMatch.RuleFormula;
                             List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus = characteristicsMatch.RuleEcus;
 
                             BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
                             string sgbdAdd = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
 
-                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristicsMatch.EcuCharacteristics, series, modelSeries, bnType, brandName, sgbdAdd, ruleDate, ruleEcus));
+                            vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristicsMatch.EcuCharacteristics, series, modelSeries, bnType, brandName, sgbdAdd, ruleDate, ruleEcus, ruleFormula));
                         }
                     }
                     else
@@ -4430,6 +4433,7 @@ namespace PsdzClient
                     string modelSeries = ecuCharacteristicsInfo.ModelSeries;
                     string ruleDate = ecuCharacteristicsInfo.RuleDate?.Date;
                     string ruleDateCompare = ecuCharacteristicsInfo.RuleDate?.DateCompare;
+                    string ruleFormula = ecuCharacteristicsInfo.RuleFormula;
                     List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus = ecuCharacteristicsInfo.RuleEcus;
                     if (string.IsNullOrEmpty(series))
                     {
@@ -4439,7 +4443,7 @@ namespace PsdzClient
 
                     string key = series.Trim().ToUpperInvariant();
                     VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoAdd = new VehicleStructsBmw.VehicleSeriesInfo(
-                        series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand,  ruleDate, ruleDateCompare, ruleEcus, ecuList);
+                        series, modelSeries, brSgbd, ecuCharacteristicsInfo.SgbdAdd, bnTypeName, ecuCharacteristicsInfo.Brand, ruleDate, ruleDateCompare, ruleEcus, ecuList);
 
                     if (sgbdDict.TryGetValue(key, out List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoList))
                     {
@@ -4502,6 +4506,8 @@ namespace PsdzClient
                                 series, modelSeries, brSgbd, ecuCharacteristicsInfo.Brand);
                             log.InfoFormat("ExtractEcuCharacteristicsVehicles Add: Rule ECUs: '{0}', Rule Date: '{1}'",
                                 vehicleSeriesInfoAdd.RuleEcus.ToStringItems(), vehicleSeriesInfoAdd.Date ?? string.Empty);
+                            log.InfoFormat("ExtractEcuCharacteristicsVehicles Add: Rule formula: '{0}'",
+                                ruleFormula);
                             foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoLog in vehicleSeriesInfoList)
                             {
                                 log.InfoFormat("ExtractEcuCharacteristicsVehicles Exist: Rule ECUs: '{0}', Rule Date: '{1}'",
