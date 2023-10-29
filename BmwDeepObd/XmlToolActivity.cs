@@ -3990,7 +3990,7 @@ namespace BmwDeepObd
                     {
                         pin78ConnRequire = detectVehicleBmw.Pin78ConnectRequire;
                         detectedVinDs2 = detectVehicleBmw.Vin;
-                        ecuListUse = DetectDs2Ecus(progress, detectedVinDs2, detectVehicleBmw.Series, detectVehicleBmw.Ds2GroupFiles);
+                        ecuListUse = DetectDs2Ecus(progress, detectedVinDs2, detectVehicleBmw);
                     }
                     else
                     {
@@ -4149,9 +4149,10 @@ namespace BmwDeepObd
             _jobThread.Start();
         }
 
-        private List<EcuInfo> DetectDs2Ecus(CustomProgressDialog progress, string vin, string vehicleType, string groupFiles)
+        private List<EcuInfo> DetectDs2Ecus(CustomProgressDialog progress, string vin, DetectVehicleBmw detectVehicleBmw)
         {
             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Get DS2 ecu list");
+            string groupFiles = detectVehicleBmw.Ds2GroupFiles;
 
             try
             {
@@ -4269,7 +4270,7 @@ namespace BmwDeepObd
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group files: {0}", groupFilesUse);
                     string[] groupArray = groupFilesUse.Split(',');
                     List<string> groupList;
-                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(vehicleType, null, null, null);
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw.Series, null, null, detectVehicleBmw);
                     if (vehicleSeriesInfo != null)
                     {
                         groupList = new List<string>();
