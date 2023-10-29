@@ -155,9 +155,10 @@ namespace BmwFileReader
 
         public const string DataFileExtension = "_VehicleDataBmw.xml";
 
-        public DetectVehicleBmw(EdiabasNet ediabas, string bmwDir) : base(ediabas)
+        public DetectVehicleBmw(EdiabasNet ediabas, string bmwDir, string series = null) : base(ediabas)
         {
             _bmwDir = bmwDir;
+            Series = series;
         }
 
         public bool DetectVehicleBmwFast(bool detectMotorbikes = false)
@@ -362,7 +363,7 @@ namespace BmwFileReader
                     LogInfoFormat("Construct date: {0}.{1}", ConstructYear, ConstructMonth);
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, this);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(this);
                 if (vehicleSeriesInfo == null)
                 {
                     if (!jobInfoVin.Motorbike)
@@ -928,7 +929,7 @@ namespace BmwFileReader
                 index = indexOffset;
 
                 UpdateTypeKeyProperties();
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, this);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(this);
                 if (vehicleSeriesInfo != null)
                 {
                     VehicleSeriesInfo = vehicleSeriesInfo;

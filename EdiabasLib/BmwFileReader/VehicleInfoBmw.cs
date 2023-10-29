@@ -872,15 +872,18 @@ namespace BmwFileReader
             return vehicleSeriesInfoData.Version;
         }
 
-        public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(string series, string constructionYear, string constructionstMonth, DetectVehicleBmwBase detectVehicleBmw)
+        public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(DetectVehicleBmwBase detectVehicleBmw)
         {
+            string series = detectVehicleBmw?.Series;
+            string constructYear = detectVehicleBmw?.ConstructYear;
+            string constructMonth = detectVehicleBmw?.ConstructMonth;
             EdiabasNet ediabas = detectVehicleBmw?.Ediabas;
 
             long dateValue = -1;
-            if (!string.IsNullOrEmpty(constructionYear) && !string.IsNullOrEmpty(constructionstMonth))
+            if (!string.IsNullOrEmpty(constructYear) && !string.IsNullOrEmpty(constructMonth))
             {
-                if (Int32.TryParse(constructionYear, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 year) &&
-                    Int32.TryParse(constructionstMonth, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 month))
+                if (Int32.TryParse(constructYear, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 year) &&
+                    Int32.TryParse(constructMonth, NumberStyles.Integer, CultureInfo.InvariantCulture, out Int32 month))
                 {
                     dateValue = year * 100 + month;
                 }
