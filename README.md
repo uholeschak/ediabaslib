@@ -10,14 +10,14 @@ This means the first job call is slow and the next are faster.
 
 The library can directly read and interpret .GRP and .PRG files, the internal interface is similar to the EDIABAS API or the Tool32.exe GUI interface.  
 At the moment the D-CAN, BMW-FAST, KWP-2000*, KWP-2000 BMW, DS2, DS1, Concept 3, ISO9141 (Concept 2) and Concept 1 concepts are supported. If you send me EDIABAS log files from other concepts I could add them if possible.  
-Now a variant that can be used with cars from the VAG group has been released, but it requires an adapter with the [Replacement firmware for ELM327](docs/Replacement_firmware_for_ELM327.md). In this mode the protocols KWP2000, KWP1281 and TP2.0 are supported (cars until 4.2012).  
+Now a variant that can be used with cars from the VAG group has been released, but it requires an adapter with the [Replacement firmware for ELM327](docs/Replacement_firmware_for_ELM327.md). In this mode, the protocols KWP2000, KWP1281 and TP2.0 are supported (cars until 4.2012).  
 
-For testing there is a console application [EdiabasTest](docs/EdiabasTest_parameters.md) with command line parameters.
+For testing, there is a console application [EdiabasTest](docs/EdiabasTest_parameters.md) with command line parameters.
 
 **More informations could be found in the [Documentation](docs/Documentation.md) section.**  
 **These are expert tools, I have no time for detailed support. Please search the internet for _EDIABAS_, _Tool32_, _INPA_, _ISTA-D_, _ISTA-P_ e.g. or use forums to get help.**
 
-If you want to support the developement you could donate a small amount.  
+If you want to support the development you could donate a small amount.  
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ)
 
 # Binary Compatibility
@@ -27,7 +27,7 @@ This has been tested with Tool32, INPA and Rheingold. Since EdiabasNet is ignori
 A compatible apiNET32.dll is also available, so it should be easy to port existing .NET applications that use the original EDIABAS library.
 
 # Android
-Now there is also a library existing that is working with Mono for Android. For communication either FTDI USB or Bluetooth Serial Port Protocol (SSP) protocol could be used.
+Now there is also a library existing that is working with Mono for Android. For communication, either FTDI USB or Bluetooth Serial Port Protocol (SSP) protocol could be used.
 
 ### Deep OBD
 Additionally an Android application _[Deep OBD](docs/Deep_OBD_for_BMW_and_VAG.md)_ is existing, that is configurable via [XML](docs/Page_specification.md). Generation of XML code could be simplified with the integrated configuration generator.  
