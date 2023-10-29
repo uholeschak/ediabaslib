@@ -299,7 +299,7 @@ namespace PsdzClient
                     return DetectResult.InvalidDatabase;
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, this);
                 if (vehicleSeriesInfo == null)
                 {
                     if (!jobInfoVin.Motorbike)
@@ -1081,10 +1081,15 @@ namespace PsdzClient
             EcuListPsdz = new List<PsdzDatabase.EcuInfo>();
         }
 
-        protected override string GetEcuNameByIdent(string sgbd)
+        public override string GetEcuNameByIdent(string sgbd)
         {
             try
             {
+                if (string.IsNullOrEmpty(sgbd))
+                {
+                    return null;
+                }
+
                 _ediabas.ResolveSgbdFile(sgbd);
 
                 _ediabas.ArgString = string.Empty;

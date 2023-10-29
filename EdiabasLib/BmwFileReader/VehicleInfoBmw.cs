@@ -872,8 +872,10 @@ namespace BmwFileReader
             return vehicleSeriesInfoData.Version;
         }
 
-        public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(string series, string constructionYear, string constructionstMonth, EdiabasNet ediabas)
+        public static VehicleStructsBmw.VehicleSeriesInfo GetVehicleSeriesInfo(string series, string constructionYear, string constructionstMonth, DetectVehicleBmwBase detectVehicleBmw)
         {
+            EdiabasNet ediabas = detectVehicleBmw?.Ediabas;
+
             long dateValue = -1;
             if (!string.IsNullOrEmpty(constructionYear) && !string.IsNullOrEmpty(constructionstMonth))
             {
@@ -911,62 +913,81 @@ namespace BmwFileReader
                     return vehicleSeriesInfoList[0];
                 }
 
-                if (dateValue >= 0)
+                foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
                 {
-                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Checking date");
-
-                    foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
+                    if (dateValue >= 0 && !string.IsNullOrEmpty(vehicleSeriesInfo.Date) && !string.IsNullOrEmpty(vehicleSeriesInfo.DateCompare))
                     {
-                        if (!string.IsNullOrEmpty(vehicleSeriesInfo.Date) && !string.IsNullOrEmpty(vehicleSeriesInfo.DateCompare))
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Checking date");
+
+                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoMatch = null;
+                        if (long.TryParse(vehicleSeriesInfo.Date, NumberStyles.Integer, CultureInfo.InvariantCulture, out long dateCompare))
                         {
-                            VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfoMatch = null;
-                            if (long.TryParse(vehicleSeriesInfo.Date, NumberStyles.Integer, CultureInfo.InvariantCulture, out long dateCompare))
+                            string dateCompre = vehicleSeriesInfo.DateCompare.ToUpperInvariant();
+                            if (dateCompre.Contains("<"))
                             {
-                                string dateCompre = vehicleSeriesInfo.DateCompare.ToUpperInvariant();
-                                if (dateCompre.Contains("<"))
+                                if (dateCompre.Contains("="))
                                 {
-                                    if (dateCompre.Contains("="))
+                                    if (dateCompare <= dateValue)
                                     {
-                                        if (dateCompare <= dateValue)
-                                        {
-                                            vehicleSeriesInfoMatch = vehicleSeriesInfo;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (dateCompare < dateValue)
-                                        {
-                                            vehicleSeriesInfoMatch = vehicleSeriesInfo;
-                                        }
+                                        vehicleSeriesInfoMatch = vehicleSeriesInfo;
                                     }
                                 }
-                                else if (dateCompre.Contains(">"))
+                                else
                                 {
-                                    if (dateCompre.Contains("="))
+                                    if (dateCompare < dateValue)
                                     {
-                                        if (dateCompare >= dateValue)
-                                        {
-                                            vehicleSeriesInfoMatch = vehicleSeriesInfo;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (dateCompare > dateValue)
-                                        {
-                                            vehicleSeriesInfoMatch = vehicleSeriesInfo;
-                                        }
+                                        vehicleSeriesInfoMatch = vehicleSeriesInfo;
                                     }
                                 }
                             }
-
-                            if (vehicleSeriesInfoMatch != null)
+                            else if (dateCompre.Contains(">"))
                             {
-                                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched date expression: {0} {1}", vehicleSeriesInfoMatch.DateCompare, vehicleSeriesInfoMatch.Date);
-                                return vehicleSeriesInfoMatch;
+                                if (dateCompre.Contains("="))
+                                {
+                                    if (dateCompare >= dateValue)
+                                    {
+                                        vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                    }
+                                }
+                                else
+                                {
+                                    if (dateCompare > dateValue)
+                                    {
+                                        vehicleSeriesInfoMatch = vehicleSeriesInfo;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (vehicleSeriesInfoMatch != null)
+                        {
+                            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched date expression: {0} {1}", vehicleSeriesInfoMatch.DateCompare, vehicleSeriesInfoMatch.Date);
+                            return vehicleSeriesInfoMatch;
+                        }
+                    }
+
+                    if (detectVehicleBmw != null && vehicleSeriesInfo.RuleEcus != null && vehicleSeriesInfo.RuleEcus.Count > 0)
+                    {
+                        foreach (VehicleStructsBmw.VehicleEcuInfo ecuInfo in vehicleSeriesInfo.RuleEcus)
+                        {
+                            if (!string.IsNullOrEmpty(ecuInfo.GroupSgbd) && !string.IsNullOrEmpty(ecuInfo.Sgbd))
+                            {
+                                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Checking ecu name Group: {0}, Name: {1}", ecuInfo.GroupSgbd, ecuInfo.Name);
+                                string ecuName = detectVehicleBmw.GetEcuNameByIdent(ecuInfo.GroupSgbd);
+                                if (!string.IsNullOrEmpty(ecuName))
+                                {
+                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved ecu name: {0}", ecuName);
+                                    if (string.Compare(ecuName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched ecu name Group: {0}, Name: {1}", ecuInfo.GroupSgbd, ecuInfo.Name);
+                                        return vehicleSeriesInfo;
+                                    }
+                                }
                             }
                         }
                     }
                 }
+
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No date matched");
             }
 

@@ -78,6 +78,7 @@ namespace BmwFileReader
         public string ILevelBackup { get; protected set; }
 
         protected EdiabasNet _ediabas;
+        public EdiabasNet Ediabas => _ediabas;
 
         public static Regex VinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
 
@@ -1006,7 +1007,7 @@ namespace BmwFileReader
             ILevelBackup = null;
         }
 
-        protected virtual string GetEcuNameByIdent(string sgbd)
+        public virtual string GetEcuNameByIdent(string sgbd)
         {
             return null;
         }

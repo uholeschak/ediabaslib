@@ -362,7 +362,7 @@ namespace BmwFileReader
                     LogInfoFormat("Construct date: {0}.{1}", ConstructYear, ConstructMonth);
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, this);
                 if (vehicleSeriesInfo == null)
                 {
                     if (!jobInfoVin.Motorbike)
@@ -928,7 +928,7 @@ namespace BmwFileReader
                 index = indexOffset;
 
                 UpdateTypeKeyProperties();
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, _ediabas);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, this);
                 if (vehicleSeriesInfo != null)
                 {
                     VehicleSeriesInfo = vehicleSeriesInfo;
@@ -1091,10 +1091,15 @@ namespace BmwFileReader
             Pin78ConnectRequire = false;
         }
 
-        protected override string GetEcuNameByIdent(string sgbd)
+        public override string GetEcuNameByIdent(string sgbd)
         {
             try
             {
+                if (string.IsNullOrEmpty(sgbd))
+                {
+                    return null;
+                }
+
                 ActivityCommon.ResolveSgbdFile(_ediabas, sgbd);
 
                 _ediabas.ArgString = string.Empty;
