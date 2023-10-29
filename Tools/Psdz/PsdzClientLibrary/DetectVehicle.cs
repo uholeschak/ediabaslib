@@ -299,7 +299,7 @@ namespace PsdzClient
                     return DetectResult.InvalidDatabase;
                 }
 
-                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(Series, ConstructYear, ConstructMonth, this);
+                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(this);
                 if (vehicleSeriesInfo == null)
                 {
                     if (!jobInfoVin.Motorbike)

@@ -2621,7 +2621,8 @@ namespace BmwDeepObd
                     _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
                     bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
 
-                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(_instanceData.VehicleSeries, null, null, null);
+                    DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(_ediabas, _bmwDir, _instanceData.VehicleSeries);
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
                     if (vehicleSeriesInfo != null)
                     {
                         VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, ecuInfo.Grp);
@@ -4270,7 +4271,7 @@ namespace BmwDeepObd
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group files: {0}", groupFilesUse);
                     string[] groupArray = groupFilesUse.Split(',');
                     List<string> groupList;
-                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw.Series, null, null, detectVehicleBmw);
+                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
                     if (vehicleSeriesInfo != null)
                     {
                         groupList = new List<string>();
