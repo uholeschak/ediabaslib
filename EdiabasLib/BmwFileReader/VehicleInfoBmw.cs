@@ -919,6 +919,7 @@ namespace BmwFileReader
                 }
 
                 List<string> brSgbdList = new List<string>();
+                List<string> sgbdAddList = new List<string>();
                 List<string> bnTypeList = new List<string>();
                 List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoMatches = new List<VehicleStructsBmw.VehicleSeriesInfo>();
                 foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoList)
@@ -928,6 +929,14 @@ namespace BmwFileReader
                         if (!brSgbdList.Contains(vehicleSeriesInfo.BrSgbd, StringComparer.OrdinalIgnoreCase))
                         {
                             brSgbdList.Add(vehicleSeriesInfo.BrSgbd);
+                        }
+                    }
+
+                    if (!string.IsNullOrEmpty(vehicleSeriesInfo.SgbdAdd))
+                    {
+                        if (!sgbdAddList.Contains(vehicleSeriesInfo.SgbdAdd, StringComparer.OrdinalIgnoreCase))
+                        {
+                            sgbdAddList.Add(vehicleSeriesInfo.SgbdAdd);
                         }
                     }
 
@@ -1038,15 +1047,22 @@ namespace BmwFileReader
                 if (brSgbdList.Count == 1)
                 {
                     string brSgbd = brSgbdList[0];
+                    string sgbdAdd = null;
                     string bnType = null;
+
+                    if (sgbdAddList.Count == 1)
+                    {
+                        sgbdAdd = sgbdAddList[0];
+                    }
 
                     if (bnTypeList.Count == 1)
                     {
                         bnType = bnTypeList[0];
                     }
 
-                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using detected BrSgbd: {0}, BnType: {1}", brSgbd, bnType ?? string.Empty);
-                    return new VehicleStructsBmw.VehicleSeriesInfo(series, null, brSgbd, null, bnType);
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using detected BrSgbd: {0}, SgbdAdd: {1}, BnType: {2}",
+                        brSgbd ?? string.Empty, sgbdAdd ?? string.Empty, bnType ?? string.Empty);
+                    return new VehicleStructsBmw.VehicleSeriesInfo(series, null, brSgbd, sgbdAdd, bnType);
                 }
             }
 
