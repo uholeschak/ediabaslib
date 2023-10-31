@@ -632,6 +632,7 @@ namespace BmwDeepObd
         private EcuInfo _ecuInfoMot;
         private EcuInfo _ecuInfoDid;
         private EcuInfo _ecuInfoBmwServiceMenu;
+        private DetectVehicleBmw _detectVehicleBmw;
         private bool _translateEnabled = true;
         private bool _translateActive;
         private bool _ecuListTranslated;
@@ -1566,6 +1567,7 @@ namespace BmwDeepObd
             _ecuList.Clear();
             _ecuInfoMot = null;
             _ecuInfoDid = null;
+            _detectVehicleBmw = null;
             _ecuListTranslated = false;
             _instanceData.EcuSearchAbortIndex = -1;
         }
@@ -2621,7 +2623,7 @@ namespace BmwDeepObd
                     _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
                     bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
 
-                    DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(_ediabas, _bmwDir, _instanceData.VehicleSeries);
+                    DetectVehicleBmw detectVehicleBmw = _detectVehicleBmw;
                     VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
                     if (vehicleSeriesInfo != null)
                     {
@@ -4023,6 +4025,11 @@ namespace BmwDeepObd
 
                         UpdateBmwEcuInfo(detectVehicleBmw);
                         ReadAllXml();
+                    }
+
+                    if (ecuListUse != null)
+                    {
+                        _detectVehicleBmw = detectVehicleBmw;
                     }
                 }
 

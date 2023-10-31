@@ -155,10 +155,9 @@ namespace BmwFileReader
 
         public const string DataFileExtension = "_VehicleDataBmw.xml";
 
-        public DetectVehicleBmw(EdiabasNet ediabas, string bmwDir, string series = null) : base(ediabas)
+        public DetectVehicleBmw(EdiabasNet ediabas, string bmwDir) : base(ediabas)
         {
             _bmwDir = bmwDir;
-            Series = series;
         }
 
         public bool DetectVehicleBmwFast(bool detectMotorbikes = false)
