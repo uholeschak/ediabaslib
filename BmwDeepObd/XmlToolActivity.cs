@@ -370,6 +370,7 @@ namespace BmwDeepObd
                 CommErrorsOccurred = false;
                 ShownServiceMenuHint = false;
                 ServiceFunctionWarningShown = false;
+                DetectVehicleBmwFile = null;
             }
 
             public bool ForceAppend { get; set; }
@@ -395,6 +396,7 @@ namespace BmwDeepObd
             public bool CommErrorsOccurred { get; set; }
             public bool ShownServiceMenuHint { get; set; }
             public bool ServiceFunctionWarningShown { get; set; }
+            public string DetectVehicleBmwFile { get; set; }
         }
 
 #if DEBUG
@@ -409,6 +411,7 @@ namespace BmwDeepObd
             </{0}>";
         private const string XsdFileName = "BmwDeepObd.xsd";
         private const string TranslationFileName = "Translation.xml";
+        private const string DetectVehicleBmwFileName = "DetectVehicleBmwInst.xml";
         private const int MotorAddrVag = 1;
 
         private const string PageExtension = ".ccpage";
@@ -877,6 +880,7 @@ namespace BmwDeepObd
         protected override void OnSaveInstanceState(Bundle outState)
         {
             StoreTranslation();
+            StoreDetectVehicleInfo();
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
@@ -9051,6 +9055,41 @@ namespace BmwDeepObd
                     return false;
                 }
                 return _activityCommon.StoreTranslationCache(Path.Combine(xmlFileDir, TranslationFileName));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool StoreDetectVehicleInfo()
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            _instanceData.DetectVehicleBmwFile = null;
+            if (string.IsNullOrEmpty(_bmwDir))
+            {
+                return false;
+            }
+
+            try
+            {
+                if (_detectVehicleBmw == null || !_detectVehicleBmw.Valid)
+                {
+                    return false;
+                }
+
+                string fileName = Path.Combine(_bmwDir, DetectVehicleBmwFileName);
+                if (!_detectVehicleBmw.SaveDataToFile(fileName))
+                {
+                    return false;
+                }
+
+                _instanceData.DetectVehicleBmwFile = fileName;
+                return true;
             }
             catch (Exception)
             {

@@ -960,7 +960,7 @@ namespace BmwFileReader
             }
         }
 
-        public bool SaveDataToFile(string fileName, string fileTimeStamp)
+        public bool SaveDataToFile(string fileName, string fileTimeStamp = null)
         {
             try
             {
@@ -994,7 +994,7 @@ namespace BmwFileReader
             return true;
         }
 
-        public bool LoadDataFromFile(string fileName, string fileTimeStamp)
+        public bool LoadDataFromFile(string fileName, string fileTimeStamp = null)
         {
             try
             {
