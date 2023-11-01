@@ -50,10 +50,15 @@ namespace BmwFileReader
                 Description = null;
             }
 
-            public object Clone()
+            public EcuInfo Clone()
             {
                 EcuInfo other = (EcuInfo)MemberwiseClone();
                 return other;
+            }
+
+            object ICloneable.Clone()
+            {
+                return Clone();
             }
 
             [XmlElement("Name"), DefaultValue(null)] public string Name { get; set; }
