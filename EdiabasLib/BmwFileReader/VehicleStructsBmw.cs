@@ -114,8 +114,8 @@ namespace BmwFileReader
             public VehicleSeriesInfo Clone()
             {
                 VehicleSeriesInfo other = (VehicleSeriesInfo) MemberwiseClone();
-                other.RuleEcus = new List<VehicleEcuInfo>(RuleEcus);
-                other.EcuList = new List<VehicleEcuInfo>(EcuList);
+                other.RuleEcus = RuleEcus.ConvertAll(x => x.Clone()).ToList();
+                other.EcuList = EcuList.ConvertAll(x => x.Clone()).ToList();
                 return other;
             }
 
