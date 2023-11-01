@@ -35,8 +35,12 @@ namespace BmwFileReader
         }
 
         [XmlType("EcuInfo")]
-        public class EcuInfo
+        public class EcuInfo : ICloneable
         {
+            public EcuInfo()
+            {
+            }
+
             public EcuInfo(string name, Int64 address, string grp)
             {
                 Name = name;
@@ -44,6 +48,12 @@ namespace BmwFileReader
                 Grp = grp;
                 Sgbd = null;
                 Description = null;
+            }
+
+            public object Clone()
+            {
+                EcuInfo other = (EcuInfo)MemberwiseClone();
+                return other;
             }
 
             [XmlElement("Name"), DefaultValue(null)] public string Name { get; set; }

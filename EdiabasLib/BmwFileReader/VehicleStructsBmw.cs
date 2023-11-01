@@ -21,7 +21,7 @@ namespace BmwFileReader
         public const int MaxEcuAddr = 255;
 
         [XmlType("VEI")]
-        public class VehicleEcuInfo
+        public class VehicleEcuInfo : ICloneable
         {
             public VehicleEcuInfo()
             {
@@ -65,6 +65,12 @@ namespace BmwFileReader
                 return sb.ToString();
             }
 
+            public object Clone()
+            {
+                VehicleEcuInfo other = (VehicleEcuInfo)MemberwiseClone();
+                return other;
+            }
+
             [XmlElement("DA")] public int DiagAddr { get; set; }
             [XmlElement("Nm"), DefaultValue(null)] public string Name { get; set; }
             [XmlElement("GS"), DefaultValue(null)] public string GroupSgbd { get; set; }
@@ -73,7 +79,7 @@ namespace BmwFileReader
 
         [XmlInclude(typeof(VehicleEcuInfo))]
         [XmlType("VSI")]
-        public class VehicleSeriesInfo
+        public class VehicleSeriesInfo : ICloneable
         {
             public VehicleSeriesInfo()
             {
@@ -98,6 +104,14 @@ namespace BmwFileReader
             {
                 Date = null;
                 DateCompare = null;
+            }
+
+            public object Clone()
+            {
+                VehicleSeriesInfo other = (VehicleSeriesInfo) MemberwiseClone();
+                other.RuleEcus = new List<VehicleEcuInfo>(RuleEcus);
+                other.EcuList = new List<VehicleEcuInfo>(EcuList);
+                return other;
             }
 
             [XmlElement("Sr"), DefaultValue(null)] public string Series { get; set; }

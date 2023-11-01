@@ -15,11 +15,11 @@ namespace BmwFileReader
 {
     public class DetectVehicleBmw : DetectVehicleBmwBase
     {
-        [XmlInclude(typeof(EcuInfo))]
+        [XmlInclude(typeof(EcuInfo)), XmlInclude(typeof(VehicleStructsBmw.VehicleSeriesInfo))]
         [XmlType("VehicleDataBmw")]
         public class VehicleDataBmw
         {
-            public const string DataVersion = "6";
+            public const string DataVersion = "7";
 
             public string GetVersionString(DetectVehicleBmw detectVehicleBmw)
             {
@@ -63,7 +63,7 @@ namespace BmwFileReader
                 ProductType = detectVehicleBmw.ProductType;
                 BnType = detectVehicleBmw.BnType;
                 Brand = detectVehicleBmw.Brand;
-                Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
+                VehicleSeriesInfo = (VehicleStructsBmw.VehicleSeriesInfo) detectVehicleBmw.VehicleSeriesInfo.Clone();
                 EcuList = new List<EcuInfo>(detectVehicleBmw.EcuList);
                 ConstructYear = detectVehicleBmw.ConstructYear;
                 ConstructMonth = detectVehicleBmw.ConstructMonth;
@@ -77,12 +77,13 @@ namespace BmwFileReader
                 ILevelShip = detectVehicleBmw.ILevelShip;
                 ILevelCurrent = detectVehicleBmw.ILevelCurrent;
                 ILevelBackup = detectVehicleBmw.ILevelBackup;
+                Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
             }
 
             public bool Restore(DetectVehicleBmw detectVehicleBmw)
             {
                 string versionString = GetVersionString(detectVehicleBmw);
-                if (string.Compare(Version, versionString, StringComparison.InvariantCulture) != 0)
+                if (!string.IsNullOrEmpty(Version) && string.Compare(Version, versionString, StringComparison.InvariantCulture) != 0)
                 {
                     return false;
                 }
@@ -97,7 +98,7 @@ namespace BmwFileReader
                 detectVehicleBmw.ProductType = ProductType;
                 detectVehicleBmw.BnType = BnType;
                 detectVehicleBmw.Brand = Brand;
-                detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
+                detectVehicleBmw.VehicleSeriesInfo = (VehicleStructsBmw.VehicleSeriesInfo)VehicleSeriesInfo?.Clone();
                 detectVehicleBmw.EcuList = new List<EcuInfo>(EcuList);
                 detectVehicleBmw.ConstructYear = ConstructYear;
                 detectVehicleBmw.ConstructMonth = ConstructMonth;
@@ -111,6 +112,7 @@ namespace BmwFileReader
                 detectVehicleBmw.ILevelShip = ILevelShip;
                 detectVehicleBmw.ILevelCurrent = ILevelCurrent;
                 detectVehicleBmw.ILevelBackup = ILevelBackup;
+                detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
 
                 return true;
             }
@@ -126,7 +128,7 @@ namespace BmwFileReader
             [XmlElement("ProductType"), DefaultValue(null)] public string ProductType { get; set; }
             [XmlElement("BnType")] public string BnType { get; private set; }
             [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
-            [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
+            [XmlElement("VehicleSeriesInfo"), DefaultValue(null)] public VehicleStructsBmw.VehicleSeriesInfo VehicleSeriesInfo { get; protected set; }
             [XmlElement("EcuList"), DefaultValue(null)] public List<EcuInfo> EcuList { get; protected set; }
             [XmlElement("ConstructYear"), DefaultValue(null)] public string ConstructYear { get; set; }
             [XmlElement("ConstructMonth"), DefaultValue(null)] public string ConstructMonth { get; set; }
@@ -140,6 +142,7 @@ namespace BmwFileReader
             [XmlElement("ILevelShip"), DefaultValue(null)] public string ILevelShip { get; set; }
             [XmlElement("ILevelCurrent"), DefaultValue(null)] public string ILevelCurrent { get; set; }
             [XmlElement("ILevelBackup"), DefaultValue(null)] public string ILevelBackup { get; set; }
+            [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
         }
 
         public delegate bool AbortDelegate();
