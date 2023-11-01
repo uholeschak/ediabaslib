@@ -65,10 +65,15 @@ namespace BmwFileReader
                 return sb.ToString();
             }
 
-            public object Clone()
+            public VehicleEcuInfo Clone()
             {
                 VehicleEcuInfo other = (VehicleEcuInfo)MemberwiseClone();
                 return other;
+            }
+
+            object ICloneable.Clone()
+            {
+                return Clone();
             }
 
             [XmlElement("DA")] public int DiagAddr { get; set; }

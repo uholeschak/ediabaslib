@@ -114,9 +114,15 @@ namespace BmwDeepObd
 
             public string InitialResults { get; set; }
 
-            public object Clone()
+            public JobInfo Clone()
             {
-                return MemberwiseClone();
+                JobInfo other = (JobInfo)MemberwiseClone();
+                return other;
+            }
+
+            object ICloneable.Clone()
+            {
+                return Clone();
             }
         }
 
@@ -2506,13 +2512,11 @@ namespace BmwDeepObd
                             initialJobsIndexHash.Add(initialIndex);
                             if (jobValid)
                             {
-                                if (job.Clone() is JobInfo jobClone)
-                                {
-                                    jobClone.InitialIndex = initialIndex;
-                                    jobClone.InitialArgs = jobItems.Length > 1 ? jobItems[1] : string.Empty;
-                                    jobClone.InitialResults = jobItems.Length > 2 ? jobItems[2] : string.Empty;
-                                    _jobListAdapter.Items.Add(jobClone);
-                                }
+                                JobInfo jobClone = job.Clone();
+                                jobClone.InitialIndex = initialIndex;
+                                jobClone.InitialArgs = jobItems.Length > 1 ? jobItems[1] : string.Empty;
+                                jobClone.InitialResults = jobItems.Length > 2 ? jobItems[2] : string.Empty;
+                                _jobListAdapter.Items.Add(jobClone);
                             }
                         }
 
