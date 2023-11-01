@@ -15,6 +15,7 @@ namespace BmwFileReader
 {
     public class DetectVehicleBmw : DetectVehicleBmwBase
     {
+        [XmlInclude(typeof(EcuInfo))]
         [XmlType("VehicleDataBmw")]
         public class VehicleDataBmw
         {

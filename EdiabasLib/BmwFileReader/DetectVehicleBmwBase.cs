@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using EdiabasLib;
 
 namespace BmwFileReader
@@ -32,6 +34,7 @@ namespace BmwFileReader
             public bool Motorbike { get; }
         }
 
+        [XmlType("EcuInfo")]
         public class EcuInfo
         {
             public EcuInfo(string name, Int64 address, string grp)
@@ -43,11 +46,11 @@ namespace BmwFileReader
                 Description = null;
             }
 
-            public string Name { get; set; }
-            public Int64 Address { get; set; }
-            public string Grp { get; set; }
-            public string Sgbd { get; set; }
-            public string Description { get; set; }
+            [XmlElement("Name"), DefaultValue(null)] public string Name { get; set; }
+            [XmlElement("Address"), DefaultValue(null)] public Int64 Address { get; set; }
+            [XmlElement("Grp"), DefaultValue(null)] public string Grp { get; set; }
+            [XmlElement("Sgbd"), DefaultValue(null)] public string Sgbd { get; set; }
+            [XmlElement("Description"), DefaultValue(null)] public string Description { get; set; }
         }
 
         public string Vin { get; protected set; }
