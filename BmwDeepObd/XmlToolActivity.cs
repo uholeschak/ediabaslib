@@ -9079,21 +9079,22 @@ namespace BmwDeepObd
                 return false;
             }
 
-            _instanceData.DetectVehicleBmwFile = null;
-            if (string.IsNullOrEmpty(_bmwDir))
-            {
-                return false;
-            }
-
             try
             {
+                _instanceData.DetectVehicleBmwFile = null;
                 DetectVehicleBmw detectVehicleBmw = _detectVehicleBmw;
                 if (detectVehicleBmw == null || !detectVehicleBmw.Valid)
                 {
                     return false;
                 }
 
-                string fileName = Path.Combine(_bmwDir, DetectVehicleBmwFileName);
+                string xmlFileDir = XmlFileDir();
+                if (xmlFileDir == null)
+                {
+                    return false;
+                }
+
+                string fileName = Path.Combine(xmlFileDir, DetectVehicleBmwFileName);
                 if (!detectVehicleBmw.SaveDataToFile(fileName))
                 {
                     return false;
