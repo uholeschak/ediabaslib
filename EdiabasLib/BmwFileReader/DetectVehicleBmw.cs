@@ -64,6 +64,7 @@ namespace BmwFileReader
                 BnType = detectVehicleBmw.BnType;
                 Brand = detectVehicleBmw.Brand;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
+                EcuList = new List<EcuInfo>(detectVehicleBmw.EcuList);
                 ConstructYear = detectVehicleBmw.ConstructYear;
                 ConstructMonth = detectVehicleBmw.ConstructMonth;
                 Paint = detectVehicleBmw.Paint;
@@ -97,6 +98,7 @@ namespace BmwFileReader
                 detectVehicleBmw.BnType = BnType;
                 detectVehicleBmw.Brand = Brand;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
+                detectVehicleBmw.EcuList = new List<EcuInfo>(EcuList);
                 detectVehicleBmw.ConstructYear = ConstructYear;
                 detectVehicleBmw.ConstructMonth = ConstructMonth;
                 detectVehicleBmw.Paint = Paint;
@@ -125,6 +127,7 @@ namespace BmwFileReader
             [XmlElement("BnType")] public string BnType { get; private set; }
             [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
+            [XmlElement("EcuList"), DefaultValue(null)] public List<EcuInfo> EcuList { get; protected set; }
             [XmlElement("ConstructYear"), DefaultValue(null)] public string ConstructYear { get; set; }
             [XmlElement("ConstructMonth"), DefaultValue(null)] public string ConstructMonth { get; set; }
             [XmlElement("Paint"), DefaultValue(null)] public string Paint { get; private set; }
