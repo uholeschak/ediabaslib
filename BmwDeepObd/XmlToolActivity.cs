@@ -824,6 +824,15 @@ namespace BmwDeepObd
             EdiabasClose(_instanceData.ForceAppend);
             ReadTranslation();
 
+            if (!string.IsNullOrEmpty(_instanceData.DetectVehicleBmwFile) && !string.IsNullOrEmpty(_bmwDir))
+            {
+                DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(_ediabas, _bmwDir);
+                if (detectVehicleBmw.LoadDataFromFile(_instanceData.DetectVehicleBmwFile))
+                {
+                    _detectVehicleBmw = detectVehicleBmw;
+                }
+            }
+
             if (!_activityRecreated)
             {
                 if (_instanceData.ManualConfigIdx > 0 || IsPageSelectionActive())
@@ -2628,18 +2637,21 @@ namespace BmwDeepObd
                     bmwServiceDataItems = VehicleInfoBmw.GetServiceDataItems(_bmwDir, _ruleEvalBmw);
 
                     DetectVehicleBmw detectVehicleBmw = _detectVehicleBmw;
-                    VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
-                    if (vehicleSeriesInfo != null)
+                    if (detectVehicleBmw != null)
                     {
-                        VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, ecuInfo.Grp);
-                        if (vehicleEcuInfo != null)
+                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
+                        if (vehicleSeriesInfo != null)
                         {
-                            if (!string.IsNullOrWhiteSpace(vehicleEcuInfo.GroupSgbd))
+                            VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, ecuInfo.Grp);
+                            if (vehicleEcuInfo != null)
                             {
-                                string[] groupNames = vehicleEcuInfo.GroupSgbd.Split('|');
-                                foreach (string groupName in groupNames)
+                                if (!string.IsNullOrWhiteSpace(vehicleEcuInfo.GroupSgbd))
                                 {
-                                    validSgbdDict.TryAdd(groupName.ToUpperInvariant(), true);
+                                    string[] groupNames = vehicleEcuInfo.GroupSgbd.Split('|');
+                                    foreach (string groupName in groupNames)
+                                    {
+                                        validSgbdDict.TryAdd(groupName.ToUpperInvariant(), true);
+                                    }
                                 }
                             }
                         }
@@ -9077,13 +9089,14 @@ namespace BmwDeepObd
 
             try
             {
-                if (_detectVehicleBmw == null || !_detectVehicleBmw.Valid)
+                DetectVehicleBmw detectVehicleBmw = _detectVehicleBmw;
+                if (detectVehicleBmw == null || !detectVehicleBmw.Valid)
                 {
                     return false;
                 }
 
                 string fileName = Path.Combine(_bmwDir, DetectVehicleBmwFileName);
-                if (!_detectVehicleBmw.SaveDataToFile(fileName))
+                if (!detectVehicleBmw.SaveDataToFile(fileName))
                 {
                     return false;
                 }
