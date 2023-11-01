@@ -106,12 +106,17 @@ namespace BmwFileReader
                 DateCompare = null;
             }
 
-            public object Clone()
+            public VehicleSeriesInfo Clone()
             {
                 VehicleSeriesInfo other = (VehicleSeriesInfo) MemberwiseClone();
                 other.RuleEcus = new List<VehicleEcuInfo>(RuleEcus);
                 other.EcuList = new List<VehicleEcuInfo>(EcuList);
                 return other;
+            }
+
+            object ICloneable.Clone()
+            {
+                return Clone();
             }
 
             [XmlElement("Sr"), DefaultValue(null)] public string Series { get; set; }

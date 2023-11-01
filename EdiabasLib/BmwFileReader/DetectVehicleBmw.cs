@@ -63,7 +63,7 @@ namespace BmwFileReader
                 ProductType = detectVehicleBmw.ProductType;
                 BnType = detectVehicleBmw.BnType;
                 Brand = detectVehicleBmw.Brand;
-                VehicleSeriesInfo = (VehicleStructsBmw.VehicleSeriesInfo) detectVehicleBmw.VehicleSeriesInfo.Clone();
+                VehicleSeriesInfo = detectVehicleBmw.VehicleSeriesInfo?.Clone();
                 EcuList = new List<EcuInfo>(detectVehicleBmw.EcuList);
                 ConstructYear = detectVehicleBmw.ConstructYear;
                 ConstructMonth = detectVehicleBmw.ConstructMonth;
@@ -98,7 +98,7 @@ namespace BmwFileReader
                 detectVehicleBmw.ProductType = ProductType;
                 detectVehicleBmw.BnType = BnType;
                 detectVehicleBmw.Brand = Brand;
-                detectVehicleBmw.VehicleSeriesInfo = (VehicleStructsBmw.VehicleSeriesInfo)VehicleSeriesInfo?.Clone();
+                detectVehicleBmw.VehicleSeriesInfo = VehicleSeriesInfo?.Clone();
                 detectVehicleBmw.EcuList = new List<EcuInfo>(EcuList);
                 detectVehicleBmw.ConstructYear = ConstructYear;
                 detectVehicleBmw.ConstructMonth = ConstructMonth;
