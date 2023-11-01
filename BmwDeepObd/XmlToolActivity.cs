@@ -3085,7 +3085,7 @@ namespace BmwDeepObd
             return null;
         }
 
-        private void UpdateBmwEcuInfo(DetectVehicleBmw detectVehicleBmw)
+        private void UpdateBmwEcuInfo()
         {
             if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
             {
@@ -3094,6 +3094,7 @@ namespace BmwDeepObd
 
             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
             {
+                DetectVehicleBmw detectVehicleBmw = _detectVehicleBmw;
                 _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
 
                 foreach (EcuInfo ecuInfo in _ecuList)
@@ -3997,7 +3998,8 @@ namespace BmwDeepObd
                         progress.Progress = 100;
                     });
 
-                    UpdateBmwEcuInfo(detectVehicleBmw);
+                    _detectVehicleBmw = detectVehicleBmw;
+                    UpdateBmwEcuInfo();
                     ReadAllXml();
                 }
 
@@ -4039,13 +4041,9 @@ namespace BmwDeepObd
                             _instanceData.Vin = GetBestVin(_ecuList);
                         }
 
-                        UpdateBmwEcuInfo(detectVehicleBmw);
-                        ReadAllXml();
-                    }
-
-                    if (ecuListUse != null)
-                    {
                         _detectVehicleBmw = detectVehicleBmw;
+                        UpdateBmwEcuInfo();
+                        ReadAllXml();
                     }
                 }
 
