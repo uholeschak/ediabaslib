@@ -411,7 +411,7 @@ namespace BmwDeepObd
             </{0}>";
         private const string XsdFileName = "BmwDeepObd.xsd";
         private const string TranslationFileName = "Translation.xml";
-        private const string DetectVehicleBmwFileName = "DetectVehicleBmwInst.xml";
+        private const string DetectVehicleBmwFileName = "XmlToolDetectVehicleBmw.xml";
         private const int MotorAddrVag = 1;
 
         private const string PageExtension = ".ccpage";
@@ -9088,13 +9088,12 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string xmlFileDir = XmlFileDir();
-                if (xmlFileDir == null)
+                if (string.IsNullOrEmpty(_appDataDir))
                 {
                     return false;
                 }
 
-                string fileName = Path.Combine(xmlFileDir, DetectVehicleBmwFileName);
+                string fileName = Path.Combine(_appDataDir, DetectVehicleBmwFileName);
                 if (!detectVehicleBmw.SaveDataToFile(fileName))
                 {
                     return false;
