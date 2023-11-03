@@ -1488,6 +1488,27 @@ namespace BmwDeepObd
 
         private void FinishContinue()
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(_instanceData.DetectVehicleBmwFile))
+            {
+                try
+                {
+                    if (File.Exists(_instanceData.DetectVehicleBmwFile))
+                    {
+                        File.Delete(_instanceData.DetectVehicleBmwFile);
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _instanceData.DetectVehicleBmwFile = null;
+            }
+
             if (!SendTraceFile((sender, args) =>
             {
                 if (_activityCommon == null)
