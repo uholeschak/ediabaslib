@@ -53,7 +53,6 @@ namespace BmwFileReader
             public VehicleDataBmw(DetectVehicleBmw detectVehicleBmw)
             {
                 Version = GetVersionString(detectVehicleBmw);
-                Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Vin = detectVehicleBmw.Vin;
                 TypeKey = detectVehicleBmw.TypeKey;
                 GroupSgdb = detectVehicleBmw.GroupSgbd;
@@ -77,7 +76,9 @@ namespace BmwFileReader
                 ILevelShip = detectVehicleBmw.ILevelShip;
                 ILevelCurrent = detectVehicleBmw.ILevelCurrent;
                 ILevelBackup = detectVehicleBmw.ILevelBackup;
+                Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
+                Pin78ConnectRequire = detectVehicleBmw.Pin78ConnectRequire;
             }
 
             public bool Restore(DetectVehicleBmw detectVehicleBmw)
@@ -88,7 +89,6 @@ namespace BmwFileReader
                     return false;
                 }
 
-                detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Vin = Vin;
                 detectVehicleBmw.TypeKey = TypeKey;
                 detectVehicleBmw.GroupSgbd = GroupSgdb;
@@ -112,13 +112,14 @@ namespace BmwFileReader
                 detectVehicleBmw.ILevelShip = ILevelShip;
                 detectVehicleBmw.ILevelCurrent = ILevelCurrent;
                 detectVehicleBmw.ILevelBackup = ILevelBackup;
+                detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
+                detectVehicleBmw.Pin78ConnectRequire = Pin78ConnectRequire;
 
                 return true;
             }
 
             [XmlElement("Version")] public string Version { get; set; }
-            [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
             [XmlElement("Vin"), DefaultValue(null)] public string Vin { get; set; }
             [XmlElement("TypeKey"), DefaultValue(null)] public string TypeKey { get; set; }
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
@@ -126,7 +127,7 @@ namespace BmwFileReader
             [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
             [XmlElement("ProductType"), DefaultValue(null)] public string ProductType { get; set; }
-            [XmlElement("BnType")] public string BnType { get; private set; }
+            [XmlElement("BnType"), DefaultValue(null)] public string BnType { get; private set; }
             [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
             [XmlElement("VehicleSeriesInfo"), DefaultValue(null)] public VehicleStructsBmw.VehicleSeriesInfo VehicleSeriesInfo { get; protected set; }
             [XmlElement("EcuList"), DefaultValue(null)] public List<EcuInfo> EcuList { get; protected set; }
@@ -142,7 +143,9 @@ namespace BmwFileReader
             [XmlElement("ILevelShip"), DefaultValue(null)] public string ILevelShip { get; set; }
             [XmlElement("ILevelCurrent"), DefaultValue(null)] public string ILevelCurrent { get; set; }
             [XmlElement("ILevelBackup"), DefaultValue(null)] public string ILevelBackup { get; set; }
+            [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
+            [XmlElement("Pin78ConnectRequire")] public bool Pin78ConnectRequire { get; set; }
         }
 
         public delegate bool AbortDelegate();
