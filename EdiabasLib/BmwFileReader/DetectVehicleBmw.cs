@@ -62,6 +62,8 @@ namespace BmwFileReader
                 ProductType = detectVehicleBmw.ProductType;
                 BnType = detectVehicleBmw.BnType;
                 Brand = detectVehicleBmw.Brand;
+                TransmissionType = detectVehicleBmw.TransmissionType;
+                Motor = detectVehicleBmw.Motor;
                 VehicleSeriesInfo = detectVehicleBmw.VehicleSeriesInfo?.Clone();
                 EcuList = detectVehicleBmw.EcuList?.ConvertAll(x => x.Clone()).ToList();
                 ConstructYear = detectVehicleBmw.ConstructYear;
@@ -98,6 +100,8 @@ namespace BmwFileReader
                 detectVehicleBmw.ProductType = ProductType;
                 detectVehicleBmw.BnType = BnType;
                 detectVehicleBmw.Brand = Brand;
+                detectVehicleBmw.TransmissionType = TransmissionType;
+                detectVehicleBmw.Motor = Motor;
                 detectVehicleBmw.VehicleSeriesInfo = VehicleSeriesInfo?.Clone();
                 detectVehicleBmw.EcuList = EcuList?.ConvertAll(x => x.Clone()).ToList();
                 detectVehicleBmw.ConstructYear = ConstructYear;
@@ -129,6 +133,8 @@ namespace BmwFileReader
             [XmlElement("ProductType"), DefaultValue(null)] public string ProductType { get; set; }
             [XmlElement("BnType"), DefaultValue(null)] public string BnType { get; private set; }
             [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
+            [XmlElement("TransmissionType"), DefaultValue(null)] public string TransmissionType { get; set; }
+            [XmlElement("Motor"), DefaultValue(null)] public string Motor { get; set; }
             [XmlElement("VehicleSeriesInfo"), DefaultValue(null)] public VehicleStructsBmw.VehicleSeriesInfo VehicleSeriesInfo { get; protected set; }
             [XmlElement("EcuList"), DefaultValue(null)] public List<EcuInfo> EcuList { get; protected set; }
             [XmlElement("ConstructYear"), DefaultValue(null)] public string ConstructYear { get; set; }
