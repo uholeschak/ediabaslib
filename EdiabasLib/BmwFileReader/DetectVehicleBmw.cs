@@ -66,6 +66,7 @@ namespace BmwFileReader
                 Motor = detectVehicleBmw.Motor;
                 VehicleSeriesInfo = detectVehicleBmw.VehicleSeriesInfo?.Clone();
                 EcuList = detectVehicleBmw.EcuList?.ConvertAll(x => x.Clone()).ToList();
+                // ConstructDate is not stored
                 ConstructYear = detectVehicleBmw.ConstructYear;
                 ConstructMonth = detectVehicleBmw.ConstructMonth;
                 Paint = detectVehicleBmw.Paint;
