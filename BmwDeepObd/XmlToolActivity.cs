@@ -9109,18 +9109,18 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string xmlFileDir = XmlFileDir();
-                if (string.IsNullOrEmpty(xmlFileDir) || !Directory.Exists(xmlFileDir))
+                string storageDir = XmlFileDir();
+                if (string.IsNullOrEmpty(storageDir) || !Directory.Exists(storageDir))
                 {
-                    xmlFileDir = _appDataDir;
+                    storageDir = _appDataDir;
                 }
 
-                if (string.IsNullOrEmpty(xmlFileDir))
+                if (string.IsNullOrEmpty(storageDir) || !Directory.Exists(storageDir))
                 {
                     return false;
                 }
 
-                string fileName = Path.Combine(xmlFileDir, DetectVehicleBmwFileName);
+                string fileName = Path.Combine(storageDir, DetectVehicleBmwFileName);
                 if (!detectVehicleBmw.SaveDataToFile(fileName))
                 {
                     return false;
