@@ -1,7 +1,11 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient.Core.Container;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Text.RegularExpressions;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -61,6 +65,27 @@ namespace PsdzClient.Core
                 vecInfo.Produktlinie = "-";
             }
             vecInfo.Sp2021Enabled = vecInfo.Produktlinie.StartsWith("21");
+        }
+
+        public bool IsSp2021Gateway(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        {
+            string text = "";
+            IEcuJob ecuJob = ecuKom.ApiJobWithRetries("G_ZGW", "IDENT", string.Empty, string.Empty, retryCount);
+            if (ecuJob.IsOkay())
+            {
+                text = ecuJob.getStringResult(0, "VARIANTE");
+                if (text == null)
+                {
+                    text = "";
+                }
+            }
+            if (!vecInfo.Sp2021Enabled && !text.Equals("BCP_SP21", StringComparison.OrdinalIgnoreCase))
+            {
+                //Log.Info(Log.CurrentMethod(), "Vehicle gateway is not bcp_sp21!");
+                return false;
+            }
+            //Log.Info(Log.CurrentMethod(), "Vehicle gateway is bcp_sp21!");
+            return true;
         }
 
         // ToDo: Check on update
@@ -547,6 +572,103 @@ namespace PsdzClient.Core
         public void AddServiceCode(string methodName, int identifier)
         {
             //fastaService.AddServiceCode(ServiceCodeName, string.Format(ServiceCodeValuePattern, methodName, identifier), layoutGroup);
+        }
+
+        public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        {
+            Reactor instance = Reactor.Instance;
+            IEcuJob ecuJob = new ECUJob();
+            if (IsSp2021Gateway(vecInfo, ecuKom, retryCount))
+            {
+                ecuJob = ecuKom.ApiJobWithRetries("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR", string.Empty, string.Empty, retryCount);
+                if (!ecuJob.IsOkay())
+                {
+                    HandleReadILevelForSp2021Fallback(instance, vecInfo, ecuKom, retryCount);
+                }
+                else if (!ProcessILevelJobResults(instance, vecInfo, ecuJob))
+                {
+                    HandleReadILevelForSp2021Fallback(instance, vecInfo, ecuKom, retryCount);
+                }
+            }
+            else
+            {
+                ecuJob = ecuKom.ApiJobWithRetries("g_zgw", "STATUS_VCM_I_STUFE_LESEN", string.Empty, string.Empty, retryCount);
+                if (!ecuJob.IsOkay())
+                {
+                    HandleReadIlevelBackup(instance, vecInfo, ecuKom, retryCount);
+                }
+                else if (!ProcessILevelJobResults(instance, vecInfo, ecuJob))
+                {
+                    HandleReadIlevelBackup(instance, vecInfo, ecuKom, retryCount);
+                }
+            }
+            if (!string.IsNullOrEmpty(vecInfo.ILevel))
+            {
+                if (vecInfo.ILevel.Length < 4 || vecInfo.ILevel.Contains("UNBEK"))
+                {
+                    vecInfo.ILevel = vecInfo.ILevelWerk;
+                }
+            }
+            else
+            {
+                vecInfo.ILevel = vecInfo.ILevelWerk;
+            }
+        }
+
+        public bool ProcessILevelJobResults(Reactor reactor, IVehicle vecInfo, IEcuJob iJob)
+        {
+            string stringResult = iJob.getStringResult(1, "STAT_I_STUFE_WERK");
+            string stringResult2 = iJob.getStringResult(1, "STAT_I_STUFE_HO");
+            string stringResult3 = iJob.getStringResult(1, "STAT_I_STUFE_HO_BACKUP");
+            if (!IsExcludedFromILevelValidation(iJob) && (!ValidateILevelWithRegexPattern(stringResult, "ILevelWerk") || !ValidateILevelWithRegexPattern(stringResult2, "ILevelHO") || !ValidateILevelWithRegexPattern(stringResult3, "ILevelHOBackup")))
+            {
+                return false;
+            }
+            reactor.SetILevelWerk(stringResult, DataSource.Vehicle);
+            reactor.SetILevel(stringResult2, DataSource.Vehicle);
+            vecInfo.ILevelBackup = stringResult3;
+            return true;
+        }
+
+        private void HandleReadIlevelBackup(Reactor reactor, IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        {
+            IEcuJob ecuJob = ecuKom.ApiJobWithRetries("g_frm", "STATUS_VCM_I_STUFE_LESEN", string.Empty, string.Empty, retryCount);
+            if (ecuJob.IsOkay())
+            {
+                ProcessILevelJobResults(reactor, vecInfo, ecuJob);
+            }
+        }
+
+        private void HandleReadILevelForSp2021Fallback(Reactor reactor, IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        {
+            IEcuJob ecuJob = ecuKom.ApiJobWithRetries("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", string.Empty, string.Empty, retryCount);
+            if (ecuJob.IsOkay())
+            {
+                ProcessILevelJobResults(reactor, vecInfo, ecuJob);
+            }
+        }
+
+        private bool IsExcludedFromILevelValidation(IEcuJob iJob)
+        {
+            string[] source = new string[1] { "REM_20" };
+            string ecuVariante = iJob.getStringResult(0, "VARIANTE");
+            if (source.Any((string x) => x.Equals(ecuVariante, StringComparison.OrdinalIgnoreCase)))
+            {
+                //Log.Info(method, "Vehicle is excluded from I-Level validation");
+                return true;
+            }
+            return false;
+        }
+
+        private bool ValidateILevelWithRegexPattern(string ilevelInput, string iLevelDescription)
+        {
+            //Log.Info(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " started");
+            if (!Regex.IsMatch(ilevelInput, ILevelBN2020RegexPattern))
+            {
+                //Log.Warning(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " failed");
+                return false;
+            }
+            return true;
         }
     }
 }

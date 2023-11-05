@@ -485,7 +485,7 @@ namespace PsdzClient.Programming
 			this.FaActual = fa;
             if (VecInfo != null)
             {
-                VecInfo.FA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.ModelSeries);
+                VecInfo.FA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.BrName);
             }
 		}
 
@@ -494,7 +494,7 @@ namespace PsdzClient.Programming
 			this.FaTarget = fa;
             if (VecInfo != null)
             {
-                VecInfo.TargetFA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.ModelSeries);
+                VecInfo.TargetFA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.BrName);
             }
 		}
 

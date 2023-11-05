@@ -165,6 +165,12 @@
     <Compile Include="Core\Container\EDIABASAdapterDeviceResult.cs" />
     <Compile Include="Core\Container\IEcuKom.cs" />
     <Compile Include="Core\Container\IEcuKomApi.cs" />
+    <Compile Include="Core\DataHolder.cs" />
+    <Compile Include="Core\DataSourcePriority.cs" />
+    <Compile Include="Core\FallbackMechanisms.cs" />
+    <Compile Include="Core\IMultisourceLogger.cs" />
+    <Compile Include="Core\IMultisourceProperties.cs" />
+    <Compile Include="Core\IReactorVehicle.cs" />
     <Compile Include="Core\ITextContent.cs" />
     <Compile Include="Core\Container\NativeError.cs" />
     <Compile Include="Core\CountryExpression.cs" />
@@ -222,12 +228,15 @@
     <Compile Include="Core\IStufeXExpression.cs" />
     <Compile Include="Core\ITextContentManager.cs" />
     <Compile Include="Core\ITextLocator.cs" />
+    <Compile Include="Core\IValueValidator.cs" />
     <Compile Include="Core\IXGBMBusLogisticsEntry.cs" />
     <Compile Include="Core\Localization.cs" />
     <Compile Include="Core\LocalizedText.cs" />
     <Compile Include="Core\ManufactoringDateExpression.cs" />
     <Compile Include="Core\Container\MultipleChoice.cs" />
     <Compile Include="Core\Container\MultipleValue.cs" />
+    <Compile Include="Core\MultisourceLogic.cs" />
+    <Compile Include="Core\MultisourceProperties.cs" />
     <Compile Include="Core\NotExpression.cs" />
     <Compile Include="Core\ObservableCollectionEx.cs" />
     <Compile Include="Core\OrExpression.cs" />
@@ -236,6 +245,8 @@
     <Compile Include="Core\Container\Range.cs" />
     <Compile Include="Core\Container\RangeConstraint.cs" />
     <Compile Include="Core\Container\Reference.cs" />
+    <Compile Include="Core\PropertyData.cs" />
+    <Compile Include="Core\Reactor.cs" />
     <Compile Include="Core\RuleExpression.cs" />
     <Compile Include="Core\SaLaPaExpression.cs" />
     <Compile Include="Core\SALAPALocalizedEntry.cs" />
@@ -272,6 +283,7 @@
     <Compile Include="Core\Container\ValueConstraint.cs" />
     <Compile Include="Core\ValueExpression.cs" />
     <Compile Include="Core\Container\ValueLiteral.cs" />
+    <Compile Include="Core\ValueValidator.cs" />
     <Compile Include="Core\VariableExpression.cs" />
     <Compile Include="Core\VariantRuleParser.cs" />
     <Compile Include="Core\VCIDevice.cs" />
@@ -282,6 +294,7 @@
     <Compile Include="Core\VehicleCharacteristicVehicleHelper.cs" />
     <Compile Include="Core\XGBMBusLogisticsEntry.cs" />
     <Compile Include="Core\XNodeExtension.cs" />
+    <Compile Include="DataHolderItem.cs" />
     <Compile Include="DetectVehicle.cs" />
     <Compile Include="Core\DiagnosticsBusinessData.cs" />
     <Compile Include="Core\Container\HeaderAdapter.cs" />
