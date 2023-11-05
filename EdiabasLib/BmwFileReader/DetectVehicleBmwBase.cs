@@ -99,6 +99,7 @@ namespace BmwFileReader
         public EdiabasNet Ediabas => _ediabas;
 
         public static Regex VinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
+        public static Regex ILevelRegex = new Regex(@"([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}");
 
         // from ReadVinForGroupCars, ReadVinForMotorcycles
         public static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
@@ -215,6 +216,27 @@ namespace BmwFileReader
             }
 
             return sb.ToString();
+        }
+
+        public static bool IsValidILevel(string iLevel)
+        {
+            if (string.IsNullOrWhiteSpace(iLevel))
+            {
+                return false;
+            }
+
+            string iLevelTrim = iLevel.Trim();
+            if (iLevelTrim.Length < 3 || string.Compare(iLevelTrim, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return false;
+            }
+
+            if (!ILevelRegex.IsMatch(iLevelTrim))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static bool IsDs2GroupSgbd(string name)
