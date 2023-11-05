@@ -82,7 +82,7 @@ namespace BmwFileReader
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
                 Pin78ConnectRequire = detectVehicleBmw.Pin78ConnectRequire;
-                TypeKeyProperties = SerializableDictionary<string, string>.CloneFromDict(detectVehicleBmw.TypeKeyProperties);
+                TypeKeyProperties = detectVehicleBmw.TypeKeyProperties != null ? new SerializableDictionary<string, string>(detectVehicleBmw.TypeKeyProperties).Clone() : null;
             }
 
             public bool Restore(DetectVehicleBmw detectVehicleBmw)
@@ -121,7 +121,7 @@ namespace BmwFileReader
                 detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
                 detectVehicleBmw.Pin78ConnectRequire = Pin78ConnectRequire;
-                detectVehicleBmw.TypeKeyProperties = TypeKeyProperties.Clone();
+                detectVehicleBmw.TypeKeyProperties = TypeKeyProperties?.Clone();
 
                 return true;
             }
