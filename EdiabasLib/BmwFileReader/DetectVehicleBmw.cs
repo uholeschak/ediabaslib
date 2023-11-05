@@ -57,7 +57,7 @@ namespace BmwFileReader
                 TypeKey = detectVehicleBmw.TypeKey;
                 GroupSgdb = detectVehicleBmw.GroupSgbd;
                 SgdbAdd = detectVehicleBmw.SgbdAdd;
-                ModelSeries = detectVehicleBmw.ModelSeries;
+                BrName = detectVehicleBmw.BrName;
                 Series = detectVehicleBmw.Series;
                 ProductType = detectVehicleBmw.ProductType;
                 BnType = detectVehicleBmw.BnType;
@@ -97,7 +97,7 @@ namespace BmwFileReader
                 detectVehicleBmw.TypeKey = TypeKey;
                 detectVehicleBmw.GroupSgbd = GroupSgdb;
                 detectVehicleBmw.SgbdAdd = SgdbAdd;
-                detectVehicleBmw.ModelSeries = ModelSeries;
+                detectVehicleBmw.BrName = BrName;
                 detectVehicleBmw.Series = Series;
                 detectVehicleBmw.ProductType = ProductType;
                 detectVehicleBmw.BnType = BnType;
@@ -131,7 +131,7 @@ namespace BmwFileReader
             [XmlElement("TypeKey"), DefaultValue(null)] public string TypeKey { get; set; }
             [XmlElement("GroupSgdb"), DefaultValue(null)] public string GroupSgdb { get; set; }
             [XmlElement("SgdbAdd"), DefaultValue(null)] string SgdbAdd { get; set; }
-            [XmlElement("ModelSeries"), DefaultValue(null)] public string ModelSeries { get; set; }
+            [XmlElement("BrName"), DefaultValue(null)] public string BrName { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
             [XmlElement("ProductType"), DefaultValue(null)] public string ProductType { get; set; }
             [XmlElement("BnType"), DefaultValue(null)] public string BnType { get; private set; }
