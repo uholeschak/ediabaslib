@@ -544,7 +544,7 @@ namespace BmwFileReader
                             if (resultDict.TryGetValue("STAT_I_STUFE_WERK", out EdiabasNet.ResultData resultData))
                             {
                                 string iLevel = resultData.OpData as string;
-                                if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 && string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                if (IsValidILevel(iLevel))
                                 {
                                     iLevelShip = iLevel;
                                     LogInfoFormat("Detected ILevel ship: {0}", iLevelShip);
@@ -556,7 +556,7 @@ namespace BmwFileReader
                                 if (resultDict.TryGetValue("STAT_I_STUFE_HO", out resultData))
                                 {
                                     string iLevel = resultData.OpData as string;
-                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 && string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (IsValidILevel(iLevel))
                                     {
                                         iLevelCurrent = iLevel;
                                         LogInfoFormat("Detected ILevel current: {0}", iLevelCurrent);
@@ -571,7 +571,7 @@ namespace BmwFileReader
                                 if (resultDict.TryGetValue("STAT_I_STUFE_HO_BACKUP", out resultData))
                                 {
                                     string iLevel = resultData.OpData as string;
-                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 && string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (IsValidILevel(iLevel))
                                     {
                                         iLevelBackup = iLevel;
                                         LogInfoFormat("Detected ILevel backup: {0}", iLevelBackup);
