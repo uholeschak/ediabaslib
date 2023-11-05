@@ -1,6 +1,8 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
 using System;
+using PsdzClient.Core.Container;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -51,13 +53,13 @@ namespace PsdzClient.Core
         void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob);
 
         bool CheckForSpecificModelPopUpForElectricalChecks(string ereihe);
-
+#endif
         void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
 
         bool ProcessILevelJobResults(Reactor reactor, IVehicle vecInfo, IEcuJob iJob);
 
         bool IsSp2021Gateway(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
-
+#if false
         IEcuJob ClampShutdownManagement(IVehicle vecInfo, IEcuKom ecuKom, int retryCount = 2, int i_geschw_schwelle = 30);
 #endif
     }
