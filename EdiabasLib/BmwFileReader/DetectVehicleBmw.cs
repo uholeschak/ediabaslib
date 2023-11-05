@@ -19,7 +19,7 @@ namespace BmwFileReader
         [XmlType("VehicleDataBmw")]
         public class VehicleDataBmw
         {
-            public const string DataVersion = "7";
+            public const string DataVersion = "8";
 
             public string GetVersionString(DetectVehicleBmw detectVehicleBmw)
             {
@@ -82,6 +82,7 @@ namespace BmwFileReader
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
                 Pin78ConnectRequire = detectVehicleBmw.Pin78ConnectRequire;
+                TypeKeyProperties = SerializableDictionary<string, string>.CloneFromDict(detectVehicleBmw.TypeKeyProperties);
             }
 
             public bool Restore(DetectVehicleBmw detectVehicleBmw)
@@ -120,6 +121,7 @@ namespace BmwFileReader
                 detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
                 detectVehicleBmw.Pin78ConnectRequire = Pin78ConnectRequire;
+                detectVehicleBmw.TypeKeyProperties = TypeKeyProperties.Clone();
 
                 return true;
             }
@@ -153,6 +155,7 @@ namespace BmwFileReader
             [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
             [XmlElement("Pin78ConnectRequire")] public bool Pin78ConnectRequire { get; set; }
+            [XmlElement("TypeKeyProperties")] public SerializableDictionary<string, string> TypeKeyProperties { get; set; }
         }
 
         public delegate bool AbortDelegate();
@@ -163,9 +166,9 @@ namespace BmwFileReader
 
         public bool Valid { get; private set; }
         public bool Ds2Vehicle { get; private set; }
-        public Dictionary<string, string> TypeKeyProperties { get; private set; }
         public string Ds2GroupFiles { get; private set; }
         public bool Pin78ConnectRequire { get; private set; }
+        public Dictionary<string, string> TypeKeyProperties { get; private set; }
 
         private string _bmwDir;
         private string _fileTimeStamp;
@@ -1103,9 +1106,9 @@ namespace BmwFileReader
 
             Valid = false;
             Ds2Vehicle = false;
-            TypeKeyProperties = null;
             Ds2GroupFiles = null;
             Pin78ConnectRequire = false;
+            TypeKeyProperties = null;
         }
 
         public override string GetEcuNameByIdent(string sgbd)
