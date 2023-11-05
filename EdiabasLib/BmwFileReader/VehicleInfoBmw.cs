@@ -1092,7 +1092,6 @@ namespace BmwFileReader
                 case 'F':
                 case 'G':
                 case 'I':
-                case 'J':
                 case 'U':
                 {
                     string brSgbd = "F01";
