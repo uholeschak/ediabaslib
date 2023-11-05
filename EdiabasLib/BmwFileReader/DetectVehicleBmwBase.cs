@@ -72,7 +72,7 @@ namespace BmwFileReader
         public string TypeKey { get; protected set; }
         public string GroupSgbd { get; protected set; }
         public string SgbdAdd { get; protected set; }
-        public string ModelSeries { get; protected set; }
+        public string BrName { get; protected set; }
         public string Series { get; protected set; }
         public string ProductType { get; protected set; }
         public string BnType { get; protected set; }
@@ -507,7 +507,7 @@ namespace BmwFileReader
                     if (!string.IsNullOrEmpty(vSeries))
                     {
                         LogInfoFormat("Detected vehicle series: {0}", vSeries);
-                        ModelSeries = br;
+                        BrName = br;
                         Series = vSeries;
                         dataValid = true;
                     }
@@ -559,7 +559,7 @@ namespace BmwFileReader
             if (!string.IsNullOrEmpty(vSeries))
             {
                 LogInfoFormat("Detected vehicle series: {0}", vSeries);
-                ModelSeries = br;
+                BrName = br;
                 Series = vSeries;
             }
         }
@@ -637,7 +637,7 @@ namespace BmwFileReader
                         if (!string.IsNullOrEmpty(vSeries))
                         {
                             LogInfoFormat("Detected vehicle series: {0}", vSeries);
-                            ModelSeries = br;
+                            BrName = br;
                             Series = vSeries;
                             dataValid = true;
                         }
@@ -1001,7 +1001,7 @@ namespace BmwFileReader
             TypeKey = null;
             GroupSgbd = null;
             SgbdAdd = null;
-            ModelSeries = null;
+            BrName = null;
             Series = null;
             ProductType = null;
             BnType = null;
