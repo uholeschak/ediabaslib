@@ -21,6 +21,14 @@ namespace BmwFileReader
         public static string keyTag = "key";
         public static string valueTag = "value";
 
+        public SerializableDictionary()
+        {
+        }
+
+        public SerializableDictionary(IDictionary<TKey, TValue> dictionary) : base(dictionary)
+        {
+        }
+
         public XmlSchema GetSchema()
         {
             return null;
@@ -78,16 +86,6 @@ namespace BmwFileReader
 
                 writer.WriteEndElement();
             }
-        }
-
-        public static SerializableDictionary<TKey, TValue> CloneFromDict(Dictionary<TKey, TValue> dictionary)
-        {
-            SerializableDictionary<TKey, TValue> other = new SerializableDictionary<TKey, TValue>();
-            foreach (KeyValuePair<TKey, TValue> keyValue in dictionary)
-            {
-                other.Add(keyValue.Key, keyValue.Value);
-            }
-            return other;
         }
 
         public SerializableDictionary<TKey, TValue> Clone()
