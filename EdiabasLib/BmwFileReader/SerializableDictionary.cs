@@ -25,7 +25,18 @@ namespace BmwFileReader
         {
         }
 
-        public SerializableDictionary(IDictionary<TKey, TValue> dictionary) : base(dictionary)
+        public SerializableDictionary(IDictionary<TKey, TValue> dictionary) :
+            base(dictionary)
+        {
+        }
+
+        public SerializableDictionary(IEqualityComparer<TKey> comparer) :
+            base(comparer)
+        {
+        }
+
+        public SerializableDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer) :
+            base(dictionary, comparer)
         {
         }
 
@@ -90,7 +101,7 @@ namespace BmwFileReader
 
         public SerializableDictionary<TKey, TValue> Clone()
         {
-            SerializableDictionary<TKey, TValue> other = new SerializableDictionary<TKey, TValue>();
+            SerializableDictionary<TKey, TValue> other = new SerializableDictionary<TKey, TValue>(Comparer);
             foreach (KeyValuePair<TKey, TValue> keyValue in this)
             {
                 other.Add(keyValue.Key, keyValue.Value);
@@ -102,6 +113,5 @@ namespace BmwFileReader
         {
             return Clone();
         }
-
     }
 }
