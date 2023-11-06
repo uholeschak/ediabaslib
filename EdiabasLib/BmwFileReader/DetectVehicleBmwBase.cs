@@ -146,6 +146,7 @@ namespace BmwFileReader
             new JobInfo("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
             new JobInfo("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
             new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
+            new JobInfo("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR"),
         };
 
         public static readonly List<JobInfo> ReadVinJobs = new List<JobInfo>
@@ -218,7 +219,7 @@ namespace BmwFileReader
             return sb.ToString();
         }
 
-        public static bool IsValidILevel(string iLevel)
+        public static bool IsValidILevel(string iLevel, string ecuName = null)
         {
             if (string.IsNullOrWhiteSpace(iLevel))
             {
@@ -226,9 +227,14 @@ namespace BmwFileReader
             }
 
             string iLevelTrim = iLevel.Trim();
-            if (iLevelTrim.Length < 3 || string.Compare(iLevelTrim, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) == 0)
+            if (iLevelTrim.Length < 4 || string.Compare(iLevelTrim, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(ecuName) && string.Compare(ecuName, "REM_20", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return true;
             }
 
             if (!ILevelRegex.IsMatch(iLevelTrim))
@@ -239,8 +245,30 @@ namespace BmwFileReader
             return true;
         }
 
+        public static bool IsSp2021Gateway(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
+            string nameTrim = name.Trim();
+
+            if (string.Compare(name, "BCP_SP21", StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static bool IsDs2GroupSgbd(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false; 
+            }
+
             string nameTrim = name.Trim();
             string[] groupArray = AllDs2GroupFiles.Split(',');
             foreach (string group in groupArray)
