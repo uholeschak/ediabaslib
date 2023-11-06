@@ -877,7 +877,18 @@ namespace BmwFileReader
             string series = detectVehicleBmw?.Series;
             string constructYear = detectVehicleBmw?.ConstructYear;
             string constructMonth = detectVehicleBmw?.ConstructMonth;
+            string iLevelShip = detectVehicleBmw?.ILevelShip;
             EdiabasNet ediabas = detectVehicleBmw?.Ediabas;
+
+            string modelSeries = null;
+            if (!string.IsNullOrEmpty(iLevelShip) && iLevelShip.Length >= 4)
+            {
+                string[] iLevelParts = iLevelShip.Split('-');
+                if (iLevelParts.Length > 1 && iLevelParts[0].Length >= 3)
+                {
+                    modelSeries = iLevelParts[0];
+                }
+            }
 
             long dateValue = -1;
             if (!string.IsNullOrEmpty(constructYear) && !string.IsNullOrEmpty(constructMonth))
@@ -889,8 +900,8 @@ namespace BmwFileReader
                 }
             }
 
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info from vehicle series: {0}, date: {1}",
-                series ?? string.Empty, dateValue);
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info from vehicle series: {0}, modelSeries: {1}, date: {2}",
+                series ?? string.Empty, modelSeries ?? string.Empty, dateValue);
             if (series == null)
             {
                 return null;
@@ -957,6 +968,16 @@ namespace BmwFileReader
                     }
 
                     bool matched = false;
+                    if (!string.IsNullOrEmpty(modelSeries) && !string.IsNullOrEmpty(vehicleSeriesInfo.ModelSeries))
+                    {
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Checking model series");
+                        if (string.Compare(vehicleSeriesInfo.ModelSeries, modelSeries, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched model series: {0}", modelSeries);
+                            matched = true;
+                        }
+                    }
+
                     if (!matched && dateValue >= 0 && !string.IsNullOrEmpty(vehicleSeriesInfo.Date) && !string.IsNullOrEmpty(vehicleSeriesInfo.DateCompare))
                     {
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Checking date");
