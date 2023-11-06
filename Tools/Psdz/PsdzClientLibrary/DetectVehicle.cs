@@ -629,9 +629,6 @@ namespace PsdzClient
                     }
                 }
 
-                string iLevelShip = null;
-                string iLevelCurrent = null;
-                string iLevelBackup = null;
                 bool sp2021Gateway = false;
                 foreach (JobInfo jobInfo in readILevelJobsBmwFast)
                 {
@@ -672,44 +669,8 @@ namespace PsdzClient
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
                         {
-                            Dictionary<string, EdiabasNet.ResultData> resultDict = resultSets[1];
-                            if (resultDict.TryGetValue("STAT_I_STUFE_WERK", out EdiabasNet.ResultData resultData))
+                            if (SetILevel(resultSets[1], ecuName))
                             {
-                                string iLevel = resultData.OpData as string;
-                                if (IsValidILevel(iLevel, ecuName))
-                                {
-                                    iLevelShip = iLevel;
-                                    LogInfoFormat("Detected ILevel ship: {0}", iLevelShip);
-                                }
-                            }
-
-                            if (!string.IsNullOrEmpty(iLevelShip))
-                            {
-                                if (resultDict.TryGetValue("STAT_I_STUFE_HO", out resultData))
-                                {
-                                    string iLevel = resultData.OpData as string;
-                                    if (IsValidILevel(iLevel, ecuName))
-                                    {
-                                        iLevelCurrent = iLevel;
-                                        LogInfoFormat("Detected ILevel current: {0}", iLevelCurrent);
-                                    }
-                                }
-
-                                if (string.IsNullOrEmpty(iLevelCurrent))
-                                {
-                                    iLevelCurrent = iLevelShip;
-                                }
-
-                                if (resultDict.TryGetValue("STAT_I_STUFE_HO_BACKUP", out resultData))
-                                {
-                                    string iLevel = resultData.OpData as string;
-                                    if (IsValidILevel(iLevel, ecuName))
-                                    {
-                                        iLevelBackup = iLevel;
-                                        LogInfoFormat("Detected ILevel backup: {0}", iLevelBackup);
-                                    }
-                                }
-
                                 break;
                             }
                         }
@@ -724,18 +685,11 @@ namespace PsdzClient
                 indexOffset += readILevelJobsBmwFast.Count;
                 progressFunc?.Invoke(100);
 
-                if (string.IsNullOrEmpty(iLevelShip))
+                if (string.IsNullOrEmpty(ILevelShip))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "ILevel not found");
                     return DetectResult.NoResponse;
                 }
-
-                LogInfoFormat("ILevel: Ship={0}, Current={1}, Backup={2}", iLevelShip,
-                    iLevelCurrent, iLevelBackup);
-
-                ILevelShip = iLevelShip;
-                ILevelCurrent = iLevelCurrent;
-                ILevelBackup = iLevelBackup;
 
                 HandleSpecialEcus();
                 ConvertEcuList();
