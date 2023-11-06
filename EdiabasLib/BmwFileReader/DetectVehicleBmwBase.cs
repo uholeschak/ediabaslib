@@ -14,7 +14,7 @@ namespace BmwFileReader
     {
         public class JobInfo
         {
-            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, string bnType = null, string ecuListJob = null)
+            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, string bnType = null, string ecuListJob = null, string ecuName = null)
             {
                 SgdbName = sgdbName;
                 JobName = jobName;
@@ -22,6 +22,7 @@ namespace BmwFileReader
                 JobResult = jobResult;
                 BnType = bnType;
                 EcuListJob = ecuListJob;
+                EcuName = ecuName;
                 Motorbike = !string.IsNullOrEmpty(bnType) && bnType.ToUpperInvariant().Contains("MOTORBIKE");
             }
 
@@ -31,6 +32,7 @@ namespace BmwFileReader
             public string JobResult { get; }
             public string BnType { get; }
             public string EcuListJob { get; }
+            public string EcuName { get; }
             public bool Motorbike { get; }
         }
 
@@ -144,9 +146,9 @@ namespace BmwFileReader
         public static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
         {
             new JobInfo("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
+            new JobInfo("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", null, null, null, null, "BCP_SP21"),
             new JobInfo("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
             new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
-            new JobInfo("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR"),
         };
 
         public static readonly List<JobInfo> ReadVinJobs = new List<JobInfo>
