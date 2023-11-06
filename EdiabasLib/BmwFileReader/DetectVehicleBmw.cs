@@ -382,6 +382,71 @@ namespace BmwFileReader
                     LogInfoFormat("Construct date: {0}.{1}", ConstructYear, ConstructMonth);
                 }
 
+                bool sp2021Gateway = false;
+                foreach (JobInfo jobInfo in readILevelJobsBmwFast)
+                {
+                    if (AbortFunc != null && AbortFunc())
+                    {
+                        return false;
+                    }
+
+                    ProgressFunc?.Invoke(100 * index / jobCount);
+
+                    LogInfoFormat("Read ILevel job: {0},{1}", jobInfo.SgdbName, jobInfo.JobName);
+                    if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
+                    {
+                        LogInfoFormat("Job ignored: {0}", jobInfo.SgdbName);
+                        index++;
+                        continue;
+                    }
+
+                    if (IsSp2021Gateway(jobInfo.EcuName) && !sp2021Gateway)
+                    {
+                        LogInfoFormat("Job ignored: {0}, EcuName: {1}", jobInfo.SgdbName, jobInfo.EcuName);
+                        index++;
+                        continue;
+                    }
+
+                    try
+                    {
+                        _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
+
+                        _ediabas.ArgString = string.Empty;
+                        _ediabas.ArgBinaryStd = null;
+                        _ediabas.ResultsRequests = string.Empty;
+                        _ediabas.ExecuteJob(jobInfo.JobName);
+                        string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+                        if (IsSp2021Gateway(ecuName))
+                        {
+                            sp2021Gateway = true;
+                        }
+
+                        resultSets = _ediabas.ResultSets;
+                        if (resultSets != null && resultSets.Count >= 2)
+                        {
+                            if (SetILevel(resultSets[1], ecuName))
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        LogErrorFormat("No ILevel response");
+                        // ignored
+                    }
+
+                    index++;
+                }
+
+                indexOffset += readILevelJobsBmwFast.Count;
+                index = indexOffset;
+
+                if (string.IsNullOrEmpty(ILevelShip))
+                {
+                    LogErrorFormat("ILevel not found");
+                }
+
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(this);
                 if (vehicleSeriesInfo == null)
                 {
@@ -508,71 +573,7 @@ namespace BmwFileReader
                     index++;
                 }
 
-                bool sp2021Gateway = false;
-                foreach (JobInfo jobInfo in readILevelJobsBmwFast)
-                {
-                    if (AbortFunc != null && AbortFunc())
-                    {
-                        return false;
-                    }
-
-                    ProgressFunc?.Invoke(100 * index / jobCount);
-
-                    LogInfoFormat("Read ILevel job: {0},{1}", jobInfo.SgdbName, jobInfo.JobName);
-                    if (invalidSgbdSet.Contains(jobInfo.SgdbName.ToUpperInvariant()))
-                    {
-                        LogInfoFormat("Job ignored: {0}", jobInfo.SgdbName);
-                        index++;
-                        continue;
-                    }
-
-                    if (IsSp2021Gateway(jobInfo.EcuName) && !sp2021Gateway)
-                    {
-                        LogInfoFormat("Job ignored: {0}, EcuName: {1}", jobInfo.SgdbName, jobInfo.EcuName);
-                        index++;
-                        continue;
-                    }
-
-                    try
-                    {
-                        _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
-
-                        _ediabas.ArgString = string.Empty;
-                        _ediabas.ArgBinaryStd = null;
-                        _ediabas.ResultsRequests = string.Empty;
-                        _ediabas.ExecuteJob(jobInfo.JobName);
-                        string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
-                        if (IsSp2021Gateway(ecuName))
-                        {
-                            sp2021Gateway = true;
-                        }
-
-                        resultSets = _ediabas.ResultSets;
-                        if (resultSets != null && resultSets.Count >= 2)
-                        {
-                            if (SetILevel(resultSets[1], ecuName))
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        LogErrorFormat("No ILevel response");
-                        // ignored
-                    }
-
-                    index++;
-                }
-
-                indexOffset += readILevelJobsBmwFast.Count;
-                index = indexOffset;
                 ProgressFunc?.Invoke(100 * index / jobCount);
-
-                if (string.IsNullOrEmpty(ILevelShip))
-                {
-                    LogErrorFormat("ILevel not found");
-                }
 
                 HandleSpecialEcus();
 
