@@ -689,23 +689,9 @@ namespace PsdzClientLibrary.Core
             vehicle.Modelljahr = multisourceLogic.SetProperty(value, source, "Modelljahr");
         }
 
+        // ToDo: Check on update
         private void Vehicle_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            try
-            {
-                if (Environment.StackTrace.IndexOf("BMW.ISPI.IstaOperation.Impl.ObserverBase", StringComparison.InvariantCultureIgnoreCase) > -1)
-                {
-                    //Log.Error("FusionReactor.Vehicle_PropertyChanged", "PropertyChanged is observed in UI thread?");
-                }
-                if (Environment.StackTrace.IndexOf("ReadVehicleFromXml", StringComparison.InvariantCultureIgnoreCase) > -1)
-                {
-                    //Log.Error("FusionReactor.Vehicle_PropertyChanged", "PropertyChanged is observed when deserializing?");
-                }
-            }
-            catch (Exception)
-            {
-                //Log.Error("FusionReactor.Vehicle_PropertyChanged", "Exception thrown while reaching stack trace: {0}", ex);
-            }
             bool flag = true;
             switch (e.PropertyName)
             {

@@ -536,6 +536,8 @@ namespace BmwFileReader
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(jobInfo.JobName);
+                        string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+                        bool sp2021Gateway = IsSp2021Gateway(ecuName);
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
@@ -544,7 +546,7 @@ namespace BmwFileReader
                             if (resultDict.TryGetValue("STAT_I_STUFE_WERK", out EdiabasNet.ResultData resultData))
                             {
                                 string iLevel = resultData.OpData as string;
-                                if (IsValidILevel(iLevel))
+                                if (IsValidILevel(iLevel, ecuName))
                                 {
                                     iLevelShip = iLevel;
                                     LogInfoFormat("Detected ILevel ship: {0}", iLevelShip);
@@ -556,7 +558,7 @@ namespace BmwFileReader
                                 if (resultDict.TryGetValue("STAT_I_STUFE_HO", out resultData))
                                 {
                                     string iLevel = resultData.OpData as string;
-                                    if (IsValidILevel(iLevel))
+                                    if (IsValidILevel(iLevel, ecuName))
                                     {
                                         iLevelCurrent = iLevel;
                                         LogInfoFormat("Detected ILevel current: {0}", iLevelCurrent);
@@ -571,7 +573,7 @@ namespace BmwFileReader
                                 if (resultDict.TryGetValue("STAT_I_STUFE_HO_BACKUP", out resultData))
                                 {
                                     string iLevel = resultData.OpData as string;
-                                    if (IsValidILevel(iLevel))
+                                    if (IsValidILevel(iLevel, ecuName))
                                     {
                                         iLevelBackup = iLevel;
                                         LogInfoFormat("Detected ILevel backup: {0}", iLevelBackup);

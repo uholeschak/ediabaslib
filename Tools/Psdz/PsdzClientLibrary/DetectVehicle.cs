@@ -655,6 +655,8 @@ namespace PsdzClient
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(jobInfo.JobName);
+                        string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
+                        bool sp2021Gateway = IsSp2021Gateway(ecuName);
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
@@ -663,8 +665,7 @@ namespace PsdzClient
                             if (resultDict.TryGetValue("STAT_I_STUFE_WERK", out EdiabasNet.ResultData resultData))
                             {
                                 string iLevel = resultData.OpData as string;
-                                if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
-                                    string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                if (IsValidILevel(iLevel, ecuName))
                                 {
                                     iLevelShip = iLevel;
                                     LogInfoFormat("Detected ILevel ship: {0}",
@@ -677,8 +678,7 @@ namespace PsdzClient
                                 if (resultDict.TryGetValue("STAT_I_STUFE_HO", out resultData))
                                 {
                                     string iLevel = resultData.OpData as string;
-                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
-                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (IsValidILevel(iLevel, ecuName))
                                     {
                                         iLevelCurrent = iLevel;
                                         LogInfoFormat("Detected ILevel current: {0}",
@@ -694,8 +694,7 @@ namespace PsdzClient
                                 if (resultDict.TryGetValue("STAT_I_STUFE_HO_BACKUP", out resultData))
                                 {
                                     string iLevel = resultData.OpData as string;
-                                    if (!string.IsNullOrEmpty(iLevel) && iLevel.Length >= 4 &&
-                                        string.Compare(iLevel, VehicleInfoBmw.ResultUnknown, StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (IsValidILevel(iLevel, ecuName))
                                     {
                                         iLevelBackup = iLevel;
                                         LogInfoFormat("Detected ILevel backup: {0}",
