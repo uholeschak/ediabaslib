@@ -511,7 +511,7 @@ namespace BmwFileReader
                 string iLevelShip = null;
                 string iLevelCurrent = null;
                 string iLevelBackup = null;
-                string ecuNameCheck = null;
+                bool sp2021Gateway = false;
                 foreach (JobInfo jobInfo in readILevelJobsBmwFast)
                 {
                     if (AbortFunc != null && AbortFunc())
@@ -531,15 +531,11 @@ namespace BmwFileReader
 
                     try
                     {
-                        if (!string.IsNullOrEmpty(jobInfo.EcuName))
+                        if (IsSp2021Gateway(jobInfo.EcuName) && !sp2021Gateway)
                         {
-                            if (string.IsNullOrEmpty(ecuNameCheck) ||
-                                string.Compare(jobInfo.EcuName, ecuNameCheck, StringComparison.OrdinalIgnoreCase) != 0)
-                            {
-                                LogInfoFormat("Job ignored: {0}, EcuName: {1}", jobInfo.SgdbName, jobInfo.EcuName);
-                                index++;
-                                continue;
-                            }
+                            LogInfoFormat("Job ignored: {0}, EcuName: {1}", jobInfo.SgdbName, jobInfo.EcuName);
+                            index++;
+                            continue;
                         }
 
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
@@ -549,10 +545,9 @@ namespace BmwFileReader
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(jobInfo.JobName);
                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
-                        bool sp2021Gateway = IsSp2021Gateway(ecuName);
-                        if (sp2021Gateway)
+                        if (IsSp2021Gateway(ecuName))
                         {
-                            ecuNameCheck = ecuName;
+                            sp2021Gateway = true;
                         }
 
                         resultSets = _ediabas.ResultSets;
