@@ -780,6 +780,62 @@ namespace BmwFileReader
             }
         }
 
+        public bool SetILevel(Dictionary<string, EdiabasNet.ResultData> resultDict, string ecuName)
+        {
+            string iLevelShip = null;
+            string iLevelCurrent = null;
+            string iLevelBackup = null;
+
+            if (resultDict.TryGetValue("STAT_I_STUFE_WERK", out EdiabasNet.ResultData resultData))
+            {
+                string iLevel = resultData.OpData as string;
+                if (IsValidILevel(iLevel, ecuName))
+                {
+                    iLevelShip = iLevel;
+                    LogInfoFormat("Detected ILevel ship: {0}", iLevelShip);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(iLevelShip))
+            {
+                if (resultDict.TryGetValue("STAT_I_STUFE_HO", out resultData))
+                {
+                    string iLevel = resultData.OpData as string;
+                    if (IsValidILevel(iLevel, ecuName))
+                    {
+                        iLevelCurrent = iLevel;
+                        LogInfoFormat("Detected ILevel current: {0}", iLevelCurrent);
+                    }
+                }
+
+                if (string.IsNullOrEmpty(iLevelCurrent))
+                {
+                    iLevelCurrent = iLevelShip;
+                }
+
+                if (resultDict.TryGetValue("STAT_I_STUFE_HO_BACKUP", out resultData))
+                {
+                    string iLevel = resultData.OpData as string;
+                    if (IsValidILevel(iLevel, ecuName))
+                    {
+                        iLevelBackup = iLevel;
+                        LogInfoFormat("Detected ILevel backup: {0}", iLevelBackup);
+                    }
+                }
+
+                LogInfoFormat("ILevel: Ship={0}, Current={1}, Backup={2}",
+                    iLevelShip, iLevelCurrent, iLevelBackup);
+
+                ILevelShip = iLevelShip;
+                ILevelCurrent = iLevelCurrent;
+                ILevelBackup = iLevelBackup;
+
+                return true;
+            }
+
+            return false;
+        }
+
         public bool IsMotorbike()
         {
             if (!string.IsNullOrEmpty(ProductType))
