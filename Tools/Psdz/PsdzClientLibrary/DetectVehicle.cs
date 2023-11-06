@@ -632,6 +632,7 @@ namespace PsdzClient
                 string iLevelShip = null;
                 string iLevelCurrent = null;
                 string iLevelBackup = null;
+                bool sp2021Gateway = false;
                 foreach (JobInfo jobInfo in readILevelJobsBmwFast)
                 {
                     if (_abortRequest)
@@ -646,6 +647,13 @@ namespace PsdzClient
                         continue;
                     }
 
+                    if (IsSp2021Gateway(jobInfo.EcuName) && !sp2021Gateway)
+                    {
+                        LogInfoFormat("Job ignored: {0}, EcuName: {1}", jobInfo.SgdbName, jobInfo.EcuName);
+                        index++;
+                        continue;
+                    }
+
                     try
                     {
                         progressFunc?.Invoke(index * 100 / jobCount);
@@ -656,7 +664,10 @@ namespace PsdzClient
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(jobInfo.JobName);
                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
-                        bool sp2021Gateway = IsSp2021Gateway(ecuName);
+                        if (IsSp2021Gateway(ecuName))
+                        {
+                            sp2021Gateway = true;
+                        }
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
@@ -668,8 +679,7 @@ namespace PsdzClient
                                 if (IsValidILevel(iLevel, ecuName))
                                 {
                                     iLevelShip = iLevel;
-                                    LogInfoFormat("Detected ILevel ship: {0}",
-                                        iLevelShip);
+                                    LogInfoFormat("Detected ILevel ship: {0}", iLevelShip);
                                 }
                             }
 
@@ -681,8 +691,7 @@ namespace PsdzClient
                                     if (IsValidILevel(iLevel, ecuName))
                                     {
                                         iLevelCurrent = iLevel;
-                                        LogInfoFormat("Detected ILevel current: {0}",
-                                            iLevelCurrent);
+                                        LogInfoFormat("Detected ILevel current: {0}", iLevelCurrent);
                                     }
                                 }
 
@@ -697,8 +706,7 @@ namespace PsdzClient
                                     if (IsValidILevel(iLevel, ecuName))
                                     {
                                         iLevelBackup = iLevel;
-                                        LogInfoFormat("Detected ILevel backup: {0}",
-                                            iLevelBackup);
+                                        LogInfoFormat("Detected ILevel backup: {0}", iLevelBackup);
                                     }
                                 }
 

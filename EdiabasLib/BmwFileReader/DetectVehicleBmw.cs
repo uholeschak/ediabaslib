@@ -529,15 +529,15 @@ namespace BmwFileReader
                         continue;
                     }
 
+                    if (IsSp2021Gateway(jobInfo.EcuName) && !sp2021Gateway)
+                    {
+                        LogInfoFormat("Job ignored: {0}, EcuName: {1}", jobInfo.SgdbName, jobInfo.EcuName);
+                        index++;
+                        continue;
+                    }
+
                     try
                     {
-                        if (IsSp2021Gateway(jobInfo.EcuName) && !sp2021Gateway)
-                        {
-                            LogInfoFormat("Job ignored: {0}, EcuName: {1}", jobInfo.SgdbName, jobInfo.EcuName);
-                            index++;
-                            continue;
-                        }
-
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
