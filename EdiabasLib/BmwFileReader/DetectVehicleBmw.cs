@@ -511,6 +511,7 @@ namespace BmwFileReader
                 string iLevelShip = null;
                 string iLevelCurrent = null;
                 string iLevelBackup = null;
+                string ecuNameCheck = null;
                 foreach (JobInfo jobInfo in readILevelJobsBmwFast)
                 {
                     if (AbortFunc != null && AbortFunc())
@@ -530,6 +531,17 @@ namespace BmwFileReader
 
                     try
                     {
+                        if (!string.IsNullOrEmpty(jobInfo.EcuName))
+                        {
+                            if (string.IsNullOrEmpty(ecuNameCheck) ||
+                                string.Compare(jobInfo.EcuName, ecuNameCheck, StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                LogInfoFormat("Job ignored: {0}, EcuName: {1}", jobInfo.SgdbName, jobInfo.EcuName);
+                                index++;
+                                continue;
+                            }
+                        }
+
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
@@ -538,6 +550,10 @@ namespace BmwFileReader
                         _ediabas.ExecuteJob(jobInfo.JobName);
                         string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                         bool sp2021Gateway = IsSp2021Gateway(ecuName);
+                        if (sp2021Gateway)
+                        {
+                            ecuNameCheck = ecuName;
+                        }
 
                         resultSets = _ediabas.ResultSets;
                         if (resultSets != null && resultSets.Count >= 2)
