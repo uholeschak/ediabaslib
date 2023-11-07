@@ -175,7 +175,11 @@ namespace PsdzClient
                     {
                         Vehicle vehicleIdent = new Vehicle(_clientContext);
                         vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINBasedFeatures;
+                        vehicleIdent.VIN17 = Vin;
                         vehicleIdent.VINRangeType = vinRangesByVin.TypeKey;
+                        vehicleIdent.Modelljahr = vinRangesByVin.ProductionYear;
+                        vehicleIdent.Modellmonat = vinRangesByVin.ProductionMonth.PadLeft(2, '0');
+                        vehicleIdent.Modelltag = "01";
                         vehicleIdent.VCI.VCIType = VCIDeviceType.EDIABAS;
 
                         VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
