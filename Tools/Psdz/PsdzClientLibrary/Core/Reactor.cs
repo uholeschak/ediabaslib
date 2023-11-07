@@ -25,7 +25,7 @@ namespace PsdzClientLibrary.Core
 
     public class Reactor
     {
-        private static Reactor singleton;
+        //private static Reactor singleton;
 
         private MultisourceLogic multisourceLogic;
 
@@ -41,6 +41,7 @@ namespace PsdzClientLibrary.Core
 
         private static object obj = new object();
 
+#if false
         public static Reactor Instance
         {
             get
@@ -52,13 +53,14 @@ namespace PsdzClientLibrary.Core
                 return singleton;
             }
         }
+#endif
 
-        public Reactor(IReactorVehicle reactorVehicle, DataHolder dataHolder = null)
+        public Reactor(IReactorVehicle reactorVehicle, DataHolder dataHolder)
         {
             this.dataHolder = dataHolder;
+            log = new MultisourceLogger();
             multisourceLogic = new MultisourceLogic(dataHolder, log, new MultisourceProperties(), new ValueValidator());
             fallback = new FallbackMechanisms(dataHolder);
-            log = new MultisourceLogger();
             vehicle = reactorVehicle;
         }
 
@@ -88,6 +90,7 @@ namespace PsdzClientLibrary.Core
             observerEnabled = false;
         }
 
+#if false
         public static void Initialize(IReactorVehicle reactorVehicle, IMultisourceLogger logger, DataHolder dataHolder = null)
         {
             log = logger;
@@ -101,6 +104,7 @@ namespace PsdzClientLibrary.Core
             }
             singleton = new Reactor(reactorVehicle, dataHolder ?? new DataHolder());
         }
+#endif
 
         public void SetFA(FA value, DataSource source)
         {
