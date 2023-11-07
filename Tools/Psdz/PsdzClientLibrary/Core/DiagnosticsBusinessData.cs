@@ -576,7 +576,7 @@ namespace PsdzClient.Core
 
         public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
-            Reactor instance = Reactor.Instance;
+            Reactor instance = new Reactor(vecInfo as Vehicle, new DataHolder());
             IEcuJob ecuJob = new ECUJob();
             if (IsSp2021Gateway(vecInfo, ecuKom, retryCount))
             {

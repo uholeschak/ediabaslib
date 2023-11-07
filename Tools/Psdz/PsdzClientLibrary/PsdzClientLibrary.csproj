@@ -235,6 +235,7 @@
     <Compile Include="Core\ManufactoringDateExpression.cs" />
     <Compile Include="Core\Container\MultipleChoice.cs" />
     <Compile Include="Core\Container\MultipleValue.cs" />
+    <Compile Include="Core\MultisourceLogger.cs" />
     <Compile Include="Core\MultisourceLogic.cs" />
     <Compile Include="Core\MultisourceProperties.cs" />
     <Compile Include="Core\NotExpression.cs" />

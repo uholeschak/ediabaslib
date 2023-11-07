@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -26,155 +27,142 @@ namespace PsdzClient.Core
         protected override bool ComputeAEBezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetAEBezeichnung(characteristic.Name, DataSource.Database);
-            vecInfo.AEBezeichnung = characteristic.Name;
+            reactor.SetAEBezeichnung(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetAEKurzbezeichnung(characteristic.Name, DataSource.Database);
-            vecInfo.AEKurzbezeichnung = characteristic.Name;
+            reactor.SetAEKurzbezeichnung(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeAELeistungsklasse(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetAELeistungsklasse(characteristic.Name, DataSource.Database);
-            vecInfo.AELeistungsklasse = characteristic.Name;
+            reactor.SetAELeistungsklasse(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeAEUeberarbeitung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetAEUeberarbeitung(characteristic.Name, DataSource.Database);
-            vecInfo.AEUeberarbeitung = characteristic.Name;
+            reactor.SetAEUeberarbeitung(characteristic.Name, DataSource.Database);
             return true;
         }
 
-		protected override bool ComputeAntrieb(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Antrieb = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeAntrieb(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetAntrieb(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeBaseVersion(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.BaseVersion = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeBaseVersion(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetBaseVersion(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeBasicType(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.BasicType = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeBasicType(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetBasicType(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeBaureihe(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Baureihe = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeBaureihe(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetBaureihe(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeBaureihenverbund(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Baureihenverbund = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeBaureihenverbund(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetBaureihenverbund(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeBaustandsJahr(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.BaustandsJahr = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeBaustandsJahr(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetBaustandsJahr(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeBaustandsMonat(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.BaustandsMonat = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeBaustandsMonat(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetBaustandsMonat(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
         protected override bool ComputeBrandName(params object[] parameters)
         {
             GetIdentParameters(parameters);
             string text = characteristic.Name.ToUpper(CultureInfo.InvariantCulture);
-            //reactor.SetMarke(text, DataSource.Database);
-            vecInfo.Marke = text;
+            reactor.SetMarke(text, DataSource.Database);
             switch (text)
             {
                 case "BMW PKW":
-                    //reactor.SetBrandName(BrandName.BMWPKW, DataSource.Database);
-                    vecInfo.BrandName = BrandName.BMWPKW;
+                    reactor.SetBrandName(BrandName.BMWPKW, DataSource.Database);
                     break;
                 case "BMW I":
-                    //reactor.SetBrandName(BrandName.BMWi, DataSource.Database);
-                    vecInfo.BrandName = BrandName.BMWi;
+                    reactor.SetBrandName(BrandName.BMWi, DataSource.Database);
                     break;
                 case "TOYOTA":
-                    //reactor.SetBrandName(BrandName.TOYOTA, DataSource.Database);
-                    vecInfo.BrandName = BrandName.TOYOTA;
+                    reactor.SetBrandName(BrandName.TOYOTA, DataSource.Database);
                     break;
                 case "BMW M GMBH PKW":
-                    //reactor.SetBrandName(BrandName.BMWMGmbHPKW, DataSource.Database);
-                    vecInfo.BrandName = BrandName.BMWMGmbHPKW;
+                    reactor.SetBrandName(BrandName.BMWMGmbHPKW, DataSource.Database);
                     break;
                 case "MINI PKW":
-                    //reactor.SetBrandName(BrandName.MINIPKW, DataSource.Database);
-                    vecInfo.BrandName = BrandName.MINIPKW;
+                    reactor.SetBrandName(BrandName.MINIPKW, DataSource.Database);
                     break;
                 case "ROLLS-ROYCE PKW":
-                    //reactor.SetBrandName(BrandName.ROLLSROYCEPKW, DataSource.Database);
-                    vecInfo.BrandName = BrandName.ROLLSROYCEPKW;
+                    reactor.SetBrandName(BrandName.ROLLSROYCEPKW, DataSource.Database);
                     break;
                 case "BMW USA PKW":
-                    //reactor.SetBrandName(BrandName.BMWUSAPKW, DataSource.Database);
-                    vecInfo.BrandName = BrandName.BMWUSAPKW;
+                    reactor.SetBrandName(BrandName.BMWUSAPKW, DataSource.Database);
                     break;
                 default:
                     //Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown brand name: {0}", characteristic.Name);
                     break;
                 case "BMW MOTORRAD":
-                    //reactor.SetBrandName(BrandName.BMWMOTORRAD, DataSource.Database);
-                    vecInfo.BrandName = BrandName.BMWMOTORRAD;
+                    reactor.SetBrandName(BrandName.BMWMOTORRAD, DataSource.Database);
                     break;
             }
             return true;
         }
 
         protected override bool ComputeCountryOfAssembly(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.CountryOfAssembly = this.characteristic.Name;
-			return true;
-		}
+        {
+            GetIdentParameters(parameters);
+            reactor.SetCountryOfAssembly(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeDrehmoment(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.Drehmoment = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeDrehmoment(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetDrehmoment(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeElektrischeReichweite(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.ElektrischeReichweite = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeElektrischeReichweite(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetElektrischeReichweite(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeEreihe(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
+        protected override bool ComputeEreihe(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
             decimal? istaVisible = null;
             if (decimal.TryParse(this.characteristic.IstaVisible, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal visible))
             {
@@ -182,15 +170,13 @@ namespace PsdzClient.Core
             }
             if (!((istaVisible.GetValueOrDefault() == default(decimal)) & istaVisible.HasValue))
             {
-                //reactor.SetEreihe(characteristic.Name, DataSource.Database);
-                vecInfo.Ereihe = characteristic.Name;
+                reactor.SetEreihe(characteristic.Name, DataSource.Database);
                 vecInfo.EBezeichnungUIText = characteristic.Name;
             }
             else
             {
-                //reactor.SetEreihe(characteristic.Name, DataSource.Database);
-                vecInfo.Ereihe = characteristic.Name;
-                vecInfo.EBezeichnungUIText = DefaultEmptyCharacteristicValue;
+                reactor.SetEreihe(characteristic.Name, DataSource.Database);
+                vecInfo.EBezeichnungUIText = "-";
             }
             return true;
         }
@@ -205,32 +191,28 @@ namespace PsdzClient.Core
         protected override bool ComputeHybridkennzeichen(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetHybridkennzeichen(characteristic.Name, DataSource.Database);
-            vecInfo.Hybridkennzeichen = characteristic.Name;
+            reactor.SetHybridkennzeichen(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeKarosserie(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetKarosserie(characteristic.Name, DataSource.Database);
-            vecInfo.Karosserie = characteristic.Name;
+            reactor.SetKarosserie(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeLand(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetLand(characteristic.Name, DataSource.Database);
-            vecInfo.Land = characteristic.Name;
+            reactor.SetLand(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeLenkung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetLenkung(characteristic.Name, DataSource.Database);
-            vecInfo.Lenkung = characteristic.Name;
+            reactor.SetLenkung(characteristic.Name, DataSource.Database);
             return true;
         }
 
@@ -244,54 +226,48 @@ namespace PsdzClient.Core
         protected override bool ComputeMotorarbeitsverfahren(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetMotorarbeitsverfahren(characteristic.Name, DataSource.Database);
-            vecInfo.Motorarbeitsverfahren = characteristic.Name;
+            reactor.SetMotorarbeitsverfahren(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeProdart(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetProdart(characteristic.Name, DataSource.Database);
-            vecInfo.Prodart = characteristic.Name;
+            reactor.SetProdart(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeProduktlinie(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetProduktlinie(characteristic.Name, DataSource.Database);
-            vecInfo.Produktlinie = characteristic.Name;
+            reactor.SetProduktlinie(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeSicherheitsrelevant(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetSicherheitsrelevant(characteristic.Name, DataSource.Database);
-            vecInfo.Sicherheitsrelevant = characteristic.Name;
+            reactor.SetSicherheitsrelevant(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeTueren(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetTueren(characteristic.Name, DataSource.Database);
-            vecInfo.Tueren = characteristic.Name;
+            reactor.SetTueren(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeTyp(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetTyp(characteristic.Name, DataSource.Database);
-            vecInfo.Typ = characteristic.Name;
+            reactor.SetTyp(characteristic.Name, DataSource.Database);
             return true;
         }
 
-		protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
+        protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
             decimal? istaVisible = null;
             if (decimal.TryParse(this.characteristic.IstaVisible, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal visible))
             {
@@ -299,28 +275,27 @@ namespace PsdzClient.Core
             }
             if (!((istaVisible.GetValueOrDefault() == default(decimal)) & istaVisible.HasValue))
             {
-				vecInfo.VerkaufsBezeichnung = characteristic.Name;
-			}
-			else
-			{
-				vecInfo.VerkaufsBezeichnung = DefaultEmptyCharacteristicValue;
-			}
-			return true;
-		}
+                reactor.SetVerkaufsBezeichnung(characteristic.Name, DataSource.Database);
+            }
+            else
+            {
+                reactor.SetVerkaufsBezeichnung("-", DataSource.Hardcoded);
+            }
+            return true;
+        }
 
-		protected override bool ComputeEMOTArbeitsverfahren(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.EMotor.EMOTArbeitsverfahren = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeEMOTArbeitsverfahren(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetEMOTArbeitsverfahren(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
         protected override bool ComputeEMOTBaureihe(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetEMOTBaureihe(characteristic.Name, DataSource.Database);
-            vecInfo.EMotor.EMOTBaureihe = characteristic.Name;
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || vecInfo.GenericMotor.Engine2 == DefaultEmptyCharacteristicValue)
+            reactor.SetEMOTBaureihe(characteristic.Name, DataSource.Database);
+            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || vecInfo.GenericMotor.Engine2 == "-")
             {
                 vecInfo.GenericMotor.Engine2 = characteristic.Name;
             }
@@ -330,136 +305,127 @@ namespace PsdzClient.Core
         protected override bool ComputeEMOTBezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetEMOTBezeichnung(characteristic.Name, DataSource.Database);
-            vecInfo.EMotor.EMOTBezeichnung = this.characteristic.Name;
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || vecInfo.GenericMotor.EngineLabel2 == DefaultEmptyCharacteristicValue)
+            reactor.SetEMOTBezeichnung(characteristic.Name, DataSource.Database);
+            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || vecInfo.GenericMotor.EngineLabel2 == "-")
             {
                 vecInfo.GenericMotor.EngineLabel2 = characteristic.Name;
             }
             return true;
         }
 
-		protected override bool ComputeEMOTDrehmoment(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.EMotor.EMOTDrehmoment = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeEMOTDrehmoment(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetEMOTDrehmoment(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeEMOTEinbaulage(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.EMotor.EMOTEinbaulage = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeEMOTEinbaulage(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetEMOTEinbaulage(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeEMOTKraftstoffart(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.EMotor.EMOTKraftstoffart = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeEMOTKraftstoffart(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetEMOTKraftstoffart(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeEMOTLeistungsklasse(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.EMotor.EMOTLeistungsklasse = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeEMOTLeistungsklasse(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetEMOTLeistungsklasse(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
-		protected override bool ComputeEMOTUeberarbeitung(params object[] parameters)
-		{
-			this.GetIdentParameters(parameters);
-			this.vecInfo.EMotor.EMOTUeberarbeitung = this.characteristic.Name;
-			return true;
-		}
+        protected override bool ComputeEMOTUeberarbeitung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetEMOTUeberarbeitung(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
         protected override bool ComputeLeistungsklasse(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetLeistungsklasse(characteristic.Name, DataSource.Database);
-            vecInfo.Leistungsklasse = characteristic.Name;
+            reactor.SetLeistungsklasse(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeMotor(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetMotor(characteristic.Name, DataSource.Database);
-            vecInfo.Motor = characteristic.Name;
+            reactor.SetMotor(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeHubraum(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetHubraum(characteristic.Name, DataSource.Database);
-            vecInfo.Hubraum = characteristic.Name;
+            reactor.SetHubraum(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeKraftstoffart(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetKraftstoffart(characteristic.Name, DataSource.Database);
-            vecInfo.Kraftstoffart = characteristic.Name;
+            reactor.SetKraftstoffart(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeMOTBezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetMOTBezeichnung(characteristic.Name, DataSource.Database);
-            vecInfo.MOTBezeichnung = characteristic.Name;
+            reactor.SetMOTBezeichnung(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeMOTEinbaulage(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetMOTEinbaulage(characteristic.Name, DataSource.Database);
-            vecInfo.MOTEinbaulage = characteristic.Name;
+            reactor.SetMOTEinbaulage(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeUeberarbeitung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetUeberarbeitung(characteristic.Name, DataSource.Database);
-            vecInfo.Ueberarbeitung = characteristic.Name;
+            reactor.SetUeberarbeitung(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeKraftstoffartEinbaulage(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //reactor.SetKraftstoffartEinbaulage(characteristic.Name, DataSource.Database);
-            vecInfo.KraftstoffartEinbaulage = this.characteristic.Name;
+            reactor.SetKraftstoffartEinbaulage(characteristic.Name, DataSource.Database);
             return true;
         }
 
-		protected override bool ComputeEngine2(params object[] parameters)
-		{
+        protected override bool ComputeEngine2(params object[] parameters)
+        {
             GetIdentParameters(parameters);
             GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTBaureihe = characteristic.Name;
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || characteristic.Name != DefaultEmptyCharacteristicValue)
+            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || characteristic.Name != "-")
             {
                 vecInfo.GenericMotor.Engine2 = string.Join(",", vecInfo.HeatMotors.Select((HeatMotor v) => v.HeatMOTBaureihe));
             }
             return true;
         }
 
-		protected override bool ComputeEngineLabel2(params object[] parameters)
-		{
+        protected override bool ComputeEngineLabel2(params object[] parameters)
+        {
             GetIdentParameters(parameters);
             GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTBezeichnung = characteristic.Name;
-            //reactor.AddInfoToDataholderAboutHeatMotors(vecInfo.HeatMotors, DataSource.Database);
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || characteristic.Name != DefaultEmptyCharacteristicValue)
+            reactor.AddInfoToDataholderAboutHeatMotors(vecInfo.HeatMotors, DataSource.Database);
+            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || characteristic.Name != "-")
             {
                 vecInfo.GenericMotor.EngineLabel2 = string.Join(",", vecInfo.HeatMotors.Select((HeatMotor v) => v.HeatMOTBezeichnung));
             }
             return true;
-		}
+        }
 
         protected override bool ComputeHeatMOTFortlaufendeNum(params object[] parameters)
         {
@@ -503,16 +469,18 @@ namespace PsdzClient.Core
             return true;
         }
 
+
         protected override bool ComputeDefault(params object[] parameters)
-		{
-			GetIdentParameters(parameters);
+        {
+            GetIdentParameters(parameters);
             //Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown key:{0} value: {1}", characteristic.RootNodeClass, characteristic.Name);
             return false;
-		}
+        }
 
         private void GetIdentParameters(params object[] parameters)
         {
             vecInfo = (Vehicle)parameters[0];
+            reactor = new Reactor(vecInfo, new DataHolder());
             characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
 
@@ -536,5 +504,7 @@ namespace PsdzClient.Core
 		private Vehicle vecInfo;
 
 		private PsdzDatabase.Characteristics characteristic;
-	}
+
+        private Reactor reactor;
+    }
 }

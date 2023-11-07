@@ -53,11 +53,12 @@ namespace PsdzClientLibrary.Core
             }
         }
 
-        private Reactor(IReactorVehicle reactorVehicle, DataHolder dataHolder = null)
+        public Reactor(IReactorVehicle reactorVehicle, DataHolder dataHolder = null)
         {
             this.dataHolder = dataHolder;
             multisourceLogic = new MultisourceLogic(dataHolder, log, new MultisourceProperties(), new ValueValidator());
             fallback = new FallbackMechanisms(dataHolder);
+            log = new MultisourceLogger();
             vehicle = reactorVehicle;
         }
 

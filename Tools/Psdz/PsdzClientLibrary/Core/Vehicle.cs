@@ -16,11 +16,12 @@ using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Contracts;
 using PsdzClient.Utility;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
-	public class Vehicle : typeVehicle, INotifyPropertyChanged, IVehicle
-	{
+	public class Vehicle : typeVehicle, INotifyPropertyChanged, IVehicle, IReactorVehicle
+    {
 		public Vehicle(ClientContext clientContext) : base(clientContext)
         {
             TransmissionDataType = new TransmissionDataType();
@@ -40,6 +41,7 @@ namespace PsdzClient.Core
             clamp15MinValue = 0.0;
             clamp30MinValue = 9.95; //new VoltageThreshold(BatteryEnum.Pb).MinError;
             //RxSwin = new RxSwinData();
+            Reactor.Initialize(this, null);
         }
 
 #if false
@@ -231,6 +233,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [XmlIgnore]
         public bool IsEcuIdentSuccessfull { get; set; }
 #if false
 
@@ -1465,6 +1468,23 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
+        public string Baustand
+        {
+            get
+            {
+                return baustand;
+            }
+            set
+            {
+                if (baustand != value)
+                {
+                    baustand = value;
+                    OnPropertyChanged("Baustand");
+                }
+            }
+        }
+
+        [XmlIgnore]
         public bool IsNoVehicleCommunicationRunning
         {
             get
@@ -2192,6 +2212,8 @@ namespace PsdzClient.Core
 
         private string kraftstoffartEinbaulage;
 
-		private static readonly DateTime lciRRS2 = DateTime.Parse("2012-05-31", CultureInfo.InvariantCulture);
+        private string baustand;
+
+        private static readonly DateTime lciRRS2 = DateTime.Parse("2012-05-31", CultureInfo.InvariantCulture);
     }
 }
