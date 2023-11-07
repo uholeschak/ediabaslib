@@ -953,10 +953,10 @@ namespace PsdzClient.Programming
 
                 if (detectResult != DetectVehicle.DetectResult.Ok)
                 {
-                    if (series.Length > 0)
+                    string bnType = PsdzContext.DetectVehicle.BnType;
+                    if (!string.IsNullOrEmpty(bnType))
                     {
-                        char seriesChar = char.ToUpperInvariant(series[0]);
-                        if (char.IsLetter(seriesChar) && seriesChar <= 'E')
+                        if (bnType.IndexOf("2020", StringComparison.OrdinalIgnoreCase) < 0)
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.VehicleSeriesInvalid, series));
                         }
