@@ -4,11 +4,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
+using PsdzClient.Core;
 using PsdzClient.Core.Container;
 
 namespace PsdzClient
@@ -35,15 +35,17 @@ namespace PsdzClient
         public delegate void ProgressDelegate(int percent);
 
         private PsdzDatabase _pdszDatabase;
+        private ClientContext _clientContext;
         private bool _disposed;
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
 
         public List<PsdzDatabase.EcuInfo> EcuListPsdz { get; private set; }
 
-        public DetectVehicle(PsdzDatabase pdszDatabase, string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
+        public DetectVehicle(PsdzDatabase pdszDatabase, ClientContext clientContext, string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
         {
             _pdszDatabase = pdszDatabase;
+            _clientContext = clientContext;
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet
             {
@@ -171,16 +173,28 @@ namespace PsdzClient
                     List<PsdzDatabase.Characteristics> characteristicsList = _pdszDatabase.GetVehicleIdentByTypeKey(vinRangesByVin.TypeKey, false);
                     if (characteristicsList != null)
                     {
+                        Vehicle vehicleIdent = new Vehicle(_clientContext);
+                        vehicleIdent.VehicleIdentLevel = IdentificationLevel.VINBasedFeatures;
+                        vehicleIdent.VINRangeType = vinRangesByVin.TypeKey;
+                        vehicleIdent.VCI.VCIType = VCIDeviceType.EDIABAS;
+
+                        VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
                         foreach (PsdzDatabase.Characteristics characteristics in characteristicsList)
                         {
-                            if (string.Compare(characteristics.NodeClass, "40137602", StringComparison.OrdinalIgnoreCase) == 0)
-                            {   // from VehicleCharacteristicVehicleHelper.ComputeGetriebe
-                                TransmissionType = characteristics.EcuTranslation.TextDe;
+                            if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, vehicleIdent, characteristics))
+                            {
+                                log.ErrorFormat("DetectVehicleBmwFast AssignVehicleCharacteristic failed");
                             }
-                            else if (string.Compare(characteristics.NodeClass, "40132226", StringComparison.OrdinalIgnoreCase) == 0)
-                            {   // from VehicleCharacteristicVehicleHelper.ComputeMotor
-                                Motor = characteristics.EcuTranslation.TextDe;
-                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(vehicleIdent.Getriebe))
+                        {
+                            TransmissionType = vehicleIdent.Getriebe;
+                        }
+
+                        if (!string.IsNullOrEmpty(vehicleIdent.Motor))
+                        {
+                            Motor = vehicleIdent.Motor;
                         }
                     }
                 }
