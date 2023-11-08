@@ -1,0 +1,346 @@
+﻿using Microsoft.Win32;
+using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.ServiceModel.Channels;
+using System.ServiceModel;
+using System.Threading;
+using System;
+using System.Net.Sockets;
+using PsdzClient.Core;
+
+namespace PsdzClientLibrary.Core
+{
+    public enum EventKind
+    {
+        T,
+        F
+    }
+
+    public class Log
+    {
+        private enum TraceLevel
+        {
+            INFO,
+            DEBUG,
+            WARNING,
+            ERROR,
+            FATAL
+        }
+
+        private static readonly CultureInfo LogCulture = CultureInfo.CreateSpecificCulture("de-DE");
+
+        public static bool LogCallerPid { get; set; }
+
+        public static void Error(string method, string msg, params object[] args)
+        {
+            Error(method, msg, EventKind.T, args);
+        }
+
+        public static void Error(string method, string msg, EventKind evtKind, params object[] args)
+        {
+            try
+            {
+                WriteTraceEntry(method, msg, TraceLevel.ERROR, evtKind, args);
+                Flush();
+            }
+            catch (Exception ex)
+            {
+                TraceTraceError("{0} Log.Error() - failed in method \"{2}\" while writing message \"{3}\" with exception: {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), ex.ToString(), method, msg);
+            }
+        }
+
+        private static void TraceTraceError(string format, params object[] args)
+        {
+            Trace.TraceError(format, args);
+            Flush();
+        }
+
+        public static void ErrorException(string method, Exception exception)
+        {
+            Error(method, "failed with exception: {0}", exception);
+        }
+
+        public static void ErrorException(string method, string msg, Exception exception)
+        {
+            Error(method, "failed with exception: {0} - {1}", msg, exception);
+        }
+
+        public static void Flush()
+        {
+            Trace.Flush();
+        }
+
+        public static void Info(string method, string msg, params object[] args)
+        {
+            Info(method, msg, EventKind.T, args);
+        }
+
+        public static void Info(string method, string msg, EventKind evtKind, params object[] args)
+        {
+            try
+            {
+                WriteTraceEntry(method, msg, TraceLevel.INFO, evtKind, args);
+            }
+            catch (Exception ex)
+            {
+                TraceTraceError("{0} Log.Info() - failed in method \"{2}\" while writing message \"{3}\" with exception: {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), ex.ToString(), method, msg);
+            }
+        }
+
+        public static void LoadedAssemblies()
+        {
+            try
+            {
+                Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                foreach (Assembly assembly in assemblies)
+                {
+                    Info("Log.LoadedAssemblies()", "found loaded assembly: {0} {1} {2} GAC: {3}", assembly.FullName, assembly.ImageRuntimeVersion, assembly.IsDynamic ? "(internal)" : assembly.Location, assembly.GlobalAssemblyCache);
+                }
+            }
+            catch (Exception exception)
+            {
+                WarningException("Log.LoadedAssemblies()", exception);
+            }
+        }
+
+        public static void ThreadStarted(string method, Thread thread)
+        {
+            if (thread == null)
+            {
+                Info(method, "Thread started [{0}, {1}].", "null", "null");
+            }
+            else
+            {
+                Info(method, "Thread started [{0}, {1}].", thread.ManagedThreadId, thread.Name);
+            }
+        }
+
+        public static void ThreadStopped(string method, Thread thread)
+        {
+            if (thread == null)
+            {
+                Info(method, "Thread stopped [{0}, {1}].", "null", "null");
+            }
+            else
+            {
+                Info(method, "Thread stopped [{0}, {1}], is alive: {2}.", thread.ManagedThreadId, thread.Name, thread.IsAlive);
+            }
+        }
+
+        public static void ThreadRemoved(string method, Thread thread)
+        {
+            if (thread == null)
+            {
+                Info(method, "Thread removed [{0}, {1}].", "null", "null");
+            }
+            else
+            {
+                Info(method, "Thread removed [{0}, {1}], is alive: {2}.", thread.ManagedThreadId, thread.Name, thread.IsAlive);
+            }
+        }
+
+        public static void Threads()
+        {
+            Thread currentThread = Thread.CurrentThread;
+            Info("Log.Threads()", "Thread with ID=\"{0}\" and Name=\"{1}\"", currentThread.ManagedThreadId, currentThread.Name);
+        }
+
+        public static void LocalIP()
+        {
+            IEnumerable<IPAddress> values = Dns.GetHostEntry(Dns.GetHostName()).AddressList.Where((IPAddress a) => a.AddressFamily == AddressFamily.InterNetwork);
+            Info("Log.LocalIP()", "local ip addresses: {0}", string.Join("; ", values));
+        }
+
+        public static void Warning(string method, string msg, params object[] args)
+        {
+            Warning(method, msg, EventKind.T, args);
+        }
+
+        public static void Warning(string method, string msg, EventKind evtKind, params object[] args)
+        {
+            try
+            {
+                WriteTraceEntry(method, msg, TraceLevel.WARNING, evtKind, args);
+            }
+            catch (Exception ex)
+            {
+                TraceTraceError("{0} Log.Warning() - failed in method \"{2}\" while writing message \"{3}\" with exception: {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), ex.ToString(), method, msg);
+            }
+        }
+
+        public static void Fatal(string method, string msg, params object[] args)
+        {
+            try
+            {
+                string text = BuildEntry(TraceLevel.FATAL, EventKind.T, method, msg);
+                Trace.Fail((args == null) ? text : string.Format(text, args));
+            }
+            catch (Exception ex)
+            {
+                TraceTraceError("{0} Log.Fatal() - failed in method \"{2}\" while writing message \"{3}\" with exception: {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), ex.ToString(), method, msg);
+            }
+        }
+
+        public static void Debug(string method, string msg, params object[] args)
+        {
+            Debug(1, 1, method, msg, args);
+        }
+
+        public static void Debug(int logState, string method, string msg, params object[] args)
+        {
+            Debug(logState, 1, method, msg, args);
+        }
+
+        public static void Debug(int logState, int logThreshhold, string method, string msg, params object[] args)
+        {
+            Debug(logState, logThreshhold, method, msg, EventKind.T, args);
+        }
+
+        public static void Debug(int logState, int logThreshhold, string method, string msg, EventKind evtKind, params object[] args)
+        {
+            if (logState < logThreshhold)
+            {
+                return;
+            }
+            try
+            {
+                string format = BuildEntry(TraceLevel.DEBUG, evtKind, method, msg);
+                if (args != null)
+                {
+                    string.Format(format, args);
+                }
+            }
+            catch (Exception ex)
+            {
+                TraceTraceError("{0} Log.Debug() - failed in method \"{2}\" while writing message \"{3}\" with exception: {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), ex.ToString(), method, msg);
+            }
+        }
+
+        public static void WarningException(string method, Exception exception)
+        {
+            Warning(method, "failed with exception: {0}", exception.ToString());
+        }
+
+        public static void WarningException(string method, string msg, Exception exception)
+        {
+            Warning(method, "failed with exception: {0} - {1}", msg, exception);
+        }
+
+        public static void SystemRessources()
+        {
+            Process currentProcess = Process.GetCurrentProcess();
+            Info("Log.SystemRessources()", "Process system memory process context usage: {0} ({1})", Environment.WorkingSet, Environment.WorkingSet.ToFileSize());
+            Info("Log.SystemRessources()", "Process physical memory usage: {0} ({1})", currentProcess.WorkingSet64, currentProcess.WorkingSet64.ToFileSize());
+            Info("Log.SystemRessources()", "Process NonpagedSystemMemorySize64 memory usage: {0} ({1})", currentProcess.NonpagedSystemMemorySize64, currentProcess.NonpagedSystemMemorySize64.ToFileSize());
+            Info("Log.SystemRessources()", "Process PagedMemorySize64 memory usage: {0} ({1})", currentProcess.PagedMemorySize64, currentProcess.PagedMemorySize64.ToFileSize());
+            Info("Log.SystemRessources()", "Process PrivateMemorySize64 memory usage: {0} ({1})", currentProcess.PrivateMemorySize64, currentProcess.PrivateMemorySize64.ToFileSize());
+            Info("Log.SystemRessources()", "Process handle count: " + currentProcess.HandleCount);
+            Info("Log.SystemRessources()", "Base priority of the associated process: " + currentProcess.BasePriority);
+            Info("Log.SystemRessources()", "Priority class of the associated process: " + currentProcess.PriorityClass);
+            Info("Log.SystemRessources()", "User Processor Time: " + currentProcess.UserProcessorTime.ToString());
+            Info("Log.SystemRessources()", "Privileged Processor Time: " + currentProcess.PrivilegedProcessorTime.ToString());
+            Info("Log.SystemRessources()", "Total Processor Time: " + currentProcess.TotalProcessorTime.ToString());
+        }
+
+        public static void SystemInformation()
+        {
+            try
+            {
+                //Info("Log.SystemInformation()", "Process is associated with a Terminal Services client session (RDP) : {0}", System.Windows.Forms.SystemInformation.TerminalServerSession);
+                string name = "System\\CurrentControlSet\\Control\\Windows";
+                RegistryKey registryKey = Registry.LocalMachine.OpenSubKey(name);
+                string name2 = "ShutdownTime";
+                long fileTime = BitConverter.ToInt64((byte[])registryKey.GetValue(name2), 0);
+                Info(CurrentMethod(), "Last reboot time: {0}", DateTime.FromFileTime(fileTime));
+                RdpSessionHistory();
+                GetCurrentProcessInformation();
+            }
+            catch (Exception exception)
+            {
+                ErrorException(CurrentMethod(), exception);
+            }
+        }
+
+        public static void RdpSessionHistory()
+        {
+            string query = "*[System/EventID=1149]";
+            int num2 = 0;
+            EventLogReader eventLogReader = new EventLogReader(new EventLogQuery("Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational", PathType.LogName, query)
+            {
+                ReverseDirection = true
+            });
+            for (EventRecord eventRecord = eventLogReader.ReadEvent(); eventRecord != null; eventRecord = eventLogReader.ReadEvent())
+            {
+                DateTime? timeCreated = eventRecord.TimeCreated;
+                Info(CurrentMethod(), "RDP session was activated at: {0}", timeCreated);
+                num2++;
+                if (num2 == 5)
+                {
+                    break;
+                }
+            }
+        }
+
+        public static void GetCurrentProcessInformation()
+        {
+            string processName = Process.GetCurrentProcess().ProcessName;
+            DateTime startTime = Process.GetCurrentProcess().StartTime;
+            Info(CurrentMethod(), "Process {0} started at {1}", processName, startTime);
+        }
+
+        private static int GetCallerPid(MessageHeaders headers)
+        {
+            if (headers == null)
+            {
+                return Process.GetCurrentProcess().Id;
+            }
+            int num2 = headers.FindHeader("PID", string.Empty);
+            if (num2 >= 0)
+            {
+                return headers.GetHeader<int>(num2);
+            }
+            return Process.GetCurrentProcess().Id;
+        }
+
+        private static string BuildEntry(TraceLevel level, EventKind kind, string method, string msg)
+        {
+            try
+            {
+                string text = (string.IsNullOrEmpty(method) ? "'method_not_set'" : method);
+                string text2 = (string.IsNullOrEmpty(msg) ? "'msg was empty'" : msg.Replace("\"", "'"));
+                if (LogCallerPid)
+                {
+                    int callerPid = GetCallerPid(OperationContext.Current?.IncomingMessageHeaders);
+                    return string.Format(LogCulture, "{0} {1} [{2}] Thread-ID: [{3}] Caller-PID: [{4}] {5} - {6}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), level, kind, Thread.CurrentThread.ManagedThreadId, callerPid, text, text2);
+                }
+                return string.Format(LogCulture, "{0} {1} [{2}] ISTA: [{3}] {4} - {5}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), level, kind, Thread.CurrentThread.ManagedThreadId, text, text2);
+            }
+            catch (Exception ex)
+            {
+                TraceTraceError("{0} Log.BuildEntry() - failed with exception: {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), ex.ToString());
+            }
+            return "Log.BuildEntry() - failed";
+        }
+
+        public static string CurrentMethod()
+        {
+            MethodBase method = new StackFrame(1).GetMethod();
+            if (method != null && method.DeclaringType != null)
+            {
+                return method.DeclaringType.Name + "." + method.Name;
+            }
+            return string.Empty;
+        }
+
+        private static void WriteTraceEntry(string method, string msg, TraceLevel level, EventKind evtKind, params object[] args)
+        {
+            string text = BuildEntry(level, evtKind, method, msg);
+            Trace.WriteLine((args == null || !args.Any()) ? text : string.Format(text, args));
+        }
+    }
+}
