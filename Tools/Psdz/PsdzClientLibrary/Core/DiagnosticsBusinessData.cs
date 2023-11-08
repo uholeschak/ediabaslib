@@ -576,6 +576,7 @@ namespace PsdzClient.Core
 
         public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
+            // [UH] get reactor from vehicle
             Reactor reactor = (vecInfo as Vehicle)?.Reactor;
             if (reactor == null)
             {

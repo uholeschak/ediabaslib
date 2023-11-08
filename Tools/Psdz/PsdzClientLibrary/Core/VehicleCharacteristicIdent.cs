@@ -480,6 +480,7 @@ namespace PsdzClient.Core
         private void GetIdentParameters(params object[] parameters)
         {
             vecInfo = (Vehicle)parameters[0];
+            // [UH] get reactor from vehicle
             reactor = vecInfo.Reactor;
             characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
