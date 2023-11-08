@@ -10,6 +10,7 @@ using System.Xml.Schema;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BmwFileReader;
 using PsdzClient.Utility;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -70,7 +71,7 @@ namespace PsdzClient.Core
 			IEcuTreeConfiguration ecuTreeConfiguration = null;
 			ValidationEventHandler veh = delegate (object sender, ValidationEventArgs e)
 			{
-				//Log.Warning("BaseEcuCharacteristics.Constructor", string.Format(CultureInfo.InvariantCulture, "Validation: {0}", e.Message));
+				Log.Warning("BaseEcuCharacteristics.Constructor", string.Format(CultureInfo.InvariantCulture, "Validation: {0}", e.Message));
 			};
 			if (xmlCharacteristic.Contains("<?xml"))
 			{
@@ -115,7 +116,7 @@ namespace PsdzClient.Core
 			{
 				if (!EcuTreeConfiguration.ValidateFile(stream, veh))
 				{
-					//Log.Error("BaseEcuCharacteristics.Constructor", string.Format(CultureInfo.InvariantCulture, "Validation failed: {0}", xmlCharacteristic));
+					Log.Error("BaseEcuCharacteristics.Constructor", string.Format(CultureInfo.InvariantCulture, "Validation failed: {0}", xmlCharacteristic));
 				}
 				return EcuTreeConfiguration.ReadFromStream(stream);
 			}
@@ -207,16 +208,16 @@ namespace PsdzClient.Core
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception exception)
                         {
-                            //Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception);
+                            Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception);
                         }
                     }
                     return observableCollectionEx;
                 }
-                catch (Exception)
+                catch (Exception exception2)
                 {
-                    //Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception2);
+                    Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception2);
                     return observableCollectionEx;
                 }
             }
@@ -247,12 +248,12 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".ShapeECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".ShapeECUConfiguration()", "vecInfo was null");
                 return;
             }
             if (vecInfo.ECU == null)
             {
-                //Log.Warning(GetType().Name + ".ShapeECUConfiguration()", "vecInfo.ecu was null");
+                Log.Warning(GetType().Name + ".ShapeECUConfiguration()", "vecInfo.ecu was null");
                 return;
             }
             if (xorConfiguration != null)
@@ -311,7 +312,7 @@ namespace PsdzClient.Core
             ValidateIfDiagnosticsHasValidLicense();
             if (!sgAdr.HasValue)
             {
-                //Log.Info(GetType().Name + ".getBus()", "sgAdr was null");
+                Log.Info(GetType().Name + ".getBus()", "sgAdr was null");
                 return BusType.UNKNOWN;
             }
             long? num2 = sgAdr;
@@ -320,7 +321,7 @@ namespace PsdzClient.Core
                 num2 = sgAdr;
                 if (num2 > 255L)
                 {
-                    //Log.Info(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+                    Log.Info(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
                     return BusType.UNKNOWN;
                 }
             }
@@ -334,12 +335,12 @@ namespace PsdzClient.Core
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException(GetType().Name + ".getBus()", exception);
+                Log.WarningException(GetType().Name + ".getBus()", exception);
             }
             LogMissingBus(group, sgAdr);
-            //Log.Info(GetType().Name + ".getBus()", "no bus found for ecu address: {0}", sgAdr.Value.ToString("X2"));
+            Log.Info(GetType().Name + ".getBus()", "no bus found for ecu address: {0}", sgAdr.Value.ToString("X2"));
             return BusType.UNKNOWN;
         }
 
@@ -348,12 +349,12 @@ namespace PsdzClient.Core
             ValidateIfDiagnosticsHasValidLicense();
             if (!sgAdr.HasValue)
             {
-                //Log.Warning(GetType().Name + ".getBus()", "sgAdr was null");
+                Log.Warning(GetType().Name + ".getBus()", "sgAdr was null");
                 return BusType.UNKNOWN;
             }
             if (sgAdr < 0L && sgAdr > 255L)
             {
-                //Log.Warning(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+                Log.Warning(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
                 return BusType.UNKNOWN;
             }
             try
@@ -373,11 +374,11 @@ namespace PsdzClient.Core
                     }
                 }
                 LogMissingBus(group, sgAdr);
-                //Log.Warning(GetType().Name + ".getBus()", "no bus found for ecu address/subaddress: {0:X2} {1:X2}", sgAdr, subAdr);
+                Log.Warning(GetType().Name + ".getBus()", "no bus found for ecu address/subaddress: {0:X2} {1:X2}", sgAdr, subAdr);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException(GetType().Name + ".getBus()", exception);
+                Log.WarningException(GetType().Name + ".getBus()", exception);
             }
             return BusType.UNKNOWN;
         }
@@ -387,7 +388,7 @@ namespace PsdzClient.Core
 			ValidateIfDiagnosticsHasValidLicense();
 			if (string.IsNullOrEmpty(grp))
 			{
-				//Log.Info("iBusEcuCharacteristics.getSgAdr()", "grp was null or empty.");
+				Log.Info("iBusEcuCharacteristics.getSgAdr()", "grp was null or empty.");
 				return -1;
 			}
 			try
@@ -400,9 +401,9 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException("iBusEcuCharacteristics.getSgAdr()", exception);
+				Log.WarningException("iBusEcuCharacteristics.getSgAdr()", exception);
 			}
 			return -1;
 		}
@@ -412,12 +413,12 @@ namespace PsdzClient.Core
 			ValidateIfDiagnosticsHasValidLicense();
 			if (!sgAdr.HasValue)
 			{
-				//Log.Info(GetType().Name + ".getECU_GROBNAME()", "sgAdr was null");
+				Log.Info(GetType().Name + ".getECU_GROBNAME()", "sgAdr was null");
 				return null;
 			}
 			if (sgAdr < 0L && sgAdr > 255L)
 			{
-				//Log.Info(GetType().Name + ".getECU_GROBNAME()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+				Log.Info(GetType().Name + ".getECU_GROBNAME()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
 				return null;
 			}
 			try
@@ -430,11 +431,11 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException(GetType().Name + ".getECU_GROBNAME()", exception);
+				Log.WarningException(GetType().Name + ".getECU_GROBNAME()", exception);
 			}
-			//Log.Info(GetType().Name + ".getECU_GROBNAME()", "no ECU_GROBNAME found for ecu address: {0}", FormatConverter.Dec2Hex(sgAdr));
+			Log.Info(GetType().Name + ".getECU_GROBNAME()", "no ECU_GROBNAME found for ecu address: {0}", FormatConverter.Dec2Hex(sgAdr));
 			return null;
 		}
 
@@ -443,12 +444,12 @@ namespace PsdzClient.Core
 			ValidateIfDiagnosticsHasValidLicense();
 			if (!sgAdr.HasValue)
 			{
-				//Log.Info(GetType().Name + ".getECU_GRUPPE()", "sgAdr was null");
+				Log.Info(GetType().Name + ".getECU_GRUPPE()", "sgAdr was null");
 				return string.Empty;
 			}
 			if (sgAdr < 0L && sgAdr > 255L)
 			{
-				//Log.Info(GetType().Name + ".getECU_GRUPPE()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+				Log.Info(GetType().Name + ".getECU_GRUPPE()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
 				return string.Empty;
 			}
 			try
@@ -461,9 +462,9 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
+				Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
 			}
 			return string.Empty;
 		}
@@ -473,14 +474,14 @@ namespace PsdzClient.Core
 			ValidateIfDiagnosticsHasValidLicense();
 			if (!sgAdr.HasValue)
 			{
-				//Log.Info(GetType().Name + ".getEcuCoordinates()", "sgAdr was null");
+				Log.Info(GetType().Name + ".getEcuCoordinates()", "sgAdr was null");
 				col = -1;
 				row = -1;
 				return false;
 			}
 			if (sgAdr < 0L && sgAdr > 255L)
 			{
-				//Log.Info(GetType().Name + ".getEcuCoordinates()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+				Log.Info(GetType().Name + ".getEcuCoordinates()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
 				col = -1;
 				row = -1;
 				return false;
@@ -497,9 +498,9 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
+				Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
 			}
 			col = -1;
 			row = -1;
@@ -511,14 +512,14 @@ namespace PsdzClient.Core
 			ValidateIfDiagnosticsHasValidLicense();
 			if (!sgAdr.HasValue)
 			{
-				//Log.Warning(GetType().Name + ".getEcuCoordinates()", "sgAdr was null");
+				Log.Warning(GetType().Name + ".getEcuCoordinates()", "sgAdr was null");
 				col = -1;
 				row = -1;
 				return false;
 			}
 			if (sgAdr < 0L && sgAdr > 255L)
 			{
-				//Log.Warning(GetType().Name + ".getEcuCoordinates()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+				Log.Warning(GetType().Name + ".getEcuCoordinates()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
 				col = -1;
 				row = -1;
 				return false;
@@ -544,9 +545,9 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
+				Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
 			}
 			col = -1;
 			row = -1;
@@ -564,17 +565,17 @@ namespace PsdzClient.Core
 					{
 						if (!string.IsNullOrEmpty(text) && text.Length >= 10 && text.Trim().Split(';')[2].Contains(typeKey))
 						{
-							//Log.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} found", typeKey);
+							Log.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} found", typeKey);
 							return true;
 						}
 					}
-					catch (Exception)
+					catch (Exception exception)
 					{
-						//Log.WarningException(GetType().Name + ".IsTypeKeyListed()", exception);
+						Log.WarningException(GetType().Name + ".IsTypeKeyListed()", exception);
 					}
 				}
 			}
-			//Log.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} NOT found", typeKey);
+			Log.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} NOT found", typeKey);
 			return false;
 		}
 
@@ -583,7 +584,7 @@ namespace PsdzClient.Core
 			ValidateIfDiagnosticsHasValidLicense();
 			if (vecInfo == null)
 			{
-				//Log.Warning(GetType().Name + ".CalculateMaxAssembledECUList()", "vecInfo was null");
+				Log.Warning(GetType().Name + ".CalculateMaxAssembledECUList()", "vecInfo was null");
 				return;
 			}
 			if (vecInfo.ECU == null)
@@ -622,15 +623,15 @@ namespace PsdzClient.Core
                             }
                         }
 					}
-					catch (Exception)
+					catch (Exception exception)
 					{
-						//Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception);
+						Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception);
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception exception2)
 			{
-				//Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception2);
+				Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception2);
 			}
 		}
 
@@ -692,7 +693,7 @@ namespace PsdzClient.Core
 		{
 			if (vecInfo == null)
 			{
-				//Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+				Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
 				return;
 			}
 			if (vecInfo.ECU == null)
@@ -717,7 +718,7 @@ namespace PsdzClient.Core
 				ECU eCU = vecInfo.getECU(remove);
 				if (eCU != null)
 				{
-					//Log.Info(GetType().Name + ".CalculateECUConfiguration()", "Removing ECU: {0}", eCU);
+					Log.Info(GetType().Name + ".CalculateECUConfiguration()", "Removing ECU: {0}", eCU);
 					vecInfo.ECU.Remove(eCU);
 				}
 			}
@@ -727,7 +728,7 @@ namespace PsdzClient.Core
 		{
 			if (vecInfo == null)
 			{
-				//Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
+				Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
 				return;
 			}
 			if (vecInfo.ECU == null)
@@ -754,12 +755,12 @@ namespace PsdzClient.Core
 				}
 				foreach (ECU item2 in vecInfo.ECU)
 				{
-					//Log.Info(GetType().Name + ".CalculateECUConfigurationConfigured()", "Expected ecu at address: {0:X2} / '{1}'", item2.ID_SG_ADR, item2.ECU_GRUPPE);
+					Log.Info(GetType().Name + ".CalculateECUConfigurationConfigured()", "Expected ecu at address: {0:X2} / '{1}'", item2.ID_SG_ADR, item2.ECU_GRUPPE);
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException(GetType().Name + ".CalculateECUConfigurationConfigured()", exception);
+				Log.WarningException(GetType().Name + ".CalculateECUConfigurationConfigured()", exception);
 			}
 		}
 
@@ -800,10 +801,10 @@ namespace PsdzClient.Core
                     }
                     if (!string.IsNullOrEmpty(vecInfo.ILevelWerk) && !string.IsNullOrEmpty(array3[4]) && !array3[4].Contains(vecInfo.ILevelWerk))
                     {
-                        //Log.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking iLevel: '{0}'", array3[4]);
+                        Log.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking iLevel: '{0}'", array3[4]);
                         continue;
                     }
-                    //Log.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking production date from: '{0}' to '{1}'", array3[5], array3[6]);
+                    Log.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking production date from: '{0}' to '{1}'", array3[5], array3[6]);
                     if (string.IsNullOrEmpty(array3[5]) || array3[5].Length != 6)
                     {
                         goto IL_01ce;
@@ -843,9 +844,9 @@ namespace PsdzClient.Core
                     }
                     end_IL_004a:;
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
-                    //Log.WarningException(GetType().Name + ".ProcessCompatibilityInfo()", exception);
+                    Log.WarningException(GetType().Name + ".ProcessCompatibilityInfo()", exception);
                 }
             }
         }
@@ -854,7 +855,7 @@ namespace PsdzClient.Core
 		{
 			if (vecInfo == null)
 			{
-				//Log.Warning(GetType().Name + ".SetupMinimalECUConfiguration()", "vecInfo was null");
+				Log.Warning(GetType().Name + ".SetupMinimalECUConfiguration()", "vecInfo was null");
 				return;
 			}
 			if (vecInfo.ECU == null)
