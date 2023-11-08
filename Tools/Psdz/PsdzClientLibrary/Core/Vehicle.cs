@@ -41,6 +41,7 @@ namespace PsdzClient.Core
             clamp15MinValue = 0.0;
             clamp30MinValue = 9.95; //new VoltageThreshold(BatteryEnum.Pb).MinError;
             //RxSwin = new RxSwinData();
+            Reactor = new Reactor(this, new DataHolder());
         }
 
 #if false
@@ -2133,6 +2134,9 @@ namespace PsdzClient.Core
             }
             return num;
         }
+
+        // [UH] local reactor
+        public Reactor Reactor { get; private set; }
 
         // ToDo: Check on update
         public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";

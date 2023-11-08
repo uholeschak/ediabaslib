@@ -576,18 +576,23 @@ namespace PsdzClient.Core
 
         public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
-            Reactor instance = new Reactor(vecInfo as Vehicle, new DataHolder());
+            Reactor reactor = (vecInfo as Vehicle)?.Reactor;
+            if (reactor == null)
+            {
+                return;
+            }
+
             IEcuJob ecuJob = new ECUJob();
             if (IsSp2021Gateway(vecInfo, ecuKom, retryCount))
             {
                 ecuJob = ecuKom.ApiJobWithRetries("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR", string.Empty, string.Empty, retryCount);
                 if (!ecuJob.IsOkay())
                 {
-                    HandleReadILevelForSp2021Fallback(instance, vecInfo, ecuKom, retryCount);
+                    HandleReadILevelForSp2021Fallback(reactor, vecInfo, ecuKom, retryCount);
                 }
-                else if (!ProcessILevelJobResults(instance, vecInfo, ecuJob))
+                else if (!ProcessILevelJobResults(reactor, vecInfo, ecuJob))
                 {
-                    HandleReadILevelForSp2021Fallback(instance, vecInfo, ecuKom, retryCount);
+                    HandleReadILevelForSp2021Fallback(reactor, vecInfo, ecuKom, retryCount);
                 }
             }
             else
@@ -595,11 +600,11 @@ namespace PsdzClient.Core
                 ecuJob = ecuKom.ApiJobWithRetries("g_zgw", "STATUS_VCM_I_STUFE_LESEN", string.Empty, string.Empty, retryCount);
                 if (!ecuJob.IsOkay())
                 {
-                    HandleReadIlevelBackup(instance, vecInfo, ecuKom, retryCount);
+                    HandleReadIlevelBackup(reactor, vecInfo, ecuKom, retryCount);
                 }
-                else if (!ProcessILevelJobResults(instance, vecInfo, ecuJob))
+                else if (!ProcessILevelJobResults(reactor, vecInfo, ecuJob))
                 {
-                    HandleReadIlevelBackup(instance, vecInfo, ecuKom, retryCount);
+                    HandleReadIlevelBackup(reactor, vecInfo, ecuKom, retryCount);
                 }
             }
             if (!string.IsNullOrEmpty(vecInfo.ILevel))
