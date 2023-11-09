@@ -1,5 +1,6 @@
 ﻿// BMW.Rheingold.ISTA.CoreFramework.BaseAdapter
 using System;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {
@@ -31,7 +32,7 @@ namespace PsdzClient.Core.Container
                         }
                         return;
                     }
-                    //Log.Info("BaseAdapter.diveConfigNodes()", "found subnode of type All with 0 children");
+                    Log.Info("BaseAdapter.diveConfigNodes()", "found subnode of type All with 0 children");
                     if (!path.Contains("ECUGroupOrVariant"))
                     {
                         NodePathList.setParameter(path + "/ECUGroupOrVariant", null);
@@ -43,7 +44,7 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("BaseAdapter.diveConfigNodes()", "found unhandled configuration container path: {0}", path);
+                    Log.Warning("BaseAdapter.diveConfigNodes()", "found unhandled configuration container path: {0}", path);
                 }
             }
             else if (node is Value)
@@ -134,7 +135,7 @@ namespace PsdzClient.Core.Container
                     }
                     else
                     {
-                        //Log.Warning("BaseAdapter.diveConfigNodes()", "Path: {0} Value: unknown Type: {1}", path, literal.Item.GetType().Name);
+                        Log.Warning("BaseAdapter.diveConfigNodes()", "Path: {0} Value: unknown Type: {1}", path, literal.Item.GetType().Name);
                     }
                 }
             }

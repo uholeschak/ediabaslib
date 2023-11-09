@@ -6,6 +6,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {
@@ -207,9 +208,9 @@ namespace PsdzClient.Core.Container
                 StringReader input = new StringReader(configuration);
                 return (Configuration)new XmlSerializer(typeof(Configuration)).Deserialize(XmlReader.Create(input));
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("Configuration.Deserialize()", exception);
+                Log.WarningException("Configuration.Deserialize()", exception);
             }
             return null;
         }

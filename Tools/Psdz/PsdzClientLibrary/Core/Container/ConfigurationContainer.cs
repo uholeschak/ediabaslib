@@ -7,6 +7,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {
@@ -182,9 +183,9 @@ namespace PsdzClient.Core.Container
                 return (ConfigurationContainer)new XmlSerializer(typeof(ConfigurationContainer)).Deserialize(
                     XmlReader.Create(input));
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ConfigurationContainer.Deserialize()", exception);
+                Log.WarningException("ConfigurationContainer.Deserialize()", exception);
             }
 
             return null;

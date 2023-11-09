@@ -4,6 +4,7 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {
@@ -342,7 +343,7 @@ namespace PsdzClient.Core.Container
 
         public object Query(string nodePath)
         {
-            //Log.Warning("ANode.Query()", "not implemented !!!");
+            Log.Warning("ANode.Query()", "not implemented !!!");
             if (Name != null && string.Equals(Name, nodePath))
             {
                 return this;
