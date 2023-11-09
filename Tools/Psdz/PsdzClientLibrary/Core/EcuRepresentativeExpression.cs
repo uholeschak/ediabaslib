@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -24,7 +25,7 @@ namespace PsdzClient.Core
 		{
 			if (vec == null)
 			{
-				//Log.Warning("EcuRepresentativeExpression.Evaluate()", "vec was null", Array.Empty<object>());
+				Log.Warning("EcuRepresentativeExpression.Evaluate()", "vec was null", Array.Empty<object>());
 				return false;
 			}
             PsdzDatabase.EcuReps ecuRepsById = ClientContext.GetDatabase(vec)?.GetEcuRepsById(this.value.ToString(CultureInfo.InvariantCulture));

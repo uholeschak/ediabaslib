@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using System.Xml.Xsl;
 using System.Xml;
 using System;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -97,10 +98,10 @@ namespace PsdzClient.Core
                 xElement = ParseXml(Create(plainText));
                 return xElement.Print();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 string text2 = EscapeXmlElementContent(text);
-                //Log.Warning("TextContent.AsignFormattedText()", "Failed to assign formatted text \"{0}\". Assign paragraph with plain text \"{1}\" instead. {2}", text, text2, ex.Message);
+                Log.Warning("TextContent.AsignFormattedText()", "Failed to assign formatted text \"{0}\". Assign paragraph with plain text \"{1}\" instead. {2}", text, text2, ex.Message);
                 return ParseXml(Create(text2)).Print();
             }
         }
@@ -188,7 +189,7 @@ namespace PsdzClient.Core
                     {
                         if (!(item is XText node))
                         {
-                            //Log.Error("BuildPlainText()", "Node with type \"XmlNodeType.Text\" is no XText (Parent name \"{0}\"). Using method Print() instead of PrintPlainText().", item.Parent?.Name?.LocalName);
+                            Log.Error("BuildPlainText()", "Node with type \"XmlNodeType.Text\" is no XText (Parent name \"{0}\"). Using method Print() instead of PrintPlainText().", item.Parent?.Name?.LocalName);
                             stringBuilder.Append(item.Print(flag));
                         }
                         else
@@ -270,7 +271,7 @@ namespace PsdzClient.Core
             {
                 if (logMissing)
                 {
-                    //Log.Warning("TextContentManager.GetAttibuteValue()", "Element \"{0}\" has no attribute \"{1}\", retuning null.", element?.Name?.LocalName, name);
+                    Log.Warning("TextContentManager.GetAttibuteValue()", "Element \"{0}\" has no attribute \"{1}\", retuning null.", element?.Name?.LocalName, name);
                 }
                 return null;
             }
@@ -372,7 +373,7 @@ namespace PsdzClient.Core
                 {
                     if (!Regex.IsMatch(xmlText.Trim(), "^\\d+$"))
                     {
-                        //Log.Info("TextContentOld.ReplaceTextReferences()", "found native text!? no replacement required for: {0}", xmlText);
+                        Log.Info("TextContentOld.ReplaceTextReferences()", "found native text!? no replacement required for: {0}", xmlText);
                         return string.Format(CultureInfo.InvariantCulture, "<TextItem SchemaVersion=\"1.0.0\">{0}</TextItem>", xmlText);
                     }
                     string textItem = database.GetTextById(xmlText, new string[1] { language })[0].TextItem;
@@ -394,7 +395,7 @@ namespace PsdzClient.Core
                         if (xAttribute != null && !string.IsNullOrEmpty(xAttribute.Value))
                         {
                             string value = xAttribute.Value;
-                            //Log.Info("TextContentOld.ReplaceTextReferences()", "Found referenced text: {0} Path: {1}", xElement, xAttribute.Value);
+                            Log.Info("TextContentOld.ReplaceTextReferences()", "Found referenced text: {0} Path: {1}", xElement, xAttribute.Value);
                             PsdzDatabase.EcuTranslation ecuTranslation = database.GetSpTextItemsByControlId(value);
                             string localizedXmlValue = null;
                             if (ecuTranslation != null)
@@ -404,7 +405,7 @@ namespace PsdzClient.Core
                             XElement content;
                             if (string.IsNullOrEmpty(localizedXmlValue))
                             {
-                                //Log.Error("TextContentOld.ReplaceTextReferences()", "Failed to get the localized text for ID {0}.", value);
+                                Log.Error("TextContentOld.ReplaceTextReferences()", "Failed to get the localized text for ID {0}.", value);
                                 content = XElement.Parse("<TextItem>###" + value + "###</TextItem>");
                             }
                             else
@@ -420,9 +421,9 @@ namespace PsdzClient.Core
                 }
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex2)
             {
-                //Log.Warning("TextContentOld.ReplaceTextReferences()", "error parsing xmlText {0} : {1}", xmlText, ex2.ToString());
+                Log.Warning("TextContentOld.ReplaceTextReferences()", "error parsing xmlText {0} : {1}", xmlText, ex2.ToString());
                 return result;
             }
         }
@@ -572,9 +573,9 @@ namespace PsdzClient.Core
                 XElement xElement2 = XElement.Load(XmlReader.Create(new StringReader(append)));
                 xElement.Add(xElement2.Elements());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Info("TextContent.ConcatText()", "Text to append \"{0}\"could not be parsed as XML, thus add it as plain text. {1}", append, ex.Message);
+                Log.Info("TextContent.ConcatText()", "Text to append \"{0}\"could not be parsed as XML, thus add it as plain text. {1}", append, ex.Message);
                 if (xElement.LastNode is XElement xElement3 && xElement3.Name.LocalName.Equals("PARAGRAPH"))
                 {
                     xElement3.Add(new XText(append));

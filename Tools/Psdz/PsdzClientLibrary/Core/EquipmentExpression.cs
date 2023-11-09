@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -29,7 +30,7 @@ namespace PsdzClient.Core
             }
 			if (vec == null)
 			{
-				//Log.Error("EquipmentExpression.Evaluate()", "vec was null", Array.Empty<object>());
+				Log.Error("EquipmentExpression.Evaluate()", "vec was null", Array.Empty<object>());
 				return false;
 			}
 			if (vec.VehicleIdentLevel == IdentificationLevel.None)

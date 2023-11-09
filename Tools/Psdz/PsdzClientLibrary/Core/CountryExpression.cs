@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -42,9 +43,9 @@ namespace PsdzClient.Core
                 string outletCountry = ClientContext.GetCountry(this.vecInfo);
                 flag = (outletCountry == this.CountryCode);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("CountryExpression.Evaluate()", exception);
+                Log.WarningException("CountryExpression.Evaluate()", exception);
             }
             return flag;
         }

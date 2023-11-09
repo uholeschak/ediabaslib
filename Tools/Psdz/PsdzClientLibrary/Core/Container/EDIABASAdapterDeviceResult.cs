@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using PsdzClient.Utility;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {
@@ -86,9 +87,9 @@ namespace PsdzClient.Core.Container
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("EDIABASAdapterDeviceResult.getISTAResultAsType()", exception);
+                Log.WarningException("EDIABASAdapterDeviceResult.getISTAResultAsType()", exception);
             }
             return job.getISTAResultAsType(resultName, targetType);
         }

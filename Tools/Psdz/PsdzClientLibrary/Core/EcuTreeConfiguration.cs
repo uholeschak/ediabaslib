@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using BmwFileReader;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -231,9 +232,9 @@ namespace PsdzClient.Core
 							stream.CopyTo(xsdEcuTreeConfigurationStream);
 						}
 					}
-					catch (Exception)
+					catch (Exception exception)
 					{
-						//Log.ErrorException("EcuTreeConfiguration.XsdEcuTreeConfigurationStream", exception);
+						Log.ErrorException("EcuTreeConfiguration.XsdEcuTreeConfigurationStream", exception);
 					}
 				}
 				xsdEcuTreeConfigurationStream.Position = 0L;

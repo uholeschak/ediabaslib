@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {
@@ -18,9 +19,9 @@ namespace PsdzClient.Core.Container
                 Remove(key);
                 base.Add(key, value);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("HardenedStringObjectDictionary.Add()", exception);
+                Log.WarningException("HardenedStringObjectDictionary.Add()", exception);
             }
         }
     }

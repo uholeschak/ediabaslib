@@ -5,6 +5,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -374,9 +375,9 @@ namespace PsdzClient.Core
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("EcuVariantLocator.GetDataValue<T>()", exception);
+                Log.WarningException("EcuVariantLocator.GetDataValue<T>()", exception);
             }
             return default(T);
         }

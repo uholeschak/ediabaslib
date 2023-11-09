@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -73,9 +74,9 @@ namespace PsdzClient.Core
                         break;
                 }
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException("DateExpression.Evaluate()", exception);
+				Log.WarningException("DateExpression.Evaluate()", exception);
 				result = false;
 			}
 			return result;

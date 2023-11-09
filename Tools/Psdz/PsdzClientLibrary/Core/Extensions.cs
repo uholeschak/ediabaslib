@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary.Core;
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -37,9 +38,9 @@ namespace PsdzClient.Core
 					{
 						value = string.Format(CultureInfo.InvariantCulture, format, obj);
 					}
-					catch (Exception)
+					catch (Exception exception)
 					{
-						//Log.WarningException("Extensions.ToStringItems()", exception);
+						Log.WarningException("Extensions.ToStringItems()", exception);
 						value = obj.ToString();
 					}
 				}
