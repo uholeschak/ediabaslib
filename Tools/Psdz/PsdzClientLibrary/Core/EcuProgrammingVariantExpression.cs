@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -16,7 +17,7 @@ namespace PsdzClient.Core
 			{
 				if (vec == null)
 				{
-					//Log.Warning("EcuProgrammingVariantExpression.Evaluate()", "vec was null", Array.Empty<object>());
+					Log.Warning("EcuProgrammingVariantExpression.Evaluate()", "vec was null", Array.Empty<object>());
 					result = false;
 				}
 				else
@@ -46,14 +47,14 @@ namespace PsdzClient.Core
 					}
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException("EcuProgrammingVariantExpression.Evaluate()", exception);
+				Log.WarningException("EcuProgrammingVariantExpression.Evaluate()", exception);
 				result = false;
 			}
 			finally
 			{
-				//Log.Info(Log.CurrentMethod(), this.ToString(), Array.Empty<object>());
+				Log.Info(Log.CurrentMethod(), this.ToString(), Array.Empty<object>());
 			}
 			return result;
 		}

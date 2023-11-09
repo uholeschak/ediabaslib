@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -13,7 +14,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             if (vecInfo.ECU == null)
@@ -84,7 +85,7 @@ namespace PsdzClient.Core
             {
                 if (vecInfo.getECUbyECU_SGBD("DSC_MK60") != null && !vecInfo.hasSA("210"))
                 {
-                    //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "found DSC_MK60 used for ABS only");
+                    Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "found DSC_MK60 used for ABS only");
                 }
                 else
                 {
@@ -106,7 +107,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -214,7 +215,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -310,7 +311,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -386,7 +387,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -461,7 +462,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -555,7 +556,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -575,7 +576,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -595,7 +596,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -615,7 +616,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -681,7 +682,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -719,7 +720,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -742,7 +743,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -766,7 +767,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -790,7 +791,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -827,7 +828,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             if (vecInfo.ECU == null)
@@ -855,7 +856,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
                 return;
             }
             HashSet<int> sgList = new HashSet<int>();
@@ -875,7 +876,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -894,7 +895,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -913,7 +914,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -932,7 +933,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -955,7 +956,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -1018,7 +1019,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -1125,7 +1126,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -1145,7 +1146,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -1165,7 +1166,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -1203,7 +1204,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();
@@ -1227,7 +1228,7 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             HashSet<int> hashSet = new HashSet<int>();

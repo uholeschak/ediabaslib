@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Programming;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -331,7 +332,7 @@ namespace PsdzClient.Core
 			}
 			catch (Exception)
 			{
-				//Log.WarningException("ECU.IsSet(long fOrt)", exception);
+				Log.WarningException("ECU.IsSet(long fOrt)", exception);
 			}
 #endif
 			return false;
@@ -410,9 +411,9 @@ namespace PsdzClient.Core
 				stringBuilder.AppendFormat("SERIAL_SUCCESSFULLY: {0} \n", this.SERIAL_SUCCESSFULLY);
 				stringBuilder.AppendFormat("PHYSHW_SUCCESSFULLY: {0} \n", this.PHYSHW_SUCCESSFULLY);
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException("ECU.ToString()", exception);
+				Log.WarningException("ECU.ToString()", exception);
 			}
 			return stringBuilder.ToString();
 		}

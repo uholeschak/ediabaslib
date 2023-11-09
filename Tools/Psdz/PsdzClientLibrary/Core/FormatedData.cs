@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Serialization;
 using System;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -100,9 +101,9 @@ namespace PsdzClient.Core
                     ModuleName = moduleName
                 }.Localize();
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("FormatedData.Localize(string fmtStrId, string moduleName, bool translateValues, params object[] values)", exception);
+                Log.WarningException("FormatedData.Localize(string fmtStrId, string moduleName, bool translateValues, params object[] values)", exception);
             }
             return null;
         }
@@ -139,10 +140,10 @@ namespace PsdzClient.Core
                 }
                 return Translate(translator, this, culture);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 string text = ((!string.IsNullOrEmpty(base.fmtStrId)) ? ("<" + base.fmtStrId + ">") : "No message defined");
-                //Log.Error("FormatedData.BuildLocalizedMessage()", "Failed to localize \"{0}\", returning \"{1}\". Reason: {2}", base.fmtStrId, text, ex);
+                Log.Error("FormatedData.BuildLocalizedMessage()", "Failed to localize \"{0}\", returning \"{1}\". Reason: {2}", base.fmtStrId, text, ex);
                 return text;
             }
         }

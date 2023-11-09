@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -24,7 +25,7 @@ namespace PsdzClient.Core
 		{
 			if (vec == null)
 			{
-				//Log.Warning("EcuGroupExpression.Evaluate()", "vec was null", Array.Empty<object>());
+				Log.Warning("EcuGroupExpression.Evaluate()", "vec was null", Array.Empty<object>());
 				return false;
 			}
 			PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(vec)?.GetEcuGroupById(this.value.ToString(CultureInfo.InvariantCulture));
@@ -41,7 +42,7 @@ namespace PsdzClient.Core
 				return true;
 			}
             bool flag = vec.getECUbyECU_GRUPPE(ecuGroupById.Name) != null;
-            //Log.Debug("EcuGroupExpression.Evaluate()", "EcuGroupId: {0} (original rule: {1})  result: {2}", value, ecuGroupById.Name, flag);
+            Log.Debug("EcuGroupExpression.Evaluate()", "EcuGroupId: {0} (original rule: {1})  result: {2}", value, ecuGroupById.Name, flag);
 			return flag;
 		}
 
