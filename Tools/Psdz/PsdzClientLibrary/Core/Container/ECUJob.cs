@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using PsdzClient.Utility;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {
@@ -123,9 +124,9 @@ namespace PsdzClient.Core.Container
                     return array.Length < 0;
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.IsNullOrEmpty(ushort,string)", exception);
+                Log.WarningException("ECUJob.IsNullOrEmpty(ushort,string)", exception);
             }
             return false;
         }
@@ -148,9 +149,9 @@ namespace PsdzClient.Core.Container
                     return array.Length < 0;
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.IsNullOrEmpty(string)", exception);
+                Log.WarningException("ECUJob.IsNullOrEmpty(string)", exception);
                 return false;
             }
             return false;
@@ -218,9 +219,9 @@ namespace PsdzClient.Core.Container
                     return stringBuilder.ToString();
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.Dump()", exception);
+                Log.WarningException("ECUJob.Dump()", exception);
             }
             return null;
         }
@@ -241,12 +242,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getByteArrayResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getByteArrayResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getByteArrayResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getByteArrayResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             len = 0u;
             return null;
@@ -263,7 +264,7 @@ namespace PsdzClient.Core.Container
                     {
                         if (item.Format != 7)
                         {
-                            //Log.Warning("ECUJob.getByteArrayResult()", "resultName: {0} has different format type!!! You selected ByteArray but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
+                            Log.Warning("ECUJob.getByteArrayResult()", "resultName: {0} has different format type!!! You selected ByteArray but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                             continue;
                         }
                         if (item.Value == null)
@@ -282,12 +283,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getByteArrayResult()", "JobResult was null for resultName: {0} ", resultName);
+                    Log.Warning("ECUJob.getByteArrayResult()", "JobResult was null for resultName: {0} ", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getByteArrayResult()", "failed for result: {0} with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getByteArrayResult()", "failed for result: {0} with exception {1}", resultName, ex.ToString());
             }
             len = 0u;
             return null;
@@ -304,7 +305,7 @@ namespace PsdzClient.Core.Container
                     {
                         if (item.Format != 1)
                         {
-                            //Log.Warning("ECUJob.getByteResult()", "(set={0},resultName={1}) has different format type!!! You selected Byte but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
+                            Log.Warning("ECUJob.getByteResult()", "(set={0},resultName={1}) has different format type!!! You selected Byte but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                             continue;
                         }
                         return (byte)item.Value;
@@ -312,12 +313,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getByteResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getByteResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getByteResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getByteResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             return null;
         }
@@ -333,7 +334,7 @@ namespace PsdzClient.Core.Container
                     {
                         if (item.Format != 1)
                         {
-                            //Log.Warning("ECUJob.getByteResult()", "(resultName={0}) has different format type!!! You selected Byte but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
+                            Log.Warning("ECUJob.getByteResult()", "(resultName={0}) has different format type!!! You selected Byte but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                             continue;
                         }
                         return (byte)item.Value;
@@ -341,12 +342,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getByteResult()", "(resultName={0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getByteResult()", "(resultName={0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getByteResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getByteResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
             }
             return null;
         }
@@ -379,10 +380,10 @@ namespace PsdzClient.Core.Container
                                 {
                                     return getResult((ushort)(num2 + 1), array[1]);
                                 }
-                                //Log.Warning("ECUJob.getISTAResult()", "failed to separate result name from result path: {0}", resultName);
+                                Log.Warning("ECUJob.getISTAResult()", "failed to separate result name from result path: {0}", resultName);
                                 return null;
                             }
-                            //Log.Warning("ECUJob.getISTAResult()", "failed to evaluate query: {0}", resultName);
+                            Log.Warning("ECUJob.getISTAResult()", "failed to evaluate query: {0}", resultName);
                         }
                         else if (resultName.StartsWith("/Result/Status/", StringComparison.Ordinal))
                         {
@@ -392,25 +393,25 @@ namespace PsdzClient.Core.Container
                                 object result = getResult(text2);
                                 if (result == null)
                                 {
-                                    //Log.Warning("ECUJob.getISTAResult()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
+                                    Log.Warning("ECUJob.getISTAResult()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
                                 }
                                 else
                                 {
-                                    //Log.Info("ECUJob.getISTAResult()", "obj type is {0}", result.GetType().ToString());
+                                    Log.Info("ECUJob.getISTAResult()", "obj type is {0}", result.GetType().ToString());
                                 }
                                 return result;
                             }
                         }
                         else
                         {
-                            //Log.Warning("ECUJob.getISTAResult()", "failed to evaluate query: {0}", resultName);
+                            Log.Warning("ECUJob.getISTAResult()", "failed to evaluate query: {0}", resultName);
                         }
                         return getResult(resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.getISTAResult()", exception);
+                Log.WarningException("ECUJob.getISTAResult()", exception);
             }
             return null;
         }
@@ -425,10 +426,10 @@ namespace PsdzClient.Core.Container
                     object iSTAResult = getISTAResult(resultName);
                     if (iSTAResult == null)
                     {
-                        //Log.Error("ECUJob.getISTAResultAs(string resultName)", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
+                        Log.Error("ECUJob.getISTAResultAs(string resultName)", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
                         return default(T);
                     }
-                    //Log.Info("ECUJob.getISTAResultAs(string resultName)", "obj type is {0} targetType is: {1}", iSTAResult.GetType().ToString(), typeFromHandle.ToString());
+                    Log.Info("ECUJob.getISTAResultAs(string resultName)", "obj type is {0} targetType is: {1}", iSTAResult.GetType().ToString(), typeFromHandle.ToString());
                     try
                     {
                         if (iSTAResult.GetType() != typeFromHandle)
@@ -436,9 +437,9 @@ namespace PsdzClient.Core.Container
                             return (T)Convert.ChangeType(iSTAResult, typeFromHandle);
                         }
                     }
-                    catch (Exception)
+                    catch (Exception exception)
                     {
-                        //Log.WarningException("ECUJob.getISTAResultAs()", exception);
+                        Log.WarningException("ECUJob.getISTAResultAs()", exception);
                         string text = iSTAResult.ToString();
                         if (!string.IsNullOrEmpty(text))
                         {
@@ -464,9 +465,9 @@ namespace PsdzClient.Core.Container
                 }
                 return default(T);
             }
-            catch (Exception)
+            catch (Exception exception2)
             {
-                //Log.WarningException("ECUJob.getISTAResultAs(string resultName)", exception2);
+                Log.WarningException("ECUJob.getISTAResultAs(string resultName)", exception2);
             }
             return default(T);
         }
@@ -500,14 +501,14 @@ namespace PsdzClient.Core.Container
                                     object result = getResult((ushort)(num2 + 1), array[1]);
                                     if (result == null)
                                     {
-                                        //Log.Warning("ECUJob.getISTAResultAsType()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
+                                        Log.Warning("ECUJob.getISTAResultAsType()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
                                         return null;
                                     }
                                     if (result.GetType() != targetType)
                                     {
                                         string text2 = result.GetType().ToString();
                                         string text3 = targetType.ToString();
-                                        //Log.Info("ECUJob.getISTAResultAsType(string, Type)", "result: {0} obj type is {1} targetType is: {2}", resultName, text2, text3);
+                                        Log.Info("ECUJob.getISTAResultAsType(string, Type)", "result: {0} obj type is {1} targetType is: {2}", resultName, text2, text3);
                                     }
                                     try
                                     {
@@ -516,9 +517,9 @@ namespace PsdzClient.Core.Container
                                             return Convert.ChangeType(result, targetType);
                                         }
                                     }
-                                    catch (Exception)
+                                    catch (Exception exception)
                                     {
-                                        //Log.WarningException("ECUJob.getISTAResultAsType()", exception);
+                                        Log.WarningException("ECUJob.getISTAResultAsType()", exception);
                                         string text4 = result.ToString();
                                         if (!string.IsNullOrEmpty(text4))
                                         {
@@ -527,7 +528,7 @@ namespace PsdzClient.Core.Container
                                             {
                                                 if (!(targetType == typeof(bool)))
                                                 {
-                                                    //Log.Info("ECUJob.getISTAResultAsType()", "found multipart string; trying conversion with the first part");
+                                                    Log.Info("ECUJob.getISTAResultAsType()", "found multipart string; trying conversion with the first part");
                                                     return Convert.ChangeType(array2[0], targetType);
                                                 }
                                                 if ("wahr".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "true".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "1".Equals(array2[0], StringComparison.OrdinalIgnoreCase))
@@ -543,15 +544,15 @@ namespace PsdzClient.Core.Container
                                     }
                                     if (result is string && Regex.Match(resultName, "STAT.*TEXT").Success)
                                     {
-                                        //Log.Warning("ECUJob.getISTAResultAsType()", "found STAT_*_TEXT string construct for result: {0}; force character conversion to enable bogus testmodules", resultName);
+                                        Log.Warning("ECUJob.getISTAResultAsType()", "found STAT_*_TEXT string construct for result: {0}; force character conversion to enable bogus testmodules", resultName);
                                         return FormatConverter.Ascii2UTF8(result);
                                     }
                                     return result;
                                 }
-                                //Log.Warning("ECUJob.getISTAResultAsType()", "failed to separate result name from result path: {0}", resultName);
+                                Log.Warning("ECUJob.getISTAResultAsType()", "failed to separate result name from result path: {0}", resultName);
                                 return null;
                             }
-                            //Log.Warning("ECUJob.getISTAResultAsType()", "failed to evaluate query: {0}", resultName);
+                            Log.Warning("ECUJob.getISTAResultAsType()", "failed to evaluate query: {0}", resultName);
                         }
                         else if (resultName.StartsWith("/Result/Status/", StringComparison.Ordinal))
                         {
@@ -561,12 +562,12 @@ namespace PsdzClient.Core.Container
                                 object result2 = getResult(text5);
                                 if (result2 == null)
                                 {
-                                    //Log.Warning("ECUJob.getISTAResultAsType()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
+                                    Log.Warning("ECUJob.getISTAResultAsType()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
                                     return null;
                                 }
                                 if (result2.GetType() != targetType)
                                 {
-                                    //Log.Info("ECUJob.getISTAResultAsType()", "result: {0} obj type is {1} targetType is: {2}", resultName, result2.GetType().ToString(), targetType.ToString());
+                                    Log.Info("ECUJob.getISTAResultAsType()", "result: {0} obj type is {1} targetType is: {2}", resultName, result2.GetType().ToString(), targetType.ToString());
                                 }
                                 if (result2.GetType() != targetType)
                                 {
@@ -577,14 +578,14 @@ namespace PsdzClient.Core.Container
                         }
                         else
                         {
-                            //Log.Warning("ECUJob.getISTAResultAsType()", "failed to evaluate query: {0}", resultName);
+                            Log.Warning("ECUJob.getISTAResultAsType()", "failed to evaluate query: {0}", resultName);
                         }
                         return getResult(resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception exception2)
             {
-                //Log.WarningException("ECUJob.getISTAResultAsType()", exception2);
+                Log.WarningException("ECUJob.getISTAResultAsType()", exception2);
             }
             return null;
         }
@@ -601,16 +602,16 @@ namespace PsdzClient.Core.Container
                         eCUResult.FASTARelevant = true;
                         return eCUResult.Value;
                     }
-                    //Log.Warning("ECUJob.getResult()", "({0},{1}) - result not found in JobResult list.", set, resultName);
+                    Log.Warning("ECUJob.getResult()", "({0},{1}) - result not found in JobResult list.", set, resultName);
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getResult()", "({0},{1}) - JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getResult()", "({0},{1}) - JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             return null;
         }
@@ -627,16 +628,16 @@ namespace PsdzClient.Core.Container
                         eCUResult.FASTARelevant = true;
                         return eCUResult.Value;
                     }
-                    //Log.Warning("ECUJob.getResult()", "no matching result found for result name: {0}", resultName);
+                    Log.Warning("ECUJob.getResult()", "no matching result found for result name: {0}", resultName);
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getResult()", "JobResult was null for result name: {0}", resultName);
+                    Log.Warning("ECUJob.getResult()", "JobResult was null for result name: {0}", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getResult()", "failed for result name: {0} with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getResult()", "failed for result name: {0} with exception {1}", resultName, ex.ToString());
             }
             return null;
         }
@@ -651,10 +652,10 @@ namespace PsdzClient.Core.Container
                     object result = getResult(set, resultName);
                     if (result == null)
                     {
-                        //Log.Warning("ECUJob.getResultAs(ushort set, string resultName)", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
+                        Log.Warning("ECUJob.getResultAs(ushort set, string resultName)", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
                         return defaultRes;
                     }
-                    //Log.Info("ECUJob.getResultAs(ushort set, string resultName)", "obj type is {0} targetType is: {1}", result.GetType().ToString(), typeFromHandle.ToString());
+                    Log.Info("ECUJob.getResultAs(ushort set, string resultName)", "obj type is {0} targetType is: {1}", result.GetType().ToString(), typeFromHandle.ToString());
                     if (result.GetType() != typeFromHandle)
                     {
                         return (T)Convert.ChangeType(result, typeFromHandle);
@@ -663,9 +664,9 @@ namespace PsdzClient.Core.Container
                 }
                 return defaultRes;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.getISTAResult(ushort set, string resultName)", exception);
+                Log.WarningException("ECUJob.getISTAResult(ushort set, string resultName)", exception);
             }
             return defaultRes;
         }
@@ -680,12 +681,12 @@ namespace PsdzClient.Core.Container
                     object result = getResult(resultName, getLast);
                     if (result == null)
                     {
-                        //Log.Error("ECUJob.getResultAs(string resultName)", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
+                        Log.Error("ECUJob.getResultAs(string resultName)", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
                         return defaultRes;
                     }
                     if (result.GetType() != typeFromHandle)
                     {
-                        //Log.Info("ECUJob.getISTAResultAs(string resultName)", "result: {0} obj type is {1} targetType is: {2}", resultName, result.GetType().ToString(), typeFromHandle.ToString());
+                        Log.Info("ECUJob.getISTAResultAs(string resultName)", "result: {0} obj type is {1} targetType is: {2}", resultName, result.GetType().ToString(), typeFromHandle.ToString());
                     }
                     if (result.GetType() != typeFromHandle)
                     {
@@ -695,9 +696,9 @@ namespace PsdzClient.Core.Container
                 }
                 return defaultRes;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.getISTAResultAs(string resultName)", exception);
+                Log.WarningException("ECUJob.getISTAResultAs(string resultName)", exception);
             }
             return defaultRes;
         }
@@ -717,18 +718,18 @@ namespace PsdzClient.Core.Container
                             return current.Format;
                         }
                     }
-                    //Log.Warning("ECUJob.getResultFormat()", "(resultName={0}) - no matching result found in JobResult.", resultName);
+                    Log.Warning("ECUJob.getResultFormat()", "(resultName={0}) - no matching result found in JobResult.", resultName);
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getResultFormat()", "(resultName={0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getResultFormat()", "(resultName={0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getResultFormat()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getResultFormat()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
-            //Log.Warning("ECUJob.getResultFormat()", "({0},{1}) - no valid format in selected result set found.", set, resultName);
+            Log.Warning("ECUJob.getResultFormat()", "({0},{1}) - no valid format in selected result set found.", set, resultName);
             return -1;
         }
 
@@ -750,12 +751,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getResultFormat()", "({0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getResultFormat()", "({0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getResultFormat()", "({0}) - failed with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getResultFormat()", "({0}) - failed with exception {1}", resultName, ex.ToString());
             }
             return -1;
         }
@@ -775,12 +776,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getResults()", "({0}) - JobResult was null.", set);
+                    Log.Warning("ECUJob.getResults()", "({0}) - JobResult was null.", set);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getResults()", "({0}) - failed with exception {1}", set, ex.ToString());
+                Log.Warning("ECUJob.getResults()", "({0}) - failed with exception {1}", set, ex.ToString());
             }
             return list;
         }
@@ -803,9 +804,9 @@ namespace PsdzClient.Core.Container
                     return stringBuilder.ToString();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getResult()", "({0},{1},{2}) - failed with exception {3}", set, resultName, format, ex.ToString());
+                Log.Warning("ECUJob.getResult()", "({0},{1},{2}) - failed with exception {3}", set, resultName, format, ex.ToString());
             }
             return null;
         }
@@ -851,12 +852,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getResultStringList()", "({0},{1},{2}) - JobResult was null.", startSet, stopSet, resultName);
+                    Log.Warning("ECUJob.getResultStringList()", "({0},{1},{2}) - JobResult was null.", startSet, stopSet, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.getResultStringList()", exception);
+                Log.WarningException("ECUJob.getResultStringList()", exception);
             }
             return list;
         }
@@ -874,7 +875,7 @@ namespace PsdzClient.Core.Container
                         {
                             if (item.Format != 2)
                             {
-                                //Log.Warning("ECUJob.getStringResult()", "(set={0},resultName={1}) has different format type!!! You selected string but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
+                                Log.Warning("ECUJob.getStringResult()", "(set={0},resultName={1}) has different format type!!! You selected string but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                                 continue;
                             }
                             return ((short)item.Value).ToString(CultureInfo.InvariantCulture);
@@ -884,12 +885,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getStringResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getStringResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getStringResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getStringResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             return null;
         }
@@ -909,7 +910,7 @@ namespace PsdzClient.Core.Container
                             {
                                 if (item.Format != 4)
                                 {
-                                    //Log.Warning("ECUJob.getStringResult()", "(resultName={0}) has different format type!!! You selected string but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
+                                    Log.Warning("ECUJob.getStringResult()", "(resultName={0}) has different format type!!! You selected string but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                                     continue;
                                 }
                                 return ((int)item.Value).ToString(CultureInfo.InvariantCulture);
@@ -921,12 +922,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getStringResult()", "(resultName={0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getStringResult()", "(resultName={0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getStringResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getStringResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
             }
             return null;
         }
@@ -942,7 +943,7 @@ namespace PsdzClient.Core.Container
                     {
                         if (item.Format != 0)
                         {
-                            //Log.Warning("ECUJob.getcharResult()", "(set={0},resultName={1}) has different format type!!! You selected char but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
+                            Log.Warning("ECUJob.getcharResult()", "(set={0},resultName={1}) has different format type!!! You selected char but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                             continue;
                         }
                         return (char)item.Value;
@@ -950,12 +951,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getcharResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getcharResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getcharResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getcharResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             return null;
         }
@@ -971,7 +972,7 @@ namespace PsdzClient.Core.Container
                     {
                         if (item.Format != 0)
                         {
-                            //Log.Warning("ECUJob.getcharResult()", "(resultName={0}) has different format type!!! You selected char but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
+                            Log.Warning("ECUJob.getcharResult()", "(resultName={0}) has different format type!!! You selected char but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                             continue;
                         }
                         return (char)item.Value;
@@ -979,12 +980,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getcharResult()", "(resultName={0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getcharResult()", "(resultName={0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getcharResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getcharResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
             }
             return null;
         }
@@ -1002,7 +1003,7 @@ namespace PsdzClient.Core.Container
                         {
                             if (item.Format != 6)
                             {
-                                //Log.Warning("ECUJob.getdoubleResult()", "(set={0},resultName={1}) has different format type!!! You selected double but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
+                                Log.Warning("ECUJob.getdoubleResult()", "(set={0},resultName={1}) has different format type!!! You selected double but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                                 continue;
                             }
                             return double.Parse((string)item.Value, CultureInfo.InvariantCulture);
@@ -1012,12 +1013,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getdoubleResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getdoubleResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getdoubleResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getdoubleResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             return null;
         }
@@ -1033,7 +1034,7 @@ namespace PsdzClient.Core.Container
                     {
                         if (item.Format != 8)
                         {
-                            //Log.Warning("ECUJob.getdoubleResult()", "(resultName={0}) has different format type!!! You selected double but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
+                            Log.Warning("ECUJob.getdoubleResult()", "(resultName={0}) has different format type!!! You selected double but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                             continue;
                         }
                         return (double)item.Value;
@@ -1041,12 +1042,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getdoubleResult()", "(resultName={0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getdoubleResult()", "(resultName={0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getdoubleResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getdoubleResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
             }
             return null;
         }
@@ -1055,7 +1056,7 @@ namespace PsdzClient.Core.Container
         {
             if (string.IsNullOrEmpty(resultName))
             {
-                //Log.Warning("ECUKom.getintResult(ushort set, string resultName)", "failed due to resultName was empty or null.");
+                Log.Warning("ECUKom.getintResult(ushort set, string resultName)", "failed due to resultName was empty or null.");
                 return null;
             }
             try
@@ -1075,7 +1076,7 @@ namespace PsdzClient.Core.Container
                                     {
                                         if (item.Format != 8)
                                         {
-                                            //Log.Warning("ECUJob.getintResult()", "(set={0},resultName={1}) has different format type!!! You selected int but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
+                                            Log.Warning("ECUJob.getintResult()", "(set={0},resultName={1}) has different format type!!! You selected int but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                                             continue;
                                         }
                                         return (int)(double)item.Value;
@@ -1091,12 +1092,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getintResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getintResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getintResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getintResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             return null;
         }
@@ -1105,7 +1106,7 @@ namespace PsdzClient.Core.Container
         {
             if (string.IsNullOrEmpty(resultName))
             {
-                //Log.Warning("ECUKom.getintResult(string resultName)", "failed due to resultName was empty or null.");
+                Log.Warning("ECUKom.getintResult(string resultName)", "failed due to resultName was empty or null.");
                 return null;
             }
             try
@@ -1123,7 +1124,7 @@ namespace PsdzClient.Core.Container
                                 {
                                     if (item.Format != 1)
                                     {
-                                        //Log.Warning("ECUJob.getintResult()", "resultName={0} has different format type!!! You selected int but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
+                                        Log.Warning("ECUJob.getintResult()", "resultName={0} has different format type!!! You selected int but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                                         continue;
                                     }
                                     return (byte)item.Value;
@@ -1137,12 +1138,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getintResult()", "resultName={0} - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getintResult()", "resultName={0} - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.getintResult()", exception);
+                Log.WarningException("ECUJob.getintResult()", exception);
             }
             return null;
         }
@@ -1164,7 +1165,7 @@ namespace PsdzClient.Core.Container
                                 {
                                     if (item.Format != 6)
                                     {
-                                        //Log.Warning("ECUJob.getshortResult()", "(set={0},resultName={1}) has different format type!!! You selected short but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
+                                        Log.Warning("ECUJob.getshortResult()", "(set={0},resultName={1}) has different format type!!! You selected short but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                                         continue;
                                     }
                                     return short.Parse(item.Value.ToString());
@@ -1178,12 +1179,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getshortResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getshortResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getshortResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getshortResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             return null;
         }
@@ -1205,7 +1206,7 @@ namespace PsdzClient.Core.Container
                                 {
                                     if (item.Format != 6)
                                     {
-                                        //Log.Warning("ECUJob.getshortResult()", "(resultName={0}) has different format type!!! You selected short but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
+                                        Log.Warning("ECUJob.getshortResult()", "(resultName={0}) has different format type!!! You selected short but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                                         continue;
                                     }
                                     return short.Parse(item.Value.ToString());
@@ -1219,12 +1220,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getshortResult()", "(resultName={0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getshortResult()", "(resultName={0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getshortResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getshortResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
             }
             return null;
         }
@@ -1233,7 +1234,7 @@ namespace PsdzClient.Core.Container
         {
             if (string.IsNullOrEmpty(resultName))
             {
-                //Log.Warning("ECUKom.getuintResult(ushort set, string resultName)", "failed due to resultName was empty or null.");
+                Log.Warning("ECUKom.getuintResult(ushort set, string resultName)", "failed due to resultName was empty or null.");
                 return null;
             }
             try
@@ -1251,10 +1252,10 @@ namespace PsdzClient.Core.Container
                                 {
                                     if (item.Format != 4)
                                     {
-                                        //Log.Warning("ECUJob.getuintResult()", "(set={0},resultName={1}) has different format type!!! You selected uint but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
+                                        Log.Warning("ECUJob.getuintResult()", "(set={0},resultName={1}) has different format type!!! You selected uint but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                                         continue;
                                     }
-                                    //Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUJob.getuintResult()", "(set={0},resultName={1}) signed/unsigned mismatch", set, resultName);
+                                    Log.Debug(ClientContext.DebugLogLevel, 2, "ECUJob.getuintResult()", "(set={0},resultName={1}) signed/unsigned mismatch", set, resultName);
                                     return (uint)(int)item.Value;
                                 }
                                 return (uint)item.Value;
@@ -1266,12 +1267,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getuintResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getuintResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getuintResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getuintResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             return null;
         }
@@ -1280,7 +1281,7 @@ namespace PsdzClient.Core.Container
         {
             if (string.IsNullOrEmpty(resultName))
             {
-                //Log.Warning("ECUKom.getuintResult(ushort set, string resultName)", "failed due to resultName was empty or null.");
+                Log.Warning("ECUKom.getuintResult(ushort set, string resultName)", "failed due to resultName was empty or null.");
                 return null;
             }
             try
@@ -1300,12 +1301,12 @@ namespace PsdzClient.Core.Container
                                     {
                                         if (item.Format == 6)
                                         {
-                                            //Log.Warning("ECUJob.getuintResult()", "resultName='{0}', resultFormat='{1}', resultValue='{2}')", resultName, ECUKom.APIFormatName(item.Format), item.Value as string);
+                                            Log.Warning("ECUJob.getuintResult()", "resultName='{0}', resultFormat='{1}', resultValue='{2}')", resultName, ECUKom.APIFormatName(item.Format), item.Value as string);
                                         }
-                                        //Log.Warning("ECUJob.getuintResult()", "(resultName={0}) has different format type!!! You selected uint but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
+                                        Log.Warning("ECUJob.getuintResult()", "(resultName={0}) has different format type!!! You selected uint but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                                         continue;
                                     }
-                                    //Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUJob.getuintResult()", "(resultName={0}) signed/unsigned mismatch", resultName);
+                                    Log.Debug(ClientContext.DebugLogLevel, 2, "ECUJob.getuintResult()", "(resultName={0}) signed/unsigned mismatch", resultName);
                                     return (uint)(int)item.Value;
                                 }
                                 return (uint)item.Value;
@@ -1317,12 +1318,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getuintResult()", "(resultName={0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getuintResult()", "(resultName={0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getuintResult()", "(resultName={0}) - failed with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getuintResult()", "(resultName={0}) - failed with exception {1}", resultName, ex.ToString());
             }
             return null;
         }
@@ -1331,7 +1332,7 @@ namespace PsdzClient.Core.Container
         {
             if (string.IsNullOrEmpty(resultName))
             {
-                //Log.Warning("ECUKom.getushortResult()", "(ushort set, string resultName) - failed due to resultName was empty or null.");
+                Log.Warning("ECUKom.getushortResult()", "(ushort set, string resultName) - failed due to resultName was empty or null.");
                 return null;
             }
             try
@@ -1348,19 +1349,19 @@ namespace PsdzClient.Core.Container
                             {
                                 return (ushort)current.Value;
                             }
-                            //Log.Warning("ECUJob.getushortResult()", "(set={0},resultName={1}) has different format type!!! You selected ushort but should be:{2}", set, resultName, ECUKom.APIFormatName(current.Format));
+                            Log.Warning("ECUJob.getushortResult()", "(set={0},resultName={1}) has different format type!!! You selected ushort but should be:{2}", set, resultName, ECUKom.APIFormatName(current.Format));
                             return Convert.ToUInt16(current.Value);
                         }
                     }
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getushortResult()", "(set={0},resultName={1})", "JobResult was null.", set, resultName);
+                    Log.Warning("ECUJob.getushortResult()", "(set={0},resultName={1})", "JobResult was null.", set, resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getushortResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+                Log.Warning("ECUJob.getushortResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
             }
             return null;
         }
@@ -1369,7 +1370,7 @@ namespace PsdzClient.Core.Container
         {
             if (string.IsNullOrEmpty(resultName))
             {
-                //Log.Warning("ECUKom.getushortResult()", "failed due to resultName was empty or null.");
+                Log.Warning("ECUKom.getushortResult()", "failed due to resultName was empty or null.");
                 return null;
             }
             try
@@ -1386,19 +1387,19 @@ namespace PsdzClient.Core.Container
                             {
                                 return (ushort)current.Value;
                             }
-                            //Log.Warning("ECUJob.getushortResult()", "resultName={0}) has different format type!!! You selected ushort but should be:{1}", resultName, ECUKom.APIFormatName(current.Format));
+                            Log.Warning("ECUJob.getushortResult()", "resultName={0}) has different format type!!! You selected ushort but should be:{1}", resultName, ECUKom.APIFormatName(current.Format));
                             return Convert.ToUInt16(current.Value);
                         }
                     }
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getushortResult()", "(resultName={0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getushortResult()", "(resultName={0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getushortResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getushortResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
             }
             return null;
         }
@@ -1409,17 +1410,17 @@ namespace PsdzClient.Core.Container
             {
                 if (dJob == null)
                 {
-                    //Log.Warning("ECUJob.Dump()", "failed due job was not initialized.");
+                    Log.Warning("ECUJob.Dump()", "failed due job was not initialized.");
                     return;
                 }
                 if (string.IsNullOrEmpty(dJob.EcuName))
                 {
-                    //Log.Warning("ECUJob.Dump()", "failed EcuName is null or empty.");
+                    Log.Warning("ECUJob.Dump()", "failed EcuName is null or empty.");
                     return;
                 }
                 if (string.IsNullOrEmpty(dJob.JobName))
                 {
-                    //Log.Warning("ECUJob.Dump()", "failed for EcuName: {0}. JobName is null or empty.", dJob.EcuName);
+                    Log.Warning("ECUJob.Dump()", "failed for EcuName: {0}. JobName is null or empty.", dJob.EcuName);
                     return;
                 }
                 string empty = string.Empty;
@@ -1437,7 +1438,7 @@ namespace PsdzClient.Core.Container
                 {
                     empty3 = dJob.JobResultFilter;
                 }
-                //Log.Info("ECUJob.Dump()", "ECUJob({0},{1},{2},{3}). Job returned: {4} {5} RSets: {6}", dJob.EcuName, dJob.JobName, empty2, empty3, dJob.JobErrorCode, empty, dJob.JobResultSets);
+                Log.Info("ECUJob.Dump()", "ECUJob({0},{1},{2},{3}). Job returned: {4} {5} RSets: {6}", dJob.EcuName, dJob.JobName, empty2, empty3, dJob.JobErrorCode, empty, dJob.JobResultSets);
                 if (dJob.JobResult == null)
                 {
                     return;
@@ -1457,12 +1458,12 @@ namespace PsdzClient.Core.Container
                     {
                         text = FormatConverter.ByteArray2String(param, item.Length);
                     }
-                    //Log.Info("ECUJob.Dump()", "Set:{0} Format:({1}/{2}) Name:{3} Value:{4} FASTA:{5}", item.Set, item.Format, ECUKom.APIFormatName(item.Format), item.Name, text, item.FASTARelevant);
+                    Log.Info("ECUJob.Dump()", "Set:{0} Format:({1}/{2}) Name:{3} Value:{4} FASTA:{5}", item.Set, item.Format, ECUKom.APIFormatName(item.Format), item.Name, text, item.FASTARelevant);
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.Dump()", exception);
+                Log.WarningException("ECUJob.Dump()", exception);
             }
         }
 
@@ -1472,19 +1473,19 @@ namespace PsdzClient.Core.Container
             {
                 if (jobList == null)
                 {
-                    //Log.Warning("ECUJob.Dump(List<ECUJob>)", "failed due job was not initialized.");
+                    Log.Warning("ECUJob.Dump(List<ECUJob>)", "failed due job was not initialized.");
                     return;
                 }
                 foreach (ECUJob job in jobList)
                 {
                     string text = ((!string.IsNullOrEmpty(job.JobResultFilter)) ? job.JobResultFilter : string.Empty);
                     string text2 = ((!string.IsNullOrEmpty(job.JobParam)) ? job.JobParam : string.Empty);
-                    //Log.Info("ECUJob.DumpList()", "Dump of (List<ECUJob>). Job: ({0},{1},{2},{3}) - retcode: {4}", job.EcuName, job.JobName, text2, text, job.JobErrorCode);
+                    Log.Info("ECUJob.DumpList()", "Dump of (List<ECUJob>). Job: ({0},{1},{2},{3}) - retcode: {4}", job.EcuName, job.JobName, text2, text, job.JobErrorCode);
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.Dump()", exception);
+                Log.WarningException("ECUJob.Dump()", exception);
             }
         }
 
@@ -1502,9 +1503,9 @@ namespace PsdzClient.Core.Container
                 }
                 return list;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.scanECUfromFunctionalResponse()", exception);
+                Log.WarningException("ECUJob.scanECUfromFunctionalResponse()", exception);
             }
             return null;
         }
@@ -1518,7 +1519,7 @@ namespace PsdzClient.Core.Container
         {
             if (string.IsNullOrEmpty(resultName))
             {
-                //Log.Warning("ECUKom.getResults()", "failed due to resultName was empty or null.");
+                Log.Warning("ECUKom.getResults()", "failed due to resultName was empty or null.");
                 return null;
             }
             List<object> list = new List<object>();
@@ -1534,12 +1535,12 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    //Log.Warning("ECUJob.getResults()", "({0}) - JobResult was null.", resultName);
+                    Log.Warning("ECUJob.getResults()", "({0}) - JobResult was null.", resultName);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("ECUJob.getResults()", "({0}) - failed with exception {1}", resultName, ex.ToString());
+                Log.Warning("ECUJob.getResults()", "({0}) - failed with exception {1}", resultName, ex.ToString());
             }
             return null;
         }
@@ -1557,11 +1558,11 @@ namespace PsdzClient.Core.Container
                     }
                     return;
                 }
-                //Log.Warning("ECUJob.maskResultFASTARelevant()", "JobResult was null.");
+                Log.Warning("ECUJob.maskResultFASTARelevant()", "JobResult was null.");
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.maskResultFASTARelevant()", exception);
+                Log.WarningException("ECUJob.maskResultFASTARelevant()", exception);
             }
         }
 
@@ -1621,11 +1622,11 @@ namespace PsdzClient.Core.Container
                         return;
                     }
                 }
-                //Log.Warning("ECUJob.maskResultFASTARelevant()", "({0},{1},{2}) - JobResult was null.", startSet, stopSet, resultName);
+                Log.Warning("ECUJob.maskResultFASTARelevant()", "({0},{1},{2}) - JobResult was null.", startSet, stopSet, resultName);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ECUJob.maskResultFASTARelevant()", exception);
+                Log.WarningException("ECUJob.maskResultFASTARelevant()", exception);
             }
         }
     }
