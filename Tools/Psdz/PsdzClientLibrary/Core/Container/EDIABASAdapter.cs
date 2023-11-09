@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using PsdzClient.Utility;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {
@@ -108,7 +109,7 @@ namespace PsdzClient.Core.Container
                     {
                         if (configContainer.Header == null || configContainer.Header.Version == null || configContainer.Header.Version.Major != 2L || configContainer.Header.Version.Minor != 0L)
                         {
-                            //Log.Warning("EDIABASAdapter.DoParamterization()", "unable to identify sgbd from default values od config overrides");
+                            Log.Warning("EDIABASAdapter.DoParamterization()", "unable to identify sgbd from default values od config overrides");
                             return;
                         }
                         keyValuePairEndsWith = parameterContainer.getKeyValuePairContains("/Variant/");
@@ -124,7 +125,7 @@ namespace PsdzClient.Core.Container
                             keyValuePairEndsWith = parameterContainer.getKeyValuePairContains("/Group/");
                             if (!keyValuePairEndsWith.HasValue || !keyValuePairEndsWith.HasValue || string.IsNullOrEmpty(keyValuePairEndsWith.Value.Key) || keyValuePairEndsWith.Value.Value == null)
                             {
-                                //Log.Warning("EDIABASAdapter.DoParamterization()", "unable to identify sgbd from default values od config overrides");
+                                Log.Warning("EDIABASAdapter.DoParamterization()", "unable to identify sgbd from default values od config overrides");
                                 return;
                             }
                             text = keyValuePairEndsWith.Value.Key;
@@ -193,7 +194,7 @@ namespace PsdzClient.Core.Container
                     }
                     else
                     {
-                        //Log.Warning("EDIABASAdapter.DoParameterization()", "got empty parameter value from path: {0}", item4.Key);
+                        Log.Warning("EDIABASAdapter.DoParameterization()", "got empty parameter value from path: {0}", item4.Key);
                         ecuParam += ";";
                     }
                 }
@@ -203,9 +204,9 @@ namespace PsdzClient.Core.Container
                 }
                 parameterizationDone = true;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("EDIABASAdapter.DoParameterization()", exception);
+                Log.WarningException("EDIABASAdapter.DoParameterization()", exception);
             }
         }
 
@@ -256,7 +257,7 @@ namespace PsdzClient.Core.Container
             {
                 if (ecuKom == null)
                 {
-                    //Log.Warning("EDIABASAdapter.Execute()", "ecuKom was null; no communication possible");
+                    Log.Warning("EDIABASAdapter.Execute()", "ecuKom was null; no communication possible");
                     return new EDIABASAdapterDeviceResult(new ECUJob(), inParameters);
                 }
                 if (parameterizationDone && !string.IsNullOrEmpty(ecuGroup) && !string.IsNullOrEmpty(ecuJob))
@@ -266,8 +267,8 @@ namespace PsdzClient.Core.Container
                         ECUJob eCUJob = ecuKom.apiJob(ecuGroup, ecuJob, ecuParam, ecuResultFilter);
                         eCUJob.maskResultFASTARelevant(1, -1, "JOB_STATUS");
                         MarkAsFastaRelevant(eCUJob, RetrieveFastaRelevantJobNames(inParameters));
-                        //Log.Error("EidiabusAdapter", string.Join("\n", eCUJob.JobResult.Select((ECUResult x) => $"name: {x.Name}, value: {x.Value}, relevant: {x.FASTARelevant}, set: {x.Set}")));
-                        //Log.Info("EDIABASAdapter.Execute()", "apiJob('{0}', '{1}', '{2}') - JobStatus: {3}:{4}", ecuGroup, ecuJob, ecuParam, eCUJob?.JobErrorCode ?? (-1), (eCUJob != null) ? eCUJob.JobErrorText : "null");
+                        Log.Error("EidiabusAdapter", string.Join("\n", eCUJob.JobResult.Select((ECUResult x) => $"name: {x.Name}, value: {x.Value}, relevant: {x.FASTARelevant}, set: {x.Set}")));
+                        Log.Info("EDIABASAdapter.Execute()", "apiJob('{0}', '{1}', '{2}') - JobStatus: {3}:{4}", ecuGroup, ecuJob, ecuParam, eCUJob?.JobErrorCode ?? (-1), (eCUJob != null) ? eCUJob.JobErrorText : "null");
                         return new EDIABASAdapterDeviceResult(eCUJob, inParameters);
                     }
                     if (ecuData != null)
@@ -275,15 +276,15 @@ namespace PsdzClient.Core.Container
                         ECUJob eCUJob2 = ecuKom.apiJobData(ecuGroup, ecuJob, ecuData, ecuData.Length, ecuResultFilter);
                         eCUJob2.maskResultFASTARelevant(1, -1, "JOB_STATUS");
                         MarkAsFastaRelevant(eCUJob2, RetrieveFastaRelevantJobNames(inParameters));
-                        //Log.Info("EDIABASAdapter.Execute()", "apiJobData('{0}', '{1}', Data Len: {2}) - JobStatus: {3}:{4}", ecuGroup, ecuJob, (ecuData != null) ? ecuData.Length.ToString(CultureInfo.InvariantCulture) : "null", eCUJob2?.JobErrorCode ?? (-1), (eCUJob2 != null) ? eCUJob2.JobErrorText : "null");
+                        Log.Info("EDIABASAdapter.Execute()", "apiJobData('{0}', '{1}', Data Len: {2}) - JobStatus: {3}:{4}", ecuGroup, ecuJob, (ecuData != null) ? ecuData.Length.ToString(CultureInfo.InvariantCulture) : "null", eCUJob2?.JobErrorCode ?? (-1), (eCUJob2 != null) ? eCUJob2.JobErrorText : "null");
                         return new EDIABASAdapterDeviceResult(eCUJob2, inParameters);
                     }
-                    //Log.Warning("EDIABASAdapter.Execute()", "binModeReq was true but no valid ecuData");
+                    Log.Warning("EDIABASAdapter.Execute()", "binModeReq was true but no valid ecuData");
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("EDIABASAdapter.Execute()", exception);
+                Log.WarningException("EDIABASAdapter.Execute()", exception);
             }
             return new EDIABASAdapterDeviceResult(new ECUJob(), inParameters);
         }

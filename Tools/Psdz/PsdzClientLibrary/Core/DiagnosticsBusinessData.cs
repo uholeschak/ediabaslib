@@ -81,10 +81,10 @@ namespace PsdzClient.Core
             }
             if (!vecInfo.Sp2021Enabled && !text.Equals("BCP_SP21", StringComparison.OrdinalIgnoreCase))
             {
-                //Log.Info(Log.CurrentMethod(), "Vehicle gateway is not bcp_sp21!");
+                Log.Info(Log.CurrentMethod(), "Vehicle gateway is not bcp_sp21!");
                 return false;
             }
-            //Log.Info(Log.CurrentMethod(), "Vehicle gateway is bcp_sp21!");
+            Log.Info(Log.CurrentMethod(), "Vehicle gateway is bcp_sp21!");
             return true;
         }
 
@@ -156,7 +156,7 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public string GetMainSeriesSgbdAdditional(IVehicle vecInfo)
         {
-            //Log.Info(Log.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional");
+            Log.Info(Log.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional");
             if (vecInfo.Prodart == "P")
             {
                 if (!string.IsNullOrEmpty(vecInfo.Produktlinie))
@@ -167,21 +167,21 @@ namespace PsdzClient.Core
                         if (!(text == "PL6"))
                         {
                             AddServiceCode(string.Empty, 3);
-                            //Log.Info(Log.CurrentMethod(), "Reached default block, produck line: " + vecInfo.Produktlinie);
+                            Log.Info(Log.CurrentMethod(), "Reached default block, produck line: " + vecInfo.Produktlinie);
                         }
                         else if (!vecInfo.C_DATETIME.HasValue)
                         {
                             AddServiceCode(string.Empty, 2);
-                            //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
+                            Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                             if (vecInfo.Ereihe == "F01" || vecInfo.Ereihe == "F02" || vecInfo.Ereihe == "F03" || vecInfo.Ereihe == "F04" || vecInfo.Ereihe == "F06" || vecInfo.Ereihe == "F07" || vecInfo.Ereihe == "F10" || vecInfo.Ereihe == "F11" || vecInfo.Ereihe == "F12" || vecInfo.Ereihe == "F13" || vecInfo.Ereihe == "F18")
                             {
-                                //Log.Info(Log.CurrentMethod(), "Ereihe: " + vecInfo.Ereihe + ", returning F01BN2K");
+                                Log.Info(Log.CurrentMethod(), "Ereihe: " + vecInfo.Ereihe + ", returning F01BN2K");
                                 return "F01BN2K";
                             }
                         }
                         else if (vecInfo.C_DATETIME < DTimeF01Lci)
                         {
-                            //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is earlier than DTimeF01Lci");
+                            Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is earlier than DTimeF01Lci");
                             return "F01BN2K";
                         }
                     }
@@ -190,12 +190,12 @@ namespace PsdzClient.Core
                         if (!vecInfo.C_DATETIME.HasValue)
                         {
                             AddServiceCode(string.Empty, 1);
-                            //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
+                            Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                             return "RR1_2020";
                         }
                         if (vecInfo.C_DATETIME >= DTimeRR_S2)
                         {
-                            //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is later than DTimeRR_S2");
+                            Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is later than DTimeRR_S2");
                             return "RR1_2020";
                         }
                     }
@@ -205,7 +205,7 @@ namespace PsdzClient.Core
             {
                 _ = vecInfo.Prodart == "M";
             }
-            //Log.Info(Log.CurrentMethod(), "Returning null for product line: " + vecInfo?.Produktlinie + ", ereihe: " + vecInfo.Ereihe);
+            Log.Info(Log.CurrentMethod(), "Returning null for product line: " + vecInfo?.Produktlinie + ", ereihe: " + vecInfo.Ereihe);
             return null;
         }
 
@@ -346,7 +346,7 @@ namespace PsdzClient.Core
                                 if (!vecInfo.C_DATETIME.HasValue)
                                 {
                                     AddServiceCode(string.Empty, 1);
-                                    //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
+                                    Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                     list.Add(16);
                                     list.Add(50);
                                     list.Add(64);
@@ -369,7 +369,7 @@ namespace PsdzClient.Core
                                     if (!vecInfo.C_DATETIME.HasValue)
                                     {
                                         AddServiceCode(string.Empty, 3);
-                                        //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
+                                        Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                         list.Add(16);
                                         list.Add(50);
                                         list.Add(64);
@@ -399,7 +399,7 @@ namespace PsdzClient.Core
                             else if (!vecInfo.C_DATETIME.HasValue)
                             {
                                 AddServiceCode(string.Empty, 2);
-                                //Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
+                                Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                 list.Add(16);
                                 list.Add(50);
                                 list.Add(64);
@@ -458,7 +458,7 @@ namespace PsdzClient.Core
                 }
                 return list;
             }
-            //Log.Info(Log.CurrentMethod(), "Returning null for product line: " + vecInfo?.Produktlinie + ", ereihe: " + vecInfo.Ereihe);
+            Log.Info(Log.CurrentMethod(), "Returning null for product line: " + vecInfo?.Produktlinie + ", ereihe: " + vecInfo.Ereihe);
             return null;
         }
 
@@ -509,11 +509,11 @@ namespace PsdzClient.Core
                             return BNType.BN2020;
                     }
                 }
-                //Log.Warning(Log.CurrentMethod(), "Baureihenverbund is null or empty. BNType will be determined by Ereihe!");
+                Log.Warning(Log.CurrentMethod(), "Baureihenverbund is null or empty. BNType will be determined by Ereihe!");
                 switch (vecInfo.Ereihe)
                 {
                     default:
-                        //Log.Warning(Log.CurrentMethod(), "Ereihe is null or empty. No BNType can be determined!");
+                        Log.Warning(Log.CurrentMethod(), "Ereihe is null or empty. No BNType can be determined!");
                         return BNType.UNKNOWN;
                     case "E38":
                     case "E39":
@@ -549,10 +549,10 @@ namespace PsdzClient.Core
                             return BNType.BNK01X_MOTORBIKE;
                     }
                 }
-                //Log.Info(Log.CurrentMethod(), "Baureihenverbund was empty, returning default value.");
+                Log.Info(Log.CurrentMethod(), "Baureihenverbund was empty, returning default value.");
                 return BNType.BN2020_MOTORBIKE;
             }
-            //Log.Info(Log.CurrentMethod(), "Returning BNType.UNKNOWN for Prodart: " + vecInfo?.Prodart);
+            Log.Info(Log.CurrentMethod(), "Returning BNType.UNKNOWN for Prodart: " + vecInfo?.Prodart);
             return BNType.UNKNOWN;
         }
 
@@ -656,11 +656,13 @@ namespace PsdzClient.Core
 
         private bool IsExcludedFromILevelValidation(IEcuJob iJob)
         {
+            string method = Log.CurrentMethod() + "()";
+            Log.Info(method, "Check if iLevel is excluded from validation");
             string[] source = new string[1] { "REM_20" };
             string ecuVariante = iJob.getStringResult(0, "VARIANTE");
             if (source.Any((string x) => x.Equals(ecuVariante, StringComparison.OrdinalIgnoreCase)))
             {
-                //Log.Info(method, "Vehicle is excluded from I-Level validation");
+                Log.Info(method, "Vehicle is excluded from I-Level validation");
                 return true;
             }
             return false;
@@ -668,10 +670,10 @@ namespace PsdzClient.Core
 
         private bool ValidateILevelWithRegexPattern(string ilevelInput, string iLevelDescription)
         {
-            //Log.Info(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " started");
+            Log.Info(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " started");
             if (!Regex.IsMatch(ilevelInput, ILevelBN2020RegexPattern))
             {
-                //Log.Warning(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " failed");
+                Log.Warning(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " failed");
                 return false;
             }
             return true;
