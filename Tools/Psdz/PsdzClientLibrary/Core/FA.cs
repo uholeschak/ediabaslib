@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Utility;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -706,9 +707,9 @@ namespace PsdzClient.Core
                     return text3 + text4;
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("FA.ExtractEreihe()", exception);
+                Log.WarningException("FA.ExtractEreihe()", exception);
             }
             return null;
         }

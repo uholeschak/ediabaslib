@@ -182,7 +182,7 @@ namespace PsdzClient.Core
 			{
 				if (type == null)
 				{
-					//Log.Error("Extensions.CreateInstance()", "type was null!!!!", Array.Empty<object>());
+					Log.Error("Extensions.CreateInstance()", "type was null!!!!", Array.Empty<object>());
 				}
 				ConstructorInfo constructor = type.GetConstructor(constructorParamType);
 				if (constructor == null)

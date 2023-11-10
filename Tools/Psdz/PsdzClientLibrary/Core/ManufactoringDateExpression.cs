@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -50,9 +51,9 @@ namespace PsdzClient.Core
 					ticks = new DateTime(Convert.ToInt32(vec.Modelljahr, CultureInfo.InvariantCulture), Convert.ToInt32(vec.Modellmonat, CultureInfo.InvariantCulture), 1).Ticks;
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException("ManufactoringDateExpression.Evaluate()", exception);
+				Log.WarningException("ManufactoringDateExpression.Evaluate()", exception);
 				return false;
 			}
 			bool flag;

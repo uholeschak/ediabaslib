@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using BmwFileReader;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -57,7 +58,7 @@ namespace PsdzClient.Core
             {
                 return new TextContentManager(databaseProvider, lang, xepInfoObj, serviceDialogName);
             }
-            //Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identifikator + "(" + xepInfoObj.ControlId + ")"));
+            Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identification + "(" + xepInfoObj.ControlId + ")"));
             return new TextContentManagerDummy();
         }
 
@@ -87,7 +88,7 @@ namespace PsdzClient.Core
             this.xepInfoObj = xepInfoObj;
             serviceProgramCollection = ReadTextCollection(num2);
             serviceProgramCollectionRoot = null;
-            //Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identifikator, xepInfoObj.ControlId);
+            Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identification, xepInfoObj.ControlId);
         }
 
         internal TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, string textCollection)
@@ -138,10 +139,10 @@ namespace PsdzClient.Core
                     list.AddRange(lang.Select((string x) => new LocalizedText(o.GetTitle(x), x)));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 list.AddRange(lang.Select((string x) => new LocalizedText(string.Format(CultureInfo.InvariantCulture, "<<<{0}>>>", value), x)));
-                //Log.Error("TextContentManager.__StandardText()", "No valid standard text found for control id \"{0}\", returning \"{1}\". {2}", value, list[0].TextItem, ex);
+                Log.Error("TextContentManager.__StandardText()", "No valid standard text found for control id \"{0}\", returning \"{1}\". {2}", value, list[0].TextItem, ex);
             }
             return ReplaceTextReferencesAndHandleParameter(list, paramArray);
         }
@@ -228,9 +229,9 @@ namespace PsdzClient.Core
                 namespaceManager.AddNamespace("spe", "http://bmw.com/2014/Spe_Text_2.0");
                 return XElement.Load(xmlReader);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Error("TextContentManager.ParseXml()", "Failed with \"{0}\" while parsing XML: {1}", ex.Message, text);
+                Log.Error("TextContentManager.ParseXml()", "Failed with \"{0}\" while parsing XML: {1}", ex.Message, text);
                 throw;
             }
         }
@@ -276,14 +277,14 @@ namespace PsdzClient.Core
                     {
                         if (_TextParameter.Value == null)
                         {
-                            //Log.Error("TextContentManager.GetParameter()", "Parameter with name \"{0}\" has a value==null. Returning \"{1}\" instead.", id, text);
+                            Log.Error("TextContentManager.GetParameter()", "Parameter with name \"{0}\" has a value==null. Returning \"{1}\" instead.", id, text);
                             return text;
                         }
                         return _TextParameter.Value;
                     }
                 }
             }
-            //Log.Error("TextContentManager.GetParameter()", "Parameter with name \"{0}\" missing. Returning \"{1}\" instead.", id, text);
+            Log.Error("TextContentManager.GetParameter()", "Parameter with name \"{0}\" missing. Returning \"{1}\" instead.", id, text);
             return text;
         }
 
@@ -339,7 +340,7 @@ namespace PsdzClient.Core
                 parameterElement.Add(new XAttribute(XName.Get("done"), true));
                 return;
             }
-            //Log.Error("TextContentManager.ReplaceParameterSimpleType()", "The value \"{0}\" of the TEXTPARAMETER with ID \"{1}\" is a simple type. It will be wrapped into a TEXTITEM.", text, attParameterId.Value);
+            Log.Error("TextContentManager.ReplaceParameterSimpleType()", "The value \"{0}\" of the TEXTPARAMETER with ID \"{1}\" is a simple type. It will be wrapped into a TEXTITEM.", text, attParameterId.Value);
             XElement xElement = ParseSpeXml("<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>" + text + "</spe:PARAGRAPH></spe:TEXTITEM>", language, db);
             parameterElement.ReplaceWith(xElement.Element(XName.Get("PARAGRAPH", "http://bmw.com/2014/Spe_Text_2.0")));
         }
@@ -421,10 +422,10 @@ namespace PsdzClient.Core
                 }
                 return num2.ToString(text);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.ErrorException("TextContentManager.Format()", exception);
-                //Log.Error("TextContentManager.Format()", "Invalid format \"{0}\" was being tried to be applied. Unformatted value is returned.", text);
+                Log.ErrorException("TextContentManager.Format()", exception);
+                Log.Error("TextContentManager.Format()", "Invalid format \"{0}\" was being tried to be applied. Unformatted value is returned.", text);
                 return paramValue.ToString();
             }
         }
@@ -481,7 +482,7 @@ namespace PsdzClient.Core
                 {
                     if (repeat == 10)
                     {
-                        //Log.Error("TextContentManager.AppendStandardText()", "Abort recursive replacement of spe:STANDARDTEXT (elementsToBeReplaced.Count={0}).", enumerable.Count());
+                        Log.Error("TextContentManager.AppendStandardText()", "Abort recursive replacement of spe:STANDARDTEXT (elementsToBeReplaced.Count={0}).", enumerable.Count());
                     }
                     else
                     {
@@ -534,9 +535,9 @@ namespace PsdzClient.Core
                 string text = ParseSpeXml(xml, lang[0], db).Print();
                 return CreateTextLocator(text);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Error("", "Failed to parse text item \"{0}\", returning empty text. {1}", xmlText, ex);
+                Log.Error("", "Failed to parse text item \"{0}\", returning empty text. {1}", xmlText, ex);
                 return CreateTextLocator(string.Empty);
             }
         }
@@ -551,10 +552,10 @@ namespace PsdzClient.Core
                 {
                     xElement = XElement.Parse(TextContent.ReplaceTextReferences(item.TextItem, db, item.Language));
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     string text = $"<TextItem>{item}</TextItem>";
-                    //Log.Warning("TextContentManager.HandleParameter()", "Failed to parse \"{0}\". Try to parse \"{1}\" instead: {2}", item, text, ex);
+                    Log.Warning("TextContentManager.HandleParameter()", "Failed to parse \"{0}\". Try to parse \"{1}\" instead: {2}", item, text, ex);
                     xElement = XElement.Parse(text);
                 }
                 if (paramArray != null)
@@ -578,17 +579,17 @@ namespace PsdzClient.Core
                                 {
                                     obj = XElement.Parse(text2);
                                 }
-                                catch (Exception)
+                                catch (Exception ex2)
                                 {
                                     text3 = $"<TextItem>{text2}</TextItem>";
-                                    //Log.Warning("TextContentManager.HandleParameter()", "Failed to parse parameter \"{0}\". Try to parse \"{1}\" instead: {2}", text2, text3, ex2);
+                                    Log.Warning("TextContentManager.HandleParameter()", "Failed to parse parameter \"{0}\". Try to parse \"{1}\" instead: {2}", text2, text3, ex2);
                                     obj = XElement.Parse(text3);
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception ex3)
                             {
                                 obj = new TextContent(textLocator.Text).PlainText;
-                                //Log.Error("TextContentManager.HandleParameter()", "Failed to parse \"{0}\", use \"{1}\" instead: {2}", text3, obj, ex3);
+                                Log.Error("TextContentManager.HandleParameter()", "Failed to parse \"{0}\", use \"{1}\" instead: {2}", text3, obj, ex3);
                             }
                             foreach (XElement item2 in list2)
                             {
@@ -603,7 +604,7 @@ namespace PsdzClient.Core
                             {
                                 if (_TextParameter.Value != null)
                                 {
-                                    //Log.Info("TextContentManager.HandleParameter()", "Parameter: {0} Type: {1} Format: {2}", _TextParameter.Name, _TextParameter.Value.GetType(), xAttribute.Value);
+                                    Log.Info("TextContentManager.HandleParameter()", "Parameter: {0} Type: {1} Format: {2}", _TextParameter.Name, _TextParameter.Value.GetType(), xAttribute.Value);
                                     try
                                     {
                                         if (_TextParameter.Value is double)
@@ -647,15 +648,15 @@ namespace PsdzClient.Core
                                             item3.ReplaceWith(_TextParameter.Value.ToString());
                                         }
                                     }
-                                    catch (Exception)
+                                    catch (Exception exception)
                                     {
-                                        //Log.WarningException("TextContentManager.HandleParameter()", exception);
+                                        Log.WarningException("TextContentManager.HandleParameter()", exception);
                                         item3.ReplaceWith(_TextParameter.Value.ToString());
                                     }
                                 }
                                 else
                                 {
-                                    //Log.Info("TextContentManager.HandleParameter()", "Parameter: {0} Type: null Format: {1}", _TextParameter.Name, xAttribute.Value);
+                                    Log.Info("TextContentManager.HandleParameter()", "Parameter: {0} Type: null Format: {1}", _TextParameter.Name, xAttribute.Value);
                                 }
                             }
                             else
@@ -716,9 +717,9 @@ namespace PsdzClient.Core
                                         XElement content = XElement.Parse("<TextItem>" + text4 + "</TextItem>");
                                         item3.ReplaceWith(content);
                                     }
-                                    catch (Exception)
+                                    catch (Exception exception2)
                                     {
-                                        //Log.WarningException("TextContentManager.HandleParameter()", exception2);
+                                        Log.WarningException("TextContentManager.HandleParameter()", exception2);
                                         item3.ReplaceWith(_TextParameter.Value.ToString());
                                     }
                                 }

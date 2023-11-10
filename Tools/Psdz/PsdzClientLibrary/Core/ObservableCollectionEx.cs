@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -61,9 +62,9 @@ namespace PsdzClient.Core
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("ObservableCollectionEx.OnCollectionChanged()", exception);
+                Log.WarningException("ObservableCollectionEx.OnCollectionChanged()", exception);
             }
         }
     }
