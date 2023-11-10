@@ -16,6 +16,7 @@ using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Programming
 {
@@ -75,9 +76,9 @@ namespace PsdzClient.Programming
 			{
 				this.SvkCurrent = programmingObjectBuilder.Build(ecu.SVK);
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException("EcuProgrammingInfo.EcuProgrammingInfo()", exception);
+				Log.WarningException("EcuProgrammingInfo.EcuProgrammingInfo()", exception);
 				this.SvkCurrent = null;
 			}
 		}
@@ -450,7 +451,7 @@ namespace PsdzClient.Programming
 			new List<IProgrammingAction>();
 			if (talLines == null)
 			{
-				//Log.Error("ProgrammingUtils.AddProgrammingActionsToEcu()", "Param 'talLines' is missing!", Array.Empty<object>());
+				Log.Error("ProgrammingUtils.AddProgrammingActionsToEcu()", "Param 'talLines' is missing!", Array.Empty<object>());
 			}
 			IDictionary<ProgrammingActionType, IList<SgbmIdChange>> dictionary = this.CalculateActionStates(talLines);
 			if (dictionary.ContainsKey(ProgrammingActionType.Unmounting) && dictionary.ContainsKey(ProgrammingActionType.Mounting))
@@ -685,7 +686,7 @@ namespace PsdzClient.Programming
 				case PsdzTaCategories.EcuActivate:
 				case PsdzTaCategories.EcuPoll:
 				case PsdzTaCategories.EcuMirrorDeploy:
-					//Log.Warning(Log.CurrentMethod(), string.Format(CultureInfo.InvariantCulture, "Unimplemented TA category type {0}.", talLine.TaCategories), Array.Empty<object>());
+					Log.Warning(Log.CurrentMethod(), string.Format(CultureInfo.InvariantCulture, "Unimplemented TA category type {0}.", talLine.TaCategories), Array.Empty<object>());
 					return set;
 			}
 			throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported TA category type {0}.", talLine.TaCategories));

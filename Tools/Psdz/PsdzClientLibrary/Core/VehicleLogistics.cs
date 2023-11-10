@@ -11,6 +11,7 @@ using BmwFileReader;
 using PsdzClient.Core;
 using PsdzClient.Utility;
 using PsdzClientLibrary;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -73,13 +74,13 @@ namespace PsdzClient.Core
                 {
                     ecuCharacteristics.TryAdd(vehicle.GetCustomHashCode(), val);
                     val.BordnetName = name;
-                    //Log.Info(Log.CurrentMethod(), "Found characteristics with group sgdb: " + val.brSgbd);
+                    Log.Info(Log.CurrentMethod(), "Found characteristics with group sgdb: " + val.brSgbd);
                 }
                 return val;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.ErrorException(Log.CurrentMethod(), exception);
+                Log.ErrorException(Log.CurrentMethod(), exception);
                 return null;
             }
         }
@@ -88,12 +89,12 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             if (vecInfo.BNType == BNType.UNKNOWN)
             {
-                //Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
+                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
                 return;
             }
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
@@ -103,7 +104,7 @@ namespace PsdzClient.Core
             }
             else
             {
-                //Log.Warning("VehicleLogistics.CalculateMaxAssembledECUList()", "no fitting BaseEcuCharacteristics found");
+                Log.Warning("VehicleLogistics.CalculateMaxAssembledECUList()", "no fitting BaseEcuCharacteristics found");
             }
         }
 
@@ -111,7 +112,7 @@ namespace PsdzClient.Core
         {
             if (vehicle == null)
             {
-                //Log.Warning("VehicleLogistics.DecodeVCMBackupFA()", "vehicle was null");
+                Log.Warning("VehicleLogistics.DecodeVCMBackupFA()", "vehicle was null");
             }
             else if (fa != null && fa.Length >= 160)
             {
@@ -214,9 +215,9 @@ namespace PsdzClient.Core
                         text2 = text2.Substring(j, text2.Length - j);
                     }
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
-                    //Log.WarningException("VehicleLogistics.DecodeVCMBackupFA()", exception);
+                    Log.WarningException("VehicleLogistics.DecodeVCMBackupFA()", exception);
                 }
                 string text3 = string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}", vehicle.FA.BR, vehicle.FA.C_DATE, vehicle.FA.TYPE, vehicle.FA.LACK, vehicle.FA.POLSTER);
                 foreach (string item4 in vehicle.FA.SA)
@@ -240,7 +241,7 @@ namespace PsdzClient.Core
             }
             else
             {
-                //Log.Warning("VehicleLogistics.DecodeVCMBackupFA()", "fa byte stream was null or too short");
+                Log.Warning("VehicleLogistics.DecodeVCMBackupFA()", "fa byte stream was null or too short");
             }
         }
 
@@ -253,12 +254,12 @@ namespace PsdzClient.Core
         {
             if (vecInfo == null)
             {
-                //Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
+                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
             if (vecInfo.BNType == BNType.UNKNOWN)
             {
-                //Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
+                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
                 return;
             }
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
@@ -268,7 +269,7 @@ namespace PsdzClient.Core
             }
             else
             {
-                //Log.Warning("vehicleLogistics.CaCalculateECUConfiguration()", "no fitting BaseEcuCharacteristics found");
+                Log.Warning("vehicleLogistics.CaCalculateECUConfiguration()", "no fitting BaseEcuCharacteristics found");
             }
         }
 
@@ -635,7 +636,7 @@ namespace PsdzClient.Core
                     case "G22":
                         return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                 }
-                //Log.Info("VehicleLogistics.GetCharacteristics()", "cannot retrieve bordnet configuration using ereihe");
+                Log.Info("VehicleLogistics.GetCharacteristics()", "cannot retrieve bordnet configuration using ereihe");
             }
             switch (vecInfo.BNType)
             {
@@ -736,7 +737,7 @@ namespace PsdzClient.Core
                         return (int) diagAddrValue;
                     }
                 }
-                //Log.Info(Log.CurrentMethod(), "No diagnostic address can be retrieved from database by group name: " + grp);
+                Log.Info(Log.CurrentMethod(), "No diagnostic address can be retrieved from database by group name: " + grp);
                 //BMW.Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.AddServiceCode(Log.CurrentMethod(), 1);
                 return GetCharacteristics(vecInfo)?.getECUAdrByECU_GRUPPE(grp) ?? (-1);
             }

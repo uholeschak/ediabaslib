@@ -130,7 +130,7 @@ namespace PsdzClient.Core
                     reactor.SetBrandName(BrandName.BMWUSAPKW, DataSource.Database);
                     break;
                 default:
-                    //Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown brand name: {0}", characteristic.Name);
+                    Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown brand name: {0}", characteristic.Name);
                     break;
                 case "BMW MOTORRAD":
                     reactor.SetBrandName(BrandName.BMWMOTORRAD, DataSource.Database);
@@ -473,7 +473,7 @@ namespace PsdzClient.Core
         protected override bool ComputeDefault(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            //Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown key:{0} value: {1}", characteristic.RootNodeClass, characteristic.Name);
+            Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown key:{0} value: {1}", characteristic.RootNodeClass, characteristic.Name);
             return false;
         }
 

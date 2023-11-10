@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -154,7 +155,7 @@ namespace PsdzClient.Core
         protected override bool ComputeDefault(params object[] parameters)
         {
             characteristicValue = "???";
-            //Log.Warning("Vehicle.getISTACharactersitics()", "failed to evaluate characteristic: {0} (id: {1})", characteristicRoots.Title_dede, characteristicId);
+            Log.Warning("Vehicle.getISTACharactersitics()", "failed to evaluate characteristic: {0} (id: {1})", characteristicRoots?.EcuTranslation?.TextDe ?? string.Empty, characteristicId);
             return false;
         }
 
