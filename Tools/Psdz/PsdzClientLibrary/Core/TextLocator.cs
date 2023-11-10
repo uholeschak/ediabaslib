@@ -1,6 +1,7 @@
 ﻿using PsdzClient.Core.Container;
 using System.Collections.Generic;
 using System;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -72,9 +73,9 @@ namespace PsdzClient.Core
                 }
                 return new TextLocator(textContent);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("TextLocator.Concat(ITextLocator theTextLocator, bool theAddAfterLineBreak)", exception);
+                Log.WarningException("TextLocator.Concat(ITextLocator theTextLocator, bool theAddAfterLineBreak)", exception);
                 return this;
             }
         }

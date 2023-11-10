@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -125,7 +126,7 @@ namespace PsdzClient.Core
                 case EExpressionType.ECUPROGRAMMINGVARIANT:
                     return SingleAssignmentExpression.Deserialize(ms, eExpressionType, vec);
                 default:
-                    //Log.Error("RuleExpression.Deserialize()", "Unknown Expression-Type");
+                    Log.Error("RuleExpression.Deserialize()", "Unknown Expression-Type");
                     throw new Exception("Unknown Expression-Type");
             }
         }
@@ -138,7 +139,7 @@ namespace PsdzClient.Core
             }
             if (!(exp is AndExpression) && !(exp is OrExpression) && !(exp is CharacteristicExpression) && !(exp is DateExpression) && !(exp is EcuCliqueExpression) && !(exp is NotExpression) && !(exp is SaLaPaExpression) && !(exp is CountryExpression) && !(exp is IStufeExpression) && !(exp is IStufeXExpression) && !(exp is EquipmentExpression) && !(exp is ValidFromExpression) && !(exp is ValidToExpression) && !(exp is SiFaExpression) && !(exp is EcuRepresentativeExpression) && !(exp is ManufactoringDateExpression) && !(exp is EcuVariantExpression) && !(exp is EcuProgrammingVariantExpression))
             {
-                //Log.Error("RuleExpression.Evaluate(Vehicle vec, RuleExpression exp)", "RuleExpression {0} not implemented.", exp.ToString());
+                Log.Error("RuleExpression.Evaluate(Vehicle vec, RuleExpression exp)", "RuleExpression {0} not implemented.", exp.ToString());
                 return false;
             }
             return exp.Evaluate(vec, ffmResolver, internalResult);

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -65,7 +66,7 @@ namespace PsdzClient.Core
                     singleAssignmentExpression = new EcuProgrammingVariantExpression();
                     break;
                 default:
-                    //Log.Warning("SingleAssignmentExpression.Deserialize()", "unhandled SingleAssignmentExpression found: {0}", type.ToString());
+                    Log.Warning("SingleAssignmentExpression.Deserialize()", "unhandled SingleAssignmentExpression found: {0}", type.ToString());
                     throw new Exception("Unknown expression type");
             }
             singleAssignmentExpression.value = num;

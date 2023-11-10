@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using System;
 using System.Globalization;
 using System.Linq;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -91,9 +92,9 @@ namespace PsdzClient.Core
                     }
                     flag = true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    //Log.Warning("Translator.GetIds()", "Exception occurred for '{0}': {1}", module, ex.ToString());
+                    Log.Warning("Translator.GetIds()", "Exception occurred for '{0}': {1}", module, ex.ToString());
                 }
             }
             return list;
@@ -159,9 +160,9 @@ namespace PsdzClient.Core
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("Translator.GetName()", "Exception occurred for '{0}': {1}", idStr, ex.ToString());
+                Log.Warning("Translator.GetName()", "Exception occurred for '{0}': {1}", idStr, ex.ToString());
             }
             return idStr.Replace("\\n", "\n");
         }
@@ -189,9 +190,9 @@ namespace PsdzClient.Core
                 }
                 return string.Format(name, fmtStr.Values);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("Translator.translate()", exception);
+                Log.WarningException("Translator.translate()", exception);
             }
             return null;
         }
@@ -202,7 +203,7 @@ namespace PsdzClient.Core
             {
                 if (string.IsNullOrEmpty(fileName))
                 {
-                    //Log.Warning("Translator.deserializeLocalization()", "fileName was null or empty");
+                    Log.Warning("Translator.deserializeLocalization()", "fileName was null or empty");
                     return null;
                 }
                 if (File.Exists(fileName))
@@ -214,11 +215,11 @@ namespace PsdzClient.Core
                         return result;
                     }
                 }
-                //Log.Warning("Translator.deserializeLocalization()", "localization file not found");
+                Log.Warning("Translator.deserializeLocalization()", "localization file not found");
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("Translator.deserializeLocalization()", exception);
+                Log.WarningException("Translator.deserializeLocalization()", exception);
             }
             return null;
         }
@@ -227,7 +228,7 @@ namespace PsdzClient.Core
         {
             if (string.IsNullOrEmpty(resourceName))
             {
-                //Log.Warning("Translator.deserializeLocalization()", "resourceName was null or empty");
+                Log.Warning("Translator.deserializeLocalization()", "resourceName was null or empty");
                 return null;
             }
             try
@@ -237,16 +238,16 @@ namespace PsdzClient.Core
                 {
                     return new XmlSerializer(typeof(Localization)).Deserialize(manifestResourceStream) as Localization;
                 }
-                //Log.Info("Translator.deserializeLocalizationbyResource()", "resource stream was null; check your uri: {0}", resourceName);
+                Log.Info("Translator.deserializeLocalizationbyResource()", "resource stream was null; check your uri: {0}", resourceName);
                 string[] manifestResourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
                 foreach (string text in manifestResourceNames)
                 {
-                    //Log.Info("Translator.deserializeLocalizationbyResource()", "available resource: {0}", text);
+                    Log.Info("Translator.deserializeLocalizationbyResource()", "available resource: {0}", text);
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                //Log.WarningException("Translator.deserializeLocalizationbyResource()", exception);
+                Log.WarningException("Translator.deserializeLocalizationbyResource()", exception);
             }
             return null;
         }

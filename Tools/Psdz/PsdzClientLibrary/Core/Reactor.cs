@@ -96,7 +96,7 @@ namespace PsdzClientLibrary.Core
             log = logger;
             if (singleton != null)
             {
-                //Log.Error(Log.CurrentMethod(), "Fusior reactor is already initialized!");
+                Log.Error(Log.CurrentMethod(), "Fusior reactor is already initialized!");
                 if (dataHolder == null)
                 {
                     dataHolder = singleton.dataHolder;
@@ -649,7 +649,7 @@ namespace PsdzClientLibrary.Core
         public void DumpReactorState()
         {
             string text = dataHolder.SerializeToXml(log);
-            //Log.Info(Log.CurrentMethod(), "Vehicle state: " + Environment.NewLine + " " + text);
+            Log.Info(Log.CurrentMethod(), "Vehicle state: " + Environment.NewLine + " " + text);
         }
 
         private void AssignPropertyAndExecuteFallback(Action setBody, Action fallback = null)
@@ -1072,7 +1072,7 @@ namespace PsdzClientLibrary.Core
             }
             if (flag)
             {
-                //Log.Info("FusionReactor.Vehicle_PropertyChanged()", Environment.StackTrace);
+                Log.Info("FusionReactor.Vehicle_PropertyChanged()", Environment.StackTrace);
             }
         }
 
