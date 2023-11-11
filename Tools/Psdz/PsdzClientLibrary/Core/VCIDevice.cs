@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -290,9 +291,9 @@ namespace PsdzClient.Core
 				stringBuilder.AppendFormat(CultureInfo.InvariantCulture, "(ControlPort={0}),{1}", this.ControlPort, arg);
 				stringBuilder.AppendFormat(CultureInfo.InvariantCulture, "(PwfState={0})", this.PwfState);
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException("VCIDevice.ToAttrList()", exception);
+				Log.WarningException("VCIDevice.ToAttrList()", exception);
 			}
 			return stringBuilder.ToString();
 		}
@@ -422,9 +423,9 @@ namespace PsdzClient.Core
 					num4
 				});
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException("VCIDevice.IntIPAddress2String()", exception);
+				Log.WarningException("VCIDevice.IntIPAddress2String()", exception);
 			}
 			return null;
 		}
@@ -443,9 +444,9 @@ namespace PsdzClient.Core
 					return;
 				}
 			}
-			catch (Exception)
+			catch (Exception exception)
 			{
-				//Log.WarningException("VCIGuiDevice.UUIDString2UUID()", exception);
+				Log.WarningException("VCIGuiDevice.UUIDString2UUID()", exception);
 			}
 			leastSigBits = 0L;
 			mostSigBits = 0L;

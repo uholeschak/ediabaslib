@@ -14,6 +14,7 @@ using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Programming
 {
@@ -302,10 +303,10 @@ namespace PsdzClient.Programming
 				}
 				else
 				{
-					//Log.Warning("EcuProgrammingInfos.UpdateProgrammingActions", "Could not find ecu programming object for 0x{0:X2}", new object[]
-					//{
-					//	psdzEcuIdentifier.DiagAddrAsInt
-					//});
+					Log.Warning("EcuProgrammingInfos.UpdateProgrammingActions", "Could not find ecu programming object for 0x{0:X2}", new object[]
+					{
+						psdzEcuIdentifier.DiagAddrAsInt
+					});
 				}
 			}
 		}

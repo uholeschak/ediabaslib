@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -232,9 +233,9 @@ namespace PsdzClient.Core
 						return Convert.ToUInt32(this.STAT_SW_ID.Substring(0, 4), 16);
 					}
 				}
-				catch (Exception)
+				catch (Exception exception)
 				{
-					//Log.WarningException("swIdType.get_applicationNoUI()", exception);
+					Log.WarningException("swIdType.get_applicationNoUI()", exception);
 				}
 				return 0U;
 			}
@@ -251,9 +252,9 @@ namespace PsdzClient.Core
 						return Convert.ToUInt32(this.STAT_SW_ID.Substring(4, 4), 16);
 					}
 				}
-				catch (Exception)
+				catch (Exception exception)
 				{
-					//Log.WarningException("swIdType.get_upgradeIndexUI()", exception);
+					Log.WarningException("swIdType.get_upgradeIndexUI()", exception);
 				}
 				return 0U;
 			}

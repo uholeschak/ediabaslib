@@ -7,6 +7,7 @@ using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Events;
 using BMW.Rheingold.Psdz.Model.Tal;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Programming
 {
@@ -80,7 +81,7 @@ namespace PsdzClient.Programming
 				case PsdzTaCategories.EcuActivate:
 				case PsdzTaCategories.EcuPoll:
 				case PsdzTaCategories.EcuMirrorDeploy:
-					//Log.Warning(Log.CurrentMethod(), string.Format("Unimplemented TA category type {0}.", cat), Array.Empty<object>());
+					Log.Warning(Log.CurrentMethod(), string.Format("Unimplemented TA category type {0}.", cat), Array.Empty<object>());
 					return null;
 			}
 			return null;

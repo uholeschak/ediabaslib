@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using Newtonsoft.Json;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Programming
 {
@@ -21,7 +22,7 @@ namespace PsdzClient.Programming
                     return null;
                 }
                 responseJson = JsonConvert.DeserializeObject<ResponseJson>(jsonContent);
-                //Log.Info(Log.CurrentMethod(), string.Format("Json file Content: {0}", responseJson), Array.Empty<object>());
+                Log.Info(Log.CurrentMethod(), string.Format("Json file Content: {0}", responseJson), Array.Empty<object>());
             }
             catch (Exception ex)
             {
@@ -41,7 +42,7 @@ namespace PsdzClient.Programming
                 }
                 string text = File.ReadAllText(filePath);
                 result = JsonConvert.DeserializeObject<RequestJson>(text);
-                //Log.Info(Log.CurrentMethod(), "File: " + filePath + ": Content: " + text, Array.Empty<object>());
+                Log.Info(Log.CurrentMethod(), "File: " + filePath + ": Content: " + text, Array.Empty<object>());
             }
             catch (Exception ex)
             {

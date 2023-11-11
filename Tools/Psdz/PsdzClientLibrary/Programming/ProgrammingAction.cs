@@ -12,6 +12,7 @@ using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Programming
 {
@@ -458,7 +459,7 @@ namespace PsdzClient.Programming
 			}
 			else
 			{
-				//Log.Warning("ProgrammingAction.MapState", "input is null. 'TaExecutionState.Inactive' will be used.", Array.Empty<object>());
+				Log.Warning("ProgrammingAction.MapState", "input is null. 'TaExecutionState.Inactive' will be used.", Array.Empty<object>());
 			}
 			return ProgrammingActionState.ActionPlanned;
 		}

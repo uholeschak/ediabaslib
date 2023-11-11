@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -2194,7 +2195,7 @@ namespace PsdzClient.Core
                 {
                     vehicleIdentAlreadyDoneField = value;
                     OnPropertyChanged("VehicleIdentAlreadyDone");
-                    //Log.Info(Log.CurrentMethod(), "VehicleIdentAlreadyDone '{0}'", vehicleIdentAlreadyDoneField);
+                    Log.Info(Log.CurrentMethod(), "VehicleIdentAlreadyDone '{0}'", vehicleIdentAlreadyDoneField);
                 }
             }
         }

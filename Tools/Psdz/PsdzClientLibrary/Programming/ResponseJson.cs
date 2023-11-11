@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
+using PsdzClientLibrary.Core;
 
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
@@ -16,7 +17,7 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
         {
             this.signedNcd.ForEach(delegate (SignedNcd x)
             {
-                //Log.Info(Log.CurrentMethod(), "Saving calculated NCD: " + x.ToString, Array.Empty<object>());
+                Log.Info(Log.CurrentMethod(), "Saving calculated NCD: " + x.ToString, Array.Empty<object>());
                 string btld = x.btld;
                 string cafd = x.cafd;
                 string str = (btld + cafd.Replace("cafd", string.Empty) + ".ncd").ToLower();

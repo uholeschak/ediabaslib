@@ -20,6 +20,7 @@ using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Programming.BMW.Rheingold.Programming.API;
 using PsdzClient.Utility;
+using PsdzClientLibrary.Core;
 
 namespace BMW.Rheingold.Programming.API
 {
@@ -67,7 +68,7 @@ namespace BMW.Rheingold.Programming.API
             }
             if (!standardFp.IsValid)
             {
-                //Log.Warning("ProgrammingObjectBuilder.Build()", "Vehicle profile 'standardFp' is not valid!");
+                Log.Warning("ProgrammingObjectBuilder.Build()", "Vehicle profile 'standardFp' is not valid!");
                 return null;
             }
             IDictionary<int, IEnumerable<IVehicleProfileCriterion>> dictionary = new Dictionary<int, IEnumerable<IVehicleProfileCriterion>>();

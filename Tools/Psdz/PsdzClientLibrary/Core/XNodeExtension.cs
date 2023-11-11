@@ -1,5 +1,6 @@
 ﻿using System.Xml.Linq;
 using System;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -24,7 +25,7 @@ namespace PsdzClient.Core
             string text = node.ToString(SaveOptions.DisableFormatting | SaveOptions.OmitDuplicateNamespaces);
             if (string.IsNullOrWhiteSpace(text))
             {
-                //Log.Info("XNodeExtension.Print()", "Print white spaces of \"{0}\" with parameter removeWhiteSpace={1}.", node.Parent?.Name?.LocalName, removeWhiteSpace);
+                Log.Info("XNodeExtension.Print()", "Print white spaces of \"{0}\" with parameter removeWhiteSpace={1}.", node.Parent?.Name?.LocalName, removeWhiteSpace);
                 if (!(text == null || removeWhiteSpace))
                 {
                     return " ";

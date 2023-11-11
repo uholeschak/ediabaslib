@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Utility
 {
@@ -125,9 +126,9 @@ namespace PsdzClient.Utility
                 }
                 return new string(array);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //Log.Warning("FormatConverter.Ascii2UTF8()", "failed with exception: {0}", ex.ToString());
+                Log.Warning("FormatConverter.Ascii2UTF8()", "failed with exception: {0}", ex.ToString());
                 return null;
             }
 		}
