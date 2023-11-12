@@ -704,10 +704,15 @@ namespace PsdzClient.Programming
         }
 
         // ToDo: Check on update
-        private bool PerformVecInfoAssignments()
+        private void PerformVecInfoAssignments()
         {
             try
             {
+                if (VecInfo == null)
+                {
+                    return;
+                }
+
                 if (VecInfo.ECU != null && VecInfo.ECU.Count > 0)
                 {
                     GearboxUtility.PerformGearboxAssignments(VecInfo);
@@ -839,7 +844,7 @@ namespace PsdzClient.Programming
 
                 if (!string.IsNullOrEmpty(VecInfo.Motor) && !(VecInfo.Motor == "UNBEK"))
                 {
-                    return true;
+                    return;
                 }
 
                 ECU eCUbyECU_GRUPPE = VecInfo.getECUbyECU_GRUPPE("D_MOTOR");
@@ -858,10 +863,8 @@ namespace PsdzClient.Programming
             }
             catch (Exception)
             {
-                return false;
+                return;
             }
-
-            return true;
         }
 
         private void CalculateECUConfiguration()
