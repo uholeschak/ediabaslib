@@ -701,11 +701,8 @@ namespace PsdzClient.Programming
                 }
             }
 
-            VecInfo.MainSeriesSgbdAdditional = DetectVehicle.SgbdAdd;
-            if (string.IsNullOrEmpty(VecInfo.MainSeriesSgbdAdditional))
-            {
-                VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
-            }
+            // DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway
+            VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
             return true;
         }
