@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
@@ -18,6 +19,7 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using BmwFileReader;
 using PsdzClient.Core;
 using PsdzClient.Utility;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Programming
 {
@@ -707,57 +709,157 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        private void PerformVecInfoAssignments()
+        // ToDo: Check on update
+        private bool PerformVecInfoAssignments()
         {
-            if (VecInfo.ECU != null && VecInfo.ECU.Count > 0)
+            try
             {
-                GearboxUtility.PerformGearboxAssignments(VecInfo);
-            }
-
-            if (VecInfo.BNType == BNType.UNKNOWN && !string.IsNullOrEmpty(VecInfo.Ereihe))
-            {
-                VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
-            }
-
-            if (VecInfo.BNMixed == BNMixed.UNKNOWN)
-            {
-                VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
-            }
-
-            if (string.IsNullOrEmpty(VecInfo.Prodart))
-            {
-                if (VecInfo.IsMotorcycle())
+                if (VecInfo.ECU != null && VecInfo.ECU.Count > 0)
                 {
-                    if (!VecInfo.IsMotorcycle())
+                    GearboxUtility.PerformGearboxAssignments(VecInfo);
+                }
+
+                if (VecInfo.BNType == BNType.UNKNOWN && !string.IsNullOrEmpty(VecInfo.Ereihe))
+                {
+                    VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
+                }
+
+                if (VecInfo.BNMixed == BNMixed.UNKNOWN)
+                {
+                    VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.Prodart))
+                {
+                    if (VecInfo.IsMotorcycle())
                     {
-                        VecInfo.Prodart = "P";
+                        if (!VecInfo.IsMotorcycle())
+                        {
+                            VecInfo.Prodart = "P";
+                        }
+                        else
+                        {
+                            VecInfo.Prodart = "M";
+                        }
                     }
-                    else
+                }
+
+                if ((string.IsNullOrEmpty(VecInfo.Lenkung) || VecInfo.Lenkung == "UNBEK" || VecInfo.Lenkung.Trim() == string.Empty) && (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4)))
+                {
+                    switch (VecInfo.VINType[3])
                     {
-                        VecInfo.Prodart = "M";
+                        default:
+                            VecInfo.Lenkung = "LL";
+                            break;
+                        case '1':
+                        case '3':
+                        case '5':
+                        case 'C':
+                            VecInfo.Lenkung = "LL";
+                            break;
+                        case '2':
+                        case '6':
+                            VecInfo.Lenkung = "RL";
+                            break;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(VecInfo.BaseVersion) && (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4)))
+                {
+                    switch (VecInfo.VINType[3])
+                    {
+                        case '3':
+                        case 'C':
+                            VecInfo.BaseVersion = "US";
+                            break;
+                        case '1':
+                        case '5':
+                            VecInfo.BaseVersion = "ECE";
+                            break;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.Land) || VecInfo.Land == "UNBEK")
+                {
+                    if (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4))
+                    {
+                        switch (VecInfo.VINType[3])
+                        {
+                            default:
+                                VecInfo.Land = "EUR";
+                                break;
+                            case '1':
+                            case '2':
+                                VecInfo.Land = "EUR";
+                                break;
+                            case '3':
+                            case '4':
+                            case 'C':
+                                VecInfo.Land = "USA";
+                                break;
+                        }
+                    }
+                    if (VecInfo.hasSA("807") && VecInfo.Prodart == "P")
+                    {
+                        VecInfo.Land = "JP";
+                    }
+                    if (VecInfo.hasSA("8AA") && VecInfo.Prodart == "P")
+                    {
+                        VecInfo.Land = "CHN";
+                    }
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.Modelljahr) && !string.IsNullOrEmpty(VecInfo.ILevelWerk))
+                {
+                    try
+                    {
+                        if (Regex.IsMatch(VecInfo.ILevelWerk, "^\\w{4}[_\\-]\\d{2}[_\\-]\\d{2}[_\\-]\\d{3}$"))
+                        {
+                            VecInfo.BaustandsJahr = VecInfo.ILevelWerk.Substring(5, 2);
+                            VecInfo.BaustandsMonat = VecInfo.ILevelWerk.Substring(8, 2);
+                            int num2 = Convert.ToInt32(VecInfo.ILevelWerk.Substring(5, 2), CultureInfo.InvariantCulture);
+                            VecInfo.Modelljahr = ((num2 <= 50) ? (num2 + 2000) : (num2 + 1900)).ToString(CultureInfo.InvariantCulture);
+                            VecInfo.Modellmonat = VecInfo.ILevelWerk.Substring(8, 2);
+                            VecInfo.Modelltag = "01";
+                            Log.Info("Missing construction date (year: {0}, month: {1}) retrieved from iLevel plant ('{2}')", VecInfo.Modelljahr, VecInfo.Modellmonat, VecInfo.ILevelWerk);
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.WarningException("VehicleIdent.finalizeFASTAHeader()", exception);
+                    }
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.Abgas))
+                {
+                    VecInfo.Abgas = "KAT";
+                }
+
+                if (!string.IsNullOrEmpty(VecInfo.Motor) && !(VecInfo.Motor == "UNBEK"))
+                {
+                    return true;
+                }
+
+                ECU eCUbyECU_GRUPPE = VecInfo.getECUbyECU_GRUPPE("D_MOTOR");
+                if (eCUbyECU_GRUPPE == null)
+                {
+                    eCUbyECU_GRUPPE = VecInfo.getECUbyECU_GRUPPE("G_MOTOR");
+                }
+                if (eCUbyECU_GRUPPE != null && !string.IsNullOrEmpty(eCUbyECU_GRUPPE.VARIANTE))
+                {
+                    Match match = Regex.Match(eCUbyECU_GRUPPE.VARIANTE, "[SNM]\\d\\d");
+                    if (match.Success)
+                    {
+                        VecInfo.Motor = match.Value;
                     }
                 }
             }
-
-            if ((string.IsNullOrEmpty(VecInfo.Lenkung) || VecInfo.Lenkung == "UNBEK" || VecInfo.Lenkung.Trim() == string.Empty) && (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4)))
+            catch (Exception)
             {
-                switch (VecInfo.VINType[3])
-                {
-                    default:
-                        VecInfo.Lenkung = "LL";
-                        break;
-                    case '1':
-                    case '3':
-                    case '5':
-                    case 'C':
-                        VecInfo.Lenkung = "LL";
-                        break;
-                    case '2':
-                    case '6':
-                        VecInfo.Lenkung = "RL";
-                        break;
-                }
+                return false;
             }
+
+            return true;
         }
 
         private void CalculateECUConfiguration()
