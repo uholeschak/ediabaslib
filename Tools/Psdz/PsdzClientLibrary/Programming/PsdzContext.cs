@@ -711,6 +711,10 @@ namespace PsdzClient.Programming
 
             // DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
+            if (VecInfo.ECU != null && VecInfo.ECU.Count > 0)
+            {
+                GearboxUtility.PerformGearboxAssignments(VecInfo);
+            }
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
             return true;
         }
