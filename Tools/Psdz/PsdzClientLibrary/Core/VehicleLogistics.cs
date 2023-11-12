@@ -726,6 +726,7 @@ namespace PsdzClient.Core
 
         public static int getECUAdrByECU_GRUPPE(Vehicle vecInfo, string grp)
         {
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             if (vecInfo != null && !string.IsNullOrEmpty(grp))
             {
                 PsdzDatabase.EcuGroup ecuGroupByName = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupByName(grp);
@@ -738,11 +739,10 @@ namespace PsdzClient.Core
                     }
                 }
                 Log.Info(Log.CurrentMethod(), "No diagnostic address can be retrieved from database by group name: " + grp);
-                //BMW.Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.AddServiceCode(Log.CurrentMethod(), 1);
+                service.AddServiceCode(Log.CurrentMethod(), 1);
                 return GetCharacteristics(vecInfo)?.getECUAdrByECU_GRUPPE(grp) ?? (-1);
             }
             return -1;
         }
-
     }
 }

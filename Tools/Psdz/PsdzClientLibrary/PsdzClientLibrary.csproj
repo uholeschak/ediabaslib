@@ -171,6 +171,7 @@
     <Compile Include="Core\IMultisourceLogger.cs" />
     <Compile Include="Core\IMultisourceProperties.cs" />
     <Compile Include="Core\IReactorVehicle.cs" />
+    <Compile Include="Core\IServiceLocator.cs" />
     <Compile Include="Core\ITextContent.cs" />
     <Compile Include="Core\Container\NativeError.cs" />
     <Compile Include="Core\CountryExpression.cs" />
@@ -253,6 +254,7 @@
     <Compile Include="Core\SaLaPaExpression.cs" />
     <Compile Include="Core\SALAPALocalizedEntry.cs" />
     <Compile Include="Core\Container\Sequence.cs" />
+    <Compile Include="Core\ServiceLocator.cs" />
     <Compile Include="Core\SGBDBusLogisticsEntry.cs" />
     <Compile Include="Core\SiFaExpression.cs" />
     <Compile Include="Core\SingleAssignmentExpression.cs" />
