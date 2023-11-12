@@ -693,13 +693,7 @@ namespace PsdzClient.Programming
             VecInfo.BatteryType = PsdzDatabase.ResolveBatteryType(VecInfo);
             VecInfo.WithLfpBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP;
             VecInfo.MainSeriesSgbd = DetectVehicle.GroupSgbd;
-            if (string.IsNullOrEmpty(VecInfo.MainSeriesSgbd))
-            {
-                if (!string.IsNullOrEmpty(VecInfo.Ereihe))
-                {
-                    VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
-                }
-            }
+
             // DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
 
@@ -827,6 +821,14 @@ namespace PsdzClient.Programming
                     catch (Exception exception)
                     {
                         Log.WarningException("VehicleIdent.finalizeFASTAHeader()", exception);
+                    }
+                }
+
+                if (string.IsNullOrEmpty(VecInfo.MainSeriesSgbd))
+                {
+                    if (!string.IsNullOrEmpty(VecInfo.Ereihe))
+                    {
+                        VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
                     }
                 }
 
