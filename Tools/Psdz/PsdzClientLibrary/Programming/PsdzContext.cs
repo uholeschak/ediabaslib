@@ -677,12 +677,6 @@ namespace PsdzClient.Programming
 
             UpdateSALocalizedItems(programmingService, clientContext);
 
-            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
-            if (VecInfo.BNType == BNType.UNKNOWN && !string.IsNullOrEmpty(VecInfo.Ereihe))
-            {
-                VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
-            }
-
             VecInfo.FA.AlreadyDone = true;
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
             {
@@ -693,11 +687,7 @@ namespace PsdzClient.Programming
                 CalculateECUConfiguration();
             }
 
-            if (VecInfo.BNMixed == BNMixed.UNKNOWN)
-            {
-                VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
-            }
-
+            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
             VecInfo.BatteryType = PsdzDatabase.ResolveBatteryType(VecInfo);
             VecInfo.WithLfpBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP;
             VecInfo.MainSeriesSgbd = DetectVehicle.GroupSgbd;
@@ -708,15 +698,46 @@ namespace PsdzClient.Programming
                     VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
                 }
             }
-
             // DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
+
+            PerformVecInfoAssignments();
+
+            EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
+            return true;
+        }
+
+        private void PerformVecInfoAssignments()
+        {
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 0)
             {
                 GearboxUtility.PerformGearboxAssignments(VecInfo);
             }
-            EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
-            return true;
+
+            if (VecInfo.BNType == BNType.UNKNOWN && !string.IsNullOrEmpty(VecInfo.Ereihe))
+            {
+                VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
+            }
+
+            if (VecInfo.BNMixed == BNMixed.UNKNOWN)
+            {
+                VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
+            }
+
+            if (string.IsNullOrEmpty(VecInfo.Prodart))
+            {
+                if (VecInfo.IsMotorcycle())
+                {
+                    if (!VecInfo.IsMotorcycle())
+                    {
+                        VecInfo.Prodart = "P";
+                    }
+                    else
+                    {
+                        VecInfo.Prodart = "M";
+                    }
+                }
+            }
         }
 
         private void CalculateECUConfiguration()
