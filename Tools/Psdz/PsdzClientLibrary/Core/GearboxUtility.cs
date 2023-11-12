@@ -97,8 +97,7 @@ namespace PsdzClient.Core
         {
             string name = gearboxCharacteristic.Name;
             Log.Info("GearboxUtility.SetGearboxTypeFromCharacteristics()", "Gearbox type: '" + name + "' found in the xep_characteristics table.");
-            //Reactor.Instance.SetGetriebe(name, DataSource.Database);
-            vehicle.Getriebe = name;
+            vehicle.Reactor.SetGetriebe(name, DataSource.Database);
         }
 #if false
 		public static void SetServiceCodeIfGearboxIsNotDetected(Vehicle vehicle, IFasta2Service fasta)
