@@ -738,6 +738,26 @@ namespace PsdzClient.Programming
                     }
                 }
             }
+
+            if ((string.IsNullOrEmpty(VecInfo.Lenkung) || VecInfo.Lenkung == "UNBEK" || VecInfo.Lenkung.Trim() == string.Empty) && (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4)))
+            {
+                switch (VecInfo.VINType[3])
+                {
+                    default:
+                        VecInfo.Lenkung = "LL";
+                        break;
+                    case '1':
+                    case '3':
+                    case '5':
+                    case 'C':
+                        VecInfo.Lenkung = "LL";
+                        break;
+                    case '2':
+                    case '6':
+                        VecInfo.Lenkung = "RL";
+                        break;
+                }
+            }
         }
 
         private void CalculateECUConfiguration()
