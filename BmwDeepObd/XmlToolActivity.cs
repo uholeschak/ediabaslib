@@ -742,6 +742,11 @@ namespace BmwDeepObd
             _ecuListAdapter.CheckChanged += EcuCheckChanged;
             _ecuListAdapter.MenuOptionsSelected += (ecuInfo, view) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 int itemIndex = _ecuListAdapter.Items.IndexOf(ecuInfo);
                 if (itemIndex < 0)
                 {
@@ -754,8 +759,13 @@ namespace BmwDeepObd
             _listViewEcu.Adapter = _ecuListAdapter;
             _listViewEcu.ItemClick += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 int pos = args.Position;
-                if (pos >= 0)
+                if (pos >= 0 && pos < _ecuList.Count)
                 {
                     PerformJobsRead(_ecuList[pos]);
                 }
@@ -767,6 +777,7 @@ namespace BmwDeepObd
                 {
                     return;
                 }
+
                 if (_activityActive)
                 {
                     UpdateOptionsMenu();
@@ -2413,6 +2424,7 @@ namespace BmwDeepObd
             AndroidX.AppCompat.Widget.PopupMenu popupContext = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
             popupContext.Inflate(Resource.Menu.xml_tool_context);
 
+            bool itemInEcuList = itemPos >= 0 && itemPos < _ecuList.Count;
             bool enableMenuAction = itemPos >= 0 && itemPos < _ecuListAdapter.Items.Count && !IsJobRunning();
             bool bmwVisible = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw;
             bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw;
@@ -2439,7 +2451,7 @@ namespace BmwDeepObd
             IMenuItem bmwActuatorMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_actuator);
             if (bmwActuatorMenu != null)
             {
-                bool enableBmwActuator = enableMenuAction && XmlToolEcuActivity.ControlActuatorCount(_ecuList[itemPos]) > 0;
+                bool enableBmwActuator = enableMenuAction && itemInEcuList && XmlToolEcuActivity.ControlActuatorCount(_ecuList[itemPos]) > 0;
                 bmwActuatorMenu.SetEnabled(enableBmwActuator);
                 bmwActuatorMenu.SetVisible(bmwVisible && bmwDatabaseActive);
             }
@@ -2447,7 +2459,7 @@ namespace BmwDeepObd
             IMenuItem bmwServiceMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_service);
             if (bmwServiceMenu != null)
             {
-                bool enableBmwService = enableMenuAction && ShowBwmServiceMenu(_ecuList[itemPos]) > 0;
+                bool enableBmwService = enableMenuAction && itemInEcuList && ShowBwmServiceMenu(_ecuList[itemPos]) > 0;
                 bmwServiceMenu.SetEnabled(enableBmwService);
                 bmwServiceMenu.SetVisible(bmwVisible && bmwDatabaseActive);
             }
@@ -2495,6 +2507,11 @@ namespace BmwDeepObd
                 }
 
                 if (args?.Item == null)
+                {
+                    return;
+                }
+
+                if (itemPos < 0 || itemPos >= _ecuList.Count)
                 {
                     return;
                 }
