@@ -712,37 +712,29 @@ namespace PsdzClient.Programming
                 {
                     return;
                 }
-
                 if (VecInfo.ECU != null && VecInfo.ECU.Count > 0)
-                {
+                {   // [UH] ECU check added
                     GearboxUtility.PerformGearboxAssignments(VecInfo);
                 }
-
                 if (VecInfo.BNType == BNType.UNKNOWN && !string.IsNullOrEmpty(VecInfo.Ereihe))
                 {
                     VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
                 }
-
                 if (VecInfo.BNMixed == BNMixed.UNKNOWN)
                 {
                     VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
                 }
-
                 if (string.IsNullOrEmpty(VecInfo.Prodart))
                 {
-                    if (VecInfo.IsMotorcycle())
+                    if (!VecInfo.IsMotorcycle())
                     {
-                        if (!VecInfo.IsMotorcycle())
-                        {
-                            VecInfo.Prodart = "P";
-                        }
-                        else
-                        {
-                            VecInfo.Prodart = "M";
-                        }
+                        VecInfo.Prodart = "P";
+                    }
+                    else
+                    {
+                        VecInfo.Prodart = "M";
                     }
                 }
-
                 if ((string.IsNullOrEmpty(VecInfo.Lenkung) || VecInfo.Lenkung == "UNBEK" || VecInfo.Lenkung.Trim() == string.Empty) && (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4)))
                 {
                     switch (VecInfo.VINType[3])
@@ -762,7 +754,6 @@ namespace PsdzClient.Programming
                             break;
                     }
                 }
-
                 if (string.IsNullOrWhiteSpace(VecInfo.BaseVersion) && (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4)))
                 {
                     switch (VecInfo.VINType[3])
@@ -777,7 +768,6 @@ namespace PsdzClient.Programming
                             break;
                     }
                 }
-
                 if (string.IsNullOrEmpty(VecInfo.Land) || VecInfo.Land == "UNBEK")
                 {
                     if (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4))
@@ -807,7 +797,6 @@ namespace PsdzClient.Programming
                         VecInfo.Land = "CHN";
                     }
                 }
-
                 if (string.IsNullOrEmpty(VecInfo.Modelljahr) && !string.IsNullOrEmpty(VecInfo.ILevelWerk))
                 {
                     try
@@ -828,25 +817,18 @@ namespace PsdzClient.Programming
                         Log.WarningException("VehicleIdent.finalizeFASTAHeader()", exception);
                     }
                 }
-
                 if (string.IsNullOrEmpty(VecInfo.MainSeriesSgbd))
-                {
-                    if (!string.IsNullOrEmpty(VecInfo.Ereihe))
-                    {
-                        VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
-                    }
+                {   // [UH] simplified
+                    VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
                 }
-
                 if (string.IsNullOrEmpty(VecInfo.Abgas))
                 {
                     VecInfo.Abgas = "KAT";
                 }
-
                 if (!string.IsNullOrEmpty(VecInfo.Motor) && !(VecInfo.Motor == "UNBEK"))
                 {
                     return;
                 }
-
                 ECU eCUbyECU_GRUPPE = VecInfo.getECUbyECU_GRUPPE("D_MOTOR");
                 if (eCUbyECU_GRUPPE == null)
                 {
@@ -861,9 +843,9 @@ namespace PsdzClient.Programming
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception exception2)
             {
-                return;
+                Log.WarningException("VehicleIdent.finalizeFASTAHeader()", exception2);
             }
         }
 
