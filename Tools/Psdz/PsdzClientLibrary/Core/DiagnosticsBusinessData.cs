@@ -11,8 +11,87 @@ namespace PsdzClient.Core
 {
 	public class DiagnosticsBusinessData : IDiagnosticsBusinessData
     {
-        private static readonly DiagnosticsBusinessData instance = new DiagnosticsBusinessData();
-        public static IDiagnosticsBusinessData Instance => instance;
+        internal class EcuKomConfig
+        {
+            private string ecu;
+
+            private string job;
+
+            private string param;
+
+            private ushort set;
+
+            private string result;
+
+            public string Ecu
+            {
+                get
+                {
+                    return ecu;
+                }
+                set
+                {
+                    ecu = value;
+                }
+            }
+
+            public string Job
+            {
+                get
+                {
+                    return job;
+                }
+                set
+                {
+                    job = value;
+                }
+            }
+
+            public string Param
+            {
+                get
+                {
+                    return param;
+                }
+                set
+                {
+                    param = value;
+                }
+            }
+
+            public ushort Set
+            {
+                get
+                {
+                    return set;
+                }
+                set
+                {
+                    set = value;
+                }
+            }
+
+            public string Result
+            {
+                get
+                {
+                    return result;
+                }
+                set
+                {
+                    result = value;
+                }
+            }
+
+            internal EcuKomConfig(string ecu, string job, string param, ushort set, string result)
+            {
+                this.ecu = ecu;
+                this.job = job;
+                this.param = param;
+                this.set = set;
+                this.result = result;
+            }
+        }
 
         private const string ILevelBN2020RegexPattern = "([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}";
 
@@ -567,6 +646,19 @@ namespace PsdzClient.Core
                 return false;
             }
             return false;
+        }
+
+        public string GetFourCharEreihe(string ereihe)
+        {
+            if (ereihe != null && ereihe.Length == 3)
+            {
+                return ereihe.Insert(1, "0");
+            }
+            if (ereihe != null && ereihe.Length == 4)
+            {
+                return ereihe;
+            }
+            return string.Empty;
         }
 
         public void AddServiceCode(string methodName, int identifier)
