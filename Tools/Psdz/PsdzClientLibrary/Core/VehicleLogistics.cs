@@ -704,11 +704,11 @@ namespace PsdzClient.Core
 
         public static string getBrSgbd(Vehicle vecInfo)
         {
-            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             string text = service.GetMainSeriesSgbd(vecInfo);
-            // [UH] check for invalid series -
-            if (string.IsNullOrEmpty(text) || text == "-")
+            if (string.IsNullOrEmpty(text))
             {
+                service.AddServiceCode(Log.CurrentMethod(), 1);
                 text = GetCharacteristics(vecInfo)?.brSgbd;
             }
             return text;
