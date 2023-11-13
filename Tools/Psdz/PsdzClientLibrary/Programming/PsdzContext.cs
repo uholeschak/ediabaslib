@@ -689,7 +689,7 @@ namespace PsdzClient.Programming
                 CalculateECUConfiguration();
             }
 
-            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             VecInfo.BatteryType = PsdzDatabase.ResolveBatteryType(VecInfo);
             VecInfo.WithLfpBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP;
             VecInfo.MainSeriesSgbd = DetectVehicle.GroupSgbd;
@@ -718,7 +718,8 @@ namespace PsdzClient.Programming
                 }
                 if (VecInfo.BNType == BNType.UNKNOWN && !string.IsNullOrEmpty(VecInfo.Ereihe))
                 {
-                    VecInfo.BNType = DiagnosticsBusinessData.Instance.GetBNType(VecInfo);
+                    IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
+                    VecInfo.BNType = service.GetBNType(VecInfo);
                 }
                 if (VecInfo.BNMixed == BNMixed.UNKNOWN)
                 {

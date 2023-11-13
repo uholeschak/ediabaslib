@@ -291,7 +291,7 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
         {
-            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             int customHashCode = vecInfo.GetCustomHashCode();
             if (ecuCharacteristics.TryGetValue(customHashCode, out var value))
             {
@@ -668,7 +668,7 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public static BNMixed getBNMixed(string br, FA fa)
         {
-            IDiagnosticsBusinessData service = DiagnosticsBusinessData.Instance;
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             if (string.IsNullOrEmpty(br))
             {
                 return BNMixed.UNKNOWN;

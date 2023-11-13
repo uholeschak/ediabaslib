@@ -61,6 +61,13 @@ namespace PsdzClient.Core
         bool IsSp2021Gateway(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
 #if false
         IEcuJob ClampShutdownManagement(IVehicle vecInfo, IEcuKom ecuKom, int retryCount = 2, int i_geschw_schwelle = 30);
+
+        string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom);
+
+        string ReadVinForMotorcycles(BNType bNType, IEcuKom ecuKom);
 #endif
+        string GetFourCharEreihe(string ereihe);
+
+        //void ShowAdapterHintMotorCycle(IProgressMonitor monitor, IOperationServices services, string eReihe, string basicType);
     }
 }

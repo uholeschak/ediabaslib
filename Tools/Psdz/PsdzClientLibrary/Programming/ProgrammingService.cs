@@ -25,6 +25,13 @@ namespace PsdzClient.Programming
             this.EventManager = new ProgrammingEventManager();
             this.PsdzDatabase = new PsdzDatabase(istaFolder);
             PreparePsdzBackupDataPath(istaFolder);
+
+            // [UH] create services
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
+            if (service == null)
+            {
+                ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData());
+            }
         }
 
         public bool CollectPsdzLog(string targetLogFilePath)

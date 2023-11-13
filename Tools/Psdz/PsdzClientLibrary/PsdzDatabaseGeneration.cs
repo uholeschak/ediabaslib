@@ -19,6 +19,7 @@ using HarmonyLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using PsdzClient.Core;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient
 {
@@ -3996,6 +3997,7 @@ namespace PsdzClient
                     return null;
                 }
 
+                IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
                 List<BordnetsData> boardnetsList = GetAllBordnetRules();
                 Dictionary<string, Tuple<Vehicle, List<string>>> vehicleTypeKeyHashes = new Dictionary<string, Tuple<Vehicle, List<string>>>();
 
@@ -4355,8 +4357,8 @@ namespace PsdzClient
                             string ruleFormula = characteristicsMatch.RuleFormula;
                             List<VehicleStructsBmw.VehicleEcuInfo> ruleEcus = characteristicsMatch.RuleEcus;
 
-                            BNType bnType = DiagnosticsBusinessData.Instance.GetBNType(vehicleIdent);
-                            string sgbdAdd = DiagnosticsBusinessData.Instance.GetMainSeriesSgbdAdditional(vehicleIdent);
+                            BNType bnType = service.GetBNType(vehicleIdent);
+                            string sgbdAdd = service.GetMainSeriesSgbdAdditional(vehicleIdent);
 
                             vehicleSeriesList.Add(new EcuCharacteristicsInfo(characteristicsMatch.EcuCharacteristics, series, modelSeries, bnType, brandName, sgbdAdd, ruleDate, ruleEcus, ruleFormula));
                         }
