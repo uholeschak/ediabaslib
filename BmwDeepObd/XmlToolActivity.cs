@@ -2532,11 +2532,21 @@ namespace BmwDeepObd
                     }
 
                     case Resource.Id.menu_xml_tool_move_up:
+                        if (itemPos <= 0)
+                        {
+                            break;
+                        }
+
                         (_ecuList[itemPos], _ecuList[itemPos - 1]) = (_ecuList[itemPos - 1], _ecuList[itemPos]);
                         UpdateDisplay();
                         break;
 
                     case Resource.Id.menu_xml_tool_move_down:
+                        if (itemPos + 1 >= _ecuList.Count)
+                        {
+                            break;
+                        }
+
                         (_ecuList[itemPos], _ecuList[itemPos + 1]) = (_ecuList[itemPos + 1], _ecuList[itemPos]);
                         UpdateDisplay();
                         break;
