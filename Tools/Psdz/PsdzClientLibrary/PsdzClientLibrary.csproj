@@ -255,6 +255,7 @@
     <Compile Include="Core\SaLaPaExpression.cs" />
     <Compile Include="Core\SALAPALocalizedEntry.cs" />
     <Compile Include="Core\Container\Sequence.cs" />
+    <Compile Include="Core\ServiceCodes.cs" />
     <Compile Include="Core\ServiceLocator.cs" />
     <Compile Include="Core\SGBDBusLogisticsEntry.cs" />
     <Compile Include="Core\SiFaExpression.cs" />

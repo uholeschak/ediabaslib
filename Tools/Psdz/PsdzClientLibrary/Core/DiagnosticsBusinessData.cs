@@ -9,7 +9,28 @@ using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
+    public enum LayoutGroup
+    {
+        X,
+        D,
+        P,
+        PB,
+        PK,
+        PR,
+        PBV,
+        L,
+        R,
+        F,
+        PA,
+        PS,
+        PAP,
+        PAV,
+        PAE,
+        PAN
+    }
+
     public delegate object DoECUIdentDelegate(IVehicle vecInfo, ECU mECU, IEcuKom ecuKom, ref bool resetMOSTGWdone, IProgressMonitor monitor, int retry, bool forceReRead, bool tryReanimation, bool IdentForceOnUnidentified = false);
+
     public class DiagnosticsBusinessData : IDiagnosticsBusinessData
     {
         internal class EcuKomConfig
@@ -98,11 +119,11 @@ namespace PsdzClient.Core
 
         //private IFasta2Service fastaService = ServiceLocator.Current.GetService<IFasta2Service>();
 
-        //private string ServiceCodeName = ServiceCodes.DBD01_ObseleteCode_nu_LF;
+        private string ServiceCodeName = ServiceCodes.DBD01_ObseleteCode_nu_LF;
 
-        //private string ServiceCodeValuePattern = "{0}_{1}";
+        private string ServiceCodeValuePattern = "{0}_{1}";
 
-        //private LayoutGroup layoutGroup = LayoutGroup.D;
+        private LayoutGroup layoutGroup = LayoutGroup.D;
 
         private readonly List<string> fsLesenExpertVariants = new List<string>
         {
@@ -137,7 +158,6 @@ namespace PsdzClient.Core
         public DateTime DTime2023_03 => DateTime.ParseExact("01.03.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
 
         public DateTime DTime2023_07 => DateTime.ParseExact("01.07.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
-
         public void SetSp2021Enabled(IVehicle vecInfo)
         {
             if (string.IsNullOrEmpty(vecInfo.Produktlinie) && ClientContext.GetBrand((Vehicle) vecInfo) == CharacteristicExpression.EnumBrand.BMWMotorrad)
