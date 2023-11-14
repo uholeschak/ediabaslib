@@ -117,7 +117,7 @@ namespace PsdzClient.Core
 
         private const string ILevelBN2020RegexPattern = "([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}";
 
-        //private IFasta2Service fastaService = ServiceLocator.Current.GetService<IFasta2Service>();
+        private IFasta2Service fastaService = ServiceLocator.Current.GetService<IFasta2Service>();
 
         private string ServiceCodeName = ServiceCodes.DBD01_ObseleteCode_nu_LF;
 
@@ -884,7 +884,7 @@ namespace PsdzClient.Core
 
         public void AddServiceCode(string methodName, int identifier)
         {
-            //fastaService.AddServiceCode(ServiceCodeName, string.Format(ServiceCodeValuePattern, methodName, identifier), layoutGroup);
+            fastaService.AddServiceCode(ServiceCodeName, string.Format(ServiceCodeValuePattern, methodName, identifier), layoutGroup);
         }
 
         public bool IsEPMEnabled(IVehicle vehicle)

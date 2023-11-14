@@ -27,8 +27,14 @@ namespace PsdzClient.Programming
             PreparePsdzBackupDataPath(istaFolder);
 
             // [UH] create services
-            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
-            if (service == null)
+            IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
+            if (fasta2Service == null)
+            {
+                ServiceLocator.Current.TryAddService((IFasta2Service)new Fasta2Service());
+            }
+
+            IDiagnosticsBusinessData diagnosticsBusiness = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
+            if (diagnosticsBusiness == null)
             {
                 ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData());
             }
