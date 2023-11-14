@@ -28,7 +28,7 @@ namespace PsdzClient.Core
 
         string GetMainSeriesSgbd(IVehicle vecInfo);
 
-        //void UpdateCharacteristics(IVehicle vecInfo, string typsnr, IEcuKom ecuKom, bool isVorSerie, IProgressMonitor monitor, int retryCount, Func<BNType, int, IProgressMonitor, IEcuJob> doECUReadFA);
+        void UpdateCharacteristics(IVehicle vecInfo, string typsnr, IEcuKom ecuKom, bool isVorSerie, IProgressMonitor monitor, int retryCount, Func<BNType, int, IProgressMonitor, IEcuJob> doECUReadFA);
 
         string GetMainSeriesSgbdAdditional(IVehicle vecInfo);
 

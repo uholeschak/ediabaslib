@@ -170,6 +170,7 @@
     <Compile Include="Core\FallbackMechanisms.cs" />
     <Compile Include="Core\IMultisourceLogger.cs" />
     <Compile Include="Core\IMultisourceProperties.cs" />
+    <Compile Include="Core\IProgressMonitor.cs" />
     <Compile Include="Core\IReactorVehicle.cs" />
     <Compile Include="Core\IServiceLocator.cs" />
     <Compile Include="Core\ITextContent.cs" />

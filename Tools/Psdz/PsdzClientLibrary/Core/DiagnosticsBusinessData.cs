@@ -635,6 +635,112 @@ namespace PsdzClient.Core
             return BNType.UNKNOWN;
         }
 
+        public void UpdateCharacteristics(IVehicle vecInfo, string typsnr, IEcuKom ecuKom, bool isVorSerie, IProgressMonitor monitor, int retryCount, Func<BNType, int, IProgressMonitor, IEcuJob> doECUReadFA)
+        {
+            if (vecInfo.BNType != BNType.UNKNOWN && vecInfo.BNType != BNType.IBUS && vecInfo.BNType != 0)
+            {
+                return;
+            }
+            AddServiceCode(Log.CurrentMethod(), 1);
+            IEcuJob ecuJob = ecuKom.DefaultApiJob("FZGIDENT", "GRUNDMERKMALE_LESEN", typsnr, string.Empty);
+            if (ecuJob.IsOkay())
+            {
+                if (!isVorSerie && vecInfo.BNType != BNType.BN2020)
+                {
+                    AddServiceCode(Log.CurrentMethod(), 2);
+                    if (!vecInfo.IsEreiheValid())
+                    {
+                        vecInfo.Ereihe = ecuJob.getStringResult(1, "BR_TXT");
+                    }
+                    vecInfo.Antrieb = ecuJob.getStringResult(1, "ANTR_TXT");
+                    GearboxUtility.SetGearboxType(vecInfo, ecuJob.getStringResult(1, "GETR_TXT"), "UpdateCharacteristics");
+                    vecInfo.Hubraum = ecuJob.getStringResult(1, "HUBR_TXT");
+                    vecInfo.Land = ecuJob.getStringResult(1, "LAND_TXT");
+                    vecInfo.Lenkung = ecuJob.getStringResult(1, "LENK_TXT");
+                    vecInfo.Motor = ecuJob.getStringResult(1, "MOTOR_TXT");
+                    vecInfo.Baureihe = ecuJob.getStringResult(1, "REIHE_TXT");
+                    vecInfo.Typ = ecuJob.getStringResult(1, "TYPSNR_TXT");
+                    vecInfo.VerkaufsBezeichnung = ecuJob.getStringResult(1, "VERK_TXT");
+                    vecInfo.Karosserie = ecuJob.getStringResult(1, "KAROS_TXT");
+                    vecInfo.Abgas = "KAT";
+                    if (!vecInfo.IsEreiheValid())
+                    {
+                        Log.Warning("VehicleIdent.UpdateVehicleCharactersitics()", "failed to identify vehicle via FZGIDENT/grundmerkmale_lesen");
+                        IEcuJob ecuJob2 = ecuKom.DefaultApiJob("FZGIDENT", "STRINGS_LESEN", typsnr, string.Empty);
+                        if (ecuJob2.IsDone())
+                        {
+                            if (!isVorSerie)
+                            {
+                                vecInfo.Typ = ecuJob2.getStringResult(1, "TYP_TXT");
+                                vecInfo.Ereihe = ecuJob2.getStringResult(1, "BR_TXT");
+                                string stringResult = ecuJob2.getStringResult(1, "MO_TXT");
+                                if (!string.IsNullOrEmpty(stringResult) && stringResult.Contains("_"))
+                                {
+                                    string[] array = stringResult.Split('_');
+                                    vecInfo.Motor = array[1];
+                                    vecInfo.VerkaufsBezeichnung = array[0];
+                                }
+                                string stringResult2 = ecuJob2.getStringResult(1, "LA_TXT");
+                                if (!string.IsNullOrEmpty(stringResult2) && stringResult2.Contains("_"))
+                                {
+                                    string[] array2 = stringResult2.Split('_');
+                                    vecInfo.Land = array2[0];
+                                    vecInfo.Lenkung = array2[1];
+                                }
+                                vecInfo.Abgas = "KAT";
+                                if (vecInfo.IsEreiheValid())
+                                {
+                                    IEcuJob ecuJob3 = ecuKom.DefaultApiJob("FZGIDENT", "ERSTE_BR_ERMITTELN", vecInfo.Ereihe, string.Empty);
+                                    if (ecuJob3.IsDone())
+                                    {
+                                        vecInfo.Baureihe = ecuJob3.getStringResult(1, "ORG_BR");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Log.Info("VehicleIdent.getvehicleCharacteristics()", "manually entered vehicle characteristics necessary.");
+                        }
+                    }
+                }
+                if (!vecInfo.IsEreiheValid() || vecInfo.BNType == BNType.UNKNOWN)
+                {
+                    AddServiceCode(Log.CurrentMethod(), 3);
+                    Log.Warning("VehicleIdent.getVehicleCharacteristics()", "still Ereihe or BNType unknown;  trying to brute force FA and Ereihe");
+                    if (vecInfo.BNType == BNType.UNKNOWN)
+                    {
+                        doECUReadFA(BNType.BN2000, retryCount, monitor);
+                    }
+                    if (vecInfo.BNType == BNType.UNKNOWN)
+                    {
+                        doECUReadFA(BNType.BN2020, retryCount, monitor);
+                    }
+                    if (vecInfo.BNType == BNType.UNKNOWN)
+                    {
+                        doECUReadFA(BNType.BN2000_MOTORBIKE, retryCount, monitor);
+                    }
+                    if (vecInfo.BNType == BNType.UNKNOWN)
+                    {
+                        doECUReadFA(BNType.BN2020_MOTORBIKE, retryCount, monitor);
+                    }
+                    if (vecInfo.BNType == BNType.UNKNOWN)
+                    {
+                        doECUReadFA(BNType.IBUS, retryCount, monitor);
+                    }
+                }
+                vecInfo.Abgas = "KAT";
+                if (string.IsNullOrEmpty(vecInfo.Typ))
+                {
+                    vecInfo.Typ = typsnr;
+                }
+            }
+            else
+            {
+                Log.Warning("VehicleIdent.UpdateVehicleCharactersitics()", "failed when executing FZGIDENT:grundmerkmale_lesen with typsnr: {0} errorcode:{1} - {2}", typsnr, ecuJob.JobErrorCode, ecuJob.JobErrorText);
+            }
+        }
+
         public void AddServiceCode(string methodName, int identifier)
         {
             //fastaService.AddServiceCode(ServiceCodeName, string.Format(ServiceCodeValuePattern, methodName, identifier), layoutGroup);
