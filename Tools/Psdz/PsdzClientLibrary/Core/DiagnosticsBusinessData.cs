@@ -635,6 +635,11 @@ namespace PsdzClient.Core
             return BNType.UNKNOWN;
         }
 
+        public void AddServiceCode(string methodName, int identifier)
+        {
+            //fastaService.AddServiceCode(ServiceCodeName, string.Format(ServiceCodeValuePattern, methodName, identifier), layoutGroup);
+        }
+
         public bool IsEPMEnabled(IVehicle vehicle)
         {
             if (vehicle != null && !string.IsNullOrEmpty(vehicle.Produktlinie))
@@ -661,9 +666,111 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-        public void AddServiceCode(string methodName, int identifier)
+        public string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom)
         {
-            //fastaService.AddServiceCode(ServiceCodeName, string.Format(ServiceCodeValuePattern, methodName, identifier), layoutGroup);
+            Dictionary<string, EcuKomConfig> dictionary = new Dictionary<string, EcuKomConfig>();
+            dictionary.Add("G_ZGW", new EcuKomConfig("G_ZGW", "STATUS_VIN_LESEN", string.Empty, 1, "STAT_VIN"));
+            dictionary.Add("G_CAS", new EcuKomConfig("G_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, 1, "STAT_FGNR17_WERT"));
+            dictionary.Add("G_FRM", new EcuKomConfig("G_FRM", "STATUS_VCM_VIN", string.Empty, 1, "STAT_VIN_EINH"));
+            dictionary.Add("D_LM", new EcuKomConfig("D_LM", "READ_FVIN", string.Empty, 1, "FVIN"));
+            dictionary.Add("FRM_87", new EcuKomConfig("FRM_87", "READ_FVIN", string.Empty, 1, "FVIN"));
+            dictionary.Add("D_CAS", new EcuKomConfig("D_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, 1, "FGNUMMER"));
+            dictionary.Add("ZCS_ALL", new EcuKomConfig("ZCS_ALL", "FGNR_LESEN", string.Empty, 1, "FG_NR"));
+            dictionary.Add("D_0080", new EcuKomConfig("D_0080", "AIF_FG_NR_LESEN", string.Empty, 1, "AIF_FG_NR"));
+            dictionary.Add("D_0010", new EcuKomConfig("D_0080", "AIF_LESEN", string.Empty, 1, "AIF_FG_NR"));
+            dictionary.Add("EWS3", new EcuKomConfig("EWS3", "FGNR_LESEN", string.Empty, 1, "FG_NR"));
+            dictionary.Add("D_ZGM", new EcuKomConfig("D_ZGM", "C_FG_LESEN", string.Empty, 1, "FG_NR"));
+            List<EcuKomConfig> list = new List<EcuKomConfig>();
+            switch (bNType)
+            {
+                case BNType.BN2020:
+                    list.Add(dictionary["G_ZGW"]);
+                    list.Add(dictionary["G_CAS"]);
+                    list.Add(dictionary["G_FRM"]);
+                    break;
+                case BNType.BEV2010:
+                    list.Add(dictionary["D_CAS"]);
+                    list.Add(dictionary["D_LM"]);
+                    list.Add(dictionary["FRM_87"]);
+                    list.Add(dictionary["D_ZGM"]);
+                    break;
+                case BNType.BN2000:
+                    list.Add(dictionary["D_CAS"]);
+                    list.Add(dictionary["D_LM"]);
+                    list.Add(dictionary["FRM_87"]);
+                    list.Add(dictionary["D_ZGM"]);
+                    break;
+                case BNType.IBUS:
+                    list.Add(dictionary["ZCS_ALL"]);
+                    list.Add(dictionary["D_0080"]);
+                    list.Add(dictionary["D_0010"]);
+                    list.Add(dictionary["EWS3"]);
+                    break;
+                default:
+                    foreach (KeyValuePair<string, EcuKomConfig> item in dictionary)
+                    {
+                        list.Add(item.Value);
+                    }
+                    break;
+            }
+            return ReadVinFromEcus(ecuKom, list);
+        }
+
+        public string ReadVinForMotorcycles(BNType bNType, IEcuKom ecuKom)
+        {
+            Dictionary<string, EcuKomConfig> dictionary = new Dictionary<string, EcuKomConfig>();
+            dictionary.Add("D_MRMOT", new EcuKomConfig("D_MRMOT", "STATUS_FAHRGESTELLNUMMER", string.Empty, 1, "STAT_FGNUMMER"));
+            dictionary.Add("MRBMSMP1", new EcuKomConfig("D_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", 1, "STAT_FAHRGESTELLNUMMER_TEXT"));
+            dictionary.Add("G_MRMOT", new EcuKomConfig("G_MRMOT", "STATUS_LESEN", "ARG;FAHRGESTELLNUMMER_MR", 1, "STAT_FAHRGESTELLNUMMER_TEXT"));
+            dictionary.Add("X_K001", new EcuKomConfig("X_K001", "prog_fg_nr_lesen_funktional", "18", 1, "FG_NR_LANG"));
+            dictionary.Add("X_KS01", new EcuKomConfig("X_KS01", "prog_fg_nr_lesen_funktional", "18", 1, "FG_NR_LANG"));
+            List<EcuKomConfig> list = new List<EcuKomConfig>();
+            switch (bNType)
+            {
+                case BNType.BN2020_MOTORBIKE:
+                    list.Add(dictionary["G_MRMOT"]);
+                    list.Add(dictionary["X_K001"]);
+                    list.Add(dictionary["X_KS01"]);
+                    break;
+                case BNType.BN2000_MOTORBIKE:
+                    list.Add(dictionary["D_MRMOT"]);
+                    list.Add(dictionary["MRBMSMP1"]);
+                    break;
+                default:
+                    foreach (KeyValuePair<string, EcuKomConfig> item in dictionary)
+                    {
+                        list.Add(item.Value);
+                    }
+                    break;
+            }
+            return ReadVinFromEcus(ecuKom, list);
+        }
+
+        internal string ReadVinFromEcus(IEcuKom ecuKom, List<EcuKomConfig> ecuKomconfigs)
+        {
+            string text = null;
+            foreach (EcuKomConfig ecuKomconfig in ecuKomconfigs)
+            {
+                try
+                {
+                    Log.Info("VehicleIdent.GetVin17()", "trying to get VIN from {0} with {1}", ecuKomconfig.Ecu, ecuKomconfig.Job);
+                    IEcuJob ecuJob = ecuKom.ApiJob(ecuKomconfig.Ecu, ecuKomconfig.Job, ecuKomconfig.Param, string.Empty);
+                    if (ecuJob.IsOkay())
+                    {
+                        text = ecuJob.getStringResult(ecuKomconfig.Set, ecuKomconfig.Result);
+                        if (!string.IsNullOrEmpty(text) && text != "00000000000000000")
+                        {
+                            Log.Info("VehicleIdent.GetVin17()", "getting VIN was successfully: {0}", text);
+                            return text;
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Log.WarningException("VehicleIdent.GetVin17()", exception);
+                }
+            }
+            return null;
         }
 
         public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
