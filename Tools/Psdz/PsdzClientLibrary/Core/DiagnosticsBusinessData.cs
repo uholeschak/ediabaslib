@@ -9,7 +9,8 @@ using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
-	public class DiagnosticsBusinessData : IDiagnosticsBusinessData
+    public delegate object DoECUIdentDelegate(IVehicle vecInfo, ECU mECU, IEcuKom ecuKom, ref bool resetMOSTGWdone, IProgressMonitor monitor, int retry, bool forceReRead, bool tryReanimation, bool IdentForceOnUnidentified = false);
+    public class DiagnosticsBusinessData : IDiagnosticsBusinessData
     {
         internal class EcuKomConfig
         {
@@ -286,61 +287,6 @@ namespace PsdzClient.Core
             }
             Log.Info(Log.CurrentMethod(), "Returning null for product line: " + vecInfo?.Produktlinie + ", ereihe: " + vecInfo.Ereihe);
             return null;
-        }
-
-        // ToDo: Check on update
-        public void SpecialTreatmentBasedOnEreihe(string typsnr, IVehicle vecInfo)
-        {
-            if ((string.Compare(vecInfo.Ereihe, "M12", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "M2_", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && string.Compare(typsnr, "CZ31", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                AddServiceCode(string.Empty, 1);
-                vecInfo.VerkaufsBezeichnung = "ACTIVEE";
-                vecInfo.Motor = "IB1";
-                vecInfo.Leistung = "23";
-                vecInfo.Hubraum = "0";
-                vecInfo.Karosserie = "SAV";
-                vecInfo.Antrieb = "RWD";
-                GearboxUtility.SetGearboxType(vecInfo, "MECH", "SpecialTreatmentBasedOnEreihe");
-                vecInfo.Baureihe = "X'";
-                vecInfo.Lenkung = "LL";
-                vecInfo.Land = "CHN";
-                vecInfo.Ereihe = "M12";
-                vecInfo.BNType = BNType.BEV2010;
-                vecInfo.BNMixed = BNMixed.HETEROGENEOUS;
-                vecInfo.Ueberarbeitung = "0";
-                vecInfo.MOTBezeichnung = "IB1P23M0";
-                vecInfo.Baureihenverbund = "M012";
-                vecInfo.Abgas = "KAT";
-            }
-            if ((string.Compare(vecInfo.Ereihe, "E82", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && (string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP33", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP3C", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP9C", StringComparison.OrdinalIgnoreCase) == 0))
-            {
-                AddServiceCode(string.Empty, 2);
-                vecInfo.VerkaufsBezeichnung = "ActiveE";
-                vecInfo.Motor = "IB1";
-                vecInfo.Leistung = "23";
-                vecInfo.Hubraum = "0";
-                vecInfo.Karosserie = "COU";
-                vecInfo.Antrieb = "RWD";
-                GearboxUtility.SetGearboxType(vecInfo, "MECH", "SpecialTreatmentBasedOnEreihe");
-                vecInfo.Baureihe = "1'";
-                vecInfo.Lenkung = "LL";
-                if (string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) != 0 && string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) != 0)
-                {
-                    vecInfo.Land = "USA";
-                }
-                else
-                {
-                    vecInfo.Land = "EUR";
-                }
-            }
-            if (string.Compare(vecInfo.Ereihe, "R56", StringComparison.OrdinalIgnoreCase) == 0 && (string.Compare(typsnr, "MF74", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "MF84", StringComparison.OrdinalIgnoreCase) == 0))
-            {
-                AddServiceCode(string.Empty, 3);
-                vecInfo.VerkaufsBezeichnung = "MINI E";
-                vecInfo.Motor = "I15";
-                vecInfo.Leistung = "140";
-                vecInfo.Hubraum = "0";
-            }
         }
 
         // ToDo: Check on update
@@ -738,6 +684,181 @@ namespace PsdzClient.Core
             else
             {
                 Log.Warning("VehicleIdent.UpdateVehicleCharactersitics()", "failed when executing FZGIDENT:grundmerkmale_lesen with typsnr: {0} errorcode:{1} - {2}", typsnr, ecuJob.JobErrorCode, ecuJob.JobErrorText);
+            }
+        }
+
+        // ToDo: Check on update
+        public void SpecialTreatmentBasedOnEreihe(string typsnr, IVehicle vecInfo)
+        {
+            if ((string.Compare(vecInfo.Ereihe, "M12", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "M2_", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && string.Compare(typsnr, "CZ31", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                AddServiceCode(string.Empty, 1);
+                vecInfo.VerkaufsBezeichnung = "ACTIVEE";
+                vecInfo.Motor = "IB1";
+                vecInfo.Leistung = "23";
+                vecInfo.Hubraum = "0";
+                vecInfo.Karosserie = "SAV";
+                vecInfo.Antrieb = "RWD";
+                GearboxUtility.SetGearboxType(vecInfo, "MECH", "SpecialTreatmentBasedOnEreihe");
+                vecInfo.Baureihe = "X'";
+                vecInfo.Lenkung = "LL";
+                vecInfo.Land = "CHN";
+                vecInfo.Ereihe = "M12";
+                vecInfo.BNType = BNType.BEV2010;
+                vecInfo.BNMixed = BNMixed.HETEROGENEOUS;
+                vecInfo.Ueberarbeitung = "0";
+                vecInfo.MOTBezeichnung = "IB1P23M0";
+                vecInfo.Baureihenverbund = "M012";
+                vecInfo.Abgas = "KAT";
+            }
+            if ((string.Compare(vecInfo.Ereihe, "E82", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && (string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP33", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP3C", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP9C", StringComparison.OrdinalIgnoreCase) == 0))
+            {
+                AddServiceCode(string.Empty, 2);
+                vecInfo.VerkaufsBezeichnung = "ActiveE";
+                vecInfo.Motor = "IB1";
+                vecInfo.Leistung = "23";
+                vecInfo.Hubraum = "0";
+                vecInfo.Karosserie = "COU";
+                vecInfo.Antrieb = "RWD";
+                GearboxUtility.SetGearboxType(vecInfo, "MECH", "SpecialTreatmentBasedOnEreihe");
+                vecInfo.Baureihe = "1'";
+                vecInfo.Lenkung = "LL";
+                if (string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) != 0 && string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    vecInfo.Land = "USA";
+                }
+                else
+                {
+                    vecInfo.Land = "EUR";
+                }
+            }
+            if (string.Compare(vecInfo.Ereihe, "R56", StringComparison.OrdinalIgnoreCase) == 0 && (string.Compare(typsnr, "MF74", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "MF84", StringComparison.OrdinalIgnoreCase) == 0))
+            {
+                AddServiceCode(string.Empty, 3);
+                vecInfo.VerkaufsBezeichnung = "MINI E";
+                vecInfo.Motor = "I15";
+                vecInfo.Leistung = "140";
+                vecInfo.Hubraum = "0";
+            }
+        }
+
+        public void BN2000HandleKMMFixes(IVehicle vecInfo, IEcuKom ecuKom, bool resetMOSTDone, IProgressMonitor monitor, int retryCount, DoECUIdentDelegate doECUIdentDelegate)
+        {
+            if ((vecInfo.hasSA("6VC") || vecInfo.hasSA("612") || vecInfo.hasSA("633")) && vecInfo.getECU(54L) == null)
+            {
+                AddServiceCode(Log.CurrentMethod(), 1);
+                ECU eCU = new ECU();
+                eCU.BUS = BusType.MOST;
+                eCU.ID_SG_ADR = 54L;
+                eCU.ECU_GRUPPE = "D_TEL";
+                eCU.ECU_GROBNAME = "TEL";
+                vecInfo.AddEcu(eCU);
+                doECUIdentDelegate(vecInfo, eCU, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
+            }
+            if (vecInfo.hasSA("610") && vecInfo.getECU(61L) == null)
+            {
+                AddServiceCode(Log.CurrentMethod(), 2);
+                ECU eCU2 = new ECU();
+                eCU2.BUS = BusType.MOST;
+                eCU2.ID_SG_ADR = 61L;
+                eCU2.ECU_GRUPPE = "D_HUD";
+                eCU2.ECU_GROBNAME = "HUD";
+                vecInfo.AddEcu(eCU2);
+                doECUIdentDelegate(vecInfo, eCU2, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
+            }
+            if (vecInfo.hasSA("672") && vecInfo.getECU(60L) == null)
+            {
+                AddServiceCode(Log.CurrentMethod(), 3);
+                ECU eCU3 = new ECU();
+                eCU3.BUS = BusType.MOST;
+                eCU3.ID_SG_ADR = 60L;
+                eCU3.ECU_GRUPPE = "D_CDC";
+                eCU3.ECU_GROBNAME = "CDC";
+                vecInfo.AddEcu(eCU3);
+                doECUIdentDelegate(vecInfo, eCU3, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
+            }
+            if (vecInfo.hasSA("696") && vecInfo.getECU(49L) == null)
+            {
+                AddServiceCode(Log.CurrentMethod(), 4);
+                ECU eCU4 = new ECU();
+                eCU4.BUS = BusType.MOST;
+                eCU4.ID_SG_ADR = 49L;
+                eCU4.ECU_GRUPPE = "D_MMC";
+                eCU4.ECU_GROBNAME = "MMC";
+                vecInfo.AddEcu(eCU4);
+                doECUIdentDelegate(vecInfo, eCU4, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
+            }
+            if (vecInfo.hasBusType(BusType.MOST) && vecInfo.getECUbyECU_GRUPPE("D_MOSTGW") != null)
+            {
+                AddServiceCode(Log.CurrentMethod(), 5);
+                ECU eCU5 = new ECU();
+                eCU5.BUS = BusType.VIRTUALBUSCHECK;
+                eCU5.ID_SG_ADR = 255L;
+                eCU5.ECU_GRUPPE = "D_MOST";
+                eCU5.ECU_GROBNAME = "MOST";
+                vecInfo.AddEcu(eCU5);
+                doECUIdentDelegate(vecInfo, eCU5, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
+            }
+        }
+
+        public void HandleECUGroups(IVehicle vecInfo, IEcuKom ecuKom, List<IEcu> ecusToRemoveKMM)
+        {
+            IEcu eCUbyECU_GRUPPE = vecInfo.getECUbyECU_GRUPPE("D_RLS");
+            if (eCUbyECU_GRUPPE == null && "e89x".Equals(vecInfo.MainSeriesSgbd, StringComparison.OrdinalIgnoreCase))
+            {
+                AddServiceCode(Log.CurrentMethod(), 1);
+                if (vecInfo.hasSA("521"))
+                {
+                    AddServiceCode(Log.CurrentMethod(), 2);
+                    eCUbyECU_GRUPPE = new ECU();
+                    eCUbyECU_GRUPPE.ECU_GRUPPE = "D_RLS";
+                    eCUbyECU_GRUPPE.ID_SG_ADR = 86L;
+                    eCUbyECU_GRUPPE.ID_LIN_SLAVE_ADR = 128L;
+                    eCUbyECU_GRUPPE.ECU_GROBNAME = "RLS";
+                    eCUbyECU_GRUPPE.TITLE_ECUTREE = "RLS";
+                    vecInfo.AddEcu(eCUbyECU_GRUPPE);
+                }
+                else
+                {
+                    AddServiceCode(Log.CurrentMethod(), 3);
+                    if ((ecuKom.DefaultApiJob("D_RLS", "IDENT", string.Empty, string.Empty) as ECUJob).IsOkay())
+                    {
+                        AddServiceCode(Log.CurrentMethod(), 4);
+                        eCUbyECU_GRUPPE = new ECU();
+                        eCUbyECU_GRUPPE.ECU_GRUPPE = "D_RLS";
+                        eCUbyECU_GRUPPE.ID_SG_ADR = 86L;
+                        eCUbyECU_GRUPPE.ID_LIN_SLAVE_ADR = 128L;
+                        eCUbyECU_GRUPPE.ECU_GROBNAME = "RLS";
+                        eCUbyECU_GRUPPE.TITLE_ECUTREE = "RLS";
+                        vecInfo.AddEcu(eCUbyECU_GRUPPE);
+                    }
+                }
+            }
+            IEcu eCUbyECU_GRUPPE2 = vecInfo.getECUbyECU_GRUPPE("D_ISPB");
+            if (eCUbyECU_GRUPPE2 != null && !eCUbyECU_GRUPPE2.IDENT_SUCCESSFULLY)
+            {
+                AddServiceCode(Log.CurrentMethod(), 5);
+                IEcu eCUbyECU_GRUPPE3 = vecInfo.getECUbyECU_GRUPPE("D_MMI");
+                if ((eCUbyECU_GRUPPE3.IDENT_SUCCESSFULLY && string.Compare(eCUbyECU_GRUPPE3.VARIANTE, "RAD2", StringComparison.OrdinalIgnoreCase) == 0) || vecInfo.hasSA("6VC") || vecInfo.getECUbyECU_SGBD("CMEDIAR") != null)
+                {
+                    Log.Info("VehicleIdent.doECUIdent()", "found RAD2 with built-in USB/audio (SA 6FL/6ND/6NE)");
+                    ecusToRemoveKMM.Add(eCUbyECU_GRUPPE2);
+                }
+            }
+            if (vecInfo.BNType == BNType.BEV2010)
+            {
+                AddServiceCode(Log.CurrentMethod(), 6);
+                IEcu eCUbyECU_GRUPPE4 = vecInfo.getECUbyECU_GRUPPE("D_FBI");
+                if (eCUbyECU_GRUPPE4 != null && !eCUbyECU_GRUPPE4.IDENT_SUCCESSFULLY && vecInfo.hasSA("8AA"))
+                {
+                    Log.Info("VehicleIdent.doECUIdent()", "found ECALL in china BEV2010; will be removed");
+                    ecusToRemoveKMM.Add(eCUbyECU_GRUPPE4);
+                }
+            }
+            foreach (IEcu item in ecusToRemoveKMM)
+            {
+                Log.Info("VehicleIdent.doECUIdent()", "remove ECU at address: {0} due to KMM error.", item.ID_SG_ADR);
+                vecInfo.RemoveEcu(item);
             }
         }
 

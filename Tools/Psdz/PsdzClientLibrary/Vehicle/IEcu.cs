@@ -64,159 +64,161 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
-	[AuthorAPI(SelectableTypeDeclaration = true)]
-	public interface IEcu : INotifyPropertyChanged
-	{
-		string ProgrammingVariantName { get; set; }
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IEcu : INotifyPropertyChanged
+    {
+        string ProgrammingVariantName { get; set; }
 
-		IEnumerable<IAif> AIF { get; }
+        IEnumerable<IAif> AIF { get; }
 
-		bool AIF_SUCCESSFULLY { get; }
+        bool AIF_SUCCESSFULLY { get; }
 
-		BusType BUS { get; }
+        BusType BUS { get; }
 
-		uint BUSID { get; }
+        uint BUSID { get; }
 
-		bool COMMUNICATION_SUCCESSFULLY { get; }
+        bool COMMUNICATION_SUCCESSFULLY { get; }
 
-		string DATEN_REFERENZ { get; }
+        string DATEN_REFERENZ { get; }
 
-		bool DATEN_REFERENZ_SUCCESSFULLY { get; }
+        bool DATEN_REFERENZ_SUCCESSFULLY { get; }
 
-		typeDiagProtocoll DiagProtocoll { get; }
+        typeDiagProtocoll DiagProtocoll { get; }
 
-		string ECUTreeColor { get; }
+        string ECUTreeColor { get; set; }
 
-		int ECUTreeColumn { get; }
+        int ECUTreeColumn { get; }
 
-		int ECUTreeRow { get; }
+        int ECUTreeRow { get; }
 
-		string ECU_ADR { get; }
+        string ECU_ADR { get; }
 
-		bool ECU_ASSEMBLY_CONFIRMED { get; }
+        bool ECU_ASSEMBLY_CONFIRMED { get; }
 
-		string ECU_GROBNAME { get; }
+        string ECU_GROBNAME { get; set; }
 
-		string ECU_GRUPPE { get; }
+        string ECU_GRUPPE { get; set; }
 
-		bool ECU_HAS_CONFIG_OVERRIDE { get; }
+        bool ECU_HAS_CONFIG_OVERRIDE { get; }
 
-		string ECU_NAME { get; }
+        string ECU_NAME { get; }
 
-		string ECU_SGBD { get; }
+        string ECU_SGBD { get; }
 
-		//IEnumerable<IDtc> FEHLER { get; }
+        //IEnumerable<IDtc> FEHLER { get; }
 
-		int FLASH_STATE { get; }
+        int FLASH_STATE { get; }
 
-		bool FS_SUCCESSFULLY { get; }
+        bool FS_SUCCESSFULLY { get; }
 
-		int F_ANZ { get; }
+        int F_ANZ { get; }
 
-		string HARDWARE_REFERENZ { get; }
+        string HARDWARE_REFERENZ { get; }
 
-		bool HWREF_SUCCESSFULLY { get; }
+        bool HWREF_SUCCESSFULLY { get; }
 
-		int? HW_REF_STATUS { get; }
+        int? HW_REF_STATUS { get; }
 
-		bool IDENT_SUCCESSFULLY { get; }
+        bool IDENT_SUCCESSFULLY { get; }
 
-		string ID_BMW_NR { get; }
+        string ID_BMW_NR { get; }
 
-		short? ID_BUS_INDEX { get; }
+        short? ID_BUS_INDEX { get; }
 
-		short? ID_COD_INDEX { get; }
+        short? ID_COD_INDEX { get; }
 
-		string ID_DATUM { get; }
+        string ID_DATUM { get; }
 
-		int? ID_DATUM_JAHR { get; }
+        int? ID_DATUM_JAHR { get; }
 
-		short? ID_DATUM_KW { get; }
+        short? ID_DATUM_KW { get; }
 
-		int? ID_DATUM_MONAT { get; }
+        int? ID_DATUM_MONAT { get; }
 
-		int? ID_DATUM_TAG { get; }
+        int? ID_DATUM_TAG { get; }
 
-		int? ID_DIAG_INDEX { get; }
+        int? ID_DIAG_INDEX { get; }
 
-		short? ID_EWS_SS { get; }
+        short? ID_EWS_SS { get; }
 
-		string ID_HW_NR { get; }
+        string ID_HW_NR { get; }
 
-		short? ID_LIEF_NR { get; }
+        short? ID_LIEF_NR { get; }
 
-		string ID_LIEF_TEXT { get; }
+        string ID_LIEF_TEXT { get; }
 
-		long? ID_LIN_SLAVE_ADR { get; }
+        long? ID_LIN_SLAVE_ADR { get; set; }
 
-		long? ID_SGBD_INDEX { get; }
+        long? ID_SGBD_INDEX { get; }
 
-		long ID_SG_ADR { get; }
+        long ID_SG_ADR { get; set; }
 
-		short? ID_SW_NR { get; }
+        short? ID_SW_NR { get; }
 
-		string ID_SW_NR_FSV { get; }
+        string ID_SW_NR_FSV { get; }
 
-		string ID_SW_NR_MCV { get; }
+        string ID_SW_NR_MCV { get; }
 
-		string ID_SW_NR_OSV { get; }
+        string ID_SW_NR_OSV { get; }
 
-		string ID_SW_NR_RES { get; }
+        string ID_SW_NR_RES { get; }
 
-		int? ID_VAR_INDEX { get; }
+        int? ID_VAR_INDEX { get; }
 
-		//IEnumerable<IDtc> INFO { get; }
+        //IEnumerable<IDtc> INFO { get; }
 
-		bool IS_SUCCESSFULLY { get; }
+        bool IS_SUCCESSFULLY { get; }
 
-		int I_ANZ { get; }
+        int I_ANZ { get; }
 
-		//IEnumerable<IJob> JOBS { get; }
+        //IEnumerable<IJob> JOBS { get; }
 
-		bool PHYSHW_SUCCESSFULLY { get; }
+        bool PHYSHW_SUCCESSFULLY { get; }
 
-		string PHYSIKALISCHE_HW_NR { get; }
+        string PHYSIKALISCHE_HW_NR { get; }
 
-		bool SERIAL_SUCCESSFULLY { get; }
+        bool SERIAL_SUCCESSFULLY { get; }
 
-		string SERIENNUMMER { get; }
+        string SERIENNUMMER { get; }
 
-		ISvk SVK { get; }
+        ISvk SVK { get; }
 
-		bool SVK_SUCCESSFULLY { get; }
+        bool SVK_SUCCESSFULLY { get; }
 
-		IEnumerable<ISwtStatus> SWTStatus { get; }
+        IEnumerable<ISwtStatus> SWTStatus { get; }
 
-		int StillProgrammable { get; }
+        int StillProgrammable { get; }
 
-		IEnumerable<BusType> SubBUS { get; }
+        IEnumerable<BusType> SubBUS { get; }
 
-		IEnumerable<IEcuTransaction> TAL { get; }
+        IEnumerable<IEcuTransaction> TAL { get; }
 
-		string TITLE_ECUTREE { get; }
+        string TITLE_ECUTREE { get; set; }
 
-		string VARIANTE { get; }
+        string VARIANTE { get; }
 
-		IEcuStatusInfo StatusInfo { get; set; }
+        IEcuStatusInfo StatusInfo { get; set; }
 
-		string EcuUid { get; set; }
+        string EcuUid { get; set; }
 
-		IDtc GetDTCById(decimal id);
+        //ILcSwitchList LCSwitchList { get; set; }
 
-		string GetNewestZusbauNoFromAif();
+        //IDtc GetDTCById(decimal id);
 
-		bool IsRoot();
+        string GetNewestZusbauNoFromAif();
 
-		bool IsSet(long fOrt);
+        bool IsRoot();
 
-		bool IsVirtual();
+        //bool IsSet(long fOrt);
 
-		bool IsVirtualOrVirtualBusCheck();
+        bool IsVirtual();
 
-		bool IsVirtualRootOrVirtualBusCheck();
+        bool IsVirtualOrVirtualBusCheck();
 
-		IDtc getDTCbyF_ORT(int F_ORT);
+        bool IsVirtualRootOrVirtualBusCheck();
 
-		string LogEcu();
-	}
+        //IDtc getDTCbyF_ORT(int F_ORT);
+
+        string LogEcu();
+    }
 }

@@ -39,13 +39,13 @@ namespace PsdzClient.Core
         BNType GetBNType(IVehicle vehicle);
 
         bool IsEPMEnabled(IVehicle vehicle);
-#if false
-        IEcuJob ExecuteFSLesenExpert(IEcuKom ecuKom, string variant, int retries);
+
+        //IEcuJob ExecuteFSLesenExpert(IEcuKom ecuKom, string variant, int retries);
 
         void BN2000HandleKMMFixes(IVehicle vecInfo, IEcuKom ecuKom, bool resetMOSTDone, IProgressMonitor monitor, int retryCount, DoECUIdentDelegate doECUIdentDelegate);
 
         void HandleECUGroups(IVehicle vecInfo, IEcuKom ecuKom, List<IEcu> ecusToRemoveKMM);
-#endif
+
         void AddServiceCode(string methodName, int identifier);
 #if false
         void SetVehicleLifeStartDate(IVehicle vehicle, IEcuKom ecuKom);
