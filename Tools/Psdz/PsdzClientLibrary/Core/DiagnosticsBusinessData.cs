@@ -167,6 +167,7 @@ namespace PsdzClient.Core
             vecInfo.Sp2021Enabled = vecInfo.Produktlinie.StartsWith("21");
         }
 
+        // ToDo: Check on update
         public bool IsSp2021Gateway(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
             string text = "";
@@ -887,6 +888,25 @@ namespace PsdzClient.Core
             fastaService.AddServiceCode(ServiceCodeName, string.Format(ServiceCodeValuePattern, methodName, identifier), layoutGroup);
         }
 
+        public void SetVehicleLifeStartDate(IVehicle vehicle, IEcuKom ecuKom)
+        {
+            if (vehicle.BrandName == BrandName.BMWMOTORRAD)
+            {
+                if (vehicle.BNType != BNType.BN2000_MOTORBIKE && vehicle.BNType != BNType.BNK01X_MOTORBIKE)
+                {
+                    ExecuteVehicleLifeStartDateJobAndProcessResults("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", 3, "STAT_SYSTEMZEIT_WERT", ecuKom, vehicle);
+                }
+                else
+                {
+                    Log.Warning(Log.CurrentMethod(), "Found BN2000 Motorbike. VehicleLifeStartdate cannot be read out of the vehicle");
+                }
+            }
+            else if (!ExecuteVehicleLifeStartDateJobAndProcessResults("G_ZGW", "STATUS_LESEN", "ID;0x1701", 3, "STAT_SYSTEMZEIT_WERT", ecuKom, vehicle))
+            {
+                ExecuteVehicleLifeStartDateJobAndProcessResults("BCP_SP21", "STATUS_LESEN", "ID;0x1769", 3, "STAT_SYSTIME_SECONDS_WERT", ecuKom, vehicle, "STAT_SYSTIME_SECONDS");
+            }
+        }
+
         public bool IsEPMEnabled(IVehicle vehicle)
         {
             if (vehicle != null && !string.IsNullOrEmpty(vehicle.Produktlinie))
@@ -911,6 +931,90 @@ namespace PsdzClient.Core
                 return ereihe;
             }
             return string.Empty;
+        }
+
+#if false
+        public void ShowAdapterHintMotorCycle(IProgressMonitor monitor, IOperationServices services, string eReihe, string basicType)
+        {
+            switch (eReihe)
+            {
+                case "K16":
+                    if (!monitor.RequestConfirmation(ProgressRequestConfirmationType.Information, FormatedData.Localize("#Warning"), FormatedData.Localize("#064")))
+                    {
+                        Log.Info("CommandVINVehicleData.DoExecute()", "No adapter confirmed for motorcycle {0}", eReihe);
+                    }
+                    break;
+                case "259S":
+                case "R22":
+                case "R21":
+                case "R28":
+                case "259C":
+                case "K589":
+                case "K30":
+                case "K41":
+                    if ("0308,0309,0318,0319,0329,0362,0379,0391,0405,0414,0415,0417,0419,0421,0422,0424,0428,0429,0431,0432,0433,0434,0438,0439,0441,0442,0447,0477,0492,0495,0496,0498,0499,0544,0545,0547,0548,0549,0554,0555,0557,0558,0559".Contains(basicType))
+                    {
+                        InteractionMotorcycleMRMA24Model model = new InteractionMotorcycleMRMA24Model();
+                        services.InteractionService.Register(model);
+                    }
+                    break;
+            }
+        }
+#endif
+        private void SetVehicleLifeStartDateWithJobResult(IVehicle vehicle, int? result)
+        {
+            vehicle.VehicleLifeStartDate = DateTime.Now.AddSeconds(-result.Value);
+        }
+
+        private void MaskResultFASTARelevant(IEcuJob ecuJob, ushort startSet, int stopSet, IList<string> fsLesenExpertResultNames)
+        {
+            fsLesenExpertResultNames.ForEach(delegate (string x)
+            {
+                ecuJob.maskResultFASTARelevant(startSet, stopSet, x);
+            });
+        }
+
+        private bool SetVehicleLifeStartDateWithAlternativeResult(IVehicle vehicle, string alternativeResult, ECUJob job)
+        {
+            bool result = false;
+            if (string.IsNullOrEmpty(alternativeResult))
+            {
+                Log.Warning(Log.CurrentMethod(), "VehicleLifeStartdate could not be read out of the vehicle because the alternative Resultname was empty!");
+            }
+            else
+            {
+                int? result2 = job.getintResult(1, alternativeResult);
+                if (result2.HasValue)
+                {
+                    SetVehicleLifeStartDateWithJobResult(vehicle, result2);
+                    result = true;
+                }
+                else
+                {
+                    Log.Warning(Log.CurrentMethod(), "VehicleLifeStartdate could not be read out of the vehicle with the Job {0} , params {1} and resultname {2}", job.JobName, job.JobParam, alternativeResult);
+                }
+            }
+            return result;
+        }
+
+        private bool ExecuteVehicleLifeStartDateJobAndProcessResults(string sgbd, string jobName, string jobParams, int retryCount, string resultname, IEcuKom ecuKom, IVehicle vehicle, string alternativeResult = "")
+        {
+            bool result = false;
+            ECUJob eCUJob = ecuKom.ApiJobWithRetries(sgbd, jobName, jobParams, string.Empty, retryCount) as ECUJob;
+            if (eCUJob.IsOkay())
+            {
+                int? result2 = eCUJob.getintResult(1, resultname);
+                if (result2.HasValue)
+                {
+                    SetVehicleLifeStartDateWithJobResult(vehicle, result2);
+                    result = true;
+                }
+                else
+                {
+                    result = SetVehicleLifeStartDateWithAlternativeResult(vehicle, alternativeResult, eCUJob);
+                }
+            }
+            return result;
         }
 
         public string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom)

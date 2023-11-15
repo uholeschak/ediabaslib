@@ -47,9 +47,9 @@ namespace PsdzClient.Core
         void HandleECUGroups(IVehicle vecInfo, IEcuKom ecuKom, List<IEcu> ecusToRemoveKMM);
 
         void AddServiceCode(string methodName, int identifier);
-#if false
-        void SetVehicleLifeStartDate(IVehicle vehicle, IEcuKom ecuKom);
 
+        void SetVehicleLifeStartDate(IVehicle vehicle, IEcuKom ecuKom);
+#if false
         void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob);
 
         bool CheckForSpecificModelPopUpForElectricalChecks(string ereihe);
