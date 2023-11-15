@@ -170,8 +170,12 @@
     <Compile Include="Core\FallbackMechanisms.cs" />
     <Compile Include="Core\Fasta2Service.cs" />
     <Compile Include="Core\IFasta2Service.cs" />
+    <Compile Include="Core\IInteractionService.cs" />
     <Compile Include="Core\IMultisourceLogger.cs" />
     <Compile Include="Core\IMultisourceProperties.cs" />
+    <Compile Include="Core\INavigationService.cs" />
+    <Compile Include="Core\InteractionMotorcycleMRMA24Model.cs" />
+    <Compile Include="Core\IOperationServices.cs" />
     <Compile Include="Core\IProgressMonitor.cs" />
     <Compile Include="Core\IReactorVehicle.cs" />
     <Compile Include="Core\IServiceLocator.cs" />

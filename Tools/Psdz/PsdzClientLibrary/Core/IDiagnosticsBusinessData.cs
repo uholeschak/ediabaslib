@@ -68,6 +68,6 @@ namespace PsdzClient.Core
 
         string GetFourCharEreihe(string ereihe);
 
-        //void ShowAdapterHintMotorCycle(IProgressMonitor monitor, IOperationServices services, string eReihe, string basicType);
+        void ShowAdapterHintMotorCycle(IProgressMonitor monitor, IOperationServices services, string eReihe, string basicType);
     }
 }
