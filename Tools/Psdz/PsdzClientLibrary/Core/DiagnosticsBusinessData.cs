@@ -920,6 +920,38 @@ namespace PsdzClient.Core
             return false;
         }
 
+        public IEcuJob ExecuteFSLesenExpert(IEcuKom ecuKom, string variant, int retries)
+        {
+            if (fsLesenExpertVariants.Any((string v) => v.Equals(variant, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return ecuKom.ApiJobWithRetries(variant, "FS_LESEN_EXPERT", ";0x2C;0x20", string.Empty, retries);
+            }
+            return null;
+        }
+
+        public bool CheckForSpecificModelPopUpForElectricalChecks(string ereihe)
+        {
+            if (!specificModelsNoPopUp.Contains(ereihe))
+            {
+                string item = Regex.Replace(ereihe, "[0-9]", "x");
+                if (!placeholderModelsNopPopUp.Contains(item))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob)
+        {
+            MaskResultFASTARelevant(ecuJob, 1, 1, new List<string>
+            {
+                "F_ORT_NR", "F_EREIGNIS_DTC", "F_UEBERLAUF", "F_VORHANDEN_NR", "F_READY_NR", "F_WARNUNG_NR", "F_HFK", "F_HLZ", "F_SAE_CODE_STRING", "F_HEX_CODE",
+                "F_FEHLERKLASSE"
+            });
+            MaskResultFASTARelevant(ecuJob, 1, -2, new List<string> { "F_UW_KM", "F_UW_KM_SUPREME", "F_UW_ZEIT", "F_UW_ZEIT_SUPREME", "F_UW_ANZ", "F_UW*_NR", "F_UW*_WERT", "F_UW_BN", "F_UW_TN" });
+        }
+
         public string GetFourCharEreihe(string ereihe)
         {
             if (ereihe != null && ereihe.Length == 3)

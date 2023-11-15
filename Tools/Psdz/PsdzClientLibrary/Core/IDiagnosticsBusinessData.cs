@@ -49,11 +49,11 @@ namespace PsdzClient.Core
         void AddServiceCode(string methodName, int identifier);
 
         void SetVehicleLifeStartDate(IVehicle vehicle, IEcuKom ecuKom);
-#if false
+
         void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob);
 
         bool CheckForSpecificModelPopUpForElectricalChecks(string ereihe);
-#endif
+
         void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
 
         bool ProcessILevelJobResults(Reactor reactor, IVehicle vecInfo, IEcuJob iJob);
