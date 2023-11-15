@@ -40,7 +40,7 @@ namespace PsdzClient.Core
 
         bool IsEPMEnabled(IVehicle vehicle);
 
-        //IEcuJob ExecuteFSLesenExpert(IEcuKom ecuKom, string variant, int retries);
+        IEcuJob ExecuteFSLesenExpert(IEcuKom ecuKom, string variant, int retries);
 
         void BN2000HandleKMMFixes(IVehicle vecInfo, IEcuKom ecuKom, bool resetMOSTDone, IProgressMonitor monitor, int retryCount, DoECUIdentDelegate doECUIdentDelegate);
 
