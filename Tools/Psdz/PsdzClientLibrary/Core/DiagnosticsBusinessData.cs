@@ -1048,6 +1048,88 @@ namespace PsdzClient.Core
             return result;
         }
 
+        public IEcuJob ClampShutdownManagement(IVehicle vecInfo, IEcuKom ecuKom, int retryCount = 2, int i_geschw_schwelle = 30)
+        {
+            IEcuJob clampJob = null;
+            if (ecuKom != null && vecInfo != null)
+            {
+                switch (vecInfo.BNType)
+                {
+                    case BNType.BN2020:
+                        {
+                            string variante = null;
+                            DetermineBn2020CentralEcuVariant(vecInfo, ecuKom, retryCount, ref clampJob, ref variante);
+                            switch (variante)
+                            {
+                                default:
+                                    Log.Info(Log.CurrentMethod(), "Unexpected Variant for clamp shutdown management appeared: " + variante);
+                                    ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
+                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KLEMME15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                    break;
+                                case "BCP_SP21":
+                                    vecInfo.PADVehicle = true;
+                                    ecuKom.ApiJobWithRetries("G_ZGW", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
+                                    clampJob = ecuKom.ApiJobWithRetries("G_ZGW", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                    break;
+                                case "BDC_G11":
+                                case "BDC_G05":
+                                    vecInfo.PADVehicle = true;
+                                    ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
+                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                    break;
+                                case "BDC":
+                                case "FEM_20":
+                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                    break;
+                                case "CAS4_2":
+                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ID;0xAC51;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                    break;
+                            }
+                            break;
+                        }
+                    case BNType.BN2000:
+                    case BNType.BEV2010:
+                        clampJob = ecuKom.ApiJobWithRetries("D_CAS", "STEUERN_KL15_ABSCHALTUNG", i_geschw_schwelle.ToString(CultureInfo.InvariantCulture), string.Empty, retryCount);
+                        break;
+                }
+            }
+            return clampJob;
+        }
+
+        private void DetermineBn2020CentralEcuVariant(IVehicle vecInfo, IEcuKom ecuKom, int retryCount, ref IEcuJob clampJob, ref string variante)
+        {
+            if (IsSp2021Gateway(vecInfo, ecuKom, retryCount))
+            {
+                IEcu eCUbyECU_GRUPPE = vecInfo.getECUbyECU_GRUPPE("G_ZGW");
+                if (eCUbyECU_GRUPPE != null)
+                {
+                    variante = ((!string.IsNullOrEmpty(eCUbyECU_GRUPPE.VARIANTE)) ? eCUbyECU_GRUPPE.VARIANTE.ToUpper() : null);
+                }
+                if (string.IsNullOrEmpty(variante))
+                {
+                    IEcuJob ecuJob = ecuKom.DefaultApiJob("G_ZGW", "IDENT", string.Empty, string.Empty);
+                    if (ecuJob.IsDone())
+                    {
+                        variante = ecuJob.getStringResult("VARIANTE");
+                    }
+                }
+                return;
+            }
+            IEcu eCUbyECU_GRUPPE2 = vecInfo.getECUbyECU_GRUPPE("G_CAS");
+            if (eCUbyECU_GRUPPE2 != null)
+            {
+                variante = ((!string.IsNullOrEmpty(eCUbyECU_GRUPPE2.VARIANTE)) ? eCUbyECU_GRUPPE2.VARIANTE.ToUpper() : null);
+            }
+            if (string.IsNullOrEmpty(variante))
+            {
+                clampJob = ecuKom.DefaultApiJob("G_CAS", "IDENT", string.Empty, string.Empty);
+                if (clampJob.IsDone())
+                {
+                    variante = clampJob.getStringResult("VARIANTE");
+                }
+            }
+        }
+
         public string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom)
         {
             Dictionary<string, EcuKomConfig> dictionary = new Dictionary<string, EcuKomConfig>();

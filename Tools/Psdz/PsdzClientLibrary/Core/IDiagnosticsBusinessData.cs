@@ -59,9 +59,9 @@ namespace PsdzClient.Core
         bool ProcessILevelJobResults(Reactor reactor, IVehicle vecInfo, IEcuJob iJob);
 
         bool IsSp2021Gateway(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
-#if false
+
         IEcuJob ClampShutdownManagement(IVehicle vecInfo, IEcuKom ecuKom, int retryCount = 2, int i_geschw_schwelle = 30);
-#endif
+
         string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom);
 
         string ReadVinForMotorcycles(BNType bNType, IEcuKom ecuKom);
