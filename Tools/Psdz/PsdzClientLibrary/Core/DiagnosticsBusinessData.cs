@@ -986,7 +986,7 @@ namespace PsdzClient.Core
                     if ("0308,0309,0318,0319,0329,0362,0379,0391,0405,0414,0415,0417,0419,0421,0422,0424,0428,0429,0431,0432,0433,0434,0438,0439,0441,0442,0447,0477,0492,0495,0496,0498,0499,0544,0545,0547,0548,0549,0554,0555,0557,0558,0559".Contains(basicType))
                     {
                         InteractionMotorcycleMRMA24Model model = new InteractionMotorcycleMRMA24Model();
-                        //services.InteractionService.Register(model);
+                        services.InteractionService.Register(model);
                     }
                     break;
             }

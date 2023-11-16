@@ -1,7 +1,8 @@
 ﻿namespace PsdzClientLibrary.Core
 {
     // [UH] dummy file
-    public class IInteractionService
+    public interface IInteractionService
     {
+        void Register(InteractionModel model);
     }
 }

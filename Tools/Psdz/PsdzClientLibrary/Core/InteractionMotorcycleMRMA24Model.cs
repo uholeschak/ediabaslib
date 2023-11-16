@@ -3,7 +3,7 @@
 namespace PsdzClientLibrary.Core
 {
     [DataContract]
-    public class InteractionMotorcycleMRMA24Model
+    public class InteractionMotorcycleMRMA24Model : InteractionModel, IInteractionMotorcycleMRMA24Model
     {
         public InteractionMotorcycleMRMA24Model()
         {
