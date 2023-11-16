@@ -7,6 +7,7 @@ namespace PsdzClientLibrary.Core
     {
         public InteractionMotorcycleMRMA24Model()
         {
+            base.DialogSize = 1;
         }
     }
 }
