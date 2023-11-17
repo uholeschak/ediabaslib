@@ -9,8 +9,31 @@ using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
-	public static class GearboxUtility
-	{
+    public static class GearboxUtility
+    {
+        private static DateTime legacyDetectionConditionDate = new DateTime(2020, 7, 1);
+
+        private static Predicate<IVehicle> useLegacyGearboxTypeDetection = delegate (IVehicle v)
+        {
+            try
+            {
+                return new DateTime(int.Parse(v.Modelljahr), int.Parse(v.Modellmonat), 1) < legacyDetectionConditionDate;
+            }
+            catch (Exception ex)
+            {
+                Log.Error("GearboxUtility.useLegacyGearboxTypeDetection", "Error occured when checking the condition, possible problem with vehicle construction date - year: " + v.Modelljahr + ", month: " + v.Modellmonat, ex);
+                return false;
+            }
+        };
+
+        public const string Manual = "MECH";
+
+        public const string Automatic = "AUT";
+
+        public const string NoGearbox = "-";
+
+        public const string UnknownGearbox = "X";
+
         public static void SetGearboxType(IVehicle vehicle, string gearboxType, [CallerMemberName] string caller = null)
         {
             if (useLegacyGearboxTypeDetection(vehicle))
@@ -20,7 +43,6 @@ namespace PsdzClient.Core
             }
         }
 
-        // ToDo: Check on update
         public static void SetAutomaticGearboxByEgsEcu(Vehicle vehicle)
         {
             if (useLegacyGearboxTypeDetection(vehicle) && vehicle.getECUbyECU_GRUPPE("G_EGS") != null && string.CompareOrdinal(vehicle.Getriebe, "AUT") != 0)
@@ -93,11 +115,13 @@ namespace PsdzClient.Core
             return true;
         }
 
+        // [UH] Characteristics replaced
         public static void SetGearboxTypeFromCharacteristics(Vehicle vehicle, PsdzDatabase.Characteristics gearboxCharacteristic)
         {
             string name = gearboxCharacteristic.Name;
             Log.Info("GearboxUtility.SetGearboxTypeFromCharacteristics()", "Gearbox type: '" + name + "' found in the xep_characteristics table.");
-            vehicle.Reactor.SetGetriebe(name, DataSource.Database);
+            // [UH] reactor replaced
+            vehicle?.Reactor?.SetGetriebe(name, DataSource.Database);
         }
 
         public static void SetServiceCodeIfGearboxIsNotDetected(Vehicle vehicle, IFasta2Service fasta)
@@ -107,28 +131,5 @@ namespace PsdzClient.Core
                 fasta.AddServiceCode(ServiceCodes.NVI04_Gearbox_X, vehicle.Ereihe + ", " + vehicle.Typ, LayoutGroup.D);
             }
         }
-
-        private static DateTime legacyDetectionConditionDate = new DateTime(2020, 7, 1);
-
-        private static Predicate<IVehicle> useLegacyGearboxTypeDetection = delegate (IVehicle v)
-        {
-            try
-            {
-                return new DateTime(int.Parse(v.Modelljahr), int.Parse(v.Modellmonat), 1) < legacyDetectionConditionDate;
-            }
-            catch (Exception ex)
-            {
-                Log.Error("GearboxUtility.useLegacyGearboxTypeDetection", "Error occured when checking the condition, possible problem with vehicle construction date - year: " + v.Modelljahr + ", month: " + v.Modellmonat, ex);
-                return false;
-            }
-        };
-
-        public const string Manual = "MECH";
-
-        public const string Automatic = "AUT";
-
-        public const string NoGearbox = "-";
-
-        public const string UnknownGearbox = "X";
     }
 }
