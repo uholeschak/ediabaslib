@@ -4023,6 +4023,9 @@ namespace PsdzClient
                             }
                         }
 
+                        string typsnr = !string.IsNullOrEmpty(vehicleIdent.Typ) ? vehicleIdent.Typ : vehicleIdent.VINType;
+                        service.SpecialTreatmentBasedOnEreihe(typsnr, vehicleIdent);
+
                         string series = vehicleIdent.Ereihe;
                         string modelSeries = vehicleIdent.Baureihenverbund;
                         string productType = vehicleIdent.Prodart;

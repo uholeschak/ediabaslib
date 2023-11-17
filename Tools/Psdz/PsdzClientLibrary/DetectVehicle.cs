@@ -10,6 +10,7 @@ using EdiabasLib;
 using log4net;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient
 {
@@ -76,6 +77,7 @@ namespace PsdzClient
 
             try
             {
+                IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
                 List<JobInfo> readVinJobsBmwFast = new List<JobInfo>(ReadVinJobsBmwFast);
                 List<JobInfo> readFaJobsBmwFast = new List<JobInfo>(ReadFaJobsBmwFast);
                 List<JobInfo> readILevelJobsBmwFast = new List<JobInfo>(ReadILevelJobsBmwFast);
@@ -190,6 +192,9 @@ namespace PsdzClient
                                 log.ErrorFormat("DetectVehicleBmwFast AssignVehicleCharacteristic failed");
                             }
                         }
+
+                        string typsnr = !string.IsNullOrEmpty(vehicleIdent.Typ) ? vehicleIdent.Typ : vehicleIdent.VINType;
+                        service.SpecialTreatmentBasedOnEreihe(typsnr, vehicleIdent);
 
                         if (!string.IsNullOrEmpty(vehicleIdent.Getriebe))
                         {
