@@ -99,16 +99,16 @@ namespace PsdzClient.Core
             Log.Info("GearboxUtility.SetGearboxTypeFromCharacteristics()", "Gearbox type: '" + name + "' found in the xep_characteristics table.");
             vehicle.Reactor.SetGetriebe(name, DataSource.Database);
         }
-#if false
-		public static void SetServiceCodeIfGearboxIsNotDetected(Vehicle vehicle, IFasta2Service fasta)
-		{
-			if (vehicle.Getriebe == UnknownGearbox)
-			{
-				fasta.AddServiceCode("NVI04_Gearbox_X", vehicle.Ereihe + ", " + vehicle.Typ, LayoutGroup.D);
-			}
-		}
-#endif
-		private static DateTime legacyDetectionConditionDate = new DateTime(2020, 7, 1);
+
+        public static void SetServiceCodeIfGearboxIsNotDetected(Vehicle vehicle, IFasta2Service fasta)
+        {
+            if (vehicle.Getriebe == "X")
+            {
+                fasta.AddServiceCode(ServiceCodes.NVI04_Gearbox_X, vehicle.Ereihe + ", " + vehicle.Typ, LayoutGroup.D);
+            }
+        }
+
+        private static DateTime legacyDetectionConditionDate = new DateTime(2020, 7, 1);
 
         private static Predicate<IVehicle> useLegacyGearboxTypeDetection = delegate (IVehicle v)
         {
