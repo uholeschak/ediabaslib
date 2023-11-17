@@ -158,6 +158,111 @@ namespace PsdzClient.Core
         public DateTime DTime2023_03 => DateTime.ParseExact("01.03.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
 
         public DateTime DTime2023_07 => DateTime.ParseExact("01.07.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
+
+        public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        {
+            // [UH] get reactor from vehicle
+            Reactor instance = (vecInfo as Vehicle)?.Reactor;
+            if (instance == null)
+            {
+                return;
+            }
+            IEcuJob ecuJob = new ECUJob();
+            if (IsSp2021Gateway(vecInfo, ecuKom, retryCount))
+            {
+                ecuJob = ecuKom.ApiJobWithRetries("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR", string.Empty, string.Empty, retryCount);
+                if (!ecuJob.IsOkay())
+                {
+                    HandleReadILevelForSp2021Fallback(instance, vecInfo, ecuKom, retryCount);
+                }
+                else if (!ProcessILevelJobResults(instance, vecInfo, ecuJob))
+                {
+                    HandleReadILevelForSp2021Fallback(instance, vecInfo, ecuKom, retryCount);
+                }
+            }
+            else
+            {
+                ecuJob = ecuKom.ApiJobWithRetries("g_zgw", "STATUS_VCM_I_STUFE_LESEN", string.Empty, string.Empty, retryCount);
+                if (!ecuJob.IsOkay())
+                {
+                    HandleReadIlevelBackup(instance, vecInfo, ecuKom, retryCount);
+                }
+                else if (!ProcessILevelJobResults(instance, vecInfo, ecuJob))
+                {
+                    HandleReadIlevelBackup(instance, vecInfo, ecuKom, retryCount);
+                }
+            }
+            if (!string.IsNullOrEmpty(vecInfo.ILevel))
+            {
+                if (vecInfo.ILevel.Length < 4 || vecInfo.ILevel.Contains("UNBEK"))
+                {
+                    vecInfo.ILevel = vecInfo.ILevelWerk;
+                }
+            }
+            else
+            {
+                vecInfo.ILevel = vecInfo.ILevelWerk;
+            }
+        }
+
+        public bool ProcessILevelJobResults(Reactor reactor, IVehicle vecInfo, IEcuJob iJob)
+        {
+            string stringResult = iJob.getStringResult(1, "STAT_I_STUFE_WERK");
+            string stringResult2 = iJob.getStringResult(1, "STAT_I_STUFE_HO");
+            string stringResult3 = iJob.getStringResult(1, "STAT_I_STUFE_HO_BACKUP");
+            if (!IsExcludedFromILevelValidation(iJob) && (!ValidateILevelWithRegexPattern(stringResult, "ILevelWerk") || !ValidateILevelWithRegexPattern(stringResult2, "ILevelHO") || !ValidateILevelWithRegexPattern(stringResult3, "ILevelHOBackup")))
+            {
+                return false;
+            }
+            reactor.SetILevelWerk(stringResult, DataSource.Vehicle);
+            reactor.SetILevel(stringResult2, DataSource.Vehicle);
+            vecInfo.ILevelBackup = stringResult3;
+            return true;
+        }
+
+        private void HandleReadIlevelBackup(Reactor reactor, IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        {
+            IEcuJob ecuJob = ecuKom.ApiJobWithRetries("g_frm", "STATUS_VCM_I_STUFE_LESEN", string.Empty, string.Empty, retryCount);
+            if (ecuJob.IsOkay())
+            {
+                ProcessILevelJobResults(reactor, vecInfo, ecuJob);
+            }
+        }
+
+        private void HandleReadILevelForSp2021Fallback(Reactor reactor, IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        {
+            IEcuJob ecuJob = ecuKom.ApiJobWithRetries("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", string.Empty, string.Empty, retryCount);
+            if (ecuJob.IsOkay())
+            {
+                ProcessILevelJobResults(reactor, vecInfo, ecuJob);
+            }
+        }
+
+        private bool IsExcludedFromILevelValidation(IEcuJob iJob)
+        {
+            string method = Log.CurrentMethod() + "()";
+            Log.Info(method, "Check if iLevel is excluded from validation");
+            string[] source = new string[1] { "REM_20" };
+            string ecuVariante = iJob.getStringResult(0, "VARIANTE");
+            if (source.Any((string x) => x.Equals(ecuVariante, StringComparison.OrdinalIgnoreCase)))
+            {
+                Log.Info(method, "Vehicle is excluded from I-Level validation");
+                return true;
+            }
+            return false;
+        }
+
+        private bool ValidateILevelWithRegexPattern(string ilevelInput, string iLevelDescription)
+        {
+            Log.Info(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " started");
+            if (!Regex.IsMatch(ilevelInput, "([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}"))
+            {
+                Log.Warning(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " failed");
+                return false;
+            }
+            return true;
+        }
+
         public void SetSp2021Enabled(IVehicle vecInfo)
         {
             if (string.IsNullOrEmpty(vecInfo.Produktlinie) && ClientContext.GetBrand((Vehicle) vecInfo) == CharacteristicExpression.EnumBrand.BMWMotorrad)
@@ -229,7 +334,7 @@ namespace PsdzClient.Core
                                 return "E65";
                             }
                         }
-                        AddServiceCode(string.Empty, 1);
+                        AddServiceCode(Log.CurrentMethod(), 1);
                         return "-";
                     }
                     if (vecInfo.Prodart == "M")
@@ -237,7 +342,7 @@ namespace PsdzClient.Core
                         switch (vecInfo.BNType)
                         {
                             default:
-                                AddServiceCode(string.Empty, 2);
+                                AddServiceCode(Log.CurrentMethod(), 2);
                                 return "-";
                             case BNType.BN2000_MOTORBIKE:
                                 return "MRK24";
@@ -247,14 +352,13 @@ namespace PsdzClient.Core
                                 return "MRK24";
                         }
                     }
-                    AddServiceCode(string.Empty, 3);
+                    AddServiceCode(Log.CurrentMethod(), 3);
                     return "";
                 case BNType.IBUS:
                     return "-";
             }
         }
 
-        // ToDo: Check on update
         public string GetMainSeriesSgbdAdditional(IVehicle vecInfo)
         {
             Log.Info(Log.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional");
@@ -267,12 +371,12 @@ namespace PsdzClient.Core
                     {
                         if (!(text == "PL6"))
                         {
-                            AddServiceCode(string.Empty, 3);
+                            AddServiceCode(Log.CurrentMethod(), 3);
                             Log.Info(Log.CurrentMethod(), "Reached default block, produck line: " + vecInfo.Produktlinie);
                         }
                         else if (!vecInfo.C_DATETIME.HasValue)
                         {
-                            AddServiceCode(string.Empty, 2);
+                            AddServiceCode(Log.CurrentMethod(), 2);
                             Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                             if (vecInfo.Ereihe == "F01" || vecInfo.Ereihe == "F02" || vecInfo.Ereihe == "F03" || vecInfo.Ereihe == "F04" || vecInfo.Ereihe == "F06" || vecInfo.Ereihe == "F07" || vecInfo.Ereihe == "F10" || vecInfo.Ereihe == "F11" || vecInfo.Ereihe == "F12" || vecInfo.Ereihe == "F13" || vecInfo.Ereihe == "F18")
                             {
@@ -290,7 +394,7 @@ namespace PsdzClient.Core
                     {
                         if (!vecInfo.C_DATETIME.HasValue)
                         {
-                            AddServiceCode(string.Empty, 1);
+                            AddServiceCode(Log.CurrentMethod(), 1);
                             Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                             return "RR1_2020";
                         }
@@ -391,7 +495,7 @@ namespace PsdzClient.Core
                             {
                                 if (!vecInfo.C_DATETIME.HasValue)
                                 {
-                                    AddServiceCode(string.Empty, 1);
+                                    AddServiceCode(Log.CurrentMethod(), 1);
                                     Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                     list.Add(16);
                                     list.Add(50);
@@ -414,7 +518,7 @@ namespace PsdzClient.Core
                                 {
                                     if (!vecInfo.C_DATETIME.HasValue)
                                     {
-                                        AddServiceCode(string.Empty, 3);
+                                        AddServiceCode(Log.CurrentMethod(), 3);
                                         Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                         list.Add(16);
                                         list.Add(50);
@@ -444,7 +548,7 @@ namespace PsdzClient.Core
                             }
                             else if (!vecInfo.C_DATETIME.HasValue)
                             {
-                                AddServiceCode(string.Empty, 2);
+                                AddServiceCode(Log.CurrentMethod(), 2);
                                 Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
                                 list.Add(16);
                                 list.Add(50);
@@ -512,7 +616,7 @@ namespace PsdzClient.Core
         public BNType GetBNType(IVehicle vecInfo)
         {
             if (vecInfo == null)
-            {
+            {   // [UH] added
                 return BNType.UNKNOWN;
             }
             if (vecInfo.Prodart == "P")
@@ -713,7 +817,7 @@ namespace PsdzClient.Core
         {
             if ((string.Compare(vecInfo.Ereihe, "M12", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "M2_", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && string.Compare(typsnr, "CZ31", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                AddServiceCode(string.Empty, 1);
+                AddServiceCode(Log.CurrentMethod(), 1);
                 vecInfo.VerkaufsBezeichnung = "ACTIVEE";
                 vecInfo.Motor = "IB1";
                 vecInfo.Leistung = "23";
@@ -734,7 +838,7 @@ namespace PsdzClient.Core
             }
             if ((string.Compare(vecInfo.Ereihe, "E82", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && (string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP33", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP3C", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP9C", StringComparison.OrdinalIgnoreCase) == 0))
             {
-                AddServiceCode(string.Empty, 2);
+                AddServiceCode(Log.CurrentMethod(), 2);
                 vecInfo.VerkaufsBezeichnung = "ActiveE";
                 vecInfo.Motor = "IB1";
                 vecInfo.Leistung = "23";
@@ -755,7 +859,7 @@ namespace PsdzClient.Core
             }
             if (string.Compare(vecInfo.Ereihe, "R56", StringComparison.OrdinalIgnoreCase) == 0 && (string.Compare(typsnr, "MF74", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "MF84", StringComparison.OrdinalIgnoreCase) == 0))
             {
-                AddServiceCode(string.Empty, 3);
+                AddServiceCode(Log.CurrentMethod(), 3);
                 vecInfo.VerkaufsBezeichnung = "MINI E";
                 vecInfo.Motor = "I15";
                 vecInfo.Leistung = "140";
@@ -929,6 +1033,16 @@ namespace PsdzClient.Core
             return null;
         }
 
+        public void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob)
+        {
+            MaskResultFASTARelevant(ecuJob, 1, 1, new List<string>
+        {
+            "F_ORT_NR", "F_EREIGNIS_DTC", "F_UEBERLAUF", "F_VORHANDEN_NR", "F_READY_NR", "F_WARNUNG_NR", "F_HFK", "F_HLZ", "F_SAE_CODE_STRING", "F_HEX_CODE",
+            "F_FEHLERKLASSE"
+        });
+            MaskResultFASTARelevant(ecuJob, 1, -2, new List<string> { "F_UW_KM", "F_UW_KM_SUPREME", "F_UW_ZEIT", "F_UW_ZEIT_SUPREME", "F_UW_ANZ", "F_UW*_NR", "F_UW*_WERT", "F_UW_BN", "F_UW_TN" });
+        }
+
         public bool CheckForSpecificModelPopUpForElectricalChecks(string ereihe)
         {
             if (!specificModelsNoPopUp.Contains(ereihe))
@@ -940,16 +1054,6 @@ namespace PsdzClient.Core
                 }
             }
             return false;
-        }
-
-        public void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob)
-        {
-            MaskResultFASTARelevant(ecuJob, 1, 1, new List<string>
-            {
-                "F_ORT_NR", "F_EREIGNIS_DTC", "F_UEBERLAUF", "F_VORHANDEN_NR", "F_READY_NR", "F_WARNUNG_NR", "F_HFK", "F_HLZ", "F_SAE_CODE_STRING", "F_HEX_CODE",
-                "F_FEHLERKLASSE"
-            });
-            MaskResultFASTARelevant(ecuJob, 1, -2, new List<string> { "F_UW_KM", "F_UW_KM_SUPREME", "F_UW_ZEIT", "F_UW_ZEIT_SUPREME", "F_UW_ANZ", "F_UW*_NR", "F_UW*_WERT", "F_UW_BN", "F_UW_TN" });
         }
 
         public string GetFourCharEreihe(string ereihe)
@@ -1235,111 +1339,6 @@ namespace PsdzClient.Core
                 }
             }
             return null;
-        }
-
-        public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
-        {
-            // [UH] get reactor from vehicle
-            Reactor reactor = (vecInfo as Vehicle)?.Reactor;
-            if (reactor == null)
-            {
-                return;
-            }
-
-            IEcuJob ecuJob = new ECUJob();
-            if (IsSp2021Gateway(vecInfo, ecuKom, retryCount))
-            {
-                ecuJob = ecuKom.ApiJobWithRetries("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR", string.Empty, string.Empty, retryCount);
-                if (!ecuJob.IsOkay())
-                {
-                    HandleReadILevelForSp2021Fallback(reactor, vecInfo, ecuKom, retryCount);
-                }
-                else if (!ProcessILevelJobResults(reactor, vecInfo, ecuJob))
-                {
-                    HandleReadILevelForSp2021Fallback(reactor, vecInfo, ecuKom, retryCount);
-                }
-            }
-            else
-            {
-                ecuJob = ecuKom.ApiJobWithRetries("g_zgw", "STATUS_VCM_I_STUFE_LESEN", string.Empty, string.Empty, retryCount);
-                if (!ecuJob.IsOkay())
-                {
-                    HandleReadIlevelBackup(reactor, vecInfo, ecuKom, retryCount);
-                }
-                else if (!ProcessILevelJobResults(reactor, vecInfo, ecuJob))
-                {
-                    HandleReadIlevelBackup(reactor, vecInfo, ecuKom, retryCount);
-                }
-            }
-            if (!string.IsNullOrEmpty(vecInfo.ILevel))
-            {
-                if (vecInfo.ILevel.Length < 4 || vecInfo.ILevel.Contains("UNBEK"))
-                {
-                    vecInfo.ILevel = vecInfo.ILevelWerk;
-                }
-            }
-            else
-            {
-                vecInfo.ILevel = vecInfo.ILevelWerk;
-            }
-        }
-
-        public bool ProcessILevelJobResults(Reactor reactor, IVehicle vecInfo, IEcuJob iJob)
-        {
-            string stringResult = iJob.getStringResult(1, "STAT_I_STUFE_WERK");
-            string stringResult2 = iJob.getStringResult(1, "STAT_I_STUFE_HO");
-            string stringResult3 = iJob.getStringResult(1, "STAT_I_STUFE_HO_BACKUP");
-            if (!IsExcludedFromILevelValidation(iJob) && (!ValidateILevelWithRegexPattern(stringResult, "ILevelWerk") || !ValidateILevelWithRegexPattern(stringResult2, "ILevelHO") || !ValidateILevelWithRegexPattern(stringResult3, "ILevelHOBackup")))
-            {
-                return false;
-            }
-            reactor.SetILevelWerk(stringResult, DataSource.Vehicle);
-            reactor.SetILevel(stringResult2, DataSource.Vehicle);
-            vecInfo.ILevelBackup = stringResult3;
-            return true;
-        }
-
-        private void HandleReadIlevelBackup(Reactor reactor, IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
-        {
-            IEcuJob ecuJob = ecuKom.ApiJobWithRetries("g_frm", "STATUS_VCM_I_STUFE_LESEN", string.Empty, string.Empty, retryCount);
-            if (ecuJob.IsOkay())
-            {
-                ProcessILevelJobResults(reactor, vecInfo, ecuJob);
-            }
-        }
-
-        private void HandleReadILevelForSp2021Fallback(Reactor reactor, IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
-        {
-            IEcuJob ecuJob = ecuKom.ApiJobWithRetries("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", string.Empty, string.Empty, retryCount);
-            if (ecuJob.IsOkay())
-            {
-                ProcessILevelJobResults(reactor, vecInfo, ecuJob);
-            }
-        }
-
-        private bool IsExcludedFromILevelValidation(IEcuJob iJob)
-        {
-            string method = Log.CurrentMethod() + "()";
-            Log.Info(method, "Check if iLevel is excluded from validation");
-            string[] source = new string[1] { "REM_20" };
-            string ecuVariante = iJob.getStringResult(0, "VARIANTE");
-            if (source.Any((string x) => x.Equals(ecuVariante, StringComparison.OrdinalIgnoreCase)))
-            {
-                Log.Info(method, "Vehicle is excluded from I-Level validation");
-                return true;
-            }
-            return false;
-        }
-
-        private bool ValidateILevelWithRegexPattern(string ilevelInput, string iLevelDescription)
-        {
-            Log.Info(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " started");
-            if (!Regex.IsMatch(ilevelInput, ILevelBN2020RegexPattern))
-            {
-                Log.Warning(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " failed");
-                return false;
-            }
-            return true;
         }
     }
 }
