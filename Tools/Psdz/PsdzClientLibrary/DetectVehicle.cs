@@ -10,6 +10,7 @@ using EdiabasLib;
 using log4net;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
+using PsdzClient.Programming;
 using PsdzClientLibrary.Core;
 
 namespace PsdzClient
@@ -77,7 +78,6 @@ namespace PsdzClient
 
             try
             {
-                IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
                 List<JobInfo> readVinJobsBmwFast = new List<JobInfo>(ReadVinJobsBmwFast);
                 List<JobInfo> readFaJobsBmwFast = new List<JobInfo>(ReadFaJobsBmwFast);
                 List<JobInfo> readILevelJobsBmwFast = new List<JobInfo>(ReadILevelJobsBmwFast);
@@ -184,13 +184,9 @@ namespace PsdzClient
                         vehicleIdent.Modelltag = "01";
                         vehicleIdent.VCI.VCIType = VCIDeviceType.EDIABAS;
 
-                        VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
-                        foreach (PsdzDatabase.Characteristics characteristics in characteristicsList)
+                        if (!PsdzContext.UpdateAllVehicleCharacteristics(characteristicsList, _pdszDatabase, vehicleIdent))
                         {
-                            if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, vehicleIdent, characteristics))
-                            {
-                                log.ErrorFormat("DetectVehicleBmwFast AssignVehicleCharacteristic failed");
-                            }
+                            log.ErrorFormat("DetectVehicleBmwFast UpdateAllVehicleCharacteristics failed");
                         }
 
                         if (!string.IsNullOrEmpty(vehicleIdent.Getriebe))

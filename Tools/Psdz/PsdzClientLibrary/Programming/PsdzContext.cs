@@ -669,15 +669,7 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            if (!AssignVehicleCharacteristics(characteristicsList, VecInfo))
-            {
-                return false; 
-            }
-
-            string typsnr = !string.IsNullOrEmpty(VecInfo.Typ) ? VecInfo.Typ : VecInfo.VINType;
-            service.SpecialTreatmentBasedOnEreihe(typsnr, VecInfo);
-
-            if (!UpdateAlpinaCharacteristics(programmingService.PsdzDatabase, VecInfo))
+            if (!UpdateAllVehicleCharacteristics(characteristicsList, programmingService.PsdzDatabase, VecInfo))
             {
                 return false;
             }
@@ -736,6 +728,30 @@ namespace PsdzClient.Programming
             if (list.Any())
             {
                 return AssignVehicleCharacteristics(list, vehicle);
+            }
+
+            return true;
+        }
+
+        public static bool UpdateAllVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, PsdzDatabase database, Vehicle vehicle)
+        {
+            if (database == null || vehicle == null)
+            {
+                return false;
+            }
+
+            if (!AssignVehicleCharacteristics(characteristics, vehicle))
+            {
+                return false;
+            }
+
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
+            string typsnr = !string.IsNullOrEmpty(vehicle.Typ) ? vehicle.Typ : vehicle.VINType;
+            service.SpecialTreatmentBasedOnEreihe(typsnr, vehicle);
+
+            if (!UpdateAlpinaCharacteristics(database, vehicle))
+            {
+                return false;
             }
 
             return true;

@@ -4015,17 +4015,9 @@ namespace PsdzClient
                         vehicleIdent.Modellmonat = "01";
                         vehicleIdent.Modelltag = "01";
 
-                        if (!PsdzContext.AssignVehicleCharacteristics(characteristicsList, vehicleIdent))
+                        if (!PsdzContext.UpdateAllVehicleCharacteristics(characteristicsList, this, vehicleIdent))
                         {
-                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles AssignVehicleCharacteristics failed");
-                        }
-
-                        string typsnr = !string.IsNullOrEmpty(vehicleIdent.Typ) ? vehicleIdent.Typ : vehicleIdent.VINType;
-                        service.SpecialTreatmentBasedOnEreihe(typsnr, vehicleIdent);
-
-                        if (!PsdzContext.UpdateAlpinaCharacteristics(this, vehicleIdent))
-                        {
-                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles UpdateAlpinaCharacteristics failed");
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles UpdateAllVehicleCharacteristics failed");
                         }
 
                         string series = vehicleIdent.Ereihe;
