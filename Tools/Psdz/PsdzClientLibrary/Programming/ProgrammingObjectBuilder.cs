@@ -5,10 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Programming.API;
-using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -18,7 +14,6 @@ using BMW.Rheingold.Psdz.Model.Swt;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
-using PsdzClient.Programming.BMW.Rheingold.Programming.API;
 using PsdzClient.Utility;
 using PsdzClientLibrary.Core;
 
@@ -205,7 +200,7 @@ namespace BMW.Rheingold.Programming.API
             if (sollVerbauung != null && sollVerbauung.Svt != null)
             {
                 IPsdzSvt svt = sollVerbauung.Svt;
-                IPsdzOrderList psdzOrderList = sollVerbauung.PsdzOrderList;
+                _ = sollVerbauung.PsdzOrderList;
                 SystemVerbauTabelle systemVerbauTabelle = new SystemVerbauTabelle();
                 systemVerbauTabelle.Version = svt.Version;
                 systemVerbauTabelle.HoSignature = svt.HoSignature;
@@ -226,7 +221,6 @@ namespace BMW.Rheingold.Programming.API
                         }
                         systemVerbauTabelle.AddEcu(ecuObj);
                     }
-                    return systemVerbauTabelle;
                 }
                 return systemVerbauTabelle;
             }
@@ -374,7 +368,7 @@ namespace BMW.Rheingold.Programming.API
 
         public ISwtApplicationId BuildSwtApplicationId(int appNo, int upgradeIdx)
         {
-            return new SwtApplicationIdObj(appNo, upgradeIdx);
+            return new PsdzClient.Programming.BMW.Rheingold.Programming.API.SwtApplicationIdObj(appNo, upgradeIdx);
         }
 
         public IFetchEcuCertCheckingResult Build(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
@@ -519,7 +513,7 @@ namespace BMW.Rheingold.Programming.API
 			return new IntegrationLevelTriple(istufenTriple.Shipment, istufenTriple.Last, istufenTriple.Current);
 		}
 
-		internal SystemVerbauKennung Build(ISvk svkInput)
+		internal SystemVerbauKennung Build(CoreFramework.Contracts.Vehicle.ISvk svkInput)
 		{
 			if (svkInput == null)
 			{
