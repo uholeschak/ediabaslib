@@ -669,16 +669,17 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            if (!AssignVehicleCharacteristics(characteristicsList))
+            if (!AssignVehicleCharacteristics(characteristicsList, VecInfo))
             {
                 return false; 
             }
 
             string typsnr = !string.IsNullOrEmpty(VecInfo.Typ) ? VecInfo.Typ : VecInfo.VINType;
             service.SpecialTreatmentBasedOnEreihe(typsnr, VecInfo);
-            if (!UpdateAlpinaCharacteristics(programmingService))
+
+            if (!UpdateAlpinaCharacteristics(programmingService.PsdzDatabase, VecInfo))
             {
-                return false; 
+                return false;
             }
 
             UpdateSALocalizedItems(programmingService, clientContext);
@@ -706,15 +707,19 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public bool AssignVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics)
+        public static bool AssignVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, Vehicle vehicle)
         {
-            VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
+            if (vehicle == null)
+            {
+                return false; 
+            }
 
+            VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
             foreach (PsdzDatabase.Characteristics characteristic in characteristics)
             {
-                if (string.IsNullOrEmpty(VecInfo.VerkaufsBezeichnung) || !(characteristic.RootNodeClass == "40143490"))
+                if (string.IsNullOrEmpty(vehicle.VerkaufsBezeichnung) || !(characteristic.RootNodeClass == "40143490"))
                 {
-                    if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristic.RootNodeClass, VecInfo, characteristic))
+                    if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristic.RootNodeClass, vehicle, characteristic))
                     {
                         return false;
                     }
@@ -724,13 +729,13 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public bool UpdateAlpinaCharacteristics(ProgrammingService programmingService)
+        public static bool UpdateAlpinaCharacteristics(PsdzDatabase database, Vehicle vehicle)
         {
             List<PsdzDatabase.Characteristics> list = new List<PsdzDatabase.Characteristics>();
-            programmingService.PsdzDatabase.GetAlpinaCharacteristics(VecInfo, list);
+            database.GetAlpinaCharacteristics(vehicle, list);
             if (list.Any())
             {
-                return AssignVehicleCharacteristics(list);
+                return AssignVehicleCharacteristics(list, vehicle);
             }
 
             return true;

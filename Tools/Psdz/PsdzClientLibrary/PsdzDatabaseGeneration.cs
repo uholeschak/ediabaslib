@@ -19,6 +19,7 @@ using HarmonyLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using PsdzClient.Core;
+using PsdzClient.Programming;
 using PsdzClientLibrary.Core;
 
 namespace PsdzClient
@@ -4014,17 +4015,18 @@ namespace PsdzClient
                         vehicleIdent.Modellmonat = "01";
                         vehicleIdent.Modelltag = "01";
 
-                        VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
-                        foreach (Characteristics characteristics in characteristicsList)
+                        if (!PsdzContext.AssignVehicleCharacteristics(characteristicsList, vehicleIdent))
                         {
-                            if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristics.RootNodeClass, vehicleIdent, characteristics))
-                            {
-                                log.ErrorFormat("ExtractEcuCharacteristicsVehicles AssignVehicleCharacteristic failed");
-                            }
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles AssignVehicleCharacteristics failed");
                         }
 
                         string typsnr = !string.IsNullOrEmpty(vehicleIdent.Typ) ? vehicleIdent.Typ : vehicleIdent.VINType;
                         service.SpecialTreatmentBasedOnEreihe(typsnr, vehicleIdent);
+
+                        if (!PsdzContext.UpdateAlpinaCharacteristics(this, vehicleIdent))
+                        {
+                            log.ErrorFormat("ExtractEcuCharacteristicsVehicles UpdateAlpinaCharacteristics failed");
+                        }
 
                         string series = vehicleIdent.Ereihe;
                         string modelSeries = vehicleIdent.Baureihenverbund;
