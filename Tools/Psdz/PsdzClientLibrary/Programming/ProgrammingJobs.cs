@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
@@ -2436,6 +2437,13 @@ namespace PsdzClient.Programming
                     sbResult.AppendLine(Strings.RequestedPlannedConstructionFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
+                }
+
+                ProgrammingObjectBuilder programmingObjectBuilder = ProgrammingService.ProgrammingInfos?.ProgrammingObjectBuilder;
+                if (programmingObjectBuilder != null)
+                {
+                    IDictionary<string, string> orderNumbers = new Dictionary<string, string>();
+                    programmingObjectBuilder.FillOrderNumbers(psdzSollverbauung, orderNumbers);
                 }
 
                 PsdzContext.SetSollverbauung(psdzSollverbauung);

@@ -153,7 +153,6 @@ namespace BMW.Rheingold.Programming.API
                     IEcuObj ecu = Build(item);
                     systemVerbauTabelle.AddEcu(ecu);
                 }
-                return systemVerbauTabelle;
             }
             return systemVerbauTabelle;
         }
