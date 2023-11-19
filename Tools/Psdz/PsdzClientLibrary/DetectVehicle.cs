@@ -193,9 +193,6 @@ namespace PsdzClient
                             }
                         }
 
-                        string typsnr = !string.IsNullOrEmpty(vehicleIdent.Typ) ? vehicleIdent.Typ : vehicleIdent.VINType;
-                        service.SpecialTreatmentBasedOnEreihe(typsnr, vehicleIdent);
-
                         if (!string.IsNullOrEmpty(vehicleIdent.Getriebe))
                         {
                             TransmissionType = vehicleIdent.Getriebe;

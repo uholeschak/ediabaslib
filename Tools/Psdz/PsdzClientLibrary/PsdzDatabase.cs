@@ -2876,9 +2876,9 @@ namespace PsdzClient
         public List<Characteristics> GetVehicleCharacteristics(Vehicle vehicle)
         {
             List<Characteristics> characteristicsList = GetVehicleCharacteristicsFromDatabase(vehicle, false);
-            if (characteristicsList != null && characteristicsList.Count > 0 && IsVehicleAnAlpina(vehicle))
+            if (characteristicsList != null && characteristicsList.Count > 0)
             {
-                HandleAlpinaVehicles(vehicle, characteristicsList);
+                GetAlpinaCharacteristics(vehicle, characteristicsList);
             }
 
             return characteristicsList;
@@ -2918,8 +2918,13 @@ namespace PsdzClient
             return result;
         }
 
-        private void HandleAlpinaVehicles(Vehicle vehicle, List<Characteristics> characteristicsList)
+        public void GetAlpinaCharacteristics(Vehicle vehicle, List<Characteristics> characteristicsList)
         {
+            if (!IsVehicleAnAlpina(vehicle))
+            {
+                return;
+            }
+
             log.InfoFormat("HandleAlpinaVehicles List size: {0}", characteristicsList.Count);
             List<Characteristics> vehicleCharacteristicsFromDatabase = GetVehicleCharacteristicsFromDatabase(vehicle, true);
             if (vehicleCharacteristicsFromDatabase != null)
