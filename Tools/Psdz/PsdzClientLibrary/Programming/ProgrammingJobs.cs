@@ -2434,6 +2434,7 @@ namespace PsdzClient.Programming
 
                 if (psdzSollverbauung == null)
                 {
+                    ProgrammingService.ProgrammingInfos.SetSvkTargetForEachEcu(null);
                     sbResult.AppendLine(Strings.RequestedPlannedConstructionFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
