@@ -2432,23 +2432,25 @@ namespace PsdzClient.Programming
                     log.ErrorFormat(CultureInfo.InvariantCulture, "VehicleFunctions Planned construction general Exception: {0}", ex.Message);
                 }
 
+                EcuProgrammingInfos ecuProgrammingInfos = ProgrammingService.ProgrammingInfos;
                 if (psdzSollverbauung == null)
                 {
-                    ProgrammingService.ProgrammingInfos.SetSvkTargetForEachEcu(null);
+                    ecuProgrammingInfos?.SetSvkTargetForEachEcu(null);
                     sbResult.AppendLine(Strings.RequestedPlannedConstructionFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                ProgrammingObjectBuilder programmingObjectBuilder = ProgrammingService.ProgrammingInfos?.ProgrammingObjectBuilder;
+                ISvt svtTarget = null;
+                ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
                 if (programmingObjectBuilder != null)
                 {
                     IDictionary<string, string> orderNumbers = new Dictionary<string, string>();
                     programmingObjectBuilder.FillOrderNumbers(psdzSollverbauung, orderNumbers);
-                    ISvt svtTarget = programmingObjectBuilder.Build(psdzSollverbauung, orderNumbers);
-                    ProgrammingService.ProgrammingInfos.SetSvkTargetForEachEcu(svtTarget);
+                    svtTarget = programmingObjectBuilder.Build(psdzSollverbauung, orderNumbers);
                 }
 
+                ecuProgrammingInfos?.SetSvkTargetForEachEcu(svtTarget);
                 PsdzContext.SetSollverbauung(psdzSollverbauung);
                 if (psdzSollverbauung.PsdzOrderList != null)
                 {
