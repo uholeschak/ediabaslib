@@ -2444,6 +2444,8 @@ namespace PsdzClient.Programming
                 {
                     IDictionary<string, string> orderNumbers = new Dictionary<string, string>();
                     programmingObjectBuilder.FillOrderNumbers(psdzSollverbauung, orderNumbers);
+                    ISvt svtTarget = programmingObjectBuilder.Build(psdzSollverbauung, orderNumbers);
+                    ProgrammingService.ProgrammingInfos.SetSvkTargetForEachEcu(svtTarget);
                 }
 
                 PsdzContext.SetSollverbauung(psdzSollverbauung);
