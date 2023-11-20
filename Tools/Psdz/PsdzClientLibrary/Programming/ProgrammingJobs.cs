@@ -2165,8 +2165,12 @@ namespace PsdzClient.Programming
                 log.InfoFormat(CultureInfo.InvariantCulture, "Building SVT");
                 EcuProgrammingInfos ecuProgrammingInfos = ProgrammingService.ProgrammingInfos;
                 ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
-                ISvt svtCurrent = programmingObjectBuilder?.Build(psdzStandardSvtNames);
-                ecuProgrammingInfos?.SetSvkCurrentForEachEcu(svtCurrent);
+                if (ecuProgrammingInfos != null && programmingObjectBuilder != null)
+                {
+                    ISvt svtCurrent = programmingObjectBuilder.Build(psdzStandardSvtNames);
+                    ecuProgrammingInfos.SetSvkCurrentForEachEcu(svtCurrent);
+                }
+
                 IPsdzSvt psdzSvt = ProgrammingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
                 if (psdzSvt == null)
                 {
@@ -2443,15 +2447,14 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                ISvt svtTarget = null;
-                if (programmingObjectBuilder != null)
+                if (ecuProgrammingInfos != null && programmingObjectBuilder != null)
                 {
                     IDictionary<string, string> orderNumbers = new Dictionary<string, string>();
                     programmingObjectBuilder.FillOrderNumbers(psdzSollverbauung, orderNumbers);
-                    svtTarget = programmingObjectBuilder.Build(psdzSollverbauung, orderNumbers);
+                    ISvt svtTarget = programmingObjectBuilder.Build(psdzSollverbauung, orderNumbers);
+                    ecuProgrammingInfos.SetSvkTargetForEachEcu(svtTarget);
                 }
 
-                ecuProgrammingInfos?.SetSvkTargetForEachEcu(svtTarget);
                 PsdzContext.SetSollverbauung(psdzSollverbauung);
                 if (psdzSollverbauung.PsdzOrderList != null)
                 {
