@@ -2163,6 +2163,10 @@ namespace PsdzClient.Programming
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Building SVT");
+                EcuProgrammingInfos ecuProgrammingInfos = ProgrammingService.ProgrammingInfos;
+                ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
+                ISvt svtCurrent = programmingObjectBuilder?.Build(psdzStandardSvtNames);
+                ecuProgrammingInfos?.SetSvkCurrentForEachEcu(svtCurrent);
                 IPsdzSvt psdzSvt = ProgrammingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
                 if (psdzSvt == null)
                 {
@@ -2432,17 +2436,14 @@ namespace PsdzClient.Programming
                     log.ErrorFormat(CultureInfo.InvariantCulture, "VehicleFunctions Planned construction general Exception: {0}", ex.Message);
                 }
 
-                EcuProgrammingInfos ecuProgrammingInfos = ProgrammingService.ProgrammingInfos;
                 if (psdzSollverbauung == null)
                 {
-                    ecuProgrammingInfos?.SetSvkTargetForEachEcu(null);
                     sbResult.AppendLine(Strings.RequestedPlannedConstructionFailed);
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
                 ISvt svtTarget = null;
-                ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
                 if (programmingObjectBuilder != null)
                 {
                     IDictionary<string, string> orderNumbers = new Dictionary<string, string>();
