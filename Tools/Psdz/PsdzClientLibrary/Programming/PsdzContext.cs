@@ -197,6 +197,10 @@ namespace PsdzClient.Programming
 
         public Vehicle VecInfo { get; set; }
 
+        public ISvt SvtCurrent { get; set; }
+
+        public ISvt SvtTarget { get; set; }
+
         public IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
 
         public IDictionary<string, IList<string>> ExecutionOrderBottom { get; private set; }
