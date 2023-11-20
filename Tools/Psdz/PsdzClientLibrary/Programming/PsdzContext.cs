@@ -703,6 +703,23 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        public void SetSvtCurrent(ProgrammingService programmingService, IPsdzStandardSvt standardSvt, string vin17)
+        {
+            EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
+            ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
+            if (ecuProgrammingInfos == null || programmingObjectBuilder == null)
+            {
+                SvtCurrent = null;
+                SetSvtActual(null);
+                return;
+            }
+
+            SvtCurrent = programmingObjectBuilder.Build(standardSvt);
+            ecuProgrammingInfos.SetSvkCurrentForEachEcu(SvtCurrent);
+            IPsdzSvt psdzSvt = programmingService.Psdz.ObjectBuilder.BuildSvt(standardSvt, vin17);
+            SetSvtActual(psdzSvt);
+        }
+
         public static bool AssignVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, Vehicle vehicle)
         {
             if (vehicle == null)

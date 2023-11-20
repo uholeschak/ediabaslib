@@ -2163,18 +2163,8 @@ namespace PsdzClient.Programming
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Building SVT");
-                EcuProgrammingInfos ecuProgrammingInfos = ProgrammingService.ProgrammingInfos;
-                ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
-                ISvt svtCurrent = null;
-                if (ecuProgrammingInfos != null && programmingObjectBuilder != null)
-                {
-                    svtCurrent = programmingObjectBuilder.Build(psdzStandardSvtNames);
-                    ecuProgrammingInfos.SetSvkCurrentForEachEcu(svtCurrent);
-                }
-
-                PsdzContext.SvtCurrent = svtCurrent;
-                IPsdzSvt psdzSvt = ProgrammingService.Psdz.ObjectBuilder.BuildSvt(psdzStandardSvtNames, psdzVin.Value);
-                if (psdzSvt == null)
+                PsdzContext.SetSvtCurrent(ProgrammingService, psdzStandardSvtNames, psdzVin.Value);
+                if (PsdzContext.SvtActual == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Building SVT failed");
                     sbResult.AppendLine(Strings.DetectInstalledEcusFailed);
@@ -2182,10 +2172,9 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                PsdzContext.SetSvtActual(psdzSvt);
                 cts?.Token.ThrowIfCancellationRequested();
 
-                ProgrammingService.PsdzDatabase.LinkSvtEcus(PsdzContext.DetectVehicle.EcuListPsdz, psdzSvt);
+                ProgrammingService.PsdzDatabase.LinkSvtEcus(PsdzContext.DetectVehicle.EcuListPsdz, PsdzContext.SvtActual);
                 List<PsdzDatabase.EcuInfo> individualEcus = PsdzContext.GetEcuList(true);
                 if (individualEcus != null)
                 {
@@ -2449,6 +2438,8 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
+                EcuProgrammingInfos ecuProgrammingInfos = ProgrammingService.ProgrammingInfos;
+                ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
                 ISvt svtTarget = null;
                 if (ecuProgrammingInfos != null && programmingObjectBuilder != null)
                 {
