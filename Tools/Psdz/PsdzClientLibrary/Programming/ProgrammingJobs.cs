@@ -2440,17 +2440,10 @@ namespace PsdzClient.Programming
 
                 EcuProgrammingInfos ecuProgrammingInfos = ProgrammingService.ProgrammingInfos;
                 ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
-                ISvt svtTarget = null;
-                if (ecuProgrammingInfos != null && programmingObjectBuilder != null)
-                {
-                    IDictionary<string, string> orderNumbers = new Dictionary<string, string>();
-                    programmingObjectBuilder.FillOrderNumbers(psdzSollverbauung, orderNumbers);
-                    svtTarget = programmingObjectBuilder.Build(psdzSollverbauung, orderNumbers);
-                    ecuProgrammingInfos.SetSvkTargetForEachEcu(svtTarget);
-                }
+                IDictionary<string, string> orderNumbers = new Dictionary<string, string>();
+                programmingObjectBuilder?.FillOrderNumbers(psdzSollverbauung, orderNumbers);
+                PsdzContext.SetSollverbauung(ProgrammingService, psdzSollverbauung, orderNumbers);
 
-                PsdzContext.SvtTarget = svtTarget;
-                PsdzContext.SetSollverbauung(psdzSollverbauung);
                 if (psdzSollverbauung.PsdzOrderList != null)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Target construction: Count={0}, Units={1}",

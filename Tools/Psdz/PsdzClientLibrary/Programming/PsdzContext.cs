@@ -197,9 +197,9 @@ namespace PsdzClient.Programming
 
         public Vehicle VecInfo { get; set; }
 
-        public ISvt SvtCurrent { get; set; }
+        public ISvt SvtTarget { get; private set; }
 
-        public ISvt SvtTarget { get; set; }
+        public ISvt SvtCurrent { get; private set; }
 
         public IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
 
@@ -703,20 +703,30 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        // From ProgrammingSession
+        public void SetSollverbauung(ProgrammingService programmingService, IPsdzSollverbauung sollverbauung, IDictionary<string, string> orderNumbers = null)
+        {
+            EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
+            ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
+            SvtTarget = sollverbauung != null ? programmingObjectBuilder?.Build(sollverbauung, orderNumbers ?? new Dictionary<string, string>()) : null;
+            ecuProgrammingInfos?.SetSvkTargetForEachEcu(SvtTarget);
+            SetSollverbauung(sollverbauung);
+        }
+
+        // From ProgrammingSession
+        public void SetSvtCurrent(ProgrammingService programmingService, IPsdzStandardSvt standardSvt)
+        {
+            SetSvtCurrent(programmingService, standardSvt, VecInfo.VIN17);
+        }
+
+        // From ProgrammingSession
         public void SetSvtCurrent(ProgrammingService programmingService, IPsdzStandardSvt standardSvt, string vin17)
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
             ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
-            if (ecuProgrammingInfos == null || programmingObjectBuilder == null)
-            {
-                SvtCurrent = null;
-                SetSvtActual(null);
-                return;
-            }
-
-            SvtCurrent = programmingObjectBuilder.Build(standardSvt);
-            ecuProgrammingInfos.SetSvkCurrentForEachEcu(SvtCurrent);
-            IPsdzSvt psdzSvt = programmingService.Psdz.ObjectBuilder.BuildSvt(standardSvt, vin17);
+            SvtCurrent = programmingObjectBuilder?.Build(standardSvt);
+            ecuProgrammingInfos?.SetSvkCurrentForEachEcu(SvtCurrent);
+            IPsdzSvt psdzSvt = programmingService?.Psdz?.ObjectBuilder?.BuildSvt(standardSvt, vin17);
             SetSvtActual(psdzSvt);
         }
 
