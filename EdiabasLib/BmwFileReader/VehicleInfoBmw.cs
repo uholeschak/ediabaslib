@@ -978,7 +978,7 @@ namespace BmwFileReader
                         }
                     }
 
-                    if (!matched && dateValue >= 0 && !string.IsNullOrEmpty(vehicleSeriesInfo.Date) && !string.IsNullOrEmpty(vehicleSeriesInfo.DateCompare))
+                    if (matched && dateValue >= 0 && !string.IsNullOrEmpty(vehicleSeriesInfo.Date) && !string.IsNullOrEmpty(vehicleSeriesInfo.DateCompare))
                     {
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Checking date");
 
@@ -1025,28 +1025,10 @@ namespace BmwFileReader
                         if (vehicleSeriesInfoMatch != null)
                         {
                             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched date expression: {0} {1}", vehicleSeriesInfoMatch.DateCompare, vehicleSeriesInfoMatch.Date);
-                            matched = true;
                         }
-                    }
-
-                    if (!matched && detectVehicleBmw != null && vehicleSeriesInfo.RuleEcus != null && vehicleSeriesInfo.RuleEcus.Count > 0)
-                    {
-                        foreach (VehicleStructsBmw.VehicleEcuInfo ecuInfo in vehicleSeriesInfo.RuleEcus)
+                        else
                         {
-                            if (!string.IsNullOrEmpty(ecuInfo.GroupSgbd) && !string.IsNullOrEmpty(ecuInfo.Sgbd))
-                            {
-                                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Checking ecu name Group: {0}, Name: {1}", ecuInfo.GroupSgbd, ecuInfo.Name);
-                                string ecuName = detectVehicleBmw.GetEcuNameByIdent(ecuInfo.GroupSgbd);
-                                if (!string.IsNullOrEmpty(ecuName))
-                                {
-                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved ecu name: {0}", ecuName);
-                                    if (string.Compare(ecuName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched ecu name Group: {0}, Name: {1}", ecuInfo.GroupSgbd, ecuInfo.Name);
-                                        matched = true;
-                                    }
-                                }
-                            }
+                            matched = false;
                         }
                     }
 
@@ -1060,6 +1042,44 @@ namespace BmwFileReader
                 if (vehicleSeriesInfoMatches.Count == 1)
                 {
                     return vehicleSeriesInfoMatches[0];
+                }
+
+                List<VehicleStructsBmw.VehicleSeriesInfo> vehicleSeriesInfoMatchesEcu = new List<VehicleStructsBmw.VehicleSeriesInfo>();
+                foreach (VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo in vehicleSeriesInfoMatches)
+                {
+                    if (detectVehicleBmw != null && vehicleSeriesInfo.RuleEcus != null && vehicleSeriesInfo.RuleEcus.Count > 0)
+                    {
+                        VehicleStructsBmw.VehicleEcuInfo ecuInfoMatch = null;
+                        foreach (VehicleStructsBmw.VehicleEcuInfo ecuInfo in vehicleSeriesInfo.RuleEcus)
+                        {
+                            if (!string.IsNullOrEmpty(ecuInfo.GroupSgbd) && !string.IsNullOrEmpty(ecuInfo.Sgbd))
+                            {
+                                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Checking ecu name Group: {0}, Name: {1}", ecuInfo.GroupSgbd, ecuInfo.Name);
+                                string ecuName = detectVehicleBmw.GetEcuNameByIdent(ecuInfo.GroupSgbd);
+                                if (!string.IsNullOrEmpty(ecuName))
+                                {
+                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved ecu name: {0}", ecuName);
+                                    if (string.Compare(ecuName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        ecuInfoMatch = ecuInfo;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (ecuInfoMatch != null)
+                        {
+                            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matched ecu name Group: {0}, Name: {1}", ecuInfoMatch.GroupSgbd, ecuInfoMatch.Name);
+                            vehicleSeriesInfoMatchesEcu.Add(vehicleSeriesInfo);
+                        }
+                    }
+                }
+
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle series info matches ECU: {0}", vehicleSeriesInfoMatchesEcu.Count);
+                if (vehicleSeriesInfoMatchesEcu.Count == 1)
+                {
+                    return vehicleSeriesInfoMatchesEcu[0];
                 }
 
                 ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle info counts: ModelSerie: {0}, BrSgbd: {1}, SgbdAdd: {2}, BnType: {3}",
