@@ -2438,12 +2438,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                EcuProgrammingInfos ecuProgrammingInfos = ProgrammingService.ProgrammingInfos;
-                ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
-                IDictionary<string, string> orderNumbers = new Dictionary<string, string>();
-                programmingObjectBuilder?.FillOrderNumbers(psdzSollverbauung, orderNumbers);
-                PsdzContext.SetSollverbauung(ProgrammingService, psdzSollverbauung, orderNumbers);
-
+                PsdzContext.SetSollverbauung(ProgrammingService, psdzSollverbauung);
                 if (psdzSollverbauung.PsdzOrderList != null)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Target construction: Count={0}, Units={1}",

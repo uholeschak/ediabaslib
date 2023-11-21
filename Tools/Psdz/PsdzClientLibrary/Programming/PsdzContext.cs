@@ -708,7 +708,15 @@ namespace PsdzClient.Programming
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
             ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
-            SvtTarget = sollverbauung != null ? programmingObjectBuilder?.Build(sollverbauung, orderNumbers ?? new Dictionary<string, string>()) : null;
+
+            IDictionary<string, string> useOrderNumbers = orderNumbers;
+            if (useOrderNumbers == null)
+            {
+                useOrderNumbers = new Dictionary<string, string>();
+                programmingObjectBuilder?.FillOrderNumbers(sollverbauung, useOrderNumbers);
+            }
+
+            SvtTarget = sollverbauung != null ? programmingObjectBuilder?.Build(sollverbauung, useOrderNumbers) : null;
             ecuProgrammingInfos?.SetSvkTargetForEachEcu(SvtTarget);
             SetSollverbauung(sollverbauung);
         }
