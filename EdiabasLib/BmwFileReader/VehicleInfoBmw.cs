@@ -1116,6 +1116,11 @@ namespace BmwFileReader
 
         public static VehicleStructsBmw.VehicleEcuInfo GetEcuInfoByGroupName(VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo, string name)
         {
+            if (vehicleSeriesInfo?.EcuList == null)
+            {
+                return null;
+            }
+
             string nameLower = name.ToLowerInvariant();
             foreach (VehicleStructsBmw.VehicleEcuInfo ecuInfo in vehicleSeriesInfo.EcuList)
             {

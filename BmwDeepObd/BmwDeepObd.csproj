@@ -295,7 +295,7 @@
       <HintPath>packages\Xamarin.Google.Android.Play.Core.1.10.2.2\lib\monoandroid90\Xamarin.Google.Android.Play.Core.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Google.ErrorProne.Annotations, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Google.ErrorProne.Annotations.2.21.1.1\lib\monoandroid12.0\Xamarin.Google.ErrorProne.Annotations.dll</HintPath>
+      <HintPath>packages\Xamarin.Google.ErrorProne.Annotations.2.23.0\lib\monoandroid12.0\Xamarin.Google.ErrorProne.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Google.Guava.ListenableFuture, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.16\lib\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.dll</HintPath>
