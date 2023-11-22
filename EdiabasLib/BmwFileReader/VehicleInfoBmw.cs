@@ -1071,7 +1071,7 @@ namespace BmwFileReader
                                 if (!string.IsNullOrEmpty(ecuInfo.GroupSgbd) && !string.IsNullOrEmpty(ecuInfo.Sgbd))
                                 {
                                     ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Checking ecu name Group: {0}, Name: {1}", ecuInfo.GroupSgbd, ecuInfo.Name);
-                                    string ecuName = detectVehicleBmw.GetEcuNameByIdent(ecuInfo.GroupSgbd);
+                                    string ecuName = detectVehicleBmw.GetEcuNameByIdentCached(ecuInfo.GroupSgbd);
                                     if (!string.IsNullOrEmpty(ecuName))
                                     {
                                         ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolved ecu name: {0}", ecuName);

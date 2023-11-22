@@ -79,6 +79,10 @@ namespace BmwFileReader
                 ILevelShip = detectVehicleBmw.ILevelShip;
                 ILevelCurrent = detectVehicleBmw.ILevelCurrent;
                 ILevelBackup = detectVehicleBmw.ILevelBackup;
+                lock (detectVehicleBmw._ecuNameIdentDictLock)
+                {
+                    EcuNameIdentDict = detectVehicleBmw.EcuNameIdentDict != null ? new SerializableDictionary<string, string>(detectVehicleBmw.EcuNameIdentDict).Clone() : null;
+                }
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
                 Pin78ConnectRequire = detectVehicleBmw.Pin78ConnectRequire;
@@ -118,6 +122,10 @@ namespace BmwFileReader
                 detectVehicleBmw.ILevelShip = ILevelShip;
                 detectVehicleBmw.ILevelCurrent = ILevelCurrent;
                 detectVehicleBmw.ILevelBackup = ILevelBackup;
+                lock (detectVehicleBmw._ecuNameIdentDictLock)
+                {
+                    detectVehicleBmw.EcuNameIdentDict = EcuNameIdentDict?.Clone();
+                }
                 detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
                 detectVehicleBmw.Pin78ConnectRequire = Pin78ConnectRequire;
@@ -152,6 +160,7 @@ namespace BmwFileReader
             [XmlElement("ILevelShip"), DefaultValue(null)] public string ILevelShip { get; set; }
             [XmlElement("ILevelCurrent"), DefaultValue(null)] public string ILevelCurrent { get; set; }
             [XmlElement("ILevelBackup"), DefaultValue(null)] public string ILevelBackup { get; set; }
+            [XmlElement("EcuNameIdentDict")] public SerializableDictionary<string, string> EcuNameIdentDict { get; set; }
             [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
             [XmlElement("Pin78ConnectRequire")] public bool Pin78ConnectRequire { get; set; }

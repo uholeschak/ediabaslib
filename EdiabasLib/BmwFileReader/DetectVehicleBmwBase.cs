@@ -96,6 +96,8 @@ namespace BmwFileReader
         public string ILevelShip { get; protected set; }
         public string ILevelCurrent { get; protected set; }
         public string ILevelBackup { get; protected set; }
+        public Dictionary<string, string> EcuNameIdentDict { get; protected set; }
+        protected object _ecuNameIdentDictLock = new object();
 
         protected EdiabasNet _ediabas;
         public EdiabasNet Ediabas => _ediabas;
@@ -864,7 +866,7 @@ namespace BmwFileReader
                     const int addressRls = 86;
                     if (EcuList.All(ecuInfo => ecuInfo.Address != addressRls))
                     {
-                        bool addEcu = HasSa("521") || !string.IsNullOrEmpty(GetEcuNameByIdent(groupRls));
+                        bool addEcu = HasSa("521") || !string.IsNullOrEmpty(GetEcuNameByIdentCached(groupRls));
                         if (addEcu)
                         {
                             EcuInfo ecuInfoAdd = new EcuInfo("RLS", addressRls, groupRls);
@@ -879,7 +881,7 @@ namespace BmwFileReader
             EcuInfo ecuInfoIspd = GetEcuByEcuGroup(groupIspd);
             if (ecuInfoIspd != null)
             {
-                if (string.IsNullOrEmpty(GetEcuNameByIdent(groupIspd)))
+                if (string.IsNullOrEmpty(GetEcuNameByIdentCached(groupIspd)))
                 {
                     bool removeEcu = false;
                     if (HasSa("6VC") || GetEcuByEcuGroup("CMEDIAR") != null)
@@ -892,7 +894,7 @@ namespace BmwFileReader
                         EcuInfo ecuInfoMmi = GetEcuByEcuGroup(groupMmi);
                         if (ecuInfoMmi != null)
                         {
-                            string ecuMmiName = GetEcuNameByIdent(groupMmi);
+                            string ecuMmiName = GetEcuNameByIdentCached(groupMmi);
                             if (!string.IsNullOrEmpty(ecuMmiName) && string.Compare(ecuMmiName, "RAD2", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 removeEcu = true;
@@ -920,7 +922,7 @@ namespace BmwFileReader
                     EcuInfo ecuInfoFdi = GetEcuByEcuGroup(groupFdi);
                     if (ecuInfoFdi != null)
                     {
-                        if (HasSa("8AA") && string.IsNullOrEmpty(GetEcuNameByIdent(groupFdi)))
+                        if (HasSa("8AA") && string.IsNullOrEmpty(GetEcuNameByIdentCached(groupFdi)))
                         {
                             if (!ecuRemoveList.Contains(ecuInfoFdi))
                             {
@@ -941,7 +943,7 @@ namespace BmwFileReader
                         EcuInfo ecuInfoEgs = GetEcuByAddr(24);
                         if (ecuInfoEgs != null)
                         {
-                            if (!HasGearBoxEcu() && string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoEgs.Grp)))
+                            if (!HasGearBoxEcu() && string.IsNullOrEmpty(GetEcuNameByIdentCached(ecuInfoEgs.Grp)))
                             {   // EGS in MECH gear E84 found
                                 if (!ecuRemoveList.Contains(ecuInfoEgs))
                                 {
@@ -956,7 +958,7 @@ namespace BmwFileReader
                         EcuInfo ecuInfoCvm = GetEcuByAddr(36);
                         if (ecuInfoCvm != null)
                         {
-                            if (string.IsNullOrEmpty(GetEcuNameByIdent(ecuInfoCvm.Grp)))
+                            if (string.IsNullOrEmpty(GetEcuNameByIdentCached(ecuInfoCvm.Grp)))
                             {   // CVM in R59 found
                                 if (!ecuRemoveList.Contains(ecuInfoCvm))
                                 {
@@ -1131,6 +1133,31 @@ namespace BmwFileReader
             ILevelShip = null;
             ILevelCurrent = null;
             ILevelBackup = null;
+            lock (_ecuNameIdentDictLock)
+            {
+                EcuNameIdentDict = new Dictionary<string, string>();
+            }
+        }
+
+        public virtual string GetEcuNameByIdentCached(string sgbd)
+        {
+            lock (_ecuNameIdentDictLock)
+            {
+                string key = sgbd.Trim().ToUpperInvariant();
+                if (EcuNameIdentDict == null)
+                {
+                    EcuNameIdentDict = new Dictionary<string, string>();
+                }
+
+                if (EcuNameIdentDict.TryGetValue(key, out string ecuNameCached))
+                {
+                    return ecuNameCached;
+                }
+
+                string ecuName = GetEcuNameByIdent(sgbd);
+                EcuNameIdentDict.Add(key, ecuName);
+                return ecuName;
+            }
         }
 
         public virtual string GetEcuNameByIdent(string sgbd)
