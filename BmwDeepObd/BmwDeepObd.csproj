@@ -136,7 +136,7 @@
     <Reference Include="Mono.Android.Export" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Xamarin.AndroidX.Activity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.AndroidX.Activity.1.8.0.1\lib\monoandroid12.0\Xamarin.AndroidX.Activity.dll</HintPath>
+      <HintPath>packages\Xamarin.AndroidX.Activity.1.8.1\lib\monoandroid12.0\Xamarin.AndroidX.Activity.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.Annotation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.AndroidX.Annotation.1.7.0.2\lib\monoandroid12.0\Xamarin.AndroidX.Annotation.dll</HintPath>
@@ -301,7 +301,7 @@
       <HintPath>packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.16\lib\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Jetbrains.Annotations, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Jetbrains.Annotations.24.0.1.5\lib\monoandroid12.0\Xamarin.Jetbrains.Annotations.dll</HintPath>
+      <HintPath>packages\Xamarin.Jetbrains.Annotations.24.1.0\lib\monoandroid12.0\Xamarin.Jetbrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Kotlin.StdLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Kotlin.StdLib.1.9.20\lib\monoandroid12.0\Xamarin.Kotlin.StdLib.dll</HintPath>
@@ -875,7 +875,6 @@
     <Error Condition="!Exists('packages\Xamarin.AndroidX.ConstraintLayout.Core.1.0.4.8\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.ConstraintLayout.Core.1.0.4.8\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.Core.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.MultiDex.2.0.1.21\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.MultiDex.2.0.1.21\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.16\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.16\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.Jetbrains.Annotations.24.0.1.5\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Jetbrains.Annotations.24.0.1.5\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Annotation.Experimental.1.3.1.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Annotation.Experimental.1.3.1.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Annotation.Jvm.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Jvm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Annotation.Jvm.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Jvm.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Annotation.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Annotation.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Annotation.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Annotation.targets'))" />
@@ -915,7 +914,6 @@
     <Error Condition="!Exists('packages\Xamarin.AndroidX.DynamicAnimation.1.0.0.21\build\monoandroid12.0\Xamarin.AndroidX.DynamicAnimation.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.DynamicAnimation.1.0.0.21\build\monoandroid12.0\Xamarin.AndroidX.DynamicAnimation.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.SavedState.1.2.1.5\build\monoandroid12.0\Xamarin.AndroidX.SavedState.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.SavedState.1.2.1.5\build\monoandroid12.0\Xamarin.AndroidX.SavedState.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.6.2.2\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.6.2.2\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets'))" />
-    <Error Condition="!Exists('packages\Xamarin.AndroidX.Activity.1.8.0.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Activity.1.8.0.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.VectorDrawable.1.1.0.21\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.VectorDrawable.1.1.0.21\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.VectorDrawable.Animated.1.1.0.21\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.Animated.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.VectorDrawable.Animated.1.1.0.21\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.Animated.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.6.1.6\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.6.1.6\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets'))" />
@@ -932,6 +930,8 @@
     <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Common.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Common.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Jdk7.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Jdk7.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Kotlin.StdLib.Jdk8.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Kotlin.StdLib.Jdk8.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Jetbrains.Annotations.24.1.0\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Jetbrains.Annotations.24.1.0\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.AndroidX.Activity.1.8.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Activity.1.8.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>SETLOCAL EnableDelayedExpansion
@@ -949,7 +949,6 @@ if EXIST "!cache_dir!" (
   <Import Project="packages\Xamarin.AndroidX.ConstraintLayout.Core.1.0.4.8\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.Core.targets" Condition="Exists('packages\Xamarin.AndroidX.ConstraintLayout.Core.1.0.4.8\build\monoandroid12.0\Xamarin.AndroidX.ConstraintLayout.Core.targets')" />
   <Import Project="packages\Xamarin.AndroidX.MultiDex.2.0.1.21\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets" Condition="Exists('packages\Xamarin.AndroidX.MultiDex.2.0.1.21\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" />
   <Import Project="packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.16\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets" Condition="Exists('packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.16\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets')" />
-  <Import Project="packages\Xamarin.Jetbrains.Annotations.24.0.1.5\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets" Condition="Exists('packages\Xamarin.Jetbrains.Annotations.24.0.1.5\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Annotation.Experimental.1.3.1.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets" Condition="Exists('packages\Xamarin.AndroidX.Annotation.Experimental.1.3.1.3\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Experimental.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Annotation.Jvm.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Jvm.targets" Condition="Exists('packages\Xamarin.AndroidX.Annotation.Jvm.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Annotation.Jvm.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Annotation.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Annotation.targets" Condition="Exists('packages\Xamarin.AndroidX.Annotation.1.7.0.2\build\monoandroid12.0\Xamarin.AndroidX.Annotation.targets')" />
@@ -989,7 +988,6 @@ if EXIST "!cache_dir!" (
   <Import Project="packages\Xamarin.AndroidX.DynamicAnimation.1.0.0.21\build\monoandroid12.0\Xamarin.AndroidX.DynamicAnimation.targets" Condition="Exists('packages\Xamarin.AndroidX.DynamicAnimation.1.0.0.21\build\monoandroid12.0\Xamarin.AndroidX.DynamicAnimation.targets')" />
   <Import Project="packages\Xamarin.AndroidX.SavedState.1.2.1.5\build\monoandroid12.0\Xamarin.AndroidX.SavedState.targets" Condition="Exists('packages\Xamarin.AndroidX.SavedState.1.2.1.5\build\monoandroid12.0\Xamarin.AndroidX.SavedState.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.6.2.2\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets" Condition="Exists('packages\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.2.6.2.2\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.ViewModelSavedState.targets')" />
-  <Import Project="packages\Xamarin.AndroidX.Activity.1.8.0.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets" Condition="Exists('packages\Xamarin.AndroidX.Activity.1.8.0.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" />
   <Import Project="packages\Xamarin.AndroidX.VectorDrawable.1.1.0.21\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.targets" Condition="Exists('packages\Xamarin.AndroidX.VectorDrawable.1.1.0.21\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.targets')" />
   <Import Project="packages\Xamarin.AndroidX.VectorDrawable.Animated.1.1.0.21\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.Animated.targets" Condition="Exists('packages\Xamarin.AndroidX.VectorDrawable.Animated.1.1.0.21\build\monoandroid12.0\Xamarin.AndroidX.VectorDrawable.Animated.targets')" />
   <Import Project="packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.6.1.6\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets" Condition="Exists('packages\Xamarin.AndroidX.AppCompat.AppCompatResources.1.6.1.6\build\monoandroid12.0\Xamarin.AndroidX.AppCompat.AppCompatResources.targets')" />
@@ -1006,4 +1004,6 @@ if EXIST "!cache_dir!" (
   <Import Project="packages\Xamarin.Kotlin.StdLib.Common.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Common.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Common.targets')" />
   <Import Project="packages\Xamarin.Kotlin.StdLib.Jdk7.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Jdk7.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk7.targets')" />
   <Import Project="packages\Xamarin.Kotlin.StdLib.Jdk8.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets" Condition="Exists('packages\Xamarin.Kotlin.StdLib.Jdk8.1.9.20\build\monoandroid12.0\Xamarin.Kotlin.StdLib.Jdk8.targets')" />
+  <Import Project="packages\Xamarin.Jetbrains.Annotations.24.1.0\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets" Condition="Exists('packages\Xamarin.Jetbrains.Annotations.24.1.0\build\monoandroid12.0\Xamarin.Jetbrains.Annotations.targets')" />
+  <Import Project="packages\Xamarin.AndroidX.Activity.1.8.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets" Condition="Exists('packages\Xamarin.AndroidX.Activity.1.8.1\build\monoandroid12.0\Xamarin.AndroidX.Activity.targets')" />
 </Project>
