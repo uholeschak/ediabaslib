@@ -1138,22 +1138,12 @@ namespace BmwFileReader
         public virtual string GetEcuNameByIdentCached(string sgbd)
         {
             string key = sgbd.Trim().ToUpperInvariant();
-            if (!EcuNameIdentDict.TryGetValue(key, out string ecuNameCached))
-            {
-                return null;
-            }
-
-            if (!string.IsNullOrEmpty(ecuNameCached))
+            if (EcuNameIdentDict.TryGetValue(key, out string ecuNameCached))
             {
                 return ecuNameCached;
             }
 
             string ecuName = GetEcuNameByIdent(sgbd);
-            if (!string.IsNullOrEmpty(ecuName))
-            {
-                return ecuName;
-            }
-
             EcuNameIdentDict.Add(key, ecuName);
             return ecuName;
         }
