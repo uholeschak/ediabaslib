@@ -838,9 +838,12 @@ namespace BmwDeepObd
             if (!string.IsNullOrEmpty(_instanceData.DetectVehicleBmwFile) && !string.IsNullOrEmpty(_bmwDir))
             {
                 DetectVehicleBmw detectVehicleBmw = new DetectVehicleBmw(_ediabas, _bmwDir);
-                if (detectVehicleBmw.LoadDataFromFile(_instanceData.DetectVehicleBmwFile))
+                lock (detectVehicleBmw.GlobalLockObject)
                 {
-                    _detectVehicleBmw = detectVehicleBmw;
+                    if (detectVehicleBmw.LoadDataFromFile(_instanceData.DetectVehicleBmwFile))
+                    {
+                        _detectVehicleBmw = detectVehicleBmw;
+                    }
                 }
             }
 
