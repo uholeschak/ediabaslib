@@ -102,6 +102,8 @@ namespace BmwFileReader
         protected EdiabasNet _ediabas;
         public EdiabasNet Ediabas => _ediabas;
 
+        public object GlobalLockObject { get; protected set; } = new object();
+
         public static Regex VinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
         public static Regex ILevelRegex = new Regex(@"([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}");
 

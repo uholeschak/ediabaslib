@@ -2687,18 +2687,21 @@ namespace BmwDeepObd
                     DetectVehicleBmw detectVehicleBmw = _detectVehicleBmw;
                     if (detectVehicleBmw != null)
                     {
-                        VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
-                        if (vehicleSeriesInfo != null)
+                        lock (detectVehicleBmw.GlobalLockObject)
                         {
-                            VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, ecuInfo.Grp);
-                            if (vehicleEcuInfo != null)
+                            VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
+                            if (vehicleSeriesInfo != null)
                             {
-                                if (!string.IsNullOrWhiteSpace(vehicleEcuInfo.GroupSgbd))
+                                VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, ecuInfo.Grp);
+                                if (vehicleEcuInfo != null)
                                 {
-                                    string[] groupNames = vehicleEcuInfo.GroupSgbd.Split('|');
-                                    foreach (string groupName in groupNames)
+                                    if (!string.IsNullOrWhiteSpace(vehicleEcuInfo.GroupSgbd))
                                     {
-                                        validSgbdDict.TryAdd(groupName.ToUpperInvariant(), true);
+                                        string[] groupNames = vehicleEcuInfo.GroupSgbd.Split('|');
+                                        foreach (string groupName in groupNames)
+                                        {
+                                            validSgbdDict.TryAdd(groupName.ToUpperInvariant(), true);
+                                        }
                                     }
                                 }
                             }
@@ -3143,7 +3146,10 @@ namespace BmwDeepObd
             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
             {
                 DetectVehicleBmw detectVehicleBmw = _detectVehicleBmw;
-                _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
+                lock (detectVehicleBmw.GlobalLockObject)
+                {
+                    _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
+                }
 
                 foreach (EcuInfo ecuInfo in _ecuList)
                 {
@@ -9148,9 +9154,12 @@ namespace BmwDeepObd
                 }
 
                 string fileName = Path.Combine(storageDir, DetectVehicleBmwFileName);
-                if (!detectVehicleBmw.SaveDataToFile(fileName))
+                lock (detectVehicleBmw.GlobalLockObject)
                 {
-                    return false;
+                    if (!detectVehicleBmw.SaveDataToFile(fileName))
+                    {
+                        return false;
+                    }
                 }
 
                 _instanceData.DetectVehicleBmwFile = fileName;
