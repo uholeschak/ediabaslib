@@ -4035,7 +4035,10 @@ namespace BmwDeepObd
                                 }
                             }
 
-                            detectVehicleBmw.HandleSpecialEcus();
+                            lock (detectVehicleBmw.GlobalLockObject)
+                            {
+                                detectVehicleBmw.HandleSpecialEcus();
+                            }
                         }
                     }
                     catch (Exception)

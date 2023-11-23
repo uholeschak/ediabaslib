@@ -97,7 +97,6 @@ namespace BmwFileReader
         public string ILevelCurrent { get; protected set; }
         public string ILevelBackup { get; protected set; }
         public Dictionary<string, string> EcuNameIdentDict { get; protected set; }
-        protected object _ecuNameIdentDictLock = new object();
 
         protected EdiabasNet _ediabas;
         public EdiabasNet Ediabas => _ediabas;
@@ -1135,31 +1134,25 @@ namespace BmwFileReader
             ILevelShip = null;
             ILevelCurrent = null;
             ILevelBackup = null;
-            lock (_ecuNameIdentDictLock)
-            {
-                EcuNameIdentDict = new Dictionary<string, string>();
-            }
+            EcuNameIdentDict = new Dictionary<string, string>();
         }
 
         public virtual string GetEcuNameByIdentCached(string sgbd)
         {
-            lock (_ecuNameIdentDictLock)
+            string key = sgbd.Trim().ToUpperInvariant();
+            if (EcuNameIdentDict == null)
             {
-                string key = sgbd.Trim().ToUpperInvariant();
-                if (EcuNameIdentDict == null)
-                {
-                    EcuNameIdentDict = new Dictionary<string, string>();
-                }
-
-                if (EcuNameIdentDict.TryGetValue(key, out string ecuNameCached))
-                {
-                    return ecuNameCached;
-                }
-
-                string ecuName = GetEcuNameByIdent(sgbd);
-                EcuNameIdentDict.Add(key, ecuName);
-                return ecuName;
+                EcuNameIdentDict = new Dictionary<string, string>();
             }
+
+            if (EcuNameIdentDict.TryGetValue(key, out string ecuNameCached))
+            {
+                return ecuNameCached;
+            }
+
+            string ecuName = GetEcuNameByIdent(sgbd);
+            EcuNameIdentDict.Add(key, ecuName);
+            return ecuName;
         }
 
         public virtual string GetEcuNameByIdent(string sgbd)

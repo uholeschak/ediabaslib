@@ -79,10 +79,7 @@ namespace BmwFileReader
                 ILevelShip = detectVehicleBmw.ILevelShip;
                 ILevelCurrent = detectVehicleBmw.ILevelCurrent;
                 ILevelBackup = detectVehicleBmw.ILevelBackup;
-                lock (detectVehicleBmw._ecuNameIdentDictLock)
-                {
-                    EcuNameIdentDict = detectVehicleBmw.EcuNameIdentDict != null ? new SerializableDictionary<string, string>(detectVehicleBmw.EcuNameIdentDict).Clone() : null;
-                }
+                EcuNameIdentDict = detectVehicleBmw.EcuNameIdentDict != null ? new SerializableDictionary<string, string>(detectVehicleBmw.EcuNameIdentDict).Clone() : null;
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
                 Pin78ConnectRequire = detectVehicleBmw.Pin78ConnectRequire;
@@ -122,10 +119,7 @@ namespace BmwFileReader
                 detectVehicleBmw.ILevelShip = ILevelShip;
                 detectVehicleBmw.ILevelCurrent = ILevelCurrent;
                 detectVehicleBmw.ILevelBackup = ILevelBackup;
-                lock (detectVehicleBmw._ecuNameIdentDictLock)
-                {
-                    detectVehicleBmw.EcuNameIdentDict = EcuNameIdentDict?.Clone();
-                }
+                detectVehicleBmw.EcuNameIdentDict = EcuNameIdentDict?.Clone();
                 detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
                 detectVehicleBmw.Pin78ConnectRequire = Pin78ConnectRequire;
