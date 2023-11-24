@@ -842,21 +842,24 @@ namespace BmwDeepObd
                                 DataUpdatedEvent();
                             };
 
-                            if (!detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
+                            lock (detectVehicleBmw.GlobalLockObject)
                             {
-                                bool detectMotorbike = ActivityCommon.JobReader.IsMotorbike;
-                                if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
+                                if (!detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
                                 {
-                                    detectVehicleBmw.DetectVehicleBmwFast(detectMotorbike);
-                                }
-                                else
-                                {
-                                    detectVehicleBmw.DetectVehicleDs2();
-                                }
+                                    bool detectMotorbike = ActivityCommon.JobReader.IsMotorbike;
+                                    if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
+                                    {
+                                        detectVehicleBmw.DetectVehicleBmwFast(detectMotorbike);
+                                    }
+                                    else
+                                    {
+                                        detectVehicleBmw.DetectVehicleDs2();
+                                    }
 
-                                if (detectVehicleBmw.Valid)
-                                {
-                                    detectVehicleBmw.SaveDataToFile(vehicleDataFile, xmlTimeStamp);
+                                    if (detectVehicleBmw.Valid)
+                                    {
+                                        detectVehicleBmw.SaveDataToFile(vehicleDataFile, xmlTimeStamp);
+                                    }
                                 }
                             }
 
