@@ -9158,7 +9158,7 @@ namespace BmwDeepObd
             {
                 _instanceData.DetectVehicleBmwFile = null;
                 DetectVehicleBmw detectVehicleBmw = _detectVehicleBmw;
-                if (detectVehicleBmw == null || !detectVehicleBmw.Valid)
+                if (detectVehicleBmw == null)
                 {
                     return false;
                 }
@@ -9177,6 +9177,11 @@ namespace BmwDeepObd
                 string fileName = Path.Combine(storageDir, DetectVehicleBmwFileName);
                 lock (detectVehicleBmw.GlobalLockObject)
                 {
+                    if (!detectVehicleBmw.Valid)
+                    {
+                        return false;
+                    }
+
                     if (!detectVehicleBmw.SaveDataToFile(fileName))
                     {
                         return false;
