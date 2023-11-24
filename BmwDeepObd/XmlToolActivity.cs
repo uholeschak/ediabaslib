@@ -3149,9 +3149,12 @@ namespace BmwDeepObd
             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
             {
                 DetectVehicleBmw detectVehicleBmw = _detectVehicleBmw;
-                lock (detectVehicleBmw.GlobalLockObject)
+                if (detectVehicleBmw != null)
                 {
-                    _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
+                    lock (detectVehicleBmw.GlobalLockObject)
+                    {
+                        _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
+                    }
                 }
 
                 foreach (EcuInfo ecuInfo in _ecuList)
