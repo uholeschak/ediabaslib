@@ -2692,18 +2692,21 @@ namespace BmwDeepObd
                     {
                         lock (detectVehicleBmw.GlobalLockObject)
                         {
-                            VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
-                            if (vehicleSeriesInfo != null)
+                            if (detectVehicleBmw.Valid)
                             {
-                                VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, ecuInfo.Grp);
-                                if (vehicleEcuInfo != null)
+                                VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
+                                if (vehicleSeriesInfo != null)
                                 {
-                                    if (!string.IsNullOrWhiteSpace(vehicleEcuInfo.GroupSgbd))
+                                    VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo = VehicleInfoBmw.GetEcuInfoByGroupName(vehicleSeriesInfo, ecuInfo.Grp);
+                                    if (vehicleEcuInfo != null)
                                     {
-                                        string[] groupNames = vehicleEcuInfo.GroupSgbd.Split('|');
-                                        foreach (string groupName in groupNames)
+                                        if (!string.IsNullOrWhiteSpace(vehicleEcuInfo.GroupSgbd))
                                         {
-                                            validSgbdDict.TryAdd(groupName.ToUpperInvariant(), true);
+                                            string[] groupNames = vehicleEcuInfo.GroupSgbd.Split('|');
+                                            foreach (string groupName in groupNames)
+                                            {
+                                                validSgbdDict.TryAdd(groupName.ToUpperInvariant(), true);
+                                            }
                                         }
                                     }
                                 }
