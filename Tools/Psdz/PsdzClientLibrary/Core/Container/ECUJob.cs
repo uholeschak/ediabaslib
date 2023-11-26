@@ -1255,7 +1255,7 @@ namespace PsdzClient.Core.Container
                                         Log.Warning("ECUJob.getuintResult()", "(set={0},resultName={1}) has different format type!!! You selected uint but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                                         continue;
                                     }
-                                    Log.Debug(ClientContext.DebugLogLevel, 2, "ECUJob.getuintResult()", "(set={0},resultName={1}) signed/unsigned mismatch", set, resultName);
+                                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUJob.getuintResult()", "(set={0},resultName={1}) signed/unsigned mismatch", set, resultName);
                                     return (uint)(int)item.Value;
                                 }
                                 return (uint)item.Value;
@@ -1306,7 +1306,7 @@ namespace PsdzClient.Core.Container
                                         Log.Warning("ECUJob.getuintResult()", "(resultName={0}) has different format type!!! You selected uint but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                                         continue;
                                     }
-                                    Log.Debug(ClientContext.DebugLogLevel, 2, "ECUJob.getuintResult()", "(resultName={0}) signed/unsigned mismatch", resultName);
+                                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUJob.getuintResult()", "(resultName={0}) signed/unsigned mismatch", resultName);
                                     return (uint)(int)item.Value;
                                 }
                                 return (uint)item.Value;

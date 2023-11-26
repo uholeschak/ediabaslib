@@ -563,7 +563,7 @@ namespace PsdzClient.Core.Container
                 while (num2 < retries && !eCUJob.IsDone())
                 {
                     Thread.Sleep(millisecondsTimeout);
-                    Log.Debug(ClientContext.DebugLogLevel, "ECUKom.apiJob()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, jobName, num2);
+                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, jobName, num2);
                     eCUJob = apiJob(ecu, jobName, param, resultFilter);
                     num2 = (ushort)(num2 + 1);
                 }
@@ -673,7 +673,7 @@ namespace PsdzClient.Core.Container
                 eCUJob5.JobResultSets = rsets;
                 if (rsets > 0)
                 {
-                    Log.Debug(ClientContext.DebugLogLevel, "ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5} RSets: {6}", ecu, jobName, param, resultFilter, eCUJob5.JobErrorCode, eCUJob5.JobErrorText, rsets);
+                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5} RSets: {6}", ecu, jobName, param, resultFilter, eCUJob5.JobErrorCode, eCUJob5.JobErrorText, rsets);
                     for (ushort num4 = 0; num4 <= rsets; num4 = (ushort)(num4 + 1))
                     {
                         if (api.apiResultNumber(out var buffer, num4))
@@ -824,7 +824,7 @@ namespace PsdzClient.Core.Container
                 ushort num2 = 0;
                 while (num2 < retries && !eCUJob.IsDone())
                 {
-                    Log.Debug(ClientContext.DebugLogLevel, "ECUKom.apiJobData()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, job, num2);
+                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJobData()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, job, num2);
                     eCUJob = apiJobData(ecu, job, param, paramlen, resultFilter);
                     num2 = (ushort)(num2 + 1);
                 }
@@ -903,7 +903,7 @@ namespace PsdzClient.Core.Container
                 eCUJob4.JobErrorText = api.apiErrorText();
                 if (num2 == 0)
                 {
-                    Log.Debug(ClientContext.DebugLogLevel, "ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5}", ecu, job, param, resultFilter, eCUJob4.JobErrorCode, eCUJob4.JobErrorText);
+                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5}", ecu, job, param, resultFilter, eCUJob4.JobErrorCode, eCUJob4.JobErrorText);
                     if (api.apiResultSets(out var rsets))
                     {
                         eCUJob4.JobResultSets = rsets;
@@ -1096,7 +1096,7 @@ namespace PsdzClient.Core.Container
                         lastJobExecution = GetLastExecutionTime(item.ExecutionStartTime);
                     }
                     ecuJobDictionary[ecuName + "-" + jobName].Add(item);
-                    Log.Debug(ClientContext.DebugLogLevel, 2, "ECUKom.GetJobFromCache()", "4th try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
+                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "4th try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
                     CacheHitCounter++;
                     return item;
                 }
@@ -1107,7 +1107,7 @@ namespace PsdzClient.Core.Container
             {
                 lastJobExecution = GetLastExecutionTime(query.First().ExecutionStartTime);
             }
-            Log.Debug(ClientContext.DebugLogLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
+            Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
             CacheHitCounter++;
             return query.First();
         }

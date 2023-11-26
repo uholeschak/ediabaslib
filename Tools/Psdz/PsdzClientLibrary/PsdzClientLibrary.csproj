@@ -165,6 +165,7 @@
     <Compile Include="Core\Container\EDIABASAdapterDeviceResult.cs" />
     <Compile Include="Core\Container\IEcuKom.cs" />
     <Compile Include="Core\Container\IEcuKomApi.cs" />
+    <Compile Include="Core\Container\VehicleCommunication.cs" />
     <Compile Include="Core\DataHolder.cs" />
     <Compile Include="Core\DataSourcePriority.cs" />
     <Compile Include="Core\FallbackMechanisms.cs" />
