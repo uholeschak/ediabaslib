@@ -132,6 +132,10 @@ namespace PsdzClient.Core.Container
                 {
                     return result;
                 }
+                if (CoreFramework.DebugLevel > 0)
+                {
+                    Log.Warning("ParameterContainer.getKeyValuePairEndsWith()", "Parameter \"{0}\" unknown.", name);
+                }
             }
             catch (Exception exception)
             {
@@ -148,6 +152,10 @@ namespace PsdzClient.Core.Container
                 if (result.HasValue && result.HasValue && !string.IsNullOrEmpty(result.Value.Key))
                 {
                     return result;
+                }
+                if (CoreFramework.DebugLevel > 0)
+                {
+                    Log.Warning("ParameterContainer.getKeyValuePairContains()", "Parameter \"{0}\" unknown.", keyContains);
                 }
             }
             catch (Exception exception)
@@ -166,6 +174,10 @@ namespace PsdzClient.Core.Container
                 {
                     return result;
                 }
+                if (CoreFramework.DebugLevel > 0)
+                {
+                    Log.Warning("ParameterContainer.getKeyValuePairEndsWith()", "Parameter \"{0}\" unknown.", keyEndsWith);
+                }
             }
             catch (Exception exception)
             {
@@ -183,6 +195,10 @@ namespace PsdzClient.Core.Container
                 {
                     return result;
                 }
+                if (CoreFramework.DebugLevel > 0)
+                {
+                    Log.Warning("ParameterContainer.getKeyValuePairStartsWith()", "Parameter \"{0}\" unknown.", keyStartsWith);
+                }
             }
             catch (Exception exception)
             {
@@ -197,6 +213,15 @@ namespace PsdzClient.Core.Container
             {
                 if (parameters.ContainsKey(name))
                 {
+                    if (CoreFramework.DebugLevel > 0)
+                    {
+                        Type type = null;
+                        if (parameters[name] != null)
+                        {
+                            type = parameters[name].GetType();
+                        }
+                        Log.Info("ParameterContainer.getParameter()", "Parameter name=\"{0}\", type=\"{1}\", value=\"{2}\".", name, type, parameters[name]);
+                    }
                     return parameters[name];
                 }
                 Log.Warning("ParameterContainer.getParameter()", "Parameter \"{0}\" unknown.", name);
@@ -214,7 +239,20 @@ namespace PsdzClient.Core.Container
             {
                 if (parameters.ContainsKey(name))
                 {
+                    if (CoreFramework.DebugLevel > 0)
+                    {
+                        Type type = null;
+                        if (parameters[name] != null)
+                        {
+                            type = parameters[name].GetType();
+                        }
+                        Log.Info("ParameterContainer.getParameter()", "Parameter name=\"{0}\", type=\"{1}\", value=\"{2}\".", name, type, parameters[name]);
+                    }
                     return parameters[name];
+                }
+                if (CoreFramework.DebugLevel > 0)
+                {
+                    Log.Info("ParameterContainer.getParameter()", "Parameter \"{0}\" unknown. Using default value: {1}", name, defaultValue);
                 }
                 return defaultValue;
             }
@@ -234,6 +272,10 @@ namespace PsdzClient.Core.Container
                 {
                     return keyValuePair.Value;
                 }
+                if (CoreFramework.DebugLevel > 0)
+                {
+                    Log.Warning("ParameterContainer.getParameterEndsWith()", "Parameter \"{0}\" unknown.", nameEndsWith);
+                }
             }
             catch (Exception exception)
             {
@@ -250,6 +292,10 @@ namespace PsdzClient.Core.Container
                 if (!string.IsNullOrEmpty(keyValuePair.Key))
                 {
                     return keyValuePair.Value;
+                }
+                if (CoreFramework.DebugLevel > 0)
+                {
+                    Log.Warning("ParameterContainer.getParameterStartsWith()", "Parameter \"{0}\" unknown.", nameStartsWith);
                 }
             }
             catch (Exception exception)
