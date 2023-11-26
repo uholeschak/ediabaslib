@@ -34,35 +34,9 @@ namespace PsdzClient.Core
             [DataMember]
             BMWMotorrad,
             [DataMember]
-            WIESMANN,
-            [DataMember]
-            MORGAN,
-            [DataMember]
-            RODING,
-            [DataMember]
-            PGO,
-            [DataMember]
-            GIBBS,
-            [DataMember]
             BMWi,
             [DataMember]
             TOYOTA,
-            [DataMember]
-            CAMPAGNA,
-            [DataMember]
-            ZINORO,
-            [DataMember]
-            HUSQVARNA,
-            [DataMember]
-            Brilliance,
-            [DataMember]
-            YANMAR,
-            [DataMember]
-            KARMA,
-            [DataMember]
-            TORQEEDO,
-            [DataMember]
-            WORKHORSE,
             [DataMember]
             Unknown
         }
@@ -134,89 +108,71 @@ namespace PsdzClient.Core
 			return new CharacteristicExpression(num, num2, vec);
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
-		{
-			string value = null;
-			bool flag;
-			if (vec != null && vec.VCI != null && vec.VCI.VCIType != VCIDeviceType.UNKNOWN)
-			{
-				flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult);
-			}
-			else if (CharacteristicRoot.Equals("Marke"))
-			{
-				string text;
-				switch (ClientContext.GetBrand(vec))
-				{
-					case EnumBrand.BMWBMWiMINI:
-						text = "BMW/BMW I/MINI";
-						break;
-					case EnumBrand.BMWBMWi:
-						text = "BMW/BMW I";
-						break;
-					case EnumBrand.BMWiMINI:
-						text = "BMW I/MINI";
-						break;
-					case EnumBrand.BMWMINI:
-						text = "BMW/MINI";
-						break;
-					case EnumBrand.BMWPKW:
-						text = "BMW PKW";
-						break;
-					case EnumBrand.Mini:
-						text = "MINI PKW";
-						break;
-					case EnumBrand.RollsRoyce:
-						text = "ROLLS-ROYCE PKW";
-						break;
-					case EnumBrand.BMWMotorrad:
-						text = "BMW MOTORRAD";
-						break;
-					case EnumBrand.WIESMANN:
-						text = "WIESMANN";
-						break;
-					case EnumBrand.MORGAN:
-						text = "MORGAN";
-						break;
-					case EnumBrand.RODING:
-						text = "RODING";
-						break;
-					case EnumBrand.PGO:
-						text = "PGO";
-						break;
-					case EnumBrand.GIBBS:
-						text = "GIBBS";
-						break;
-					case EnumBrand.BMWi:
-						text = "BMW I";
-						break;
-					case EnumBrand.TOYOTA:
-						text = "TOYOTA";
-						break;
-					default:
-						text = "-";
-						break;
-					case EnumBrand.ZINORO:
-						text = "ZINORO";
-						break;
-				}
-				value = text;
-				flag = string.Compare(text, CharacteristicValue, StringComparison.OrdinalIgnoreCase) == 0 || ((CharacteristicValue == "MINI PKW" || CharacteristicValue == "BMW PKW") && string.Compare(text, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0) || (CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) && string.Compare(text, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0) || ((CharacteristicValue == "MINI PKW" || CharacteristicValue == "BMW PKW" || CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase)) && string.Compare(text, "BMW/BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0) || ((CharacteristicValue == "BMW PKW" || CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase)) && string.Compare(text, "BMW/BMW I", StringComparison.OrdinalIgnoreCase) == 0) || (((CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) || CharacteristicValue == "MINI PKW") && string.Compare(text, "BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0) ? true : false);
-			}
-			else if (!"Sicherheitsrelevant".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase) && !"Sicherheitsfahrzeug".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase))
-			{
-				Log.Warning("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer true", CharacteristicRoot);
-				flag = true;
-			}
-			else
-			{
-				Log.Info("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer false for 'Sicherheitsrelevant'", CharacteristicRoot);
-				flag = false;
-			}
-			Log.Debug("CharacteristicExpression.Evaluate()", "rule: {0}={1} result: {2} (session context: {3}) [original rule: {4}={5}]", CharacteristicRoot, CharacteristicValue, flag, value, dataclassId, datavalueId);
-			return flag;
-		}
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
+        {
+            string value = null;
+            bool flag;
+            if (vec != null && vec.VCI != null && vec.VCI.VCIType != VCIDeviceType.UNKNOWN)
+            {
+                flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult, vec);
+            }
+            else if (CharacteristicRoot.Equals("Marke"))
+            {
+                string text;
+                switch (ClientContext.GetBrand(vec))
+                {
+                    default:
+                        text = "-";
+                        break;
+                    case EnumBrand.BMWBMWiMINI:
+                        text = "BMW/BMW I/MINI";
+                        break;
+                    case EnumBrand.BMWBMWi:
+                        text = "BMW/BMW I";
+                        break;
+                    case EnumBrand.BMWiMINI:
+                        text = "BMW I/MINI";
+                        break;
+                    case EnumBrand.BMWMINI:
+                        text = "BMW/MINI";
+                        break;
+                    case EnumBrand.BMWPKW:
+                        text = "BMW PKW";
+                        break;
+                    case EnumBrand.Mini:
+                        text = "MINI PKW";
+                        break;
+                    case EnumBrand.RollsRoyce:
+                        text = "ROLLS-ROYCE PKW";
+                        break;
+                    case EnumBrand.BMWMotorrad:
+                        text = "BMW MOTORRAD";
+                        break;
+                    case EnumBrand.BMWi:
+                        text = "BMW I";
+                        break;
+                    case EnumBrand.TOYOTA:
+                        text = "TOYOTA";
+                        break;
+                }
+                value = text;
+                flag = string.Compare(text, CharacteristicValue, StringComparison.OrdinalIgnoreCase) == 0 || ((CharacteristicValue == "MINI PKW" || CharacteristicValue == "BMW PKW") && string.Compare(text, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0) || (CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) && string.Compare(text, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0) || ((CharacteristicValue == "MINI PKW" || CharacteristicValue == "BMW PKW" || CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase)) && string.Compare(text, "BMW/BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0) || ((CharacteristicValue == "BMW PKW" || CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase)) && string.Compare(text, "BMW/BMW I", StringComparison.OrdinalIgnoreCase) == 0) || (((CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) || CharacteristicValue == "MINI PKW") && string.Compare(text, "BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0) ? true : false);
+            }
+            else if (!"Sicherheitsrelevant".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase) && !"Sicherheitsfahrzeug".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Warning("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer true", CharacteristicRoot);
+                flag = true;
+            }
+            else
+            {
+                Log.Info("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer false for 'Sicherheitsrelevant'", CharacteristicRoot);
+                flag = false;
+            }
+            Log.Debug("CharacteristicExpression.Evaluate()", "rule: {0}={1} result: {2} (session context: {3}) [original rule: {4}={5}]", CharacteristicRoot, CharacteristicValue, flag, value, dataclassId, datavalueId);
+            return flag;
+        }
 
-		public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
+        public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
 		{
 			long num;
 			if (!baseConfiguration.Characteristics.TryGetValue(this.dataclassId, out num))

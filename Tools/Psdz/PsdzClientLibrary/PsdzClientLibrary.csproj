@@ -132,6 +132,8 @@
     <Compile Include="Contracts\INavFSCProvided.cs" />
     <Compile Include="Contracts\ITransmissionDataType.cs" />
     <Compile Include="Core\BaseFormatedData.cs" />
+    <Compile Include="Core\ConfigSettings.cs" />
+    <Compile Include="Core\ConfigValue.cs" />
     <Compile Include="Core\Container\ABranch.cs" />
     <Compile Include="Core\Container\AChoice.cs" />
     <Compile Include="Core\Container\AConstraint.cs" />
@@ -246,6 +248,7 @@
     <Compile Include="Core\Localization.cs" />
     <Compile Include="Core\LocalizedText.cs" />
     <Compile Include="Core\Log.cs" />
+    <Compile Include="Core\LogValue.cs" />
     <Compile Include="Core\ManufactoringDateExpression.cs" />
     <Compile Include="Core\Container\MultipleChoice.cs" />
     <Compile Include="Core\Container\MultipleValue.cs" />
