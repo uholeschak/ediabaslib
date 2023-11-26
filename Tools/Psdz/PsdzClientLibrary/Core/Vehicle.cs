@@ -1524,10 +1524,10 @@ namespace PsdzClient.Core
                     flag2 = false;
                     flag = true;
                 }
-                //if (CoreFramework.DebugLevel > 0)
-                //{
-                //    Log.Info("Vehicle.evalILevelExpression()", "expression:{0} vehicle iLEVEL:{1}", iLevelExpressions, base.ILevel);
-                //}
+                if (CoreFramework.DebugLevel > 0)
+                {
+                    Log.Info("Vehicle.evalILevelExpression()", "expression:{0} vehicle iLEVEL:{1}", iLevelExpressions, base.ILevel);
+                }
                 string[] separator = new string[2] { "&", "|" };
                 string[] array = iLevelExpressions.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string text in array)
@@ -1544,46 +1544,46 @@ namespace PsdzClient.Core
                         switch (array2[0])
                         {
                             case "<":
-                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))
-                                //{
-                                //    Log.Info("Vehicle.evalILevelExpression()", "< was true");
-                                //}
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))
+                                {
+                                    Log.Info("Vehicle.evalILevelExpression()", "< was true");
+                                }
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "=":
-                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))
-                                //{
-                                //    Log.Info("Vehicle.evalILevelExpression()", "= was true");
-                                //}
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))
+                                {
+                                    Log.Info("Vehicle.evalILevelExpression()", "= was true");
+                                }
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case ">=":
-                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))
-                                //{
-                                //    Log.Info("Vehicle.evalILevelExpression()", ">= was true");
-                                //}
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))
+                                {
+                                    Log.Info("Vehicle.evalILevelExpression()", ">= was true");
+                                }
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case ">":
-                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))
-                                //{
-                                //    Log.Info("Vehicle.evalILevelExpression()", "> was true");
-                                //}
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))
+                                {
+                                    Log.Info("Vehicle.evalILevelExpression()", "> was true");
+                                }
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "<=":
-                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))
-                                //{
-                                //    Log.Info("Vehicle.evalILevelExpression()", "<= was true");
-                                //}
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))
+                                {
+                                    Log.Info("Vehicle.evalILevelExpression()", "<= was true");
+                                }
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "!=":
                             case "<>":
-                                //if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))
-                                //{
-                                //    Log.Info("Vehicle.evalILevelExpression()", "!= was true");
-                                //}
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))
+                                {
+                                    Log.Info("Vehicle.evalILevelExpression()", "!= was true");
+                                }
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                         }
