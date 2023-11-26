@@ -21,8 +21,6 @@ namespace PsdzClient
         public string Language { get; set; }
         public bool ProtectionVehicleService { get; set; }
 
-        public static int DebugLogLevel { get; set; } = 0;
-
         static ClientContext()
         {
             _enablePsdzMultiSession = false;

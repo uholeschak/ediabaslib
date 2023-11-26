@@ -189,7 +189,7 @@ namespace PsdzClientLibrary.Core
 
         public static void Debug(string method, string msg, params object[] args)
         {
-            Debug(ClientContext.DebugLogLevel, 1, method, msg, args);
+            Debug(CoreFramework.DebugLevel, 1, method, msg, args);
         }
 
         public static void Debug(int logState, string method, string msg, params object[] args)
