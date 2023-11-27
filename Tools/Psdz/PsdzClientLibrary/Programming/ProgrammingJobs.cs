@@ -759,17 +759,7 @@ namespace PsdzClient.Programming
                     log.InfoFormat(CultureInfo.InvariantCulture, "Host started");
                 }
 
-                if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Logging.Level.Trace.Enabled"))
-                {
-                    ClientContext.IsProblemHandlingTraceRunning = true;
-                    ProgrammingService.SetLogLevelToMax();
-                    CoreFramework.DebugLevel = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Level.Trace.Ista", 5);
-                }
-                else
-                {
-                    ClientContext.IsProblemHandlingTraceRunning = false;
-                    ProgrammingService.SetLogLevelToNormal();
-                }
+                EnableLogTrace(true);
 
                 sbResult.AppendLine(Strings.HostStarted);
                 UpdateStatus(sbResult.ToString());
@@ -832,6 +822,21 @@ namespace PsdzClient.Programming
             }
 
             return true;
+        }
+
+        public void EnableLogTrace(bool enableTrace)
+        {
+            if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Logging.Level.Trace.Enabled"))
+            {
+                ClientContext.IsProblemHandlingTraceRunning = true;
+                ProgrammingService.SetLogLevelToMax();
+                CoreFramework.DebugLevel = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Level.Trace.Ista", 5);
+            }
+            else
+            {
+                ClientContext.IsProblemHandlingTraceRunning = false;
+                ProgrammingService.SetLogLevelToNormal();
+            }
         }
 
         public bool ConnectVehicle(CancellationTokenSource cts, string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
