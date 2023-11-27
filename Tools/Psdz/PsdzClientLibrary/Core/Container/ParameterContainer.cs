@@ -134,7 +134,7 @@ namespace PsdzClient.Core.Container
                 }
                 if (CoreFramework.DebugLevel > 0)
                 {
-                    Log.Warning("ParameterContainer.getKeyValuePairEndsWith()", "Parameter \"{0}\" unknown.", name);
+                    Log.Warning("ParameterContainer.getKeyValuePair()", "Parameter \"{0}\" unknown.", name);
                 }
             }
             catch (Exception exception)

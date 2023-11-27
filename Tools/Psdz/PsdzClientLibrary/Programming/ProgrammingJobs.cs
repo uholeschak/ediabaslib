@@ -34,6 +34,8 @@ using EdiabasLib;
 using log4net;
 using log4net.Config;
 using PsdzClient.Core;
+using PsdzClient.Core.Container;
+using PsdzClientLibrary.Core;
 using PsdzClientLibrary.Resources;
 using VCIDeviceType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType;
 
@@ -754,9 +756,15 @@ namespace PsdzClient.Programming
                         return false;
                     }
 
-                    ProgrammingService.SetLogLevelToMax();
                     log.InfoFormat(CultureInfo.InvariantCulture, "Host started");
                 }
+
+                ProgrammingService.SetLogLevelToMax();
+                if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Logging.Level.Trace.Enabled"))
+                {
+                    CoreFramework.DebugLevel = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Level.Trace.Ista", 5);
+                }
+
 
                 sbResult.AppendLine(Strings.HostStarted);
                 UpdateStatus(sbResult.ToString());
