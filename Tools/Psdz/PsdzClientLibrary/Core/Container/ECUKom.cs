@@ -547,6 +547,14 @@ namespace PsdzClient.Core.Container
 
         public ECUJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "")
         {
+            if (FromFastaConfig && !string.IsNullOrEmpty(sgbd) && apiJobNamesToBeCached.Contains(job))
+            {
+                ECUJob jobFromCache = GetJobFromCache(sgbd, job, param, resultFilter);
+                if (jobFromCache != null && (CommunicationMode == CommMode.Simulation || (jobFromCache.JobErrorCode != 0 && jobFromCache.JobResult != null && jobFromCache.JobResult.Count > 0)))
+                {
+                    return jobFromCache;
+                }
+            }
             return apiJob(variant, job, param, resultFilter, retries, 0);
         }
 
@@ -1036,6 +1044,49 @@ namespace PsdzClient.Core.Container
             return eCUJob4;
         }
 
+        public ECUJob GetJobFromCache(string ecuName, string jobName, string jobParam, string jobResultFilter)
+        {
+            Log.Info("ECUKom.GetJobFromCache()", "Try retrieve from Cache: EcuName:{0}, JobName:{1}, JobParam:{2})", ecuName, jobName, jobParam);
+            if (!VehicleCommunication.validLicense)
+            {
+                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
+            }
+            if (!ecuJobDictionary.ContainsKey(ecuName + "-" + jobName))
+            {
+                ecuJobDictionary.Add(ecuName + "-" + jobName, new List<ECUJob>());
+            }
+            try
+            {
+                IEnumerable<ECUJob> enumerable = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobResultFilter, jobResultFilter, StringComparison.OrdinalIgnoreCase) && job.ExecutionStartTime > lastJobExecution);
+                if (enumerable != null && enumerable.Count() > 0)
+                {
+                    return RetrieveEcuJob(enumerable, ecuName, jobName);
+                }
+                IEnumerable<ECUJob> enumerable2 = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase) && job.ExecutionStartTime > lastJobExecution);
+                if (enumerable2 != null && enumerable2.Count() > 0)
+                {
+                    return RetrieveEcuJob(enumerable2, ecuName, jobName);
+                }
+                IEnumerable<ECUJob> enumerable3 = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobResultFilter, jobResultFilter, StringComparison.OrdinalIgnoreCase));
+                if (enumerable3 != null && enumerable3.Count() > 0)
+                {
+                    return RetrieveEcuJobNoExecTime(enumerable3, ecuName, jobName);
+                }
+                IEnumerable<ECUJob> enumerable4 = jobList.Where((ECUJob job) => string.Equals(job.EcuName, ecuName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobName, jobName, StringComparison.OrdinalIgnoreCase) && string.Equals(job.JobParam, jobParam, StringComparison.OrdinalIgnoreCase));
+                if (enumerable4 != null && enumerable4.Count() > 0)
+                {
+                    return RetrieveEcuJobNoExecTime(enumerable4, ecuName, jobName);
+                }
+                CacheMissCounter++;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("ECUKom.GetJobFromCache()", "job {0},{1}) - failed with exception {2}", ecuName, jobName, ex.ToString());
+            }
+            Log.Info("ECUKom.GetJobFromCache()", "No result! EcuName:{0}, JobName:{1}, JobParam:{2})", ecuName, jobName, jobParam);
+            return null;
+        }
+
         public IEcuJob ExecuteJobOverEnet(string icomAddress, string ecu, string job, string param, string resultFilter = "", int retries = 0)
         {
             End();
@@ -1096,7 +1147,7 @@ namespace PsdzClient.Core.Container
                         lastJobExecution = GetLastExecutionTime(item.ExecutionStartTime);
                     }
                     ecuJobDictionary[ecuName + "-" + jobName].Add(item);
-                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "4th try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
+                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.RetrieveEcuJobNoExecTime()", "4th try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
                     CacheHitCounter++;
                     return item;
                 }
@@ -1107,6 +1158,27 @@ namespace PsdzClient.Core.Container
             {
                 lastJobExecution = GetLastExecutionTime(query.First().ExecutionStartTime);
             }
+            Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.RetrieveEcuJobNoExecTime()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
+            CacheHitCounter++;
+            return query.First();
+        }
+
+        private ECUJob RetrieveEcuJob(IEnumerable<ECUJob> query, string ecuName, string jobName)
+        {
+            foreach (ECUJob item in query)
+            {
+                if (!ecuJobDictionary[ecuName + "-" + jobName].Contains(item))
+                {
+                    ecuJobDictionary[ecuName + "-" + jobName].Add(item);
+                    lastJobExecution = GetLastExecutionTime(item.ExecutionStartTime);
+                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
+                    CacheHitCounter++;
+                    return item;
+                }
+            }
+            ecuJobDictionary[ecuName + "-" + jobName].Clear();
+            ecuJobDictionary[ecuName + "-" + jobName].Add(query.First());
+            lastJobExecution = GetLastExecutionTime(query.First().ExecutionStartTime);
             Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
             CacheHitCounter++;
             return query.First();
