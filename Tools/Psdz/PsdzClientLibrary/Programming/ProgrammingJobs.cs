@@ -759,12 +759,17 @@ namespace PsdzClient.Programming
                     log.InfoFormat(CultureInfo.InvariantCulture, "Host started");
                 }
 
-                ProgrammingService.SetLogLevelToMax();
                 if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Logging.Level.Trace.Enabled"))
                 {
+                    ClientContext.IsProblemHandlingTraceRunning = true;
+                    ProgrammingService.SetLogLevelToMax();
                     CoreFramework.DebugLevel = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Level.Trace.Ista", 5);
                 }
-
+                else
+                {
+                    ClientContext.IsProblemHandlingTraceRunning = false;
+                    ProgrammingService.SetLogLevelToNormal();
+                }
 
                 sbResult.AppendLine(Strings.HostStarted);
                 UpdateStatus(sbResult.ToString());

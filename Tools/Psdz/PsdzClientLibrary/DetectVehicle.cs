@@ -831,7 +831,17 @@ namespace PsdzClient
                     }
                 }
 
-                EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, new ECUKom("DetectVehicle", _ediabas), configurationContainer);
+                ECUKom ecuKom = new ECUKom("DetectVehicle", _ediabas);
+                if (_clientContext.IsProblemHandlingTraceRunning)
+                {
+                    ecuKom.SetLogLevelToMax();
+                }
+                else
+                {
+                    ecuKom.SetLogLevelToNormal();
+                }
+
+                EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, ecuKom, configurationContainer);
                 ediabasAdapter.DoParameterization();
                 IDiagnosticDeviceResult diagnosticDeviceResult = ediabasAdapter.Execute(new ParameterContainer());
                 if (diagnosticDeviceResult == null)

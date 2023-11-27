@@ -20,6 +20,7 @@ namespace PsdzClient
         public string OutletCountry { get; set; }
         public string Language { get; set; }
         public bool ProtectionVehicleService { get; set; }
+        public bool IsProblemHandlingTraceRunning { get; set; }
 
         static ClientContext()
         {
