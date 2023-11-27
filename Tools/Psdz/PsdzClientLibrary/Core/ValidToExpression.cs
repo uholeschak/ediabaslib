@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using PsdzClientLibrary.Core;
+using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
@@ -22,10 +21,13 @@ namespace PsdzClient.Core
 
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
         {
-            bool flag = DateTime.Now <= DateTime.FromBinary(this.value);
+            bool flag = ((DateTime.Now <= DateTime.FromBinary(value)) ? true : false);
+            if (CoreFramework.DebugLevel > 1)
+            {
+                Trace.TraceInformation("{0} ValidToExpression.Evaluate() - ValidTo: {1} (original value: {2}) result: {3}", DateTime.Now, DateTime.FromBinary(value), value, flag);
+            }
             return flag;
         }
-
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
         {
             if (client.ClientDate <= DateTime.FromBinary(this.value))
