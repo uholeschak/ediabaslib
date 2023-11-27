@@ -171,6 +171,8 @@
     <Compile Include="Core\CoreFramework.cs" />
     <Compile Include="Core\DataHolder.cs" />
     <Compile Include="Core\DataSourcePriority.cs" />
+    <Compile Include="Core\DateTimePrecise.cs" />
+    <Compile Include="Core\DateTimePreciseSafeImmutable.cs" />
     <Compile Include="Core\FallbackMechanisms.cs" />
     <Compile Include="Core\Fasta2Service.cs" />
     <Compile Include="Core\IFasta2Service.cs" />

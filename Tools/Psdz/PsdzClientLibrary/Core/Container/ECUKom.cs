@@ -560,6 +560,10 @@ namespace PsdzClient.Core.Container
 
         public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout)
         {
+            if (retries > 5)
+            {
+                Log.Warning("ECUKom.apiJob()", "Number of retries is set to {0}.", retries);
+            }
             try
             {
                 ECUJob eCUJob = apiJob(ecu, jobName, param, resultFilter);
@@ -625,6 +629,10 @@ namespace PsdzClient.Core.Container
             eCUJob2.JobErrorCode = 91;
             eCUJob2.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
             eCUJob2.JobResult = new List<ECUResult>();
+            if (VehicleCommunication.DebugLevel > 2)
+            {
+                ECUJob.Dump(eCUJob2);
+            }
             return eCUJob2;
         }
 
@@ -652,10 +660,11 @@ namespace PsdzClient.Core.Container
                 resultFilter = string.Empty;
             }
 
+            DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
             int num2 = 0;
             ECUJob eCUJob5 = new ECUJob();
             eCUJob5.EcuName = ecu;
-            eCUJob5.ExecutionStartTime = DateTime.Now;
+            eCUJob5.ExecutionStartTime = dateTimePrecise.Now;
             eCUJob5.JobName = jobName;
             eCUJob5.JobParam = param;
             eCUJob5.JobResultFilter = resultFilter;
@@ -682,11 +691,11 @@ namespace PsdzClient.Core.Container
                 if (rsets > 0)
                 {
                     Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5} RSets: {6}", ecu, jobName, param, resultFilter, eCUJob5.JobErrorCode, eCUJob5.JobErrorText, rsets);
-                    for (ushort num4 = 0; num4 <= rsets; num4 = (ushort)(num4 + 1))
+                    for (ushort num4 = 0; num4 <= rsets; num4++)
                     {
                         if (api.apiResultNumber(out var buffer, num4))
                         {
-                            for (ushort num5 = 1; num5 <= buffer; num5 = (ushort)(num5 + 1))
+                            for (ushort num5 = 1; num5 <= buffer; num5++)
                             {
                                 ECUResult eCUResult = new ECUResult();
                                 string buffer2 = string.Empty;
@@ -806,7 +815,7 @@ namespace PsdzClient.Core.Container
             {
                 Log.WarningException("ECUKom.apiJob()", exception);
             }
-            eCUJob5.ExecutionEndTime = DateTime.Now;
+            eCUJob5.ExecutionEndTime = dateTimePrecise.Now;
             AddJobInCache(eCUJob5, cacheAdding);
             return eCUJob5;
         }
