@@ -99,6 +99,12 @@
                       <item android:id="@+id/menu_cfg_page_edit_fontsize"
                             android:icon="@android:drawable/ic_menu_edit"
                             android:title="@string/menu_cfg_page_edit_fontsize"/>
+                      <item android:id="@+id/menu_cfg_page_edit_gauges_landscape"
+                            android:icon="@android:drawable/ic_menu_edit"
+                            android:title="@string/menu_cfg_page_edit_gauges_landscape"/>
+                      <item android:id="@+id/menu_cfg_page_edit_gauges_portrait"
+                            android:icon="@android:drawable/ic_menu_edit"
+                            android:title="@string/menu_cfg_page_edit_gauges_portrait"/>
                   </menu>
               </item>
               <item android:id="@+id/menu_cfg_select_edit"
