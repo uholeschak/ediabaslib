@@ -1736,7 +1736,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_fontsize:
-                    //StartEditXml(GetSelectedPage()?.XmlFileName);
+                    SelectFontSize(GetSelectedPage()?.XmlFileName);
                     return true;
 
                 case Resource.Id.menu_cfg_select_edit:
@@ -7300,7 +7300,13 @@ namespace BmwDeepObd
                 {
                     return;
                 }
+
                 SparseBooleanArray sparseArray = listView.CheckedItemPositions;
+                if (sparseArray == null)
+                {
+                    return;
+                }
+
                 for (int i = 0; i < sparseArray.Size(); i++)
                 {
                     bool value = sparseArray.ValueAt(i);
@@ -7779,6 +7785,69 @@ namespace BmwDeepObd
                 _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                 return false;
             }
+        }
+
+        private bool SelectFontSize(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(Resource.String.menu_cfg_page_edit_fontsize);
+            ListView listView = new ListView(this);
+
+            List<string> sizeNames = new List<string>
+            {
+                GetString(Resource.String.xml_tool_ecu_font_size_small),
+                GetString(Resource.String.xml_tool_ecu_font_size_medium),
+                GetString(Resource.String.xml_tool_ecu_font_size_large),
+            };
+            ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
+                Android.Resource.Layout.SimpleListItemSingleChoice, sizeNames.ToArray());
+            listView.Adapter = adapter;
+            listView.ChoiceMode = ChoiceMode.Single;
+            listView.SetItemChecked(0, true);
+
+            builder.SetView(listView);
+            builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                SparseBooleanArray sparseArray = listView.CheckedItemPositions;
+                if (sparseArray == null)
+                {
+                    return;
+                }
+
+                int selectedFontSize = -1;
+                for (int i = 0; i < sparseArray.Size(); i++)
+                {
+                    bool value = sparseArray.ValueAt(i);
+                    switch (sparseArray.KeyAt(i))
+                    {
+                        case 0:
+                            selectedFontSize = 0;
+                            break;
+
+                        case 1:
+                            selectedFontSize = 1;
+                            break;
+
+                        case 2:
+                            selectedFontSize = 2;
+                            break;
+                    }
+                }
+            });
+            builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
+            builder.Show();
+
+            return true;
         }
 
         public class TabsFragmentStateAdapter : FragmentStateAdapter
