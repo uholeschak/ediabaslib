@@ -1507,6 +1507,12 @@ namespace BmwDeepObd
             IMenuItem cfgPageEditFontsizeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_fontsize);
             cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && !errorsPage);
 
+            IMenuItem cfgPageEditGaugesLandscapeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_gauges_landscape);
+            cfgPageEditGaugesLandscapeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && !errorsPage);
+
+            IMenuItem cfgPageEditGaugesPortraitMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_gauges_portrait);
+            cfgPageEditGaugesPortraitMenu?.SetEnabled(!commActive && enableSelectedPageEdit && !errorsPage);
+
             IMenuItem cfgSelectEditMenu = menu.FindItem(Resource.Id.menu_cfg_select_edit);
             cfgSelectEditMenu?.SetEnabled(!commActive);
 
@@ -1744,6 +1750,14 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_cfg_page_edit_fontsize:
                     EditFontSize(currentPage);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_edit_gauges_landscape:
+                    EditGaugesCount(currentPage, true);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_edit_gauges_portrait:
+                    EditGaugesCount(currentPage, false);
                     return true;
 
                 case Resource.Id.menu_cfg_select_edit:
@@ -7919,17 +7933,19 @@ namespace BmwDeepObd
                 }
 
                 int currentGauges = landscape ? currentPage.GaugesLandscape : currentPage.GaugesPortrait;
+                int titleId = landscape ? Resource.String.menu_cfg_page_edit_gauges_landscape : Resource.String.menu_cfg_page_edit_gauges_portrait;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.SetTitle(Resource.String.menu_cfg_page_edit_fontsize);
+                builder.SetTitle(titleId);
                 ListView listView = new ListView(this);
 
                 const int minGauges = 2;
+                const int maxGauges = 10;
                 int selectedPosition = 0;
                 List<string> gaugeNames = new List<string>();
-                for (int i = minGauges; i < 10; i++)
+                for (int gauges = minGauges; gauges <= maxGauges; gauges++)
                 {
-                    gaugeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}", i));
-                    if (i == currentGauges)
+                    gaugeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}", gauges));
+                    if (gauges == currentGauges)
                     {
                         selectedPosition = gaugeNames.Count - 1;
                     }
