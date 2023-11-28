@@ -333,6 +333,8 @@
   <string name="menu_cfg_edit">Редактировать</string>
   <string name="menu_cfg_pages_edit">Редактировать список страниц</string>
   <string name="menu_cfg_page_edit">Редактировать текущую страницу</string>
+  <!--Translate-->
+  <string name="menu_cfg_page_edit_fontsize">Размер шрифта текущей страницы</string>
   <string name="menu_cfg_select_edit">Редактировать другой файл</string>
   <string name="menu_cfg_edit_reset">Сбросить XML редактор</string>
   <string name="menu_cfg_close">Закрыть</string>

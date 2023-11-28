@@ -1333,6 +1333,7 @@ namespace BmwDeepObd
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
             bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
+            bool enableSelectedPageEdit = !string.IsNullOrEmpty(GetSelectedPage()?.XmlFileName);
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
             if (actionProviderConnect != null)
@@ -1495,7 +1496,10 @@ namespace BmwDeepObd
             cfgPagesEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName) && !string.IsNullOrEmpty(ActivityCommon.JobReader.XmlFileNamePages));
 
             IMenuItem cfgPageEditMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit);
-            cfgPageEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(GetSelectedPage()?.XmlFileName));
+            cfgPageEditMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
+
+            IMenuItem cfgPageEditFontsizeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_fontsize);
+            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
 
             IMenuItem cfgSelectEditMenu = menu.FindItem(Resource.Id.menu_cfg_select_edit);
             cfgSelectEditMenu?.SetEnabled(!commActive);
@@ -1729,6 +1733,10 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_cfg_page_edit:
                     StartEditXml(GetSelectedPage()?.XmlFileName);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_edit_fontsize:
+                    //StartEditXml(GetSelectedPage()?.XmlFileName);
                     return true;
 
                 case Resource.Id.menu_cfg_select_edit:
