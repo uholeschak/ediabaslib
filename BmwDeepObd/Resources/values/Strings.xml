@@ -308,7 +308,7 @@
   <string name="menu_cfg_sel">Select</string>
   <string name="menu_cfg_edit">Edit</string>
   <string name="menu_cfg_pages_edit">Edit pages list</string>
-  <string name="menu_cfg_page_menu">Current page</string>
+  <string name="menu_cfg_page_menu">Edit current page</string>
   <string name="menu_cfg_page_edit">Edit current page</string>
   <string name="menu_cfg_page_edit_fontsize">Current page font size</string>
   <string name="menu_cfg_select_edit">Edit other file</string>
