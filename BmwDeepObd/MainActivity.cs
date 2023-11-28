@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -7802,6 +7803,22 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                string currentFontSize = "small";
+                Regex regexfontSize = new Regex("fontsize\\s*=\\s*\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                MatchCollection matchesLogOutput = regexfontSize.Matches(fileText);
+                foreach (Match match in matchesLogOutput)
+                {
+                    if (match.Groups.Count == 2)
+                    {
+                        string fontSize = match.Groups[1].Value;
+                        if (!string.IsNullOrWhiteSpace(fontSize))
+                        {
+                            currentFontSize = fontSize;
+                            break;
+                        }
+                    }
+                }
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.SetTitle(Resource.String.menu_cfg_page_edit_fontsize);
                 ListView listView = new ListView(this);
@@ -7816,7 +7833,9 @@ namespace BmwDeepObd
                     Android.Resource.Layout.SimpleListItemSingleChoice, sizeNames.ToArray());
                 listView.Adapter = adapter;
                 listView.ChoiceMode = ChoiceMode.Single;
-                listView.SetItemChecked(0, true);
+                listView.SetItemChecked(0,  string.Compare(currentFontSize, "small", StringComparison.OrdinalIgnoreCase) == 0);
+                listView.SetItemChecked(1, string.Compare(currentFontSize, "medium", StringComparison.OrdinalIgnoreCase) == 0);
+                listView.SetItemChecked(2, string.Compare(currentFontSize, "large", StringComparison.OrdinalIgnoreCase) == 0);
 
                 builder.SetView(listView);
                 builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
