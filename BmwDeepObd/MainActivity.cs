@@ -7803,7 +7803,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string currentFontSize = "small";
+                int currentFontIndex = 0;
                 Regex regexfontSize = new Regex("fontsize\\s*=\\s*\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection matchesLogOutput = regexfontSize.Matches(fileText);
                 foreach (Match match in matchesLogOutput)
@@ -7813,8 +7813,23 @@ namespace BmwDeepObd
                         string fontSize = match.Groups[1].Value;
                         if (!string.IsNullOrWhiteSpace(fontSize))
                         {
-                            currentFontSize = fontSize;
-                            break;
+                            if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Small.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                currentFontIndex = 0;
+                                break;
+                            }
+
+                            if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Medium.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                currentFontIndex = 1;
+                                break;
+                            }
+
+                            if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Large.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                currentFontIndex = 2;
+                                break;
+                            }
                         }
                     }
                 }
@@ -7833,9 +7848,9 @@ namespace BmwDeepObd
                     Android.Resource.Layout.SimpleListItemSingleChoice, sizeNames.ToArray());
                 listView.Adapter = adapter;
                 listView.ChoiceMode = ChoiceMode.Single;
-                listView.SetItemChecked(0,  string.Compare(currentFontSize, "small", StringComparison.OrdinalIgnoreCase) == 0);
-                listView.SetItemChecked(1, string.Compare(currentFontSize, "medium", StringComparison.OrdinalIgnoreCase) == 0);
-                listView.SetItemChecked(2, string.Compare(currentFontSize, "large", StringComparison.OrdinalIgnoreCase) == 0);
+                listView.SetItemChecked(0, currentFontIndex == 0);
+                listView.SetItemChecked(1, currentFontIndex == 1);
+                listView.SetItemChecked(2, currentFontIndex == 2);
 
                 builder.SetView(listView);
                 builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
@@ -7845,32 +7860,33 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    SparseBooleanArray sparseArray = listView.CheckedItemPositions;
-                    if (sparseArray == null)
+                    string selectedFont = XmlToolActivity.DisplayFontSize.Small.ToString().ToLowerInvariant();
+                    switch (listView.CheckedItemPosition)
                     {
-                        return;
+                        case 1:
+                            selectedFont = XmlToolActivity.DisplayFontSize.Medium.ToString().ToLowerInvariant();
+                            break;
+
+                        case 2:
+                            selectedFont = XmlToolActivity.DisplayFontSize.Large.ToString().ToLowerInvariant();
+                            break;
                     }
 
-                    int selectedFontSize = -1;
-                    for (int i = 0; i < sparseArray.Size(); i++)
+                    string fileTextMod = regexfontSize.Replace(fileText, match =>
                     {
-                        bool value = sparseArray.ValueAt(i);
-                        switch (sparseArray.KeyAt(i))
+                        if (match.Groups.Count == 2)
                         {
-                            case 0:
-                                selectedFontSize = 0;
-                                break;
-
-                            case 1:
-                                selectedFontSize = 1;
-                                break;
-
-                            case 2:
-                                selectedFontSize = 2;
-                                break;
+                            return string.Format(CultureInfo.InvariantCulture, "fontsize=\"{0}\"", selectedFont);
                         }
+
+                        return match.ToString();
+                    });
+
+                    if (fileTextMod != fileText)
+                    {
+                        File.WriteAllText(fileName, fileTextMod);
+                        ReadConfigFile();
                     }
-                    UpdateOptionsMenu();
                 });
                 builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
                 builder.Show();
