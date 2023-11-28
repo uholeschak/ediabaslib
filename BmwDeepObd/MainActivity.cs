@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
@@ -1736,7 +1737,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_fontsize:
-                    //StartEditXml(GetSelectedPage()?.XmlFileName);
+                    SelectFontSize(GetSelectedPage()?.XmlFileName);
                     return true;
 
                 case Resource.Id.menu_cfg_select_edit:
@@ -7300,7 +7301,13 @@ namespace BmwDeepObd
                 {
                     return;
                 }
+
                 SparseBooleanArray sparseArray = listView.CheckedItemPositions;
+                if (sparseArray == null)
+                {
+                    return;
+                }
+
                 for (int i = 0; i < sparseArray.Size(); i++)
                 {
                     bool value = sparseArray.ValueAt(i);
@@ -7779,6 +7786,117 @@ namespace BmwDeepObd
                 _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                 return false;
             }
+        }
+
+        private bool SelectFontSize(string fileName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return false;
+                }
+
+                string fileText = File.ReadAllText(fileName);
+                if (string.IsNullOrWhiteSpace(fileText))
+                {
+                    return false;
+                }
+
+                int currentFontIndex = 0;
+                Regex regexfontSize = new Regex("fontsize\\s*=\\s*\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                MatchCollection matchesLogOutput = regexfontSize.Matches(fileText);
+                foreach (Match match in matchesLogOutput)
+                {
+                    if (match.Groups.Count == 2)
+                    {
+                        string fontSize = match.Groups[1].Value;
+                        if (!string.IsNullOrWhiteSpace(fontSize))
+                        {
+                            if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Small.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                currentFontIndex = 0;
+                                break;
+                            }
+
+                            if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Medium.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                currentFontIndex = 1;
+                                break;
+                            }
+
+                            if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Large.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                currentFontIndex = 2;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.SetTitle(Resource.String.menu_cfg_page_edit_fontsize);
+                ListView listView = new ListView(this);
+
+                List<string> sizeNames = new List<string>
+                {
+                    GetString(Resource.String.xml_tool_ecu_font_size_small),
+                    GetString(Resource.String.xml_tool_ecu_font_size_medium),
+                    GetString(Resource.String.xml_tool_ecu_font_size_large),
+                };
+                ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
+                    Android.Resource.Layout.SimpleListItemSingleChoice, sizeNames.ToArray());
+                listView.Adapter = adapter;
+                listView.ChoiceMode = ChoiceMode.Single;
+                listView.SetItemChecked(0, currentFontIndex == 0);
+                listView.SetItemChecked(1, currentFontIndex == 1);
+                listView.SetItemChecked(2, currentFontIndex == 2);
+
+                builder.SetView(listView);
+                builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    string selectedFont = XmlToolActivity.DisplayFontSize.Small.ToString().ToLowerInvariant();
+                    switch (listView.CheckedItemPosition)
+                    {
+                        case 1:
+                            selectedFont = XmlToolActivity.DisplayFontSize.Medium.ToString().ToLowerInvariant();
+                            break;
+
+                        case 2:
+                            selectedFont = XmlToolActivity.DisplayFontSize.Large.ToString().ToLowerInvariant();
+                            break;
+                    }
+
+                    string fileTextMod = regexfontSize.Replace(fileText, match =>
+                    {
+                        if (match.Groups.Count == 2)
+                        {
+                            return string.Format(CultureInfo.InvariantCulture, "fontsize=\"{0}\"", selectedFont);
+                        }
+
+                        return match.ToString();
+                    });
+
+                    if (fileTextMod != fileText)
+                    {
+                        File.WriteAllText(fileName, fileTextMod);
+                        ReadConfigFile();
+                    }
+                });
+                builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
+                builder.Show();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public class TabsFragmentStateAdapter : FragmentStateAdapter
