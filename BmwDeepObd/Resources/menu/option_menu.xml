@@ -89,12 +89,18 @@
               <item android:id="@+id/menu_cfg_pages_edit"
                     android:icon="@android:drawable/ic_menu_edit"
                     android:title="@string/menu_cfg_pages_edit"/>
-              <item android:id="@+id/menu_cfg_page_edit"
+              <item android:id="@+id/menu_cfg_page_menu"
                     android:icon="@android:drawable/ic_menu_edit"
-                    android:title="@string/menu_cfg_page_edit"/>
-              <item android:id="@+id/menu_cfg_page_edit_fontsize"
-                    android:icon="@android:drawable/ic_menu_edit"
-                    android:title="@string/menu_cfg_page_edit_fontsize"/>
+                    android:title="@string/menu_cfg_page_menu">
+                  <menu>
+                      <item android:id="@+id/menu_cfg_page_edit"
+                            android:icon="@android:drawable/ic_menu_edit"
+                            android:title="@string/menu_cfg_page_edit"/>
+                      <item android:id="@+id/menu_cfg_page_edit_fontsize"
+                            android:icon="@android:drawable/ic_menu_edit"
+                            android:title="@string/menu_cfg_page_edit_fontsize"/>
+                  </menu>
+              </item>
               <item android:id="@+id/menu_cfg_select_edit"
                     android:icon="@android:drawable/ic_menu_edit"
                     android:title="@string/menu_cfg_select_edit"/>

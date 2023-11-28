@@ -1334,7 +1334,9 @@ namespace BmwDeepObd
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
             bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
-            bool enableSelectedPageEdit = !string.IsNullOrEmpty(GetSelectedPage()?.XmlFileName);
+            JobReader.PageInfo currentPage = GetSelectedPage();
+            bool errorsPage = currentPage?.ErrorsInfo != null;
+            bool enableSelectedPageEdit = !string.IsNullOrEmpty(currentPage?.XmlFileName);
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
             if (actionProviderConnect != null)
@@ -1496,11 +1498,14 @@ namespace BmwDeepObd
             IMenuItem cfgPagesEditMenu = menu.FindItem(Resource.Id.menu_cfg_pages_edit);
             cfgPagesEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName) && !string.IsNullOrEmpty(ActivityCommon.JobReader.XmlFileNamePages));
 
+            IMenuItem cfgPageMenu = menu.FindItem(Resource.Id.menu_cfg_page_menu);
+            cfgPageMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
+
             IMenuItem cfgPageEditMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit);
             cfgPageEditMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
 
             IMenuItem cfgPageEditFontsizeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_fontsize);
-            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
+            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && !errorsPage);
 
             IMenuItem cfgSelectEditMenu = menu.FindItem(Resource.Id.menu_cfg_select_edit);
             cfgSelectEditMenu?.SetEnabled(!commActive);
@@ -7804,7 +7809,7 @@ namespace BmwDeepObd
                 }
 
                 int currentFontIndex = 0;
-                Regex regexfontSize = new Regex("(fontsize\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                Regex regexfontSize = new Regex("(\\Wfontsize\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection matchesLogOutput = regexfontSize.Matches(fileText);
                 foreach (Match match in matchesLogOutput)
                 {

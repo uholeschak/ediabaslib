@@ -332,6 +332,8 @@
   <string name="menu_cfg_sel">Выбрать</string>
   <string name="menu_cfg_edit">Редактировать</string>
   <string name="menu_cfg_pages_edit">Редактировать список страниц</string>
+  <!--Translate-->
+  <string name="menu_cfg_page_menu">Текущая страница</string>
   <string name="menu_cfg_page_edit">Редактировать текущую страницу</string>
   <!--Translate-->
   <string name="menu_cfg_page_edit_fontsize">Размер шрифта текущей страницы</string>
