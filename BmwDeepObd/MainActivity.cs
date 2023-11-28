@@ -1668,6 +1668,7 @@ namespace BmwDeepObd
                 }
             }
 
+            JobReader.PageInfo currentPage = GetSelectedPage();
             switch (item.ItemId)
             {
                 case Resource.Id.menu_manufacturer:
@@ -1738,11 +1739,11 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit:
-                    StartEditXml(GetSelectedPage()?.XmlFileName);
+                    StartEditXml(currentPage?.XmlFileName);
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_fontsize:
-                    SelectFontSize(GetSelectedPage()?.XmlFileName);
+                    EditFontSize(currentPage);
                     return true;
 
                 case Resource.Id.menu_cfg_select_edit:
@@ -7793,10 +7794,16 @@ namespace BmwDeepObd
             }
         }
 
-        private bool SelectFontSize(string fileName)
+        private bool EditFontSize(JobReader.PageInfo currentPage)
         {
             try
             {
+                if (currentPage == null)
+                {
+                    return false;
+                }
+
+                string fileName = currentPage.XmlFileName;
                 if (string.IsNullOrEmpty(fileName))
                 {
                     return false;
@@ -7809,34 +7816,19 @@ namespace BmwDeepObd
                 }
 
                 int currentFontIndex = 0;
-                Regex regexfontSize = new Regex("(\\Wfontsize\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-                MatchCollection matchesLogOutput = regexfontSize.Matches(fileText);
-                foreach (Match match in matchesLogOutput)
+                switch (currentPage.TextResId)
                 {
-                    if (match.Groups.Count == 3)
-                    {
-                        string fontSize = match.Groups[2].Value;
-                        if (!string.IsNullOrWhiteSpace(fontSize))
-                        {
-                            if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Small.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                currentFontIndex = 0;
-                                break;
-                            }
+                    case Android.Resource.Style.TextAppearanceSmall:
+                        currentFontIndex = 0;
+                        break;
 
-                            if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Medium.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                currentFontIndex = 1;
-                                break;
-                            }
+                    case Android.Resource.Style.TextAppearanceMedium:
+                        currentFontIndex = 1;
+                        break;
 
-                            if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Large.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                currentFontIndex = 2;
-                                break;
-                            }
-                        }
-                    }
+                    case Android.Resource.Style.TextAppearanceLarge:
+                        currentFontIndex = 2;
+                        break;
                 }
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -7877,11 +7869,100 @@ namespace BmwDeepObd
                             break;
                     }
 
+                    Regex regexfontSize = new Regex("(\\Wfontsize\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                     string fileTextMod = regexfontSize.Replace(fileText, match =>
                     {
                         if (match.Groups.Count == 3)
                         {
                             return string.Format(CultureInfo.InvariantCulture, "{0}\"{1}\"", match.Groups[1].Value, selectedFont);
+                        }
+
+                        return match.ToString();
+                    });
+
+                    if (fileTextMod != fileText)
+                    {
+                        File.WriteAllText(fileName, fileTextMod);
+                        ReadConfigFile();
+                    }
+                });
+                builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
+                builder.Show();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool EditGaugesCount(JobReader.PageInfo currentPage, bool landscape)
+        {
+            try
+            {
+                if (currentPage == null)
+                {
+                    return false;
+                }
+
+                string fileName = currentPage.XmlFileName;
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return false;
+                }
+
+                string fileText = File.ReadAllText(fileName);
+                if (string.IsNullOrWhiteSpace(fileText))
+                {
+                    return false;
+                }
+
+                int currentGauges = landscape ? currentPage.GaugesLandscape : currentPage.GaugesPortrait;
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.SetTitle(Resource.String.menu_cfg_page_edit_fontsize);
+                ListView listView = new ListView(this);
+
+                const int minGauges = 2;
+                int selectedPosition = 0;
+                List<string> gaugeNames = new List<string>();
+                for (int i = minGauges; i < 10; i++)
+                {
+                    gaugeNames.Add(string.Format(CultureInfo.InvariantCulture, "{0}", i));
+                    if (i == currentGauges)
+                    {
+                        selectedPosition = gaugeNames.Count - 1;
+                    }
+                }
+
+                ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
+                    Android.Resource.Layout.SimpleListItemSingleChoice, gaugeNames.ToArray());
+                listView.Adapter = adapter;
+                listView.ChoiceMode = ChoiceMode.Single;
+                listView.SetItemChecked(selectedPosition, true);
+
+                builder.SetView(listView);
+                builder.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    int pos = listView.CheckedItemPosition;
+                    if (pos < 0)
+                    {
+                        return;
+                    }
+
+                    int selectedGauges = pos + minGauges;
+                    string keyWord = landscape ? "gauges-landscape" : "gauges-portrait";
+                    Regex regexGauges = new Regex($"(\\W{keyWord}\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                    string fileTextMod = regexGauges.Replace(fileText, match =>
+                    {
+                        if (match.Groups.Count == 3)
+                        {
+                            return string.Format(CultureInfo.InvariantCulture, "{0}\"{1}\"", match.Groups[1].Value, selectedGauges);
                         }
 
                         return match.ToString();
