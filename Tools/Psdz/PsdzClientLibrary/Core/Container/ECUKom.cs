@@ -535,7 +535,8 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, resultFilter, cacheAdding);
         }
 
-        public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter, int retries, bool fastaActive)
+        // [UH] added default values
+        public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter = "", int retries = 0, bool fastaActive = true)
         {
             return (retries == 0) ? apiJob(ecu, job, param, resultFilter) : apiJob(ecu, job, param, resultFilter, retries, 0);
         }
@@ -892,11 +893,12 @@ namespace PsdzClient.Core.Container
                 paramlen = param.Length;
             }
 
+            DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
             int num2 = 0;
             ECUJob eCUJob4 = new ECUJob();
             eCUJob4.EcuName = ecu;
             eCUJob4.JobName = job;
-            eCUJob4.ExecutionStartTime = DateTime.Now;
+            eCUJob4.ExecutionStartTime = dateTimePrecise.Now;
             eCUJob4.ExecutionEndTime = eCUJob4.ExecutionStartTime;
             eCUJob4.JobResultFilter = resultFilter;
             eCUJob4.JobResult = new List<ECUResult>();
@@ -924,11 +926,11 @@ namespace PsdzClient.Core.Container
                     if (api.apiResultSets(out var rsets))
                     {
                         eCUJob4.JobResultSets = rsets;
-                        for (ushort num4 = 0; num4 <= rsets; num4 = (ushort)(num4 + 1))
+                        for (ushort num4 = 0; num4 <= rsets; num4++)
                         {
                             if (api.apiResultNumber(out var buffer, num4))
                             {
-                                for (ushort num5 = 1; num5 <= buffer; num5 = (ushort)(num5 + 1))
+                                for (ushort num5 = 1; num5 <= buffer; num5++)
                                 {
                                     ECUResult eCUResult = new ECUResult();
                                     eCUResult.Set = num4;
@@ -1048,18 +1050,34 @@ namespace PsdzClient.Core.Container
             {
                 Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex3.ToString());
             }
-            eCUJob4.ExecutionEndTime = DateTime.Now;
+            eCUJob4.ExecutionEndTime = dateTimePrecise.Now;
             AddJobInCache(eCUJob4);
             return eCUJob4;
+        }
+
+        public int getErrorCode()
+        {
+            return api.apiErrorCode();
+        }
+
+        public string getErrorText()
+        {
+            return api.apiErrorText();
+        }
+
+        public int getState(int suspendTime)
+        {
+            return api.apiStateExt(suspendTime);
+        }
+
+        public bool setConfig(string cfgName, string cfgValue)
+        {
+            return api.apiSetConfig(cfgName, cfgValue);
         }
 
         public ECUJob GetJobFromCache(string ecuName, string jobName, string jobParam, string jobResultFilter)
         {
             Log.Info("ECUKom.GetJobFromCache()", "Try retrieve from Cache: EcuName:{0}, JobName:{1}, JobParam:{2})", ecuName, jobName, jobParam);
-            if (!VehicleCommunication.validLicense)
-            {
-                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-            }
             if (!ecuJobDictionary.ContainsKey(ecuName + "-" + jobName))
             {
                 ecuJobDictionary.Add(ecuName + "-" + jobName, new List<ECUJob>());
@@ -1113,7 +1131,7 @@ namespace PsdzClient.Core.Container
                 return null;
             }
             SetEcuPath(logging: true);
-            IEcuJob result = ApiJob(ecu, job, param, resultFilter, retries, true);
+            IEcuJob result = ApiJob(ecu, job, param, resultFilter, retries);
             RefreshEdiabasConnection();
             return result;
         }
@@ -1135,7 +1153,7 @@ namespace PsdzClient.Core.Container
             string result = string.Empty;
             try
             {
-                string pathString = "..\\..\\..\\logs";
+                string pathString = ConfigSettings.getPathString("BMW.Rheingold.Logging.Directory.Current", "..\\..\\..\\logs");
                 result = Path.GetFullPath(pathString);
             }
             catch (Exception ex)
@@ -1156,7 +1174,7 @@ namespace PsdzClient.Core.Container
                         lastJobExecution = GetLastExecutionTime(item.ExecutionStartTime);
                     }
                     ecuJobDictionary[ecuName + "-" + jobName].Add(item);
-                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.RetrieveEcuJobNoExecTime()", "4th try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
+                    Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "4th try: found job {0}/{1}/{2}/{3}/{4} at {5}", item.EcuName, item.JobName, item.JobParam, item.JobErrorCode, item.JobErrorText, item.ExecutionStartTime);
                     CacheHitCounter++;
                     return item;
                 }
@@ -1167,7 +1185,7 @@ namespace PsdzClient.Core.Container
             {
                 lastJobExecution = GetLastExecutionTime(query.First().ExecutionStartTime);
             }
-            Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.RetrieveEcuJobNoExecTime()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
+            Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
             CacheHitCounter++;
             return query.First();
         }
@@ -1205,7 +1223,6 @@ namespace PsdzClient.Core.Container
             }
             return executionStartTime;
         }
-
 
         private void AddJobInCache(ECUJob job, bool cacheCondition = true)
         {
@@ -1284,6 +1301,11 @@ namespace PsdzClient.Core.Container
         public int getState()
         {
             return api.apiState();
+        }
+
+        public int waitJobDone(int suspendTime)
+        {
+            return getState(suspendTime);
         }
     }
 }
