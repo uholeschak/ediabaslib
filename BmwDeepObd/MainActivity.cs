@@ -7804,13 +7804,13 @@ namespace BmwDeepObd
                 }
 
                 int currentFontIndex = 0;
-                Regex regexfontSize = new Regex("fontsize\\s*=\\s*\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                Regex regexfontSize = new Regex("(fontsize\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection matchesLogOutput = regexfontSize.Matches(fileText);
                 foreach (Match match in matchesLogOutput)
                 {
-                    if (match.Groups.Count == 2)
+                    if (match.Groups.Count == 3)
                     {
-                        string fontSize = match.Groups[1].Value;
+                        string fontSize = match.Groups[2].Value;
                         if (!string.IsNullOrWhiteSpace(fontSize))
                         {
                             if (string.Compare(fontSize, XmlToolActivity.DisplayFontSize.Small.ToString().ToLowerInvariant(), StringComparison.OrdinalIgnoreCase) == 0)
@@ -7874,9 +7874,9 @@ namespace BmwDeepObd
 
                     string fileTextMod = regexfontSize.Replace(fileText, match =>
                     {
-                        if (match.Groups.Count == 2)
+                        if (match.Groups.Count == 3)
                         {
-                            return string.Format(CultureInfo.InvariantCulture, "fontsize=\"{0}\"", selectedFont);
+                            return string.Format(CultureInfo.InvariantCulture, "{0}\"{1}\"", match.Groups[1].Value, selectedFont);
                         }
 
                         return match.ToString();
