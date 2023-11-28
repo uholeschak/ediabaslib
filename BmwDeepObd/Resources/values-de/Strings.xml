@@ -332,6 +332,7 @@
   <string name="menu_cfg_sel">Auswählen</string>
   <string name="menu_cfg_edit">Editieren</string>
   <string name="menu_cfg_pages_edit">Seitenliste editieren</string>
+  <string name="menu_cfg_page_menu">Aktuelle Seite</string>
   <string name="menu_cfg_page_edit">Aktuelle Seite editieren</string>
   <string name="menu_cfg_page_edit_fontsize">Aktuelle Seite Schriftgröße</string>
   <string name="menu_cfg_select_edit">Andere Datei editieren</string>
