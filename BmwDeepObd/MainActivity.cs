@@ -1335,7 +1335,6 @@ namespace BmwDeepObd
             bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
             JobReader.PageInfo currentPage = GetSelectedPage();
-            bool errorsPage = currentPage?.ErrorsInfo != null;
             bool enableSelectedPageEdit = !string.IsNullOrEmpty(currentPage?.XmlFileName);
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
@@ -1505,13 +1504,13 @@ namespace BmwDeepObd
             cfgPageEditMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
 
             IMenuItem cfgPageEditFontsizeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_fontsize);
-            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && !errorsPage);
+            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.TextResId != 0);
 
             IMenuItem cfgPageEditGaugesLandscapeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_gauges_landscape);
-            cfgPageEditGaugesLandscapeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && !errorsPage);
+            cfgPageEditGaugesLandscapeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.GaugesLandscape != null);
 
             IMenuItem cfgPageEditGaugesPortraitMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_gauges_portrait);
-            cfgPageEditGaugesPortraitMenu?.SetEnabled(!commActive && enableSelectedPageEdit && !errorsPage);
+            cfgPageEditGaugesPortraitMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.GaugesPortrait != null);
 
             IMenuItem cfgSelectEditMenu = menu.FindItem(Resource.Id.menu_cfg_select_edit);
             cfgSelectEditMenu?.SetEnabled(!commActive);
@@ -4304,7 +4303,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    int gaugeCount = portrait ? pageInfo.GaugesPortrait : pageInfo.GaugesLandscape;
+                    int gaugeCount = portrait ? pageInfo.GaugesPortraitValue : pageInfo.GaugesLandscapeValue;
                     gaugeSize = (gridViewResult.Width / gaugeCount) - gridViewResult.HorizontalSpacing - 1;
                     if (gaugeSize < 10)
                     {
@@ -7983,7 +7982,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                int currentGauges = landscape ? currentPage.GaugesLandscape : currentPage.GaugesPortrait;
+                int currentGauges = landscape ? currentPage.GaugesLandscapeValue : currentPage.GaugesPortraitValue;
                 int titleId = landscape ? Resource.String.menu_cfg_page_edit_gauges_landscape : Resource.String.menu_cfg_page_edit_gauges_portrait;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.SetTitle(titleId);
