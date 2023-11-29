@@ -175,7 +175,7 @@ namespace BmwDeepObd
 
         public class PageInfo
         {
-            public PageInfo(string xmlFileName, string name, float weight, DisplayModeType displayMode, int textResId, int? gaugesPortrait, int? gaugesLandscape, string logFile, string dbName, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string xmlFileName, string name, float weight, DisplayModeType displayMode, int? textResId, int? gaugesPortrait, int? gaugesLandscape, string logFile, string dbName, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
                 XmlFileName = xmlFileName;
                 Name = name;
@@ -229,7 +229,7 @@ namespace BmwDeepObd
 
             public DisplayModeType DisplayMode { get; }
 
-            public int TextResId { get; }
+            public int? TextResId { get; }
 
             public int? GaugesPortrait { get; }
 
@@ -552,7 +552,7 @@ namespace BmwDeepObd
                         string pageName = string.Empty;
                         string xmlFileName = string.Empty;
                         float pageWeight = -1;
-                        int textResId = 0;
+                        int? textResId = null;
                         int? gaugesPortrait = null;
                         int? gaugesLandscape = null;
                         PageInfo.DisplayModeType displayMode = PageInfo.DisplayModeType.List;
