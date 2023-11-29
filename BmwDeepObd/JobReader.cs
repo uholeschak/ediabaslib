@@ -175,13 +175,13 @@ namespace BmwDeepObd
 
         public class PageInfo
         {
-            public PageInfo(string xmlFileName, string name, float weight, DisplayModeType displayMode, int? textResId, int? gaugesPortrait, int? gaugesLandscape, string logFile, string dbName, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
+            public PageInfo(string xmlFileName, string name, float weight, DisplayModeType displayMode, XmlToolActivity.DisplayFontSize? displayFontSize, int? gaugesPortrait, int? gaugesLandscape, string logFile, string dbName, bool jobActivate, string classCode, bool codeShowWarnings, JobsInfo jobsInfo, ErrorsInfo errorsInfo, List<DisplayInfo> displayList, List<StringInfo> stringList)
             {
                 XmlFileName = xmlFileName;
                 Name = name;
                 Weight = weight;
                 DisplayMode = displayMode;
-                TextResId = textResId;
+                DisplayFontSize = displayFontSize;
                 GaugesPortrait = gaugesPortrait;
                 GaugesLandscape = gaugesLandscape;
                 LogFile = logFile;
@@ -229,7 +229,30 @@ namespace BmwDeepObd
 
             public DisplayModeType DisplayMode { get; }
 
-            public int? TextResId { get; }
+            public XmlToolActivity.DisplayFontSize? DisplayFontSize { get; }
+
+            public int? TextResId
+            {
+                get
+                {
+                    if (DisplayFontSize != null)
+                    {
+                        switch (DisplayFontSize.Value)
+                        {
+                            case XmlToolActivity.DisplayFontSize.Small:
+                                return Android.Resource.Style.TextAppearanceSmall;
+
+                            case XmlToolActivity.DisplayFontSize.Medium:
+                                return Android.Resource.Style.TextAppearanceMedium;
+
+                            case XmlToolActivity.DisplayFontSize.Large:
+                                return Android.Resource.Style.TextAppearanceLarge;
+                        }
+                    }
+
+                    return null;
+                }
+            }
 
             public int? GaugesPortrait { get; }
 
@@ -552,7 +575,7 @@ namespace BmwDeepObd
                         string pageName = string.Empty;
                         string xmlFileName = string.Empty;
                         float pageWeight = -1;
-                        int? textResId = null;
+                        XmlToolActivity.DisplayFontSize? displayFontSize = null;
                         int? gaugesPortrait = null;
                         int? gaugesLandscape = null;
                         PageInfo.DisplayModeType displayMode = PageInfo.DisplayModeType.List;
@@ -593,19 +616,9 @@ namespace BmwDeepObd
                             if (attrib != null)
                             {
                                 string size = attrib.Value.ToLowerInvariant();
-                                switch (size)
+                                if (Enum.TryParse(size, true, out XmlToolActivity.DisplayFontSize fontSize))
                                 {
-                                    case "small":
-                                        textResId = Android.Resource.Style.TextAppearanceSmall;
-                                        break;
-
-                                    case "medium":
-                                        textResId = Android.Resource.Style.TextAppearanceMedium;
-                                        break;
-
-                                    case "large":
-                                        textResId = Android.Resource.Style.TextAppearanceLarge;
-                                        break;
+                                    displayFontSize = fontSize;
                                 }
                             }
 
@@ -878,7 +891,7 @@ namespace BmwDeepObd
                             classCode = null;
                         }
 
-                        _pageList.Add(new PageInfo(xmlFileName, pageName, pageWeight, displayMode, textResId, gaugesPortrait, gaugesLandscape, logFile, dbName, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
+                        _pageList.Add(new PageInfo(xmlFileName, pageName, pageWeight, displayMode, displayFontSize, gaugesPortrait, gaugesLandscape, logFile, dbName, jobActivate, classCode, codeShowWarnings, jobsInfo, errorsInfo, displayList, stringList));
                     }
                 }
 
