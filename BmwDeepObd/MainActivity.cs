@@ -7911,15 +7911,43 @@ namespace BmwDeepObd
 
                     if (fileTextMod != fileText)
                     {
-                        File.WriteAllText(fileName, fileTextMod);
-                        ReadConfigFile();
+                        try
+                        {
+                            File.WriteAllText(fileName, fileTextMod);
+                            ReadConfigFile();
+                        }
+                        catch (Exception ex)
+                        {
+                            string errorMessage = EdiabasNet.GetExceptionText(ex);
+#if DEBUG
+                            Log.Info(Tag, string.Format("EditFontSize Exception: {0}", errorMessage));
+#endif
+                            string message = GetString(Resource.String.file_access_denied);
+                            if (!string.IsNullOrEmpty(errorMessage))
+                            {
+                                message += "\r\n" + errorMessage;
+                            }
+
+                            _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                        }
                     }
                 });
                 builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
                 builder.Show();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                string errorMessage = EdiabasNet.GetExceptionText(ex);
+#if DEBUG
+                Log.Info(Tag, string.Format("EditFontSize Exception: {0}", errorMessage));
+#endif
+                string message = GetString(Resource.String.file_access_denied);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message += "\r\n" + errorMessage;
+                }
+
+                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                 return false;
             }
 
@@ -8007,15 +8035,43 @@ namespace BmwDeepObd
 
                     if (fileTextMod != fileText)
                     {
-                        File.WriteAllText(fileName, fileTextMod);
-                        ReadConfigFile();
+                        try
+                        {
+                            File.WriteAllText(fileName, fileTextMod);
+                            ReadConfigFile();
+                        }
+                        catch (Exception ex)
+                        {
+                            string errorMessage = EdiabasNet.GetExceptionText(ex);
+#if DEBUG
+                            Log.Info(Tag, string.Format("EditGaugesCount Exception: {0}", errorMessage));
+#endif
+                            string message = GetString(Resource.String.file_access_denied);
+                            if (!string.IsNullOrEmpty(errorMessage))
+                            {
+                                message += "\r\n" + errorMessage;
+                            }
+
+                            _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                        }
                     }
                 });
                 builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
                 builder.Show();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                string errorMessage = EdiabasNet.GetExceptionText(ex);
+#if DEBUG
+                Log.Info(Tag, string.Format("EditGaugesCount Exception: {0}", errorMessage));
+#endif
+                string message = GetString(Resource.String.file_access_denied);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message += "\r\n" + errorMessage;
+                }
+
+                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
                 return false;
             }
 
