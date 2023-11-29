@@ -7983,6 +7983,7 @@ namespace BmwDeepObd
                 }
 
                 int currentGauges = landscape ? currentPage.GaugesLandscapeValue : currentPage.GaugesPortraitValue;
+                int defaultGauges = landscape ? JobReader.GaugesLandscapeDefault : JobReader.GaugesPortraitDefault;
                 int titleId = landscape ? Resource.String.menu_cfg_page_edit_gauges_landscape : Resource.String.menu_cfg_page_edit_gauges_portrait;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.SetTitle(titleId);
@@ -7990,7 +7991,8 @@ namespace BmwDeepObd
 
                 const int minGauges = 2;
                 const int maxGauges = 10;
-                int selectedPosition = 0;
+                int selectedPosition = -1;
+                int selectedPositionDefault = 0;
                 List<string> gaugeNames = new List<string>();
                 for (int gauges = minGauges; gauges <= maxGauges; gauges++)
                 {
@@ -7999,6 +8001,16 @@ namespace BmwDeepObd
                     {
                         selectedPosition = gaugeNames.Count - 1;
                     }
+
+                    if (gauges == defaultGauges)
+                    {
+                        selectedPositionDefault = gaugeNames.Count - 1;
+                    }
+                }
+
+                if (selectedPosition < 0)
+                {
+                    selectedPosition = selectedPositionDefault;
                 }
 
                 ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
