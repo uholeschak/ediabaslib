@@ -1748,24 +1748,15 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_fontsize:
-                    if (!EditFontSize(currentPage))
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
-                    }
+                    EditFontSize(currentPage);
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_gauges_landscape:
-                    if (!EditGaugesCount(currentPage, true))
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
-                    }
+                    EditGaugesCount(currentPage, true);
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_gauges_portrait:
-                    if (!EditGaugesCount(currentPage, false))
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
-                    }
+                    EditGaugesCount(currentPage, false);
                     return true;
 
                 case Resource.Id.menu_cfg_select_edit:
@@ -7841,6 +7832,7 @@ namespace BmwDeepObd
                 MatchCollection mathches = regexfontSize.Matches(fileText);
                 if (mathches.Count == 0)
                 {
+                    _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
                     return false;
                 }
 
@@ -7982,6 +7974,7 @@ namespace BmwDeepObd
                 MatchCollection mathches = regexGauges.Matches(fileText);
                 if (mathches.Count == 0)
                 {
+                    _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
                     return false;
                 }
 
