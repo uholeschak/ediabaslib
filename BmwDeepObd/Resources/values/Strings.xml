@@ -52,6 +52,7 @@
   <string name="no_xml_editor_installed">Please install a XML editor first.</string>
   <string name="choose_xml_editor">Choose an XML editor.</string>
   <string name="file_access_denied">Access to file denied.\nPlease check the file location and access rights.</string>
+  <string name="file_editing_failed">Editing file failed.</string>
   <string name="error_no_error">No errors present</string>
   <string name="error_reading_errors">Reading error memory: {0}</string>
   <string name="error_reading_relevant_only">(Only relevant data is displayed,\nchangeable in the global settings.)</string>
