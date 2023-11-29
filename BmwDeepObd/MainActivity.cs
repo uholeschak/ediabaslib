@@ -7854,11 +7854,11 @@ namespace BmwDeepObd
                             break;
 
                         case XmlToolActivity.DisplayFontSize.Medium:
-                            currentFontIndex = 0;
+                            currentFontIndex = 1;
                             break;
 
                         case XmlToolActivity.DisplayFontSize.Large:
-                            currentFontIndex = 0;
+                            currentFontIndex = 2;
                             break;
                     }
                 }
