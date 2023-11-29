@@ -1749,15 +1749,24 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_fontsize:
-                    EditFontSize(currentPage);
+                    if (!EditFontSize(currentPage))
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
+                    }
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_gauges_landscape:
-                    EditGaugesCount(currentPage, true);
+                    if (!EditGaugesCount(currentPage, true))
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
+                    }
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_gauges_portrait:
-                    EditGaugesCount(currentPage, false);
+                    if (!EditGaugesCount(currentPage, false))
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
+                    }
                     return true;
 
                 case Resource.Id.menu_cfg_select_edit:
@@ -7829,6 +7838,13 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                Regex regexfontSize = new Regex("(\\Wfontsize\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                MatchCollection mathches = regexfontSize.Matches(fileText);
+                if (mathches.Count == 0)
+                {
+                    return false;
+                }
+
                 int currentFontIndex = 0;
                 switch (currentPage.TextResId)
                 {
@@ -7883,7 +7899,6 @@ namespace BmwDeepObd
                             break;
                     }
 
-                    Regex regexfontSize = new Regex("(\\Wfontsize\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                     string fileTextMod = regexfontSize.Replace(fileText, match =>
                     {
                         if (match.Groups.Count == 3)
@@ -7932,6 +7947,14 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                string keyWord = landscape ? "gauges-landscape" : "gauges-portrait";
+                Regex regexGauges = new Regex($"(\\W{keyWord}\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                MatchCollection mathches = regexGauges.Matches(fileText);
+                if (mathches.Count == 0)
+                {
+                    return false;
+                }
+
                 int currentGauges = landscape ? currentPage.GaugesLandscape : currentPage.GaugesPortrait;
                 int titleId = landscape ? Resource.String.menu_cfg_page_edit_gauges_landscape : Resource.String.menu_cfg_page_edit_gauges_portrait;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -7972,8 +7995,6 @@ namespace BmwDeepObd
                     }
 
                     int selectedGauges = pos + minGauges;
-                    string keyWord = landscape ? "gauges-landscape" : "gauges-portrait";
-                    Regex regexGauges = new Regex($"(\\W{keyWord}\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                     string fileTextMod = regexGauges.Replace(fileText, match =>
                     {
                         if (match.Groups.Count == 3)
