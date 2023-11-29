@@ -7828,7 +7828,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Regex regexfontSize = new Regex("(\\Wfontsize\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                Regex regexfontSize = new Regex($"(\\W{JobReader.PageFontSize}\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection mathches = regexfontSize.Matches(fileText);
                 if (mathches.Count == 0)
                 {
@@ -7969,7 +7969,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string keyWord = landscape ? "gauges-landscape" : "gauges-portrait";
+                string keyWord = landscape ? JobReader.PageGaugesLandscape : JobReader.PageGaugesPortrait;
                 Regex regexGauges = new Regex($"(\\W{keyWord}\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection mathches = regexGauges.Matches(fileText);
                 if (mathches.Count == 0)

@@ -322,6 +322,9 @@ namespace BmwDeepObd
             }
         }
 
+        public const string PageFontSize = "fontsize";
+        public const string PageGaugesPortrait = "gauges-portrait";
+        public const string PageGaugesLandscape = "gauges-landscape";
         public const int GaugesPortraitDefault = 2;
         public const int GaugesLandscapeDefault = 4;
         private readonly List<PageInfo> _pageList = new List<PageInfo>();
@@ -612,7 +615,7 @@ namespace BmwDeepObd
                                 }
                             }
 
-                            attrib = xnodePage.Attributes["fontsize"];
+                            attrib = xnodePage.Attributes[PageFontSize];
                             if (attrib != null)
                             {
                                 string size = attrib.Value.ToLowerInvariant();
@@ -622,7 +625,7 @@ namespace BmwDeepObd
                                 }
                             }
 
-                            attrib = xnodePage.Attributes["gauges-portrait"];
+                            attrib = xnodePage.Attributes[PageGaugesPortrait];
                             if (attrib != null)
                             {
                                 try
@@ -639,7 +642,7 @@ namespace BmwDeepObd
                                 }
                             }
 
-                            attrib = xnodePage.Attributes["gauges-landscape"];
+                            attrib = xnodePage.Attributes[PageGaugesLandscape];
                             if (attrib != null)
                             {
                                 try
