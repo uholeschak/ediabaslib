@@ -1504,7 +1504,7 @@ namespace BmwDeepObd
             cfgPageEditMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
 
             IMenuItem cfgPageEditFontsizeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_fontsize);
-            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.TextResId != null);
+            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.DisplayFontSize != null);
 
             IMenuItem cfgPageEditGaugesLandscapeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_gauges_landscape);
             cfgPageEditGaugesLandscapeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.GaugesLandscape != null);
@@ -7845,20 +7845,20 @@ namespace BmwDeepObd
                 }
 
                 int currentFontIndex = 0;
-                if (currentPage.TextResId != null)
+                if (currentPage.DisplayFontSize != null)
                 {
-                    switch (currentPage.TextResId.Value)
+                    switch (currentPage.DisplayFontSize.Value)
                     {
-                        case Android.Resource.Style.TextAppearanceSmall:
+                        case XmlToolActivity.DisplayFontSize.Small:
                             currentFontIndex = 0;
                             break;
 
-                        case Android.Resource.Style.TextAppearanceMedium:
-                            currentFontIndex = 1;
+                        case XmlToolActivity.DisplayFontSize.Medium:
+                            currentFontIndex = 0;
                             break;
 
-                        case Android.Resource.Style.TextAppearanceLarge:
-                            currentFontIndex = 2;
+                        case XmlToolActivity.DisplayFontSize.Large:
+                            currentFontIndex = 0;
                             break;
                     }
                 }
