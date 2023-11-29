@@ -12,12 +12,12 @@ namespace BmwDeepObd
         public List<TableResultItem> Items => _items;
         private readonly Android.App.Activity _context;
         private readonly float _textWeight;
-        private readonly int _textResId;
+        private readonly int? _textResId;
         private readonly bool _showCheckBox;
         private bool _ignoreCheckEvent;
         private readonly Android.Content.Res.ColorStateList _defaultTextColors;
 
-        public ResultListAdapter(Android.App.Activity context, float textWeight, int textResId, bool showCheckBox)
+        public ResultListAdapter(Android.App.Activity context, float textWeight, int? textResId, bool showCheckBox)
         {
             _context = context;
             _items = new List<TableResultItem> ();
@@ -161,21 +161,21 @@ namespace BmwDeepObd
             }
         }
 
-        private void SetTextApperance(TextView textView, int resId)
+        private void SetTextApperance(TextView textView, int? resId)
         {
-            if (resId == 0)
+            if (resId == null)
             {
                 return;
             }
             if (Build.VERSION.SdkInt < BuildVersionCodes.M)
             {
 #pragma warning disable 618
-                textView.SetTextAppearance(_context, resId);
+                textView.SetTextAppearance(_context, resId.Value);
 #pragma warning restore 618
             }
             else
             {
-                textView.SetTextAppearance(resId);
+                textView.SetTextAppearance(resId.Value);
             }
         }
 

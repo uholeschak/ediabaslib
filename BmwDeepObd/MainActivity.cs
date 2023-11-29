@@ -1504,7 +1504,7 @@ namespace BmwDeepObd
             cfgPageEditMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
 
             IMenuItem cfgPageEditFontsizeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_fontsize);
-            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.TextResId != 0);
+            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.TextResId != null);
 
             IMenuItem cfgPageEditGaugesLandscapeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_gauges_landscape);
             cfgPageEditGaugesLandscapeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.GaugesLandscape != null);
@@ -7845,19 +7845,22 @@ namespace BmwDeepObd
                 }
 
                 int currentFontIndex = 0;
-                switch (currentPage.TextResId)
+                if (currentPage.TextResId != null)
                 {
-                    case Android.Resource.Style.TextAppearanceSmall:
-                        currentFontIndex = 0;
-                        break;
+                    switch (currentPage.TextResId.Value)
+                    {
+                        case Android.Resource.Style.TextAppearanceSmall:
+                            currentFontIndex = 0;
+                            break;
 
-                    case Android.Resource.Style.TextAppearanceMedium:
-                        currentFontIndex = 1;
-                        break;
+                        case Android.Resource.Style.TextAppearanceMedium:
+                            currentFontIndex = 1;
+                            break;
 
-                    case Android.Resource.Style.TextAppearanceLarge:
-                        currentFontIndex = 2;
-                        break;
+                        case Android.Resource.Style.TextAppearanceLarge:
+                            currentFontIndex = 2;
+                            break;
+                    }
                 }
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -7983,7 +7986,6 @@ namespace BmwDeepObd
                 }
 
                 int currentGauges = landscape ? currentPage.GaugesLandscapeValue : currentPage.GaugesPortraitValue;
-                int defaultGauges = landscape ? JobReader.GaugesLandscapeDefault : JobReader.GaugesPortraitDefault;
                 int titleId = landscape ? Resource.String.menu_cfg_page_edit_gauges_landscape : Resource.String.menu_cfg_page_edit_gauges_portrait;
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.SetTitle(titleId);
@@ -7991,8 +7993,7 @@ namespace BmwDeepObd
 
                 const int minGauges = 2;
                 const int maxGauges = 10;
-                int selectedPosition = -1;
-                int selectedPositionDefault = 0;
+                int selectedPosition = 0;
                 List<string> gaugeNames = new List<string>();
                 for (int gauges = minGauges; gauges <= maxGauges; gauges++)
                 {
@@ -8001,16 +8002,11 @@ namespace BmwDeepObd
                     {
                         selectedPosition = gaugeNames.Count - 1;
                     }
-
-                    if (gauges == defaultGauges)
-                    {
-                        selectedPositionDefault = gaugeNames.Count - 1;
-                    }
                 }
 
-                if (selectedPosition < 0)
+                if (selectedPosition >= gaugeNames.Count)
                 {
-                    selectedPosition = selectedPositionDefault;
+                    selectedPosition = gaugeNames.Count - 1;
                 }
 
                 ArrayAdapter<string> adapter = new ArrayAdapter<string>(this,
