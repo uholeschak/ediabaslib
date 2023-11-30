@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name ="tab_ihk">
+  <page name="tab_ihk">
     <strings>
       <string name="tab_ihk">Climate</string>
       <string name="label_ihk_in_temp">Indoor temperature [°C]:</string>

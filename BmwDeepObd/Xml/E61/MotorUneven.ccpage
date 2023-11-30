@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name ="tab_motor_uneven_running" activate="true">
+  <page name="tab_motor_uneven_running" activate="true">
     <strings>
       <string name="tab_motor_uneven_running">Uneven running</string>
       <string name="label_motor_quant_corr_c1">Quant. corr. cylinder 1 [mg/pass]:</string>

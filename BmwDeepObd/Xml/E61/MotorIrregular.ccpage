@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name ="tab_motor_rot_irregular" activate="true">
+  <page name="tab_motor_rot_irregular" activate="true">
     <strings>
       <string name="tab_motor_rot_irregular">Rot. irregularity</string>
       <string name="label_motor_rpm_c1">Revolution cylinder 1 [1/min]:</string>
