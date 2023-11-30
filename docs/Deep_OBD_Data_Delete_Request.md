@@ -1,9 +1,11 @@
-# Data send byt the Deep OBD app
-The _Deep OBD app_ could the following types of data during operation:
+# Data send by the Deep OBD app
+App developer: Ulrich Holeschak  
+Play store URL: [https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd](https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd)  
+The _Deep OBD app_ could send the following types of data during operation:
+* Anonymous data to check if an app update is available.
 * Anonymous data explicitly send by the user to request OBD data extraction.
 * Anonymous trace files explicitly send by the user to report a problem containing vehicle communication data.
 * Additional information explicitly added by the user to the trace file.
-* Anonymous data to check if an app update is available.
 * Coding: All vehicle communication data is send to an external server for coding purposes. Log files of this operation are stored on the server.
 
 ## Request to delete data
