@@ -336,8 +336,8 @@
   <string name="menu_cfg_page_menu">Aktuelle Seite editieren</string>
   <string name="menu_cfg_page_edit">Seite editieren</string>
   <string name="menu_cfg_page_edit_fontsize">Schriftgröße</string>
-  <string name="menu_cfg_page_edit_gauges_landscape">Graphische Elemente Hochformat</string>
-  <string name="menu_cfg_page_edit_gauges_portrait">Graphische Elemente Querformat</string>
+  <string name="menu_cfg_page_edit_gauges_landscape">Graphische Elemente Querformat</string>
+  <string name="menu_cfg_page_edit_gauges_portrait">Graphische Elemente Hochformat</string>
   <string name="menu_cfg_select_edit">Andere Datei editieren</string>
   <string name="menu_cfg_edit_reset">XML Editor zurücksetzen</string>
   <string name="menu_cfg_close">Schließen</string>
