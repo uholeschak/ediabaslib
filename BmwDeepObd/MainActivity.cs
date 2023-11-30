@@ -7990,8 +7990,8 @@ namespace BmwDeepObd
                 builder.SetTitle(titleId);
                 ListView listView = new ListView(this);
 
-                const int minGauges = 2;
-                const int maxGauges = 10;
+                const int minGauges = 1;
+                const int maxGauges = 20;
                 int selectedPosition = 0;
                 List<string> gaugeNames = new List<string>();
                 for (int gauges = minGauges; gauges <= maxGauges; gauges++)
