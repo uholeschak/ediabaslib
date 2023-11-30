@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd BmwDeepObd.xsd">
-  <page name ="tab_adapter_config">
+  <page name="tab_adapter_config">
     <strings>
       <string name="tab_adapter_config">Adapter</string>
       <string name="button_adapter_config_can_500">500 kbit/s D-CAN</string>
