@@ -12,6 +12,6 @@ The _Deep OBD app_ could send the following types of data during operation toget
 If you want that any of the data mentioned above should be deleted, send an email to:
 [ulrich@holeschak.de](mailto:ulrich@holeschak.de)
 Add the following information:
-* App Id from the app main menu.
+* _Anonymous app id_ from the app main menu.
 * Mail adress of this has been explicitly send with trace data.
 * Type of data or all that should be deleted.
