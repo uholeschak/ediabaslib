@@ -1504,13 +1504,19 @@ namespace BmwDeepObd
             cfgPageEditMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
 
             IMenuItem cfgPageEditFontsizeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_fontsize);
-            cfgPageEditFontsizeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.DisplayFontSize != null);
+            cfgPageEditFontsizeMenu?.SetEnabled(
+                !commActive && enableSelectedPageEdit &&
+                currentPage.DisplayFontSize != null && currentPage.DisplayMode == JobReader.PageInfo.DisplayModeType.List);
 
             IMenuItem cfgPageEditGaugesLandscapeMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_gauges_landscape);
-            cfgPageEditGaugesLandscapeMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.GaugesLandscape != null);
+            cfgPageEditGaugesLandscapeMenu?.SetEnabled(
+                !commActive && enableSelectedPageEdit &&
+                currentPage.GaugesLandscape != null && currentPage.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid);
 
             IMenuItem cfgPageEditGaugesPortraitMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_gauges_portrait);
-            cfgPageEditGaugesPortraitMenu?.SetEnabled(!commActive && enableSelectedPageEdit && currentPage.GaugesPortrait != null);
+            cfgPageEditGaugesPortraitMenu?.SetEnabled(
+                !commActive && enableSelectedPageEdit &&
+                currentPage.GaugesPortrait != null && currentPage.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid);
 
             IMenuItem cfgSelectEditMenu = menu.FindItem(Resource.Id.menu_cfg_select_edit);
             cfgSelectEditMenu?.SetEnabled(!commActive);
