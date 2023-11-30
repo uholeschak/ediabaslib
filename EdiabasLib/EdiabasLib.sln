@@ -44,6 +44,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\Configuration_Generator_InpaInfo.png = ..\docs\Configuration_Generator_InpaInfo.png
 		..\docs\Custom_Bluetooth_firmware.md = ..\docs\Custom_Bluetooth_firmware.md
 		..\docs\DD39AJPA.png = ..\docs\DD39AJPA.png
+		..\docs\Deep_OBD_Data_Delete_Request.md = ..\docs\Deep_OBD_Data_Delete_Request.md
 		..\docs\Deep_OBD_for_BMW_and_VAG.md = ..\docs\Deep_OBD_for_BMW_and_VAG.md
 		..\docs\Deep_OBD_for_BMW_and_VAG_AppAxisSmall.png = ..\docs\Deep_OBD_for_BMW_and_VAG_AppAxisSmall.png
 		..\docs\Deep_OBD_for_BMW_and_VAG_AppClimateSmall.png = ..\docs\Deep_OBD_for_BMW_and_VAG_AppClimateSmall.png
