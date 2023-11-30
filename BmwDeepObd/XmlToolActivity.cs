@@ -8414,7 +8414,7 @@ namespace BmwDeepObd
                 XAttribute pageFontSizeAttr = pageNode.Attribute(JobReader.PageFontSize);
                 if (pageFontSizeAttr == null)
                 {
-                    string fontSizeName = DisplayFontSize.Large.ToString().ToLowerInvariant();
+                    string fontSizeName = DisplayFontSize.Small.ToString().ToLowerInvariant();
                     pageNode.Add(new XAttribute(JobReader.PageFontSize, fontSizeName));
                 }
 
