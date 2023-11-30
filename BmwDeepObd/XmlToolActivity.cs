@@ -7609,7 +7609,7 @@ namespace BmwDeepObd
                 }
             }
 
-            XAttribute fontSizeAttr = pageNode.Attribute("fontsize");
+            XAttribute fontSizeAttr = pageNode.Attribute(JobReader.PageFontSize);
             if (fontSizeAttr != null)
             {
                 if (Enum.TryParse(fontSizeAttr.Value, true, out DisplayFontSize fontSize))
@@ -7618,7 +7618,7 @@ namespace BmwDeepObd
                 }
             }
 
-            XAttribute gaugesPortraitAttr = pageNode.Attribute("gauges-portrait");
+            XAttribute gaugesPortraitAttr = pageNode.Attribute(JobReader.PageGaugesPortrait);
             if (gaugesPortraitAttr != null)
             {
                 try
@@ -7631,7 +7631,7 @@ namespace BmwDeepObd
                 }
             }
 
-            XAttribute gaugesLandscapeAttr = pageNode.Attribute("gauges-landscape");
+            XAttribute gaugesLandscapeAttr = pageNode.Attribute(JobReader.PageGaugesLandscape);
             if (gaugesLandscapeAttr != null)
             {
                 try
@@ -7832,7 +7832,7 @@ namespace BmwDeepObd
                 }
             }
 
-            XAttribute fontSizeAttr = pageNode.Attribute("fontsize");
+            XAttribute fontSizeAttr = pageNode.Attribute(JobReader.PageFontSize);
             if (fontSizeAttr != null)
             {
                 if (!Enum.TryParse(fontSizeAttr.Value, true, out fontSize))
@@ -7841,7 +7841,7 @@ namespace BmwDeepObd
                 }
             }
 
-            XAttribute gaugesPortraitAttr = pageNode.Attribute("gauges-portrait");
+            XAttribute gaugesPortraitAttr = pageNode.Attribute(JobReader.PageGaugesPortrait);
             if (gaugesPortraitAttr != null)
             {
                 try
@@ -7854,7 +7854,7 @@ namespace BmwDeepObd
                 }
             }
 
-            XAttribute gaugesLandscapeAttr = pageNode.Attribute("gauges-landscape");
+            XAttribute gaugesLandscapeAttr = pageNode.Attribute(JobReader.PageGaugesLandscape);
             if (gaugesLandscapeAttr != null)
             {
                 try
@@ -7976,30 +7976,30 @@ namespace BmwDeepObd
                 }
 
                 string fontSizeName = ecuInfo.FontSize.ToString().ToLowerInvariant();
-                XAttribute pageFontSizeAttr = pageNode.Attribute("fontsize");
+                XAttribute pageFontSizeAttr = pageNode.Attribute(JobReader.PageFontSize);
                 if (pageFontSizeAttr == null)
                 {
-                    pageNode.Add(new XAttribute("fontsize", fontSizeName));
+                    pageNode.Add(new XAttribute(JobReader.PageFontSize, fontSizeName));
                 }
                 else
                 {
                     pageFontSizeAttr.Value = fontSizeName;
                 }
 
-                XAttribute pageGaugesPortraitAttr = pageNode.Attribute("gauges-portrait");
+                XAttribute pageGaugesPortraitAttr = pageNode.Attribute(JobReader.PageGaugesPortrait);
                 if (pageGaugesPortraitAttr == null)
                 {
-                    pageNode.Add(new XAttribute("gauges-portrait", ecuInfo.GaugesPortrait));
+                    pageNode.Add(new XAttribute(JobReader.PageGaugesPortrait, ecuInfo.GaugesPortrait));
                 }
                 else
                 {
                     pageGaugesPortraitAttr.Value = ecuInfo.GaugesPortrait.ToString(CultureInfo.InvariantCulture);
                 }
 
-                XAttribute pageGaugesLandscapeAttr = pageNode.Attribute("gauges-landscape");
+                XAttribute pageGaugesLandscapeAttr = pageNode.Attribute(JobReader.PageGaugesLandscape);
                 if (pageGaugesLandscapeAttr == null)
                 {
-                    pageNode.Add(new XAttribute("gauges-landscape", ecuInfo.GaugesLandscape));
+                    pageNode.Add(new XAttribute(JobReader.PageGaugesLandscape, ecuInfo.GaugesLandscape));
                 }
                 else
                 {
