@@ -3374,7 +3374,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                errorMessage = EdiabasNet.GetExceptionText(ex);
+                errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
             }
             return false;
         }
@@ -5992,7 +5992,7 @@ namespace BmwDeepObd
                                 result = reportWriter.ToString();
                                 if (string.IsNullOrEmpty(result))
                                 {
-                                    result = EdiabasNet.GetExceptionText(ex);
+                                    result = EdiabasNet.GetExceptionText(ex, false, false);
                                 }
                                 result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
                             }
@@ -6065,7 +6065,7 @@ namespace BmwDeepObd
                 }
                 catch (Exception e)
                 {
-                    exceptionMessage = EdiabasNet.GetExceptionText(e);
+                    exceptionMessage = EdiabasNet.GetExceptionText(e, false, false);
                 }
 
                 if (!string.IsNullOrEmpty(exceptionMessage))
@@ -6761,7 +6761,7 @@ namespace BmwDeepObd
                 catch (Exception ex)
                 {
                     extractFailed = true;
-                    exceptionText = EdiabasNet.GetExceptionText(ex);
+                    exceptionText = EdiabasNet.GetExceptionText(ex, false, false);
                     if (ex is IOException)
                     {
                         ioError = true;
@@ -7798,7 +7798,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                string errorMessage = EdiabasNet.GetExceptionText(ex);
+                string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
 #if DEBUG
                 Log.Info(Tag, string.Format("StartEditXml Exception: {0}", errorMessage));
 #endif
@@ -7918,7 +7918,7 @@ namespace BmwDeepObd
                         }
                         catch (Exception ex)
                         {
-                            string errorMessage = EdiabasNet.GetExceptionText(ex);
+                            string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
 #if DEBUG
                             Log.Info(Tag, string.Format("EditFontSize Exception: {0}", errorMessage));
 #endif
@@ -7937,7 +7937,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                string errorMessage = EdiabasNet.GetExceptionText(ex);
+                string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
 #if DEBUG
                 Log.Info(Tag, string.Format("EditFontSize Exception: {0}", errorMessage));
 #endif
@@ -8048,7 +8048,7 @@ namespace BmwDeepObd
                         }
                         catch (Exception ex)
                         {
-                            string errorMessage = EdiabasNet.GetExceptionText(ex);
+                            string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
 #if DEBUG
                             Log.Info(Tag, string.Format("EditGaugesCount Exception: {0}", errorMessage));
 #endif
@@ -8067,7 +8067,7 @@ namespace BmwDeepObd
             }
             catch (Exception ex)
             {
-                string errorMessage = EdiabasNet.GetExceptionText(ex);
+                string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
 #if DEBUG
                 Log.Info(Tag, string.Format("EditGaugesCount Exception: {0}", errorMessage));
 #endif
