@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name ="tab_ccc_nav" weight="1.8">
+  <page name="tab_ccc_nav" weight="1.8">
     <strings>
       <string name="tab_ccc_nav">GPS</string>
       <string name="label_ccc_nav_almanach">Almanach status OK:</string>
