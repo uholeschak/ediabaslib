@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd BmwDeepObd.xsd">
-  <page name ="tab_adapter_config2">
+  <page name="tab_adapter_config2">
     <display name="label_ignition" result="0_RESPONSE" />
     <display name="label_block_size" result="1_RESPONSE" format="3L" />
     <display name="label_sep_time" result="2_RESPONSE" format="3L" />

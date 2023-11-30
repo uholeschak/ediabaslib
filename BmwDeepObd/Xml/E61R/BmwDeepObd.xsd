@@ -676,7 +676,7 @@
     <xs:attribute name="fontsize" type="fontsize-type" default="small" use="optional">
       <xs:annotation>
         <xs:documentation>
-          Font size appearence, the default size is small.
+          Font size appearance, the default size is small.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
