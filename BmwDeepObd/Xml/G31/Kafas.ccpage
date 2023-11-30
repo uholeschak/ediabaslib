@@ -2,7 +2,7 @@
 <fragment xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <page name ="tab_kafas">
+  <page name="tab_kafas">
     <strings>
       <string name="tab_kafas">Camera</string>
       <string name="label_kafas_temp_left">Temperature left cam [°C]:</string>
