@@ -11,7 +11,7 @@ namespace BmwDeepObd
     {
         public class DisplayInfo
         {
-            public DisplayInfo(int originalPosition, string name, string result, string ecuJobId, string ecuJobResultId, string format, UInt32 displayOrder, GridModeType gridType, double minValue, double maxValue, string logTag)
+            public DisplayInfo(int originalPosition, string name, string result, string ecuJobId, string ecuJobResultId, string format, UInt32? displayOrder, GridModeType gridType, double minValue, double maxValue, string logTag)
             {
                 OriginalPosition = originalPosition;
                 Name = name;
@@ -49,7 +49,7 @@ namespace BmwDeepObd
 
             public string Format { get; }
 
-            public UInt32 DisplayOrder { get; }
+            public UInt32? DisplayOrder { get; }
 
             public GridModeType GridType { get; }
 
@@ -298,14 +298,17 @@ namespace BmwDeepObd
                     return 0;
                 }
 
-                if (x.DisplayOrder > y.DisplayOrder)
+                if (x.DisplayOrder != null && y.DisplayOrder != null)
                 {
-                    return 1;
-                }
+                    if (x.DisplayOrder.Value > y.DisplayOrder.Value)
+                    {
+                        return 1;
+                    }
 
-                if (x.DisplayOrder < y.DisplayOrder)
-                {
-                    return -1;
+                    if (x.DisplayOrder.Value < y.DisplayOrder.Value)
+                    {
+                        return -1;
+                    }
                 }
 
                 if (x.OriginalPosition > y.OriginalPosition)
@@ -956,7 +959,7 @@ namespace BmwDeepObd
                 string ecuJobId = string.Empty;
                 string ecuJobResultId = string.Empty;
                 string format = null;
-                UInt32 displayOrder = 0;
+                UInt32? displayOrder = null;
                 DisplayInfo.GridModeType gridType = DisplayInfo.GridModeType.Hidden;
                 double minValue = 0;
                 double maxValue = 100;
