@@ -659,6 +659,10 @@
       <Project>{6372b7dd-e31c-48f5-8c47-f6fa2bb37070}</Project>
       <Name>CustomGaugeBinding</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\DragListViewBinding\DragListViewBinding.csproj">
+      <Project>{229e4933-3700-4f8f-817b-fa3e09e92568}</Project>
+      <Name>DragListViewBinding</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj">
       <Project>{fedd5f23-f769-44d2-9f06-39d532008197}</Project>
       <Name>EdiabasLibAndroid</Name>
