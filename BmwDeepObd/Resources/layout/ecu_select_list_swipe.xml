@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.woxthebox.draglistview.swipe.ListSwipeItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:leftViewId="@+id/item_left"
+    app:rightViewId="@+id/item_right"
+    app:swipeViewId="@+id/item_layout">
+    <TextView
+        android:id="@+id/item_left"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/item_layout"
+        android:layout_alignTop="@+id/item_layout"
+        android:background="#ff0000"
+        android:gravity="start|center_vertical"
+        android:padding="16dp"
+        android:text="Red"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/item_right"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/item_layout"
+        android:layout_alignTop="@+id/item_layout"
+        android:background="#0000ff"
+        android:gravity="end|center_vertical"
+        android:padding="16dp"
+        android:text="Blue"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"/>
+    <LinearLayout
+        android:id="@id/item_layout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:descendantFocusability="blocksDescendants"
+        android:minWidth="25px"
+        android:minHeight="25px">
+        <CheckBox
+            android:id="@+id/checkBoxEcuSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dip"
+            android:layout_weight="0" />
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="4dip"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/textEcuName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:singleLine="true"
+                android:layout_weight="0" />
+            <TextView
+                android:id="@+id/textEcuDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:singleLine="true"
+                android:layout_weight="0" />
+            <TextView
+                android:id="@+id/textEcuFunctions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:layout_weight="0" />
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/buttonEcuOptionsMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_more"
+            android:layout_weight="0"/>
+    </LinearLayout>
+</com.woxthebox.draglistview.swipe.ListSwipeItem>
