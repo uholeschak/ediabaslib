@@ -748,9 +748,9 @@ namespace BmwDeepObd
             DragListView dragListEcu = FindViewById<DragListView>(Resource.Id.dragListEcu);
             ListView listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
 #if USE_DRAG_LIST
-            _listViewEcu = dragListEcu;
             listViewEcu.Visibility = ViewStates.Gone;
-            _ecuListAdapter = new DragEcuListAdapter(this, Resource.Layout.ecu_select_list, Resource.Drawable.icon, true);
+            _listViewEcu = dragListEcu;
+            _ecuListAdapter = new DragEcuListAdapter(this, Resource.Layout.ecu_select_list_swipe, Resource.Id.item_layout, true);
 #else
             dragListEcu.Visibility = ViewStates.Gone;
             _listViewEcu = listViewEcu;
@@ -773,6 +773,7 @@ namespace BmwDeepObd
                 ShowContextMenu(view, itemIndex);
             };
 #if USE_DRAG_LIST
+            _listViewEcu.SetLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.Vertical, false));
             _listViewEcu.SetAdapter(_ecuListAdapter, false);
             _listViewEcu.SetCanDragHorizontally(false);
             _listViewEcu.SetCanDragVertically(false);
@@ -9932,7 +9933,6 @@ namespace BmwDeepObd
             {
                 public CustomViewHolder(View itemView, int handleResId, bool dragOnLongPress) : base(itemView, handleResId, dragOnLongPress)
                 {
-
                 }
 
                 public override void OnItemClicked(View view)
