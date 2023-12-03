@@ -1,3 +1,4 @@
+//#define USE_DRAG_LIST
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,7 +21,9 @@ using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
+using AndroidX.RecyclerView.Widget;
 using BmwFileReader;
+using Com.Woxthebox.Draglistview;
 
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
@@ -610,8 +613,13 @@ namespace BmwDeepObd
         private View _barView;
         private Button _buttonRead;
         private Button _buttonSafe;
+#if USE_DRAG_LIST
+        private DragListView _listViewEcu;
+        private DragEcuListAdapter _ecuListAdapter;
+#else
         private ListView _listViewEcu;
         private EcuListAdapter _ecuListAdapter;
+#endif
         private TextView _textViewCarInfo;
         private string _ecuDir;
         private string _vagDir;
@@ -737,8 +745,17 @@ namespace BmwDeepObd
             };
 
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
-            _listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
+            DragListView dragListEcu = FindViewById<DragListView>(Resource.Id.dragListEcu);
+            ListView listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
+#if USE_DRAG_LIST
+            _listViewEcu = dragListEcu;
+            listViewEcu.Visibility = ViewStates.Gone;
+            _ecuListAdapter = new DragEcuListAdapter(this, Resource.Layout.ecu_select_list, Resource.Drawable.icon, true);
+#else
+            dragListEcu.Visibility = ViewStates.Gone;
+            _listViewEcu = listViewEcu;
             _ecuListAdapter = new EcuListAdapter(this);
+#endif
             _ecuListAdapter.CheckChanged += EcuCheckChanged;
             _ecuListAdapter.MenuOptionsSelected += (ecuInfo, view) =>
             {
@@ -755,7 +772,12 @@ namespace BmwDeepObd
 
                 ShowContextMenu(view, itemIndex);
             };
-
+#if USE_DRAG_LIST
+            _listViewEcu.SetAdapter(_ecuListAdapter, false);
+            _listViewEcu.SetCanDragHorizontally(false);
+            _listViewEcu.SetCanDragVertically(false);
+            _listViewEcu.SetCustomDragItem(null);
+#else
             _listViewEcu.Adapter = _ecuListAdapter;
             _listViewEcu.ItemClick += (sender, args) =>
             {
@@ -770,7 +792,7 @@ namespace BmwDeepObd
                     PerformJobsRead(_ecuList[pos]);
                 }
             };
-
+#endif
             _activityCommon = new ActivityCommon(this, () =>
             {
                 if (_activityCommon == null)
@@ -9709,6 +9731,167 @@ namespace BmwDeepObd
                 if (tagInfo != null)
                 {
                     MenuOptionsSelected?.Invoke(tagInfo.Info, button);
+                }
+            }
+
+            private class TagInfo : Java.Lang.Object
+            {
+                public TagInfo(EcuInfo info)
+                {
+                    Info = info;
+                }
+
+                public EcuInfo Info { get; }
+            }
+        }
+
+        private class DragEcuListAdapter : DragItemAdapter
+        {
+            public delegate void ActionEventHandler(EcuInfo ecuInfo, View view);
+            public event ActionEventHandler CheckChanged;
+            public event ActionEventHandler MenuOptionsSelected;
+            public System.Collections.IList Items => ItemList;
+
+            private readonly XmlToolActivity _context;
+            private readonly int _layoutId;
+            private readonly int _dragHandleId;
+            private readonly bool _dragOnLongPress;
+            private bool _ignoreCheckEvent;
+
+            public DragEcuListAdapter(XmlToolActivity context, int layoutId, int dragHandleId, bool dragOnLongPress)
+            {
+                _context = context;
+                _layoutId = layoutId;
+                _dragHandleId = dragHandleId;
+                _dragOnLongPress = dragOnLongPress;
+                ItemList = new List<EcuInfo>();
+            }
+
+            public override long GetUniqueItemId(int position)
+            {
+                return position;
+            }
+
+            public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
+            {
+                View view = LayoutInflater.From(parent.Context)?.Inflate(_layoutId, parent, false);
+                return new CustomViewHolder(view, _dragHandleId, _dragOnLongPress);
+            }
+
+            public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
+            {
+                base.OnBindViewHolder(holder, position);
+
+                EcuInfo item = Items[position] as EcuInfo;
+                View view = holder.ItemView;
+                view.Tag = new TagInfo(item);
+                CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
+                ImageButton buttonEcuOptionsMenu = view.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
+
+                _ignoreCheckEvent = true;
+                checkBoxSelect.Checked = item.Selected;
+                _ignoreCheckEvent = false;
+
+                checkBoxSelect.Tag = new TagInfo(item);
+                checkBoxSelect.CheckedChange -= OnCheckChanged;
+                checkBoxSelect.CheckedChange += OnCheckChanged;
+
+                buttonEcuOptionsMenu.Tag = new TagInfo(item);
+                buttonEcuOptionsMenu.Click -= OnEcuOptionsClick;
+                buttonEcuOptionsMenu.Click += OnEcuOptionsClick;
+
+                TextView textEcuName = view.FindViewById<TextView>(Resource.Id.textEcuName);
+                TextView textEcuDesc = view.FindViewById<TextView>(Resource.Id.textEcuDesc);
+                TextView textEcuFunctions = view.FindViewById<TextView>(Resource.Id.textEcuFunctions);
+
+                StringBuilder stringBuilderName = new StringBuilder();
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && item.Address >= 0)
+                {
+                    stringBuilderName.Append(string.Format("{0:X02} ", item.Address));
+                }
+                stringBuilderName.Append(!string.IsNullOrEmpty(item.EcuName) ? item.EcuName : item.Name);
+                if (!string.IsNullOrEmpty(item.Description))
+                {
+                    stringBuilderName.Append(": ");
+                    stringBuilderName.Append(item.DescriptionTransRequired && !string.IsNullOrEmpty(item.DescriptionTrans)
+                        ? item.DescriptionTrans
+                        : item.Description);
+                }
+                textEcuName.Text = stringBuilderName.ToString();
+
+                StringBuilder stringBuilderInfo = new StringBuilder();
+                stringBuilderInfo.Append(_context.GetString(Resource.String.xml_tool_info_sgbd));
+                stringBuilderInfo.Append(": ");
+                stringBuilderInfo.Append(item.Sgbd);
+                if (!string.IsNullOrEmpty(item.Grp))
+                {
+                    stringBuilderInfo.Append(", ");
+                    stringBuilderInfo.Append(_context.GetString(Resource.String.xml_tool_info_grp));
+                    stringBuilderInfo.Append(": ");
+                    stringBuilderInfo.Append(item.Grp);
+                }
+                if (!string.IsNullOrEmpty(item.Vin))
+                {
+                    stringBuilderInfo.Append(", ");
+                    stringBuilderInfo.Append(_context.GetString(Resource.String.xml_tool_info_vin));
+                    stringBuilderInfo.Append(": ");
+                    stringBuilderInfo.Append(item.Vin);
+                }
+                textEcuDesc.Text = stringBuilderInfo.ToString();
+
+                string ecuFunctionNames = item.EcuFunctionNames;
+                if (!string.IsNullOrEmpty(ecuFunctionNames))
+                {
+                    textEcuFunctions.Visibility = ViewStates.Visible;
+                    textEcuFunctions.Text = ecuFunctionNames;
+                }
+                else
+                {
+                    textEcuFunctions.Visibility = ViewStates.Gone;
+                    textEcuFunctions.Text = string.Empty;
+                }
+            }
+
+            private void OnCheckChanged(object sender, CompoundButton.CheckedChangeEventArgs args)
+            {
+                if (!_ignoreCheckEvent)
+                {
+                    CheckBox checkBox = sender as CheckBox;
+                    TagInfo tagInfo = checkBox?.Tag as TagInfo;
+                    if (tagInfo != null && tagInfo.Info.Selected != args.IsChecked)
+                    {
+                        tagInfo.Info.Selected = args.IsChecked;
+                        CheckChanged?.Invoke(tagInfo.Info, checkBox);
+                        NotifyDataSetChanged();
+                    }
+                }
+            }
+
+            private void OnEcuOptionsClick(object sender, EventArgs args)
+            {
+                ImageButton button = sender as ImageButton;
+                TagInfo tagInfo = button?.Tag as TagInfo;
+                if (tagInfo != null)
+                {
+                    MenuOptionsSelected?.Invoke(tagInfo.Info, button);
+                }
+            }
+
+
+            private class CustomViewHolder : ViewHolder
+            {
+                public CustomViewHolder(View itemView, int handleResId, bool dragOnLongPress) : base(itemView, handleResId, dragOnLongPress)
+                {
+
+                }
+
+                public override void OnItemClicked(View view)
+                {
+                }
+
+                public override bool OnItemLongClicked(View view)
+                {
+                    return true;
                 }
             }
 
