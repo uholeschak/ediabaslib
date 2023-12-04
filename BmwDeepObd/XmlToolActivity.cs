@@ -24,6 +24,7 @@ using AndroidX.AppCompat.App;
 using AndroidX.RecyclerView.Widget;
 using BmwFileReader;
 using Com.Woxthebox.Draglistview;
+using Com.Woxthebox.Draglistview.Swipe;
 
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
@@ -776,8 +777,10 @@ namespace BmwDeepObd
             _listViewEcu.SetLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.Vertical, false));
             _listViewEcu.SetAdapter(_ecuListAdapter, false);
             _listViewEcu.SetCanDragHorizontally(false);
-            _listViewEcu.SetCanDragVertically(false);
+            _listViewEcu.SetCanDragVertically(true);
             _listViewEcu.SetCustomDragItem(null);
+            _listViewEcu.SetDragListListener(new CustomDragListener(this));
+            _listViewEcu.DragEnabled = true;
 #else
             _listViewEcu.Adapter = _ecuListAdapter;
             _listViewEcu.ItemClick += (sender, args) =>
@@ -9953,6 +9956,28 @@ namespace BmwDeepObd
                 }
 
                 public EcuInfo Info { get; }
+            }
+        }
+
+        private class CustomDragListener : Java.Lang.Object, DragListView.IDragListListener
+        {
+            private readonly XmlToolActivity _activity;
+
+            public CustomDragListener(XmlToolActivity activity)
+            {
+                _activity = activity;
+            }
+
+            public void OnItemDragStarted(int p0)
+            {
+            }
+
+            public void OnItemDragEnded(int p0, int p1)
+            {
+            }
+
+            public void OnItemDragging(int p0, float p1, float p2)
+            {
             }
         }
     }
