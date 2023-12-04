@@ -14,9 +14,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1" />
-    <com.woxthebox.draglistview.DragListView
-        android:id="@+id/dragListEcu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
 </LinearLayout>
