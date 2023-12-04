@@ -615,8 +615,8 @@ namespace BmwDeepObd
         private View _barView;
         private Button _buttonRead;
         private Button _buttonSafe;
-#if USE_DRAG_LIST
         private SwipeRefreshLayout _swipeRefreshLayout;
+#if USE_DRAG_LIST
         private DragListView _listViewEcu;
         private DragEcuListAdapter _ecuListAdapter;
 #else
@@ -9973,10 +9973,18 @@ namespace BmwDeepObd
 
             public void OnItemDragStarted(int p0)
             {
+                if (_activity._swipeRefreshLayout != null)
+                {
+                    _activity._swipeRefreshLayout.Enabled = false;
+                }
             }
 
             public void OnItemDragEnded(int p0, int p1)
             {
+                if (_activity._swipeRefreshLayout != null)
+                {
+                    _activity._swipeRefreshLayout.Enabled = true;
+                }
             }
 
             public void OnItemDragging(int p0, float p1, float p2)
