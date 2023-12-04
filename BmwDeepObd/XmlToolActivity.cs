@@ -757,6 +757,7 @@ namespace BmwDeepObd
             _listViewEcu = FindViewById<DragListView>(Resource.Id.listEcu);
             _ecuListAdapter = new DragEcuListAdapter(this, Resource.Layout.ecu_select_list_swipe, Resource.Id.item_layout, true);
 #else
+            _swipeRefreshLayout = null;
             _listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
 #endif
@@ -9984,6 +9985,15 @@ namespace BmwDeepObd
                 if (_activity._swipeRefreshLayout != null)
                 {
                     _activity._swipeRefreshLayout.Enabled = true;
+                }
+
+                if (p0 != p1)
+                {
+                    if (p0 >= 0 && p0 < _ecuList.Count && p1 >= 0 && p1 < _ecuList.Count)
+                    {
+                        (_ecuList[p0], _ecuList[p1]) = (_ecuList[p1], _ecuList[p0]);
+                        _activity.UpdateDisplay();
+                    }
                 }
             }
 
