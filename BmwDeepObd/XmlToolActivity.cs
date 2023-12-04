@@ -1,4 +1,4 @@
-//#define USE_DRAG_LIST
+#define USE_DRAG_LIST
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -775,7 +775,7 @@ namespace BmwDeepObd
             };
 #if USE_DRAG_LIST
             _listViewEcu.SetLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.Vertical, false));
-            _listViewEcu.SetAdapter(_ecuListAdapter, false);
+            _listViewEcu.SetAdapter(_ecuListAdapter, true);
             _listViewEcu.SetCanDragHorizontally(false);
             _listViewEcu.SetCanDragVertically(true);
             _listViewEcu.SetCustomDragItem(null);
@@ -9788,6 +9788,11 @@ namespace BmwDeepObd
 
             public override long GetUniqueItemId(int position)
             {
+                EcuInfoWrapper infoWrapper = ItemList[position] as EcuInfoWrapper;
+                if (infoWrapper != null)
+                {
+                    return infoWrapper.Info.Address;
+                }
                 return position;
             }
 
@@ -9940,6 +9945,11 @@ namespace BmwDeepObd
 
                 public override void OnItemClicked(View view)
                 {
+                    EcuInfoWrapper infoWrapper = view?.Tag as EcuInfoWrapper;
+                    if (infoWrapper != null)
+                    {
+
+                    }
                 }
 
                 public override bool OnItemLongClicked(View view)
