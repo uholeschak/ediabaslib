@@ -22,6 +22,7 @@ using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
 using AndroidX.RecyclerView.Widget;
+using AndroidX.SwipeRefreshLayout.Widget;
 using BmwFileReader;
 using Com.Woxthebox.Draglistview;
 using Com.Woxthebox.Draglistview.Swipe;
@@ -615,6 +616,7 @@ namespace BmwDeepObd
         private Button _buttonRead;
         private Button _buttonSafe;
 #if USE_DRAG_LIST
+        private SwipeRefreshLayout _swipeRefreshLayout;
         private DragListView _listViewEcu;
         private DragEcuListAdapter _ecuListAdapter;
 #else
@@ -751,6 +753,7 @@ namespace BmwDeepObd
 
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
 #if USE_DRAG_LIST
+            _swipeRefreshLayout = FindViewById<SwipeRefreshLayout>(Resource.Id.swipe_refresh_layout);
             _listViewEcu = FindViewById<DragListView>(Resource.Id.listEcu);
             _ecuListAdapter = new DragEcuListAdapter(this, Resource.Layout.ecu_select_list_swipe, Resource.Id.item_layout, true);
 #else

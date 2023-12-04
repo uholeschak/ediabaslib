@@ -264,6 +264,9 @@
     <Reference Include="Xamarin.AndroidX.Startup.StartupRuntime, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.AndroidX.Startup.StartupRuntime.1.1.1.10\lib\monoandroid12.0\Xamarin.AndroidX.Startup.StartupRuntime.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.AndroidX.SwipeRefreshLayout, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\lib\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.AndroidX.Tracing.Tracing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.AndroidX.Tracing.Tracing.1.1.0.9\lib\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.dll</HintPath>
     </Reference>
@@ -945,6 +948,7 @@
     <Error Condition="!Exists('packages\Xamarin.AndroidX.ViewPager2.1.0.0.24\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.ViewPager2.1.0.0.24\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.WebKit.1.8.0.3\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.WebKit.1.8.0.3\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.Google.Android.Material.1.10.0.2\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Android.Material.1.10.0.2\build\monoandroid12.0\Xamarin.Google.Android.Material.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>SETLOCAL EnableDelayedExpansion
@@ -1019,4 +1023,5 @@ if EXIST "!cache_dir!" (
   <Import Project="packages\Xamarin.AndroidX.ViewPager2.1.0.0.24\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets" Condition="Exists('packages\Xamarin.AndroidX.ViewPager2.1.0.0.24\build\monoandroid12.0\Xamarin.AndroidX.ViewPager2.targets')" />
   <Import Project="packages\Xamarin.AndroidX.WebKit.1.8.0.3\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets" Condition="Exists('packages\Xamarin.AndroidX.WebKit.1.8.0.3\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" />
   <Import Project="packages\Xamarin.Google.Android.Material.1.10.0.2\build\monoandroid12.0\Xamarin.Google.Android.Material.targets" Condition="Exists('packages\Xamarin.Google.Android.Material.1.10.0.2\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" />
+  <Import Project="packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.targets" Condition="Exists('packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.targets')" />
 </Project>
