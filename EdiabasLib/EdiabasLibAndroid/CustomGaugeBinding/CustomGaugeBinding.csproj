@@ -91,9 +91,6 @@
     <Reference Include="Xamarin.AndroidX.Startup.StartupRuntime, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Startup.StartupRuntime.1.1.1.10\lib\monoandroid12.0\Xamarin.AndroidX.Startup.StartupRuntime.dll</HintPath>
     </Reference>
-    <Reference Include="Xamarin.AndroidX.SwipeRefreshLayout, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\lib\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.AndroidX.Tracing.Tracing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.1.0.9\lib\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.dll</HintPath>
     </Reference>
@@ -172,7 +169,6 @@
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Common.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Common.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Common.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Runtime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Runtime.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Core.1.12.0.3\build\monoandroid12.0\Xamarin.AndroidX.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Core.1.12.0.3\build\monoandroid12.0\Xamarin.AndroidX.Core.targets'))" />
-    <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.MultiDex.2.0.1.22\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.MultiDex.2.0.1.22\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets'))" />
   </Target>
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.targets')" />
@@ -200,7 +196,6 @@
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Common.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Common.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Common.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Common.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Runtime.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Runtime.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Core.1.12.0.3\build\monoandroid12.0\Xamarin.AndroidX.Core.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Core.1.12.0.3\build\monoandroid12.0\Xamarin.AndroidX.Core.targets')" />
-  <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.SwipeRefreshLayout.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.SwipeRefreshLayout.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.MultiDex.2.0.1.22\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.MultiDex.2.0.1.22\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

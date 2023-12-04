@@ -1,4 +1,4 @@
-//#define USE_DRAG_LIST
+#define USE_DRAG_LIST
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,7 +22,6 @@ using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
 using AndroidX.RecyclerView.Widget;
-using AndroidX.SwipeRefreshLayout.Widget;
 using BmwFileReader;
 using Com.Woxthebox.Draglistview;
 using Com.Woxthebox.Draglistview.Swipe;
@@ -615,7 +614,6 @@ namespace BmwDeepObd
         private View _barView;
         private Button _buttonRead;
         private Button _buttonSafe;
-        private SwipeRefreshLayout _swipeRefreshLayout;
 #if USE_DRAG_LIST
         private DragListView _listViewEcu;
         private DragEcuListAdapter _ecuListAdapter;
@@ -753,11 +751,9 @@ namespace BmwDeepObd
 
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
 #if USE_DRAG_LIST
-            _swipeRefreshLayout = FindViewById<SwipeRefreshLayout>(Resource.Id.swipe_refresh_layout);
             _listViewEcu = FindViewById<DragListView>(Resource.Id.listEcu);
             _ecuListAdapter = new DragEcuListAdapter(this, Resource.Layout.ecu_select_list_swipe, Resource.Id.item_layout, true);
 #else
-            _swipeRefreshLayout = null;
             _listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
 #endif
@@ -9974,19 +9970,10 @@ namespace BmwDeepObd
 
             public void OnItemDragStarted(int p0)
             {
-                if (_activity._swipeRefreshLayout != null)
-                {
-                    _activity._swipeRefreshLayout.Enabled = false;
-                }
             }
 
             public void OnItemDragEnded(int p0, int p1)
             {
-                if (_activity._swipeRefreshLayout != null)
-                {
-                    _activity._swipeRefreshLayout.Enabled = true;
-                }
-
                 if (p0 != p1)
                 {
                     if (p0 >= 0 && p0 < _ecuList.Count && p1 >= 0 && p1 < _ecuList.Count)

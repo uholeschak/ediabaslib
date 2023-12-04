@@ -9,20 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/TextViewInnerCaption" />
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
+    <com.woxthebox.draglistview.DragListView
+        android:id="@+id/listEcu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
-        <!-- Need to wrap DragListView in another layout for
-            wrap_content to work for some reason -->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <com.woxthebox.draglistview.DragListView
-                android:id="@+id/listEcu"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-                </FrameLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        android:layout_weight="1" />
 </LinearLayout>
