@@ -696,7 +696,11 @@ namespace BmwDeepObd
                 SupportActionBar.SetDisplayHomeAsUpEnabled(true);
                 SupportActionBar.SetDisplayShowCustomEnabled(true);
             }
+#if USE_DRAG_LIST
+            SetContentView(Resource.Layout.xml_tool_swipe);
+#else
             SetContentView(Resource.Layout.xml_tool);
+#endif
 
             _menuUpdateHandler = new Handler(Looper.MainLooper);
             _showServiceMenuRunnable = new Java.Lang.Runnable(() =>
@@ -746,15 +750,11 @@ namespace BmwDeepObd
             };
 
             _textViewCarInfo = FindViewById<TextView>(Resource.Id.textViewCarInfo);
-            DragListView dragListEcu = FindViewById<DragListView>(Resource.Id.dragListEcu);
-            ListView listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
 #if USE_DRAG_LIST
-            listViewEcu.Visibility = ViewStates.Gone;
-            _listViewEcu = dragListEcu;
+            _listViewEcu = FindViewById<DragListView>(Resource.Id.listEcu);
             _ecuListAdapter = new DragEcuListAdapter(this, Resource.Layout.ecu_select_list_swipe, Resource.Id.item_layout, true);
 #else
-            dragListEcu.Visibility = ViewStates.Gone;
-            _listViewEcu = listViewEcu;
+            _listViewEcu = FindViewById<ListView>(Resource.Id.listEcu);
             _ecuListAdapter = new EcuListAdapter(this);
 #endif
             _ecuListAdapter.CheckChanged += EcuCheckChanged;
