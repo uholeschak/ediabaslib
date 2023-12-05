@@ -9827,8 +9827,10 @@ namespace BmwDeepObd
                     return;
                 }
 
+                customHolder.MGrabView.Tag = infoWrapper;
                 View view = customHolder.ItemView;
                 view.Tag = infoWrapper;
+
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
                 ImageButton buttonEcuOptionsMenu = view.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
 
@@ -9951,10 +9953,14 @@ namespace BmwDeepObd
                 }
             }
 
-            private class CustomViewHolder : ViewHolder
+            private class CustomViewHolder : ViewHolder, View.IOnClickListener
             {
                 public CustomViewHolder(View itemView, int handleResId, bool dragOnLongPress) : base(itemView, handleResId, dragOnLongPress)
                 {
+                    if (dragOnLongPress)
+                    {
+                        MGrabView.SetOnClickListener(this);
+                    }
                 }
 
                 public override void OnItemClicked(View view)
@@ -9969,6 +9975,15 @@ namespace BmwDeepObd
                 public override bool OnItemLongClicked(View view)
                 {
                     return true;
+                }
+
+                public void OnClick(View v)
+                {
+                    EcuInfoWrapper infoWrapper = v?.Tag as EcuInfoWrapper;
+                    if (infoWrapper != null)
+                    {
+
+                    }
                 }
             }
 
