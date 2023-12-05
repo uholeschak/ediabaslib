@@ -137,6 +137,7 @@ namespace BmwDeepObd
                 ReadCommand = null;
                 UseCompatIds = false;
                 EcuJobNames = null;
+                ItemId = null;
             }
 
             public void InitReadValues()
@@ -314,6 +315,8 @@ namespace BmwDeepObd
             public bool UseCompatIds { get; set; }
 
             public List<string> EcuJobNames { get; set; }
+
+            public long? ItemId { get; set; }
         }
 
         public class EcuInfoSubSys
@@ -641,6 +644,7 @@ namespace BmwDeepObd
         private SgFunctions _sgFunctions;
         private Thread _jobThread;
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
+        private static long _itemIdCurrent;
         private EcuInfo _ecuInfoMot;
         private EcuInfo _ecuInfoDid;
         private EcuInfo _ecuInfoBmwServiceMenu;
@@ -654,6 +658,7 @@ namespace BmwDeepObd
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
 
+            _itemIdCurrent = 0;
             if (_ecuList == null)
             {
                 _ecuList = new List<EcuInfo>();
@@ -9965,12 +9970,16 @@ namespace BmwDeepObd
                 public EcuInfoWrapper(EcuInfo info)
                 {
                     Info = info;
-                    ItemId = _ecuList.IndexOf(info);
+                    if (info.ItemId == null)
+                    {
+                        info.ItemId = _itemIdCurrent++;
+                    }
+                    ItemId = info.ItemId.Value;
                 }
 
                 public EcuInfo Info { get; }
 
-                public int ItemId { get; }
+                public long ItemId { get; }
             }
         }
 
