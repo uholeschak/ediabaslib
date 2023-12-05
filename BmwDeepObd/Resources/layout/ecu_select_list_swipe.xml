@@ -4,33 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:leftViewId="@+id/item_left"
-    app:rightViewId="@+id/item_right"
     app:swipeViewId="@+id/item_layout">
-    <TextView
-        android:id="@+id/item_left"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/item_layout"
-        android:layout_alignTop="@+id/item_layout"
-        android:background="#ff0000"
-        android:gravity="start|center_vertical"
-        android:padding="4dp"
-        android:text="Red"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"/>
-    <TextView
-        android:id="@+id/item_right"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/item_layout"
-        android:layout_alignTop="@+id/item_layout"
-        android:background="#0000ff"
-        android:gravity="end|center_vertical"
-        android:padding="4dp"
-        android:text="Blue"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"/>
     <LinearLayout
         android:id="@id/item_layout"
         android:orientation="horizontal"

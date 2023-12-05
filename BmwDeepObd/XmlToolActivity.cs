@@ -9792,9 +9792,10 @@ namespace BmwDeepObd
                 EcuInfoWrapper infoWrapper = ItemList[position] as EcuInfoWrapper;
                 if (infoWrapper != null)
                 {
-                    return infoWrapper.Info.Address;
+                    return infoWrapper.ItemId;
                 }
-                return position;
+
+                return -1;
             }
 
             public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
@@ -9964,9 +9965,12 @@ namespace BmwDeepObd
                 public EcuInfoWrapper(EcuInfo info)
                 {
                     Info = info;
+                    ItemId = _ecuList.IndexOf(info);
                 }
 
                 public EcuInfo Info { get; }
+
+                public int ItemId { get; }
             }
         }
 
