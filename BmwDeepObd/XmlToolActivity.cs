@@ -9821,8 +9821,14 @@ namespace BmwDeepObd
                     return;
                 }
 
-                View view = holder.ItemView;
-                view.Tag = new EcuInfoWrapper(this, item);
+                CustomViewHolder customHolder = holder as CustomViewHolder;
+                if (customHolder == null)
+                {
+                    return;
+                }
+
+                View view = customHolder.ItemView;
+                view.Tag = infoWrapper;
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
                 ImageButton buttonEcuOptionsMenu = view.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
 
@@ -9830,11 +9836,11 @@ namespace BmwDeepObd
                 checkBoxSelect.Checked = item.Selected;
                 _ignoreCheckEvent = false;
 
-                checkBoxSelect.Tag = new EcuInfoWrapper(this, item);
+                checkBoxSelect.Tag = infoWrapper;
                 checkBoxSelect.CheckedChange -= OnCheckChanged;
                 checkBoxSelect.CheckedChange += OnCheckChanged;
 
-                buttonEcuOptionsMenu.Tag = new EcuInfoWrapper(this, item);
+                buttonEcuOptionsMenu.Tag = infoWrapper;
                 buttonEcuOptionsMenu.Click -= OnEcuOptionsClick;
                 buttonEcuOptionsMenu.Click += OnEcuOptionsClick;
 
