@@ -775,7 +775,7 @@ namespace BmwDeepObd
             };
 #if USE_DRAG_LIST
             _listViewEcu.SetLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.Vertical, false));
-            _listViewEcu.SetAdapter(_ecuListAdapter, true);
+            _listViewEcu.SetAdapter(_ecuListAdapter, false);
             _listViewEcu.SetCanDragHorizontally(false);
             _listViewEcu.SetCanDragVertically(true);
             _listViewEcu.SetCustomDragItem(null);
@@ -9613,6 +9613,7 @@ namespace BmwDeepObd
             }
         }
 
+#if !USE_DRAG_LIST
         private class EcuListAdapter : BaseAdapter<EcuInfo>
         {
             public delegate void ActionEventHandler(EcuInfo ecuInfo, View view);
@@ -9763,7 +9764,7 @@ namespace BmwDeepObd
                 public EcuInfo Info { get; }
             }
         }
-
+#else
         private class DragEcuListAdapter : DragItemAdapter
         {
             public delegate void ActionEventHandler(EcuInfo ecuInfo, View view);
@@ -9998,5 +9999,6 @@ namespace BmwDeepObd
             {
             }
         }
+#endif
     }
 }
