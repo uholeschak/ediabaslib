@@ -783,6 +783,7 @@ namespace BmwDeepObd
             _listViewEcu.SetCanDragVertically(true);
             _listViewEcu.SetCustomDragItem(null);
             _listViewEcu.SetDragListListener(new CustomDragListener(this));
+            _listViewEcu.SetDragListCallback(new CustomDragListCallback(this));
             _listViewEcu.DragEnabled = true;
 #else
             _listViewEcu.Adapter = _ecuListAdapter;
@@ -2472,16 +2473,16 @@ namespace BmwDeepObd
             configEcuMenu.SetEnabled(enableMenuAction);
 
             IMenuItem moveTopMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_top);
-            moveTopMenu?.SetEnabled(itemPos > 0);
+            moveTopMenu?.SetEnabled(enableMenuAction && itemPos > 0);
 
             IMenuItem moveUpMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_up);
-            moveUpMenu?.SetEnabled(itemPos > 0);
+            moveUpMenu?.SetEnabled(enableMenuAction && itemPos > 0);
 
             IMenuItem moveDownMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_down);
-            moveDownMenu?.SetEnabled((itemPos + 1) < _ecuListAdapter.ItemsCount);
+            moveDownMenu?.SetEnabled(enableMenuAction && (itemPos + 1) < _ecuListAdapter.ItemsCount);
 
             IMenuItem moveBottomMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_move_bottom);
-            moveBottomMenu?.SetEnabled((itemPos + 1) < _ecuListAdapter.ItemsCount);
+            moveBottomMenu?.SetEnabled(enableMenuAction && (itemPos + 1) < _ecuListAdapter.ItemsCount);
 
             IMenuItem ediabasToolMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_ediabas_tool);
             ediabasToolMenu?.SetEnabled(enableMenuAction);
@@ -10019,6 +10020,36 @@ namespace BmwDeepObd
 
             public void OnItemDragging(int p0, float p1, float p2)
             {
+            }
+        }
+
+        private class CustomDragListCallback : Java.Lang.Object, DragListView.IDragListCallback
+        {
+            private readonly XmlToolActivity _activity;
+
+            public CustomDragListCallback(XmlToolActivity activity)
+            {
+                _activity = activity;
+            }
+
+            public bool CanDragItemAtPosition(int p0)
+            {
+                if (p0 < 0 || p0 >= _ecuList.Count)
+                {
+                    return false;
+                }
+
+                if (_activity.IsJobRunning())
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public bool CanDropItemAtPosition(int p0)
+            {
+                return CanDragItemAtPosition(p0);
             }
         }
 #endif
