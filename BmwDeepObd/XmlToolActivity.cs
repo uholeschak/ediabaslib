@@ -785,6 +785,19 @@ namespace BmwDeepObd
             _listViewEcu.SetDragListListener(new CustomDragListener(this));
             _listViewEcu.SetDragListCallback(new CustomDragListCallback(this));
             _listViewEcu.DragEnabled = true;
+
+            _ecuListAdapter.ItemClicked += (ecuInfo, view) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                if (ecuInfo != null)
+                {
+                    PerformJobsRead(ecuInfo);
+                }
+            };
 #else
             _listViewEcu.Adapter = _ecuListAdapter;
             _listViewEcu.ItemClick += (sender, args) =>
@@ -9774,6 +9787,7 @@ namespace BmwDeepObd
             public delegate void ActionEventHandler(EcuInfo ecuInfo, View view);
             public event ActionEventHandler CheckChanged;
             public event ActionEventHandler MenuOptionsSelected;
+            public event ActionEventHandler ItemClicked;
             public int ItemsCount => ItemList.Count;
 
             private readonly XmlToolActivity _context;
@@ -9807,7 +9821,7 @@ namespace BmwDeepObd
             public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
             {
                 View view = LayoutInflater.From(parent.Context)?.Inflate(_layoutId, parent, false);
-                return new CustomViewHolder(view, _dragHandleId, _dragOnLongPress);
+                return new CustomViewHolder(this, view, _dragHandleId, _dragOnLongPress);
             }
 
             public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
@@ -9955,8 +9969,11 @@ namespace BmwDeepObd
 
             private class CustomViewHolder : ViewHolder, View.IOnClickListener
             {
-                public CustomViewHolder(View itemView, int handleResId, bool dragOnLongPress) : base(itemView, handleResId, dragOnLongPress)
+                private readonly DragEcuListAdapter _adapter;
+
+                public CustomViewHolder(DragEcuListAdapter adapter, View itemView, int handleResId, bool dragOnLongPress) : base(itemView, handleResId, dragOnLongPress)
                 {
+                    _adapter = adapter;
                     if (dragOnLongPress)
                     {
                         MGrabView.SetOnClickListener(this);
@@ -9968,7 +9985,6 @@ namespace BmwDeepObd
                     EcuInfoWrapper infoWrapper = view?.Tag as EcuInfoWrapper;
                     if (infoWrapper != null)
                     {
-
                     }
                 }
 
@@ -9982,7 +9998,7 @@ namespace BmwDeepObd
                     EcuInfoWrapper infoWrapper = v?.Tag as EcuInfoWrapper;
                     if (infoWrapper != null)
                     {
-
+                        _adapter.ItemClicked?.Invoke(infoWrapper.Info, v);
                     }
                 }
             }
