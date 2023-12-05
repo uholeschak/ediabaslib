@@ -9991,9 +9991,18 @@ namespace BmwDeepObd
             {
                 if (p0 != p1)
                 {
+#if DEBUG
+                    Log.Debug(Tag, string.Format("OnItemDragEnded: {0} -> {1}", p0, p1));
+#endif
                     if (p0 >= 0 && p0 < _ecuList.Count && p1 >= 0 && p1 < _ecuList.Count)
                     {
-                        (_ecuList[p0], _ecuList[p1]) = (_ecuList[p1], _ecuList[p0]);
+                        int oldIndex = p0;
+                        int newIndex = p1;
+
+                        EcuInfo ecuInfo = _ecuList[oldIndex];
+                        _ecuList.RemoveAt(oldIndex);
+                        _ecuList.Insert(newIndex, ecuInfo);
+
                         _activity.UpdateDisplay();
                     }
                 }
