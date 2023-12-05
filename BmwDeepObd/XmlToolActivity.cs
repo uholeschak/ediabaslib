@@ -644,7 +644,6 @@ namespace BmwDeepObd
         private SgFunctions _sgFunctions;
         private Thread _jobThread;
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
-        private static long _itemIdCurrent;
         private EcuInfo _ecuInfoMot;
         private EcuInfo _ecuInfoDid;
         private EcuInfo _ecuInfoBmwServiceMenu;
@@ -658,7 +657,6 @@ namespace BmwDeepObd
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
 
-            _itemIdCurrent = 0;
             if (_ecuList == null)
             {
                 _ecuList = new List<EcuInfo>();
@@ -9782,6 +9780,7 @@ namespace BmwDeepObd
             private readonly int _dragHandleId;
             private readonly bool _dragOnLongPress;
             private bool _ignoreCheckEvent;
+            private long _itemIdCurrent;
 
             public DragEcuListAdapter(XmlToolActivity context, int layoutId, int dragHandleId, bool dragOnLongPress)
             {
@@ -9789,6 +9788,7 @@ namespace BmwDeepObd
                 _layoutId = layoutId;
                 _dragHandleId = dragHandleId;
                 _dragOnLongPress = dragOnLongPress;
+                _itemIdCurrent = 0;
                 ItemList = new List<EcuInfoWrapper>();
             }
 
@@ -9821,7 +9821,7 @@ namespace BmwDeepObd
                 }
 
                 View view = holder.ItemView;
-                view.Tag = new EcuInfoWrapper(item);
+                view.Tag = new EcuInfoWrapper(this, item);
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
                 ImageButton buttonEcuOptionsMenu = view.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
 
@@ -9829,11 +9829,11 @@ namespace BmwDeepObd
                 checkBoxSelect.Checked = item.Selected;
                 _ignoreCheckEvent = false;
 
-                checkBoxSelect.Tag = new EcuInfoWrapper(item);
+                checkBoxSelect.Tag = new EcuInfoWrapper(this, item);
                 checkBoxSelect.CheckedChange -= OnCheckChanged;
                 checkBoxSelect.CheckedChange += OnCheckChanged;
 
-                buttonEcuOptionsMenu.Tag = new EcuInfoWrapper(item);
+                buttonEcuOptionsMenu.Tag = new EcuInfoWrapper(this, item);
                 buttonEcuOptionsMenu.Click -= OnEcuOptionsClick;
                 buttonEcuOptionsMenu.Click += OnEcuOptionsClick;
 
@@ -9899,7 +9899,7 @@ namespace BmwDeepObd
 
             public void AppendItem(EcuInfo ecuInfo)
             {
-                AddItem(ItemList.Count, new EcuInfoWrapper(ecuInfo));
+                AddItem(ItemList.Count, new EcuInfoWrapper(this, ecuInfo));
             }
 
             public int GetItemIndex(EcuInfo ecuInfo)
@@ -9967,12 +9967,12 @@ namespace BmwDeepObd
 
             private class EcuInfoWrapper : Java.Lang.Object
             {
-                public EcuInfoWrapper(EcuInfo info)
+                public EcuInfoWrapper(DragEcuListAdapter adapter, EcuInfo info)
                 {
                     Info = info;
                     if (info.ItemId == null)
                     {
-                        info.ItemId = _itemIdCurrent++;
+                        info.ItemId = adapter._itemIdCurrent++;
                     }
                     ItemId = info.ItemId.Value;
                 }
