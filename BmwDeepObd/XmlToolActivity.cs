@@ -781,7 +781,7 @@ namespace BmwDeepObd
             _listViewEcu.SetAdapter(_ecuListAdapter, false);
             _listViewEcu.SetCanDragHorizontally(false);
             _listViewEcu.SetCanDragVertically(true);
-            _listViewEcu.SetCustomDragItem(null);
+            _listViewEcu.SetCustomDragItem(new CustomDragItem(this, Resource.Layout.ecu_select_list_swipe));
             _listViewEcu.SetDragListListener(new CustomDragListener(this));
             _listViewEcu.SetDragListCallback(new CustomDragListCallback(this));
             _listViewEcu.DragEnabled = true;
@@ -9980,19 +9980,6 @@ namespace BmwDeepObd
                     }
                 }
 
-                public override void OnItemClicked(View view)
-                {
-                    EcuInfoWrapper infoWrapper = view?.Tag as EcuInfoWrapper;
-                    if (infoWrapper != null)
-                    {
-                    }
-                }
-
-                public override bool OnItemLongClicked(View view)
-                {
-                    return true;
-                }
-
                 public void OnClick(View v)
                 {
                     EcuInfoWrapper infoWrapper = v?.Tag as EcuInfoWrapper;
@@ -10019,6 +10006,38 @@ namespace BmwDeepObd
                 public EcuInfo Info { get; }
 
                 public long ItemId { get; }
+            }
+        }
+
+        private class CustomDragItem : DragItem
+        {
+            public CustomDragItem(Context context, int layoutId) : base(context, layoutId)
+            {
+
+            }
+
+            public override void OnBindDragView(View clickedView, View dragView)
+            {
+                CheckBox checkBoxSelectClick = clickedView.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
+                TextView textEcuNameClick = clickedView.FindViewById<TextView>(Resource.Id.textEcuName);
+                TextView textEcuDescClick = clickedView.FindViewById<TextView>(Resource.Id.textEcuDesc);
+                TextView textEcuFunctionsClick = clickedView.FindViewById<TextView>(Resource.Id.textEcuFunctions);
+
+                CheckBox checkBoxSelectDrag = dragView.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
+                TextView textEcuNameDrag = dragView.FindViewById<TextView>(Resource.Id.textEcuName);
+                TextView textEcuDescDrag = dragView.FindViewById<TextView>(Resource.Id.textEcuDesc);
+                TextView textEcuFunctionsDrag = dragView.FindViewById<TextView>(Resource.Id.textEcuFunctions);
+
+                View itemDividerTopDrag = dragView.FindViewById<View>(Resource.Id.item_divider_top);
+                View itemDividerBottomDrag = dragView.FindViewById<View>(Resource.Id.item_divider_bottom);
+
+                checkBoxSelectDrag.Checked = checkBoxSelectClick.Checked;
+                textEcuNameDrag.Text = textEcuNameClick.Text;
+                textEcuDescDrag.Text = textEcuDescClick.Text;
+                textEcuFunctionsDrag.Text = textEcuFunctionsClick.Text;
+
+                itemDividerTopDrag.Visibility = ViewStates.Gone;
+                itemDividerBottomDrag.Visibility = ViewStates.Gone;
             }
         }
 
