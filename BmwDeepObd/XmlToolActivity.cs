@@ -10025,7 +10025,7 @@ namespace BmwDeepObd
                 _context = context;
 
                 TypedArray typedArray = context.Theme.ObtainStyledAttributes(
-                    new[] { Resource.Attribute.captionBackgroundColor });
+                    new[] { Resource.Attribute.dragBackgroundColor });
                 _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
             }
 
