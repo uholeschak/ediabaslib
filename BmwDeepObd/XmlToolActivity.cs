@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Android.Content;
 using Android.Content.PM;
+using Android.Content.Res;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Text.Method;
@@ -10016,9 +10017,16 @@ namespace BmwDeepObd
 
         private class CustomDragItem : DragItem
         {
+            private readonly Context _context;
+            private readonly Android.Graphics.Color _backgroundColor;
+
             public CustomDragItem(Context context, int layoutId) : base(context, layoutId)
             {
+                _context = context;
 
+                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                    new[] { Resource.Attribute.captionBackgroundColor });
+                _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
             }
 
             public override void OnBindDragView(View clickedView, View dragView)
@@ -10046,6 +10054,7 @@ namespace BmwDeepObd
                 itemDividerBottomDrag.Visibility = ViewStates.Visible;
                 checkBoxSelectDrag.Enabled = false;
                 buttonEcuOptionsMenu.Enabled = false;
+                dragView.SetBackgroundColor(_backgroundColor);
                 dragView.JumpDrawablesToCurrentState();
             }
         }
