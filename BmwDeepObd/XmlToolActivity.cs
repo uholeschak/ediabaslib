@@ -9845,6 +9845,11 @@ namespace BmwDeepObd
                 View view = customHolder.ItemView;
                 view.Tag = infoWrapper;
 
+                View itemDividerTop = view.FindViewById<View>(Resource.Id.item_divider_top);
+                View itemDividerBottom = view.FindViewById<View>(Resource.Id.item_divider_bottom);
+                itemDividerTop.Visibility = ViewStates.Gone;
+                itemDividerBottom.Visibility = ViewStates.Visible;
+
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
                 ImageButton buttonEcuOptionsMenu = view.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
 
@@ -10036,8 +10041,8 @@ namespace BmwDeepObd
                 textEcuDescDrag.Text = textEcuDescClick.Text;
                 textEcuFunctionsDrag.Text = textEcuFunctionsClick.Text;
 
-                itemDividerTopDrag.Visibility = ViewStates.Gone;
-                itemDividerBottomDrag.Visibility = ViewStates.Gone;
+                itemDividerTopDrag.Visibility = ViewStates.Visible;
+                itemDividerBottomDrag.Visibility = ViewStates.Visible;
             }
         }
 
