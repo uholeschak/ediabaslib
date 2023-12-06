@@ -9847,7 +9847,7 @@ namespace BmwDeepObd
 
                 View itemDividerTop = view.FindViewById<View>(Resource.Id.item_divider_top);
                 View itemDividerBottom = view.FindViewById<View>(Resource.Id.item_divider_bottom);
-                itemDividerTop.Visibility = ViewStates.Gone;
+                itemDividerTop.Visibility = ViewStates.Invisible;
                 itemDividerBottom.Visibility = ViewStates.Visible;
 
                 CheckBox checkBoxSelect = view.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
@@ -10043,6 +10043,7 @@ namespace BmwDeepObd
 
                 itemDividerTopDrag.Visibility = ViewStates.Visible;
                 itemDividerBottomDrag.Visibility = ViewStates.Visible;
+                checkBoxSelectDrag.Enabled = false;
             }
         }
 
