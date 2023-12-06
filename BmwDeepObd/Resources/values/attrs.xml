@@ -5,6 +5,7 @@
   </declare-styleable>
   <attr name="captionBackgroundColor" format="color" />
   <attr name="captionTextColor" format="color" />
+  <attr name="dragBackgroundColor" format="color" />
   <attr name="gaugePointStartColor" format="color" />
   <attr name="gaugePointEndColor" format="color" />
   <attr name="gaugeStrokeColor" format="color" />

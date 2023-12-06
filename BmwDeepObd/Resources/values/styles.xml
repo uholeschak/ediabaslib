@@ -5,6 +5,7 @@
     <item name="android:dropDownListViewStyle">@style/SpinnerDividerStyle</item>
     <item name="captionBackgroundColor">@color/colorCaptionBackground</item>
     <item name="captionTextColor">@color/colorCaptionText</item>
+    <item name="dragBackgroundColor">@color/colorBackgroundDrag</item>
     <item name="gaugePointStartColor">@color/colorGaugePoint</item>
     <item name="gaugePointEndColor">@color/colorGaugePoint</item>
     <item name="gaugeStrokeColor">@color/colorGaugeStroke</item>
@@ -15,6 +16,7 @@
     <item name="android:dropDownListViewStyle">@style/SpinnerDividerStyle</item>
     <item name="captionBackgroundColor">@color/colorCaptionBackgroundLight</item>
     <item name="captionTextColor">@color/colorCaptionTextLight</item>
+    <item name="dragBackgroundColor">@color/colorBackgroundDragLight</item>
     <item name="gaugePointStartColor">@color/colorGaugePointLight</item>
     <item name="gaugePointEndColor">@color/colorGaugePointLight</item>
     <item name="gaugeStrokeColor">@color/colorGaugeStrokeLight</item>
