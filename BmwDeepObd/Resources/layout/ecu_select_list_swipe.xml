@@ -11,7 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:descendantFocusability="blocksDescendants">
-        <View style="@style/Divider"/>
+        <View
+            style="@style/Divider"
+            android:id="@+id/item_divider_top"/>
         <LinearLayout
             android:id="@+id/item_layout_inner"
             android:orientation="horizontal"
@@ -60,6 +62,8 @@
                 android:src="@android:drawable/ic_menu_more"
                 android:layout_weight="0"/>
         </LinearLayout>
-        <View style="@style/Divider"/>
+        <View
+            style="@style/Divider"
+            android:id="@+id/item_divider_bottom"/>
     </LinearLayout>
 </com.woxthebox.draglistview.swipe.ListSwipeItem>
