@@ -10029,6 +10029,7 @@ namespace BmwDeepObd
                 TextView textEcuFunctionsClick = clickedView.FindViewById<TextView>(Resource.Id.textEcuFunctions);
 
                 CheckBox checkBoxSelectDrag = dragView.FindViewById<CheckBox>(Resource.Id.checkBoxEcuSelect);
+                ImageButton buttonEcuOptionsMenu = dragView.FindViewById<ImageButton>(Resource.Id.buttonEcuOptionsMenu);
                 TextView textEcuNameDrag = dragView.FindViewById<TextView>(Resource.Id.textEcuName);
                 TextView textEcuDescDrag = dragView.FindViewById<TextView>(Resource.Id.textEcuDesc);
                 TextView textEcuFunctionsDrag = dragView.FindViewById<TextView>(Resource.Id.textEcuFunctions);
@@ -10044,6 +10045,8 @@ namespace BmwDeepObd
                 itemDividerTopDrag.Visibility = ViewStates.Visible;
                 itemDividerBottomDrag.Visibility = ViewStates.Visible;
                 checkBoxSelectDrag.Enabled = false;
+                buttonEcuOptionsMenu.Enabled = false;
+                dragView.JumpDrawablesToCurrentState();
             }
         }
 
