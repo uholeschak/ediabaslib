@@ -9998,6 +9998,7 @@ namespace BmwDeepObd
                     EcuInfoWrapper infoWrapper = v?.Tag as EcuInfoWrapper;
                     if (infoWrapper != null)
                     {
+                        v.RequestFocus();
                         _adapter.ItemClicked?.Invoke(infoWrapper.Info, v);
                     }
                 }
