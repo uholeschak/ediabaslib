@@ -9844,7 +9844,6 @@ namespace BmwDeepObd
 
                 View grabView = customHolder.MGrabView;
                 grabView.Tag = infoWrapper;
-                grabView.Clickable = true;
                 grabView.Click -= OnGrabViewClick;
                 grabView.Click += OnGrabViewClick;
 
