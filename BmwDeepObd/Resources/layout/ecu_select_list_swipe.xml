@@ -10,6 +10,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
         android:descendantFocusability="blocksDescendants">
         <View
             style="@style/Divider"
