@@ -9843,6 +9843,9 @@ namespace BmwDeepObd
                 }
 
                 customHolder.MGrabView.Tag = infoWrapper;
+                customHolder.MGrabView.Click -= OnGrabViewClick;
+                customHolder.MGrabView.Click += OnGrabViewClick;
+
                 View view = customHolder.ItemView;
                 view.Tag = infoWrapper;
 
@@ -9948,6 +9951,16 @@ namespace BmwDeepObd
                 return -1;
             }
 
+            private void OnGrabViewClick(object sender, EventArgs args)
+            {
+                View view = sender as View;
+                EcuInfoWrapper infoWrapper = view?.Tag as EcuInfoWrapper;
+                if (infoWrapper != null)
+                {
+                    ItemClicked?.Invoke(infoWrapper.Info, view);
+                }
+            }
+
             private void OnCheckChanged(object sender, CompoundButton.CheckedChangeEventArgs args)
             {
                 if (!_ignoreCheckEvent)
@@ -9973,26 +9986,13 @@ namespace BmwDeepObd
                 }
             }
 
-            private class CustomViewHolder : ViewHolder, View.IOnClickListener
+            private class CustomViewHolder : ViewHolder
             {
                 private readonly DragEcuListAdapter _adapter;
 
                 public CustomViewHolder(DragEcuListAdapter adapter, View itemView, int handleResId, bool dragOnLongPress) : base(itemView, handleResId, dragOnLongPress)
                 {
                     _adapter = adapter;
-                    if (dragOnLongPress)
-                    {
-                        MGrabView.SetOnClickListener(this);
-                    }
-                }
-
-                public void OnClick(View v)
-                {
-                    EcuInfoWrapper infoWrapper = v?.Tag as EcuInfoWrapper;
-                    if (infoWrapper != null)
-                    {
-                        _adapter.ItemClicked?.Invoke(infoWrapper.Info, v);
-                    }
                 }
             }
 
