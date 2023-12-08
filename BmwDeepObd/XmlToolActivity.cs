@@ -9797,6 +9797,7 @@ namespace BmwDeepObd
             private readonly bool _dragOnLongPress;
             private bool _ignoreCheckEvent;
             private long _itemIdCurrent;
+            private int? _backgroundResource;
 
             public DragEcuListAdapter(XmlToolActivity context, int layoutId, int dragHandleId, bool dragOnLongPress)
             {
@@ -9805,6 +9806,13 @@ namespace BmwDeepObd
                 _dragHandleId = dragHandleId;
                 _dragOnLongPress = dragOnLongPress;
                 _itemIdCurrent = 0;
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+                    TypedArray typedArray = context.Theme.ObtainStyledAttributes(new[] { Android.Resource.Attribute.SelectableItemBackground });
+                    _backgroundResource = typedArray.GetResourceId(0, 0);
+                }
+
                 ItemList = new List<EcuInfoWrapper>();
             }
 
@@ -9843,6 +9851,11 @@ namespace BmwDeepObd
                 }
 
                 View grabView = customHolder.MGrabView;
+                if (_backgroundResource != null)
+                {
+                    grabView.SetBackgroundResource(_backgroundResource.Value);
+                }
+
                 grabView.Tag = infoWrapper;
                 grabView.Click -= OnGrabViewClick;
                 grabView.Click += OnGrabViewClick;
