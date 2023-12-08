@@ -9842,9 +9842,11 @@ namespace BmwDeepObd
                     return;
                 }
 
-                customHolder.MGrabView.Tag = infoWrapper;
-                customHolder.MGrabView.Click -= OnGrabViewClick;
-                customHolder.MGrabView.Click += OnGrabViewClick;
+                View grabView = customHolder.MGrabView;
+                grabView.Tag = infoWrapper;
+                grabView.Clickable = true;
+                grabView.Click -= OnGrabViewClick;
+                grabView.Click += OnGrabViewClick;
 
                 View view = customHolder.ItemView;
                 view.Tag = infoWrapper;
