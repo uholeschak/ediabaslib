@@ -375,10 +375,11 @@ namespace BmwDeepObd
                 BnType = string.Empty;
                 BrandName = string.Empty;
                 DetectMotorbikes = false;
-                CommErrorsOccurred = false;
-                ShownServiceMenuHint = false;
-                ServiceFunctionWarningShown = false;
                 DetectVehicleBmwFile = null;
+                CommErrorsOccurred = false;
+                ServiceMenuHintShown = false;
+                ServiceFunctionWarningShown = false;
+                ListMoveHintShown = false;
             }
 
             public bool ForceAppend { get; set; }
@@ -401,10 +402,11 @@ namespace BmwDeepObd
             public string BnType { get; set; }
             public string BrandName { get; set; }
             public bool DetectMotorbikes { get; set; }
-            public bool CommErrorsOccurred { get; set; }
-            public bool ShownServiceMenuHint { get; set; }
-            public bool ServiceFunctionWarningShown { get; set; }
             public string DetectVehicleBmwFile { get; set; }
+            public bool CommErrorsOccurred { get; set; }
+            public bool ServiceMenuHintShown { get; set; }
+            public bool ServiceFunctionWarningShown { get; set; }
+            public bool ListMoveHintShown { get; set; }
         }
 
 #if DEBUG
@@ -932,7 +934,7 @@ namespace BmwDeepObd
                         {
                             if (bmwServiceCall)
                             {
-                                _instanceData.ShownServiceMenuHint = true;
+                                _instanceData.ServiceMenuHintShown = true;
                             }
 
                             ExecuteAnalyzeJob();
@@ -1542,6 +1544,32 @@ namespace BmwDeepObd
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        public override bool DispatchTouchEvent(MotionEvent ev)
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            switch (ev.Action)
+            {
+                case MotionEventActions.Move:
+#if USE_DRAG_LIST
+                    if (_ecuList.Count > 1)
+                    {
+                        if (!_instanceData.ListMoveHintShown)
+                        {
+                            _instanceData.ListMoveHintShown = true;
+                            Toast.MakeText(this, Resource.String.xml_tool_drag_list_hint, ToastLength.Long)?.Show();
+                        }
+                    }
+#endif
+                    break;
+            }
+
+            return base.DispatchTouchEvent(ev);
         }
 
         private void FinishContinue()
@@ -4272,9 +4300,9 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            if (_instanceData.ShownServiceMenuHint)
+                            if (_instanceData.ServiceMenuHintShown)
                             {
-                                _instanceData.ShownServiceMenuHint = false;
+                                _instanceData.ServiceMenuHintShown = false;
                                 ShowAlert(Resource.String.alert_title_info, Resource.String.xml_tool_msg_service_menu);
                             }
                             else
