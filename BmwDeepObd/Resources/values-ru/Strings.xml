@@ -614,6 +614,8 @@
   <string name="xml_tool_result_vin">VIN</string>
   <string name="xml_tool_service_open_jobs">Показать {0} задания</string>
   <string name="xml_tool_service_jobs_warning">Сервисные функции пока экспериментальные!\nОтображаемые задания в Ediabas Tool могут иметь только аргументы по умолчанию, которые необходимо адаптировать перед выполнением задания!\nВы обязаны проверять задания перед выполнением!\nПомощник по аргументам может быть полезен в этом случае.\nИз-за сложности сбора данных возможно, что в будущем для выполнения заданий потребуются адаптеры Deep OBD.\nХотите продолжить?</string>
+  <!--Translate-->
+  <string name="xml_tool_drag_list_hint">Нажмите и удерживайте ЭБУ, чтобы изменить порядок.</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Добавить страницу ошибок</string>
