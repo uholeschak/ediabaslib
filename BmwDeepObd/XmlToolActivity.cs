@@ -9826,7 +9826,7 @@ namespace BmwDeepObd
             private readonly bool _dragOnLongPress;
             private bool _ignoreCheckEvent;
             private long _itemIdCurrent;
-            private int? _backgroundResource;
+            private readonly int? _backgroundResource;
 
             public DragEcuListAdapter(XmlToolActivity context, int layoutId, int dragHandleId, bool dragOnLongPress)
             {

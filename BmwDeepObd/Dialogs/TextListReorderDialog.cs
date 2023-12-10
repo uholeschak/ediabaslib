@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using Android.Content;
+using Android.Content.Res;
+using Android.OS;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using AndroidX.RecyclerView.Widget;
 using Com.Woxthebox.Draglistview;
 
 namespace BmwDeepObd.Dialogs
@@ -17,6 +20,7 @@ namespace BmwDeepObd.Dialogs
         private TextView _textViewMessage;
         private TextView _textViewMessageDetail;
         private DragListView _listViewItems;
+        private DragListAdapter _dragListAdapter;
         private List<StringObjType> _itemList;
 
         public string Message
@@ -92,6 +96,14 @@ namespace BmwDeepObd.Dialogs
                 _textViewMessage = _view.FindViewById<TextView>(Resource.Id.textViewMessage);
                 _textViewMessageDetail = _view.FindViewById<TextView>(Resource.Id.textViewMessageDetail);
                 _listViewItems = _view.FindViewById<DragListView>(Resource.Id.listViewItems);
+                _dragListAdapter = new DragListAdapter(this, Resource.Layout.ecu_select_list_swipe, Resource.Id.item_layout, true);
+                _listViewItems.SetAdapter(_dragListAdapter, false);
+                _listViewItems.SetCanDragHorizontally(false);
+                _listViewItems.SetCanDragVertically(true);
+                //_listViewItems.SetCustomDragItem(new CustomDragItem(this, Resource.Layout.ecu_select_list_swipe));
+                //_listViewItems.SetDragListListener(new CustomDragListener(this));
+                //_listViewItems.SetDragListCallback(new CustomDragListCallback(this));
+                _listViewItems.DragEnabled = true;
             }
         }
 
@@ -120,6 +132,158 @@ namespace BmwDeepObd.Dialogs
         {
             _dialog?.Dismiss();
             _dialog = null;
+        }
+
+        private class DragListAdapter : DragItemAdapter
+        {
+            public int ItemsCount => ItemList.Count;
+
+            private readonly TextListReorderDialog _context;
+            private readonly int _layoutId;
+            private readonly int _dragHandleId;
+            private readonly bool _dragOnLongPress;
+            private long _itemIdCurrent;
+            private readonly int? _backgroundResource;
+
+            public DragListAdapter(TextListReorderDialog context, int layoutId, int dragHandleId, bool dragOnLongPress)
+            {
+                _context = context;
+                _layoutId = layoutId;
+                _dragHandleId = dragHandleId;
+                _dragOnLongPress = dragOnLongPress;
+                _itemIdCurrent = 0;
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+                    TypedArray typedArray = context._activity.Theme.ObtainStyledAttributes(new[] { Android.Resource.Attribute.SelectableItemBackground });
+                    _backgroundResource = typedArray.GetResourceId(0, 0);
+                }
+
+                ItemList = new List<InfoWrapper>();
+            }
+
+            public override long GetUniqueItemId(int position)
+            {
+                InfoWrapper infoWrapper = ItemList[position] as InfoWrapper;
+                if (infoWrapper != null)
+                {
+                    return infoWrapper.ItemId;
+                }
+
+                return -1;
+            }
+
+            public override RecyclerView.ViewHolder OnCreateViewHolder(ViewGroup parent, int viewType)
+            {
+                View view = LayoutInflater.From(parent.Context)?.Inflate(_layoutId, parent, false);
+                return new CustomViewHolder(this, view, _dragHandleId, _dragOnLongPress);
+            }
+
+            public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
+            {
+                base.OnBindViewHolder(holder, position);
+
+                InfoWrapper infoWrapper = ItemList[position] as InfoWrapper;
+                StringObjInfo item = infoWrapper?.Info;
+                if (item == null)
+                {
+                    return;
+                }
+
+                CustomViewHolder customHolder = holder as CustomViewHolder;
+                if (customHolder == null)
+                {
+                    return;
+                }
+
+                View grabView = customHolder.MGrabView;
+                if (_backgroundResource != null)
+                {
+                    grabView.SetBackgroundResource(_backgroundResource.Value);
+                }
+
+                grabView.Tag = infoWrapper;
+
+                View view = customHolder.ItemView;
+                view.Tag = infoWrapper;
+
+                View itemDividerTop = view.FindViewById<View>(Resource.Id.item_divider_top);
+                View itemDividerBottom = view.FindViewById<View>(Resource.Id.item_divider_bottom);
+                itemDividerTop.Visibility = ViewStates.Invisible;
+                itemDividerBottom.Visibility = ViewStates.Visible;
+            }
+
+            public void ClearItems()
+            {
+                while (ItemList.Count > 0)
+                {
+                    RemoveItem(0);
+                }
+            }
+
+            public void AppendItem(StringObjInfo itemInfo)
+            {
+                AddItem(ItemList.Count, new InfoWrapper(this, itemInfo));
+            }
+
+            public int GetItemIndex(StringObjInfo info)
+            {
+                for (int i = 0; i < ItemsCount; i++)
+                {
+                    InfoWrapper infoWrapper = ItemList[i] as InfoWrapper;
+                    if (infoWrapper != null)
+                    {
+                        if (infoWrapper.Info == info)
+                        {
+                            return i;
+                        }
+                    }
+                }
+
+                return -1;
+            }
+
+            public class StringObjInfo
+            {
+                public StringObjInfo(string text, string description, object data)
+                {
+                    Text = text;
+                    Description = description;
+                    Data = data;
+                }
+
+                public string Text { get; set; }
+                public string Description { get; set; }
+                public object Data { get; set; }
+                public long? ItemId { get; set; }
+            }
+
+            private class CustomViewHolder : ViewHolder
+            {
+                private readonly DragListAdapter _adapter;
+
+                public CustomViewHolder(DragListAdapter adapter, View itemView, int handleResId, bool dragOnLongPress) : base(itemView, handleResId, dragOnLongPress)
+                {
+                    _adapter = adapter;
+                }
+            }
+
+            private class InfoWrapper : Java.Lang.Object
+            {
+                public InfoWrapper(DragListAdapter adapter, StringObjInfo info)
+                {
+                    Info = info;
+                    if (info.ItemId == null)
+                    {
+                        info.ItemId = adapter._itemIdCurrent++;
+                    }
+                    ItemId = info.ItemId.Value;
+                }
+
+                public StringObjInfo Info { get; }
+
+                public long ItemId { get; }
+            }
         }
     }
 }
