@@ -371,6 +371,7 @@
     <Compile Include="BaseActivity.cs" />
     <Compile Include="BmwActuatorActivity.cs" />
     <Compile Include="CheckAdapter.cs" />
+    <Compile Include="Dialogs\TextListReorderDialog.cs" />
     <Compile Include="InternalBroadcastManager\InternalBroadcastManager.cs" />
     <Compile Include="CanAdapterActivity.cs" />
     <Compile Include="CustomBackupAgent.cs" />
@@ -877,7 +878,12 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\list_reorder_dialog.xml">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Verwenden Sie die Wiederherstellung von NuGet-Paketen, um die fehlenden Dateien herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
