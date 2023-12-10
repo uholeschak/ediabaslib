@@ -13,6 +13,7 @@ using System.IO;
 using Android.Content;
 using Android.Hardware.Usb;
 using AndroidX.AppCompat.App;
+using BmwDeepObd.Dialogs;
 using BmwDeepObd.FilePicker;
 
 // ReSharper disable IdentifierTypo

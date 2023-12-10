@@ -22,6 +22,7 @@ using AndroidX.WebKit;
 using Android.Webkit;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.Content.PM;
+using BmwDeepObd.Dialogs;
 using EdiabasLib;
 using Java.Interop;
 

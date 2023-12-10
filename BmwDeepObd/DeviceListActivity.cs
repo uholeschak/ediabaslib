@@ -34,6 +34,7 @@ using Android.Content.PM;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
+using BmwDeepObd.Dialogs;
 
 namespace BmwDeepObd
 {
