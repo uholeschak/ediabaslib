@@ -96,7 +96,7 @@ namespace BmwDeepObd.Dialogs
                 _textViewMessage = _view.FindViewById<TextView>(Resource.Id.textViewMessage);
                 _textViewMessageDetail = _view.FindViewById<TextView>(Resource.Id.textViewMessageDetail);
                 _listViewItems = _view.FindViewById<DragListView>(Resource.Id.listViewItems);
-                _dragListAdapter = new DragListAdapter(this, Resource.Layout.ecu_select_list_swipe, Resource.Id.item_layout, true);
+                _dragListAdapter = new DragListAdapter(this, Resource.Layout.reorder_select_list_item, Resource.Id.item_layout, true);
                 _listViewItems.SetAdapter(_dragListAdapter, false);
                 _listViewItems.SetCanDragHorizontally(false);
                 _listViewItems.SetCanDragVertically(true);
@@ -211,6 +211,40 @@ namespace BmwDeepObd.Dialogs
                 View itemDividerBottom = view.FindViewById<View>(Resource.Id.item_divider_bottom);
                 itemDividerTop.Visibility = ViewStates.Invisible;
                 itemDividerBottom.Visibility = ViewStates.Visible;
+
+                TextView textItemTitle = view.FindViewById<TextView>(Resource.Id.textItemTitle);
+                TextView textItemDesc = view.FindViewById<TextView>(Resource.Id.textItemDesc);
+                TextView textItemDetail = view.FindViewById<TextView>(Resource.Id.textItemDetail);
+
+                if (!string.IsNullOrEmpty(item.Title))
+                {
+                    textItemTitle.Text = item.Title;
+                    textItemTitle.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    textItemTitle.Visibility = ViewStates.Gone;
+                }
+
+                if (!string.IsNullOrEmpty(item.Description))
+                {
+                    textItemDesc.Text = item.Description;
+                    textItemDesc.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    textItemDesc.Visibility = ViewStates.Gone;
+                }
+
+                if (!string.IsNullOrEmpty(item.Detail))
+                {
+                    textItemDetail.Text = item.Detail;
+                    textItemDetail.Visibility = ViewStates.Visible;
+                }
+                else
+                {
+                    textItemDetail.Visibility = ViewStates.Gone;
+                }
             }
 
             public void ClearItems()
@@ -245,15 +279,21 @@ namespace BmwDeepObd.Dialogs
 
             public class StringObjInfo
             {
-                public StringObjInfo(string text, string description, object data)
+                public StringObjInfo(string title, string description, object data) : this(title, description, null, data)
                 {
-                    Text = text;
+                }
+
+                public StringObjInfo(string title, string description, string detail, object data)
+                {
+                    Title = title;
                     Description = description;
+                    Detail = detail;
                     Data = data;
                 }
 
-                public string Text { get; set; }
+                public string Title { get; set; }
                 public string Description { get; set; }
+                public string Detail { get; set; }
                 public object Data { get; set; }
                 public long? ItemId { get; set; }
             }

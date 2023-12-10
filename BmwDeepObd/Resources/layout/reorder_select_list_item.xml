@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.woxthebox.draglistview.swipe.ListSwipeItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:swipeViewId="@+id/item_layout">
+    <LinearLayout
+        android:id="@+id/item_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:descendantFocusability="blocksDescendants">
+        <View
+            style="@style/Divider"
+            android:id="@+id/item_divider_top"/>
+        <LinearLayout
+            android:id="@+id/item_layout_inner"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:minWidth="25px"
+            android:minHeight="25px">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dip"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/textItemTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:singleLine="true"
+                    android:layout_weight="0" />
+                <TextView
+                    android:id="@+id/textItemDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="italic"
+                    android:singleLine="true"
+                    android:layout_weight="0" />
+                <TextView
+                    android:id="@+id/textItemDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:layout_weight="0" />
+            </LinearLayout>
+        </LinearLayout>
+        <View
+            style="@style/Divider"
+            android:id="@+id/item_divider_bottom"/>
+    </LinearLayout>
+</com.woxthebox.draglistview.swipe.ListSwipeItem>
