@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Android.Content;
 using Android.Content.Res;
 using Android.OS;
@@ -21,7 +22,7 @@ namespace BmwDeepObd.Dialogs
         private TextView _textViewMessageDetail;
         private DragListView _listViewItems;
         private DragListAdapter _dragListAdapter;
-        private List<StringObjType> _itemList;
+        private readonly List<StringObjInfo> _itemList;
 
         public string Message
         {
@@ -62,22 +63,20 @@ namespace BmwDeepObd.Dialogs
             }
         }
 
-        public List<StringObjType> ItemList
+        public List<StringObjInfo> ItemList
         {
             get => _itemList;
-            set
-            {
-                _itemList = value;
-            }
         }
 
-        public TextListReorderDialog(Context context) : base(context)
+        public TextListReorderDialog(Context context, List<StringObjInfo> itemList) : base(context)
         {
+            _itemList = itemList;
             LoadView(context);
         }
 
-        public TextListReorderDialog(Context context, int themeResId) : base(context, themeResId)
+        public TextListReorderDialog(Context context, List<StringObjInfo> itemList, int themeResId) : base(context, themeResId)
         {
+            _itemList = itemList;
             LoadView(context);
         }
 
@@ -96,13 +95,13 @@ namespace BmwDeepObd.Dialogs
                 _textViewMessage = _view.FindViewById<TextView>(Resource.Id.textViewMessage);
                 _textViewMessageDetail = _view.FindViewById<TextView>(Resource.Id.textViewMessageDetail);
                 _listViewItems = _view.FindViewById<DragListView>(Resource.Id.listViewItems);
-                _dragListAdapter = new DragListAdapter(_activity, Resource.Layout.reorder_select_list_item, Resource.Id.item_layout, true);
+                _dragListAdapter = new DragListAdapter(_activity, _itemList, Resource.Layout.reorder_select_list_item, Resource.Id.item_layout, true);
                 _listViewItems.SetAdapter(_dragListAdapter, false);
                 _listViewItems.SetCanDragHorizontally(false);
                 _listViewItems.SetCanDragVertically(true);
                 _listViewItems.SetCustomDragItem(new CustomDragItem(_activity, Resource.Layout.reorder_select_list_item));
-                //_listViewItems.SetDragListListener(new CustomDragListener(this));
-                //_listViewItems.SetDragListCallback(new CustomDragListCallback(this));
+                _listViewItems.SetDragListListener(new CustomDragListener(this));
+                _listViewItems.SetDragListCallback(new CustomDragListCallback(this));
                 _listViewItems.DragEnabled = true;
             }
         }
@@ -134,6 +133,27 @@ namespace BmwDeepObd.Dialogs
             _dialog = null;
         }
 
+        public class StringObjInfo
+        {
+            public StringObjInfo(string title, string description, object data) : this(title, description, null, data)
+            {
+            }
+
+            public StringObjInfo(string title, string description, string detail, object data)
+            {
+                Title = title;
+                Description = description;
+                Detail = detail;
+                Data = data;
+            }
+
+            public string Title { get; set; }
+            public string Description { get; set; }
+            public string Detail { get; set; }
+            public object Data { get; set; }
+            public long? ItemId { get; set; }
+        }
+
         private class DragListAdapter : DragItemAdapter
         {
             public int ItemsCount => ItemList.Count;
@@ -145,7 +165,7 @@ namespace BmwDeepObd.Dialogs
             private long _itemIdCurrent;
             private readonly int? _backgroundResource;
 
-            public DragListAdapter(Context context, int layoutId, int dragHandleId, bool dragOnLongPress)
+            public DragListAdapter(Context context, List<StringObjInfo> itemList, int layoutId, int dragHandleId, bool dragOnLongPress)
             {
                 _context = context;
                 _layoutId = layoutId;
@@ -159,7 +179,13 @@ namespace BmwDeepObd.Dialogs
                     _backgroundResource = typedArray.GetResourceId(0, 0);
                 }
 
-                ItemList = new List<InfoWrapper>();
+                List<InfoWrapper>infoList = new List<InfoWrapper>();
+                foreach (StringObjInfo info in itemList)
+                {
+                    infoList.Append(new InfoWrapper(this, info));
+                }
+
+                ItemList = infoList;
             }
 
             public override long GetUniqueItemId(int position)
@@ -277,27 +303,6 @@ namespace BmwDeepObd.Dialogs
                 return -1;
             }
 
-            public class StringObjInfo
-            {
-                public StringObjInfo(string title, string description, object data) : this(title, description, null, data)
-                {
-                }
-
-                public StringObjInfo(string title, string description, string detail, object data)
-                {
-                    Title = title;
-                    Description = description;
-                    Detail = detail;
-                    Data = data;
-                }
-
-                public string Title { get; set; }
-                public string Description { get; set; }
-                public string Detail { get; set; }
-                public object Data { get; set; }
-                public long? ItemId { get; set; }
-            }
-
             private class CustomViewHolder : ViewHolder
             {
                 private readonly DragListAdapter _adapter;
@@ -370,5 +375,63 @@ namespace BmwDeepObd.Dialogs
             }
         }
 
+        private class CustomDragListener : Java.Lang.Object, DragListView.IDragListListener
+        {
+            private readonly TextListReorderDialog _dialog;
+
+            public CustomDragListener(TextListReorderDialog dialog)
+            {
+                _dialog = dialog;
+            }
+
+            public void OnItemDragStarted(int p0)
+            {
+            }
+
+            public void OnItemDragEnded(int p0, int p1)
+            {
+                if (p0 != p1)
+                {
+                    if (p0 >= 0 && p0 < _dialog.ItemList.Count && p1 >= 0 && p1 < _dialog.ItemList.Count)
+                    {
+                        int oldIndex = p0;
+                        int newIndex = p1;
+
+                        StringObjInfo ecuInfo = _dialog._itemList[oldIndex];
+                        _dialog._itemList.RemoveAt(oldIndex);
+                        _dialog._itemList.Insert(newIndex, ecuInfo);
+                    }
+                }
+            }
+
+            public void OnItemDragging(int p0, float p1, float p2)
+            {
+            }
+        }
+
+        private class CustomDragListCallback : Java.Lang.Object, DragListView.IDragListCallback
+        {
+            private readonly TextListReorderDialog _dialog;
+
+            public CustomDragListCallback(TextListReorderDialog dialog)
+            {
+                _dialog = dialog;
+            }
+
+            public bool CanDragItemAtPosition(int p0)
+            {
+                if (p0 < 0 || p0 >= _dialog._itemList.Count)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public bool CanDropItemAtPosition(int p0)
+            {
+                return CanDragItemAtPosition(p0);
+            }
+        }
     }
 }
