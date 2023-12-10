@@ -9,6 +9,7 @@ using Android.Text.Method;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using BmwDeepObd.Dialogs;
 using EdiabasLib;
 
 namespace BmwDeepObd;

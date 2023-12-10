@@ -15,6 +15,7 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using BmwDeepObd.Dialogs;
 using BmwDeepObd.FilePicker;
 using BmwFileReader;
 using EdiabasLib;

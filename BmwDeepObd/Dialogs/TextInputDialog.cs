@@ -1,11 +1,10 @@
-﻿using System;
-using Android.Content;
+﻿using Android.Content;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 
-namespace BmwDeepObd
+namespace BmwDeepObd.Dialogs
 {
     public class TextInputDialog : AlertDialog.Builder
     {

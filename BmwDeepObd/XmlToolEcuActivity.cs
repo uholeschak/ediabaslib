@@ -14,6 +14,7 @@ using Android.Widget;
 using BmwFileReader;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
+using BmwDeepObd.Dialogs;
 
 namespace BmwDeepObd
 {

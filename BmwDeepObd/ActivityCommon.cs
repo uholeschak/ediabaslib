@@ -45,6 +45,7 @@ using AndroidX.AppCompat.App;
 using AndroidX.Core.Content;
 using AndroidX.Core.Content.PM;
 using AndroidX.DocumentFile.Provider;
+using BmwDeepObd.Dialogs;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo

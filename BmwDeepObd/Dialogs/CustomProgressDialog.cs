@@ -3,7 +3,7 @@ using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
 
-namespace BmwDeepObd
+namespace BmwDeepObd.Dialogs
 {
     public class CustomProgressDialog : AlertDialog.Builder
     {
