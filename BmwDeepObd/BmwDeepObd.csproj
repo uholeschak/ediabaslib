@@ -374,7 +374,7 @@
     <Compile Include="InternalBroadcastManager\InternalBroadcastManager.cs" />
     <Compile Include="CanAdapterActivity.cs" />
     <Compile Include="CustomBackupAgent.cs" />
-    <Compile Include="CustomProgressDialog.cs" />
+    <Compile Include="Dialogs\CustomProgressDialog.cs" />
     <Compile Include="DownloaderService\CustomDownloaderService.cs" />
     <Compile Include="DownloaderService\CustomDownloadNotification.cs" />
     <Compile Include="DownloaderService\CustomDownloadThread.cs" />
@@ -400,13 +400,13 @@
     <Compile Include="MtcServiceConnection.cs" />
     <Compile Include="MultiMap.cs" />
     <Compile Include="MyApplication.cs" />
-    <Compile Include="NumberInputDialog.cs" />
+    <Compile Include="Dialogs\NumberInputDialog.cs" />
     <Compile Include="PicBootloader.cs" />
     <Compile Include="ResultGridAdapter.cs" />
     <Compile Include="StringAdapter.cs" />
     <Compile Include="StringObjAdapter.cs" />
-    <Compile Include="TextInputDialog.cs" />
-    <Compile Include="TraceInfoInputDialog.cs" />
+    <Compile Include="Dialogs\TextInputDialog.cs" />
+    <Compile Include="Dialogs\TraceInfoInputDialog.cs" />
     <Compile Include="UsbReceiverActivity.cs" />
     <Compile Include="VagAdaptionActivity.cs" />
     <Compile Include="VagCodingActivity.cs" />
@@ -877,6 +877,7 @@
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
     </AndroidResource>
   </ItemGroup>
+  <ItemGroup />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Verwenden Sie die Wiederherstellung von NuGet-Paketen, um die fehlenden Dateien herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
