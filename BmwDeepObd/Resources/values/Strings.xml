@@ -314,6 +314,7 @@
   <string name="menu_cfg_page_edit_fontsize">Font size</string>
   <string name="menu_cfg_page_edit_gauges_landscape">Gauges landscape</string>
   <string name="menu_cfg_page_edit_gauges_portrait">Gauges portrait</string>
+  <string name="menu_cfg_page_edit_display_order">Result display order</string>
   <string name="menu_cfg_select_edit">Edit other file</string>
   <string name="menu_cfg_edit_reset">Reset XML editor</string>
   <string name="menu_cfg_close">Close</string>

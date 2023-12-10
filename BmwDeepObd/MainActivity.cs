@@ -1319,7 +1319,7 @@ namespace BmwDeepObd
         public override bool OnCreateOptionsMenu(IMenu menu)
         {
             MenuInflater inflater = MenuInflater;
-            inflater.Inflate(Resource.Menu.option_menu, menu);
+            inflater.Inflate(Resource.Menu.main_option_menu, menu);
             _optionsMenu = menu;
             return base.OnCreateOptionsMenu(menu);
         }
@@ -1337,6 +1337,15 @@ namespace BmwDeepObd
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
             JobReader.PageInfo currentPage = GetSelectedPage();
             bool enableSelectedPageEdit = !string.IsNullOrEmpty(currentPage?.XmlFileName);
+
+            bool hasDisplayOrder = false;
+            if (currentPage != null)
+            {
+                if (currentPage.ErrorsInfo == null)
+                {
+                    hasDisplayOrder = currentPage.DisplayList.All(x => x.DisplayOrder != null);
+                }
+            }
 
             IMenuItem actionProviderConnect = menu.FindItem(Resource.Id.menu_action_provider_connect);
             if (actionProviderConnect != null)
@@ -1518,6 +1527,9 @@ namespace BmwDeepObd
             cfgPageEditGaugesPortraitMenu?.SetEnabled(
                 !commActive && enableSelectedPageEdit &&
                 currentPage.GaugesPortrait != null && currentPage.DisplayMode == JobReader.PageInfo.DisplayModeType.Grid);
+
+            IMenuItem cfgPageEditDisplayOrderMenu = menu.FindItem(Resource.Id.menu_cfg_page_edit_display_order);
+            cfgPageEditDisplayOrderMenu?.SetEnabled(!commActive && enableSelectedPageEdit && hasDisplayOrder);
 
             IMenuItem cfgSelectEditMenu = menu.FindItem(Resource.Id.menu_cfg_select_edit);
             cfgSelectEditMenu?.SetEnabled(!commActive);
@@ -1764,6 +1776,9 @@ namespace BmwDeepObd
 
                 case Resource.Id.menu_cfg_page_edit_gauges_portrait:
                     EditGaugesCount(currentPage, false);
+                    return true;
+
+                case Resource.Id.menu_cfg_page_edit_display_order:
                     return true;
 
                 case Resource.Id.menu_cfg_select_edit:

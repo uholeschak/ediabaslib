@@ -587,7 +587,7 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\device_list.xml" />
-    <AndroidResource Include="Resources\menu\option_menu.xml">
+    <AndroidResource Include="Resources\menu\main_option_menu.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\device_name.xml" />
