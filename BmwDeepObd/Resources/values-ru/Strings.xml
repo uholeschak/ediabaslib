@@ -342,6 +342,8 @@
   <string name="menu_cfg_page_edit_gauges_landscape">Ландшафт датчиков</string>
   <!--Translate-->
   <string name="menu_cfg_page_edit_gauges_portrait">Портрет датчиков</string>
+  <!--Translate-->
+  <string name="menu_cfg_page_edit_display_order">Порядок отображения результатов</string>
   <string name="menu_cfg_select_edit">Редактировать другой файл</string>
   <string name="menu_cfg_edit_reset">Сбросить XML редактор</string>
   <string name="menu_cfg_close">Закрыть</string>

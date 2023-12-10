@@ -105,6 +105,9 @@
                       <item android:id="@+id/menu_cfg_page_edit_gauges_portrait"
                             android:icon="@android:drawable/ic_menu_edit"
                             android:title="@string/menu_cfg_page_edit_gauges_portrait"/>
+                      <item android:id="@+id/menu_cfg_page_edit_display_order"
+                            android:icon="@android:drawable/ic_menu_edit"
+                            android:title="@string/menu_cfg_page_edit_display_order"/>
                   </menu>
               </item>
               <item android:id="@+id/menu_cfg_select_edit"
