@@ -10089,8 +10089,13 @@ namespace BmwDeepObd
 
                 checkBoxSelectDrag.Checked = checkBoxSelectClick.Checked;
                 textEcuNameDrag.Text = textEcuNameClick.Text;
+                textEcuNameDrag.Visibility = textEcuNameClick.Visibility;
+
                 textEcuDescDrag.Text = textEcuDescClick.Text;
+                textEcuDescDrag.Visibility = textEcuDescClick.Visibility;
+
                 textEcuFunctionsDrag.Text = textEcuFunctionsClick.Text;
+                textEcuFunctionsDrag.Visibility = textEcuFunctionsClick.Visibility;
 
                 itemDividerTopDrag.Visibility = ViewStates.Visible;
                 itemDividerBottomDrag.Visibility = ViewStates.Visible;

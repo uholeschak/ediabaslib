@@ -96,11 +96,11 @@ namespace BmwDeepObd.Dialogs
                 _textViewMessage = _view.FindViewById<TextView>(Resource.Id.textViewMessage);
                 _textViewMessageDetail = _view.FindViewById<TextView>(Resource.Id.textViewMessageDetail);
                 _listViewItems = _view.FindViewById<DragListView>(Resource.Id.listViewItems);
-                _dragListAdapter = new DragListAdapter(this, Resource.Layout.reorder_select_list_item, Resource.Id.item_layout, true);
+                _dragListAdapter = new DragListAdapter(_activity, Resource.Layout.reorder_select_list_item, Resource.Id.item_layout, true);
                 _listViewItems.SetAdapter(_dragListAdapter, false);
                 _listViewItems.SetCanDragHorizontally(false);
                 _listViewItems.SetCanDragVertically(true);
-                //_listViewItems.SetCustomDragItem(new CustomDragItem(this, Resource.Layout.ecu_select_list_swipe));
+                _listViewItems.SetCustomDragItem(new CustomDragItem(_activity, Resource.Layout.reorder_select_list_item));
                 //_listViewItems.SetDragListListener(new CustomDragListener(this));
                 //_listViewItems.SetDragListCallback(new CustomDragListCallback(this));
                 _listViewItems.DragEnabled = true;
@@ -138,14 +138,14 @@ namespace BmwDeepObd.Dialogs
         {
             public int ItemsCount => ItemList.Count;
 
-            private readonly TextListReorderDialog _context;
+            private readonly Context _context;
             private readonly int _layoutId;
             private readonly int _dragHandleId;
             private readonly bool _dragOnLongPress;
             private long _itemIdCurrent;
             private readonly int? _backgroundResource;
 
-            public DragListAdapter(TextListReorderDialog context, int layoutId, int dragHandleId, bool dragOnLongPress)
+            public DragListAdapter(Context context, int layoutId, int dragHandleId, bool dragOnLongPress)
             {
                 _context = context;
                 _layoutId = layoutId;
@@ -155,7 +155,7 @@ namespace BmwDeepObd.Dialogs
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                 {
-                    TypedArray typedArray = context._activity.Theme.ObtainStyledAttributes(new[] { Android.Resource.Attribute.SelectableItemBackground });
+                    TypedArray typedArray = context.Theme.ObtainStyledAttributes(new[] { Android.Resource.Attribute.SelectableItemBackground });
                     _backgroundResource = typedArray.GetResourceId(0, 0);
                 }
 
@@ -325,5 +325,50 @@ namespace BmwDeepObd.Dialogs
                 public long ItemId { get; }
             }
         }
+
+        private class CustomDragItem : DragItem
+        {
+            private readonly Context _context;
+            private readonly Android.Graphics.Color _backgroundColor;
+
+            public CustomDragItem(Context context, int layoutId) : base(context, layoutId)
+            {
+                _context = context;
+
+                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                    new[] { Resource.Attribute.dragBackgroundColor });
+                _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+            }
+
+            public override void OnBindDragView(View clickedView, View dragView)
+            {
+                TextView textItemTitleClick = dragView.FindViewById<TextView>(Resource.Id.textItemTitle);
+                TextView textItemDescClick = dragView.FindViewById<TextView>(Resource.Id.textItemDesc);
+                TextView textItemDetailClick = dragView.FindViewById<TextView>(Resource.Id.textItemDetail);
+
+                TextView textItemTitleDrag = dragView.FindViewById<TextView>(Resource.Id.textItemTitle);
+                TextView textItemDescDrag = dragView.FindViewById<TextView>(Resource.Id.textItemDesc);
+                TextView textItemDetailDrag = dragView.FindViewById<TextView>(Resource.Id.textItemDetail);
+
+                View itemDividerTopDrag = dragView.FindViewById<View>(Resource.Id.item_divider_top);
+                View itemDividerBottomDrag = dragView.FindViewById<View>(Resource.Id.item_divider_bottom);
+
+                textItemTitleDrag.Text = textItemTitleClick.Text;
+                textItemTitleDrag.Visibility = textItemTitleClick.Visibility;
+
+                textItemDescDrag.Text = textItemDescClick.Text;
+                textItemDescDrag.Visibility = textItemDescClick.Visibility;
+
+                textItemDetailDrag.Text = textItemDetailClick.Text;
+                textItemDetailDrag.Visibility = textItemDetailClick.Visibility;
+
+                itemDividerTopDrag.Visibility = ViewStates.Visible;
+                itemDividerBottomDrag.Visibility = ViewStates.Visible;
+
+                dragView.SetBackgroundColor(_backgroundColor);
+                dragView.JumpDrawablesToCurrentState();
+            }
+        }
+
     }
 }
