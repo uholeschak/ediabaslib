@@ -8131,6 +8131,7 @@ namespace BmwDeepObd
 
                 TextListReorderDialog dialog = new TextListReorderDialog(this, itemList);
                 dialog.SetTitle(Resource.String.menu_cfg_page_edit_display_order);
+                dialog.SetMessage(Resource.String.display_order_edit_hint);
                 dialog.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                 {
                     if (_activityCommon == null)
