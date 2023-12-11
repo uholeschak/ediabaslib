@@ -166,7 +166,6 @@ namespace BmwDeepObd.Dialogs
             private readonly int _dragHandleId;
             private readonly bool _dragOnLongPress;
             private long _itemIdCurrent;
-            private readonly int? _backgroundResource;
 
             public DragListAdapter(Context context, List<StringObjInfo> itemList, int layoutId, int dragHandleId, bool dragOnLongPress)
             {
@@ -175,12 +174,6 @@ namespace BmwDeepObd.Dialogs
                 _dragHandleId = dragHandleId;
                 _dragOnLongPress = dragOnLongPress;
                 _itemIdCurrent = 0;
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-                {
-                    TypedArray typedArray = context.Theme.ObtainStyledAttributes(new[] { Android.Resource.Attribute.SelectableItemBackground });
-                    _backgroundResource = typedArray.GetResourceId(0, 0);
-                }
 
                 List<InfoWrapper> infoList = new List<InfoWrapper>();
                 foreach (StringObjInfo info in itemList)
@@ -226,11 +219,6 @@ namespace BmwDeepObd.Dialogs
                 }
 
                 View grabView = customHolder.MGrabView;
-                if (_backgroundResource != null)
-                {
-                    grabView.SetBackgroundResource(_backgroundResource.Value);
-                }
-
                 grabView.Tag = infoWrapper;
 
                 View view = customHolder.ItemView;

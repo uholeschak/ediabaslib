@@ -55,7 +55,7 @@
   <string name="file_access_denied">Zugriff auf die Datei verweigert.\nBitte überprüfen sie den Speicherort und die Zugriffsrechte.</string>
   <string name="file_editing_failed">Die Datei konnte nicht bearbeitet werden.</string>
   <string name="display_line_original_position">Originalposition: {0}</string>
-  <string name="display_order_edit_hint">Drag und Drop verwenden um die Anzeigereihefolge zu ändern.</string>
+  <string name="display_order_edit_hint">Langclick und Drag Drop verwenden um die Anzeigereihefolge zu ändern.</string>
   <string name="error_no_error">Keine Fehler vorhanden</string>
   <string name="error_reading_errors">Fehlerspeicher lesen: {0}</string>
   <string name="error_reading_relevant_only">(Es werden nur relevante Daten angezeigt,\nänderbar in den globalen Einstellungen.)</string>
