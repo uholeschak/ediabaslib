@@ -8153,6 +8153,53 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
+                    List<TextListReorderDialog.StringObjInfo> itemListMod = dialog.ItemList;
+                    int replaceIndex = 0;
+                    string fileTextMod = regexDisplayOrder.Replace(fileText, match =>
+                    {
+                        if (match.Groups.Count == 3)
+                        {
+                            if (replaceIndex < itemListMod.Count)
+                            {
+                                if (itemListMod[replaceIndex++].Data is JobReader.DisplayInfo info)
+                                {
+                                    return string.Format(CultureInfo.InvariantCulture, "{0}\"{1}\"", match.Groups[1].Value, info.OriginalPosition);
+                                }
+                            }
+                        }
+
+                        return match.ToString();
+                    });
+
+                    if (replaceIndex != itemListMod.Count)
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
+                        return;
+                    }
+
+                    if (fileTextMod != fileText)
+                    {
+                        try
+                        {
+                            File.WriteAllText(fileName, fileTextMod);
+                            ReadConfigFile();
+                        }
+                        catch (Exception ex)
+                        {
+                            string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
+#if DEBUG
+                            Log.Info(Tag, string.Format("EditDisplayOrder Exception: {0}", errorMessage));
+#endif
+                            string message = GetString(Resource.String.file_access_denied);
+                            if (!string.IsNullOrEmpty(errorMessage))
+                            {
+                                message += "\r\n" + errorMessage;
+                            }
+
+                            _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                        }
+                    }
                 });
                 dialog.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
                 dialog.Show();
