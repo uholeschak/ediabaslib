@@ -328,6 +328,7 @@ namespace BmwDeepObd
         public const string PageFontSize = "fontsize";
         public const string PageGaugesPortrait = "gauges-portrait";
         public const string PageGaugesLandscape = "gauges-landscape";
+        public const string DisplayNodeOrder = "display-order";
         public const int GaugesPortraitDefault = 2;
         public const int GaugesLandscapeDefault = 4;
         private readonly List<PageInfo> _pageList = new List<PageInfo>();
@@ -984,7 +985,7 @@ namespace BmwDeepObd
                     attrib = xmlNode.Attributes["format"];
                     if (attrib != null) format = attrib.Value;
 
-                    attrib = xmlNode.Attributes["display-order"];
+                    attrib = xmlNode.Attributes[DisplayNodeOrder];
                     if (attrib != null)
                     {
                         try
