@@ -97,6 +97,7 @@ namespace BmwDeepObd.Dialogs
 
                 _listViewItems = _view.FindViewById<DragListView>(Resource.Id.listViewItems);
                 _dragListAdapter = new DragListAdapter(_activity, _itemList, Resource.Layout.reorder_select_list_item, Resource.Id.item_layout, true);
+                _listViewItems.SetLayoutManager(new LinearLayoutManager(_activity, LinearLayoutManager.Vertical, false));
                 _listViewItems.SetAdapter(_dragListAdapter, false);
                 _listViewItems.SetCanDragHorizontally(false);
                 _listViewItems.SetCanDragVertically(true);
@@ -348,9 +349,9 @@ namespace BmwDeepObd.Dialogs
 
             public override void OnBindDragView(View clickedView, View dragView)
             {
-                TextView textItemTitleClick = dragView.FindViewById<TextView>(Resource.Id.textItemTitle);
-                TextView textItemDescClick = dragView.FindViewById<TextView>(Resource.Id.textItemDesc);
-                TextView textItemDetailClick = dragView.FindViewById<TextView>(Resource.Id.textItemDetail);
+                TextView textItemTitleClick = clickedView.FindViewById<TextView>(Resource.Id.textItemTitle);
+                TextView textItemDescClick = clickedView.FindViewById<TextView>(Resource.Id.textItemDesc);
+                TextView textItemDetailClick = clickedView.FindViewById<TextView>(Resource.Id.textItemDetail);
 
                 TextView textItemTitleDrag = dragView.FindViewById<TextView>(Resource.Id.textItemTitle);
                 TextView textItemDescDrag = dragView.FindViewById<TextView>(Resource.Id.textItemDesc);
