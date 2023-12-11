@@ -16,7 +16,6 @@ namespace BmwDeepObd.Dialogs
     {
         private Android.App.Activity _activity;
         private AlertDialog _dialog;
-        private InputMethodManager _imm;
         private View _view;
         private TextView _textViewMessage;
         private TextView _textViewMessageDetail;
@@ -90,10 +89,12 @@ namespace BmwDeepObd.Dialogs
                 _view = _activity.LayoutInflater.Inflate(Resource.Layout.list_reorder_dialog, null);
                 SetView(_view);
 
-                _imm = (InputMethodManager)_activity.GetSystemService(Context.InputMethodService);
-
                 _textViewMessage = _view.FindViewById<TextView>(Resource.Id.textViewMessage);
+                _textViewMessage.Text = string.Empty;
+
                 _textViewMessageDetail = _view.FindViewById<TextView>(Resource.Id.textViewMessageDetail);
+                _textViewMessageDetail.Text = string.Empty;
+
                 _listViewItems = _view.FindViewById<DragListView>(Resource.Id.listViewItems);
                 _dragListAdapter = new DragListAdapter(_activity, _itemList, Resource.Layout.reorder_select_list_item, Resource.Id.item_layout, true);
                 _listViewItems.SetAdapter(_dragListAdapter, false);
