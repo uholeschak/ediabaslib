@@ -54,6 +54,8 @@
   <string name="file_access_denied">Отказано в доступе к файлу.\nПожалуйста, проверьте наличие файла и права доступа.</string>
   <!--Translate-->
   <string name="file_editing_failed">Редактировать файл не удалось.</string>
+  <!--Translate-->
+  <string name="display_line_original_position">Исходное положение: {0}</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_reading_errors">Считывание ошибок: {0}</string>
   <string name="error_reading_relevant_only">(Отображаются только важные данные,\nкоторые можно изменить в глобальных настройках.)</string>
