@@ -3,13 +3,13 @@
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
   <page name="tab_axis">
-    <display name="label_axis_mode" result="STAT_ENERGIESPARMODE_WERT" />
-    <display name="label_axis_front_left" result="STAT_HOEHENSTAND_VL_WERT" />
-    <display name="label_axis_front_right" result="STAT_HOEHENSTAND_VR_WERT" />
-    <display name="label_axis_rear_left" result="STAT_HOEHENSTAND_HL_WERT" />
-    <display name="label_axis_rear_right" result="STAT_HOEHENSTAND_HR_WERT" />
-    <display name="label_axis_bat_volt" result="STAT_SPANNUNG_KLEMME_30_WERT" />
-    <display name="label_axis_valve_state" result="STATUS_SIGNALE_NUMERISCH" />
+    <display name="label_axis_mode" result="STAT_ENERGIESPARMODE_WERT" display-order="0" />
+    <display name="label_axis_front_left" result="STAT_HOEHENSTAND_VL_WERT" display-order="1" />
+    <display name="label_axis_front_right" result="STAT_HOEHENSTAND_VR_WERT" display-order="2" />
+    <display name="label_axis_rear_left" result="STAT_HOEHENSTAND_HL_WERT" display-order="3" />
+    <display name="label_axis_rear_right" result="STAT_HOEHENSTAND_HR_WERT" display-order="4" />
+    <display name="label_axis_bat_volt" result="STAT_SPANNUNG_KLEMME_30_WERT" display-order="5" />
+    <display name="label_axis_valve_state" result="STATUS_SIGNALE_NUMERISCH" display-order="6" />
     <strings>
       <string name="tab_axis">Axis</string>
       <string name="button_axis_up">Up</string>

@@ -25,12 +25,12 @@
     </strings>
     <jobs sgbd="kafasg11">
       <job name="STATUS_LESEN" args="ARG;_READ_ECU_TEMP;ERGEBNIS_SLI;KALIBRIERUNG_STEREO">
-        <display name="label_kafas_temp_left" result="STAT_CAM_LEFT_WERT" format="6.4R" />
-        <display name="label_kafas_temp_right" result="STAT_CAM_RIGHT_WERT" format="6.4R" />
-        <display name="label_kafas_temp_ecu" result="STAT_DSP_2_WERT" format="6.4R" />
-        <display name="label_kafas_sign_cam" result="STAT_KAMERA_ZEICHEN_NR" format="1L" />
-        <display name="label_kafas_sign_map" result="STAT_KARTE_ZEICHEN_NR" format="1L" />
-        <display name="label_kafas_sign_comb" result="STAT_FUSIONIERT_ZEICHEN_NR" format="1L" />
+        <display name="label_kafas_temp_left" result="STAT_CAM_LEFT_WERT" format="6.4R" display-order="0" />
+        <display name="label_kafas_temp_right" result="STAT_CAM_RIGHT_WERT" format="6.4R" display-order="1" />
+        <display name="label_kafas_temp_ecu" result="STAT_DSP_2_WERT" format="6.4R" display-order="2" />
+        <display name="label_kafas_sign_cam" result="STAT_KAMERA_ZEICHEN_NR" format="1L" display-order="3" />
+        <display name="label_kafas_sign_map" result="STAT_KARTE_ZEICHEN_NR" format="1L" display-order="4" />
+        <display name="label_kafas_sign_comb" result="STAT_FUSIONIERT_ZEICHEN_NR" format="1L" display-order="5" />
         <display name="label_kafas_calib" result="STAT_SAC" format="1L" />
       </job>
     </jobs>
