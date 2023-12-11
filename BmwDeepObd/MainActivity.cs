@@ -7853,8 +7853,8 @@ namespace BmwDeepObd
                 }
 
                 Regex regexfontSize = new Regex($"(\\W{JobReader.PageFontSize}\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-                MatchCollection mathches = regexfontSize.Matches(fileText);
-                if (mathches.Count == 0)
+                MatchCollection matches = regexfontSize.Matches(fileText);
+                if (matches.Count == 0)
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
                     return false;
@@ -7995,8 +7995,8 @@ namespace BmwDeepObd
 
                 string keyWord = landscape ? JobReader.PageGaugesLandscape : JobReader.PageGaugesPortrait;
                 Regex regexGauges = new Regex($"(\\W{keyWord}\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-                MatchCollection mathches = regexGauges.Matches(fileText);
-                if (mathches.Count == 0)
+                MatchCollection matches = regexGauges.Matches(fileText);
+                if (matches.Count == 0)
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
                     return false;
@@ -8125,6 +8125,14 @@ namespace BmwDeepObd
 
                 if (currentPage.DisplayList.Count < 1)
                 {
+                    return false;
+                }
+
+                Regex regexDisplayOrder = new Regex($"(\\W{JobReader.DisplayNodeOrder}\\s*=\\s*)\"(\\d+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                MatchCollection matches = regexDisplayOrder.Matches(fileText);
+                if (matches.Count != currentPage.DisplayList.Count)
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
                     return false;
                 }
 

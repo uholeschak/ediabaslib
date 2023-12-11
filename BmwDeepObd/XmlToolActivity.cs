@@ -7790,7 +7790,7 @@ namespace BmwDeepObd
                                 result.Format = formatAttr.Value;
                             }
 
-                            XAttribute dispOrderAttr = displayNode.Attribute("display-order");
+                            XAttribute dispOrderAttr = displayNode.Attribute(JobReader.DisplayNodeOrder);
                             if (dispOrderAttr != null)
                             {
                                 try
@@ -8290,7 +8290,7 @@ namespace BmwDeepObd
                             {
                                 displayNodeNew.ReplaceAttributes(from el in displayNodeOld.Attributes()
                                                                  where el.Name != "result" && el.Name != "ecu_job_id" && el.Name != "ecu_job_result_id" &&
-                                                                       el.Name != "format" && el.Name != "display-order" &&
+                                                                       el.Name != "format" && el.Name != JobReader.DisplayNodeOrder &&
                                                                        el.Name != "grid-type" && el.Name != "min-value" && el.Name != "max-value" &&
                                                                        el.Name != "log_tag"
                                                                  select new XAttribute(el));
@@ -8327,7 +8327,7 @@ namespace BmwDeepObd
                         displayNodeNew.Add(new XAttribute("format", result.Format));
                         if (result.GridType != JobReader.DisplayInfo.GridModeType.Hidden)
                         {
-                            displayNodeNew.Add(new XAttribute("display-order", result.DisplayOrder));
+                            displayNodeNew.Add(new XAttribute(JobReader.DisplayNodeOrder, result.DisplayOrder));
                             displayNodeNew.Add(new XAttribute("grid-type", result.GridType.ToString().ToLowerInvariant().Replace("_", "-")));
                             displayNodeNew.Add(new XAttribute("min-value", result.MinValue));
                             displayNodeNew.Add(new XAttribute("max-value", result.MaxValue));
