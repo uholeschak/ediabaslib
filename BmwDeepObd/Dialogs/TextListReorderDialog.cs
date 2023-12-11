@@ -180,10 +180,10 @@ namespace BmwDeepObd.Dialogs
                     _backgroundResource = typedArray.GetResourceId(0, 0);
                 }
 
-                List<InfoWrapper>infoList = new List<InfoWrapper>();
+                List<InfoWrapper> infoList = new List<InfoWrapper>();
                 foreach (StringObjInfo info in itemList)
                 {
-                    infoList.Append(new InfoWrapper(this, info));
+                    infoList.Add(new InfoWrapper(this, info));
                 }
 
                 ItemList = infoList;
