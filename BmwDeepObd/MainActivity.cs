@@ -8125,7 +8125,8 @@ namespace BmwDeepObd
                 List<TextListReorderDialog.StringObjInfo> itemList = new List<TextListReorderDialog.StringObjInfo>();
                 foreach (JobReader.DisplayInfo info in currentPage.DisplayList)
                 {
-                    itemList.Add(new TextListReorderDialog.StringObjInfo(info.Name, null, info));
+                    string description = string.Format(GetString(Resource.String.display_line_original_position), info.OriginalPosition + 1);
+                    itemList.Add(new TextListReorderDialog.StringObjInfo(info.Name, description, info));
                 }
 
                 TextListReorderDialog dialog = new TextListReorderDialog(this, itemList);
