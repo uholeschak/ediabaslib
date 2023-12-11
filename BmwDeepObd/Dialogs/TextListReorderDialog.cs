@@ -38,6 +38,7 @@ namespace BmwDeepObd.Dialogs
                 if (_textViewMessage != null)
                 {
                     _textViewMessage.Text = value;
+                    _textViewMessage.Visibility = string.IsNullOrWhiteSpace(value) ? ViewStates.Gone : ViewStates.Visible;
                 }
             }
         }

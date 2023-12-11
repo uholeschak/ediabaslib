@@ -1343,7 +1343,8 @@ namespace BmwDeepObd
             {
                 if (currentPage.ErrorsInfo == null)
                 {
-                    hasDisplayOrder = currentPage.DisplayList.All(x => x.DisplayOrder != null);
+                    int orderCount = currentPage.DisplayList.Count(x => x.DisplayOrder != null);
+                    hasDisplayOrder = orderCount > 1 && orderCount == currentPage.DisplayList.Count;
                 }
             }
 
@@ -8118,6 +8119,11 @@ namespace BmwDeepObd
 
                 string fileText = File.ReadAllText(fileName);
                 if (string.IsNullOrWhiteSpace(fileText))
+                {
+                    return false;
+                }
+
+                if (currentPage.DisplayList.Count < 1)
                 {
                     return false;
                 }
