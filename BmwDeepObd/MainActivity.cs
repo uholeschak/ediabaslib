@@ -1779,6 +1779,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit_display_order:
+                    EditDisplayOrder(currentPage);
                     return true;
 
                 case Resource.Id.menu_cfg_select_edit:
@@ -8086,6 +8087,64 @@ namespace BmwDeepObd
                 string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
 #if DEBUG
                 Log.Info(Tag, string.Format("EditGaugesCount Exception: {0}", errorMessage));
+#endif
+                string message = GetString(Resource.String.file_access_denied);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message += "\r\n" + errorMessage;
+                }
+
+                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool EditDisplayOrder(JobReader.PageInfo currentPage)
+        {
+            try
+            {
+                if (currentPage == null)
+                {
+                    return false;
+                }
+
+                string fileName = currentPage.XmlFileName;
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return false;
+                }
+
+                string fileText = File.ReadAllText(fileName);
+                if (string.IsNullOrWhiteSpace(fileText))
+                {
+                    return false;
+                }
+
+                List<TextListReorderDialog.StringObjInfo> itemList = new List<TextListReorderDialog.StringObjInfo>();
+                foreach (JobReader.DisplayInfo info in currentPage.DisplayList)
+                {
+                    itemList.Add(new TextListReorderDialog.StringObjInfo(info.Name, null, info));
+                }
+
+                TextListReorderDialog dialog = new TextListReorderDialog(this, itemList);
+                dialog.SetTitle(Resource.String.menu_cfg_page_edit_display_order);
+                dialog.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+                });
+                dialog.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
+                dialog.Show();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
+#if DEBUG
+                Log.Info(Tag, string.Format("EditDisplayOrder Exception: {0}", errorMessage));
 #endif
                 string message = GetString(Resource.String.file_access_denied);
                 if (!string.IsNullOrEmpty(errorMessage))
