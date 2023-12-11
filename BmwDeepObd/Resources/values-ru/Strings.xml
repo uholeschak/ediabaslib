@@ -55,6 +55,8 @@
   <!--Translate-->
   <string name="file_editing_failed">Редактировать файл не удалось.</string>
   <!--Translate-->
+  <string name="display_order_edit_hint">Используйте перетаскивание, чтобы изменить порядок отображения.</string>
+  <!--Translate-->
   <string name="display_line_original_position">Исходное положение: {0}</string>
   <string name="error_no_error">Ошибки отсутствуют</string>
   <string name="error_reading_errors">Считывание ошибок: {0}</string>
