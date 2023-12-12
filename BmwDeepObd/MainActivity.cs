@@ -7929,25 +7929,7 @@ namespace BmwDeepObd
 
                     if (fileTextMod != fileText)
                     {
-                        try
-                        {
-                            File.WriteAllText(fileName, fileTextMod);
-                            ReadConfigFile();
-                        }
-                        catch (Exception ex)
-                        {
-                            string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
-#if DEBUG
-                            Log.Info(Tag, string.Format("EditFontSize Exception: {0}", errorMessage));
-#endif
-                            string message = GetString(Resource.String.file_access_denied);
-                            if (!string.IsNullOrEmpty(errorMessage))
-                            {
-                                message += "\r\n" + errorMessage;
-                            }
-
-                            _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
-                        }
+                        WriteFileText(fileName, fileText);
                     }
                 });
                 builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
@@ -8059,25 +8041,7 @@ namespace BmwDeepObd
 
                     if (fileTextMod != fileText)
                     {
-                        try
-                        {
-                            File.WriteAllText(fileName, fileTextMod);
-                            ReadConfigFile();
-                        }
-                        catch (Exception ex)
-                        {
-                            string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
-#if DEBUG
-                            Log.Info(Tag, string.Format("EditGaugesCount Exception: {0}", errorMessage));
-#endif
-                            string message = GetString(Resource.String.file_access_denied);
-                            if (!string.IsNullOrEmpty(errorMessage))
-                            {
-                                message += "\r\n" + errorMessage;
-                            }
-
-                            _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
-                        }
+                        WriteFileText(fileName, fileText);
                     }
                 });
                 builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
@@ -8161,12 +8125,26 @@ namespace BmwDeepObd
                     {
                         if (match.Groups.Count == 3)
                         {
-                            if (replaceIndex < itemCount)
+                            int orderIndex = -1;
+                            int index = 0;
+                            foreach (TextListReorderDialog.StringObjInfo info in itemListMod)
                             {
-                                if (itemListMod[replaceIndex++].Data is JobReader.DisplayInfo info)
+                                if (info.Data is JobReader.DisplayInfo displayInfo)
                                 {
-                                    return string.Format(CultureInfo.InvariantCulture, "{0}\"{1}\"", match.Groups[1].Value, info.OriginalPosition);
+                                    if (displayInfo.OriginalPosition == replaceIndex)
+                                    {
+                                        orderIndex = index;
+                                        break;
+                                    }
                                 }
+
+                                index++;
+                            }
+
+                            if (orderIndex >= 0)
+                            {
+                                replaceIndex++;
+                                return string.Format(CultureInfo.InvariantCulture, "{0}\"{1}\"", match.Groups[1].Value, orderIndex);
                             }
                         }
 
@@ -8181,25 +8159,7 @@ namespace BmwDeepObd
 
                     if (fileTextMod != fileText)
                     {
-                        try
-                        {
-                            File.WriteAllText(fileName, fileTextMod);
-                            ReadConfigFile();
-                        }
-                        catch (Exception ex)
-                        {
-                            string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
-#if DEBUG
-                            Log.Info(Tag, string.Format("EditDisplayOrder Exception: {0}", errorMessage));
-#endif
-                            string message = GetString(Resource.String.file_access_denied);
-                            if (!string.IsNullOrEmpty(errorMessage))
-                            {
-                                message += "\r\n" + errorMessage;
-                            }
-
-                            _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
-                        }
+                        WriteFileText(fileName, fileText);
                     }
                 });
                 dialog.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
@@ -8218,6 +8178,33 @@ namespace BmwDeepObd
                 }
 
                 _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool WriteFileText(string fileName, string fileText)
+        {
+            try
+            {
+                File.WriteAllText(fileName, fileText);
+                ReadConfigFile();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
+#if DEBUG
+                Log.Info(Tag, string.Format("WriteFileText Exception: {0}", errorMessage));
+#endif
+                string message = GetString(Resource.String.file_access_denied);
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    message += "\r\n" + errorMessage;
+                }
+
+                _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+
                 return false;
             }
 
