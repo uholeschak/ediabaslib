@@ -7929,7 +7929,7 @@ namespace BmwDeepObd
 
                     if (fileTextMod != fileText)
                     {
-                        WriteFileText(fileName, fileText);
+                        WriteFileText(fileName, fileTextMod);
                     }
                 });
                 builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
@@ -8041,7 +8041,7 @@ namespace BmwDeepObd
 
                     if (fileTextMod != fileText)
                     {
-                        WriteFileText(fileName, fileText);
+                        WriteFileText(fileName, fileTextMod);
                     }
                 });
                 builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
@@ -8113,54 +8113,11 @@ namespace BmwDeepObd
                 dialog.MessageDetail = GetString(Resource.String.display_order_edit_hint);
                 dialog.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                 {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    List<TextListReorderDialog.StringObjInfo> itemListMod = dialog.ItemList;
-                    int itemCount = itemListMod.Count;
-                    int replaceIndex = 0;
-                    string fileTextMod = regexDisplayOrder.Replace(fileText, match =>
-                    {
-                        if (match.Groups.Count == 3)
-                        {
-                            int orderIndex = -1;
-                            int index = 0;
-                            foreach (TextListReorderDialog.StringObjInfo info in itemListMod)
-                            {
-                                if (info.Data is JobReader.DisplayInfo displayInfo)
-                                {
-                                    if (displayInfo.OriginalPosition == replaceIndex)
-                                    {
-                                        orderIndex = index;
-                                        break;
-                                    }
-                                }
-
-                                index++;
-                            }
-
-                            if (orderIndex >= 0)
-                            {
-                                replaceIndex++;
-                                return string.Format(CultureInfo.InvariantCulture, "{0}\"{1}\"", match.Groups[1].Value, orderIndex);
-                            }
-                        }
-
-                        return match.ToString();
-                    });
-
-                    if (replaceIndex != itemCount)
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
-                        return;
-                    }
-
-                    if (fileTextMod != fileText)
-                    {
-                        WriteFileText(fileName, fileText);
-                    }
+                    DialogFinished(dialog, regexDisplayOrder, fileName, fileText);
+                });
+                dialog.SetNeutralButton(Resource.String.button_reset, (sender, args) =>
+                {
+                    DialogFinished(dialog, regexDisplayOrder, fileName, fileText, true);
                 });
                 dialog.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
                 dialog.Show();
@@ -8182,6 +8139,66 @@ namespace BmwDeepObd
             }
 
             return true;
+
+            void DialogFinished(TextListReorderDialog dialog, Regex regexDisplayOrder, string fileName, string fileText, bool reset = false)
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                List<TextListReorderDialog.StringObjInfo> itemListMod = dialog.ItemList;
+                int itemCount = itemListMod.Count;
+                int replaceIndex = 0;
+                string fileTextMod = regexDisplayOrder.Replace(fileText, match =>
+                {
+                    if (match.Groups.Count == 3)
+                    {
+                        int orderIndex = -1;
+                        if (reset)
+                        {
+                            orderIndex = 0;
+                        }
+                        else
+                        {
+                            int index = 0;
+                            foreach (TextListReorderDialog.StringObjInfo info in itemListMod)
+                            {
+                                if (info.Data is JobReader.DisplayInfo displayInfo)
+                                {
+                                    if (displayInfo.OriginalPosition == replaceIndex)
+                                    {
+                                        orderIndex = index;
+                                        break;
+                                    }
+                                }
+
+                                index++;
+                            }
+                        }
+
+                        if (orderIndex >= 0)
+                        {
+                            replaceIndex++;
+                            return string.Format(CultureInfo.InvariantCulture, "{0}\"{1}\"", match.Groups[1].Value, orderIndex);
+                        }
+                    }
+
+                    return match.ToString();
+                });
+
+                if (replaceIndex != itemCount)
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
+                    return;
+                }
+
+                if (fileTextMod != fileText)
+                {
+                    WriteFileText(fileName, fileTextMod);
+                }
+
+            }
         }
 
         public bool WriteFileText(string fileName, string fileText)
