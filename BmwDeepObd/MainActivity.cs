@@ -8155,12 +8155,13 @@ namespace BmwDeepObd
                     }
 
                     List<TextListReorderDialog.StringObjInfo> itemListMod = dialog.ItemList;
+                    int itemCount = itemListMod.Count;
                     int replaceIndex = 0;
                     string fileTextMod = regexDisplayOrder.Replace(fileText, match =>
                     {
                         if (match.Groups.Count == 3)
                         {
-                            if (replaceIndex < itemListMod.Count)
+                            if (replaceIndex < itemCount)
                             {
                                 if (itemListMod[replaceIndex++].Data is JobReader.DisplayInfo info)
                                 {
@@ -8172,7 +8173,7 @@ namespace BmwDeepObd
                         return match.ToString();
                     });
 
-                    if (replaceIndex != itemListMod.Count)
+                    if (replaceIndex != itemCount)
                     {
                         _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
                         return;
