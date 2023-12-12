@@ -8111,16 +8111,22 @@ namespace BmwDeepObd
                 dialog.SetTitle(Resource.String.menu_cfg_page_edit_display_order);
                 dialog.Message = string.Empty;
                 dialog.MessageDetail = GetString(Resource.String.display_order_edit_hint);
+
+                dialog.ButtonExtra.SetText(Resource.String.button_reset);
+                dialog.ButtonExtra.Visibility = ViewStates.Visible;
                 dialog.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
                 {
                     DialogFinished(dialog, regexDisplayOrder, fileName, fileText);
                 });
-                dialog.SetNeutralButton(Resource.String.button_reset, (sender, args) =>
+                dialog.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
+
+                AlertDialog alertDialog = dialog.Create();
+                dialog.ButtonExtra.Click += (sender, args) =>
                 {
                     DialogFinished(dialog, regexDisplayOrder, fileName, fileText, true);
-                });
-                dialog.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
-                dialog.Show();
+                    alertDialog.Cancel();
+                };
+                alertDialog.Show();
             }
             catch (Exception ex)
             {
