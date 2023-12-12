@@ -229,7 +229,7 @@ namespace BmwDeepObd.Dialogs
             _activity = context as Android.App.Activity;
             if (_activity != null)
             {
-                _view = _activity.LayoutInflater.Inflate(Resource.Layout.number_input, null);
+                _view = _activity.LayoutInflater.Inflate(Resource.Layout.number_input_dialog, null);
                 SetView(_view);
 
                 _textViewInfo = _view.FindViewById<TextView>(Resource.Id.textViewInfo);

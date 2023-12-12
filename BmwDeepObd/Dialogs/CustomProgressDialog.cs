@@ -118,7 +118,7 @@ namespace BmwDeepObd.Dialogs
             _activity = context as Android.App.Activity;
             if (_activity != null)
             {
-                _view = _activity.LayoutInflater.Inflate(Resource.Layout.custom_progress, null);
+                _view = _activity.LayoutInflater.Inflate(Resource.Layout.custom_progress_dialog, null);
                 SetView(_view);
                 _progressBar = _view.FindViewById<ProgressBar>(Resource.Id.progressBar);
                 _progressBar.Indeterminate = true;

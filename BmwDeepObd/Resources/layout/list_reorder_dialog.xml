@@ -1,29 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="10dp">
-  <LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
     <TextView
-      android:id="@+id/textViewMessage"
-      android:textAppearance="@android:style/TextAppearance.DialogWindowTitle"
-      android:text="Message"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingTop ="10dp"
-      android:paddingBottom ="10dp" />
+        android:id="@+id/textViewMessage"
+        android:textAppearance="@android:style/TextAppearance.DialogWindowTitle"
+        android:text="Message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop ="10dp"
+        android:paddingBottom ="10dp" />
     <TextView
-      android:id="@+id/textViewMessageDetail"
-      android:text="Caption"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      style="@style/TextViewInnerCaption"/>
+        android:id="@+id/textViewMessageDetail"
+        android:text="Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TextViewInnerCaption"/>
     <com.woxthebox.draglistview.DragListView
         android:id="@+id/listViewItems"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-  </LinearLayout>
-</ScrollView>
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+</LinearLayout>
