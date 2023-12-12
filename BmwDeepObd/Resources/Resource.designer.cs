@@ -12795,7 +12795,7 @@ namespace BmwDeepObd
 			public const int custom_dialog = 2131427366;
 			
 			// aapt resource value: 0x7F0B0027
-			public const int custom_progress = 2131427367;
+			public const int custom_progress_dialog = 2131427367;
 			
 			// aapt resource value: 0x7F0B0028
 			public const int design_bottom_navigation_item = 2131427368;
@@ -13062,7 +13062,7 @@ namespace BmwDeepObd
 			public const int notification_template_part_time = 2131427455;
 			
 			// aapt resource value: 0x7F0B0080
-			public const int number_input = 2131427456;
+			public const int number_input_dialog = 2131427456;
 			
 			// aapt resource value: 0x7F0B0081
 			public const int reorder_select_list_item = 2131427457;
@@ -13110,7 +13110,7 @@ namespace BmwDeepObd
 			public const int tab_list = 2131427471;
 			
 			// aapt resource value: 0x7F0B0090
-			public const int text_input = 2131427472;
+			public const int text_input_dialog = 2131427472;
 			
 			// aapt resource value: 0x7F0B0091
 			public const int trace_info = 2131427473;

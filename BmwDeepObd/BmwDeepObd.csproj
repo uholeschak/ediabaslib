@@ -534,7 +534,7 @@
     <AndroidResource Include="Resources\layout\result_customgauge_dot.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\custom_progress.xml">
+    <AndroidResource Include="Resources\layout\custom_progress_dialog.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\downloader.xml" />
@@ -749,7 +749,7 @@
     </AndroidResource>
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\number_input.xml">
+    <AndroidResource Include="Resources\layout\number_input_dialog.xml">
       <Generator>MSBuild:UpdateGeneratedFiles</Generator>
       <SubType>Designer</SubType>
     </AndroidResource>
@@ -774,7 +774,7 @@
     <AndroidResource Include="Resources\drawable-nodpi\background.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\layout\text_input.xml">
+    <AndroidResource Include="Resources\layout\text_input_dialog.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
   </ItemGroup>

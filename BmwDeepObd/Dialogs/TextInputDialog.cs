@@ -90,7 +90,7 @@ namespace BmwDeepObd.Dialogs
             _activity = context as Android.App.Activity;
             if (_activity != null)
             {
-                _view = _activity.LayoutInflater.Inflate(Resource.Layout.text_input, null);
+                _view = _activity.LayoutInflater.Inflate(Resource.Layout.text_input_dialog, null);
                 SetView(_view);
 
                 _imm = (InputMethodManager)_activity.GetSystemService(Context.InputMethodService);
