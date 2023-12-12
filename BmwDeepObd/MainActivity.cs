@@ -8115,10 +8115,12 @@ namespace BmwDeepObd
                 {
                     DialogFinished(dialog, regexDisplayOrder, fileName, fileText);
                 });
+#if false
                 dialog.SetNeutralButton(Resource.String.button_reset, (sender, args) =>
                 {
                     DialogFinished(dialog, regexDisplayOrder, fileName, fileText, true);
                 });
+#endif
                 dialog.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
                 dialog.Show();
             }
