@@ -8110,7 +8110,7 @@ namespace BmwDeepObd
                 TextListReorderDialog dialog = new TextListReorderDialog(this, itemList);
                 dialog.SetTitle(Resource.String.menu_cfg_page_edit_display_order);
                 dialog.Message = string.Empty;
-                dialog.MessageDetail = GetString(Resource.String.display_order_edit_hint);
+                dialog.MessageDetail = string.Empty;
 
                 dialog.ButtonExtra.SetText(Resource.String.button_reset);
                 dialog.ButtonExtra.Visibility = ViewStates.Visible;
@@ -8127,6 +8127,7 @@ namespace BmwDeepObd
                     alertDialog.Cancel();
                 };
                 alertDialog.Show();
+                Toast.MakeText(this, GetString(Resource.String.display_order_edit_hint), ToastLength.Long)?.Show();
             }
             catch (Exception ex)
             {
