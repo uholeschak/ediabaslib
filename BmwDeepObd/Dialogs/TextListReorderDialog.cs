@@ -65,8 +65,6 @@ namespace BmwDeepObd.Dialogs
 
         public Button ButtonExtra => _buttonExtra;
 
-        public DragListAdapter ListAdapter => _dragListAdapter;
-
         public TextListReorderDialog(Context context, List<StringObjInfo> itemList) : base(context)
         {
             _itemList = itemList;
@@ -131,6 +129,16 @@ namespace BmwDeepObd.Dialogs
             {
                 Message = _activity.GetString(messageId);
             }
+        }
+
+        public void UpdateItemList(List<StringObjInfo> itemList)
+        {
+            _dragListAdapter.ClearItems();
+            foreach (StringObjInfo itemInfo in itemList)
+            {
+                _dragListAdapter.AppendItem(itemInfo);
+            }
+            _dragListAdapter.NotifyDataSetChanged();
         }
 
         public void Dismiss()
