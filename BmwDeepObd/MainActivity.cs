@@ -8123,8 +8123,8 @@ namespace BmwDeepObd
                 AlertDialog alertDialog = dialog.Create();
                 dialog.ButtonExtra.Click += (sender, args) =>
                 {
-                    DialogFinished(dialog, regexDisplayOrder, fileName, fileText, true);
-                    alertDialog.Cancel();
+                    List<TextListReorderDialog.StringObjInfo> itemListSort = itemList.OrderBy(x => x.ItemId).ToList();
+                    dialog.UpdateItemList(itemListSort);
                 };
                 alertDialog.Show();
                 Toast.MakeText(this, GetString(Resource.String.display_order_edit_hint), ToastLength.Long)?.Show();
