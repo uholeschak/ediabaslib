@@ -141,23 +141,24 @@ namespace BmwDeepObd.Dialogs
 
         public class StringObjInfo
         {
-            public StringObjInfo(string title, string description, object data) : this(title, description, null, data)
+            public StringObjInfo(string title, string description, object data, long itemId) : this(title, description, null, data, itemId)
             {
             }
 
-            public StringObjInfo(string title, string description, string detail, object data)
+            public StringObjInfo(string title, string description, string detail, object data, long itemId)
             {
                 Title = title;
                 Description = description;
                 Detail = detail;
                 Data = data;
+                ItemId = itemId;
             }
 
             public string Title { get; set; }
             public string Description { get; set; }
             public string Detail { get; set; }
             public object Data { get; set; }
-            public long? ItemId { get; set; }
+            public long ItemId { get; set; }
         }
 
         public class DragListAdapter : DragItemAdapter
@@ -168,7 +169,6 @@ namespace BmwDeepObd.Dialogs
             private readonly int _layoutId;
             private readonly int _dragHandleId;
             private readonly bool _dragOnLongPress;
-            private long _itemIdCurrent;
 
             public DragListAdapter(Context context, List<StringObjInfo> itemList, int layoutId, int dragHandleId, bool dragOnLongPress)
             {
@@ -176,7 +176,6 @@ namespace BmwDeepObd.Dialogs
                 _layoutId = layoutId;
                 _dragHandleId = dragHandleId;
                 _dragOnLongPress = dragOnLongPress;
-                _itemIdCurrent = 0;
 
                 List<InfoWrapper> infoList = new List<InfoWrapper>();
                 foreach (StringObjInfo info in itemList)
@@ -312,11 +311,7 @@ namespace BmwDeepObd.Dialogs
                 public InfoWrapper(DragListAdapter adapter, StringObjInfo info)
                 {
                     Info = info;
-                    if (info.ItemId == null)
-                    {
-                        info.ItemId = adapter._itemIdCurrent++;
-                    }
-                    ItemId = info.ItemId.Value;
+                    ItemId = info.ItemId;
                 }
 
                 public StringObjInfo Info { get; }
