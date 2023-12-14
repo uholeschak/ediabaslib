@@ -8149,7 +8149,7 @@ namespace BmwDeepObd
                 };
 
                 alertDialog.Show();
-                alertDialog.Window?.SetLayout(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.MatchParent);
+                alertDialog.Window?.SetLayout(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
 
                 Toast.MakeText(this, GetString(Resource.String.display_order_edit_hint), ToastLength.Long)?.Show();
             }
