@@ -31,10 +31,12 @@
         style="@style/Divider"
         android:id="@+id/item_divider_list_bottom"
         android:layout_height="4dp" />
-    <LinearLayout
+    <org.apmem.tools.layouts.FlowLayout
+        android:id="@+id/layoutButtons"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="right">
         <Button
             android:id="@+id/buttonExtra"
             android:text="Extra"
@@ -56,5 +58,5 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             style="?android:attr/buttonBarButtonStyle"/>
-    </LinearLayout>
+    </org.apmem.tools.layouts.FlowLayout>
 </LinearLayout>
