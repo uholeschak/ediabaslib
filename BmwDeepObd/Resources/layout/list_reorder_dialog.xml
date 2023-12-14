@@ -38,25 +38,22 @@
         android:layout_height="wrap_content"
         android:gravity="right">
         <Button
-            android:id="@+id/buttonExtra"
-            android:text="Extra"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            style="?android:attr/buttonBarButtonStyle"/>
-        <Button
             android:id="@+id/buttonAbort"
             android:text="@string/button_abort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            style="?android:attr/buttonBarButtonStyle"/>
+        <Button
+            android:id="@+id/buttonExtra"
+            android:text="Extra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             style="?android:attr/buttonBarButtonStyle"/>
         <Button
             android:id="@+id/buttonOk"
             android:text="@string/button_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
             style="?android:attr/buttonBarButtonStyle"/>
     </org.apmem.tools.layouts.FlowLayout>
 </LinearLayout>
