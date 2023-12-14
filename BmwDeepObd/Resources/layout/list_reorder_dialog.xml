@@ -31,11 +31,30 @@
         style="@style/Divider"
         android:id="@+id/item_divider_list_bottom"
         android:layout_height="4dp" />
-    <Button
-        android:id="@+id/buttonExtra"
-        android:text="Extra"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        style="?android:attr/buttonBarButtonStyle"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/buttonExtra"
+            android:text="Extra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            style="?android:attr/buttonBarButtonStyle"/>
+        <Button
+            android:id="@+id/buttonAbort"
+            android:text="@string/button_abort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            style="?android:attr/buttonBarButtonStyle"/>
+        <Button
+            android:id="@+id/buttonOk"
+            android:text="@string/button_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            style="?android:attr/buttonBarButtonStyle"/>
+    </LinearLayout>
 </LinearLayout>

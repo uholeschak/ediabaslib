@@ -17,6 +17,8 @@ namespace BmwDeepObd.Dialogs
         private TextView _textViewMessage;
         private TextView _textViewMessageDetail;
         private Button _buttonExtra;
+        private Button _buttonAbort;
+        private Button _buttonOk;
         private DragListView _listViewItems;
         private DragListAdapter _dragListAdapter;
         private readonly List<StringObjInfo> _itemList;
@@ -64,6 +66,8 @@ namespace BmwDeepObd.Dialogs
         public List<StringObjInfo> ItemList => _itemList;
 
         public Button ButtonExtra => _buttonExtra;
+        public Button ButtonAbort => _buttonAbort;
+        public Button ButtonOk => _buttonOk;
 
         public TextListReorderDialog(Context context, List<StringObjInfo> itemList) : base(context)
         {
@@ -96,6 +100,9 @@ namespace BmwDeepObd.Dialogs
                 _buttonExtra = _view.FindViewById<Button>(Resource.Id.buttonExtra);
                 _buttonExtra.Text = string.Empty;
                 _buttonExtra.Visibility = ViewStates.Gone;
+
+                _buttonAbort = _view.FindViewById<Button>(Resource.Id.buttonAbort);
+                _buttonOk = _view.FindViewById<Button>(Resource.Id.buttonOk);
 
                 _listViewItems = _view.FindViewById<DragListView>(Resource.Id.listViewItems);
                 _dragListAdapter = new DragListAdapter(_activity, _itemList, Resource.Layout.reorder_select_list_item, Resource.Id.item_layout, true);
