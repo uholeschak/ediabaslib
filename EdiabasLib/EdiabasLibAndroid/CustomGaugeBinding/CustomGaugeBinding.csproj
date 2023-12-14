@@ -45,6 +45,8 @@
     <Reference Include="Mono.Android" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors" />
     <Reference Include="System.Xml" />
     <Reference Include="Xamarin.AndroidX.Annotation, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Annotation.1.7.0.3\lib\monoandroid12.0\Xamarin.AndroidX.Annotation.dll</HintPath>
@@ -92,7 +94,7 @@
       <HintPath>..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Startup.StartupRuntime.1.1.1.10\lib\monoandroid12.0\Xamarin.AndroidX.Startup.StartupRuntime.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.Tracing.Tracing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.1.0.9\lib\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.dll</HintPath>
+      <HintPath>..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.2.0\lib\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.AndroidX.VersionedParcelable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.VersionedParcelable.1.1.1.22\lib\monoandroid12.0\Xamarin.AndroidX.VersionedParcelable.dll</HintPath>
@@ -157,7 +159,6 @@
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Collection.1.3.0.2\build\monoandroid12.0\Xamarin.AndroidX.Collection.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Collection.1.3.0.2\build\monoandroid12.0\Xamarin.AndroidX.Collection.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Concurrent.Futures.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.Concurrent.Futures.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Concurrent.Futures.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.Concurrent.Futures.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Interpolator.1.0.0.22\build\monoandroid12.0\Xamarin.AndroidX.Interpolator.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Interpolator.1.0.0.22\build\monoandroid12.0\Xamarin.AndroidX.Interpolator.targets'))" />
-    <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.1.0.9\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.1.0.9\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Startup.StartupRuntime.1.1.1.10\build\monoandroid12.0\Xamarin.AndroidX.Startup.StartupRuntime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Startup.StartupRuntime.1.1.1.10\build\monoandroid12.0\Xamarin.AndroidX.Startup.StartupRuntime.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.ProfileInstaller.ProfileInstaller.1.3.1.5\build\monoandroid12.0\Xamarin.AndroidX.ProfileInstaller.ProfileInstaller.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.ProfileInstaller.ProfileInstaller.1.3.1.5\build\monoandroid12.0\Xamarin.AndroidX.ProfileInstaller.ProfileInstaller.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.VersionedParcelable.1.1.1.22\build\monoandroid12.0\Xamarin.AndroidX.VersionedParcelable.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.VersionedParcelable.1.1.1.22\build\monoandroid12.0\Xamarin.AndroidX.VersionedParcelable.targets'))" />
@@ -170,6 +171,7 @@
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Runtime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Runtime.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Core.1.12.0.3\build\monoandroid12.0\Xamarin.AndroidX.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Core.1.12.0.3\build\monoandroid12.0\Xamarin.AndroidX.Core.targets'))" />
     <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.MultiDex.2.0.1.22\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.MultiDex.2.0.1.22\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets'))" />
+    <Error Condition="!Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.2.0\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.2.0\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets'))" />
   </Target>
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Migration.1.0.10\build\monoandroid120\Xamarin.AndroidX.Migration.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.17\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.Google.Guava.ListenableFuture.1.0.0.17\build\monoandroid12.0\Xamarin.Google.Guava.ListenableFuture.targets')" />
@@ -184,7 +186,6 @@
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Collection.1.3.0.2\build\monoandroid12.0\Xamarin.AndroidX.Collection.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Collection.1.3.0.2\build\monoandroid12.0\Xamarin.AndroidX.Collection.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Concurrent.Futures.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.Concurrent.Futures.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Concurrent.Futures.1.1.0.17\build\monoandroid12.0\Xamarin.AndroidX.Concurrent.Futures.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Interpolator.1.0.0.22\build\monoandroid12.0\Xamarin.AndroidX.Interpolator.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Interpolator.1.0.0.22\build\monoandroid12.0\Xamarin.AndroidX.Interpolator.targets')" />
-  <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.1.0.9\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.1.0.9\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Startup.StartupRuntime.1.1.1.10\build\monoandroid12.0\Xamarin.AndroidX.Startup.StartupRuntime.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Startup.StartupRuntime.1.1.1.10\build\monoandroid12.0\Xamarin.AndroidX.Startup.StartupRuntime.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.ProfileInstaller.ProfileInstaller.1.3.1.5\build\monoandroid12.0\Xamarin.AndroidX.ProfileInstaller.ProfileInstaller.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.ProfileInstaller.ProfileInstaller.1.3.1.5\build\monoandroid12.0\Xamarin.AndroidX.ProfileInstaller.ProfileInstaller.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.VersionedParcelable.1.1.1.22\build\monoandroid12.0\Xamarin.AndroidX.VersionedParcelable.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.VersionedParcelable.1.1.1.22\build\monoandroid12.0\Xamarin.AndroidX.VersionedParcelable.targets')" />
@@ -197,6 +198,7 @@
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Runtime.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Lifecycle.Runtime.2.6.2.3\build\monoandroid12.0\Xamarin.AndroidX.Lifecycle.Runtime.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Core.1.12.0.3\build\monoandroid12.0\Xamarin.AndroidX.Core.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Core.1.12.0.3\build\monoandroid12.0\Xamarin.AndroidX.Core.targets')" />
   <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.MultiDex.2.0.1.22\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.MultiDex.2.0.1.22\build\monoandroid12.0\Xamarin.AndroidX.MultiDex.targets')" />
+  <Import Project="..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.2.0\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets" Condition="Exists('..\..\..\BmwDeepObd\packages\Xamarin.AndroidX.Tracing.Tracing.1.2.0\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
