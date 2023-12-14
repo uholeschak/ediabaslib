@@ -8112,20 +8112,42 @@ namespace BmwDeepObd
                 dialog.Message = string.Empty;
                 dialog.MessageDetail = string.Empty;
 
+                AlertDialog alertDialog = dialog.Create();
+
                 dialog.ButtonExtra.SetText(Resource.String.button_reset);
                 dialog.ButtonExtra.Visibility = ViewStates.Visible;
-                dialog.SetPositiveButton(Resource.String.button_ok, (sender, args) =>
-                {
-                    DialogFinished(dialog, regexDisplayOrder, fileName, fileText);
-                });
-                dialog.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
-
-                AlertDialog alertDialog = dialog.Create();
                 dialog.ButtonExtra.Click += (sender, args) =>
                 {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
                     List<TextListReorderDialog.StringObjInfo> itemListSort = itemList.OrderBy(x => x.ItemId).ToList();
                     dialog.UpdateItemList(itemListSort);
                 };
+
+                dialog.ButtonAbort.Click += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    alertDialog.Cancel();
+                };
+
+                dialog.ButtonOk.Click += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    DialogFinished(dialog, regexDisplayOrder, fileName, fileText);
+                    alertDialog.Cancel();
+                };
+
                 alertDialog.Show();
                 Toast.MakeText(this, GetString(Resource.String.display_order_edit_hint), ToastLength.Long)?.Show();
             }
