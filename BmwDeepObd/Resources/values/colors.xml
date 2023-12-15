@@ -2,10 +2,14 @@
 <resources>
   <color name="colorCaptionBackground">#666666</color>
   <color name="colorCaptionBackgroundLight">#999999</color>
-  <color name="colorBackgroundDrag">#666666</color>
-  <color name="colorBackgroundDragLight">#999999</color>
   <color name="colorCaptionText">#ffffff</color>
   <color name="colorCaptionTextLight">#000000</color>
+  <color name="colorBalloonBackground">#ffffff</color>
+  <color name="colorBalloonBackgroundLight">#000000</color>
+  <color name="colorBalloonText">#000000</color>
+  <color name="colorBalloonTextLight">#ffffff</color>
+  <color name="colorBackgroundDrag">#666666</color>
+  <color name="colorBackgroundDragLight">#999999</color>
   <color name="colorGaugePoint">#ffffff</color>
   <color name="colorGaugePointLight">#000000</color>
   <color name="colorGaugeStroke">#444444</color>

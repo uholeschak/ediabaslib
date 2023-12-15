@@ -24,6 +24,8 @@ namespace BmwDeepObd.Dialogs
         private DragListView _listViewItems;
         private DragListAdapter _dragListAdapter;
         private Balloon _balloon;
+        private Android.Graphics.Color _balloonBackgroundColor;
+        private Android.Graphics.Color _balloonTextColor;
         private readonly List<StringObjInfo> _itemList;
 
         public string Message
@@ -90,6 +92,17 @@ namespace BmwDeepObd.Dialogs
 
             if (_activity != null)
             {
+                {
+                    TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                        new[] { Resource.Attribute.balloonBackgroundColor });
+                    _balloonBackgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+                }
+                {
+                    TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                        new[] { Resource.Attribute.balloonTextColor });
+                    _balloonTextColor = typedArray.GetColor(0, 0xFFFFFF);
+                }
+
                 _view = _activity.LayoutInflater.Inflate(Resource.Layout.list_reorder_dialog, null);
                 SetView(_view);
 
@@ -119,10 +132,11 @@ namespace BmwDeepObd.Dialogs
                 _listViewItems.DragEnabled = true;
 
                 Balloon.Builder balloonBuilder = new Balloon.Builder(_activity);
-                balloonBuilder.ArrowVisible = true;
                 balloonBuilder.DismissWhenClicked = true;
                 balloonBuilder.DismissWhenTouchOutside = true;
                 balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
+                balloonBuilder.BackgroundColor = _balloonBackgroundColor;
+                balloonBuilder.TextColor = _balloonTextColor;
                 balloonBuilder.BalloonAnimation = BalloonAnimation.Circular;
                 balloonBuilder.AutoDismissDuration = 4000;
                 balloonBuilder.LifecycleOwner = ProcessLifecycleOwner.Get();
@@ -369,9 +383,11 @@ namespace BmwDeepObd.Dialogs
             {
                 _context = context;
 
-                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
-                    new[] { Resource.Attribute.dragBackgroundColor });
-                _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+                {
+                    TypedArray typedArray = context.Theme.ObtainStyledAttributes(
+                        new[] { Resource.Attribute.dragBackgroundColor });
+                    _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+                }
             }
 
             public override void OnBindDragView(View clickedView, View dragView)
