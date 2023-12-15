@@ -8149,8 +8149,6 @@ namespace BmwDeepObd
                 };
 
                 alertDialog.Show();
-                alertDialog.Window?.SetLayout(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
-                dialog.BalloonHint.ShowAlignTop(dialog.ListViewItems);
             }
             catch (Exception ex)
             {
