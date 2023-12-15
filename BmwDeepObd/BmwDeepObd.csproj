@@ -111,6 +111,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Mono.CSharp" />
+    <Reference Include="Skydoves.Balloon, Version=1.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Karamunting.Android.Skydoves.Balloon.1.1.5\lib\monoandroid90\Skydoves.Balloon.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.5.1\lib\netstandard2.0\System.Buffers.dll</HintPath>
@@ -657,10 +660,6 @@
     <None Include="Xml\E61\Test.ccpage" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\BalloonBinding\BalloonBinding.csproj">
-      <Project>{2ba25520-dde1-4134-bed3-04f5773cf8db}</Project>
-      <Name>BalloonBinding</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\CustomGaugeBinding\CustomGaugeBinding.csproj">
       <Project>{6372b7dd-e31c-48f5-8c47-f6fa2bb37070}</Project>
       <Name>CustomGaugeBinding</Name>
