@@ -121,14 +121,27 @@ namespace BmwDeepObd.Dialogs
                 _listViewItems.DragEnabled = true;
 
                 Balloon.Builder balloonBuilder = new Balloon.Builder(_activity);
-                balloonBuilder.ArrowOrientation = ArrowOrientation.Bottom;
                 balloonBuilder.ArrowVisible = true;
+                balloonBuilder.DismissWhenClicked = true;
+                balloonBuilder.DismissWhenTouchOutside = true;
                 balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
                 balloonBuilder.BalloonAnimation = BalloonAnimation.Circular;
                 balloonBuilder.AutoDismissDuration = 4000;
                 balloonBuilder.LifecycleOwner = ProcessLifecycleOwner.Get();
                 _balloon = balloonBuilder.Build();
             }
+        }
+
+        public override AlertDialog Create()
+        {
+            AlertDialog alertDialog = base.Create();
+            alertDialog.ShowEvent += (sender, args) =>
+            {
+                alertDialog.Window?.SetLayout(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
+                _balloon.ShowAlignTop(_listViewItems);
+            };
+
+            return alertDialog;
         }
 
         public new void Show()
