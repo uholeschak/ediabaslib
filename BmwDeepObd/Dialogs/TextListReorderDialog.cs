@@ -70,8 +70,6 @@ namespace BmwDeepObd.Dialogs
         public Button ButtonAbort => _buttonAbort;
         public Button ButtonExtra => _buttonExtra;
         public Button ButtonOk => _buttonOk;
-        public DragListView ListViewItems => _listViewItems;
-        public Balloon BalloonHint => _balloon;
 
         public TextListReorderDialog(Context context, List<StringObjInfo> itemList) : base(context)
         {
