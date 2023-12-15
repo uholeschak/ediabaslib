@@ -4,8 +4,10 @@ using Android.Content.Res;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using AndroidX.Lifecycle;
 using AndroidX.RecyclerView.Widget;
 using Com.Woxthebox.Draglistview;
+using Skydoves.BalloonLib;
 
 namespace BmwDeepObd.Dialogs
 {
@@ -21,6 +23,7 @@ namespace BmwDeepObd.Dialogs
         private Button _buttonOk;
         private DragListView _listViewItems;
         private DragListAdapter _dragListAdapter;
+        private Balloon _balloon;
         private readonly List<StringObjInfo> _itemList;
 
         public string Message
@@ -67,6 +70,8 @@ namespace BmwDeepObd.Dialogs
         public Button ButtonAbort => _buttonAbort;
         public Button ButtonExtra => _buttonExtra;
         public Button ButtonOk => _buttonOk;
+        public DragListView ListViewItems => _listViewItems;
+        public Balloon BalloonHint => _balloon;
 
         public TextListReorderDialog(Context context, List<StringObjInfo> itemList) : base(context)
         {
@@ -114,6 +119,15 @@ namespace BmwDeepObd.Dialogs
                 _listViewItems.SetDragListListener(new CustomDragListener(this));
                 _listViewItems.SetDragListCallback(new CustomDragListCallback(this));
                 _listViewItems.DragEnabled = true;
+
+                Balloon.Builder balloonBuilder = new Balloon.Builder(_activity);
+                balloonBuilder.ArrowOrientation = ArrowOrientation.Bottom;
+                balloonBuilder.ArrowVisible = true;
+                balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
+                balloonBuilder.BalloonAnimation = BalloonAnimation.Circular;
+                balloonBuilder.AutoDismissDuration = 4000;
+                balloonBuilder.LifecycleOwner = ProcessLifecycleOwner.Get();
+                _balloon = balloonBuilder.Build();
             }
         }
 
