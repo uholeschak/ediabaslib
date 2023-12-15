@@ -10065,10 +10065,7 @@ namespace BmwDeepObd
             public CustomDragItem(Context context, int layoutId) : base(context, layoutId)
             {
                 _context = context;
-
-                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
-                    new[] { Resource.Attribute.dragBackgroundColor });
-                _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+                _backgroundColor = ActivityCommon.GetStyleColor(context, Resource.Attribute.dragBackgroundColor);
             }
 
             public override void OnBindDragView(View clickedView, View dragView)

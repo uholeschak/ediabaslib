@@ -2999,10 +2999,7 @@ namespace BmwDeepObd
             {
                 _context = context;
                 _items = new List<JobInfo>();
-
-                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
-                    new[] { Android.Resource.Attribute.ColorBackground });
-                _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+                _backgroundColor = ActivityCommon.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
             }
 
             public override long GetItemId(int position)
@@ -3070,9 +3067,7 @@ namespace BmwDeepObd
                 _context = context;
                 _items = new List<ExtraInfo>();
                 _itemsVisible = new List<ExtraInfo>();
-                TypedArray typedArray = context.Theme.ObtainStyledAttributes(
-                    new[] { Android.Resource.Attribute.ColorBackground });
-                _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
+                _backgroundColor = ActivityCommon.GetStyleColor(context, Android.Resource.Attribute.ColorBackground);
             }
 
             public override long GetItemId(int position)

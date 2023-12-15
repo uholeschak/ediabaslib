@@ -92,16 +92,8 @@ namespace BmwDeepObd.Dialogs
 
             if (_activity != null)
             {
-                {
-                    TypedArray typedArray = context.Theme.ObtainStyledAttributes(
-                        new[] { Resource.Attribute.balloonBackgroundColor });
-                    _balloonBackgroundColor = typedArray.GetColor(0, 0xFFFFFF);
-                }
-                {
-                    TypedArray typedArray = context.Theme.ObtainStyledAttributes(
-                        new[] { Resource.Attribute.balloonTextColor });
-                    _balloonTextColor = typedArray.GetColor(0, 0xFFFFFF);
-                }
+                _balloonBackgroundColor = ActivityCommon.GetStyleColor(context, Resource.Attribute.balloonBackgroundColor);
+                _balloonTextColor = ActivityCommon.GetStyleColor(context, Resource.Attribute.balloonTextColor);
 
                 _view = _activity.LayoutInflater.Inflate(Resource.Layout.list_reorder_dialog, null);
                 SetView(_view);
@@ -382,12 +374,7 @@ namespace BmwDeepObd.Dialogs
             public CustomDragItem(Context context, int layoutId) : base(context, layoutId)
             {
                 _context = context;
-
-                {
-                    TypedArray typedArray = context.Theme.ObtainStyledAttributes(
-                        new[] { Resource.Attribute.dragBackgroundColor });
-                    _backgroundColor = typedArray.GetColor(0, 0xFFFFFF);
-                }
+                _backgroundColor = ActivityCommon.GetStyleColor(context, Resource.Attribute.dragBackgroundColor);
             }
 
             public override void OnBindDragView(View clickedView, View dragView)

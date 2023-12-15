@@ -2163,6 +2163,12 @@ namespace BmwDeepObd
             }
         }
 
+        public static Android.Graphics.Color GetStyleColor(Context context, int attribute)
+        {
+            TypedArray typedArray = context.Theme.ObtainStyledAttributes([attribute]);
+            return typedArray.GetColor(0, 0xFFFFFF);
+        }
+
         public static bool IsBtReliable()
         {
             if (Build.VERSION.SdkInt == BuildVersionCodes.M &&
