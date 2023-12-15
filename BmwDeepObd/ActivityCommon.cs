@@ -6325,7 +6325,10 @@ namespace BmwDeepObd
                 {
                     handler?.Invoke(this, new EventArgs());
                 });
-                traceInfoInputDialog.Show();
+
+                AlertDialog alertDialog = traceInfoInputDialog.Create();
+                alertDialog.Show();
+                alertDialog.Window?.SetLayout(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
             }
             catch (Exception)
             {
