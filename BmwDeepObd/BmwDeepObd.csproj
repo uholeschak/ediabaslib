@@ -657,6 +657,10 @@
     <None Include="Xml\E61\Test.ccpage" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\BalloonBinding\BalloonBinding.csproj">
+      <Project>{2ba25520-dde1-4134-bed3-04f5773cf8db}</Project>
+      <Name>BalloonBinding</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroid\CustomGaugeBinding\CustomGaugeBinding.csproj">
       <Project>{6372b7dd-e31c-48f5-8c47-f6fa2bb37070}</Project>
       <Name>CustomGaugeBinding</Name>
