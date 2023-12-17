@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using Android.Content;
-using Android.Content.Res;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
-using AndroidX.Lifecycle;
 using AndroidX.RecyclerView.Widget;
 using Com.Woxthebox.Draglistview;
 using Skydoves.BalloonLib;
@@ -24,8 +22,6 @@ namespace BmwDeepObd.Dialogs
         private DragListView _listViewItems;
         private DragListAdapter _dragListAdapter;
         private Balloon _balloon;
-        private Android.Graphics.Color _balloonBackgroundColor;
-        private Android.Graphics.Color _balloonTextColor;
         private readonly List<StringObjInfo> _itemList;
 
         public string Message
@@ -92,9 +88,6 @@ namespace BmwDeepObd.Dialogs
 
             if (_activity != null)
             {
-                _balloonBackgroundColor = ActivityCommon.GetStyleColor(context, Resource.Attribute.balloonBackgroundColor);
-                _balloonTextColor = ActivityCommon.GetStyleColor(context, Resource.Attribute.balloonTextColor);
-
                 _view = _activity.LayoutInflater.Inflate(Resource.Layout.list_reorder_dialog, null);
                 SetView(_view);
 
@@ -123,15 +116,8 @@ namespace BmwDeepObd.Dialogs
                 _listViewItems.SetDragListCallback(new CustomDragListCallback(this));
                 _listViewItems.DragEnabled = true;
 
-                Balloon.Builder balloonBuilder = new Balloon.Builder(_activity);
-                balloonBuilder.DismissWhenClicked = true;
-                balloonBuilder.DismissWhenTouchOutside = true;
+                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(context);
                 balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
-                balloonBuilder.BackgroundColor = _balloonBackgroundColor;
-                balloonBuilder.TextColor = _balloonTextColor;
-                balloonBuilder.BalloonAnimation = BalloonAnimation.Circular;
-                balloonBuilder.AutoDismissDuration = 4000;
-                balloonBuilder.LifecycleOwner = ProcessLifecycleOwner.Get();
                 _balloon = balloonBuilder.Build();
             }
         }
