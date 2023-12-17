@@ -1566,15 +1566,24 @@ namespace BmwDeepObd
                             int itemsCount = _ecuListAdapter.ItemsCount;
                             if (itemsCount > 0)
                             {
-                                DragEcuListAdapter.CustomViewHolder viewHolder = _ecuListAdapter.GetItemViewHolder(0);
-                                View itemView = viewHolder?.ItemView;
-                                if (itemView != null && ViewCompat.IsLaidOut(itemView))
+                                View itemViewBalloon = null;
+                                for (int item = 0; item < itemsCount; item++)
                                 {
-                                    int iItemHeight = itemView.MeasuredHeight;
+                                    DragEcuListAdapter.CustomViewHolder viewHolder = _ecuListAdapter.GetItemViewHolder(item);
+                                    View itemView = viewHolder?.ItemView;
+                                    if (itemView != null && itemView.IsShown)
+                                    {
+                                        itemViewBalloon = itemView;
+                                        break;
+                                    }
+                                }
+
+                                if (itemViewBalloon != null)
+                                {
                                     Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
                                     balloonBuilder.Text = GetString(Resource.String.xml_tool_drag_list_hint);
                                     Balloon balloon = balloonBuilder.Build();
-                                    balloon.ShowAlignTop(itemView, 0, iItemHeight / 2);
+                                    balloon.Show(itemViewBalloon);
 
                                     _instanceData.ListMoveHintShown = true;
                                 }
