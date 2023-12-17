@@ -46,6 +46,8 @@ using AndroidX.Core.Content;
 using AndroidX.Core.Content.PM;
 using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.Dialogs;
+using Skydoves.BalloonLib;
+using AndroidX.Lifecycle;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -2167,6 +2169,20 @@ namespace BmwDeepObd
         {
             TypedArray typedArray = context.Theme.ObtainStyledAttributes([attribute]);
             return typedArray.GetColor(0, 0xFFFFFF);
+        }
+
+        public static Balloon.Builder GetBalloonBuilder(Context context)
+        {
+            Balloon.Builder balloonBuilder = new Balloon.Builder(context);
+            balloonBuilder.DismissWhenClicked = true;
+            balloonBuilder.DismissWhenTouchOutside = true;
+            balloonBuilder.BackgroundColor = GetStyleColor(context, Resource.Attribute.balloonBackgroundColor);
+            balloonBuilder.TextColor = GetStyleColor(context, Resource.Attribute.balloonTextColor);
+            balloonBuilder.BalloonAnimation = BalloonAnimation.Elastic;
+            balloonBuilder.AutoDismissDuration = 4000;
+            balloonBuilder.LifecycleOwner = ProcessLifecycleOwner.Get();
+
+            return balloonBuilder;
         }
 
         public static bool IsBtReliable()
