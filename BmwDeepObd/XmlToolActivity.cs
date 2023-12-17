@@ -22,6 +22,7 @@ using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
+using AndroidX.Core.View;
 using AndroidX.RecyclerView.Widget;
 using BmwDeepObd.Dialogs;
 using BmwFileReader;
@@ -1562,11 +1563,22 @@ namespace BmwDeepObd
                     {
                         if (!_instanceData.ListMoveHintShown)
                         {
-                            _instanceData.ListMoveHintShown = true;
-                            Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                            balloonBuilder.Text = GetString(Resource.String.xml_tool_drag_list_hint);
-                            Balloon balloon = balloonBuilder.Build();
-                            balloon.ShowAlignTop(_listViewEcu);
+                            int itemsCount = _ecuListAdapter.ItemsCount;
+                            if (itemsCount > 0)
+                            {
+                                DragEcuListAdapter.CustomViewHolder viewHolder = _ecuListAdapter.GetItemViewHolder(0);
+                                View itemView = viewHolder?.ItemView;
+                                if (itemView != null && ViewCompat.IsLaidOut(itemView))
+                                {
+                                    int iItemHeight = itemView.MeasuredHeight;
+                                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                                    balloonBuilder.Text = GetString(Resource.String.xml_tool_drag_list_hint);
+                                    Balloon balloon = balloonBuilder.Build();
+                                    balloon.ShowAlignTop(itemView, 0, iItemHeight / 2);
+
+                                    _instanceData.ListMoveHintShown = true;
+                                }
+                            }
                         }
                     }
 #endif
@@ -9882,6 +9894,7 @@ namespace BmwDeepObd
                     return;
                 }
 
+                infoWrapper.BoundViewHolder = customHolder;
                 View grabView = customHolder.MGrabView;
                 if (_backgroundResource != null)
                 {
@@ -9997,6 +10010,22 @@ namespace BmwDeepObd
                 return -1;
             }
 
+            public CustomViewHolder GetItemViewHolder(int itemIndex)
+            {
+                if ((itemIndex < 0) || (itemIndex >= ItemsCount))
+                {
+                    return null;
+                }
+
+                EcuInfoWrapper infoWrapper = ItemList[itemIndex] as EcuInfoWrapper;
+                if (infoWrapper != null)
+                {
+                    return infoWrapper.BoundViewHolder;
+                }
+
+                return null;
+            }
+
             private void OnGrabViewClick(object sender, EventArgs args)
             {
                 View view = sender as View;
@@ -10032,7 +10061,7 @@ namespace BmwDeepObd
                 }
             }
 
-            private class CustomViewHolder : ViewHolder
+            public class CustomViewHolder : ViewHolder
             {
                 private readonly DragEcuListAdapter _adapter;
 
@@ -10052,11 +10081,14 @@ namespace BmwDeepObd
                         info.ItemId = adapter._itemIdCurrent++;
                     }
                     ItemId = info.ItemId.Value;
+                    BoundViewHolder = null;
                 }
 
                 public EcuInfo Info { get; }
 
                 public long ItemId { get; }
+
+                public CustomViewHolder BoundViewHolder { get; set; }
             }
         }
 

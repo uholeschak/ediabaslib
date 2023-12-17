@@ -262,7 +262,7 @@ namespace BmwDeepObd.Dialogs
                     return;
                 }
 
-                infoWrapper.ViewHolder = customHolder;
+                infoWrapper.BoundViewHolder = customHolder;
                 View grabView = customHolder.MGrabView;
                 grabView.Tag = infoWrapper;
 
@@ -349,7 +349,7 @@ namespace BmwDeepObd.Dialogs
                 InfoWrapper infoWrapper = ItemList[itemIndex] as InfoWrapper;
                 if (infoWrapper != null)
                 {
-                    return infoWrapper.ViewHolder;
+                    return infoWrapper.BoundViewHolder;
                 }
 
                 return null;
@@ -371,15 +371,15 @@ namespace BmwDeepObd.Dialogs
                 {
                     Info = info;
                     ItemId = info.ItemId;
-                    ViewHolder = null;
+                    BoundViewHolder = null;
                 }
 
                 public StringObjInfo Info { get; }
 
                 public long ItemId { get; }
 
-                public CustomViewHolder ViewHolder { get; set; }
-        }
+                public CustomViewHolder BoundViewHolder { get; set; }
+            }
         }
 
         private class CustomDragItem : DragItem
