@@ -128,15 +128,24 @@ namespace BmwDeepObd.Dialogs
                 int itemsCount = _dragListAdapter.ItemsCount;
                 if (itemsCount > 0)
                 {
-                    DragListAdapter.CustomViewHolder viewHolder = _dragListAdapter.GetItemViewHolder(0);
-                    View itemView = viewHolder?.ItemView;
-                    if (itemView != null && ViewCompat.IsLaidOut(itemView))
+                    View itemViewBalloon = null;
+                    for (int item = 0; item < itemsCount; item++)
                     {
-                        int iItemHeight = itemView.MeasuredHeight;
+                        DragListAdapter.CustomViewHolder viewHolder = _dragListAdapter.GetItemViewHolder(item);
+                        View itemView = viewHolder?.ItemView;
+                        if (itemView != null && itemView.IsShown)
+                        {
+                            itemViewBalloon = itemView;
+                            break;
+                        }
+                    }
+
+                    if (itemViewBalloon != null)
+                    {
                         Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(_activity);
                         balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
                         Balloon balloon = balloonBuilder.Build();
-                        balloon.ShowAlignTop(itemView, 0, iItemHeight / 2);
+                        balloon.Show(itemViewBalloon);
                     }
                 }
             };
