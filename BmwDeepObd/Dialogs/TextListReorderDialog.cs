@@ -21,7 +21,6 @@ namespace BmwDeepObd.Dialogs
         private Button _buttonOk;
         private DragListView _listViewItems;
         private DragListAdapter _dragListAdapter;
-        private Balloon _balloon;
         private readonly List<StringObjInfo> _itemList;
 
         public string Message
@@ -115,10 +114,6 @@ namespace BmwDeepObd.Dialogs
                 _listViewItems.SetDragListListener(new CustomDragListener(this));
                 _listViewItems.SetDragListCallback(new CustomDragListCallback(this));
                 _listViewItems.DragEnabled = true;
-
-                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(context);
-                balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
-                _balloon = balloonBuilder.Build();
             }
         }
 
@@ -128,7 +123,11 @@ namespace BmwDeepObd.Dialogs
             alertDialog.ShowEvent += (sender, args) =>
             {
                 alertDialog.Window?.SetLayout(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
-                _balloon.ShowAlignTop(_listViewItems);
+
+                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(_activity);
+                balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
+                Balloon balloon = balloonBuilder.Build();
+                balloon.ShowAlignTop(_listViewItems);
             };
 
             return alertDialog;

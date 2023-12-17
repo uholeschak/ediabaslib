@@ -26,7 +26,7 @@ using AndroidX.RecyclerView.Widget;
 using BmwDeepObd.Dialogs;
 using BmwFileReader;
 using Com.Woxthebox.Draglistview;
-using Com.Woxthebox.Draglistview.Swipe;
+using Skydoves.BalloonLib;
 
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
@@ -1563,7 +1563,10 @@ namespace BmwDeepObd
                         if (!_instanceData.ListMoveHintShown)
                         {
                             _instanceData.ListMoveHintShown = true;
-                            Toast.MakeText(this, Resource.String.xml_tool_drag_list_hint, ToastLength.Long)?.Show();
+                            Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                            balloonBuilder.Text = GetString(Resource.String.xml_tool_drag_list_hint);
+                            Balloon balloon = balloonBuilder.Build();
+                            balloon.ShowAlignTop(_listViewEcu);
                         }
                     }
 #endif
