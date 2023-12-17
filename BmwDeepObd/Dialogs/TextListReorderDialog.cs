@@ -3,10 +3,10 @@ using Android.Content;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using AndroidX.Core.View;
 using AndroidX.RecyclerView.Widget;
 using Com.Woxthebox.Draglistview;
 using Skydoves.BalloonLib;
-using static BmwDeepObd.Dialogs.TextListReorderDialog;
 
 namespace BmwDeepObd.Dialogs
 {
@@ -128,11 +128,16 @@ namespace BmwDeepObd.Dialogs
                 int itemsCount = _dragListAdapter.ItemsCount;
                 if (itemsCount > 0)
                 {
-                    int iItemHeight = _listViewItems.MeasuredHeight / itemsCount;
-                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(_activity);
-                    balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
-                    Balloon balloon = balloonBuilder.Build();
-                    balloon.ShowAlignTop(_listViewItems, 0, iItemHeight / 2);
+                    DragListAdapter.CustomViewHolder viewHolder = _dragListAdapter.GetItemViewHolder(0);
+                    View itemView = viewHolder?.ItemView;
+                    if (itemView != null && ViewCompat.IsLaidOut(itemView))
+                    {
+                        int iItemHeight = itemView.MeasuredHeight;
+                        Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(_activity);
+                        balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
+                        Balloon balloon = balloonBuilder.Build();
+                        balloon.ShowAlignTop(itemView, 0, iItemHeight / 2);
+                    }
                 }
             };
 
@@ -257,6 +262,7 @@ namespace BmwDeepObd.Dialogs
                     return;
                 }
 
+                infoWrapper.ViewHolder = customHolder;
                 View grabView = customHolder.MGrabView;
                 grabView.Tag = infoWrapper;
 
@@ -333,7 +339,23 @@ namespace BmwDeepObd.Dialogs
                 return -1;
             }
 
-            private class CustomViewHolder : ViewHolder
+            public CustomViewHolder GetItemViewHolder(int itemIndex)
+            {
+                if ((itemIndex < 0) || (itemIndex >= ItemsCount))
+                {
+                    return null;
+                }
+
+                InfoWrapper infoWrapper = ItemList[itemIndex] as InfoWrapper;
+                if (infoWrapper != null)
+                {
+                    return infoWrapper.ViewHolder;
+                }
+
+                return null;
+            }
+
+            public class CustomViewHolder : ViewHolder
             {
                 private readonly DragListAdapter _adapter;
 
@@ -349,12 +371,15 @@ namespace BmwDeepObd.Dialogs
                 {
                     Info = info;
                     ItemId = info.ItemId;
+                    ViewHolder = null;
                 }
 
                 public StringObjInfo Info { get; }
 
                 public long ItemId { get; }
-            }
+
+                public CustomViewHolder ViewHolder { get; set; }
+        }
         }
 
         private class CustomDragItem : DragItem
