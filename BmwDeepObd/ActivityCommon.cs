@@ -2180,6 +2180,7 @@ namespace BmwDeepObd
             balloonBuilder.TextColor = GetStyleColor(context, Resource.Attribute.balloonTextColor);
             balloonBuilder.BalloonAnimation = BalloonAnimation.Elastic;
             balloonBuilder.AutoDismissDuration = 4000;
+            balloonBuilder.SetPadding(10);
             balloonBuilder.LifecycleOwner = ProcessLifecycleOwner.Get();
 
             return balloonBuilder;
