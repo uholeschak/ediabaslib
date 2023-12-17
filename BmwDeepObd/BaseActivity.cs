@@ -14,6 +14,7 @@ using Android.Widget;
 using AndroidX.Activity;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.View;
+using Skydoves.BalloonLib;
 
 namespace BmwDeepObd
 {
@@ -135,11 +136,6 @@ namespace BmwDeepObd
                     {
                         SupportActionBar.Show();
                         _instanceDataBase.ActionBarVisible = true;
-                        if (!_instanceDataBase.LongClickShown)
-                        {
-                            _instanceDataBase.LongClickShown = true;
-                            Toast.MakeText(this, GetString(Resource.String.long_click_show_title), ToastLength.Short)?.Show();
-                        }
                     }
                 });
 
@@ -396,6 +392,24 @@ namespace BmwDeepObd
                     if (ActivityCommon.AutoHideTitleBar || ActivityCommon.SuppressTitleBar)
                     {
                         _baseUpdateHandler.PostDelayed(_longPressRunnable, LongPressTimeout);
+
+                        if (_touchShowTitle && !SupportActionBar.IsShowing)
+                        {
+                            if (!_instanceDataBase.LongClickShown)
+                            {
+                                View contentView = FindViewById<View>(Android.Resource.Id.Content);
+                                View rootView = contentView?.RootView;
+                                if (rootView != null)
+                                {
+                                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                                    balloonBuilder.Text = GetString(Resource.String.long_click_show_title);
+                                    Balloon balloon = balloonBuilder.Build();
+                                    balloon.Show(rootView);
+
+                                    _instanceDataBase.LongClickShown = true;
+                                }
+                            }
+                        }
                     }
                     break;
             }
@@ -600,6 +614,7 @@ namespace BmwDeepObd
 
         public virtual void OnBackPressedEvent()
         {
+            _instanceDataBase.LongClickShown = false;
             Finish();
         }
 
