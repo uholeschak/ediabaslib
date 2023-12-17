@@ -6,6 +6,7 @@ using AndroidX.AppCompat.App;
 using AndroidX.RecyclerView.Widget;
 using Com.Woxthebox.Draglistview;
 using Skydoves.BalloonLib;
+using static BmwDeepObd.Dialogs.TextListReorderDialog;
 
 namespace BmwDeepObd.Dialogs
 {
@@ -124,10 +125,15 @@ namespace BmwDeepObd.Dialogs
             {
                 alertDialog.Window?.SetLayout(ViewGroup.LayoutParams.MatchParent, ViewGroup.LayoutParams.WrapContent);
 
-                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(_activity);
-                balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
-                Balloon balloon = balloonBuilder.Build();
-                balloon.ShowAlignTop(_listViewItems);
+                int itemsCount = _dragListAdapter.ItemsCount;
+                if (itemsCount > 0)
+                {
+                    int iItemHeight = _listViewItems.MeasuredHeight / itemsCount;
+                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(_activity);
+                    balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
+                    Balloon balloon = balloonBuilder.Build();
+                    balloon.ShowAlignTop(_listViewItems, 0, iItemHeight / 2);
+                }
             };
 
             return alertDialog;
