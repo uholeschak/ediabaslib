@@ -41,6 +41,7 @@ using EdiabasLib;
 using Google.Android.Material.Tabs;
 using Java.Interop;
 using Mono.CSharp;
+using Skydoves.BalloonLib;
 // ReSharper disable MergeCastWithTypeCheck
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
@@ -1572,7 +1573,6 @@ namespace BmwDeepObd
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             if (logSubMenu != null)
             {
-                _activityCommon.SetMenuDocumentTreeTooltip(logSubMenu);
                 logSubMenu.SetEnabled(interfaceAvailable && !commActive);
             }
 
@@ -7390,7 +7390,20 @@ namespace BmwDeepObd
                 UpdateOptionsMenu();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
-            builder.Show();
+            AlertDialog alertDialog = builder.Create();
+            alertDialog.Show();
+
+            if (ActivityCommon.IsDocumentTreeSupported())
+            {
+                View rootView = alertDialog.Window?.DecorView?.RootView;
+                if (rootView != null)
+                {
+                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                    balloonBuilder.Text = GetString(Resource.String.menu_hint_copy_folder);
+                    Balloon balloon = balloonBuilder.Build();
+                    balloon.ShowAlignTop(rootView);
+                }
+            }
         }
 
         private void OpenDonateLink()
