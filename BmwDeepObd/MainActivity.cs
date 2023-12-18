@@ -7390,6 +7390,7 @@ namespace BmwDeepObd
                 UpdateOptionsMenu();
             });
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
+
             AlertDialog alertDialog = builder.Create();
             alertDialog.Show();
 
