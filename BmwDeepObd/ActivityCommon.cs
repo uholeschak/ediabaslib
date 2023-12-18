@@ -2178,6 +2178,7 @@ namespace BmwDeepObd
             balloonBuilder.DismissWhenTouchOutside = true;
             balloonBuilder.BackgroundColor = GetStyleColor(context, Resource.Attribute.balloonBackgroundColor);
             balloonBuilder.TextColor = GetStyleColor(context, Resource.Attribute.balloonTextColor);
+            balloonBuilder.TextSize = 14.0f;
             balloonBuilder.BalloonAnimation = BalloonAnimation.Elastic;
             balloonBuilder.AutoDismissDuration = 4000;
             balloonBuilder.SetPadding(10);
