@@ -25,6 +25,7 @@ using AndroidX.Core.Content.PM;
 using BmwDeepObd.Dialogs;
 using EdiabasLib;
 using Java.Interop;
+using Skydoves.BalloonLib;
 
 namespace BmwDeepObd
 {
@@ -1632,7 +1633,21 @@ namespace BmwDeepObd
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
             });
-            builder.Show();
+
+            AlertDialog alertDialog = builder.Create();
+            alertDialog.Show();
+
+            if (ActivityCommon.IsDocumentTreeSupported())
+            {
+                View rootView = alertDialog.Window?.DecorView?.RootView;
+                if (rootView != null)
+                {
+                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                    balloonBuilder.Text = GetString(Resource.String.menu_hint_copy_folder);
+                    Balloon balloon = balloonBuilder.Build();
+                    balloon.ShowAlignTop(rootView);
+                }
+            }
         }
 
         private bool SendTraceFile(EventHandler<EventArgs> handler)
