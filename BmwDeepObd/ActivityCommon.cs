@@ -2181,6 +2181,8 @@ namespace BmwDeepObd
             balloonBuilder.BalloonAnimation = BalloonAnimation.Elastic;
             balloonBuilder.AutoDismissDuration = 4000;
             balloonBuilder.SetPadding(10);
+            balloonBuilder.ArrowOrientation = ArrowOrientation.Bottom;
+            balloonBuilder.ArrowPosition = 0.5f;
             balloonBuilder.LifecycleOwner = ProcessLifecycleOwner.Get();
 
             return balloonBuilder;
