@@ -209,7 +209,10 @@ namespace BmwDeepObd.FilePicker
                     {
                         if (_dirSelect)
                         {
-                            Toast.MakeText(Activity, Resource.String.file_picker_dir_select, ToastLength.Short)?.Show();
+                            Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
+                            balloonBuilder.Text = Activity.GetString(Resource.String.file_picker_dir_select);
+                            Balloon balloon = balloonBuilder.Build();
+                            balloon.Show(v);
                         }
 
                         // Dig into this directory, and display it's contents
