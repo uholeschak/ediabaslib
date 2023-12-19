@@ -10750,24 +10750,6 @@ namespace BmwDeepObd
             return documentFile.Uri.Path;
         }
 
-        public void SetMenuDocumentTreeTooltip(IMenuItem menuItem)
-        {
-            try
-            {
-                if (menuItem != null)
-                {
-                    if (IsDocumentTreeSupported() && Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    {
-                        menuItem.SetTooltipText(_activity.GetString(Resource.String.menu_hint_copy_folder));
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-        }
-
         public static List<string> GetPersistedStorages()
         {
             List<string> storageList = new List<string>();
