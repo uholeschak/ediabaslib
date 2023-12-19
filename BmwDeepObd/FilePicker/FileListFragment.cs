@@ -9,6 +9,7 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.Fragment.App;
+using Skydoves.BalloonLib;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 
@@ -54,6 +55,7 @@ namespace BmwDeepObd.FilePicker
         private bool _showCurrentDir;
         private bool _showFiles;
         private bool _showFileExtensions;
+        private string _infoText;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
@@ -108,6 +110,7 @@ namespace BmwDeepObd.FilePicker
             _showCurrentDir = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowCurrentDir, false) ?? false;
             _showFiles = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowFiles, true) ?? true;
             _showFileExtensions = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowExtension, true) ?? true;
+            _infoText = Activity.Intent?.GetStringExtra(FilePickerActivity.ExtraInfoText);
 
             _adapter = new FileListAdapter(Activity, Array.Empty<FileInfoEx>());
             ListAdapter = _adapter;
@@ -152,6 +155,14 @@ namespace BmwDeepObd.FilePicker
                     }
                 }
             };
+
+            if (!string.IsNullOrWhiteSpace(_infoText))
+            {
+                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
+                balloonBuilder.Text = _infoText;
+                Balloon balloon = balloonBuilder.Build();
+                balloon.ShowAlignTop(ListView);
+            }
         }
 
         public override void OnListItemClick(ListView l, View v, int position, long id)

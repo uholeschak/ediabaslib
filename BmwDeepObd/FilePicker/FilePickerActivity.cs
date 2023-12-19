@@ -19,6 +19,7 @@ namespace BmwDeepObd.FilePicker
         public const string ExtraShowCurrentDir = "current_dir";
         public const string ExtraShowFiles = "show_files";
         public const string ExtraShowExtension = "show_extension";
+        public const string ExtraInfoText = "info_text";
 
         public delegate void FilterEventHandler(string fileNameFilter, bool submit);
         public event FilterEventHandler FilterEvent;

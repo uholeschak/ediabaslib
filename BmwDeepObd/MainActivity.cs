@@ -1394,7 +1394,6 @@ namespace BmwDeepObd
             IMenuItem cfgSubmenu = menu.FindItem(Resource.Id.menu_cfg_submenu);
             if (cfgSubmenu != null)
             {
-                _activityCommon.SetMenuDocumentTreeTooltip(cfgSubmenu);
                 cfgSubmenu.SetEnabled(!commActive);
             }
 
@@ -1653,15 +1652,6 @@ namespace BmwDeepObd
             if (_activityCommon == null)
             {
                 return base.OnOptionsItemSelected(item);
-            }
-
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-            {
-                string tooltipText = item.TooltipText;
-                if (!string.IsNullOrWhiteSpace(tooltipText))
-                {
-                    Toast.MakeText(this, tooltipText, ToastLength.Short)?.Show();
-                }
             }
 
             if (item.GroupId == MenuGroupRecentId)
@@ -7570,6 +7560,7 @@ namespace BmwDeepObd
             }
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".cccfg");
+            serverIntent.PutExtra(FilePickerActivity.ExtraInfoText, GetString(Resource.String.menu_hint_copy_folder));
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectConfig);
         }
 
