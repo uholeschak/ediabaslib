@@ -37,8 +37,13 @@ namespace BmwDeepObd.FilePicker
                 {
                     DefaultInitialDirectory = Path.DirectorySeparatorChar.ToString();
                 }
+
+                DirSelectHintShown = false;
             }
+
             public string DefaultInitialDirectory { get; set; }
+
+            public bool DirSelectHintShown { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -209,10 +214,15 @@ namespace BmwDeepObd.FilePicker
                     {
                         if (_dirSelect)
                         {
-                            Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
-                            balloonBuilder.Text = Activity.GetString(Resource.String.file_picker_dir_select);
-                            Balloon balloon = balloonBuilder.Build();
-                            balloon.Show(v);
+                            if (!_instanceData.DirSelectHintShown)
+                            {
+                                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
+                                balloonBuilder.Text = Activity.GetString(Resource.String.file_picker_dir_select);
+                                Balloon balloon = balloonBuilder.Build();
+                                balloon.Show(v);
+
+                                _instanceData.DirSelectHintShown = true;
+                            }
                         }
 
                         // Dig into this directory, and display it's contents
