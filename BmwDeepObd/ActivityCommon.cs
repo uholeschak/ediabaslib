@@ -2190,6 +2190,21 @@ namespace BmwDeepObd
             return balloonBuilder;
         }
 
+        public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, int resId)
+        {
+            View rootView = alertDialog.Window?.DecorView?.RootView;
+            if (rootView != null)
+            {
+                Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
+                balloonBuilder.Text = context.GetString(resId);
+                Balloon balloon = balloonBuilder.Build();
+                balloon.ShowAlignTop(rootView);
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool IsBtReliable()
         {
             if (Build.VERSION.SdkInt == BuildVersionCodes.M &&

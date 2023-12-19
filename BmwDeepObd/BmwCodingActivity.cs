@@ -1639,14 +1639,7 @@ namespace BmwDeepObd
 
             if (ActivityCommon.IsDocumentTreeSupported())
             {
-                View rootView = alertDialog.Window?.DecorView?.RootView;
-                if (rootView != null)
-                {
-                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                    balloonBuilder.Text = GetString(Resource.String.menu_hint_copy_folder);
-                    Balloon balloon = balloonBuilder.Build();
-                    balloon.ShowAlignTop(rootView);
-                }
+                ActivityCommon.ShowAlertDialogBallon(this, alertDialog, Resource.String.menu_hint_copy_folder);
             }
         }
 
