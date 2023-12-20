@@ -1325,17 +1325,18 @@ namespace BmwDeepObd
                     ContextCompat.RegisterReceiver(context, _gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport), ContextCompat.ReceiverExported);
 
                     _bcReceiver = new Receiver(this);
+                    ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand), ContextCompat.ReceiverNotExported);
+                    ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction), ContextCompat.ReceiverNotExported);
+                    ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(WifiApStateChangedAction), ContextCompat.ReceiverExported);   // hidden system broadcasts
+                    context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));   // system broadcasts
+
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(PackageNameAction));
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand));
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction));
-                    context.RegisterReceiver(_bcReceiver, new IntentFilter(WifiApStateChangedAction));
                     if (UsbSupport)
                     {   // usb handling
-                        context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));
-                        context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));
-                        context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbPermissionAction));
+                        context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));   // system broadcasts
+                        context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));   // system broadcasts
+                        ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(UsbPermissionAction),ContextCompat.ReceiverNotExported);
                         if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                         {   // attached event fails
                             _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
