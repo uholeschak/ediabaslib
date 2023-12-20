@@ -7,8 +7,7 @@ using Java.Interop;
 namespace BmwDeepObd
 {
     [Android.App.Service(
-        Name = ActivityCommon.AppNameSpace + "." + nameof(ExpansionDownloaderService),
-        ForegroundServiceType = Android.Content.PM.ForegroundService.TypeDataSync
+        Name = ActivityCommon.AppNameSpace + "." + nameof(ExpansionDownloaderService)
         )]
     public class ExpansionDownloaderService : CustomDownloaderService
     {
