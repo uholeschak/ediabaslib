@@ -8,7 +8,8 @@ namespace BmwDeepObd
 {
     [Android.App.Service(
         Label = "@string/app_name",
-        Name = ActivityCommon.AppNameSpace + "." + nameof(ForegroundService)
+        Name = ActivityCommon.AppNameSpace + "." + nameof(ForegroundService),
+        ForegroundServiceType = Android.Content.PM.ForegroundService.TypeConnectedDevice
     )]
     public class ForegroundService : Android.App.Service
     {
@@ -191,11 +192,16 @@ namespace BmwDeepObd
                     .Build();
 
                 // Enlist this instance of the service as a foreground service
-                StartForeground(ServiceRunningNotificationId, notification);
+                ServiceCompat.StartForeground(this, ServiceRunningNotificationId, notification, (int) Android.Content.PM.ForegroundService.TypeConnectedDevice);
             }
-            catch (Exception)
+#pragma warning disable CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
+            catch (Exception ex)
+#pragma warning restore CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
             {
                 // ignored
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("RegisterForegroundService exception: {0}", ex.Message));
+#endif
             }
         }
 
