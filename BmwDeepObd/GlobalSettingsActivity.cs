@@ -75,6 +75,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonAskForBtEnable;
         private RadioButton _radioButtonAlwaysEnableBt;
         private RadioButton _radioButtonNoBtHandling;
+        private TextView _textViewCaptionBtDisable;
         private CheckBox _checkBoxDisableBtAtExit;
         private RadioButton _radioButtonCommLockNone;
         private RadioButton _radioButtonCommLockCpu;
@@ -192,7 +193,11 @@ namespace BmwDeepObd
             _radioButtonAlwaysEnableBt = FindViewById<RadioButton>(Resource.Id.radioButtonAlwaysEnableBt);
             _radioButtonNoBtHandling = FindViewById<RadioButton>(Resource.Id.radioButtonNoBtHandling);
 
+            ViewStates viewStateDisableBt = Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu ? ViewStates.Visible : ViewStates.Gone;
+            _textViewCaptionBtDisable = FindViewById<TextView>(Resource.Id.textViewCaptionBtDisable);
             _checkBoxDisableBtAtExit = FindViewById<CheckBox>(Resource.Id.checkBoxDisableBtAtExit);
+            _textViewCaptionBtDisable.Visibility = viewStateDisableBt;
+            _checkBoxDisableBtAtExit.Visibility = viewStateDisableBt;
 
             _radioButtonCommLockNone = FindViewById<RadioButton>(Resource.Id.radioButtonCommLockNone);
             _radioButtonCommLockCpu = FindViewById<RadioButton>(Resource.Id.radioButtonCommLockCpu);
@@ -576,7 +581,6 @@ namespace BmwDeepObd
                     break;
             }
 
-            _checkBoxDisableBtAtExit.Enabled = Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu;
             _checkBoxDisableBtAtExit.Checked = ActivityCommon.BtDisableHandling == ActivityCommon.BtDisableType.DisableIfByApp;
 
             switch (ActivityCommon.LockTypeCommunication)
@@ -745,7 +749,14 @@ namespace BmwDeepObd
             }
             ActivityCommon.BtEnbaleHandling = enableType;
 
-            ActivityCommon.BtDisableHandling = _checkBoxDisableBtAtExit.Checked ? ActivityCommon.BtDisableType.DisableIfByApp : ActivityCommon.BtDisableType.Nothing;
+            if (_checkBoxDisableBtAtExit.Visibility == ViewStates.Visible)
+            {
+                ActivityCommon.BtDisableHandling = _checkBoxDisableBtAtExit.Checked ? ActivityCommon.BtDisableType.DisableIfByApp : ActivityCommon.BtDisableType.Nothing;
+            }
+            else
+            {
+                ActivityCommon.BtDisableHandling = ActivityCommon.BtDisableType.Nothing;
+            }
 
             ActivityCommon.LockType lockType = ActivityCommon.LockTypeCommunication;
             if (_radioButtonCommLockNone.Checked)
