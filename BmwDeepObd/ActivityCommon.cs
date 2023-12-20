@@ -1319,9 +1319,10 @@ namespace BmwDeepObd
                 {
                     // android 8 rejects global receivers, so we register it locally
                     _gbcReceiver = new GlobalBroadcastReceiver();
-                    context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmallon));
-                    context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmalloff));
-                    context.RegisterReceiver(_gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport));
+                    ContextCompat.RegisterReceiver(context, _gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmallon), ContextCompat.ReceiverExported);
+                    ContextCompat.RegisterReceiver(context, _gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmallon), ContextCompat.ReceiverExported);
+                    ContextCompat.RegisterReceiver(context, _gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MtcBtSmalloff), ContextCompat.ReceiverExported);
+                    ContextCompat.RegisterReceiver(context, _gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport), ContextCompat.ReceiverExported);
 
                     _bcReceiver = new Receiver(this);
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
