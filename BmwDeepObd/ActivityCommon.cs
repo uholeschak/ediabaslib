@@ -1325,8 +1325,8 @@ namespace BmwDeepObd
                     ContextCompat.RegisterReceiver(context, _gbcReceiver, new IntentFilter(GlobalBroadcastReceiver.MicBtReport), ContextCompat.ReceiverExported);
 
                     _bcReceiver = new Receiver(this);
-                    ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand), ContextCompat.ReceiverNotExported);
-                    ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction), ContextCompat.ReceiverNotExported);
+                    ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(ForegroundService.ActionBroadcastCommand), ContextCompat.ReceiverExported);
+                    ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(GlobalBroadcastReceiver.NotificationBroadcastAction), ContextCompat.ReceiverExported);
                     ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(WifiApStateChangedAction), ContextCompat.ReceiverExported);   // hidden system broadcasts
                     context.RegisterReceiver(_bcReceiver, new IntentFilter(BluetoothAdapter.ActionStateChanged));   // system broadcasts
 
@@ -1336,7 +1336,7 @@ namespace BmwDeepObd
                     {   // usb handling
                         context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));   // system broadcasts
                         context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceAttached));   // system broadcasts
-                        ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(UsbPermissionAction),ContextCompat.ReceiverNotExported);
+                        ContextCompat.RegisterReceiver(context, _bcReceiver, new IntentFilter(UsbPermissionAction),ContextCompat.ReceiverExported);
                         if (Build.VERSION.SdkInt < BuildVersionCodes.Kitkat)
                         {   // attached event fails
                             _usbCheckTimer = new Timer(UsbCheckEvent, null, 1000, 1000);
