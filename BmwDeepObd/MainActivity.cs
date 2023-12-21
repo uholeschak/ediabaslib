@@ -1919,14 +1919,7 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        try
-                        {
-                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md")));
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
+                        _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md");
                     });
                     return true;
 
@@ -7392,14 +7385,7 @@ namespace BmwDeepObd
 
         private void OpenDonateLink()
         {
-            try
-            {
-                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ")));
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            _activityCommon.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
         }
 
         private bool EditYandexKey()
