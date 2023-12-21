@@ -181,7 +181,7 @@ namespace EdiabasLib
                         Android.Content.IntentFilter filter = new Android.Content.IntentFilter();
                         filter.AddAction(BluetoothDevice.ActionAclConnected);
                         filter.AddAction(BluetoothDevice.ActionAclDisconnected);
-                        context.RegisterReceiver(receiver, filter);
+                        context.RegisterReceiver(receiver, filter);   // system broadcasts
                     }
 
                     _connectDeviceAddress = device.Address;
