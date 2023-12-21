@@ -2706,7 +2706,7 @@ namespace BmwDeepObd
                 try
                 {
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
-                    _context?.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
+                    _context?.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));   // system broadcasts
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
                 }
                 catch (Exception)

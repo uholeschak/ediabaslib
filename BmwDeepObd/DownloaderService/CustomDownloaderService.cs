@@ -1150,7 +1150,7 @@ namespace BmwDeepObd
                         Android.Content.IntentFilter intentFilter = new Android.Content.IntentFilter(ConnectivityManager.ConnectivityAction);
 #pragma warning restore CS0618
                         intentFilter.AddAction(WifiManager.WifiStateChangedAction);
-                        this.RegisterReceiver(this.connectionReceiver, intentFilter);
+                        this.RegisterReceiver(this.connectionReceiver, intentFilter);   // system broadcasts
                     }
                 }
                 else

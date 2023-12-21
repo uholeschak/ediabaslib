@@ -224,22 +224,22 @@ namespace BmwDeepObd
             // Register for broadcasts when a device is discovered
             _receiver = new Receiver (this);
             var filter = new IntentFilter (BluetoothDevice.ActionFound);
-            RegisterReceiver (_receiver, filter);
+            RegisterReceiver (_receiver, filter);   // system broadcasts
 
             // Register for broadcasts when a device name changed
             filter = new IntentFilter(BluetoothDevice.ActionNameChanged);
-            RegisterReceiver(_receiver, filter);
+            RegisterReceiver(_receiver, filter);   // system broadcasts
 
             // Register for broadcasts when discovery has finished
             filter = new IntentFilter (BluetoothAdapter.ActionDiscoveryFinished);
-            RegisterReceiver (_receiver, filter);
+            RegisterReceiver (_receiver, filter);   // system broadcasts
 
             // register device changes
             filter = new IntentFilter();
             filter.AddAction(BluetoothDevice.ActionAclConnected);
             filter.AddAction(BluetoothDevice.ActionAclDisconnected);
             filter.AddAction(BluetoothDevice.ActionBondStateChanged);
-            RegisterReceiver(_receiver, filter);
+            RegisterReceiver(_receiver, filter);   // system broadcasts
 
             _adapterTypeDetect = new AdapterTypeDetect(_activityCommon);
             // Get the local Bluetooth adapter
