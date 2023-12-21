@@ -3368,9 +3368,19 @@ namespace BmwDeepObd
 
         public bool StartEnetAdapterConfig(string adapterIp)
         {
+            return OpenWebUrl("http://" + adapterIp);
+        }
+
+        public bool OpenWebUrl(string url)
+        {
             try
             {
-                _context.StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"http://" + adapterIp)));
+                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(url));
+                if (intent.ResolveActivity(PackageManager) == null)
+                {
+                    return false;
+                }
+                _context.StartActivity(intent);
             }
             catch (Exception)
             {
