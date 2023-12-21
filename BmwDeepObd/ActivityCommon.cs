@@ -2072,6 +2072,7 @@ namespace BmwDeepObd
                     }
 
                     intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"market://details?id=" + packageName));
+                    intent.SetPackage("com.android.vending");
                     _context.StartActivity(intent);
                     return true;
                 }
