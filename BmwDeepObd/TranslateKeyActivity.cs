@@ -157,36 +157,15 @@ namespace BmwDeepObd
                     switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
-                            try
-                            {
-                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://translate.yandex.com/developers/keys")));
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            _activityCommon.OpenWebUrl("https://translate.yandex.com/developers/keys");
                             break;
 
                         case ActivityCommon.TranslatorType.IbmWatson:
-                            try
-                            {
-                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://cloud.ibm.com/catalog/services/language-translator")));
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            _activityCommon.OpenWebUrl("https://cloud.ibm.com/catalog/services/language-translator");
                             break;
 
                         case ActivityCommon.TranslatorType.Deepl:
-                            try
-                            {
-                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://www.deepl.com/account")));
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            _activityCommon.OpenWebUrl("https://www.deepl.com/account");
                             break;
                     }
                 });
@@ -211,36 +190,15 @@ namespace BmwDeepObd
                     switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.YandexTranslate:
-                            try
-                            {
-                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://translate.yandex.com/developers/keys")));
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            _activityCommon.OpenWebUrl("https://translate.yandex.com/developers/keys");
                             break;
 
                         case ActivityCommon.TranslatorType.IbmWatson:
-                            try
-                            {
-                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://cloud.ibm.com/resources")));
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            _activityCommon.OpenWebUrl("https://cloud.ibm.com/resources");
                             break;
 
                         case ActivityCommon.TranslatorType.Deepl:
-                            try
-                            {
-                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://www.deepl.com/de/account/summary")));
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            _activityCommon.OpenWebUrl("https://www.deepl.com/de/account/summary");
                             break;
                     }
                 });
