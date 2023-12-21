@@ -4774,6 +4774,14 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (Build.VERSION.SdkInt > BuildVersionCodes.Tiramisu)
+            {
+                if (PermissionsBluetooth.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) != Permission.Granted))
+                {
+                    return false;
+                }
+            }
+
             bool result = false;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.IceCreamSandwich)
             {
@@ -4822,6 +4830,11 @@ namespace BmwDeepObd
 
         public bool BluetoothDisableAtExit()
         {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+            {   // BluetoothDisable not supported
+                return false;
+            }
+
             bool isEmpty = BaseActivity.IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
             if (isEmpty && !BtInitiallyEnabled && BtDisableHandling == BtDisableType.DisableIfByApp &&
                 IsBluetoothEnabledByApp() && !IsBluetoothConnected() && !MtcBtService &&
