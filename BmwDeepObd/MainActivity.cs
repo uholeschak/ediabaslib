@@ -495,6 +495,7 @@ namespace BmwDeepObd
         private TabLayout _tabLayout;
         private ViewPager2 _viewPager;
         private TabsFragmentStateAdapter _fragmentStateAdapter;
+        protected View _contentView;
         private readonly ConnectButtonInfo _connectButtonInfo = new ConnectButtonInfo();
         private ImageView _imageBackground;
         private HttpClient _httpClient;
@@ -578,6 +579,7 @@ namespace BmwDeepObd
             _tabLayout.TabMode = TabLayout.ModeScrollable;
             _tabLayout.TabGravity = TabLayout.GravityStart;
             _tabLayout.Visibility = ViewStates.Gone;
+            _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.SetVmPolicy(builder.Build());
@@ -1058,7 +1060,15 @@ namespace BmwDeepObd
             {
                 _backPressed = true;
                 _lastBackPressedTime = Stopwatch.GetTimestamp();
-                Toast.MakeText(this, GetString(Resource.String.back_button_twice_for_exit), ToastLength.Short)?.Show();
+
+                View rootView = _contentView?.RootView;
+                if (rootView != null)
+                {
+                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                    balloonBuilder.Text = GetString(Resource.String.back_button_twice_for_exit);
+                    Balloon balloon = balloonBuilder.Build();
+                    balloon.Show(rootView);
+                }
             }
         }
 
