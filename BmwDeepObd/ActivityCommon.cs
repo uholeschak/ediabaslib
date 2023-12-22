@@ -2075,9 +2075,7 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"market://details?id=" + packageName));
-                    intent.SetPackage("com.android.vending");
-                    _context.StartActivity(intent);
+                    OpenPlayStoreForPackage(packageName);
                     return true;
                 }
 
@@ -2104,6 +2102,7 @@ namespace BmwDeepObd
             {
                 Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"market://details?id=" + packageName));
                 intent.SetPackage("com.android.vending");
+                intent.SetFlags(ActivityFlags.NewTask);
                 _context.StartActivity(intent);
                 return true;
             }
