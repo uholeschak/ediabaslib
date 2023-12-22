@@ -417,6 +417,11 @@ namespace BmwDeepObd
             return base.DispatchTouchEvent(ev);
         }
 
+        public virtual bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+        {
+            return false;
+        }
+
         protected override void AttachBaseContext(Context @base)
         {
             base.AttachBaseContext(SetLocale(@base, ActivityMain.GetLocaleSetting()));
@@ -796,7 +801,7 @@ namespace BmwDeepObd
             }
         }
 
-        private class GestureListener : GestureDetector.SimpleOnGestureListener
+        protected class GestureListener : GestureDetector.SimpleOnGestureListener
         {
             private const int flingMinDiff = 100;
             private const int flingMinVel = 100;
@@ -819,6 +824,11 @@ namespace BmwDeepObd
             public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
             {
                 if (_activity._activityDestroyed)
+                {
+                    return true;
+                }
+
+                if (_activity.OnFling(e1, e2, velocityX, velocityY))
                 {
                     return true;
                 }

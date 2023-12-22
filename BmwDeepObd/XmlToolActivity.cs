@@ -1541,53 +1541,47 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
-        public override bool DispatchTouchEvent(MotionEvent ev)
+        public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
         {
             if (_activityCommon == null)
             {
                 return false;
             }
 
-            switch (ev.Action)
-            {
-                case MotionEventActions.Move:
 #if USE_DRAG_LIST
-                    if (_ecuList.Count > 1)
+            if (_ecuList.Count > 1)
+            {
+                if (!_instanceData.ListMoveHintShown)
+                {
+                    int itemsCount = _ecuListAdapter.ItemsCount;
+                    if (itemsCount > 0)
                     {
-                        if (!_instanceData.ListMoveHintShown)
+                        View itemViewBalloon = null;
+                        for (int item = 0; item < itemsCount; item++)
                         {
-                            int itemsCount = _ecuListAdapter.ItemsCount;
-                            if (itemsCount > 0)
+                            DragEcuListAdapter.CustomViewHolder viewHolder = _ecuListAdapter.GetItemViewHolder(item);
+                            View itemView = viewHolder?.ItemView;
+                            if (itemView != null && itemView.IsShown)
                             {
-                                View itemViewBalloon = null;
-                                for (int item = 0; item < itemsCount; item++)
-                                {
-                                    DragEcuListAdapter.CustomViewHolder viewHolder = _ecuListAdapter.GetItemViewHolder(item);
-                                    View itemView = viewHolder?.ItemView;
-                                    if (itemView != null && itemView.IsShown)
-                                    {
-                                        itemViewBalloon = itemView;
-                                        break;
-                                    }
-                                }
-
-                                if (itemViewBalloon != null)
-                                {
-                                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                                    balloonBuilder.Text = GetString(Resource.String.xml_tool_drag_list_hint);
-                                    Balloon balloon = balloonBuilder.Build();
-                                    balloon.Show(itemViewBalloon);
-
-                                    _instanceData.ListMoveHintShown = true;
-                                }
+                                itemViewBalloon = itemView;
+                                break;
                             }
                         }
-                    }
-#endif
-                    break;
-            }
 
-            return base.DispatchTouchEvent(ev);
+                        if (itemViewBalloon != null)
+                        {
+                            Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                            balloonBuilder.Text = GetString(Resource.String.xml_tool_drag_list_hint);
+                            Balloon balloon = balloonBuilder.Build();
+                            balloon.Show(itemViewBalloon);
+
+                            _instanceData.ListMoveHintShown = true;
+                        }
+                    }
+                }
+            }
+#endif
+            return false;
         }
 
         private void FinishContinue()
