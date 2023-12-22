@@ -73,7 +73,12 @@ If the port is ommitted in the IP settings, the default port is 23 in hotspot mo
 	* _Recent configurations_: In this submenu the last 10 recently used configurations are accessible.
 	* _Edit_: Edit the current configuration main _(*.cccfg file)_. A suitable XML editor has to be be installed.
 	* _Edit pages list_: Edit the current pages list _(*.cccpages file)_.
-	* _Edit current page_: Edit the currently active page _(*.cccpage file)_.
+	* _Edit current page_: Submenu to edit the currently active page _(*.cccpage file)_.
+		* _Edit page_: Edit the currently active page in the XML editor.
+		* _Font size_: Change the page font size directly without XML editor. This is only possible if the _fontsize_ tag is present in the XML file.
+		* _Gauges landscape_: Change the number of gauges in landscape mode directly without XML editor. This is only possible if the _gauges-landscape_ tag is present in the XML file.
+		* _Gauges portrait_: Change the number of gauges in portrait mode directly without XML editor. This is only possible if the _gauges-portrait_ tag is present in the XML file.
+		* _Result display order_: Change order of the displayed results directly without XML editor. This is only possible if the _display-order_ tag is present for all _display_ nodes the XML file.
 	* _Edit other file_: Allows to select and edit any configuration _(*.cccpage file)_.
 	* _Reset XML editor_: Resets the last selected XML editor. A new editor has be to be selected again when editing files.
 	* _Close_: Close the current configuration.
