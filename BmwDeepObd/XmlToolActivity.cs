@@ -1581,7 +1581,7 @@ namespace BmwDeepObd
                 }
             }
 #endif
-            return false;
+            return base.OnFling(e1, e2, velocityX, velocityY);
         }
 
         private void FinishContinue()
