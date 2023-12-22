@@ -36,7 +36,6 @@ using Android.Content.PM;
 using Android.Content.Res;
 using Android.Locations;
 using Android.OS.Storage;
-using Android.Provider;
 using Android.Views;
 using AndroidX.Core.App;
 using BmwFileReader;
@@ -2061,6 +2060,11 @@ namespace BmwDeepObd
 
         public bool StartApp(string packageName, bool marketRedirect = false)
         {
+            if (string.IsNullOrEmpty(packageName))
+            {
+                return false;
+            }
+
             try
             {
                 Intent intent = _packageManager?.GetLaunchIntentForPackage(packageName);
@@ -2087,6 +2091,28 @@ namespace BmwDeepObd
                 // ignored
             }
             return false;
+        }
+
+        public bool OpenPlayStoreForPackage(string packageName)
+        {
+            if (string.IsNullOrEmpty(packageName))
+            {
+                return false;
+            }
+
+            try
+            {
+                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"market://details?id=" + packageName));
+                intent.SetPackage("com.android.vending");
+                _context.StartActivity(intent);
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return OpenWebUrl("https://play.google.com/store/apps/details?id=" + packageName);
         }
 
         public bool RestartAppHard(DestroyDelegate destroyDelegate)
@@ -4454,7 +4480,7 @@ namespace BmwDeepObd
         {
             try
             {
-                Intent intent = new Intent(Settings.ActionApplicationDetailsSettings,
+                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings,
                     Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
                 activity.StartActivityForResult(intent, requestCode);
                 return true;
@@ -4474,7 +4500,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Intent intent = new Intent(Settings.ActionLocationSourceSettings);
+                Intent intent = new Intent(Android.Provider.Settings.ActionLocationSourceSettings);
                     activity.StartActivityForResult(intent, requestCode);
                     return true;
             }
@@ -4495,13 +4521,13 @@ namespace BmwDeepObd
 
                 try
                 {
-                    Intent intent = new Intent(Settings.ActionManageAppAllFilesAccessPermission,
+                    Intent intent = new Intent(Android.Provider.Settings.ActionManageAppAllFilesAccessPermission,
                         Android.Net.Uri.Parse("package:" + Android.App.Application.Context.PackageName));
                     activity.StartActivityForResult(intent, requestCode);
                 }
                 catch (Exception)
                 {
-                    Intent intent = new Intent(Settings.ActionManageAllFilesAccessPermission);
+                    Intent intent = new Intent(Android.Provider.Settings.ActionManageAllFilesAccessPermission);
                     activity.StartActivityForResult(intent, requestCode);
                 }
                 return true;
@@ -4528,9 +4554,9 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    Intent intent = new Intent(Settings.ActionChannelNotificationSettings);
-                    intent.PutExtra(Settings.ExtraChannelId, channelId);
-                    intent.PutExtra(Settings.ExtraAppPackage, _activity.PackageName);
+                    Intent intent = new Intent(Android.Provider.Settings.ActionChannelNotificationSettings);
+                    intent.PutExtra(Android.Provider.Settings.ExtraChannelId, channelId);
+                    intent.PutExtra(Android.Provider.Settings.ExtraAppPackage, _activity.PackageName);
                     _activity.StartActivityForResult(intent, requestCodeChannel.Value);
                     return true;
                 }
@@ -4542,8 +4568,8 @@ namespace BmwDeepObd
 
             try
             {
-                Intent intent = new Intent(Settings.ActionAppNotificationSettings);
-                intent.PutExtra(Settings.ExtraAppPackage, _activity.PackageName);
+                Intent intent = new Intent(Android.Provider.Settings.ActionAppNotificationSettings);
+                intent.PutExtra(Android.Provider.Settings.ExtraAppPackage, _activity.PackageName);
                 _activity.StartActivityForResult(intent, requestCodeApp);
                 return true;
             }
@@ -10751,7 +10777,7 @@ namespace BmwDeepObd
 
             try
             {
-                string docId = DocumentsContract.GetTreeDocumentId(documentFile.Uri);
+                string docId = Android.Provider.DocumentsContract.GetTreeDocumentId(documentFile.Uri);
                 if (!string.IsNullOrEmpty(docId))
                 {
                     string[] parts = docId.Split(':');
@@ -10790,7 +10816,7 @@ namespace BmwDeepObd
                         {
                             if (uriPermission.Uri != null && uriPermission.IsWritePermission)
                             {
-                                string docId = DocumentsContract.GetTreeDocumentId(uriPermission.Uri);
+                                string docId = Android.Provider.DocumentsContract.GetTreeDocumentId(uriPermission.Uri);
                                 if (!string.IsNullOrEmpty(docId))
                                 {
                                     string[] parts = docId.Split(':');

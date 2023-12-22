@@ -7031,27 +7031,12 @@ namespace BmwDeepObd
                 _downloadEcuAlertDialog = new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {
-                        if (ExpansionDownloaderActivity.IsFromGooglePlay(this))
+                        if (_activityCommon == null)
                         {
-                            try
-                            {
-                                StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"market://details?id=" + PackageName)));
-                                return;
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            return;
                         }
 
-                        try
-                        {
-                            StartActivity(new Intent(Intent.ActionView, Android.Net.Uri.Parse(@"https://play.google.com/store/apps/details?id=" + PackageName)));
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
+                        _activityCommon.OpenPlayStoreForPackage(PackageName);
                     })
                     .SetNegativeButton(Resource.String.button_no, (sender, args) =>
                     {
