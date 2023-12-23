@@ -51,7 +51,7 @@
   <ItemGroup>
     <None Include="Jars\AboutJars.txt" />
     <None Include="Additions\AboutAdditions.txt" />
-    <LibraryProjectZip Include="Jars\usbSerialForAndroid-release.aar" />
+    <AndroidLibrary Include="Jars\usbSerialForAndroid-release.aar" />
   </ItemGroup>
   <ItemGroup>
     <TransformFile Include="Transforms\Metadata.xml">

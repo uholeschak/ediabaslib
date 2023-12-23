@@ -130,7 +130,7 @@
   <ItemGroup>
     <None Include="Jars\AboutJars.txt" />
     <None Include="Additions\AboutAdditions.txt" />
-    <LibraryProjectZip Include="Jars\CustomGauge-release.aar" />
+    <AndroidLibrary Include="Jars\CustomGauge-release.aar" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
