@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomGaugeAndroidBinding",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsbSerialAndroidBinding", "..\EdiabasLib\EdiabasLibAndroid\UsbSerialAndroidBinding\UsbSerialAndroidBinding.csproj", "{7CEF6D90-9475-4B2F-84D5-031859A50B4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibAndroidNet", "..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj", "{5F1B024A-E776-4CE6-99AB-71498E48C639}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{7CEF6D90-9475-4B2F-84D5-031859A50B4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CEF6D90-9475-4B2F-84D5-031859A50B4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CEF6D90-9475-4B2F-84D5-031859A50B4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
