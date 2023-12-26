@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0-android</TargetFramework>
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
@@ -13,6 +13,17 @@
     <DefineConstants>$(DefineConstants);Android</DefineConstants>
     <NoWarn>1701;1702;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8622;CS8625;CS8765;CS8767</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <AndroidJavaSource Remove="UsbSerialAndroidBinding\**" />
+    <AndroidLibrary Remove="UsbSerialAndroidBinding\**" />
+    <AndroidNativeLibrary Remove="UsbSerialAndroidBinding\**" />
+    <Compile Remove="UsbSerialAndroidBinding\**" />
+    <EmbeddedResource Remove="UsbSerialAndroidBinding\**" />
+    <JavaSourceJar Remove="UsbSerialAndroidBinding\**" />
+    <None Remove="UsbSerialAndroidBinding\**" />
+    <ProguardConfiguration Remove="UsbSerialAndroidBinding\**" />
+    <TransformFile Remove="UsbSerialAndroidBinding\**" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\EdiabasLib\BtLeGattSpp.cs" Link="BtLeGattSpp.cs" />
     <Compile Include="..\EdiabasLib\EdBluetoothInterfaceAndroid.cs" Link="EdBluetoothInterfaceAndroid.cs" />
@@ -40,6 +51,6 @@
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EdiabasLibAndroid\UsbSerialAndroidBinding\UsbSerialAndroidBinding.csproj" />
+    <ProjectReference Include="UsbSerialAndroidBinding\UsbSerialAndroidBinding.csproj" />
   </ItemGroup>
 </Project>

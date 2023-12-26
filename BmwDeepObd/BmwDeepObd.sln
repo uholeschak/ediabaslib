@@ -20,11 +20,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragListViewBinding", "..\E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DragListViewAndroidBinding", "..\EdiabasLib\EdiabasLibAndroid\DragListViewAndroidBinding\DragListViewAndroidBinding.csproj", "{C759229B-3585-4F0E-87E5-4698A9CA5234}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomGaugeAndroidBinding", "..\EdiabasLib\EdiabasLibAndroid\CustomGaugeAndroidBinding\CustomGaugeAndroidBinding.csproj", "{64CE74EA-C808-4509-8686-457FB6EFCF40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomGaugeAndroidBinding", "..\EdiabasLib\EdiabasLibAndroid\CustomGaugeAndroidBinding\CustomGaugeAndroidBinding.csproj", "{64CE74EA-C808-4509-8686-457FB6EFCF40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsbSerialAndroidBinding", "..\EdiabasLib\EdiabasLibAndroid\UsbSerialAndroidBinding\UsbSerialAndroidBinding.csproj", "{7CEF6D90-9475-4B2F-84D5-031859A50B4A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdiabasLibAndroidNet", "..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj", "{5F1B024A-E776-4CE6-99AB-71498E48C639}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibAndroidNet", "..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj", "{5F1B024A-E776-4CE6-99AB-71498E48C639}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsbSerialAndroidBinding", "..\EdiabasLib\EdiabasLibAndroidNet\UsbSerialAndroidBinding\UsbSerialAndroidBinding.csproj", "{3B4C4B7B-4DBF-4918-9D82-22E1B8B5844F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,14 +62,14 @@ Global
 		{64CE74EA-C808-4509-8686-457FB6EFCF40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64CE74EA-C808-4509-8686-457FB6EFCF40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64CE74EA-C808-4509-8686-457FB6EFCF40}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7CEF6D90-9475-4B2F-84D5-031859A50B4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7CEF6D90-9475-4B2F-84D5-031859A50B4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7CEF6D90-9475-4B2F-84D5-031859A50B4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7CEF6D90-9475-4B2F-84D5-031859A50B4A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B4C4B7B-4DBF-4918-9D82-22E1B8B5844F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B4C4B7B-4DBF-4918-9D82-22E1B8B5844F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B4C4B7B-4DBF-4918-9D82-22E1B8B5844F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B4C4B7B-4DBF-4918-9D82-22E1B8B5844F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
