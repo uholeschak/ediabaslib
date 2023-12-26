@@ -1,0 +1,130 @@
+diff --git a/CustomGauge/build.gradle b/CustomGauge/build.gradle
+index 43357d5..4a4bad7 100644
+--- a/CustomGauge/build.gradle
++++ b/CustomGauge/build.gradle
+@@ -25,11 +25,11 @@ ext {
+ }
+ 
+ android {
+-    compileSdkVersion 28
++    compileSdkVersion 33
+ 
+     defaultConfig {
+-        minSdkVersion 15
+-        targetSdkVersion 28
++        minSdkVersion 19
++        targetSdkVersion 33
+         versionCode 4
+         versionName "1.0.4"
+     }
+@@ -43,7 +43,7 @@ android {
+ 
+ dependencies {
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+-    implementation 'com.android.support:appcompat-v7:28.0.0'
++    implementation 'androidx.appcompat:appcompat:1.3.1'
+ }
+ 
+ apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+diff --git a/CustomGauge/src/main/java/pl/pawelkleczkowski/customgauge/CustomGauge.java b/CustomGauge/src/main/java/pl/pawelkleczkowski/customgauge/CustomGauge.java
+index 9913a85..e2718d6 100644
+--- a/CustomGauge/src/main/java/pl/pawelkleczkowski/customgauge/CustomGauge.java
++++ b/CustomGauge/src/main/java/pl/pawelkleczkowski/customgauge/CustomGauge.java
+@@ -7,7 +7,7 @@ import android.graphics.LinearGradient;
+ import android.graphics.Paint;
+ import android.graphics.RectF;
+ import android.graphics.Shader;
+-import android.support.v4.content.ContextCompat;
++import androidx.core.content.ContextCompat;
+ import android.text.TextUtils;
+ import android.util.AttributeSet;
+ import android.view.View;
+@@ -84,7 +84,7 @@ public class CustomGauge extends View {
+         init();
+     }
+ 
+-    private void init() {
++    public void init() {
+         //main Paint
+         mPaint = new Paint();
+         mPaint.setColor(mStrokeColor);
+diff --git a/CustomGaugeExample/build.gradle b/CustomGaugeExample/build.gradle
+index 12e72b7..c1ddabf 100644
+--- a/CustomGaugeExample/build.gradle
++++ b/CustomGaugeExample/build.gradle
+@@ -1,12 +1,12 @@
+ apply plugin: 'com.android.application'
+ 
+ android {
+-    compileSdkVersion 28
++    compileSdkVersion 33
+ 
+     defaultConfig {
+         applicationId "pl.pawelkleczkowskicustomgauge"
+-        minSdkVersion 15
+-        targetSdkVersion 28
++        minSdkVersion 19
++        targetSdkVersion 33
+         versionCode 4
+         versionName "1.0.4"
+     }
+@@ -22,5 +22,5 @@ dependencies {
+     implementation project(':CustomGauge')
+     implementation fileTree(dir: 'libs', include: ['*.jar'])
+     testImplementation 'junit:junit:4.12'
+-    implementation 'com.android.support:appcompat-v7:28.0.0'
++    implementation 'androidx.appcompat:appcompat:1.3.1'
+ }
+diff --git a/CustomGaugeExample/src/main/java/pl/pawelkleczkowski/customgaugeexample/MainActivity.java b/CustomGaugeExample/src/main/java/pl/pawelkleczkowski/customgaugeexample/MainActivity.java
+index cce6a1e..428156d 100644
+--- a/CustomGaugeExample/src/main/java/pl/pawelkleczkowski/customgaugeexample/MainActivity.java
++++ b/CustomGaugeExample/src/main/java/pl/pawelkleczkowski/customgaugeexample/MainActivity.java
+@@ -3,8 +3,8 @@ package pl.pawelkleczkowski.customgaugeexample;
+ import java.util.Locale;
+ 
+ import android.os.Bundle;
+-import android.support.v7.app.AppCompatActivity;
+-import android.support.v7.widget.Toolbar;
++import androidx.appcompat.app.AppCompatActivity;
++import androidx.appcompat.widget.Toolbar;
+ import android.view.View;
+ import android.view.View.OnClickListener;
+ import android.widget.Button;
+diff --git a/CustomGaugeExample/src/main/res/layout/activity_main.xml b/CustomGaugeExample/src/main/res/layout/activity_main.xml
+index e48d945..fc31819 100644
+--- a/CustomGaugeExample/src/main/res/layout/activity_main.xml
++++ b/CustomGaugeExample/src/main/res/layout/activity_main.xml
+@@ -5,7 +5,7 @@
+     android:layout_height="match_parent"
+     tools:context="${relativePackage}.${activityClass}" >
+ 
+-    <android.support.v7.widget.Toolbar
++    <androidx.appcompat.widget.Toolbar
+         android:id="@+id/toolbar"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+diff --git a/build.gradle b/build.gradle
+index cef47c5..8572e31 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -25,3 +25,7 @@ allprojects {
+ task clean(type: Delete) {
+     delete rootProject.buildDir
+ }
++
++allprojects {
++    tasks.withType(Javadoc).all { enabled = false }
++}
+diff --git a/gradle.properties b/gradle.properties
+index 1d3591c..acf164f 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -15,4 +15,6 @@
+ # When configured, Gradle will run in incubating parallel mode.
+ # This option should only be used with decoupled projects. More details, visit
+ # http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects
+-# org.gradle.parallel=true
+\ No newline at end of file
++# org.gradle.parallel=true
++android.enableJetifier=true
++android.useAndroidX=true
