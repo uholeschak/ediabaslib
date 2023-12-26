@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);Android</DefineConstants>
+    <NoWarn>1701;1702;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8622;CS8625;CS8765;CS8767</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);Android</DefineConstants>
+    <NoWarn>1701;1702;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8622;CS8625;CS8765;CS8767</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\EdiabasLib\BtLeGattSpp.cs" Link="BtLeGattSpp.cs" />
+    <Compile Include="..\EdiabasLib\EdBluetoothInterfaceAndroid.cs" Link="EdBluetoothInterfaceAndroid.cs" />
+    <Compile Include="..\EdiabasLib\EdCustomAdapterCommon.cs" Link="EdCustomAdapterCommon.cs" />
+    <Compile Include="..\EdiabasLib\EdCustomWiFiInterface.cs" Link="EdCustomWiFiInterface.cs" />
+    <Compile Include="..\EdiabasLib\EdElmInterface.cs" Link="EdElmInterface.cs" />
+    <Compile Include="..\EdiabasLib\EdElmWifiInterface.cs" Link="EdElmWifiInterface.cs" />
+    <Compile Include="..\EdiabasLib\EdFtdiInterfaceAndroid.cs" Link="EdFtdiInterfaceAndroid.cs" />
+    <Compile Include="..\EdiabasLib\EdiabasNet.cs" Link="EdiabasNet.cs" />
+    <Compile Include="..\EdiabasLib\EdInterfaceAds.cs" Link="EdInterfaceAds.cs" />
+    <Compile Include="..\EdiabasLib\EdInterfaceBase.cs" Link="EdInterfaceBase.cs" />
+    <Compile Include="..\EdiabasLib\EdInterfaceEdic.cs" Link="EdInterfaceEdic.cs" />
+    <Compile Include="..\EdiabasLib\EdInterfaceEnet.cs" Link="EdInterfaceEnet.cs" />
+    <Compile Include="..\EdiabasLib\EdInterfaceObd.cs" Link="EdInterfaceObd.cs" />
+    <Compile Include="..\EdiabasLib\EdOperations.cs" Link="EdOperations.cs" />
+    <Compile Include="..\EdiabasLib\EscapeStreamReader.cs" Link="EscapeStreamReader.cs" />
+    <Compile Include="..\EdiabasLib\EscapeStreamWriter.cs" Link="EscapeStreamWriter.cs" />
+    <Compile Include="..\EdiabasLib\IniFile.cs" Link="IniFile.cs" />
+    <Compile Include="..\EdiabasLib\MemoryQueueBufferStream.cs" Link="MemoryQueueBufferStream.cs" />
+    <Compile Include="..\EdiabasLib\MemoryStreamReaderAndroid.cs" Link="MemoryStreamReaderAndroid.cs" />
+    <Compile Include="..\EdiabasLib\StreamExtension.cs" Link="StreamExtension.cs" />
+    <Compile Include="..\EdiabasLib\TcpClientWithTimeout.cs" Link="TcpClientWithTimeout.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SharpZipLib" Version="1.4.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdiabasLibAndroid\UsbSerialAndroidBinding\UsbSerialAndroidBinding.csproj" />
+  </ItemGroup>
+</Project>
