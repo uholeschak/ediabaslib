@@ -14,15 +14,42 @@
     <NoWarn>1701;1702;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8622;CS8625;CS8765;CS8767</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <AndroidJavaSource Remove="CustomGaugeNetBinding\**" />
+    <AndroidJavaSource Remove="DragListViewNetBinding\**" />
     <AndroidJavaSource Remove="UsbSerialAndroidBinding\**" />
+    <AndroidJavaSource Remove="UsbSerialNetBinding\**" />
+    <AndroidLibrary Remove="CustomGaugeNetBinding\**" />
+    <AndroidLibrary Remove="DragListViewNetBinding\**" />
     <AndroidLibrary Remove="UsbSerialAndroidBinding\**" />
+    <AndroidLibrary Remove="UsbSerialNetBinding\**" />
+    <AndroidNativeLibrary Remove="CustomGaugeNetBinding\**" />
+    <AndroidNativeLibrary Remove="DragListViewNetBinding\**" />
     <AndroidNativeLibrary Remove="UsbSerialAndroidBinding\**" />
+    <AndroidNativeLibrary Remove="UsbSerialNetBinding\**" />
+    <Compile Remove="CustomGaugeNetBinding\**" />
+    <Compile Remove="DragListViewNetBinding\**" />
     <Compile Remove="UsbSerialAndroidBinding\**" />
+    <Compile Remove="UsbSerialNetBinding\**" />
+    <EmbeddedResource Remove="CustomGaugeNetBinding\**" />
+    <EmbeddedResource Remove="DragListViewNetBinding\**" />
     <EmbeddedResource Remove="UsbSerialAndroidBinding\**" />
+    <EmbeddedResource Remove="UsbSerialNetBinding\**" />
+    <JavaSourceJar Remove="CustomGaugeNetBinding\**" />
+    <JavaSourceJar Remove="DragListViewNetBinding\**" />
     <JavaSourceJar Remove="UsbSerialAndroidBinding\**" />
+    <JavaSourceJar Remove="UsbSerialNetBinding\**" />
+    <None Remove="CustomGaugeNetBinding\**" />
+    <None Remove="DragListViewNetBinding\**" />
     <None Remove="UsbSerialAndroidBinding\**" />
+    <None Remove="UsbSerialNetBinding\**" />
+    <ProguardConfiguration Remove="CustomGaugeNetBinding\**" />
+    <ProguardConfiguration Remove="DragListViewNetBinding\**" />
     <ProguardConfiguration Remove="UsbSerialAndroidBinding\**" />
+    <ProguardConfiguration Remove="UsbSerialNetBinding\**" />
+    <TransformFile Remove="CustomGaugeNetBinding\**" />
+    <TransformFile Remove="DragListViewNetBinding\**" />
     <TransformFile Remove="UsbSerialAndroidBinding\**" />
+    <TransformFile Remove="UsbSerialNetBinding\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\EdiabasLib\BtLeGattSpp.cs" Link="BtLeGattSpp.cs" />
@@ -51,6 +78,6 @@
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="UsbSerialAndroidBinding\UsbSerialAndroidBinding.csproj" />
+    <ProjectReference Include="UsbSerialNetBinding\UsbSerialNetBinding.csproj" />
   </ItemGroup>
 </Project>
