@@ -120,7 +120,9 @@ namespace EdiabasLib
                 else
                 {
 #pragma warning disable 618
+#pragma warning disable CA1422
                     bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+#pragma warning restore CA1422
 #pragma warning restore 618
                 }
 
@@ -1019,7 +1021,9 @@ namespace EdiabasLib
             else
             {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                 parcel = intent.GetParcelableExtra(name);
+#pragma warning restore CA1422
 #pragma warning restore CS0618
             }
 

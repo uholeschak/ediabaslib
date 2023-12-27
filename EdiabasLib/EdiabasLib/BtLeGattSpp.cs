@@ -128,6 +128,11 @@ namespace EdiabasLib
 
         public bool ConnectLeGattDevice(Context context, BluetoothDevice device)
         {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.M)
+            {
+                return false;
+            }
+
             try
             {
                 BtGattDisconnect();
@@ -313,8 +318,10 @@ namespace EdiabasLib
                 else
                 {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                     descriptor.SetValue(enableNotifyArray);
                     if (!_bluetoothGatt.WriteDescriptor(descriptor))
+#pragma warning restore CA1422
 #pragma warning restore CS0618
                     {
                         LogString("*** GATT SPP write config descriptor failed");
@@ -379,7 +386,9 @@ namespace EdiabasLib
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
                     {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                         data = characteristic.GetValue();
+#pragma warning restore CA1422
 #pragma warning restore CS0618
                     }
 
@@ -675,8 +684,10 @@ namespace EdiabasLib
                     else
                     {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                         _btLeGattSpp._gattCharacteristicSppWrite.SetValue(sendData);
                         if (!_btLeGattSpp._bluetoothGatt.WriteCharacteristic(_btLeGattSpp._gattCharacteristicSppWrite))
+#pragma warning restore CA1422
 #pragma warning restore CS0618
                         {
                             throw new IOException("WriteCharacteristic failed");
