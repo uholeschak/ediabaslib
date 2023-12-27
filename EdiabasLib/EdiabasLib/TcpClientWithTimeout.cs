@@ -216,6 +216,7 @@ namespace EdiabasLib
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.M)
             {
 #pragma warning disable 618
+#pragma warning disable CA1422
                 Android.Net.Network defaultNetwork = Android.Net.ConnectivityManager.ProcessDefaultNetwork;
                 try
                 {
@@ -226,6 +227,7 @@ namespace EdiabasLib
                 {
                     Android.Net.ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
                 }
+#pragma warning restore CA1422
 #pragma warning restore 618
                 return;
             }

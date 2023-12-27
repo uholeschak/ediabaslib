@@ -354,7 +354,9 @@ namespace EdiabasLib
 
             public DirectoryObserver(String rootPath)
 #pragma warning disable 618
+#pragma warning disable CA1422
                 : base(rootPath, Events)
+#pragma warning restore CA1422
 #pragma warning restore 618
             {
             }
