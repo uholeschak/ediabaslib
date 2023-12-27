@@ -158,10 +158,12 @@ namespace EdiabasLib
                     if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.S)
                     {
 #pragma warning disable 618
+#pragma warning disable CA1422
                         if (wifiManager.ConnectionInfo != null && wifiManager.DhcpInfo != null)
                         {
                             serverIp = TcpClientWithTimeout.ConvertIpAddress(wifiManager.DhcpInfo.ServerAddress);
                         }
+#pragma warning restore CA1422
 #pragma warning restore 618
                     }
                     else
