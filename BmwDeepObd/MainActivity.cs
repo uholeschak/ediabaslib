@@ -40,7 +40,6 @@ using BmwFileReader;
 using EdiabasLib;
 using Google.Android.Material.Tabs;
 using Java.Interop;
-using Mono.CSharp;
 using Skydoves.BalloonLib;
 // ReSharper disable MergeCastWithTypeCheck
 // ReSharper disable IdentifierTypo
@@ -5962,10 +5961,11 @@ namespace BmwDeepObd
                         Thread compileThread = new Thread(() =>
                         {
                             string result = string.Empty;
+#if !NET
                             StringWriter reportWriter = new StringWriter();
                             try
                             {
-                                Evaluator evaluator = new Evaluator(new CompilerContext(new CompilerSettings(), new ConsoleReportPrinter(reportWriter)));
+                                Mono.CSharp.Evaluator evaluator = new Mono.CSharp.Evaluator(new Mono.CSharp.CompilerContext(new Mono.CSharp.CompilerSettings(), new Mono.CSharp.ConsoleReportPrinter(reportWriter)));
                                 evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
                                 evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
                                 evaluator.ReferenceAssembly(typeof(View).Assembly);
@@ -6011,7 +6011,7 @@ namespace BmwDeepObd
                             {
                                 result = reportWriter.ToString();
                             }
-
+#endif
                             if (!string.IsNullOrEmpty(result))
                             {
                                 lock (compileResultList)
