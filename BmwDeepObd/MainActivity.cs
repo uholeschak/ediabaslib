@@ -5976,41 +5976,66 @@ namespace BmwDeepObd
 #if NET
                             try
                             {
-                                System.CodeDom.Compiler.CompilerParameters CompilerParams = new System.CodeDom.Compiler.CompilerParameters();
-
-                                CompilerParams.GenerateInMemory = true;
-                                CompilerParams.TreatWarningsAsErrors = false;
-                                CompilerParams.GenerateExecutable = false;
-                                CompilerParams.CompilerOptions = "/optimize";
-
-                                string[] references =
+                                Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
+                                Microsoft.CodeAnalysis.PortableExecutableReference[] references = new[]
                                 {
-                                    Path.GetFileName(Assembly.GetExecutingAssembly().GetName().Name + ".dll"),
-                                    Path.GetFileName(typeof(EdiabasNet).Assembly.GetName().Name + ".dll"),
-                                    Path.GetFileName(typeof(View).Assembly.GetName().Name + ".dll")
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ActivityMain).Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(EdiabasNet).Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(LinearLayout).Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AppCompatActivity).Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(FragmentActivity).Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ComponentActivity).Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AndroidX.Activity.ComponentActivity).Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location)
                                 };
-                                CompilerParams.ReferencedAssemblies.AddRange(references);
 
-                                Microsoft.CSharp.CSharpCodeProvider provider = new Microsoft.CSharp.CSharpCodeProvider();
-                                System.CodeDom.Compiler.CompilerResults compile = provider.CompileAssemblyFromSource(CompilerParams, classCode);
-                                if (compile.Errors.HasErrors)
+                                Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation.Create(
+                                    "UserCode",
+                                    new[] { syntaxTree },
+                                    references,
+                                    new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary));
+
+                                using (MemoryStream ms = new MemoryStream())
                                 {
-                                    StringBuilder sb = new StringBuilder();
-                                    foreach (System.CodeDom.Compiler.CompilerError ce in compile.Errors)
+                                    var emitResult = compilation.Emit(ms);
+                                    if (!emitResult.Success)
                                     {
-                                        sb.AppendLine(ce.ToString());
+                                        StringBuilder sb = new StringBuilder();
+                                        foreach (Microsoft.CodeAnalysis.Diagnostic diagnostic in emitResult.Diagnostics)
+                                        {
+                                            sb.AppendLine(diagnostic.ToString());
+                                        }
+
+                                        result = sb.ToString();
                                     }
-
-                                    result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + sb;
-                                }
-                                else
-                                {
-                                    Module module = compile.CompiledAssembly.GetModules()[0];
-                                    Type pageClassType = module?.GetType("PageClass");
-                                    MethodInfo methInfo = pageClassType?.GetMethod("ExecuteJob");
-                                    if (methInfo == null)
+                                    else
                                     {
-                                        throw new Exception("No ExecuteJob method");
+                                        ms.Seek(0, SeekOrigin.Begin);
+                                        Assembly assembly = Assembly.Load(ms.ToArray());
+                                        Type pageClassType = assembly.GetType("PageClass");
+                                        if (pageClassType == null)
+                                        {
+                                            throw new Exception("Compiling PageClass failed");
+                                        }
+
+                                        if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
+                                            ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
+                                        {
+                                            if (pageClassType.GetMethod("ExecuteJob") == null)
+                                            {
+                                                throw new Exception("No ExecuteJob method");
+                                            }
+                                        }
+
+                                        object pageClassInstance = Activator.CreateInstance(pageClassType);
+                                        if (pageClassInstance == null)
+                                        {
+                                            throw new Exception("Compiling PageClass failed");
+                                        }
+
+                                        infoLocal.ClassObject = pageClassInstance;
                                     }
                                 }
                             }
