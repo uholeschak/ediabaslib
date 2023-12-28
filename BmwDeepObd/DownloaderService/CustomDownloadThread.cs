@@ -112,14 +112,13 @@ namespace BmwDeepObd
                     Log.Debug(Tag, string.Format("DownloadThread: initiating download for: {0} at: {1}", this.downloadInfo.FileName, this.downloadInfo.Uri));
                     Uri requestUri = new Uri(state.RequestUri);
                     int minute = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
-                    HttpWebRequest request = new HttpWebRequest(requestUri)
-                        {
-                            Proxy = WebRequest.DefaultWebProxy, 
-                            UserAgent = this.UserAgent, 
-                            Timeout = minute, 
-                            ReadWriteTimeout = minute, 
-                            AllowAutoRedirect = false
-                        };
+
+                    HttpWebRequest request = WebRequest.CreateHttp(requestUri);
+                    request.Proxy = WebRequest.DefaultWebProxy;
+                    request.UserAgent = this.UserAgent;
+                    request.Timeout = minute;
+                    request.ReadWriteTimeout = minute;
+                    request.AllowAutoRedirect = false;
 
                     try
                     {
