@@ -11,7 +11,4 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>1701;1702;CS0108;CS0114;CS8618;CS8625</NoWarn>
   </PropertyGroup>
-  <ItemGroup>
-    <Folder Include="Jars\" />
-  </ItemGroup>
 </Project>
