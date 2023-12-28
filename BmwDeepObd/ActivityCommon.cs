@@ -9669,13 +9669,13 @@ namespace BmwDeepObd
             {
                 if (!string.IsNullOrEmpty(key))
                 {
-                    using (AesCryptoServiceProvider crypto = new AesCryptoServiceProvider())
+                    using (Aes crypto = Aes.Create())
                     {
                         crypto.Mode = CipherMode.CBC;
                         crypto.Padding = PaddingMode.PKCS7;
                         crypto.KeySize = 256;
 
-                        using (SHA256Managed sha256 = new SHA256Managed())
+                        using (SHA256 sha256 = SHA256.Create())
                         {
                             crypto.Key = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
                         }
