@@ -7,7 +7,6 @@ using System.Text;
 using Android.Util;
 using BmwDeepObd;
 using EdiabasLib;
-using Mono.CSharp;
 
 namespace BmwFileReader
 {
