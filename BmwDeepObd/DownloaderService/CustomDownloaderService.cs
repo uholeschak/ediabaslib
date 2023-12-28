@@ -566,7 +566,6 @@ namespace BmwDeepObd
         /// This version assumes that the intent contains the pending intent as
         /// a parameter. This is used for responding to alarms.
         /// The pending intent must be in an extra with the key 
-        /// <see cref="CustomDownloaderService#PendingIntent"/>.
         /// </summary>
         /// <param name="context">
         /// Your application Context.

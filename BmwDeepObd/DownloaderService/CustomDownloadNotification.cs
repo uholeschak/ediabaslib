@@ -128,7 +128,7 @@ namespace BmwDeepObd
 
                 return true;
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 return true;
             }
@@ -396,7 +396,7 @@ namespace BmwDeepObd
 
                 return true;
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 return false;
             }
@@ -420,7 +420,7 @@ namespace BmwDeepObd
 
                 return true;
             }
-            catch (Exception)
+            catch (System.Exception)
             {
                 return false;
             }
