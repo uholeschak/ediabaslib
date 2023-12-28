@@ -2,16 +2,16 @@
   <PropertyGroup>
     <TargetFramework>net8.0-android</TargetFramework>
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);Android</DefineConstants>
-    <NoWarn>1701;1702;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8622;CS8625;CS8765;CS8767;CA1416</NoWarn>
+    <NoWarn>1701;1702;CA1416</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>$(DefineConstants);Android</DefineConstants>
-    <NoWarn>1701;1702;CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8622;CS8625;CS8765;CS8767;CA1416</NoWarn>
+    <NoWarn>1701;1702;CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\EdiabasLib\BtLeGattSpp.cs" Link="BtLeGattSpp.cs" />
