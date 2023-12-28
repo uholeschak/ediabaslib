@@ -357,7 +357,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                using (SHA256Managed sha256 = new SHA256Managed())
+                using (SHA256 sha256 = SHA256.Create())
                 {
                     return BitConverter.ToString(sha256.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()))).Replace("-", "");
                 }
@@ -5960,16 +5960,7 @@ namespace BmwDeepObd
                         JobReader.PageInfo infoLocal = pageInfo;
                         Thread compileThread = new Thread(() =>
                         {
-                            string result = string.Empty;
-#if !NET
-                            StringWriter reportWriter = new StringWriter();
-                            try
-                            {
-                                Mono.CSharp.Evaluator evaluator = new Mono.CSharp.Evaluator(new Mono.CSharp.CompilerContext(new Mono.CSharp.CompilerSettings(), new Mono.CSharp.ConsoleReportPrinter(reportWriter)));
-                                evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
-                                evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
-                                evaluator.ReferenceAssembly(typeof(View).Assembly);
-                                string classCode = @"
+                            string classCode = @"
                                     using Android.Views;
                                     using Android.Widget;
                                     using Android.Content;
@@ -5980,6 +5971,66 @@ namespace BmwDeepObd
                                     using System.Diagnostics;
                                     using System.Threading;"
                                     + infoLocal.ClassCode;
+
+                            string result = string.Empty;
+#if NET
+                            try
+                            {
+                                System.CodeDom.Compiler.CompilerParameters CompilerParams = new System.CodeDom.Compiler.CompilerParameters();
+
+                                CompilerParams.GenerateInMemory = true;
+                                CompilerParams.TreatWarningsAsErrors = false;
+                                CompilerParams.GenerateExecutable = false;
+                                CompilerParams.CompilerOptions = "/optimize";
+
+                                string[] references =
+                                {
+                                    Path.GetFileName(Assembly.GetExecutingAssembly().GetName().Name + ".dll"),
+                                    Path.GetFileName(typeof(EdiabasNet).Assembly.GetName().Name + ".dll"),
+                                    Path.GetFileName(typeof(View).Assembly.GetName().Name + ".dll")
+                                };
+                                CompilerParams.ReferencedAssemblies.AddRange(references);
+
+                                Microsoft.CSharp.CSharpCodeProvider provider = new Microsoft.CSharp.CSharpCodeProvider();
+                                System.CodeDom.Compiler.CompilerResults compile = provider.CompileAssemblyFromSource(CompilerParams, classCode);
+                                if (compile.Errors.HasErrors)
+                                {
+                                    StringBuilder sb = new StringBuilder();
+                                    foreach (System.CodeDom.Compiler.CompilerError ce in compile.Errors)
+                                    {
+                                        sb.AppendLine(ce.ToString());
+                                    }
+
+                                    result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + sb;
+                                }
+                                else
+                                {
+                                    Module module = compile.CompiledAssembly.GetModules()[0];
+                                    Type pageClassType = module?.GetType("PageClass");
+                                    MethodInfo methInfo = pageClassType?.GetMethod("ExecuteJob");
+                                    if (methInfo == null)
+                                    {
+                                        throw new Exception("No ExecuteJob method");
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                infoLocal.ClassObject = null;
+                                if (string.IsNullOrEmpty(result))
+                                {
+                                    result = EdiabasNet.GetExceptionText(ex, false, false);
+                                }
+                                result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
+                            }
+#else
+                            StringWriter reportWriter = new StringWriter();
+                            try
+                            {
+                                Mono.CSharp.Evaluator evaluator = new Mono.CSharp.Evaluator(new Mono.CSharp.CompilerContext(new Mono.CSharp.CompilerSettings(), new Mono.CSharp.ConsoleReportPrinter(reportWriter)));
+                                evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
+                                evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
+                                evaluator.ReferenceAssembly(typeof(View).Assembly);
                                 evaluator.Compile(classCode);
                                 object classObject = evaluator.Evaluate("new PageClass()");
                                 if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
@@ -6425,14 +6476,14 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                using (AesCryptoServiceProvider crypto = new AesCryptoServiceProvider())
+                using (Aes crypto = Aes.Create())
                 {
                     crypto.Mode = CipherMode.CBC;
                     crypto.Padding = PaddingMode.PKCS7;
                     crypto.KeySize = 256;
 
                     byte[] appIdBytes = Encoding.ASCII.GetBytes(ActivityCommon.AppId.ToLowerInvariant());
-                    using (SHA256Managed sha256 = new SHA256Managed())
+                    using (SHA256 sha256 = SHA256.Create())
                     {
                         crypto.Key = sha256.ComputeHash(appIdBytes);
                     }
