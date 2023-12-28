@@ -835,11 +835,13 @@ namespace UdsFileReader
 
             //MD5 Hash aus dem String berechnen. Dazu muss der string in ein Byte[]
             //zerlegt werden. Danach muss das Resultat wieder zurück in ein string.
-            MD5 md5 = new MD5CryptoServiceProvider();
-            byte[] textToHash = Encoding.Default.GetBytes(text);
-            byte[] result = md5.ComputeHash(textToHash);
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] textToHash = Encoding.Default.GetBytes(text);
+                byte[] result = md5.ComputeHash(textToHash);
 
-            return BitConverter.ToString(result).Replace("-", "");
+                return BitConverter.ToString(result).Replace("-", "");
+            }
         }
 
         public static List<string[]> ReadFileLines(string fileName, bool codeFile = false)
