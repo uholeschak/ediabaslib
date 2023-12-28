@@ -29,6 +29,7 @@ namespace BmwDeepObd
         {
             base.OnCreate();
             AppCompatDelegate.CompatVectorFromResourcesEnabled = true;
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
         }
     }
 }
