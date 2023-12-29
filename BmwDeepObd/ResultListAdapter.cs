@@ -170,7 +170,9 @@ namespace BmwDeepObd
             if (Build.VERSION.SdkInt < BuildVersionCodes.M)
             {
 #pragma warning disable 618
+#pragma warning disable CA1422
                 textView.SetTextAppearance(_context, resId.Value);
+#pragma warning restore CA1422
 #pragma warning restore 618
             }
             else
