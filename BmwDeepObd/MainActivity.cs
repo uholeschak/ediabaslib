@@ -5978,7 +5978,7 @@ namespace BmwDeepObd
                             {
                                 Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
 
-                                Microsoft.CodeAnalysis.PortableExecutableReference[] references = new[]
+                                Microsoft.CodeAnalysis.MetadataReference[] references = new[]
                                 {
                                     Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
                                     Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ActivityMain).GetTypeInfo().Assembly.Location),
