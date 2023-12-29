@@ -5977,16 +5977,17 @@ namespace BmwDeepObd
                             try
                             {
                                 Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
+
                                 Microsoft.CodeAnalysis.PortableExecutableReference[] references = new[]
                                 {
-                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
-                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ActivityMain).Assembly.Location),
-                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(EdiabasNet).Assembly.Location),
-                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(LinearLayout).Assembly.Location),
-                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AppCompatActivity).Assembly.Location),
-                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(FragmentActivity).Assembly.Location),
-                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ComponentActivity).Assembly.Location),
-                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AndroidX.Activity.ComponentActivity).Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ActivityMain).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(EdiabasNet).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(LinearLayout).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AppCompatActivity).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(FragmentActivity).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ComponentActivity).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AndroidX.Activity.ComponentActivity).GetTypeInfo().Assembly.Location),
                                     Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location),
                                     Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location)
                                 };
@@ -6045,6 +6046,7 @@ namespace BmwDeepObd
                                 if (string.IsNullOrEmpty(result))
                                 {
                                     result = EdiabasNet.GetExceptionText(ex, false, false);
+                                    result += "\r\n" + Assembly.GetExecutingAssembly().Location;
                                 }
                                 result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
                             }
