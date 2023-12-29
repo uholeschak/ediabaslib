@@ -113,7 +113,9 @@ namespace BmwDeepObd
                     Uri requestUri = new Uri(state.RequestUri);
                     int minute = (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
+#pragma warning disable SYSLIB0014
                     HttpWebRequest request = WebRequest.CreateHttp(requestUri);
+#pragma warning restore SYSLIB0014
                     request.Proxy = WebRequest.DefaultWebProxy;
                     request.UserAgent = this.UserAgent;
                     request.Timeout = minute;

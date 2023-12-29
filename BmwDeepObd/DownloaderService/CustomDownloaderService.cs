@@ -1036,6 +1036,7 @@ namespace BmwDeepObd
         /// The ExpansionDownloader.Service.DownloaderService+NetworkState.
         /// </returns>
 #pragma warning disable CS0618
+#pragma warning disable CA1422
         private NetworkState GetNetworkState(NetworkInfo info)
         {
             NetworkState state = NetworkState.Disconnected;
@@ -1063,6 +1064,7 @@ namespace BmwDeepObd
 
             return state;
         }
+#pragma warning restore CA1422
 #pragma warning restore CS0618
 
         /// <summary>
@@ -1146,7 +1148,9 @@ namespace BmwDeepObd
                     {
                         this.connectionReceiver = new InnerBroadcastReceiver(this);
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                         Android.Content.IntentFilter intentFilter = new Android.Content.IntentFilter(ConnectivityManager.ConnectivityAction);
+#pragma warning restore CA1422
 #pragma warning restore CS0618
                         intentFilter.AddAction(WifiManager.WifiStateChangedAction);
                         this.RegisterReceiver(this.connectionReceiver, intentFilter);   // system broadcasts
@@ -1391,7 +1395,9 @@ namespace BmwDeepObd
                 else
                 {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                     NetworkInfo activeInfo = this.connectivityManager.ActiveNetworkInfo;
+#pragma warning restore CA1422
 #pragma warning restore CS0618
                     this.UpdateNetworkState(activeInfo);
                 }
@@ -1507,6 +1513,7 @@ namespace BmwDeepObd
         /// The info.
         /// </param>
 #pragma warning disable CS0618
+#pragma warning disable CA1422
         private void UpdateNetworkState(NetworkInfo info)
         {
             NetworkState tempState = this.networkState;
@@ -1531,6 +1538,7 @@ namespace BmwDeepObd
 
             CheckNetworkChange(tempState);
         }
+#pragma warning restore CA1422
 #pragma warning restore CS0618
 
         private NetworkState CheckNetworkType(NetworkType networkType)
