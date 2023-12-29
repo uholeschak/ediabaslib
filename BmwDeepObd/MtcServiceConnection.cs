@@ -291,7 +291,7 @@ namespace BmwDeepObd
 
                 if (_carManagerInst == null)
                 {
-                    _carManagerInst = _carManager.NewInstance();
+                    _carManagerInst = _carManager.GetConstructor().NewInstance();
                 }
                 if (_carManagerInst == null)
                 {
