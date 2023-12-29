@@ -13,13 +13,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);Android</DefineConstants>
-    <NoWarn>1701;1702;CA1416;CA1422;IL3000</NoWarn>
+    <NoWarn>1701;1702;CA1416;IL3000</NoWarn>
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>$(DefineConstants);Android</DefineConstants>
-    <NoWarn>1701;1702;CA1416;CA1422;IL3000</NoWarn>
+    <NoWarn>1701;1702;CA1416;IL3000</NoWarn>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidLinkTool>r8</AndroidLinkTool>
