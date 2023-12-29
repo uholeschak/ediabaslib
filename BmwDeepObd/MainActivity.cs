@@ -5960,35 +5960,85 @@ namespace BmwDeepObd
                         JobReader.PageInfo infoLocal = pageInfo;
                         Thread compileThread = new Thread(() =>
                         {
-                            StringBuilder sbClassCode = new StringBuilder();
-                            sbClassCode.AppendLine(@"
-using Android.Views;
-using Android.Widget;
-using Android.Content;
-using EdiabasLib;
-using BmwDeepObd;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;");
-                            if (infoLocal.ClassCode.TrimStart().StartsWith("class"))
-                            {
-                                sbClassCode.Append("public ");
-                            }
+                            string classCode = @"
+                                    using Android.Views;
+                                    using Android.Widget;
+                                    using Android.Content;
+                                    using EdiabasLib;
+                                    using BmwDeepObd;
+                                    using System;
+                                    using System.Collections.Generic;
+                                    using System.Diagnostics;
+                                    using System.Threading;"
+                                    + infoLocal.ClassCode;
 
-                            sbClassCode.Append(infoLocal.ClassCode);
                             string result = string.Empty;
 #if NET
                             try
                             {
-                                Westwind.Scripting.CSharpScriptExecution script = new Westwind.Scripting.CSharpScriptExecution { SaveGeneratedCode = false };
-                                script.AddLoadedReferences();
-                                dynamic compiledClass = script.CompileClass(sbClassCode.ToString());
-                                if (script.Error)
+                                Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
+
+                                Microsoft.CodeAnalysis.PortableExecutableReference[] references = new[]
                                 {
-                                    result = script.ErrorMessage;
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ActivityMain).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(EdiabasNet).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(LinearLayout).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AppCompatActivity).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(FragmentActivity).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ComponentActivity).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AndroidX.Activity.ComponentActivity).GetTypeInfo().Assembly.Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location),
+                                    Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location)
+                                };
+
+                                Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation.Create(
+                                    "UserCode",
+                                    new[] { syntaxTree },
+                                    references,
+                                    new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary));
+
+                                using (MemoryStream ms = new MemoryStream())
+                                {
+                                    var emitResult = compilation.Emit(ms);
+                                    if (!emitResult.Success)
+                                    {
+                                        StringBuilder sb = new StringBuilder();
+                                        foreach (Microsoft.CodeAnalysis.Diagnostic diagnostic in emitResult.Diagnostics)
+                                        {
+                                            sb.AppendLine(diagnostic.ToString());
+                                        }
+
+                                        result = sb.ToString();
+                                    }
+                                    else
+                                    {
+                                        ms.Seek(0, SeekOrigin.Begin);
+                                        Assembly assembly = Assembly.Load(ms.ToArray());
+                                        Type pageClassType = assembly.GetType("PageClass");
+                                        if (pageClassType == null)
+                                        {
+                                            throw new Exception("Compiling PageClass failed");
+                                        }
+
+                                        if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
+                                            ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
+                                        {
+                                            if (pageClassType.GetMethod("ExecuteJob") == null)
+                                            {
+                                                throw new Exception("No ExecuteJob method");
+                                            }
+                                        }
+
+                                        object pageClassInstance = Activator.CreateInstance(pageClassType);
+                                        if (pageClassInstance == null)
+                                        {
+                                            throw new Exception("Compiling PageClass failed");
+                                        }
+
+                                        infoLocal.ClassObject = pageClassInstance;
+                                    }
                                 }
-                                infoLocal.ClassObject = compiledClass;
                             }
                             catch (Exception ex)
                             {
@@ -6007,7 +6057,7 @@ using System.Threading;");
                                 evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
                                 evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
                                 evaluator.ReferenceAssembly(typeof(View).Assembly);
-                                evaluator.Compile(sbClassCode.ToString());
+                                evaluator.Compile(classCode);
                                 object classObject = evaluator.Evaluate("new PageClass()");
                                 if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
                                     ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
