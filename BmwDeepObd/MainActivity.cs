@@ -6046,7 +6046,6 @@ namespace BmwDeepObd
                                 if (string.IsNullOrEmpty(result))
                                 {
                                     result = EdiabasNet.GetExceptionText(ex, false, false);
-                                    result += "\r\n" + Assembly.GetExecutingAssembly().Location;
                                 }
                                 result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
                             }
