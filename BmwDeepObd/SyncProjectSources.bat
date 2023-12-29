@@ -18,5 +18,5 @@ ROBOCOPY "!SrcDir!\InternalBroadcastManager" "!DstDir!\InternalBroadcastManager"
 ROBOCOPY "!SrcDir!\Resources" "!DstDir!\Resources" /MIR
 ROBOCOPY "!SrcDir!\Scripts" "!DstDir!\Scripts" /MIR
 ROBOCOPY "!SrcDir!\Xml" "!DstDir!\Xml" /MIR
-ROBOCOPY "!SrcDir!" "!DstDir!" *.cs
+ROBOCOPY "!SrcDir!" "!DstDir!" *.cs *.cfg
 ROBOCOPY "!SrcDir!" "!DstDir!\Properties" AndroidManifest.xml
