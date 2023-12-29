@@ -706,7 +706,9 @@ namespace BmwDeepObd
                 if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
                 {
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
+#pragma warning disable CA1422
                     configuration.Locale = locale;
+#pragma warning restore CA1422
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
                 }
                 else
@@ -717,7 +719,9 @@ namespace BmwDeepObd
                 if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
                 {
 #pragma warning disable 618
+#pragma warning disable CA1422
                     resources.UpdateConfiguration(configuration, resources.DisplayMetrics);
+#pragma warning restore CA1422
 #pragma warning restore 618
                     return context;
                 }

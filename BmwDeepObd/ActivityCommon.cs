@@ -1263,7 +1263,9 @@ namespace BmwDeepObd
             else
             {
 #pragma warning disable 618
+#pragma warning disable CA1422
                 _btAdapter = BluetoothAdapter.DefaultAdapter;
+#pragma warning restore CA1422
 #pragma warning restore 618
             }
             _btUpdateHandler = new Handler(Looper.MainLooper);
@@ -2740,7 +2742,9 @@ namespace BmwDeepObd
                 try
                 {
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
+#pragma warning disable CA1422
                     _context?.RegisterReceiver(_bcReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));   // system broadcasts
+#pragma warning restore CA1422
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
                 }
                 catch (Exception)
@@ -2877,7 +2881,9 @@ namespace BmwDeepObd
                 if (Build.VERSION.SdkInt < BuildVersionCodes.M)
                 {
 #pragma warning disable 618
+#pragma warning disable CA1422
                     ConnectivityManager.SetProcessDefaultNetwork(defaultNetwork);
+#pragma warning restore CA1422
 #pragma warning restore 618
                 }
                 else
@@ -3606,6 +3612,7 @@ namespace BmwDeepObd
                 if (Build.VERSION.SdkInt < BuildVersionCodes.S)
                 {
 #pragma warning disable 618
+#pragma warning disable CA1422
                     WifiInfo wifiInfo = _maWifi.ConnectionInfo;
                     if (wifiInfo != null && _maWifi.DhcpInfo != null && wifiInfo.IpAddress != 0)
                     {
@@ -3615,6 +3622,7 @@ namespace BmwDeepObd
                         ssid = GetWifiSsid(wifiInfo);
                         return !string.IsNullOrEmpty(dhcpServerAddress);
                     }
+#pragma warning restore CA1422
 #pragma warning restore 618
                     return false;
                 }
@@ -3705,7 +3713,9 @@ namespace BmwDeepObd
                         else
                         {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                             tempSsid = scanResult.Ssid;
+#pragma warning restore CA1422
 #pragma warning restore CS0618
                         }
 
@@ -3789,7 +3799,9 @@ namespace BmwDeepObd
                     if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
                     {
 #pragma warning disable 618
+#pragma warning disable CA1422
                         _maWifi?.SetWifiEnabled(false);
+#pragma warning restore CA1422
 #pragma warning restore 618
                     }
                     else
@@ -4083,7 +4095,9 @@ namespace BmwDeepObd
                             if (_maWifi != null && !_maWifi.IsWifiEnabled)
                             {
 #pragma warning disable 618
+#pragma warning disable CA1422
                                 _maWifi.SetWifiEnabled(true);
+#pragma warning restore CA1422
 #pragma warning restore 618
                             }
                         }
@@ -4115,7 +4129,9 @@ namespace BmwDeepObd
                     if (_maWifi != null && !_maWifi.IsWifiEnabled)
                     {
 #pragma warning disable 618
+#pragma warning disable CA1422
                         _maWifi.SetWifiEnabled(true);
+#pragma warning restore CA1422
 #pragma warning restore 618
                     }
                 }
@@ -4620,7 +4636,9 @@ namespace BmwDeepObd
                             if (directEnable)
                             {
 #pragma warning disable 0618
+#pragma warning disable CA1422
                                 if (_btAdapter.Enable())
+#pragma warning restore CA1422
 #pragma warning restore 0618
                                 {
                                     _btEnableCounter = 2;
@@ -4660,7 +4678,9 @@ namespace BmwDeepObd
                             if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
                             {
 #pragma warning disable 618
+#pragma warning disable CA1422
                                 _maWifi.SetWifiEnabled(true);
+#pragma warning restore CA1422
 #pragma warning restore 618
                             }
                             else
@@ -4863,7 +4883,9 @@ namespace BmwDeepObd
             try
             {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                 return _btAdapter.Disable();
+#pragma warning restore CA1422
 #pragma warning restore CS0618
             }
             catch (Exception)
@@ -5945,7 +5967,9 @@ namespace BmwDeepObd
                 if (Build.VERSION.SdkInt < BuildVersionCodes.R)
                 {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                     return packageManager.GetInstallerPackageName(packageName);
+#pragma warning restore CA1422
 #pragma warning restore CS0618
                 }
 
@@ -6120,7 +6144,9 @@ namespace BmwDeepObd
                 {
                     PackageInfo packageInfo = GetPackageInfo(PackageInfoFlags.Signatures);
 #pragma warning disable 618
+#pragma warning disable CA1422
                     signatures = packageInfo?.Signatures?.ToArray();
+#pragma warning restore CA1422
 #pragma warning restore 618
                 }
                 if (signatures != null)
@@ -9549,7 +9575,9 @@ namespace BmwDeepObd
                 return Android.Text.Html.FromHtml(source, Android.Text.FromHtmlOptions.ModeLegacy);
             }
 #pragma warning disable 618
+#pragma warning disable CA1422
             return Android.Text.Html.FromHtml(source);
+#pragma warning restore CA1422
 #pragma warning restore 618
         }
 
@@ -11678,8 +11706,10 @@ namespace BmwDeepObd
                 {
                     case BluetoothAdapter.ActionStateChanged:
 #pragma warning disable CS0618 // Typ oder Element ist veraltet
+#pragma warning disable CA1422
                     case ConnectivityManager.ConnectivityAction:
                         _activityCommon.NetworkStateChanged();
+#pragma warning restore CA1422
 #pragma warning restore CS0618 // Typ oder Element ist veraltet
                         if (action == BluetoothAdapter.ActionStateChanged)
                         {
@@ -11864,7 +11894,9 @@ namespace BmwDeepObd
             else
             {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                 parcel = intent.GetParcelableExtra(name);
+#pragma warning restore CA1422
 #pragma warning restore CS0618
             }
 

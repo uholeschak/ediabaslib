@@ -100,7 +100,9 @@ namespace BmwDeepObd
                                 else
                                 {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                                     StopForeground(true);
+#pragma warning restore CA1422
 #pragma warning restore CS0618
                                 }
 
@@ -298,7 +300,9 @@ namespace BmwDeepObd
                         else
                         {
 #pragma warning disable CS0618
+#pragma warning disable CA1422
                             StopForeground(true);
+#pragma warning restore CA1422
 #pragma warning restore CS0618
                         }
 
