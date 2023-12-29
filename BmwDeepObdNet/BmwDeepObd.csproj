@@ -118,6 +118,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;copy /y &quot;$(ProjectDir)Xml\BmwDeepObd.xsd&quot; &quot;$(ProjectDir)Xml\E61R\&quot;&#xD;&#xA;" />
+    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;copy /y &quot;$(ProjectDir)Xml\BmwDeepObd.xsd&quot; &quot;$(ProjectDir)Xml\E61R\&quot;&#xD;&#xA;del /s &quot;$(ProjectDir)Libraries\*.dll&quot;&#xD;&#xA;xcopy /y &quot;$(ProjectDir)obj\$(Configuration)\$(TargetFramework)\android\assets\*.dll&quot; &quot;$(ProjectDir)Libraries\&quot;&#xD;&#xA;" />
   </Target>
 </Project>
