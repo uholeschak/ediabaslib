@@ -6617,6 +6617,12 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nAndroid board: {0}", Build.Board ?? string.Empty));
                     sb.Append(string.Format("\nAndroid brand: {0}", Build.Brand ?? string.Empty));
                     sb.Append(string.Format("\nAndroid hardware: {0}", Build.Hardware ?? string.Empty));
+
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                    {
+                        sb.Append(string.Format("\nAndroid Abi: {0}", Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty));
+                    }
+
                     sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo?.VersionName ?? string.Empty));
                     sb.Append(string.Format("\nApp version code: {0}",

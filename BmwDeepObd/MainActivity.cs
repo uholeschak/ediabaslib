@@ -205,6 +205,7 @@ namespace BmwDeepObd
             public int CommErrorsCount { get; set; }
             public bool AutoStart { get; set; }
             public bool AdapterCheckOk { get; set; }
+            public bool ApkAssemliesExtracted { get; set; }
             public bool VagInfoShown { get; set; }
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
@@ -5924,8 +5925,21 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.JobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
                     {
-                        string packageAssembliesPath = Path.Combine(_instanceData.AppDataPath, "PackageAssemblies");
-                        _activityCommon.ExtraktPackageAssemblies(packageAssembliesPath);
+#if NET
+                        string assembliesDir = Path.Combine(_instanceData.AppDataPath, "PackageAssemblies");
+                        if (!Directory.Exists(assembliesDir))
+                        {
+                            _instanceData.ApkAssemliesExtracted = false;
+                        }
+
+                        if (!_instanceData.ApkAssemliesExtracted)
+                        {
+                            if (_activityCommon.ExtraktPackageAssemblies(assembliesDir))
+                            {
+                                _instanceData.ApkAssemliesExtracted = true;
+                            }
+                        }
+#endif
 
                         bool progressUpdated = false;
                         List<string> compileResultList = new List<string>();
@@ -5982,23 +5996,23 @@ namespace BmwDeepObd
                                         + infoLocal.ClassCode;
 
                                 string result = string.Empty;
-    #if NET
+#if NET
                                 try
                                 {
                                     Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
 
                                     Microsoft.CodeAnalysis.MetadataReference[] references = new[]
                                     {
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location),
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ActivityMain).GetTypeInfo().Assembly.Location),
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(EdiabasNet).GetTypeInfo().Assembly.Location),
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(LinearLayout).GetTypeInfo().Assembly.Location),
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AppCompatActivity).GetTypeInfo().Assembly.Location),
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(FragmentActivity).GetTypeInfo().Assembly.Location),
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(ComponentActivity).GetTypeInfo().Assembly.Location),
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(typeof(AndroidX.Activity.ComponentActivity).GetTypeInfo().Assembly.Location),
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(Assembly.Load("System.Collections").Location),
-                                        Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location)
+                                        CreateMetadataReference(typeof(object).GetTypeInfo().Assembly, assembliesDir),
+                                        CreateMetadataReference(typeof(ActivityMain).GetTypeInfo().Assembly, assembliesDir),
+                                        CreateMetadataReference(typeof(EdiabasNet).GetTypeInfo().Assembly, assembliesDir),
+                                        CreateMetadataReference(typeof(LinearLayout).GetTypeInfo().Assembly, assembliesDir),
+                                        CreateMetadataReference(typeof(AppCompatActivity).GetTypeInfo().Assembly, assembliesDir),
+                                        CreateMetadataReference(typeof(FragmentActivity).GetTypeInfo().Assembly, assembliesDir),
+                                        CreateMetadataReference(typeof(ComponentActivity).GetTypeInfo().Assembly, assembliesDir),
+                                        CreateMetadataReference(typeof(AndroidX.Activity.ComponentActivity).GetTypeInfo().Assembly, assembliesDir),
+                                        CreateMetadataReference(Assembly.Load("System.Collections"), assembliesDir),
+                                        CreateMetadataReference(Assembly.Load("System.Runtime"), assembliesDir)
                                     };
 
                                     Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation.Create(
@@ -6058,7 +6072,7 @@ namespace BmwDeepObd
                                     }
                                     result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
                                 }
-    #else
+#else
                                 StringWriter reportWriter = new StringWriter();
                                 try
                                 {
@@ -6097,7 +6111,7 @@ namespace BmwDeepObd
                                 {
                                     result = reportWriter.ToString();
                                 }
-    #endif
+#endif
                                 if (!string.IsNullOrEmpty(result))
                                 {
                                     lock (compileResultList)
@@ -6176,6 +6190,35 @@ namespace BmwDeepObd
             });
             compileThreadWrapper.Start();
         }
+
+#if NET
+        private Microsoft.CodeAnalysis.MetadataReference CreateMetadataReference(Assembly assembly, string assembliesDir)
+        {
+            string location = assembly.Location;
+            if (!File.Exists(location))
+            {
+                string fileName = Path.GetFileName(location);
+                location = Path.Combine(assembliesDir, fileName);
+                if (!File.Exists(location))
+                {
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                    {
+                        string abi = Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty;
+                        if (!string.IsNullOrEmpty(abi))
+                        {
+                            location = Path.Combine(assembliesDir, abi, fileName);
+                            if (!File.Exists(location))
+                            {
+                                return null;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(location);
+        }
+#endif
 
         private void SelectMedia()
         {
