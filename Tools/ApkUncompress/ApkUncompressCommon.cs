@@ -16,7 +16,7 @@ public class ApkUncompressCommon
         bytePool = ArrayPool<byte>.Shared;
     }
 
-    public bool UncompressDLL(Stream inputStream, string fileName, string filePath, string prefix, string? outputPath)
+    public bool UncompressDLL(Stream inputStream, string filePath, string prefix, string? outputPath)
     {
         string outputFile = Path.Combine(prefix, filePath);
         if (!string.IsNullOrEmpty(outputPath))
@@ -25,7 +25,6 @@ public class ApkUncompressCommon
         }
         bool retVal = true;
 
-        //Console.WriteLine($"Processing {fileName}");
         //
         // LZ4 compressed assembly header format:
         //   uint magic;                 // 0x5A4C4158; 'XALZ', little-endian
@@ -48,7 +47,6 @@ public class ApkUncompressCommon
                 int decoded = LZ4Codec.Decode(sourceBytes, 0, inputLength, assemblyBytes, 0, (int)decompressedLength);
                 if (decoded != (int)decompressedLength)
                 {
-                    //Console.Error.WriteLine($"  Failed to decompress LZ4 data of {fileName} (decoded: {decoded})");
                     retVal = false;
                 }
                 else
@@ -63,15 +61,10 @@ public class ApkUncompressCommon
                         fs.Write(assemblyBytes, 0, decoded);
                         fs.Flush();
                     }
-                    //Console.WriteLine($"  uncompressed to: {outputFile}");
                 }
 
                 bytePool.Return(sourceBytes);
                 bytePool.Return(assemblyBytes);
-            }
-            else
-            {
-                //Console.WriteLine($"  assembly is not compressed");
             }
         }
 

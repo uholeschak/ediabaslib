@@ -25,7 +25,7 @@ namespace ApkUncompress
         {
             using (var fs = File.Open(filePath, FileMode.Open, FileAccess.Read))
             {
-                return apkUncompress.UncompressDLL(fs, filePath, Path.GetFileName(filePath), prefix, outputPath);
+                return apkUncompress.UncompressDLL(fs, Path.GetFileName(filePath), prefix, outputPath);
             }
         }
 
@@ -58,7 +58,7 @@ namespace ApkUncompress
 
                     stream.Seek(0, SeekOrigin.Begin);
                     string fileName = entry.Name.Substring(assembliesPath.Length);
-                    apkUncompress.UncompressDLL(stream, $"{filePath}!{entry.Name}", fileName, prefix, outputPath);
+                    apkUncompress.UncompressDLL(stream, fileName, prefix, outputPath);
                 }
             }
 
@@ -81,7 +81,7 @@ namespace ApkUncompress
                 {
                     assembly.ExtractImage(stream);
                     stream.Seek(0, SeekOrigin.Begin);
-                    apkUncompress.UncompressDLL(stream, $"{filePath}!{assemblyName}", assemblyName, prefix, outputPath);
+                    apkUncompress.UncompressDLL(stream, assemblyName, prefix, outputPath);
                 }
             }
 
