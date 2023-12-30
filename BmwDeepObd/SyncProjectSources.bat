@@ -12,8 +12,8 @@ if "%1"=="FROM_NET" (
 ) else (
   if "%1"=="TO_NET" (
     set "FromNet=0"
-    set "DstDir=!RootDir!\BmwDeepObd"
-    set "SrcDir=!RootDir!\BmwDeepObdNet"
+    set "SrcDir=!RootDir!\BmwDeepObd"
+    set "DstDir=!RootDir!\BmwDeepObdNet"
   ) else (
     echo valid modes: TO_NET, FROM_NET    
     exit /b 1
