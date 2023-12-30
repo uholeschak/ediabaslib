@@ -5924,8 +5924,8 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.JobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
                     {
-                        string apkAssembliesPath = Path.Combine(_instanceData.AppDataPath, "ApkAssemblies");
-                        _activityCommon.ExtraktApkAssemblies(apkAssembliesPath);
+                        string packageAssembliesPath = Path.Combine(_instanceData.AppDataPath, "PackageAssemblies");
+                        _activityCommon.ExtraktPackageAssemblies(packageAssembliesPath);
 
                         bool progressUpdated = false;
                         List<string> compileResultList = new List<string>();

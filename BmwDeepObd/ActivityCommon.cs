@@ -10240,52 +10240,52 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool ExtraktApkAssemblies(string outputPath)
+        public bool ExtraktPackageAssemblies(string outputPath)
         {
             try
             {
                 PackageInfo packageInfo = GetPackageInfo();
-                string apkFilePath = packageInfo.ApplicationInfo?.SourceDir;
-                if (string.IsNullOrEmpty(apkFilePath))
+                string packageFilePath = packageInfo.ApplicationInfo?.SourceDir;
+                if (string.IsNullOrEmpty(packageFilePath))
                 {
                     return false;
                 }
 
-                if (!File.Exists(apkFilePath))
+                if (!File.Exists(packageFilePath))
                 {
                     return false;
                 }
 
+                string ext = Path.GetExtension(packageFilePath);
                 if (Directory.Exists(outputPath))
                 {
                     Directory.Delete(outputPath, true);
                 }
 
+                bool result = false;
                 ApkUncompressCommon apkUncompress = new ApkUncompressCommon();
-                AssemblyStoreExplorer explorer = new AssemblyStoreExplorer(apkFilePath, keepStoreInMemory: true);
-                foreach (AssemblyStoreAssembly assembly in explorer.Assemblies)
+                if (String.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    string assemblyName = assembly.DllName;
-
-                    if (!string.IsNullOrEmpty(assembly.Store.Arch))
+                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompressCommon.AssembliesPathApk, null, outputPath))
                     {
-                        assemblyName = Path.Combine(assembly.Store.Arch, assemblyName);
-                    }
-
-                    using (MemoryStream stream = new MemoryStream())
-                    {
-                        assembly.ExtractImage(stream);
-                        stream.Seek(0, SeekOrigin.Begin);
-                        apkUncompress.UncompressDLL(stream, assemblyName, null, outputPath);
+                        result = true;
                     }
                 }
+
+                if (String.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompressCommon.AssembliesPathAab, null, outputPath))
+                    {
+                        result = true;
+                    }
+                }
+
+                return result;
             }
             catch (Exception)
             {
                 return false;
             }
-
-            return true;
         }
 
         public static Dictionary<string, int> ExtractKeyWords(string archiveFilename, string wordRegEx, int maxWords, string lineRegEx, ProgressZipDelegate progressHandler)
