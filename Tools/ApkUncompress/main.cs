@@ -74,7 +74,7 @@ namespace ApkUncompress
 
                 if (!String.IsNullOrEmpty(assembly.Store.Arch))
                 {
-                    assemblyName = $"{assembly.Store.Arch}/{assemblyName}";
+                    assemblyName = Path.Combine(assembly.Store.Arch, assemblyName);
                 }
 
                 using (var stream = new MemoryStream())
