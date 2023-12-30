@@ -13,14 +13,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);Android</DefineConstants>
-    <NoWarn>1701;1702;CA1416;IL3000</NoWarn>
+    <NoWarn>1701;1702;CA1416;CS8632;IL3000</NoWarn>
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>$(DefineConstants);Android</DefineConstants>
-    <NoWarn>1701;1702;CA1416;IL3000</NoWarn>
+    <NoWarn>1701;1702;CA1416;CS8632;IL3000</NoWarn>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidLinkTool>r8</AndroidLinkTool>
@@ -43,6 +43,14 @@
     <Compile Include="..\EdiabasLib\UdsFileReader\DataReader.cs" Link="DataReader.cs" />
     <Compile Include="..\EdiabasLib\UdsFileReader\UdsReader.cs" Link="UdsReader.cs" />
     <Compile Include="..\EdiabasLib\UdsFileReader\VehicleInfoVag.cs" Link="VehicleInfoVag.cs" />
+    <Compile Include="..\Tools\ApkUncompress\ApkUncompressCommon.cs" Link="ApkUncompressCommon.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreAssembly.cs" Link="AssemblyStoreAssembly.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreExplorer.cs" Link="AssemblyStoreExplorer.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreExplorerLogLevel.cs" Link="AssemblyStoreExplorerLogLevel.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreHashEntry.cs" Link="AssemblyStoreHashEntry.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreManifestEntry.cs" Link="AssemblyStoreManifestEntry.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreManifestReader.cs" Link="AssemblyStoreManifestReader.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreReader.cs" Link="AssemblyStoreReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Xml\BmwDeepObd.xsd" />
@@ -50,6 +58,7 @@
   <ItemGroup>
     <PackageReference Include="AndroidFlowLayout" Version="1.9.0.1" />
     <PackageReference Include="Base62-Net" Version="1.2.157201" />
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.3.6" />
     <PackageReference Include="Karamunting.Android.Skydoves.Balloon" Version="1.1.5" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.8.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
@@ -119,6 +128,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;copy /y &quot;$(ProjectDir)Xml\BmwDeepObd.xsd&quot; &quot;$(ProjectDir)Xml\E61R\&quot;&#xD;&#xA;del /s &quot;$(ProjectDir)Libraries\*.dll&quot;&#xD;&#xA;xcopy /y &quot;$(ProjectDir)obj\$(Configuration)\$(TargetFramework)\android\assets\*.dll&quot; &quot;$(ProjectDir)Libraries\&quot;&#xD;&#xA;" />
+    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;copy /y &quot;$(ProjectDir)Xml\BmwDeepObd.xsd&quot; &quot;$(ProjectDir)Xml\E61R\&quot;&#xD;&#xA;" />
   </Target>
 </Project>
