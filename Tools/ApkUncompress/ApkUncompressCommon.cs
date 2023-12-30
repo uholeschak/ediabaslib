@@ -102,6 +102,7 @@ public class ApkUncompressCommon
 
     public bool UncompressFromAPK_IndividualEntries(ZipFile apk, string filePath, string assembliesPath, string prefix, string? outputPath)
     {
+        bool result = true;
         foreach (ZipEntry entry in apk)
         {
             if (!entry.IsFile)
@@ -129,16 +130,19 @@ public class ApkUncompressCommon
 
                 stream.Seek(0, SeekOrigin.Begin);
                 string fileName = entry.Name.Substring(assembliesPath.Length);
-                UncompressDLL(stream, fileName, prefix, outputPath);
+                if (!UncompressDLL(stream, fileName, prefix, outputPath))
+                {
+                    result = false;
+                }
             }
         }
 
-        return true;
+        return result;
     }
 
     public bool UncompressFromAPK_AssemblyStores(string filePath, string prefix, string? outputPath)
     {
-        var explorer = new AssemblyStoreExplorer(filePath, keepStoreInMemory: true);
+        AssemblyStoreExplorer explorer = new AssemblyStoreExplorer(filePath, keepStoreInMemory: true);
         foreach (AssemblyStoreAssembly assembly in explorer.Assemblies)
         {
             string assemblyName = assembly.DllName;
