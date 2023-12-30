@@ -5939,8 +5939,19 @@ namespace BmwDeepObd
                                 _instanceData.ApkAssemliesExtracted = true;
                             }
                         }
-#endif
 
+                        Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = new List<Microsoft.CodeAnalysis.MetadataReference>();
+
+                        foreach (Assembly loadedAssembly in loadedAssemblies)
+                        {
+                            Microsoft.CodeAnalysis.MetadataReference reference = CreateMetadataReference(loadedAssembly, assembliesDir);
+                            if (reference != null)
+                            {
+                                referencesList.Add(reference);
+                            }
+                        }
+#endif
                         bool progressUpdated = false;
                         List<string> compileResultList = new List<string>();
                         List<Thread> threadList = new List<Thread>();
@@ -6000,25 +6011,10 @@ namespace BmwDeepObd
                                 try
                                 {
                                     Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
-
-                                    Microsoft.CodeAnalysis.MetadataReference[] references = new[]
-                                    {
-                                        CreateMetadataReference(typeof(object).GetTypeInfo().Assembly, assembliesDir),
-                                        CreateMetadataReference(typeof(ActivityMain).GetTypeInfo().Assembly, assembliesDir),
-                                        CreateMetadataReference(typeof(EdiabasNet).GetTypeInfo().Assembly, assembliesDir),
-                                        CreateMetadataReference(typeof(LinearLayout).GetTypeInfo().Assembly, assembliesDir),
-                                        CreateMetadataReference(typeof(AppCompatActivity).GetTypeInfo().Assembly, assembliesDir),
-                                        CreateMetadataReference(typeof(FragmentActivity).GetTypeInfo().Assembly, assembliesDir),
-                                        CreateMetadataReference(typeof(ComponentActivity).GetTypeInfo().Assembly, assembliesDir),
-                                        CreateMetadataReference(typeof(AndroidX.Activity.ComponentActivity).GetTypeInfo().Assembly, assembliesDir),
-                                        CreateMetadataReference(Assembly.Load("System.Collections"), assembliesDir),
-                                        CreateMetadataReference(Assembly.Load("System.Runtime"), assembliesDir)
-                                    };
-
                                     Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation.Create(
                                         "UserCode",
                                         new[] { syntaxTree },
-                                        references,
+                                        referencesList,
                                         new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary));
 
                                     using (MemoryStream ms = new MemoryStream())
@@ -6195,6 +6191,11 @@ namespace BmwDeepObd
         private Microsoft.CodeAnalysis.MetadataReference CreateMetadataReference(Assembly assembly, string assembliesDir)
         {
             string location = assembly.Location;
+            if (string.IsNullOrEmpty(location))
+            {
+                return null;
+            }
+
             if (!File.Exists(location))
             {
                 string fileName = Path.GetFileName(location);
