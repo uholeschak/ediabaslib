@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-using Xamarin.Android.Tools.DecompressAssemblies;
 
 namespace Xamarin.Android.AssemblyStore
 {
@@ -105,7 +104,7 @@ namespace Xamarin.Android.AssemblyStore
 
 		void DefaultLogger (AssemblyStoreExplorerLogLevel level, string message)
 		{
-			Console.WriteLine ($"{level}: {message}");
+			//Console.WriteLine ($"{level}: {message}");
 		}
 
 		void ProcessStores ()

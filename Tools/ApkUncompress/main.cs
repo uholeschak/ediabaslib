@@ -6,90 +6,26 @@ using System.Buffers;
 using System.IO;
 using Xamarin.Android.AssemblyStore;
 
-namespace Xamarin.Android.Tools.DecompressAssemblies
+namespace ApkUncompress
 {
     internal class App
     {
-        const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
-
-        static readonly ArrayPool<byte> bytePool = ArrayPool<byte>.Shared;
+        static ApkUncompressCommon apkUncompress = new ApkUncompressCommon();
 
         static int Usage()
         {
             Console.WriteLine("Usage: decompress-assemblies {file.{dll,apk,aab}} [{file.{dll,apk,aab} ...]");
             Console.WriteLine();
-            Console.WriteLine("DLL files passed on command line are uncompressed to the current directory with the `uncompressed-` prefix added to their name.");
-            Console.WriteLine("DLL files from AAB/APK archives are uncompressed to a subdirectory of the current directory named after the archive with extension removed");
+            Console.WriteLine("DLL files passed on command line are uncompressed to the file directory with the `uncompressed-` prefix added to their name.");
+            Console.WriteLine("DLL files from AAB/APK archives are uncompressed to a subdirectory of the file directory named after the archive with extension removed");
             return 1;
-        }
-
-        static bool UncompressDLL(Stream inputStream, string fileName, string filePath, string prefix, string? outputPath)
-        {
-            string outputFile = Path.Combine(prefix, filePath);
-            if (!string.IsNullOrEmpty(outputPath))
-            {
-                outputFile = Path.Combine(outputPath, outputFile);
-            }
-            bool retVal = true;
-
-            Console.WriteLine($"Processing {fileName}");
-            //
-            // LZ4 compressed assembly header format:
-            //   uint magic;                 // 0x5A4C4158; 'XALZ', little-endian
-            //   uint descriptor_index;      // Index into an internal assembly descriptor table
-            //   uint uncompressed_length;   // Size of assembly, uncompressed
-            //
-            using (var reader = new BinaryReader(inputStream))
-            {
-                uint magic = reader.ReadUInt32();
-                if (magic == CompressedDataMagic)
-                {
-                    reader.ReadUInt32(); // descriptor index, ignore
-                    uint decompressedLength = reader.ReadUInt32();
-
-                    int inputLength = (int)(inputStream.Length - 12);
-                    byte[] sourceBytes = bytePool.Rent(inputLength);
-                    reader.Read(sourceBytes, 0, inputLength);
-
-                    byte[] assemblyBytes = bytePool.Rent((int)decompressedLength);
-                    int decoded = LZ4Codec.Decode(sourceBytes, 0, inputLength, assemblyBytes, 0, (int)decompressedLength);
-                    if (decoded != (int)decompressedLength)
-                    {
-                        Console.Error.WriteLine($"  Failed to decompress LZ4 data of {fileName} (decoded: {decoded})");
-                        retVal = false;
-                    }
-                    else
-                    {
-                        string? outputDir = Path.GetDirectoryName(outputFile);
-                        if (!String.IsNullOrEmpty(outputDir))
-                        {
-                            Directory.CreateDirectory(outputDir);
-                        }
-                        using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
-                        {
-                            fs.Write(assemblyBytes, 0, decoded);
-                            fs.Flush();
-                        }
-                        Console.WriteLine($"  uncompressed to: {outputFile}");
-                    }
-
-                    bytePool.Return(sourceBytes);
-                    bytePool.Return(assemblyBytes);
-                }
-                else
-                {
-                    Console.WriteLine($"  assembly is not compressed");
-                }
-            }
-
-            return retVal;
         }
 
         static bool UncompressDLL(string filePath, string prefix, string? outputPath)
         {
             using (var fs = File.Open(filePath, FileMode.Open, FileAccess.Read))
             {
-                return UncompressDLL(fs, filePath, Path.GetFileName(filePath), prefix, outputPath);
+                return apkUncompress.UncompressDLL(fs, filePath, Path.GetFileName(filePath), prefix, outputPath);
             }
         }
 
@@ -122,7 +58,7 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
 
                     stream.Seek(0, SeekOrigin.Begin);
                     string fileName = entry.Name.Substring(assembliesPath.Length);
-                    UncompressDLL(stream, $"{filePath}!{entry.Name}", fileName, prefix, outputPath);
+                    apkUncompress.UncompressDLL(stream, $"{filePath}!{entry.Name}", fileName, prefix, outputPath);
                 }
             }
 
@@ -145,7 +81,7 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
                 {
                     assembly.ExtractImage(stream);
                     stream.Seek(0, SeekOrigin.Begin);
-                    UncompressDLL(stream, $"{filePath}!{assemblyName}", assemblyName, prefix, outputPath);
+                    apkUncompress.UncompressDLL(stream, $"{filePath}!{assemblyName}", assemblyName, prefix, outputPath);
                 }
             }
 
@@ -221,8 +157,11 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
                 {
                     if (!UncompressDLL(file, "uncompressed-", outputPath))
                     {
+                        Console.WriteLine("Uncompress failed: {0}", file);
                         haveErrors = true;
                     }
+
+                    Console.WriteLine("Uncompressed: {0}", file);
                     continue;
                 }
 
@@ -230,8 +169,11 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
                 {
                     if (!UncompressFromAPK(file, "assemblies/", outputPath))
                     {
+                        Console.WriteLine("Uncompress failed: {0}", file);
                         haveErrors = true;
                     }
+
+                    Console.WriteLine("Uncompressed: {0}", file);
                     continue;
                 }
 
@@ -239,8 +181,11 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
                 {
                     if (!UncompressFromAPK(file, "base/root/assemblies/", outputPath))
                     {
+                        Console.WriteLine("Uncompress failed: {0}", file);
                         haveErrors = true;
                     }
+
+                    Console.WriteLine("Uncompressed: {0}", file);
                     continue;
                 }
             }
