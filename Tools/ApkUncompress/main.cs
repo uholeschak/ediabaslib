@@ -23,9 +23,13 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
             return 1;
         }
 
-        static bool UncompressDLL(Stream inputStream, string fileName, string filePath, string prefix)
+        static bool UncompressDLL(Stream inputStream, string fileName, string filePath, string prefix, string? outputPath)
         {
             string outputFile = $"{prefix}{filePath}";
+            if (!string.IsNullOrEmpty(outputPath))
+            {
+                outputFile = Path.Combine(outputPath, outputFile);
+            }
             bool retVal = true;
 
             Console.WriteLine($"Processing {fileName}");
@@ -56,7 +60,7 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
                     }
                     else
                     {
-                        string outputDir = Path.GetDirectoryName(outputFile);
+                        string? outputDir = Path.GetDirectoryName(outputFile);
                         if (!String.IsNullOrEmpty(outputDir))
                         {
                             Directory.CreateDirectory(outputDir);
@@ -81,15 +85,15 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
             return retVal;
         }
 
-        static bool UncompressDLL(string filePath, string prefix)
+        static bool UncompressDLL(string filePath, string prefix, string? outputPath)
         {
             using (var fs = File.Open(filePath, FileMode.Open, FileAccess.Read))
             {
-                return UncompressDLL(fs, filePath, Path.GetFileName(filePath), prefix);
+                return UncompressDLL(fs, filePath, Path.GetFileName(filePath), prefix, outputPath);
             }
         }
 
-        static bool UncompressFromAPK_IndividualEntries(ZipFile apk, string filePath, string assembliesPath, string prefix)
+        static bool UncompressFromAPK_IndividualEntries(ZipFile apk, string filePath, string assembliesPath, string prefix, string? outputPath)
         {
             foreach (ZipEntry entry in apk)
             {
@@ -118,14 +122,14 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
 
                     stream.Seek(0, SeekOrigin.Begin);
                     string fileName = entry.Name.Substring(assembliesPath.Length);
-                    UncompressDLL(stream, $"{filePath}!{entry.Name}", fileName, prefix);
+                    UncompressDLL(stream, $"{filePath}!{entry.Name}", fileName, prefix, outputPath);
                 }
             }
 
             return true;
         }
 
-        static bool UncompressFromAPK_AssemblyStores(string filePath, string prefix)
+        static bool UncompressFromAPK_AssemblyStores(string filePath, string prefix, string? outputPath)
         {
             var explorer = new AssemblyStoreExplorer(filePath, keepStoreInMemory: true);
             foreach (AssemblyStoreAssembly assembly in explorer.Assemblies)
@@ -141,14 +145,14 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
                 {
                     assembly.ExtractImage(stream);
                     stream.Seek(0, SeekOrigin.Begin);
-                    UncompressDLL(stream, $"{filePath}!{assemblyName}", assemblyName, prefix);
+                    UncompressDLL(stream, $"{filePath}!{assemblyName}", assemblyName, prefix, outputPath);
                 }
             }
 
             return true;
         }
 
-        static bool UncompressFromAPK(string filePath, string assembliesPath)
+        static bool UncompressFromAPK(string filePath, string assembliesPath, string? outputPath)
         {
             string prefix = $"uncompressed-{Path.GetFileNameWithoutExtension(filePath)}{Path.DirectorySeparatorChar}";
             string blobName = $"{assembliesPath}assemblies.blob";
@@ -156,7 +160,7 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
             try
             {
                 bool blobFound = false;
-                ZipFile zf = null;
+                ZipFile? zf = null;
                 try
                 {
                     FileStream fs = File.OpenRead(filePath);
@@ -185,10 +189,10 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
 
                 if (!blobFound)
                 {
-                    return UncompressFromAPK_IndividualEntries(zf, filePath, assembliesPath, prefix);
+                    return UncompressFromAPK_IndividualEntries(zf, filePath, assembliesPath, prefix, outputPath);
                 }
 
-                return UncompressFromAPK_AssemblyStores(filePath, prefix);
+                return UncompressFromAPK_AssemblyStores(filePath, prefix, outputPath);
             }
             catch (Exception)
             {
@@ -207,9 +211,15 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
             foreach (string file in args)
             {
                 string ext = Path.GetExtension(file);
+                string fullPath = Path.GetFullPath(file);
+                if (string.IsNullOrEmpty(fullPath))
+                {
+                    continue;
+                }
+                string? outputPath = Path.GetDirectoryName(fullPath);
                 if (String.Compare(".dll", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    if (!UncompressDLL(file, "uncompressed-"))
+                    if (!UncompressDLL(file, "uncompressed-", outputPath))
                     {
                         haveErrors = true;
                     }
@@ -218,7 +228,7 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
 
                 if (String.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    if (!UncompressFromAPK(file, "assemblies/"))
+                    if (!UncompressFromAPK(file, "assemblies/", outputPath))
                     {
                         haveErrors = true;
                     }
@@ -227,7 +237,7 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
 
                 if (String.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    if (!UncompressFromAPK(file, "base/root/assemblies/"))
+                    if (!UncompressFromAPK(file, "base/root/assemblies/", outputPath))
                     {
                         haveErrors = true;
                     }

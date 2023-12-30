@@ -206,7 +206,7 @@ namespace Xamarin.Android.AssemblyStore
 
 			basePathInArchive = $"{basePathInArchive}/{baseName}.";
 
-            ZipFile zf = null;
+            ZipFile? zf = null;
             try
             {
                 FileStream fs = File.OpenRead(archivePath);
