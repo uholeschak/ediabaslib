@@ -2,7 +2,7 @@
   "profiles": {
     "ApkUncompress": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\de.holeschak.bmw_deep_obd.apk"
+      "commandLineArgs": "D:\\base.apk"
     }
   }
 }

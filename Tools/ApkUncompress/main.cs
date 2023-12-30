@@ -95,10 +95,10 @@ namespace ApkUncompress
 
             try
             {
-                bool blobFound = false;
                 ZipFile? zf = null;
                 try
                 {
+                    bool blobFound = false;
                     FileStream fs = File.OpenRead(filePath);
                     zf = new ZipFile(fs);
                     foreach (ZipEntry zipEntry in zf)
@@ -107,11 +107,17 @@ namespace ApkUncompress
                         {
                             continue; // Ignore directories
                         }
+
                         if (string.Compare(zipEntry.Name, blobName, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             blobFound = true;
                             break;
                         }
+                    }
+
+                    if (!blobFound)
+                    {
+                        return UncompressFromAPK_IndividualEntries(zf, filePath, assembliesPath, prefix, outputPath);
                     }
                 }
                 finally
@@ -121,11 +127,6 @@ namespace ApkUncompress
                         zf.IsStreamOwner = true; // Makes close also shut the underlying stream
                         zf.Close(); // Ensure we release resources
                     }
-                }
-
-                if (!blobFound)
-                {
-                    return UncompressFromAPK_IndividualEntries(zf, filePath, assembliesPath, prefix, outputPath);
                 }
 
                 return UncompressFromAPK_AssemblyStores(filePath, prefix, outputPath);
