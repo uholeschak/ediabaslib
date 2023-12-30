@@ -2,6 +2,8 @@
 using System.IO;
 using System;
 using System.Buffers;
+using System.Text;
+using ICSharpCode.SharpZipLib.Core;
 
 namespace ApkUncompress;
 
@@ -30,13 +32,19 @@ public class ApkUncompressCommon
         }
         bool retVal = true;
 
+        string? outputDir = Path.GetDirectoryName(outputFile);
+        if (!string.IsNullOrEmpty(outputDir))
+        {
+            Directory.CreateDirectory(outputDir);
+        }
+
         //
         // LZ4 compressed assembly header format:
         //   uint magic;                 // 0x5A4C4158; 'XALZ', little-endian
         //   uint descriptor_index;      // Index into an internal assembly descriptor table
         //   uint uncompressed_length;   // Size of assembly, uncompressed
         //
-        using (var reader = new BinaryReader(inputStream))
+        using (BinaryReader reader = new BinaryReader(inputStream, new UTF8Encoding(), true))
         {
             uint magic = reader.ReadUInt32();
             if (magic == CompressedDataMagic)
@@ -56,11 +64,6 @@ public class ApkUncompressCommon
                 }
                 else
                 {
-                    string? outputDir = Path.GetDirectoryName(outputFile);
-                    if (!string.IsNullOrEmpty(outputDir))
-                    {
-                        Directory.CreateDirectory(outputDir);
-                    }
                     using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
                     {
                         fs.Write(assemblyBytes, 0, decoded);
@@ -70,7 +73,16 @@ public class ApkUncompressCommon
 
                 bytePool.Return(sourceBytes);
                 bytePool.Return(assemblyBytes);
+
+                return retVal;
             }
+        }
+
+        using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
+        {
+            byte[] buffer = new byte[4096]; // 4K is optimum
+            inputStream.Seek(0, SeekOrigin.Begin);
+            StreamUtils.Copy(inputStream, fs, buffer);
         }
 
         return retVal;
