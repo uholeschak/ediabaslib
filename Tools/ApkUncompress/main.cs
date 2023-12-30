@@ -49,7 +49,7 @@ namespace ApkUncompress
 
                 if (String.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    if (!apkUncompress.UncompressFromAPK(file, "assemblies/", prefix, outputPath))
+                    if (!apkUncompress.UncompressFromAPK(file, ApkUncompressCommon.AssembliesPathApk, prefix, outputPath))
                     {
                         Console.WriteLine("Uncompress failed: {0}", file);
                         haveErrors = true;
@@ -61,7 +61,7 @@ namespace ApkUncompress
 
                 if (String.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    if (!apkUncompress.UncompressFromAPK(file, "base/root/assemblies/", prefix, outputPath))
+                    if (!apkUncompress.UncompressFromAPK(file, ApkUncompressCommon.AssembliesPathAab, prefix, outputPath))
                     {
                         Console.WriteLine("Uncompress failed: {0}", file);
                         haveErrors = true;

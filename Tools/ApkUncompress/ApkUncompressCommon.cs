@@ -11,9 +11,11 @@ namespace ApkUncompress;
 
 public class ApkUncompressCommon
 {
-    const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
+    public const string AssembliesPathApk = "assemblies/";
+    public const string AssembliesPathAab = "base/root/assemblies/";
 
-    readonly ArrayPool<byte> bytePool;
+    private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
+    private readonly ArrayPool<byte> bytePool;
 
     public ApkUncompressCommon()
     {
