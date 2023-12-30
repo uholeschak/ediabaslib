@@ -25,7 +25,7 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
 
         static bool UncompressDLL(Stream inputStream, string fileName, string filePath, string prefix, string? outputPath)
         {
-            string outputFile = $"{prefix}{filePath}";
+            string outputFile = Path.Combine(prefix, filePath);
             if (!string.IsNullOrEmpty(outputPath))
             {
                 outputFile = Path.Combine(outputPath, outputFile);
@@ -154,7 +154,7 @@ namespace Xamarin.Android.Tools.DecompressAssemblies
 
         static bool UncompressFromAPK(string filePath, string assembliesPath, string? outputPath)
         {
-            string prefix = $"uncompressed-{Path.GetFileNameWithoutExtension(filePath)}{Path.DirectorySeparatorChar}";
+            string prefix = $"uncompressed-{Path.GetFileNameWithoutExtension(filePath)}";
             string blobName = $"{assembliesPath}assemblies.blob";
 
             try
