@@ -47,6 +47,8 @@ using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.Dialogs;
 using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
+using ApkUncompress;
+using Xamarin.Android.AssemblyStore;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -10236,6 +10238,54 @@ namespace BmwDeepObd
                 return false;
             }
             return true;
+        }
+
+        public bool ExtraktPackageAssemblies(string outputPath)
+        {
+            try
+            {
+                PackageInfo packageInfo = GetPackageInfo();
+                string packageFilePath = packageInfo.ApplicationInfo?.SourceDir;
+                if (string.IsNullOrEmpty(packageFilePath))
+                {
+                    return false;
+                }
+
+                if (!File.Exists(packageFilePath))
+                {
+                    return false;
+                }
+
+                string ext = Path.GetExtension(packageFilePath);
+                if (Directory.Exists(outputPath))
+                {
+                    Directory.Delete(outputPath, true);
+                }
+
+                bool result = false;
+                ApkUncompressCommon apkUncompress = new ApkUncompressCommon();
+                if (String.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompressCommon.AssembliesPathApk, null, outputPath))
+                    {
+                        result = true;
+                    }
+                }
+
+                if (String.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompressCommon.AssembliesPathAab, null, outputPath))
+                    {
+                        result = true;
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static Dictionary<string, int> ExtractKeyWords(string archiveFilename, string wordRegEx, int maxWords, string lineRegEx, ProgressZipDelegate progressHandler)
