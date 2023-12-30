@@ -47,6 +47,8 @@ using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.Dialogs;
 using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
+using ApkUncompress;
+using Xamarin.Android.AssemblyStore;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -10235,6 +10237,54 @@ namespace BmwDeepObd
             {
                 return false;
             }
+            return true;
+        }
+
+        public bool ExtraktApkAssemblies(string outputPath)
+        {
+            try
+            {
+                PackageInfo packageInfo = GetPackageInfo();
+                string apkFilePath = packageInfo.ApplicationInfo?.SourceDir;
+                if (string.IsNullOrEmpty(apkFilePath))
+                {
+                    return false;
+                }
+
+                if (!File.Exists(apkFilePath))
+                {
+                    return false;
+                }
+
+                if (Directory.Exists(outputPath))
+                {
+                    Directory.Delete(outputPath, true);
+                }
+
+                ApkUncompressCommon apkUncompress = new ApkUncompressCommon();
+                AssemblyStoreExplorer explorer = new AssemblyStoreExplorer(apkFilePath, keepStoreInMemory: true);
+                foreach (AssemblyStoreAssembly assembly in explorer.Assemblies)
+                {
+                    string assemblyName = assembly.DllName;
+
+                    if (!string.IsNullOrEmpty(assembly.Store.Arch))
+                    {
+                        assemblyName = Path.Combine(assembly.Store.Arch, assemblyName);
+                    }
+
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        assembly.ExtractImage(stream);
+                        stream.Seek(0, SeekOrigin.Begin);
+                        apkUncompress.UncompressDLL(stream, assemblyName, null, outputPath);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
             return true;
         }
 
