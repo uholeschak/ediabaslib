@@ -18,7 +18,12 @@ public class ApkUncompressCommon
 
     public bool UncompressDLL(Stream inputStream, string filePath, string prefix, string? outputPath)
     {
-        string outputFile = Path.Combine(prefix, filePath);
+        string outputFile = filePath;
+        if (!string.IsNullOrEmpty(prefix))
+        {
+            outputFile = Path.Combine(prefix, outputFile);
+        }
+
         if (!string.IsNullOrEmpty(outputPath))
         {
             outputFile = Path.Combine(outputPath, outputFile);
@@ -52,7 +57,7 @@ public class ApkUncompressCommon
                 else
                 {
                     string? outputDir = Path.GetDirectoryName(outputFile);
-                    if (!String.IsNullOrEmpty(outputDir))
+                    if (!string.IsNullOrEmpty(outputDir))
                     {
                         Directory.CreateDirectory(outputDir);
                     }
