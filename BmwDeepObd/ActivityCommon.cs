@@ -6620,7 +6620,7 @@ namespace BmwDeepObd
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                     {
-                        sb.Append(string.Format("\nAndroid Abi: {0}", Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty));
+                        sb.Append(string.Format("\nAndroid abi: {0}", Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty));
                     }
 
                     sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
