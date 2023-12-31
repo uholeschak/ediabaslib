@@ -27,10 +27,8 @@
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
   </PropertyGroup>
   <ItemGroup>
-    <TrimmerRootAssembly Include="BmwDeepObd" RootMode="all" />
-    <TrimmerRootAssembly Include="Mono.Android" RootMode="all" />
-    <TrimmerRootAssembly Include="Mono.Android.Export" RootMode="all" />
-    <TrimmerRootAssembly Include="Mono.Android.Runtime" RootMode="all" />
+    <TrimmerRootAssembly Include="Mono.Android" RootMode="visible" />
+    <TrimmerRootAssembly Include="Xamarin.AndroidX.Core" RootMode="visible" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Xml\BmwDeepObd.xsd" />
