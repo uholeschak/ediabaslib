@@ -205,17 +205,16 @@ namespace BmwDeepObd
             public int CommErrorsCount { get; set; }
             public bool AutoStart { get; set; }
             public bool AdapterCheckOk { get; set; }
-            public bool ApkAssemliesExtracted { get; set; }
             public bool VagInfoShown { get; set; }
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
             public string TraceBackupDir { get; set; }
+            public string PackageAssembliesDir { get; set; }
             public bool UpdateAvailable { get; set; }
             public int UpdateVersionCode { get; set; }
             public string UpdateMessage { get; set; }
             public long UpdateCheckTime { get; set; }
             public int UpdateSkipVersion { get; set; }
-            public long TransLoginTimeNext { get; set; }
             public string XmlEditorPackageName { get; set; }
             public string XmlEditorClassName { get; set; }
 
@@ -256,6 +255,7 @@ namespace BmwDeepObd
                 UpdateCheckTime = DateTime.MinValue.Ticks;
                 UpdateSkipVersion = -1;
                 TransLoginTimeNext = DateTime.MinValue.Ticks;
+                LastPackageExtractTime = string.Empty;
                 LastVersionCode = -1;
                 StorageRequirementsAccepted = false;
                 XmlEditorPackageName = string.Empty;
@@ -376,6 +376,7 @@ namespace BmwDeepObd
             [XmlElement("UpdateCheckTime")] public long UpdateCheckTime { get; set; }
             [XmlElement("UpdateSkipVersion")] public int UpdateSkipVersion { get; set; }
             [XmlElement("TransLoginTimeNext")] public long TransLoginTimeNext { get; set; }
+            [XmlElement("TransLoginTimeNext")] public string LastPackageExtractTime { get; set; }
             [XmlElement("VersionCode")] public long LastVersionCode { get; set; }
             [XmlElement("StorageAccepted")] public bool StorageRequirementsAccepted { get; set; }
             [XmlElement("XmlEditorPackageName")] public string XmlEditorPackageName { get; set; }
@@ -2892,7 +2893,6 @@ namespace BmwDeepObd
                     _instanceData.ConfigFileName = prefs.GetString("ConfigFile", string.Empty);
                     _instanceData.UpdateCheckTime = prefs.GetLong("UpdateCheckTime", DateTime.MinValue.Ticks);
                     _instanceData.UpdateSkipVersion = prefs.GetInt("UpdateSkipVersion", -1);
-                    _instanceData.TransLoginTimeNext = prefs.GetLong("TransLoginTimeNext", DateTime.MinValue.Ticks);
                     _instanceData.LastVersionCode = prefs.GetLong("VersionCodeLong", -1);
                     _instanceData.StorageRequirementsAccepted = prefs.GetBoolean("StorageAccepted", false);
                     _instanceData.XmlEditorPackageName = prefs.GetString("XmlEditorPackageName", string.Empty);
@@ -3109,6 +3109,7 @@ namespace BmwDeepObd
             storageClassAttributes.Add(storageType, nameof(storageData.UpdateCheckTime), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.UpdateSkipVersion), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.TransLoginTimeNext), ignoreXmlAttributes);
+            storageClassAttributes.Add(storageType, nameof(storageData.LastPackageExtractTime), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.LastVersionCode), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.StorageRequirementsAccepted), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarnings), ignoreXmlAttributes);
@@ -3229,7 +3230,6 @@ namespace BmwDeepObd
                     _instanceData.ConfigFileName = storageData.ConfigFileName;
                     _instanceData.UpdateCheckTime = storageData.UpdateCheckTime;
                     _instanceData.UpdateSkipVersion = storageData.UpdateSkipVersion;
-                    _instanceData.TransLoginTimeNext = storageData.TransLoginTimeNext;
                     _instanceData.LastVersionCode = storageData.LastVersionCode;
                     _instanceData.StorageRequirementsAccepted = storageData.StorageRequirementsAccepted;
                     _instanceData.XmlEditorPackageName = storageData.XmlEditorPackageName;
@@ -3793,6 +3793,7 @@ namespace BmwDeepObd
             _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
             _instanceData.BmwPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.BmwBaseDir);
             _instanceData.TraceBackupDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.TraceBackupDir);
+            _instanceData.PackageAssembliesDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.PackageAssembliesDir);
 
             string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");
             if (File.Exists(backgroundImageFile))
@@ -5926,30 +5927,35 @@ namespace BmwDeepObd
                     if (ActivityCommon.JobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
                     {
 #if NET
-                        string assembliesDir = Path.Combine(_instanceData.AppDataPath, "PackageAssemblies");
-                        if (!Directory.Exists(assembliesDir))
+                        string compareFileTime = null;
+                        if (!_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir, ref compareFileTime))
                         {
-                            _instanceData.ApkAssemliesExtracted = false;
+#if DEBUG
+                            Log.Info(Tag, "CompileCode ExtraktPackageAssemblies failed");
+#endif
                         }
 
-                        if (!_instanceData.ApkAssemliesExtracted)
+                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = GetLoadedMetadataReferences(out bool hasErrors);
+                        if (hasErrors)
                         {
-                            if (_activityCommon.ExtraktPackageAssemblies(assembliesDir))
+                            compareFileTime = null; // force update
+                            if (_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir, ref compareFileTime))
                             {
-                                _instanceData.ApkAssemliesExtracted = true;
+                                referencesList = GetLoadedMetadataReferences(out hasErrors);
+                            }
+                            else
+                            {
+#if DEBUG
+                                Log.Info(Tag, "CompileCode ExtraktPackageAssemblies failed");
+#endif
                             }
                         }
 
-                        Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = new List<Microsoft.CodeAnalysis.MetadataReference>();
-
-                        foreach (Assembly loadedAssembly in loadedAssemblies)
+                        if (hasErrors)
                         {
-                            Microsoft.CodeAnalysis.MetadataReference reference = CreateMetadataReference(loadedAssembly, assembliesDir);
-                            if (reference != null)
-                            {
-                                referencesList.Add(reference);
-                            }
+#if DEBUG
+                            Log.Info(Tag, "CompileCode GetLoadedMetadataReferences failed");
+#endif
                         }
 #endif
                         bool progressUpdated = false;
@@ -6188,6 +6194,28 @@ namespace BmwDeepObd
         }
 
 #if NET
+        private List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(out bool hasErrors)
+        {
+            Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            List<Microsoft.CodeAnalysis.MetadataReference> referencesList = new List<Microsoft.CodeAnalysis.MetadataReference>();
+            hasErrors = false;
+
+            foreach (Assembly loadedAssembly in loadedAssemblies)
+            {
+                Microsoft.CodeAnalysis.MetadataReference reference = CreateMetadataReference(loadedAssembly, _instanceData.PackageAssembliesDir);
+                if (reference != null)
+                {
+                    referencesList.Add(reference);
+                }
+                else
+                {
+                    hasErrors = true;
+                }
+            }
+
+            return referencesList;
+        }
+
         private Microsoft.CodeAnalysis.MetadataReference CreateMetadataReference(Assembly assembly, string assembliesDir)
         {
             string location = assembly.Location;

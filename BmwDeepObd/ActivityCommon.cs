@@ -440,6 +440,7 @@ namespace BmwDeepObd
         public const string TraceFileNameStd = "ifh.trc";
         public const string TraceFileNameZip = TraceFileNameStd + ZipExt;
         public const string TraceBackupDir = "TraceBackup";
+        public const string PackageAssembliesDir = "PackageAssemblies";
         public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
         public const string AdapterSsidEnetLink = "ENET-LINK_";
@@ -10246,7 +10247,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool ExtraktPackageAssemblies(string outputPath)
+        public bool ExtraktPackageAssemblies(string outputPath, ref string compareFileTime)
         {
             try
             {
@@ -10262,12 +10263,23 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string ext = Path.GetExtension(packageFilePath);
+                DateTime packageFileTime = File.GetLastWriteTimeUtc(packageFilePath);
+                string packageTimeStamp = packageFileTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                if (!string.IsNullOrEmpty(compareFileTime))
+                {
+                    if (string.Compare(compareFileTime, packageTimeStamp, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
+                }
+
+                compareFileTime = packageTimeStamp;
                 if (Directory.Exists(outputPath))
                 {
                     Directory.Delete(outputPath, true);
                 }
 
+                string ext = Path.GetExtension(packageFilePath);
                 bool result = false;
                 ApkUncompressCommon apkUncompress = new ApkUncompressCommon();
                 if (String.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
