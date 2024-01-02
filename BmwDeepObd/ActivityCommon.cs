@@ -10246,7 +10246,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool ExtraktPackageAssemblies(string outputPath, ref string compareFileTime)
+        public bool ExtraktPackageAssemblies(string outputPath, bool forceUpdate = false)
         {
             try
             {
@@ -10270,15 +10270,26 @@ namespace BmwDeepObd
                 string packageInfoFile = Path.Combine(outputPath, "PackageInfo.xml");
                 DateTime packageFileTime = File.GetLastWriteTimeUtc(packageFilePath);
                 string packageTimeStamp = packageFileTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
-                if (!string.IsNullOrEmpty(compareFileTime))
+                string oldTimeStamp = null;
+
+                if (File.Exists(packageInfoFile))
                 {
-                    if (string.Compare(compareFileTime, packageTimeStamp, StringComparison.OrdinalIgnoreCase) == 0)
+                    XDocument xmlInfo = XDocument.Load(packageInfoFile);
+                    XAttribute dateAttr = xmlInfo.Root?.Attribute("Date");
+                    if (dateAttr != null)
+                    {
+                        oldTimeStamp = dateAttr.Value;
+                    }
+                }
+
+                if (!forceUpdate && !string.IsNullOrEmpty(oldTimeStamp))
+                {
+                    if (string.Compare(oldTimeStamp, packageTimeStamp, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return true;
                     }
                 }
 
-                compareFileTime = packageTimeStamp;
                 if (Directory.Exists(outputPath))
                 {
                     Directory.Delete(outputPath, true);
