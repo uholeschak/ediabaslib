@@ -48,7 +48,6 @@ using BmwDeepObd.Dialogs;
 using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
 using ApkUncompress;
-using Xamarin.Android.AssemblyStore;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -10251,6 +10250,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (string.IsNullOrEmpty(outputPath))
+                {
+                    return false;
+                }
+
                 PackageInfo packageInfo = GetPackageInfo();
                 string packageFilePath = packageInfo.ApplicationInfo?.SourceDir;
                 if (string.IsNullOrEmpty(packageFilePath))
@@ -10263,6 +10267,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                string packageInfoFile = Path.Combine(outputPath, "PackageInfo.xml");
                 DateTime packageFileTime = File.GetLastWriteTimeUtc(packageFilePath);
                 string packageTimeStamp = packageFileTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                 if (!string.IsNullOrEmpty(compareFileTime))
@@ -10296,6 +10301,14 @@ namespace BmwDeepObd
                     {
                         result = true;
                     }
+                }
+
+                if (result && Directory.Exists(outputPath))
+                {
+                    XElement xmlInfo = new XElement("PackageInfo");
+                    xmlInfo.Add(new XAttribute("Name", packageFilePath));
+                    xmlInfo.Add(new XAttribute("Date", packageTimeStamp));
+                    xmlInfo.Save(packageInfoFile);
                 }
 
                 return result;
