@@ -6212,7 +6212,8 @@ namespace BmwDeepObd
                             string abi = Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty;
                             if (!string.IsNullOrEmpty(abi))
                             {
-                                location = Path.Combine(assembliesDir, abi, fileName);
+                                string abiPath = abi.Replace('-', '_').Trim();
+                                location = Path.Combine(assembliesDir, abiPath, fileName);
                                 if (!File.Exists(location))
                                 {
                                     location = null;
