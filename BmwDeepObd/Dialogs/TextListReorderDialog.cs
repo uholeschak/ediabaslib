@@ -22,7 +22,7 @@ namespace BmwDeepObd.Dialogs
         private Button _buttonOk;
         private DragListView _listViewItems;
         private DragListAdapter _dragListAdapter;
-        private readonly List<StringObjInfo> _itemList;
+        private List<StringObjInfo> _itemList;
 
         public string Message
         {
@@ -181,6 +181,8 @@ namespace BmwDeepObd.Dialogs
             {
                 _dragListAdapter.AppendItem(itemInfo);
             }
+
+            _itemList = itemList;
             _dragListAdapter.NotifyDataSetChanged();
         }
 

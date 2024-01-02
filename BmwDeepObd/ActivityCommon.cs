@@ -10298,7 +10298,7 @@ namespace BmwDeepObd
                 string ext = Path.GetExtension(packageFilePath);
                 bool result = false;
                 ApkUncompressCommon apkUncompress = new ApkUncompressCommon();
-                if (String.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompressCommon.AssembliesPathApk, null, outputPath))
                     {
@@ -10306,7 +10306,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (String.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompressCommon.AssembliesPathAab, null, outputPath))
                     {
