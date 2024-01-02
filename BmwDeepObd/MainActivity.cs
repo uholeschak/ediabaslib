@@ -5946,21 +5946,21 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                compareFileTime = null;
 #if DEBUG
                                 Log.Info(Tag, "CompileCode ExtraktPackageAssemblies failed");
 #endif
                             }
                         }
 
-                        _instanceData.LastPackageExtractTime = compareFileTime ?? string.Empty;
-
                         if (hasErrors)
                         {
+                            compareFileTime = null;
 #if DEBUG
                             Log.Info(Tag, "CompileCode GetLoadedMetadataReferences failed");
 #endif
                         }
+
+                        _instanceData.LastPackageExtractTime = compareFileTime ?? string.Empty;
 #endif
                         bool progressUpdated = false;
                         List<string> compileResultList = new List<string>();
@@ -6200,16 +6200,43 @@ namespace BmwDeepObd
 #if NET
         private List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(out bool hasErrors)
         {
+            string assembliesDir = _instanceData.PackageAssembliesDir;
             Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<Microsoft.CodeAnalysis.MetadataReference> referencesList = new List<Microsoft.CodeAnalysis.MetadataReference>();
             hasErrors = false;
 
-            foreach (Assembly loadedAssembly in loadedAssemblies)
+            foreach (Assembly assembly in loadedAssemblies)
             {
-                Microsoft.CodeAnalysis.MetadataReference reference = CreateMetadataReference(loadedAssembly, _instanceData.PackageAssembliesDir);
-                if (reference != null)
+                string location = assembly.Location;
+                if (string.IsNullOrEmpty(location))
                 {
-                    referencesList.Add(reference);
+                    continue;
+                }
+
+                if (!File.Exists(location))
+                {
+                    string fileName = Path.GetFileName(location);
+                    location = Path.Combine(assembliesDir, fileName);
+                    if (!File.Exists(location))
+                    {
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                        {
+                            string abi = Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty;
+                            if (!string.IsNullOrEmpty(abi))
+                            {
+                                location = Path.Combine(assembliesDir, abi, fileName);
+                                if (!File.Exists(location))
+                                {
+                                    location = null;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (location != null)
+                {
+                    referencesList.Add(Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(location));
                 }
                 else
                 {
@@ -6218,38 +6245,6 @@ namespace BmwDeepObd
             }
 
             return referencesList;
-        }
-
-        private Microsoft.CodeAnalysis.MetadataReference CreateMetadataReference(Assembly assembly, string assembliesDir)
-        {
-            string location = assembly.Location;
-            if (string.IsNullOrEmpty(location))
-            {
-                return null;
-            }
-
-            if (!File.Exists(location))
-            {
-                string fileName = Path.GetFileName(location);
-                location = Path.Combine(assembliesDir, fileName);
-                if (!File.Exists(location))
-                {
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-                    {
-                        string abi = Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty;
-                        if (!string.IsNullOrEmpty(abi))
-                        {
-                            location = Path.Combine(assembliesDir, abi, fileName);
-                            if (!File.Exists(location))
-                            {
-                                return null;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(location);
         }
 #endif
 
