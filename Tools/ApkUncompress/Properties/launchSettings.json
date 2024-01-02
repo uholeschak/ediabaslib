@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ApkUncompress": {
-      "commandName": "Project",
-      "commandLineArgs": "D:\\base.apk"
-    }
-  }
-}
