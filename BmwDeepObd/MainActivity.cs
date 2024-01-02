@@ -210,6 +210,7 @@ namespace BmwDeepObd
             public string TraceDir { get; set; }
             public string TraceBackupDir { get; set; }
             public string PackageAssembliesDir { get; set; }
+            public string LastPackageExtractTime { get; set; }
             public bool UpdateAvailable { get; set; }
             public int UpdateVersionCode { get; set; }
             public string UpdateMessage { get; set; }
@@ -254,7 +255,6 @@ namespace BmwDeepObd
                 ConfigFileName = string.Empty;
                 UpdateCheckTime = DateTime.MinValue.Ticks;
                 UpdateSkipVersion = -1;
-                TransLoginTimeNext = DateTime.MinValue.Ticks;
                 LastPackageExtractTime = string.Empty;
                 LastVersionCode = -1;
                 StorageRequirementsAccepted = false;
@@ -332,6 +332,7 @@ namespace BmwDeepObd
                 ConfigFileName = instanceData.ConfigFileName;
                 UpdateCheckTime = instanceData.UpdateCheckTime;
                 UpdateSkipVersion = instanceData.UpdateSkipVersion;
+                LastPackageExtractTime = instanceData.LastPackageExtractTime;
                 LastVersionCode = activityMain._currentVersionCode;
                 StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
                 XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
@@ -375,7 +376,6 @@ namespace BmwDeepObd
             [XmlElement("ConfigFile")] public string ConfigFileName { get; set; }
             [XmlElement("UpdateCheckTime")] public long UpdateCheckTime { get; set; }
             [XmlElement("UpdateSkipVersion")] public int UpdateSkipVersion { get; set; }
-            [XmlElement("TransLoginTimeNext")] public long TransLoginTimeNext { get; set; }
             [XmlElement("TransLoginTimeNext")] public string LastPackageExtractTime { get; set; }
             [XmlElement("VersionCode")] public long LastVersionCode { get; set; }
             [XmlElement("StorageAccepted")] public bool StorageRequirementsAccepted { get; set; }
@@ -3108,7 +3108,6 @@ namespace BmwDeepObd
             storageClassAttributes.Add(storageType, nameof(storageData.LastAppState), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.UpdateCheckTime), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.UpdateSkipVersion), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.TransLoginTimeNext), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.LastPackageExtractTime), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.LastVersionCode), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.StorageRequirementsAccepted), ignoreXmlAttributes);
@@ -3230,6 +3229,7 @@ namespace BmwDeepObd
                     _instanceData.ConfigFileName = storageData.ConfigFileName;
                     _instanceData.UpdateCheckTime = storageData.UpdateCheckTime;
                     _instanceData.UpdateSkipVersion = storageData.UpdateSkipVersion;
+                    _instanceData.LastPackageExtractTime = storageData.LastPackageExtractTime;
                     _instanceData.LastVersionCode = storageData.LastVersionCode;
                     _instanceData.StorageRequirementsAccepted = storageData.StorageRequirementsAccepted;
                     _instanceData.XmlEditorPackageName = storageData.XmlEditorPackageName;
@@ -5927,9 +5927,10 @@ namespace BmwDeepObd
                     if (ActivityCommon.JobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
                     {
 #if NET
-                        string compareFileTime = null;
+                        string compareFileTime = _instanceData.LastPackageExtractTime;
                         if (!_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir, ref compareFileTime))
                         {
+                            compareFileTime = null;
 #if DEBUG
                             Log.Info(Tag, "CompileCode ExtraktPackageAssemblies failed");
 #endif
@@ -5945,11 +5946,14 @@ namespace BmwDeepObd
                             }
                             else
                             {
+                                compareFileTime = null;
 #if DEBUG
                                 Log.Info(Tag, "CompileCode ExtraktPackageAssemblies failed");
 #endif
                             }
                         }
+
+                        _instanceData.LastPackageExtractTime = compareFileTime ?? string.Empty;
 
                         if (hasErrors)
                         {
