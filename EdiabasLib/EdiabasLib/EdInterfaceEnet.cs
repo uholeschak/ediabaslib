@@ -1952,6 +1952,7 @@ namespace EdiabasLib
                 {
                     return;
                 }
+
                 if (SharedDataActive.TcpDiagRecLen > 0)
                 {
                     if ((Stopwatch.GetTimestamp() - SharedDataActive.LastTcpDiagRecTime) > 300 * TickResolMs)
@@ -1959,80 +1960,92 @@ namespace EdiabasLib
                         SharedDataActive.TcpDiagRecLen = 0;
                     }
                 }
+
                 int recLen = networkStream.EndRead(ar);
                 if (recLen > 0)
                 {
                     SharedDataActive.LastTcpDiagRecTime = Stopwatch.GetTimestamp();
                     SharedDataActive.TcpDiagRecLen += recLen;
                 }
+
                 int nextReadLength = 6;
-                if (SharedDataActive.TcpDiagRecLen >= 6)
-                {   // header received
-                    long telLen = (((long)SharedDataActive.TcpDiagBuffer[0] << 24) | ((long)SharedDataActive.TcpDiagBuffer[1] << 16) | ((long)SharedDataActive.TcpDiagBuffer[2] << 8) | SharedDataActive.TcpDiagBuffer[3]) + 6;
-                    if (SharedDataActive.TcpDiagRecLen == telLen)
-                    {   // telegram received
-                        switch (SharedDataActive.TcpDiagBuffer[5])
-                        {
-                            case 0x01:  // diag data
-                            case 0x02:  // ack
-                            case 0xFF:  // nack
-                                lock (SharedDataActive.TcpDiagStreamRecLock)
-                                {
-                                    if (SharedDataActive.TcpDiagRecQueue.Count > 256)
+                try
+                {
+                    if (SharedDataActive.TcpDiagRecLen >= 6)
+                    {   // header received
+                        long telLen = (((long)SharedDataActive.TcpDiagBuffer[0] << 24) | ((long)SharedDataActive.TcpDiagBuffer[1] << 16) | ((long)SharedDataActive.TcpDiagBuffer[2] << 8) | SharedDataActive.TcpDiagBuffer[3]) + 6;
+                        if (SharedDataActive.TcpDiagRecLen == telLen)
+                        {   // telegram received
+                            switch (SharedDataActive.TcpDiagBuffer[5])
+                            {
+                                case 0x01:  // diag data
+                                case 0x02:  // ack
+                                case 0xFF:  // nack
+                                    lock (SharedDataActive.TcpDiagStreamRecLock)
                                     {
-                                        SharedDataActive.TcpDiagRecQueue.Dequeue();
+                                        if (SharedDataActive.TcpDiagRecQueue.Count > 256)
+                                        {
+                                            SharedDataActive.TcpDiagRecQueue.Dequeue();
+                                        }
+                                        byte[] recTelTemp = new byte[telLen];
+                                        Array.Copy(SharedDataActive.TcpDiagBuffer, recTelTemp, SharedDataActive.TcpDiagRecLen);
+                                        SharedDataActive.TcpDiagRecQueue.Enqueue(recTelTemp);
+                                        SharedDataActive.TcpDiagStreamRecEvent.Set();
                                     }
-                                    byte[] recTelTemp = new byte[telLen];
-                                    Array.Copy(SharedDataActive.TcpDiagBuffer, recTelTemp, SharedDataActive.TcpDiagRecLen);
-                                    SharedDataActive.TcpDiagRecQueue.Enqueue(recTelTemp);
-                                    SharedDataActive.TcpDiagStreamRecEvent.Set();
-                                }
-                                break;
+                                    break;
 
-                            case 0x12:  // alive check
-                                SharedDataActive.TcpDiagBuffer[0] = 0x00;
-                                SharedDataActive.TcpDiagBuffer[1] = 0x00;
-                                SharedDataActive.TcpDiagBuffer[2] = 0x00;
-                                SharedDataActive.TcpDiagBuffer[3] = 0x02;
-                                SharedDataActive.TcpDiagBuffer[4] = 0x00;
-                                SharedDataActive.TcpDiagBuffer[5] = 0x13;    // alive check response
-                                SharedDataActive.TcpDiagBuffer[6] = 0x00;
-                                SharedDataActive.TcpDiagBuffer[7] = (byte)TesterAddress;
-                                lock (SharedDataActive.TcpDiagStreamSendLock)
-                                {
-                                    networkStream.Write(SharedDataActive.TcpDiagBuffer, 0, 8);
-                                }
-                                break;
+                                case 0x12:  // alive check
+                                    SharedDataActive.TcpDiagBuffer[0] = 0x00;
+                                    SharedDataActive.TcpDiagBuffer[1] = 0x00;
+                                    SharedDataActive.TcpDiagBuffer[2] = 0x00;
+                                    SharedDataActive.TcpDiagBuffer[3] = 0x02;
+                                    SharedDataActive.TcpDiagBuffer[4] = 0x00;
+                                    SharedDataActive.TcpDiagBuffer[5] = 0x13;    // alive check response
+                                    SharedDataActive.TcpDiagBuffer[6] = 0x00;
+                                    SharedDataActive.TcpDiagBuffer[7] = (byte)TesterAddress;
+                                    lock (SharedDataActive.TcpDiagStreamSendLock)
+                                    {
+                                        networkStream.Write(SharedDataActive.TcpDiagBuffer, 0, 8);
+                                    }
+                                    break;
 
-                            default:
-                                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen, "*** Ignoring unknown telegram type");
-                                break;
+                                default:
+                                    EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen, "*** Ignoring unknown telegram type");
+                                    break;
+                            }
+                            SharedDataActive.TcpDiagRecLen = 0;
                         }
-                        SharedDataActive.TcpDiagRecLen = 0;
-                    }
-                    else if (SharedDataActive.TcpDiagRecLen > telLen)
-                    {
-                        SharedDataActive.TcpDiagRecLen = 0;
-                    }
-                    else if (telLen > SharedDataActive.TcpDiagBuffer.Length)
-                    {   // telegram too large -> remove all
-                        while (SharedDataActive.TcpDiagStream.DataAvailable)
+                        else if (SharedDataActive.TcpDiagRecLen > telLen)
                         {
-                            SharedDataActive.TcpDiagStream.ReadByte();
+                            SharedDataActive.TcpDiagRecLen = 0;
                         }
-                        SharedDataActive.TcpDiagRecLen = 0;
-                    }
-                    else
-                    {
-                        nextReadLength = (int)telLen;
+                        else if (telLen > SharedDataActive.TcpDiagBuffer.Length)
+                        {   // telegram too large -> remove all
+                            while (SharedDataActive.TcpDiagStream.DataAvailable)
+                            {
+                                SharedDataActive.TcpDiagStream.ReadByte();
+                            }
+                            SharedDataActive.TcpDiagRecLen = 0;
+                        }
+                        else
+                        {
+                            nextReadLength = (int)telLen;
+                        }
                     }
                 }
-                StartReadTcpDiag(nextReadLength);
+                catch (Exception)
+                {
+                    SharedDataActive.TcpDiagRecLen = 0;
+                }
+
+                if (recLen > 0)
+                {
+                    StartReadTcpDiag(nextReadLength);
+                }
             }
             catch (Exception)
             {
                 SharedDataActive.TcpDiagRecLen = 0;
-                StartReadTcpDiag(6);
             }
         }
 
@@ -2515,9 +2528,13 @@ namespace EdiabasLib
                     networkStream.Write(buffer, offset + pos, length);
                     pos += length;
                 }
+#pragma warning disable CS0168 // Variable is declared but never used
                 catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
                 {
+#if !Android
                     Debug.WriteLine("WriteNetworkStream exception: {0}", EdiabasNet.GetExceptionText(ex));
+#endif
                     throw;
                 }
             }
