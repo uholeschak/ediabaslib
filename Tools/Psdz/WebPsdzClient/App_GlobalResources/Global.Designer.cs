@@ -13,7 +13,7 @@ namespace Resources {
     
     
     /// <summary>
-    ///    Eine stark typisierte Ressourcenklasse zum Suchen von lokalisierten Zeichenfolgen usw.
+    ///   Eine stark typisierte Ressourcenklasse zum Suchen nach lokalisierten Zeichenfolgen usw.
     /// </summary>
     // Diese Klasse wurde von der Klasse "StronglyTypedResourceBuilder"
     // über ein Tool wie ResGen oder Visual Studio automatisch generiert.
@@ -33,7 +33,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
+        ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Resources.ResourceManager ResourceManager {
@@ -47,8 +47,8 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Überschreibt die CurrentUICulture-Eigenschaft des aktuellen Threads für alle
-        ///    Ressourcenlookups, die diese stark typisierte Ressourcenklasse verwenden.
+        ///   Überschreibt die Eigenschaft "CurrentUICulture" des aktuellen Threads für alle
+        ///   Ressourcensuchvorgänge, die diese stark typisierte Ressourcenklasse verwenden.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Globalization.CultureInfo Culture {
@@ -61,7 +61,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Access denied. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Access denied. ähnelt.
         /// </summary>
         internal static string AccessDenied {
             get {
@@ -70,7 +70,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Licensed OBD adapter detected. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Licensed OBD adapter detected. ähnelt.
         /// </summary>
         internal static string AdapterLicensed {
             get {
@@ -79,7 +79,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die No licensed OBD adapter detected. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die No licensed OBD adapter detected. ähnelt.
         /// </summary>
         internal static string AdapterNotLicensed {
             get {
@@ -88,7 +88,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die An update of the app is required to use this service. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die An update of the app is required to use this service. ähnelt.
         /// </summary>
         internal static string AppUpdateRequired {
             get {
@@ -97,7 +97,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Internet timeouts: {0} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Internet timeouts: {0} ähnelt.
         /// </summary>
         internal static string InternetTimeouts {
             get {
@@ -106,7 +106,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Processing ... ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Processing ... ähnelt.
         /// </summary>
         internal static string Processing {
             get {
@@ -115,7 +115,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Maximum number of sessions has been exceeded. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Maximum number of sessions has been exceeded. ähnelt.
         /// </summary>
         internal static string SessionsExceeded {
             get {
@@ -124,7 +124,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Time: {0}, UTC: {1} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Time: {0}, UTC: {1} ähnelt.
         /// </summary>
         internal static string TimeDisplay {
             get {
@@ -133,7 +133,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Please try again later. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please try again later. ähnelt.
         /// </summary>
         internal static string TryAgainLater {
             get {
@@ -142,7 +142,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Vehicle licensed. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle licensed. ähnelt.
         /// </summary>
         internal static string VehicleLicensed {
             get {
@@ -151,7 +151,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Vehicle not licensed. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle not licensed. ähnelt.
         /// </summary>
         internal static string VehicleNotLicensed {
             get {
@@ -160,7 +160,7 @@ namespace Resources {
         }
         
         /// <summary>
-        ///    Sucht eine lokalisierte Zeichenfolge, die Another instance with the same VIN is already active.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Another instance with the same VIN is already active.
         ///Please try again later. ähnelt.
         /// </summary>
         internal static string VinInstanceActive {
