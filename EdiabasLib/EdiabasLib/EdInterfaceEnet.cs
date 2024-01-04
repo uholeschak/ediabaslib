@@ -1569,6 +1569,11 @@ namespace EdiabasLib
                     }
                 }
 
+                if (recLen <= 0)
+                {
+                    continueRec = false;
+                }
+
                 if (continueRec)
                 {
                     StartUdpListen();
