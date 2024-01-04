@@ -915,9 +915,9 @@ namespace WebPsdzClient.App_Data
 
                             enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                             enetTcpClientData.EnetTcpChannel.RecEvent.Set();
-                        }
 
-                        TcpReceive(enetTcpClientData);
+                            TcpReceive(enetTcpClientData);
+                        }
                     }
                 }
                 catch (Exception ex)
