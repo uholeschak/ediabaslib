@@ -75,13 +75,18 @@ The update can only be initiated if there is a valid application in the adapter.
 
 ![](Build_Bluetooth_D-CAN_adapter_UpdateSmall.png)
 
-# 3V3OUT design problem
+# FTDI FT232RL 3V3OUT design problem
 Some D-CAN cables have a design mistake and the 100nF capacitor is missing at the 3V3OUT.  
 Before adding the recommended capacitor to the 3V3OUT pin there is ca. 400mV of ripple at the 3V3OUT, after adding the cap there is no ripple.  
 
-**From the datasheet:**  
+**From the FTDI FT232RL datasheet:**  
 Name: 3V3OUT  
 Type: Output  
 +3.3V output from integrated LDO regulator. This pin should be decoupled to ground using a 100nF capacitor. The main use of this pin is to provide the internal +3.3V supply to the USB transceiver cell and the
 internal 1.5 KOhm pull up resistor on USBDP.  
 Up to 50mA can be drawn from this pin to power external logic if required. This pin can also be used to supply the VCCIO pin.
+
+# Atmel PB4 overvoltage problem
+OBD pin 1 go to R6 1K and then the Atmega PB4, in paralell with this is R5 47K to ground.  
+This creates a voltage divider that reduces the 12V to 11.75V, the absolute maximum rating is 5.5V for the Atmega.  
+A possible solution is to move the 47K resistor to R6 and then replaced R5 with a 18K resistor.
