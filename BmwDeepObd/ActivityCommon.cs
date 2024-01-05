@@ -88,27 +88,42 @@ namespace BmwDeepObd
             public double FreeSizeBytes { get; set; }
         }
 
+        public class YandexCloudListLanguagesRequest
+        {
+            public YandexCloudListLanguagesRequest(string folderId)
+            {
+                FolderId = folderId;
+            }
+
+            [JsonPropertyName("folderId")]
+            public string FolderId { get; }
+        }
+
         public class YandexCloudTranslateRequest
         {
-            public YandexCloudTranslateRequest(string[] textArray, string source, string target)
+            public YandexCloudTranslateRequest(string[] textArray, string source, string target, string folderId)
             {
                 TextArray = textArray;
-                Format = "PLAIN_TEXT";
                 Source = source;
                 Target = target;
+                Format = "PLAIN_TEXT";
+                FolderId = folderId;
             }
 
             [JsonPropertyName("text")]
             public string[] TextArray { get; }
-
-            [JsonPropertyName("format")]
-            public string Format { get; }
 
             [JsonPropertyName("sourceLanguageCode")]
             public string Source { get; }
 
             [JsonPropertyName("targetLanguageCode")]
             public string Target { get; }
+
+            [JsonPropertyName("format")]
+            public string Format { get; }
+
+            [JsonPropertyName("folderId")]
+            public string FolderId { get; }
         }
 
         public class DeeplTranslateRequest
@@ -1074,6 +1089,10 @@ namespace BmwDeepObd
         public static string IbmTranslatorUrl { get; set; }
 
         public static string DeeplApiKey { get; set; }
+
+        public static string YandexCloudApiKey { get; set; }
+
+        public static string YandexCloudFolderId { get; set; }
 
         public static bool EnableTranslation { get; set; }
 
@@ -8870,6 +8889,10 @@ namespace BmwDeepObd
                         {
                             // no language list present, get it first
                             sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/languages");
+                            YandexCloudListLanguagesRequest languagesRequest = new YandexCloudListLanguagesRequest(YandexCloudFolderId);
+                            string jsonString = JsonSerializer.Serialize(languagesRequest);
+                            httpContent = new StringContent(jsonString);
+                            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         }
                         else
                         {
@@ -8898,15 +8921,14 @@ namespace BmwDeepObd
                                 targetLang = "en";
                             }
 
-                            YandexCloudTranslateRequest translateRequest = new YandexCloudTranslateRequest(transList.ToArray(), "de", targetLang);
+                            YandexCloudTranslateRequest translateRequest = new YandexCloudTranslateRequest(transList.ToArray(), "de", targetLang, YandexCloudFolderId);
                             string jsonString = JsonSerializer.Serialize(translateRequest);
 
                             httpContent = new StringContent(jsonString);
                             httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         }
 
-                        string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
-                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
+                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", YandexCloudApiKey);
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                         if (httpContent != null)
                         {
