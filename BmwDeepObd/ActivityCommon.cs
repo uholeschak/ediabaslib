@@ -9146,6 +9146,10 @@ namespace BmwDeepObd
                                 case TranslatorType.Deepl:
                                     _transLangList = GetDeeplLanguages(responseTranslateResult);
                                     break;
+
+                                case TranslatorType.YandexCloud:
+                                    _transLangList = GetYandexCloudLanguages(responseTranslateResult);
+                                    break;
                             }
 
                             if (_transLangList != null)
@@ -9561,6 +9565,33 @@ namespace BmwDeepObd
                 foreach (JsonElement translation in jsonDocument.RootElement.EnumerateArray())
                 {
                     if (translation.TryGetProperty("language", out JsonElement transElem))
+                    {
+                        transList.Add(transElem.GetString());
+                    }
+                }
+
+                return transList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<string> GetYandexCloudLanguages(string jsonResult)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(jsonResult))
+                {
+                    return null;
+                }
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                List<string> transList = new List<string>();
+                foreach (JsonElement language in jsonDocument.RootElement.EnumerateArray())
+                {
+                    if (language.TryGetProperty("code", out JsonElement transElem))
                     {
                         transList.Add(transElem.GetString());
                     }
