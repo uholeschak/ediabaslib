@@ -88,6 +88,29 @@ namespace BmwDeepObd
             public double FreeSizeBytes { get; set; }
         }
 
+        public class YandexCloudTranslateRequest
+        {
+            public YandexCloudTranslateRequest(string[] textArray, string source, string target)
+            {
+                TextArray = textArray;
+                Format = "PLAIN_TEXT";
+                Source = source;
+                Target = target;
+            }
+
+            [JsonPropertyName("text")]
+            public string[] TextArray { get; }
+
+            [JsonPropertyName("format")]
+            public string Format { get; }
+
+            [JsonPropertyName("sourceLanguageCode")]
+            public string Source { get; }
+
+            [JsonPropertyName("targetLanguageCode")]
+            public string Target { get; }
+        }
+
         public class DeeplTranslateRequest
         {
             public DeeplTranslateRequest(string[] textArray, string source, string target)
@@ -399,6 +422,7 @@ namespace BmwDeepObd
             [XmlEnum(Name = "YandexTranslate")] YandexTranslate,    // Yandex.translate
             [XmlEnum(Name = "IbmWatson")] IbmWatson,                // IBM Watson Translator
             [XmlEnum(Name = "DeepL")] Deepl,                        // DeepL
+            [XmlEnum(Name = "YandexCloud")] YandexCloud,            // Yandex cloud
         }
 
         public enum SsidWarnAction
@@ -8839,7 +8863,61 @@ namespace BmwDeepObd
                     int stringCount = 0;
                     HttpContent httpContent = null;
                     StringBuilder sbUrl = new StringBuilder();
-                    if (SelectedTranslator == TranslatorType.Deepl)
+
+                    if (SelectedTranslator == TranslatorType.YandexCloud)
+                    {
+                        if (_transLangList == null)
+                        {
+                            // no language list present, get it first
+                            sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/languages");
+                        }
+                        else
+                        {
+                            sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/translate");
+
+                            List<string> transList = new List<string>();
+                            int offset = _transList?.Count ?? 0;
+                            int sumLength = 0;
+                            for (int i = offset; i < _transReducedStringList.Count; i++)
+                            {
+                                string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
+                                sumLength += testString.Length;
+                                if (sumLength > 40000)
+                                {
+                                    break;
+                                }
+
+                                transList.Add(_transReducedStringList[i]);
+                                stringCount++;
+                            }
+
+                            string targetLang = _transCurrentLang;
+                            if (_transLangList.All(lang => string.Compare(lang, _transCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
+                            {
+                                // language not found
+                                targetLang = "en";
+                            }
+
+                            YandexCloudTranslateRequest translateRequest = new YandexCloudTranslateRequest(transList.ToArray(), "de", targetLang);
+                            string jsonString = JsonSerializer.Serialize(translateRequest);
+
+                            httpContent = new StringContent(jsonString);
+                            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        }
+
+                        string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
+                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
+                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                        if (httpContent != null)
+                        {
+                            taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
+                        }
+                        else
+                        {
+                            taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+                        }
+                    }
+                    else if (SelectedTranslator == TranslatorType.Deepl)
                     {
                         string deeplApiUrl = DeeplProUrl;
                         if (!string.IsNullOrEmpty(DeeplApiKey))
