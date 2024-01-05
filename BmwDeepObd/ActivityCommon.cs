@@ -1090,7 +1090,7 @@ namespace BmwDeepObd
 
         public static string DeeplApiKey { get; set; }
 
-        public static string YandexCloudApiKey { get; set; }
+        public static string YandexCloudIamToken { get; set; }
 
         public static string YandexCloudFolderId { get; set; }
 
@@ -8928,7 +8928,7 @@ namespace BmwDeepObd
                             httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         }
 
-                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", YandexCloudApiKey);
+                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", YandexCloudIamToken);
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                         if (httpContent != null)
                         {
