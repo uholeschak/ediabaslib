@@ -8892,7 +8892,6 @@ namespace BmwDeepObd
                             YandexCloudListLanguagesRequest languagesRequest = new YandexCloudListLanguagesRequest(YandexCloudFolderId);
                             string jsonString = JsonSerializer.Serialize(languagesRequest);
                             httpContent = new StringContent(jsonString);
-                            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         }
                         else
                         {
@@ -8925,19 +8924,12 @@ namespace BmwDeepObd
                             string jsonString = JsonSerializer.Serialize(translateRequest);
 
                             httpContent = new StringContent(jsonString);
-                            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         }
 
+                        httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
                         _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", YandexCloudIamToken);
                         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        if (httpContent != null)
-                        {
-                            taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
-                        }
-                        else
-                        {
-                            taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
-                        }
+                        taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
                     }
                     else if (SelectedTranslator == TranslatorType.Deepl)
                     {
