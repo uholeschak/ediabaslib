@@ -74,3 +74,14 @@ With `UpdateLoader-win32.exe` (application is only in german language) it's poss
 The update can only be initiated if there is a valid application in the adapter. When the update via bluetooth is not possible any more, connect the adapter via USB, start the update process and power on the adapter (12V).
 
 ![](Build_Bluetooth_D-CAN_adapter_UpdateSmall.png)
+
+# 3V3OUT design problem
+Some DCAN cables have a design mistake and the 100nF capacitor is missing at the 3V3OUT.  
+Before adding the recommended capacitor to the 3V3OUT pin there is ca. 400mV of ripple at the 3V3OUT, after adding the cap there is no ripple.  
+
+**From the datasheet:**  
+Name: 3V3OUT  
+Type: Output  
++3.3V output from integrated LDO regulator. This pin should be decoupled to ground using a 100nF capacitor. The main use of this pin is to provide the internal +3.3V supply to the USB transceiver cell and the
+internal 1.5 KOhm pull up resistor on USBDP.  
+Up to 50mA can be drawn from this pin to power external logic if required. This pin can also be used to supply the VCCIO pin.
