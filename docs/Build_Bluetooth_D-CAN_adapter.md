@@ -76,7 +76,7 @@ The update can only be initiated if there is a valid application in the adapter.
 ![](Build_Bluetooth_D-CAN_adapter_UpdateSmall.png)
 
 # 3V3OUT design problem
-Some DCAN cables have a design mistake and the 100nF capacitor is missing at the 3V3OUT.  
+Some D-CAN cables have a design mistake and the 100nF capacitor is missing at the 3V3OUT.  
 Before adding the recommended capacitor to the 3V3OUT pin there is ca. 400mV of ripple at the 3V3OUT, after adding the cap there is no ripple.  
 
 **From the datasheet:**  
