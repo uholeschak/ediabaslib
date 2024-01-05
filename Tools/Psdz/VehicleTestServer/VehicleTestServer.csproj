@@ -37,8 +37,8 @@
     <Reference Include="HttpMachine, Version=3.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HttpMachine.PCL.3.1.0\lib\netstandard1.0\HttpMachine.dll</HintPath>
     </Reference>
-    <Reference Include="HttpMultipartParser, Version=6.0.1.0, Culture=neutral, PublicKeyToken=6d293681fa6c7a03, processorArchitecture=MSIL">
-      <HintPath>..\packages\HttpMultipartParser.6.0.1\lib\net48\HttpMultipartParser.dll</HintPath>
+    <Reference Include="HttpMultipartParser, Version=7.1.0.0, Culture=neutral, PublicKeyToken=6d293681fa6c7a03, processorArchitecture=MSIL">
+      <HintPath>..\packages\HttpMultipartParser.7.1.0\lib\net48\HttpMultipartParser.dll</HintPath>
     </Reference>
     <Reference Include="IHttpMachine, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HttpMachine.PCL.3.1.0\lib\netstandard1.0\IHttpMachine.dll</HintPath>
