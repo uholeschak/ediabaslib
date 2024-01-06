@@ -9181,6 +9181,10 @@ namespace BmwDeepObd
                                 case TranslatorType.Deepl:
                                     transList = GetDeeplTranslations(responseTranslateResult);
                                     break;
+
+                                case TranslatorType.YandexCloud:
+                                    transList = GetYandexCloudTranslations(responseTranslateResult);
+                                    break;
                             }
 
                             if (transList != null && transList.Count == stringCount)
@@ -9589,7 +9593,12 @@ namespace BmwDeepObd
 
                 JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
                 List<string> transList = new List<string>();
-                foreach (JsonElement language in jsonDocument.RootElement.EnumerateArray())
+                if (!jsonDocument.RootElement.TryGetProperty("languages", out JsonElement languages))
+                {
+                    return null;
+                }
+
+                foreach (JsonElement language in languages.EnumerateArray())
                 {
                     if (language.TryGetProperty("code", out JsonElement transElem))
                     {
@@ -9668,6 +9677,38 @@ namespace BmwDeepObd
         }
 
         private List<string> GetDeeplTranslations(string jsonResult)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(jsonResult))
+                {
+                    return null;
+                }
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                List<string> transList = new List<string>();
+                if (!jsonDocument.RootElement.TryGetProperty("translations", out JsonElement translations))
+                {
+                    return null;
+                }
+
+                foreach (JsonElement translation in translations.EnumerateArray())
+                {
+                    if (translation.TryGetProperty("text", out JsonElement transElem))
+                    {
+                        transList.Add(transElem.GetString());
+                    }
+                }
+
+                return transList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<string> GetYandexCloudTranslations(string jsonResult)
         {
             try
             {
