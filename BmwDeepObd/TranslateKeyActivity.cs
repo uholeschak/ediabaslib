@@ -25,6 +25,8 @@ namespace BmwDeepObd
                 OldIbmTranslatorApiKey = string.Empty;
                 OldIbmTranslatorUrl = string.Empty;
                 OldDeeplApiKey = string.Empty;
+                OldYandexCloudOauthToken = string.Empty;
+                OldYandexCloudFolderId = string.Empty;
             }
 
             public string OldTranslator { get; set; }
@@ -32,6 +34,8 @@ namespace BmwDeepObd
             public string OldIbmTranslatorApiKey { get; set; }
             public string OldIbmTranslatorUrl { get; set; }
             public string OldDeeplApiKey { get; set; }
+            public string OldYandexCloudOauthToken { get; set; }
+            public string OldYandexCloudFolderId { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -44,6 +48,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonTranslatorYandex;
         private RadioButton _radioButtonTranslatorIbm;
         private RadioButton _radioButtonTranslatorDeepl;
+        private RadioButton _radioButtonTranslatorYandexCloud;
         private TextView _textViewTransKeyDesc;
         private LinearLayout _layoutYandexKey;
         private Button _buttonYandexApiKeyCreate;
@@ -86,6 +91,8 @@ namespace BmwDeepObd
                 _instanceData.OldIbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey ?? string.Empty;
                 _instanceData.OldIbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl ?? string.Empty;
                 _instanceData.OldDeeplApiKey = ActivityCommon.DeeplApiKey ?? string.Empty;
+                _instanceData.OldYandexCloudOauthToken = ActivityCommon.YandexCloudOauthToken ?? string.Empty;
+                _instanceData.OldYandexCloudFolderId = ActivityCommon.YandexCloudFolderId ?? string.Empty;
             }
 
             _activityCommon = new ActivityCommon(this);
@@ -117,6 +124,18 @@ namespace BmwDeepObd
 
             _radioButtonTranslatorDeepl = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorDeepl);
             _radioButtonTranslatorDeepl.CheckedChange += (sender, e) =>
+            {
+                if (_ignoreChange)
+                {
+                    return;
+                }
+
+                UpdateTranslatorType();
+                UpdateDisplay();
+            };
+
+            _radioButtonTranslatorYandexCloud = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandexCloud);
+            _radioButtonTranslatorYandexCloud.CheckedChange += (sender, e) =>
             {
                 if (_ignoreChange)
                 {
@@ -167,6 +186,10 @@ namespace BmwDeepObd
                         case ActivityCommon.TranslatorType.Deepl:
                             _activityCommon.OpenWebUrl("https://www.deepl.com/account");
                             break;
+
+                        case ActivityCommon.TranslatorType.YandexCloud:
+                            _activityCommon.OpenWebUrl("https://cloud.yandex.com/en/docs/translate/");
+                            break;
                     }
                 });
             };
@@ -199,6 +222,10 @@ namespace BmwDeepObd
 
                         case ActivityCommon.TranslatorType.Deepl:
                             _activityCommon.OpenWebUrl("https://www.deepl.com/de/account/summary");
+                            break;
+
+                        case ActivityCommon.TranslatorType.YandexCloud:
+                            _activityCommon.OpenWebUrl("https://cloud.yandex.com/en/docs/iam/operations/iam-token/create");
                             break;
                     }
                 });
@@ -552,6 +579,11 @@ namespace BmwDeepObd
                 case ActivityCommon.TranslatorType.Deepl:
                     ActivityCommon.DeeplApiKey = _editTextYandexApiKey.Text.Trim();
                     break;
+
+                case ActivityCommon.TranslatorType.YandexCloud:
+                    ActivityCommon.YandexCloudOauthToken = _editTextYandexApiKey.Text.Trim();
+                    ActivityCommon.YandexCloudFolderId = _editTextApiUrl.Text.Trim();
+                    break;
             }
         }
 
@@ -590,6 +622,8 @@ namespace BmwDeepObd
             ActivityCommon.IbmTranslatorApiKey = _instanceData.OldIbmTranslatorApiKey ?? string.Empty;
             ActivityCommon.IbmTranslatorUrl = _instanceData.OldIbmTranslatorUrl ?? string.Empty;
             ActivityCommon.DeeplApiKey = _instanceData.OldDeeplApiKey ?? string.Empty;
+            ActivityCommon.YandexCloudOauthToken = _instanceData.OldYandexCloudOauthToken ?? string.Empty;
+            ActivityCommon.YandexCloudFolderId = _instanceData.OldYandexCloudFolderId ?? string.Empty;
         }
 
         private bool SettingsChanged()
@@ -620,6 +654,16 @@ namespace BmwDeepObd
                 }
 
                 if (string.Compare(ActivityCommon.DeeplApiKey ?? string.Empty, _instanceData.OldDeeplApiKey ?? string.Empty, StringComparison.Ordinal) != 0)
+                {
+                    return true;
+                }
+
+                if (string.Compare(ActivityCommon.YandexCloudOauthToken ?? string.Empty, _instanceData.OldYandexCloudOauthToken ?? string.Empty, StringComparison.Ordinal) != 0)
+                {
+                    return true;
+                }
+
+                if (string.Compare(ActivityCommon.YandexCloudFolderId ?? string.Empty, _instanceData.OldYandexCloudFolderId ?? string.Empty, StringComparison.Ordinal) != 0)
                 {
                     return true;
                 }
