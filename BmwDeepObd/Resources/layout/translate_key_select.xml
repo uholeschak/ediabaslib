@@ -79,6 +79,24 @@
             android:inputType="text|textNoSuggestions"
             android:maxLines="1" />
         <TextView
+            android:id="@+id/textViewFolderIdPasteTitle"
+            android:text="@string/api_url_paste_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/TextViewInnerCaption" />
+        <Button
+            android:id="@+id/buttonFolderIdPaste"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_api_url_paste"
+            android:layout_gravity="center" />
+        <EditText
+            android:id="@+id/editTextFolderId"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text|textNoSuggestions"
+            android:maxLines="1" />
+        <TextView
             android:id="@+id/textViewApiUrlPasteTitle"
             android:text="@string/api_url_paste_title"
             android:layout_width="match_parent"
