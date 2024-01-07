@@ -7676,9 +7676,35 @@ namespace BmwDeepObd
             Translator = TranslatorType.IbmWatson;
         }
 
-        public static string GetCurrentLanguage()
+        public static string GetCurrentLanguage(bool iso3 = false)
         {
-            return Java.Util.Locale.Default.Language ?? DefaultLang;
+            string language = Java.Util.Locale.Default.Language ?? DefaultLang;
+            if (!string.IsNullOrEmpty(SelectedLocale))
+            {
+                try
+                {
+                    if (string.Compare(language, SelectedLocale, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        Java.Util.Locale locale = new Java.Util.Locale(SelectedLocale);
+                        Java.Util.Locale.Default = locale;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            if (iso3)
+            {
+                string iso3Language = Java.Util.Locale.Default.ISO3Language;
+                if (!string.IsNullOrEmpty(iso3Language))
+                {
+                    language = iso3Language;
+                }
+            }
+
+            return language;
         }
 
         public static WebProxy GetProxySettings()
