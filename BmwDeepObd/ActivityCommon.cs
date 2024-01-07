@@ -88,6 +88,17 @@ namespace BmwDeepObd
             public double FreeSizeBytes { get; set; }
         }
 
+        public class YandexCloudIamTokenRequest
+        {
+            public YandexCloudIamTokenRequest(string oAuthToken)
+            {
+                OAuthToken = oAuthToken;
+            }
+
+            [JsonPropertyName("yandexPassportOauthToken")]
+            public string OAuthToken { get; }
+        }
+
         public class YandexCloudListLanguagesRequest
         {
             public YandexCloudListLanguagesRequest(string folderId)
@@ -780,6 +791,7 @@ namespace BmwDeepObd
         private HttpClient _transLoginHttpClient;
         private bool _updateCheckActive;
         private bool _translateLockAquired;
+        private string _yandexCloudIamToken;
         private List<string> _transLangList;
         private List<string> _transList;
         private List<string> _transReducedStringList;
@@ -1090,7 +1102,7 @@ namespace BmwDeepObd
 
         public static string DeeplApiKey { get; set; }
 
-        public static string YandexCloudIamToken { get; set; }
+        public static string YandexCloudOauthToken { get; set; }
 
         public static string YandexCloudFolderId { get; set; }
 
@@ -8885,7 +8897,16 @@ namespace BmwDeepObd
 
                     if (SelectedTranslator == TranslatorType.YandexCloud)
                     {
-                        if (_transLangList == null)
+                        if (string.IsNullOrEmpty(_yandexCloudIamToken))
+                        {
+                            _yandexCloudIamToken = null;
+                            // no IAM Token present
+                            sbUrl.Append("https://iam.api.cloud.yandex.net/iam/v1/tokens");
+                            YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudOauthToken);
+                            string jsonString = JsonSerializer.Serialize(languagesRequest);
+                            httpContent = new StringContent(jsonString);
+                        }
+                        else if (_transLangList == null)
                         {
                             // no language list present, get it first
                             sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/languages");
@@ -8927,8 +8948,11 @@ namespace BmwDeepObd
                         }
 
                         httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", YandexCloudIamToken);
-                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                        if (!string.IsNullOrEmpty(_yandexCloudIamToken))
+                        {
+                            _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _yandexCloudIamToken);
+                        }
+
                         taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
                     }
                     else if (SelectedTranslator == TranslatorType.Deepl)
@@ -9131,7 +9155,20 @@ namespace BmwDeepObd
 
                     if (success)
                     {
-                        if (_transLangList == null)
+                        bool responseEvaluated = false;
+
+                        switch (SelectedTranslator)
+                        {
+                            case TranslatorType.YandexCloud:
+                                if (string.IsNullOrEmpty(_yandexCloudIamToken))
+                                {
+                                    _yandexCloudIamToken = responseTranslateResult;
+                                    responseEvaluated = true;
+                                }
+                                break;
+                        }
+
+                        if (!responseEvaluated && _transLangList == null)
                         {
                             switch (SelectedTranslator)
                             {
