@@ -271,6 +271,8 @@ namespace BmwDeepObd
                 IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
                 IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
                 DeeplApiKey = ActivityCommon.DeeplApiKey;
+                YandexCloudApiKey = ActivityCommon.YandexCloudApiKey;
+                YandexCloudFolderId = ActivityCommon.YandexCloudFolderId;
                 Translator = ActivityCommon.SelectedTranslator;
                 ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
                 BatteryWarnings = ActivityCommon.BatteryWarnings;
@@ -392,6 +394,8 @@ namespace BmwDeepObd
             [XmlElement("IbmTranslatorApiKey")] public string IbmTranslatorApiKey { get; set; }
             [XmlElement("IbmTranslatorUrl")] public string IbmTranslatorUrl { get; set; }
             [XmlElement("DeeplApiKey")] public string DeeplApiKey { get; set; }
+            [XmlElement("YandexCloudApiKey")] public string YandexCloudApiKey { get; set; }
+            [XmlElement("YandexCloudFolderId")] public string YandexCloudFolderId { get; set; }
             [XmlElement("Translator")] public ActivityCommon.TranslatorType Translator { get; set; }
             [XmlElement("ShowBatteryVoltageWarning")] public bool ShowBatteryVoltageWarning { get; set; }
             [XmlElement("BatteryWarnings")] public long BatteryWarnings { get; set; }
@@ -3244,6 +3248,8 @@ namespace BmwDeepObd
                     ActivityCommon.IbmTranslatorApiKey = storageData.IbmTranslatorApiKey;
                     ActivityCommon.IbmTranslatorUrl = storageData.IbmTranslatorUrl;
                     ActivityCommon.DeeplApiKey = storageData.DeeplApiKey;
+                    ActivityCommon.YandexCloudApiKey = storageData.YandexCloudApiKey;
+                    ActivityCommon.YandexCloudFolderId = storageData.YandexCloudFolderId;
                     _activityCommon.Translator = storageData.Translator;
                     ActivityCommon.ShowBatteryVoltageWarning = storageData.ShowBatteryVoltageWarning;
                     ActivityCommon.BatteryWarnings = storageData.BatteryWarnings;

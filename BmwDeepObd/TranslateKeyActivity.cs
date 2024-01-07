@@ -25,7 +25,7 @@ namespace BmwDeepObd
                 OldIbmTranslatorApiKey = string.Empty;
                 OldIbmTranslatorUrl = string.Empty;
                 OldDeeplApiKey = string.Empty;
-                OldYandexCloudOauthToken = string.Empty;
+                OldYandexCloudApiKey = string.Empty;
                 OldYandexCloudFolderId = string.Empty;
             }
 
@@ -34,7 +34,7 @@ namespace BmwDeepObd
             public string OldIbmTranslatorApiKey { get; set; }
             public string OldIbmTranslatorUrl { get; set; }
             public string OldDeeplApiKey { get; set; }
-            public string OldYandexCloudOauthToken { get; set; }
+            public string OldYandexCloudApiKey { get; set; }
             public string OldYandexCloudFolderId { get; set; }
         }
 
@@ -94,7 +94,7 @@ namespace BmwDeepObd
                 _instanceData.OldIbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey ?? string.Empty;
                 _instanceData.OldIbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl ?? string.Empty;
                 _instanceData.OldDeeplApiKey = ActivityCommon.DeeplApiKey ?? string.Empty;
-                _instanceData.OldYandexCloudOauthToken = ActivityCommon.YandexCloudOauthToken ?? string.Empty;
+                _instanceData.OldYandexCloudApiKey = ActivityCommon.YandexCloudApiKey ?? string.Empty;
                 _instanceData.OldYandexCloudFolderId = ActivityCommon.YandexCloudFolderId ?? string.Empty;
             }
 
@@ -548,13 +548,6 @@ namespace BmwDeepObd
                             testEnabled = false;
                         }
                         break;
-
-                    case ActivityCommon.TranslatorType.YandexCloud:
-                        if (string.IsNullOrWhiteSpace(_editTextFolderId.Text))
-                        {
-                            testEnabled = false;
-                        }
-                        break;
                 }
 
                 _buttonYandexApiKeyTest.Enabled = testEnabled;
@@ -592,7 +585,7 @@ namespace BmwDeepObd
                         break;
 
                     case ActivityCommon.TranslatorType.YandexCloud:
-                        _editTextYandexApiKey.Text = ActivityCommon.YandexCloudOauthToken;
+                        _editTextYandexApiKey.Text = ActivityCommon.YandexCloudApiKey;
                         _editTextFolderId.Text = ActivityCommon.YandexCloudFolderId;
                         break;
 
@@ -647,7 +640,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityCommon.TranslatorType.YandexCloud:
-                    ActivityCommon.YandexCloudOauthToken = _editTextYandexApiKey.Text.Trim();
+                    ActivityCommon.YandexCloudApiKey = _editTextYandexApiKey.Text.Trim();
                     ActivityCommon.YandexCloudFolderId = _editTextFolderId.Text.Trim();
                     break;
             }
@@ -692,7 +685,7 @@ namespace BmwDeepObd
             ActivityCommon.IbmTranslatorApiKey = _instanceData.OldIbmTranslatorApiKey ?? string.Empty;
             ActivityCommon.IbmTranslatorUrl = _instanceData.OldIbmTranslatorUrl ?? string.Empty;
             ActivityCommon.DeeplApiKey = _instanceData.OldDeeplApiKey ?? string.Empty;
-            ActivityCommon.YandexCloudOauthToken = _instanceData.OldYandexCloudOauthToken ?? string.Empty;
+            ActivityCommon.YandexCloudApiKey = _instanceData.OldYandexCloudApiKey ?? string.Empty;
             ActivityCommon.YandexCloudFolderId = _instanceData.OldYandexCloudFolderId ?? string.Empty;
         }
 
@@ -728,7 +721,7 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                if (string.Compare(ActivityCommon.YandexCloudOauthToken ?? string.Empty, _instanceData.OldYandexCloudOauthToken ?? string.Empty, StringComparison.Ordinal) != 0)
+                if (string.Compare(ActivityCommon.YandexCloudApiKey ?? string.Empty, _instanceData.OldYandexCloudApiKey ?? string.Empty, StringComparison.Ordinal) != 0)
                 {
                     return true;
                 }
