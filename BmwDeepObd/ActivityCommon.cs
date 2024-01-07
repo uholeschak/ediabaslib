@@ -792,6 +792,7 @@ namespace BmwDeepObd
         private bool _updateCheckActive;
         private bool _translateLockAquired;
         private string _yandexCloudIamToken;
+        private string _yandexCloudIamTokenExpires;
         private List<string> _transLangList;
         private List<string> _transList;
         private List<string> _transReducedStringList;
@@ -8900,6 +8901,7 @@ namespace BmwDeepObd
                         if (string.IsNullOrEmpty(_yandexCloudIamToken))
                         {
                             _yandexCloudIamToken = null;
+                            _yandexCloudIamTokenExpires = null;
                             // no IAM Token present
                             sbUrl.Append("https://iam.api.cloud.yandex.net/iam/v1/tokens");
                             YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudOauthToken);
@@ -9162,7 +9164,7 @@ namespace BmwDeepObd
                             case TranslatorType.YandexCloud:
                                 if (string.IsNullOrEmpty(_yandexCloudIamToken))
                                 {
-                                    _yandexCloudIamToken = responseTranslateResult;
+                                    _yandexCloudIamToken = GetYandexCloudIamToken(responseTranslateResult, out _yandexCloudIamTokenExpires);
                                     responseEvaluated = true;
                                 }
                                 break;
@@ -9526,6 +9528,39 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return message;
+            }
+        }
+
+        private string GetYandexCloudIamToken(string jsonResult, out string tokenExpires)
+        {
+            tokenExpires = null;
+            try
+            {
+                if (string.IsNullOrEmpty(jsonResult))
+                {
+                    return null;
+                }
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                string iamTokenString = null;
+                if (jsonDocument.RootElement.TryGetProperty("iamToken", out JsonElement iamToken))
+                {
+                    iamTokenString = iamToken.GetString();
+                }
+
+                if (!string.IsNullOrEmpty(iamTokenString))
+                {
+                    if (jsonDocument.RootElement.TryGetProperty("expiresAt", out JsonElement expiresAt))
+                    {
+                        tokenExpires = expiresAt.GetString();
+                    }
+                }
+
+                return iamTokenString;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
