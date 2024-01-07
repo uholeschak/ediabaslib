@@ -248,6 +248,10 @@
   <string name="button_api_key_create">создать API ключ</string>
   <string name="button_api_key_get">Показать API ключи</string>
   <string name="trans_key_paste_title">API ключ</string>
+  <!--Translate-->
+  <string name="folder_id_paste_title">Идентификатор каталога</string>
+  <!--Translate-->
+  <string name="button_folder_id_paste">Вставить идентификатор папки</string>
   <string name="button_api_key_paste">Вставить API ключи</string>
   <string name="api_url_paste_title">API URL</string>
   <string name="button_api_url_paste">вставить API URL</string>
