@@ -1103,7 +1103,7 @@ namespace BmwDeepObd
 
         public static string DeeplApiKey { get; set; }
 
-        public static string YandexCloudOauthToken { get; set; }
+        public static string YandexCloudApiKey { get; set; }
 
         public static string YandexCloudFolderId { get; set; }
 
@@ -8642,7 +8642,7 @@ namespace BmwDeepObd
                     return !string.IsNullOrWhiteSpace(DeeplApiKey);
 
                 case TranslatorType.YandexCloud:
-                    return !string.IsNullOrWhiteSpace(YandexCloudOauthToken) && !string.IsNullOrWhiteSpace(YandexCloudFolderId);
+                    return !string.IsNullOrWhiteSpace(YandexCloudApiKey);
             }
 
             return false;
@@ -8904,13 +8904,15 @@ namespace BmwDeepObd
 
                     if (SelectedTranslator == TranslatorType.YandexCloud)
                     {
-                        if (string.IsNullOrEmpty(_yandexCloudIamToken))
+                        bool useApiKey = true;
+                        if (!string.IsNullOrEmpty(YandexCloudFolderId) && string.IsNullOrEmpty(_yandexCloudIamToken))
                         {
+                            useApiKey = false;
                             _yandexCloudIamToken = null;
                             _yandexCloudIamTokenExpires = null;
                             // no IAM Token present
                             sbUrl.Append("https://iam.api.cloud.yandex.net/iam/v1/tokens");
-                            YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudOauthToken);
+                            YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudApiKey);
                             string jsonString = JsonSerializer.Serialize(languagesRequest);
                             httpContent = new StringContent(jsonString);
                         }
@@ -8956,9 +8958,17 @@ namespace BmwDeepObd
                         }
 
                         httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                        if (!string.IsNullOrEmpty(_yandexCloudIamToken))
+
+                        if (useApiKey)
                         {
-                            _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _yandexCloudIamToken);
+                            _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Api-Key", YandexCloudApiKey);
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(_yandexCloudIamToken))
+                            {
+                                _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _yandexCloudIamToken);
+                            }
                         }
 
                         taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
@@ -9168,7 +9178,7 @@ namespace BmwDeepObd
                         switch (SelectedTranslator)
                         {
                             case TranslatorType.YandexCloud:
-                                if (string.IsNullOrEmpty(_yandexCloudIamToken))
+                                if (!string.IsNullOrEmpty(YandexCloudFolderId) && string.IsNullOrEmpty(_yandexCloudIamToken))
                                 {
                                     _yandexCloudIamToken = GetYandexCloudIamToken(responseTranslateResult, out _yandexCloudIamTokenExpires);
                                     responseEvaluated = true;
