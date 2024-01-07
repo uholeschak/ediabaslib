@@ -8637,6 +8637,9 @@ namespace BmwDeepObd
 
                 case TranslatorType.Deepl:
                     return !string.IsNullOrWhiteSpace(DeeplApiKey);
+
+                case TranslatorType.YandexCloud:
+                    return !string.IsNullOrWhiteSpace(YandexCloudOauthToken) && !string.IsNullOrWhiteSpace(YandexCloudFolderId);
             }
 
             return false;
@@ -9296,6 +9299,10 @@ namespace BmwDeepObd
                                     case TranslatorType.Deepl:
                                         errorMessage = GetDeeplTranslationError(responseTranslateResult);
                                         break;
+
+                                    case TranslatorType.YandexCloud:
+                                        errorMessage = GetYandexCloudTranslationError(responseTranslateResult, out int _);
+                                        break;
                                 }
                             }
 
@@ -9444,22 +9451,31 @@ namespace BmwDeepObd
             return true;
         }
 
-        private string GetDeeplTranslationError(string jsonResult)
+        private string GetYandexTranslationError(string xmlResult, out int errorCode)
         {
+            errorCode = -1;
             string message = string.Empty;
             try
             {
-                if (string.IsNullOrEmpty(jsonResult))
+                if (string.IsNullOrEmpty(xmlResult))
                 {
                     return message;
                 }
-
-                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
-                if (jsonDocument.RootElement.TryGetProperty("message", out JsonElement jsonErrorText))
+                XDocument xmlDoc = XDocument.Parse(xmlResult);
+                if (xmlDoc.Root == null)
                 {
-                    message = jsonErrorText.GetString();
+                    return message;
                 }
-
+                XAttribute attrCode = xmlDoc.Root.Attribute("code");
+                if (attrCode != null)
+                {
+                    errorCode = XmlConvert.ToInt32(attrCode.Value);
+                }
+                XAttribute attrMessage = xmlDoc.Root.Attribute("message");
+                if (attrMessage != null)
+                {
+                    message = attrMessage.Value;
+                }
                 return message;
             }
             catch (Exception)
@@ -9498,31 +9514,52 @@ namespace BmwDeepObd
             }
         }
 
-        private string GetYandexTranslationError(string xmlResult, out int errorCode)
+        private string GetDeeplTranslationError(string jsonResult)
+        {
+            string message = string.Empty;
+            try
+            {
+                if (string.IsNullOrEmpty(jsonResult))
+                {
+                    return message;
+                }
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                if (jsonDocument.RootElement.TryGetProperty("message", out JsonElement jsonErrorText))
+                {
+                    message = jsonErrorText.GetString();
+                }
+
+                return message;
+            }
+            catch (Exception)
+            {
+                return message;
+            }
+        }
+
+        private string GetYandexCloudTranslationError(string jsonResult, out int errorCode)
         {
             errorCode = -1;
             string message = string.Empty;
             try
             {
-                if (string.IsNullOrEmpty(xmlResult))
+                if (string.IsNullOrEmpty(jsonResult))
                 {
                     return message;
                 }
-                XDocument xmlDoc = XDocument.Parse(xmlResult);
-                if (xmlDoc.Root == null)
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                if (jsonDocument.RootElement.TryGetProperty("code", out JsonElement jsonErrorCode))
                 {
-                    return message;
+                    errorCode = jsonErrorCode.GetInt32();
                 }
-                XAttribute attrCode = xmlDoc.Root.Attribute("code");
-                if (attrCode != null)
+
+                if (jsonDocument.RootElement.TryGetProperty("message", out JsonElement jsonErrorText))
                 {
-                    errorCode = XmlConvert.ToInt32(attrCode.Value);
+                    message = jsonErrorText.GetString();
                 }
-                XAttribute attrMessage = xmlDoc.Root.Attribute("message");
-                if (attrMessage != null)
-                {
-                    message = attrMessage.Value;
-                }
+
                 return message;
             }
             catch (Exception)
