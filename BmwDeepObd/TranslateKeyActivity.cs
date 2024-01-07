@@ -511,6 +511,10 @@ namespace BmwDeepObd
                         _radioButtonTranslatorDeepl.Checked = true;
                         break;
 
+                    case ActivityCommon.TranslatorType.YandexCloud:
+                        _radioButtonTranslatorYandexCloud.Checked = true;
+                        break;
+
                     default:
                         _radioButtonTranslatorYandex.Checked = true;
                         break;
@@ -668,6 +672,10 @@ namespace BmwDeepObd
             else if (_radioButtonTranslatorDeepl.Checked)
             {
                 translatorType = ActivityCommon.TranslatorType.Deepl;
+            }
+            else if (_radioButtonTranslatorYandexCloud.Checked)
+            {
+                translatorType = ActivityCommon.TranslatorType.YandexCloud;
             }
 
             _activityCommon.Translator = translatorType;
