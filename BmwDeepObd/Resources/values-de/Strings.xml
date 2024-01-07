@@ -245,6 +245,8 @@
   <string name="button_api_key_get">API Keys anzeigen</string>
   <string name="trans_key_paste_title">API Key</string>
   <string name="button_api_key_paste">API Key einfügen</string>
+  <string name="folder_id_paste_title">Folder ID</string>
+  <string name="button_folder_id_paste">Folder ID einfügen</string>
   <string name="api_url_paste_title">API URL</string>
   <string name="button_api_url_paste">API URL einfügen</string>
   <string name="trans_key_test_title">Translate</string>

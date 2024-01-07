@@ -31,11 +31,12 @@ ROBOCOPY "!SrcDir!\InternalBroadcastManager" "!DstDir!\InternalBroadcastManager"
 ROBOCOPY "!SrcDir!\Resources" "!DstDir!\Resources" /MIR
 ROBOCOPY "!SrcDir!\Scripts" "!DstDir!\Scripts" /MIR
 ROBOCOPY "!SrcDir!\Xml" "!DstDir!\Xml" /MIR
-ROBOCOPY "!SrcDir!" "!DstDir!" *.cs *.cfg
+ROBOCOPY "!SrcDir!" "!DstDir!" *.cs *.cfg /XF "!SrcDir!\Resource.designer.cs"
 if "!FromNet!"=="1" (
   ROBOCOPY "!SrcDir!" "!DstDir!\Properties" AndroidManifest.xml
 ) else (
   ROBOCOPY "!SrcDir!\Properties" "!DstDir!" AndroidManifest.xml
+  IF EXIST "!DstDir!\Resource.designer.cs" DEL /q "!DstDir!\Resource.designer.cs"
 )
 
 echo done

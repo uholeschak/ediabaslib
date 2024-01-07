@@ -80,7 +80,7 @@
             android:maxLines="1" />
         <TextView
             android:id="@+id/textViewFolderIdPasteTitle"
-            android:text="@string/api_url_paste_title"
+            android:text="@string/folder_id_paste_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
@@ -88,7 +88,7 @@
             android:id="@+id/buttonFolderIdPaste"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/button_api_url_paste"
+            android:text="@string/button_folder_id_paste"
             android:layout_gravity="center" />
         <EditText
             android:id="@+id/editTextFolderId"
