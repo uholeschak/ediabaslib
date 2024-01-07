@@ -1713,6 +1713,9 @@ namespace BmwDeepObd
 
                 case TranslatorType.Deepl:
                     return _context.GetString(Resource.String.select_translator_deepl);
+
+                case TranslatorType.YandexCloud:
+                    return _context.GetString(Resource.String.select_translator_yandex_cloud);
             }
             return string.Empty;
         }
