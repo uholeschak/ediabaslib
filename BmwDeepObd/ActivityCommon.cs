@@ -8946,10 +8946,9 @@ namespace BmwDeepObd
 
                     if (SelectedTranslator == TranslatorType.YandexCloud)
                     {
-                        bool useApiKey = true;
-                        if (IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
+                        bool oauthToken = IsYandexCloudOauthToken(YandexCloudApiKey);
+                        if (oauthToken && string.IsNullOrEmpty(_yandexCloudIamToken))
                         {
-                            useApiKey = false;
                             _yandexCloudIamToken = null;
                             _yandexCloudIamTokenExpires = null;
                             // no IAM Token present
@@ -9001,16 +9000,16 @@ namespace BmwDeepObd
 
                         httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                        if (useApiKey)
-                        {
-                            _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Api-Key", YandexCloudApiKey);
-                        }
-                        else
+                        if (oauthToken)
                         {
                             if (!string.IsNullOrEmpty(_yandexCloudIamToken))
                             {
                                 _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _yandexCloudIamToken);
                             }
+                        }
+                        else
+                        {
+                            _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Api-Key", YandexCloudApiKey);
                         }
 
                         taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
@@ -9216,85 +9215,56 @@ namespace BmwDeepObd
                     if (success)
                     {
                         bool responseEvaluated = false;
-
                         switch (SelectedTranslator)
                         {
                             case TranslatorType.YandexCloud:
                                 if (IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
                                 {
                                     _yandexCloudIamToken = GetYandexCloudIamToken(responseTranslateResult, out _yandexCloudIamTokenExpires);
+                                    if (!string.IsNullOrEmpty(_yandexCloudIamToken))
+                                    {
+                                        _activity?.RunOnUiThread(() =>
+                                        {
+                                            if (_disposed)
+                                            {
+                                                return;
+                                            }
+                                            TranslateStrings(stringList, handler, disableCache);
+                                        });
+                                        return;
+                                    }
+
                                     responseEvaluated = true;
+                                    // error
+                                    _transList = null;
                                 }
                                 break;
                         }
 
-                        if (!responseEvaluated && _transLangList == null)
+                        if (!responseEvaluated)
                         {
-                            switch (SelectedTranslator)
+                            if (_transLangList == null)
                             {
-                                case TranslatorType.YandexTranslate:
-                                    _transLangList = GetYandexLanguages(responseTranslateResult);
-                                    break;
-
-                                case TranslatorType.IbmWatson:
-                                    _transLangList = GetIbmLanguages(responseTranslateResult);
-                                    break;
-
-                                case TranslatorType.Deepl:
-                                    _transLangList = GetDeeplLanguages(responseTranslateResult);
-                                    break;
-
-                                case TranslatorType.YandexCloud:
-                                    _transLangList = GetYandexCloudLanguages(responseTranslateResult);
-                                    break;
-                            }
-
-                            if (_transLangList != null)
-                            {
-                                _activity?.RunOnUiThread(() =>
+                                switch (SelectedTranslator)
                                 {
-                                    if (_disposed)
-                                    {
-                                        return;
-                                    }
-                                    TranslateStrings(stringList, handler, disableCache);
-                                });
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            List<string> transList = null;
-                            switch (SelectedTranslator)
-                            {
-                                case TranslatorType.YandexTranslate:
-                                    transList = GetYandexTranslations(responseTranslateResult);
-                                    break;
+                                    case TranslatorType.YandexTranslate:
+                                        _transLangList = GetYandexLanguages(responseTranslateResult);
+                                        break;
 
-                                case TranslatorType.IbmWatson:
-                                    transList = GetIbmTranslations(responseTranslateResult);
-                                    break;
+                                    case TranslatorType.IbmWatson:
+                                        _transLangList = GetIbmLanguages(responseTranslateResult);
+                                        break;
 
-                                case TranslatorType.Deepl:
-                                    transList = GetDeeplTranslations(responseTranslateResult);
-                                    break;
+                                    case TranslatorType.Deepl:
+                                        _transLangList = GetDeeplLanguages(responseTranslateResult);
+                                        break;
 
-                                case TranslatorType.YandexCloud:
-                                    transList = GetYandexCloudTranslations(responseTranslateResult);
-                                    break;
-                            }
-
-                            if (transList != null && transList.Count == stringCount)
-                            {
-                                if (_transList == null)
-                                {
-                                    _transList = transList;
+                                    case TranslatorType.YandexCloud:
+                                        _transLangList = GetYandexCloudLanguages(responseTranslateResult);
+                                        break;
                                 }
-                                else
-                                {
-                                    _transList.AddRange(transList);
-                                }
-                                if (_transList.Count < _transReducedStringList.Count)
+
+                                if (_transLangList != null)
                                 {
                                     _activity?.RunOnUiThread(() =>
                                     {
@@ -9309,8 +9279,54 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                // error
-                                _transList = null;
+                                List<string> transList = null;
+                                switch (SelectedTranslator)
+                                {
+                                    case TranslatorType.YandexTranslate:
+                                        transList = GetYandexTranslations(responseTranslateResult);
+                                        break;
+
+                                    case TranslatorType.IbmWatson:
+                                        transList = GetIbmTranslations(responseTranslateResult);
+                                        break;
+
+                                    case TranslatorType.Deepl:
+                                        transList = GetDeeplTranslations(responseTranslateResult);
+                                        break;
+
+                                    case TranslatorType.YandexCloud:
+                                        transList = GetYandexCloudTranslations(responseTranslateResult);
+                                        break;
+                                }
+
+                                if (transList != null && transList.Count == stringCount)
+                                {
+                                    if (_transList == null)
+                                    {
+                                        _transList = transList;
+                                    }
+                                    else
+                                    {
+                                        _transList.AddRange(transList);
+                                    }
+                                    if (_transList.Count < _transReducedStringList.Count)
+                                    {
+                                        _activity?.RunOnUiThread(() =>
+                                        {
+                                            if (_disposed)
+                                            {
+                                                return;
+                                            }
+                                            TranslateStrings(stringList, handler, disableCache);
+                                        });
+                                        return;
+                                    }
+                                }
+                                else
+                                {
+                                    // error
+                                    _transList = null;
+                                }
                             }
                         }
                     }
