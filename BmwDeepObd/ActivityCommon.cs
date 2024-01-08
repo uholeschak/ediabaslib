@@ -8695,7 +8695,8 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (apiKey.StartsWith("y0_", StringComparison.OrdinalIgnoreCase))
+            string keyTrim = apiKey.Trim();
+            if (keyTrim.Length > 10 && keyTrim.StartsWith("y0_", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }

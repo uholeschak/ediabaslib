@@ -553,6 +553,16 @@ namespace BmwDeepObd
                             testEnabled = false;
                         }
                         break;
+
+                    case ActivityCommon.TranslatorType.YandexCloud:
+                        if (folderIdVisible)
+                        {
+                            if (string.IsNullOrWhiteSpace(_editTextFolderId.Text))
+                            {
+                                testEnabled = false;
+                            }
+                        }
+                        break;
                 }
 
                 _buttonYandexApiKeyTest.Enabled = testEnabled;
