@@ -520,7 +520,12 @@ namespace BmwDeepObd
                         break;
                 }
 
-                bool folderIdVisible = ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.YandexCloud;
+                bool folderIdVisible = false;
+                if (ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.YandexCloud)
+                {
+                    folderIdVisible = ActivityCommon.IsYandexCloudOauthToken(_editTextYandexApiKey.Text);
+                }
+
                 _textViewFolderIdPasteTitle.Visibility = folderIdVisible ? ViewStates.Visible : ViewStates.Gone;
                 _editTextFolderId.Visibility = folderIdVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonFolderIdPaste.Visibility = folderIdVisible ? ViewStates.Visible : ViewStates.Gone;
