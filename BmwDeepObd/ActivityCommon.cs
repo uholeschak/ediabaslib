@@ -8946,7 +8946,7 @@ namespace BmwDeepObd
                     if (SelectedTranslator == TranslatorType.YandexCloud)
                     {
                         bool useApiKey = true;
-                        if (!string.IsNullOrEmpty(YandexCloudFolderId) && string.IsNullOrEmpty(_yandexCloudIamToken))
+                        if (IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
                         {
                             useApiKey = false;
                             _yandexCloudIamToken = null;
@@ -9219,7 +9219,7 @@ namespace BmwDeepObd
                         switch (SelectedTranslator)
                         {
                             case TranslatorType.YandexCloud:
-                                if (!string.IsNullOrEmpty(YandexCloudFolderId) && string.IsNullOrEmpty(_yandexCloudIamToken))
+                                if (!IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
                                 {
                                     _yandexCloudIamToken = GetYandexCloudIamToken(responseTranslateResult, out _yandexCloudIamTokenExpires);
                                     responseEvaluated = true;
