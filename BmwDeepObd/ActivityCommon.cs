@@ -9220,7 +9220,7 @@ namespace BmwDeepObd
                         switch (SelectedTranslator)
                         {
                             case TranslatorType.YandexCloud:
-                                if (!IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
+                                if (IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
                                 {
                                     _yandexCloudIamToken = GetYandexCloudIamToken(responseTranslateResult, out _yandexCloudIamTokenExpires);
                                     responseEvaluated = true;
