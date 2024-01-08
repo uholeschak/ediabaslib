@@ -8688,6 +8688,21 @@ namespace BmwDeepObd
 #endif
         }
 
+        public static bool IsYandexCloudOauthToken(string apiKey)
+        {
+            if (string.IsNullOrEmpty(apiKey))
+            {
+                return false;
+            }
+
+            if (apiKey.StartsWith("y0_", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool VagFilesRequired()
         {
             return SelectedManufacturer != ManufacturerType.Bmw;
