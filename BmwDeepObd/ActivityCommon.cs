@@ -107,6 +107,7 @@ namespace BmwDeepObd
             }
 
             [JsonPropertyName("folderId")]
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public string FolderId { get; }
         }
 
@@ -134,6 +135,7 @@ namespace BmwDeepObd
             public string Format { get; }
 
             [JsonPropertyName("folderId")]
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public string FolderId { get; }
         }
 
@@ -8947,7 +8949,7 @@ namespace BmwDeepObd
                     if (SelectedTranslator == TranslatorType.YandexCloud)
                     {
                         bool oauthToken = IsYandexCloudOauthToken(YandexCloudApiKey);
-                        string folderId = oauthToken ? YandexCloudFolderId : string.Empty;
+                        string folderId = oauthToken ? YandexCloudFolderId : null;
                         if (oauthToken && string.IsNullOrEmpty(_yandexCloudIamToken))
                         {
                             _yandexCloudIamToken = null;
