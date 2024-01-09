@@ -7679,12 +7679,12 @@ namespace BmwDeepObd
 
         public static string GetCurrentLanguage(bool iso3 = false)
         {
-            string language = Java.Util.Locale.Default.Language ?? DefaultLang;
+            string language = Java.Util.Locale.Default.Language;
             if (!string.IsNullOrEmpty(SelectedLocale))
             {
                 try
                 {
-                    if (string.Compare(language, SelectedLocale, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.IsNullOrEmpty(language) || string.Compare(language, SelectedLocale, StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         Java.Util.Locale locale = new Java.Util.Locale(SelectedLocale);
                         Java.Util.Locale.Default = locale;
@@ -7696,6 +7696,7 @@ namespace BmwDeepObd
                 }
             }
 
+            language = Java.Util.Locale.Default.Language;
             if (iso3)
             {
                 string iso3Language = Java.Util.Locale.Default.ISO3Language;
@@ -7705,7 +7706,7 @@ namespace BmwDeepObd
                 }
             }
 
-            return language;
+            return language ?? DefaultLang;
         }
 
         public static WebProxy GetProxySettings()
