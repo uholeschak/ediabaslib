@@ -18,10 +18,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <RadioButton
-                android:id="@+id/radioButtonTranslatorYandex"
+                android:id="@+id/radioButtonTranslatorYandexCloud"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/trans_translator_yandex" />
+                android:text="@string/trans_translator_yandex_cloud" />
+            <RadioButton
+                android:id="@+id/radioButtonTranslatorYandexTranslate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/trans_translator_yandex_translate" />
             <RadioButton
                 android:id="@+id/radioButtonTranslatorIbm"
                 android:layout_width="wrap_content"
@@ -32,11 +37,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/trans_translator_deepl" />
-            <RadioButton
-                android:id="@+id/radioButtonTranslatorYandexCloud"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/trans_translator_yandex_cloud" />
         </RadioGroup>
         <TextView
             android:id="@+id/textViewTransKeyDesc"

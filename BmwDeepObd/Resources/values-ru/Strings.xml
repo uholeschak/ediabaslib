@@ -239,7 +239,7 @@
   <!-- Translate Key -->
   <string name="trans_api_key_title">Настройки перевода</string>
   <string name="trans_caption_translator">Переводчик</string>
-  <string name="trans_translator_yandex">Яндекс.Переводчик</string>
+  <string name="trans_translator_yandex_translate">Яндекс.Переводчик</string>
   <string name="trans_translator_ibm">IBM Watson</string>
   <string name="trans_translator_deepl">DeepL</string>
   <string name="trans_translator_yandex_cloud">Yandex Cloud</string>
