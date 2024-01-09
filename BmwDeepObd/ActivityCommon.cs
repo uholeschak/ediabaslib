@@ -121,7 +121,7 @@ namespace BmwDeepObd
                 FolderId = folderId;
             }
 
-            [JsonPropertyName("text")]
+            [JsonPropertyName("texts")]
             public string[] TextArray { get; }
 
             [JsonPropertyName("sourceLanguageCode")]
@@ -8981,7 +8981,7 @@ namespace BmwDeepObd
                             {
                                 string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
                                 sumLength += testString.Length;
-                                if (sumLength > 40000)
+                                if (sumLength > 9000)
                                 {
                                     break;
                                 }
