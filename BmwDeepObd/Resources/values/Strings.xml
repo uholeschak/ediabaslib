@@ -211,7 +211,7 @@
   <!-- Translate Key -->
   <string name="trans_api_key_title">Translation configuration</string>
   <string name="trans_caption_translator">Translator</string>
-  <string name="trans_translator_yandex">Yandex.Translate</string>
+  <string name="trans_translator_yandex_translate">Yandex.Translate</string>
   <string name="trans_translator_ibm">IBM Watson</string>
   <string name="trans_translator_deepl">DeepL</string>
   <string name="trans_translator_yandex_cloud">Yandex Cloud</string>

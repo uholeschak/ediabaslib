@@ -45,10 +45,10 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private View _contentView;
         private TextView _textViewCaptionTranslator;
-        private RadioButton _radioButtonTranslatorYandex;
+        private RadioButton _radioButtonTranslatorYandexCloud;
+        private RadioButton _radioButtonTranslatorYandexTranslate;
         private RadioButton _radioButtonTranslatorIbm;
         private RadioButton _radioButtonTranslatorDeepl;
-        private RadioButton _radioButtonTranslatorYandexCloud;
         private TextView _textViewTransKeyDesc;
         private LinearLayout _layoutYandexKey;
         private Button _buttonYandexApiKeyCreate;
@@ -101,8 +101,21 @@ namespace BmwDeepObd
             _activityCommon = new ActivityCommon(this);
 
             _textViewCaptionTranslator = FindViewById<TextView>(Resource.Id.textViewCaptionTranslator);
-            _radioButtonTranslatorYandex = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandex);
-            _radioButtonTranslatorYandex.CheckedChange += (sender, e) =>
+
+            _radioButtonTranslatorYandexCloud = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandexCloud);
+            _radioButtonTranslatorYandexCloud.CheckedChange += (sender, e) =>
+            {
+                if (_ignoreChange)
+                {
+                    return;
+                }
+
+                UpdateTranslatorType();
+                UpdateDisplay();
+            };
+
+            _radioButtonTranslatorYandexTranslate = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandexTranslate);
+            _radioButtonTranslatorYandexTranslate.CheckedChange += (sender, e) =>
             {
                 if (_ignoreChange)
                 {
@@ -127,18 +140,6 @@ namespace BmwDeepObd
 
             _radioButtonTranslatorDeepl = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorDeepl);
             _radioButtonTranslatorDeepl.CheckedChange += (sender, e) =>
-            {
-                if (_ignoreChange)
-                {
-                    return;
-                }
-
-                UpdateTranslatorType();
-                UpdateDisplay();
-            };
-
-            _radioButtonTranslatorYandexCloud = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandexCloud);
-            _radioButtonTranslatorYandexCloud.CheckedChange += (sender, e) =>
             {
                 if (_ignoreChange)
                 {
@@ -516,7 +517,7 @@ namespace BmwDeepObd
                         break;
 
                     default:
-                        _radioButtonTranslatorYandex.Checked = true;
+                        _radioButtonTranslatorYandexTranslate.Checked = true;
                         break;
                 }
 
@@ -669,7 +670,7 @@ namespace BmwDeepObd
             }
 
             ActivityCommon.TranslatorType translatorType = ActivityCommon.SelectedTranslator;
-            if (_radioButtonTranslatorYandex.Checked)
+            if (_radioButtonTranslatorYandexTranslate.Checked)
             {
                 translatorType = ActivityCommon.TranslatorType.YandexTranslate;
             }
