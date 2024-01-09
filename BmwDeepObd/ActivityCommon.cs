@@ -8953,8 +8953,12 @@ namespace BmwDeepObd
                         };
                         bool oauthToken = IsYandexCloudOauthToken(YandexCloudApiKey);
                         string folderId = oauthToken ? YandexCloudFolderId : null;
-                        TimeSpan tokenAge = DateTime.Now - _yandexCloudIamTokenTime;
+                        if (string.IsNullOrWhiteSpace(folderId))
+                        {
+                            folderId = null;
+                        }
 
+                        TimeSpan tokenAge = DateTime.Now - _yandexCloudIamTokenTime;
                         if (tokenAge.TotalHours > 24)
                         {
                             _yandexCloudIamToken = null;
