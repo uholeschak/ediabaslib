@@ -101,19 +101,18 @@ namespace BmwDeepObd
 
         public class YandexCloudListLanguagesRequest
         {
-            public YandexCloudListLanguagesRequest(string folderId)
+            public YandexCloudListLanguagesRequest(string folderId = null)
             {
                 FolderId = folderId;
             }
 
             [JsonPropertyName("folderId")]
-            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public string FolderId { get; }
         }
 
         public class YandexCloudTranslateRequest
         {
-            public YandexCloudTranslateRequest(string[] textArray, string source, string target, string folderId)
+            public YandexCloudTranslateRequest(string[] textArray, string source, string target, string folderId = null)
             {
                 TextArray = textArray;
                 Source = source;
@@ -135,7 +134,6 @@ namespace BmwDeepObd
             public string Format { get; }
 
             [JsonPropertyName("folderId")]
-            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public string FolderId { get; }
         }
 
@@ -8948,6 +8946,10 @@ namespace BmwDeepObd
 
                     if (SelectedTranslator == TranslatorType.YandexCloud)
                     {
+                        JsonSerializerOptions jsonOptions = new()
+                        {
+                            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                        };
                         bool oauthToken = IsYandexCloudOauthToken(YandexCloudApiKey);
                         string folderId = oauthToken ? YandexCloudFolderId : null;
                         if (oauthToken && string.IsNullOrEmpty(_yandexCloudIamToken))
@@ -8957,7 +8959,7 @@ namespace BmwDeepObd
                             // no IAM Token present
                             sbUrl.Append("https://iam.api.cloud.yandex.net/iam/v1/tokens");
                             YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudApiKey);
-                            string jsonString = JsonSerializer.Serialize(languagesRequest);
+                            string jsonString = JsonSerializer.Serialize(languagesRequest, jsonOptions);
                             httpContent = new StringContent(jsonString);
                         }
                         else if (_transLangList == null)
@@ -8965,7 +8967,7 @@ namespace BmwDeepObd
                             // no language list present, get it first
                             sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/languages");
                             YandexCloudListLanguagesRequest languagesRequest = new YandexCloudListLanguagesRequest(folderId);
-                            string jsonString = JsonSerializer.Serialize(languagesRequest);
+                            string jsonString = JsonSerializer.Serialize(languagesRequest, jsonOptions);
                             httpContent = new StringContent(jsonString);
                         }
                         else
@@ -8996,7 +8998,7 @@ namespace BmwDeepObd
                             }
 
                             YandexCloudTranslateRequest translateRequest = new YandexCloudTranslateRequest(transList.ToArray(), "de", targetLang, folderId);
-                            string jsonString = JsonSerializer.Serialize(translateRequest);
+                            string jsonString = JsonSerializer.Serialize(translateRequest, jsonOptions);
 
                             httpContent = new StringContent(jsonString);
                         }
