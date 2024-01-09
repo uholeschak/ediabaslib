@@ -793,6 +793,7 @@ namespace BmwDeepObd
         private bool _translateLockAquired;
         private string _yandexCloudIamToken;
         private string _yandexCloudIamTokenExpires;
+        private DateTime _yandexCloudIamTokenTime = DateTime.MinValue;
         private List<string> _transLangList;
         private List<string> _transList;
         private List<string> _transReducedStringList;
@@ -8696,7 +8697,7 @@ namespace BmwDeepObd
             }
 
             string keyTrim = apiKey.Trim();
-            if (keyTrim.Length > 10 && keyTrim.StartsWith("y0_", StringComparison.OrdinalIgnoreCase))
+            if (keyTrim.Length > 40 && keyTrim[2] == '_')
             {
                 return true;
             }
@@ -8952,10 +8953,19 @@ namespace BmwDeepObd
                         };
                         bool oauthToken = IsYandexCloudOauthToken(YandexCloudApiKey);
                         string folderId = oauthToken ? YandexCloudFolderId : null;
+                        TimeSpan tokenAge = DateTime.Now - _yandexCloudIamTokenTime;
+
+                        if (tokenAge.TotalHours > 24)
+                        {
+                            _yandexCloudIamToken = null;
+                            _yandexCloudIamTokenExpires = null;
+                        }
+
                         if (oauthToken && string.IsNullOrEmpty(_yandexCloudIamToken))
                         {
                             _yandexCloudIamToken = null;
                             _yandexCloudIamTokenExpires = null;
+                            _yandexCloudIamTokenTime = DateTime.MinValue;
                             // no IAM Token present
                             sbUrl.Append("https://iam.api.cloud.yandex.net/iam/v1/tokens");
                             YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudApiKey);
@@ -9228,6 +9238,7 @@ namespace BmwDeepObd
                                     _yandexCloudIamToken = GetYandexCloudIamToken(responseTranslateResult, out _yandexCloudIamTokenExpires);
                                     if (!string.IsNullOrEmpty(_yandexCloudIamToken))
                                     {
+                                        _yandexCloudIamTokenTime = DateTime.Now;
                                         _activity?.RunOnUiThread(() =>
                                         {
                                             if (_disposed)
