@@ -361,7 +361,7 @@ namespace ApkUploader
                     "ApkUploader", _cts.Token, new FileDataStore("ApkUploader")).Result;
             }
 
-            if (credential.Token.IsExpired(SystemClock.Default))
+            if (credential.Token.IsStale)
             {
                 if (!credential.RefreshTokenAsync(_cts.Token).Result)
                 {
