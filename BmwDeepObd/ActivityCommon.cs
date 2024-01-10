@@ -1313,6 +1313,7 @@ namespace BmwDeepObd
             _bcReceiverUpdateDisplayHandler = bcReceiverUpdateDisplayHandler;
             _bcReceiverReceivedHandler = bcReceiverReceivedHandler;
             Emulator = IsEmulator();
+            ResetYandexIamToken();
             _clipboardManager = context?.GetSystemService(Context.ClipboardService);
             if (Build.VERSION.SdkInt >= BuildVersionCodes.JellyBeanMr2)
             {
@@ -8960,17 +8961,14 @@ namespace BmwDeepObd
                         }
 
                         TimeSpan tokenAge = DateTime.Now - _yandexCloudIamTokenTime;
-                        if (tokenAge.TotalHours > 24)
+                        if (tokenAge.TotalHours > 1)
                         {
-                            _yandexCloudIamToken = null;
-                            _yandexCloudIamTokenExpires = null;
+                            ResetYandexIamToken();
                         }
 
                         if (oauthToken && string.IsNullOrEmpty(_yandexCloudIamToken))
                         {
-                            _yandexCloudIamToken = null;
-                            _yandexCloudIamTokenExpires = null;
-                            _yandexCloudIamTokenTime = DateTime.MinValue;
+                            ResetYandexIamToken();
                             // no IAM Token present
                             sbUrl.Append("https://iam.api.cloud.yandex.net/iam/v1/tokens");
                             YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudApiKey);
@@ -9355,6 +9353,7 @@ namespace BmwDeepObd
                     {
                         // error
                         _transList = null;
+                        ResetYandexIamToken();
                     }
                     _activity?.RunOnUiThread(() =>
                     {
@@ -9541,6 +9540,13 @@ namespace BmwDeepObd
             });
             translateThread.Start();
             return true;
+        }
+
+        private void ResetYandexIamToken()
+        {
+            _yandexCloudIamToken = null;
+            _yandexCloudIamTokenExpires = null;
+            _yandexCloudIamTokenTime = DateTime.MinValue;
         }
 
         private string GetYandexTranslationError(string xmlResult, out int errorCode)
