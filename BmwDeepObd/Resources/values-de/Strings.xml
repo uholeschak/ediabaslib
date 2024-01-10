@@ -240,6 +240,7 @@
   <string name="trans_translator_deepl">DeepL</string>
   <string name="trans_translator_yandex_cloud">Yandex Cloud</string>
   <string name="trans_key_desc">Für eine automatische Übersetzung mit {0} wird eine (kostenloser) API Key und Account benötigt, der eine begrenzte Anzahl an Übersetzungen pro Tag erlaubt.\nMit den folgenden Schaltflächen loggen Sie sich in Ihren Account ein um eine Key zu erzeugen oder Ihre bestehenden anzuzeigen.\nKopieren Sie den Key aus dem Browser und fügen Sie Ihn in das untere Feld mit der Einfügen Schaltfläche ein.\nUm den Key zu kopieren drücken und halten Sie das erste Wort, erweitern den Bereich und wählen Sie anschließend kopieren.</string>
+  <string name="trans_key_yandex_cloud">Yandex Cloud erlaubt zusätzlich ein OAuth Token und eine Folder ID anstelle des API Keys zu verwenden.</string>
   <string name="trans_key_copy_title">API Key kopieren</string>
   <string name="button_api_key_create">API Key erzeugen</string>
   <string name="button_api_key_get">API Keys anzeigen</string>

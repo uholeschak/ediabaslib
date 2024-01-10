@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
-using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Views.InputMethods;
@@ -500,7 +500,17 @@ namespace BmwDeepObd
             try
             {
                 _ignoreChange = true;
-                _textViewTransKeyDesc.Text = string.Format(GetString(Resource.String.trans_key_desc), _activityCommon.TranslatorName());
+                StringBuilder sbDescription = new StringBuilder();
+                sbDescription.Append(string.Format(GetString(Resource.String.trans_key_desc), _activityCommon.TranslatorName()));
+                switch (ActivityCommon.SelectedTranslator)
+                {
+                    case ActivityCommon.TranslatorType.YandexCloud:
+                        sbDescription.Append("\r\n");
+                        sbDescription.Append(GetString(Resource.String.trans_key_yandex_cloud));
+                        break;
+                }
+
+                _textViewTransKeyDesc.Text = sbDescription.ToString();
 
                 switch (ActivityCommon.SelectedTranslator)
                 {
