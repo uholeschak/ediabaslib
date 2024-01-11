@@ -18,14 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragListViewBinding", "..\EdiabasLib\EdiabasLibAndroid\DragListViewBinding\DragListViewBinding.csproj", "{229E4933-3700-4F8F-817B-FA3E09E92568}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdiabasLibAndroidNet", "..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj", "{5F1B024A-E776-4CE6-99AB-71498E48C639}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsbSerialNetBinding", "..\EdiabasLib\AndroidNetBindings\UsbSerialNetBinding\UsbSerialNetBinding.csproj", "{EF4994CF-05E4-49C1-9E45-D9D0970F19EC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DragListViewNetBinding", "..\EdiabasLib\AndroidNetBindings\DragListViewNetBinding\DragListViewNetBinding.csproj", "{A6FE214C-78A6-46EE-A38F-A54A2B66E242}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomGaugeNetBinding", "..\EdiabasLib\AndroidNetBindings\CustomGaugeNetBinding\CustomGaugeNetBinding.csproj", "{42F48EB8-CFFE-43BB-9FCF-DC74C7F4D04D}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,22 +46,6 @@ Global
 		{229E4933-3700-4F8F-817B-FA3E09E92568}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{229E4933-3700-4F8F-817B-FA3E09E92568}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{229E4933-3700-4F8F-817B-FA3E09E92568}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F1B024A-E776-4CE6-99AB-71498E48C639}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EF4994CF-05E4-49C1-9E45-D9D0970F19EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EF4994CF-05E4-49C1-9E45-D9D0970F19EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EF4994CF-05E4-49C1-9E45-D9D0970F19EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EF4994CF-05E4-49C1-9E45-D9D0970F19EC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6FE214C-78A6-46EE-A38F-A54A2B66E242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6FE214C-78A6-46EE-A38F-A54A2B66E242}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6FE214C-78A6-46EE-A38F-A54A2B66E242}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6FE214C-78A6-46EE-A38F-A54A2B66E242}.Release|Any CPU.Build.0 = Release|Any CPU
-		{42F48EB8-CFFE-43BB-9FCF-DC74C7F4D04D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{42F48EB8-CFFE-43BB-9FCF-DC74C7F4D04D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{42F48EB8-CFFE-43BB-9FCF-DC74C7F4D04D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{42F48EB8-CFFE-43BB-9FCF-DC74C7F4D04D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
