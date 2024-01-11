@@ -37,6 +37,7 @@ if "!FromNet!"=="1" (
 ) else (
   ROBOCOPY "!SrcDir!\Properties" "!DstDir!" AndroidManifest.xml
   IF EXIST "!DstDir!\Resource.designer.cs" DEL /q "!DstDir!\Resource.designer.cs"
+  IF EXIST "!DstDir!\Resources\Resource.designer.cs" DEL /q "!DstDir!\Resources\Resource.designer.cs"
 )
 
 echo done
