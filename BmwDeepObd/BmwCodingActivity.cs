@@ -231,7 +231,7 @@ namespace BmwDeepObd
                             packageVersion = PackageInfoCompat.GetLongVersionCode(packageInfo);
                         }
 
-                        string language = ActivityCommon.GetCurrentLanguage();
+                        string language = _activityCommon.GetCurrentLanguage();
                         string userAgentAppend = string.Format(CultureInfo.InvariantCulture, " DeepObd/{0}/{1}", packageVersion, language);
                         userAgent += userAgentAppend;
 
@@ -830,7 +830,7 @@ namespace BmwDeepObd
                         { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
                             packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
                         { new StringContent(ActivityCommon.AppId), "app_id" },
-                        { new StringContent(ActivityCommon.GetCurrentLanguage()), "lang" },
+                        { new StringContent(_activityCommon.GetCurrentLanguage()), "lang" },
                         { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
                         { new StringContent(_activityCommon.SelectedInterface.ToDescriptionString()), "interface_type" },
                         { new StringContent(ActivityCommon.LastAdapterSerial ?? string.Empty), "adapter_serial" },

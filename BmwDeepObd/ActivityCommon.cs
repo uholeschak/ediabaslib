@@ -7677,36 +7677,51 @@ namespace BmwDeepObd
             Translator = TranslatorType.IbmWatson;
         }
 
-        public static string GetCurrentLanguage(bool iso3 = false)
+        public string GetCurrentLanguage(bool iso3 = false)
         {
-            string language = Java.Util.Locale.Default.Language;
-            if (!string.IsNullOrEmpty(SelectedLocale))
+            return GetCurrentLanguageStatic(iso3, _context);
+        }
+
+        public static string GetCurrentLanguageStatic(bool iso3 = false, Context context = null)
+        {
+            try
             {
-                try
+                Java.Util.Locale locale = Java.Util.Locale.Default;
+                Configuration configuration = context?.Resources?.Configuration;
+
+                if (configuration != null)
                 {
-                    if (string.IsNullOrEmpty(language) || string.Compare(language, SelectedLocale, StringComparison.OrdinalIgnoreCase) != 0)
+                    AndroidX.Core.OS.LocaleListCompat localeList =
+                        AndroidX.Core.OS.ConfigurationCompat.GetLocales(configuration);
+                    if (localeList.Size() > 0)
                     {
-                        Java.Util.Locale locale = new Java.Util.Locale(SelectedLocale);
-                        Java.Util.Locale.Default = locale;
+                        locale = localeList.Get(0);
                     }
                 }
-                catch (Exception)
+                else
                 {
-                    // ignored
+                    if (!string.IsNullOrEmpty(SelectedLocale))
+                    {
+                        locale = new Java.Util.Locale(SelectedLocale);
+                    }
                 }
-            }
 
-            language = Java.Util.Locale.Default.Language;
-            if (iso3)
+                string language = locale?.Language;
+                if (iso3)
+                {
+                    string iso3Language = locale?.ISO3Language;
+                    if (!string.IsNullOrEmpty(iso3Language))
+                    {
+                        language = iso3Language;
+                    }
+                }
+
+                return language ?? DefaultLang;
+            }
+            catch (Exception)
             {
-                string iso3Language = Java.Util.Locale.Default.ISO3Language;
-                if (!string.IsNullOrEmpty(iso3Language))
-                {
-                    language = iso3Language;
-                }
+                return DefaultLang;
             }
-
-            return language ?? DefaultLang;
         }
 
         public static WebProxy GetProxySettings()
@@ -8016,7 +8031,7 @@ namespace BmwDeepObd
 
         public static string GetVagDatUkdDir(string ecuPath, bool ignoreManufacturer = false)
         {
-            string lang = GetCurrentLanguage();
+            string lang = GetCurrentLanguageStatic();
             string dirName = Path.Combine(ecuPath, "dat.ukd", lang);
             if (!Directory.Exists(dirName))
             {
@@ -8676,7 +8691,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool IsTranslationRequired()
+        public bool IsTranslationRequired()
         {
 #if true
             if (SelectedManufacturer != ManufacturerType.Bmw)
@@ -11002,7 +11017,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                string lang = GetCurrentLanguage();
+                string lang = GetCurrentLanguageStatic();
                 if (_udsReaderDict.TryGetValue(lang, out udsReader))
                 {
                     return udsReader;
@@ -11144,7 +11159,7 @@ namespace BmwDeepObd
                     _ecuFunctionReader = new EcuFunctionReader(bmwPath);
                 }
 
-                if (!_ecuFunctionReader.Init(GetCurrentLanguage(), out errorMessage))
+                if (!_ecuFunctionReader.Init(GetCurrentLanguageStatic(), out errorMessage))
                 {
                     return false;
                 }

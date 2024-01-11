@@ -127,7 +127,7 @@ namespace BmwFileReader
                     }
 
                     // this should be the dealer languge, replace it with current language
-                    string language = ActivityCommon.GetCurrentLanguage();
+                    string language = ActivityCommon.GetCurrentLanguageStatic();
                     if (language.Length > 2)
                     {
                         language = language.Substring(0, 2);

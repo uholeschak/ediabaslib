@@ -2122,7 +2122,7 @@ namespace BmwDeepObd
                                             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                             if (ecuResultStateValue != null)
                                             {
-                                                resultString = ecuResultStateValue.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                resultString = ecuResultStateValue.Title?.GetTitle(ActivityCommon.GetCurrentLanguageStatic());
                                             }
                                         }
 
@@ -2252,7 +2252,7 @@ namespace BmwDeepObd
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (ecuResultStateValue != null)
                 {
-                    resultString = ecuResultStateValue.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                    resultString = ecuResultStateValue.Title?.GetTitle(ActivityCommon.GetCurrentLanguageStatic());
                 }
             }
             
@@ -2438,7 +2438,7 @@ namespace BmwDeepObd
         public static List<string> ConvertFaultCodeError(Int64 errorCode, bool info, EdiabasErrorReport errorReport, EcuFunctionStructs.EcuVariant ecuVariant)
         {
             List<string> resultList = new List<string>();
-            string language = ActivityCommon.GetCurrentLanguage();
+            string language = ActivityCommon.GetCurrentLanguageStatic();
             EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, info, ecuVariant);
             if (ecuFaultCodeLabel != null)
             {
@@ -2601,7 +2601,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            string language = ActivityCommon.GetCurrentLanguage();
+            string language = ActivityCommon.GetCurrentLanguageStatic();
             Int64 envCount = ActivityMain.GetResultInt64(errorDetail, "F_UW_ANZ", out bool countFound);
             if (!countFound || envCount < 1)
             {
