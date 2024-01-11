@@ -47,7 +47,6 @@ using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.Dialogs;
 using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
-using ApkUncompress;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -10617,6 +10616,7 @@ namespace BmwDeepObd
             return true;
         }
 
+#if NET
         public bool ExtraktPackageAssemblies(string outputPath, bool forceUpdate = false)
         {
             try
@@ -10668,10 +10668,10 @@ namespace BmwDeepObd
 
                 string ext = Path.GetExtension(packageFilePath);
                 bool result = false;
-                ApkUncompressCommon apkUncompress = new ApkUncompressCommon();
+                ApkUncompress.ApkUncompressCommon apkUncompress = new ApkUncompress.ApkUncompressCommon();
                 if (string.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompressCommon.AssembliesPathApk, null, outputPath))
+                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompress.ApkUncompressCommon.AssembliesPathApk, null, outputPath))
                     {
                         result = true;
                     }
@@ -10679,7 +10679,7 @@ namespace BmwDeepObd
 
                 if (string.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompressCommon.AssembliesPathAab, null, outputPath))
+                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompress.ApkUncompressCommon.AssembliesPathAab, null, outputPath))
                     {
                         result = true;
                     }
@@ -10700,6 +10700,7 @@ namespace BmwDeepObd
                 return false;
             }
         }
+#endif
 
         public static Dictionary<string, int> ExtractKeyWords(string archiveFilename, string wordRegEx, int maxWords, string lineRegEx, ProgressZipDelegate progressHandler)
         {
