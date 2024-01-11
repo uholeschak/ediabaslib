@@ -698,14 +698,14 @@ namespace BmwDeepObd
             if (translationSubmenu != null)
             {
                 translationSubmenu.SetEnabled(true);
-                translationSubmenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationSubmenu.SetVisible(_activityCommon.IsTranslationRequired());
             }
 
             IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
             if (translationEnableMenu != null)
             {
                 translationEnableMenu.SetEnabled(!commActive || ActivityCommon.IsTranslationAvailable());
-                translationEnableMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationEnableMenu.SetVisible(_activityCommon.IsTranslationRequired());
                 translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
             }
 
@@ -713,14 +713,14 @@ namespace BmwDeepObd
             if (translationYandexKeyMenu != null)
             {
                 translationYandexKeyMenu.SetEnabled(!commActive);
-                translationYandexKeyMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationYandexKeyMenu.SetVisible(_activityCommon.IsTranslationRequired());
             }
 
             IMenuItem translationClearCacheMenu = menu.FindItem(Resource.Id.menu_translation_clear_cache);
             if (translationClearCacheMenu != null)
             {
                 translationClearCacheMenu.SetEnabled(!_activityCommon.IsTranslationCacheEmpty());
-                translationClearCacheMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationClearCacheMenu.SetVisible(_activityCommon.IsTranslationRequired());
             }
         }
 
@@ -1142,7 +1142,7 @@ namespace BmwDeepObd
 
             try
             {
-                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_configDir))
+                if (ActivityCommon.IsTranslationAvailable() && _activityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_configDir))
                 {
                     return _activityCommon.ReadTranslationCache(Path.Combine(_configDir, TranslationFileName));
                 }
@@ -1164,7 +1164,7 @@ namespace BmwDeepObd
 
             try
             {
-                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_configDir))
+                if (ActivityCommon.IsTranslationAvailable() && _activityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_configDir))
                 {
                     return _activityCommon.StoreTranslationCache(Path.Combine(_configDir, TranslationFileName));
                 }
@@ -1179,7 +1179,7 @@ namespace BmwDeepObd
 
         private void UpdateDisplay()
         {
-            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
+            if (_activityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
             {
                 EditYandexKey();
                 return;
@@ -1847,7 +1847,7 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool TranslateEcuText(EventHandler<EventArgs> handler = null)
         {
-            if (_translateEnabled && !_translateActive && ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
+            if (_translateEnabled && !_translateActive && _activityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
             {
                 if (!_jobListTranslated)
                 {

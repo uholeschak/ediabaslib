@@ -1354,14 +1354,14 @@ namespace BmwDeepObd
             if (translationSubmenu != null)
             {
                 translationSubmenu.SetEnabled(true);
-                translationSubmenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationSubmenu.SetVisible(_activityCommon.IsTranslationRequired());
             }
 
             IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
             if (translationEnableMenu != null)
             {
                 translationEnableMenu.SetEnabled(!commActive || ActivityCommon.IsTranslationAvailable());
-                translationEnableMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationEnableMenu.SetVisible(_activityCommon.IsTranslationRequired());
                 translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
             }
 
@@ -1369,14 +1369,14 @@ namespace BmwDeepObd
             if (translationYandexKeyMenu != null)
             {
                 translationYandexKeyMenu.SetEnabled(!commActive);
-                translationYandexKeyMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationYandexKeyMenu.SetVisible(_activityCommon.IsTranslationRequired());
             }
 
             IMenuItem translationClearCacheMenu = menu.FindItem(Resource.Id.menu_translation_clear_cache);
             if (translationClearCacheMenu != null)
             {
                 translationClearCacheMenu.SetEnabled(!_activityCommon.IsTranslationCacheEmpty());
-                translationClearCacheMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationClearCacheMenu.SetVisible(_activityCommon.IsTranslationRequired());
             }
         }
 
@@ -1794,7 +1794,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
+            if (_activityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation && !ActivityCommon.IsTranslationAvailable())
             {
                 EditYandexKey();
                 return;
@@ -1865,7 +1865,7 @@ namespace BmwDeepObd
 
         private bool TranslateEcuText(EventHandler<EventArgs> handler = null)
         {
-            if (_translateEnabled && !_translateActive && ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
+            if (_translateEnabled && !_translateActive && _activityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
             {
                 if (!_ecuListTranslated)
                 {
@@ -2855,7 +2855,7 @@ namespace BmwDeepObd
                 }
 
                 AndroidX.AppCompat.Widget.PopupMenu popupMenu = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor, (int) GravityFlags.Right);
-                string language = ActivityCommon.GetCurrentLanguage();
+                string language = _activityCommon.GetCurrentLanguage();
                 int menuId = 1;
                 bool result = AddBwmServiceMenuChilds(popupMenu.Menu, null, serviceTreeItem, ecuInfo, validSgbdDict, language, 0, ref menuId);
                 if (!result || menuId == 1 || !popupMenu.Menu.HasVisibleItems)
@@ -3717,7 +3717,7 @@ namespace BmwDeepObd
                                                         }
                                                         else
                                                         {
-                                                            string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                            string title = ecuVariant.Title?.GetTitle(_activityCommon.GetCurrentLanguage());
                                                             if (!string.IsNullOrEmpty(title))
                                                             {
                                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
@@ -3818,7 +3818,7 @@ namespace BmwDeepObd
                                                         ecuInfo.EcuName = ecuName.ToUpperInvariant();
                                                         ecuInfo.Grp = groupName.ToUpperInvariant();
 
-                                                        string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                                        string title = ecuVariant.Title?.GetTitle(_activityCommon.GetCurrentLanguage());
                                                         if (!string.IsNullOrEmpty(title))
                                                         {
                                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT ECU variant found for: Sgbd={0}, Name={1}, Group={2}, Title={3}",
@@ -4112,7 +4112,7 @@ namespace BmwDeepObd
                                         }
                                         else
                                         {
-                                            string title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                            string title = ecuVariant.Title?.GetTitle(_activityCommon.GetCurrentLanguage());
                                             if (!string.IsNullOrEmpty(title))
                                             {
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
@@ -4423,7 +4423,7 @@ namespace BmwDeepObd
                                         }
                                         else
                                         {
-                                            title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                            title = ecuVariant.Title?.GetTitle(_activityCommon.GetCurrentLanguage());
                                             if (!string.IsNullOrWhiteSpace(ecuVariant.GroupName))
                                             {
                                                 ecuInfo.Grp = ecuVariant.GroupName.Trim();
@@ -5736,7 +5736,7 @@ namespace BmwDeepObd
 
             if (ecuVariant != null)
             {
-                string language = ActivityCommon.GetCurrentLanguage();
+                string language = _activityCommon.GetCurrentLanguage();
                 List<Tuple<EcuFunctionStructs.EcuFixedFuncStruct, EcuFunctionStructs.EcuFuncStruct>> fixedFuncStructList = ActivityCommon.EcuFunctionReader.GetFixedFuncStructList(ecuVariant);
                 foreach (var ecuFixedFuncStructPair in fixedFuncStructList)
                 {
@@ -7416,7 +7416,7 @@ namespace BmwDeepObd
                                 }
                                 else
                                 {
-                                    title = ecuVariant.Title?.GetTitle(ActivityCommon.GetCurrentLanguage());
+                                    title = ecuVariant.Title?.GetTitle(_activityCommon.GetCurrentLanguage());
                                 }
                             }
 

@@ -408,7 +408,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            string language = ActivityCommon.GetCurrentLanguage();
+            string language = _activityCommon.GetCurrentLanguage();
             bool multipleFuncStruct = false;
             _jobActuatorList = new List<XmlToolEcuActivity.JobInfo>();
             foreach (XmlToolEcuActivity.JobInfo jobInfo in _ecuInfo.JobList)
@@ -516,7 +516,7 @@ namespace BmwDeepObd
         {
             int selectedFunction = _instanceData.SelectedFunction;
             int selection = 0;
-            string language = ActivityCommon.GetCurrentLanguage();
+            string language = _activityCommon.GetCurrentLanguage();
 
             CreateActuatorJobList();
 
@@ -607,7 +607,7 @@ namespace BmwDeepObd
         {
             UpdateActuatorStatus();
 
-            string language = ActivityCommon.GetCurrentLanguage();
+            string language = _activityCommon.GetCurrentLanguage();
             StringBuilder stringBuilderComments = new StringBuilder();
             XmlToolEcuActivity.JobInfo selectedJob = GetSelectedJob();
 
@@ -715,7 +715,7 @@ namespace BmwDeepObd
                 return;
             }
             object lockObject = new object();
-            string language = ActivityCommon.GetCurrentLanguage();
+            string language = _activityCommon.GetCurrentLanguage();
 
             bool activation = selectedJob.EcuFixedFuncStruct.Activation.ConvertToInt() > 0;
             Int64 activationDuration = selectedJob.EcuFixedFuncStruct.ActivationDurationMs.ConvertToInt();

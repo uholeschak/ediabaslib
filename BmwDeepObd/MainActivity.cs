@@ -1615,14 +1615,14 @@ namespace BmwDeepObd
             if (translationSubmenu != null)
             {
                 translationSubmenu.SetEnabled(true);
-                translationSubmenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationSubmenu.SetVisible(_activityCommon.IsTranslationRequired());
             }
 
             IMenuItem translationEnableMenu = menu.FindItem(Resource.Id.menu_translation_enable);
             if (translationEnableMenu != null)
             {
                 translationEnableMenu.SetEnabled(!commActive || ActivityCommon.IsTranslationAvailable());
-                translationEnableMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationEnableMenu.SetVisible(_activityCommon.IsTranslationRequired());
                 translationEnableMenu.SetChecked(ActivityCommon.EnableTranslation);
             }
 
@@ -1630,14 +1630,14 @@ namespace BmwDeepObd
             if (translationYandexKeyMenu != null)
             {
                 translationYandexKeyMenu.SetEnabled(!commActive);
-                translationYandexKeyMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationYandexKeyMenu.SetVisible(_activityCommon.IsTranslationRequired());
             }
 
             IMenuItem translationClearCacheMenu = menu.FindItem(Resource.Id.menu_translation_clear_cache);
             if (translationClearCacheMenu != null)
             {
                 translationClearCacheMenu.SetEnabled(!_activityCommon.IsTranslationCacheEmpty());
-                translationClearCacheMenu.SetVisible(ActivityCommon.IsTranslationRequired());
+                translationClearCacheMenu.SetVisible(_activityCommon.IsTranslationRequired());
             }
 
             IMenuItem globalSettingsMenu = menu.FindItem(Resource.Id.menu_global_settings);
@@ -4944,7 +4944,7 @@ namespace BmwDeepObd
         private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<string> translationList, ref List<ActivityCommon.VagDtcEntry> dtcList)
         {
             StringBuilder srMessage = new StringBuilder();
-            string language = ActivityCommon.GetCurrentLanguage();
+            string language = _activityCommon.GetCurrentLanguage();
             bool shadow = errorReport is EdiabasThread.EdiabasErrorShadowReport;
             string ecuTitle = GetPageString(pageInfo, errorReport.EcuName);
             EcuFunctionStructs.EcuVariant ecuVariant = errorReport.EcuVariant;
@@ -5236,7 +5236,7 @@ namespace BmwDeepObd
                     {
                         text1 = FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
                         text2 = FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
-                        if (ActivityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
+                        if (_activityCommon.IsTranslationRequired() && ActivityCommon.EnableTranslation)
                         {
                             int index = translationList.Count;
                             translationList.Add(text1);
@@ -5533,8 +5533,8 @@ namespace BmwDeepObd
 
         public static String GetPageString(JobReader.PageInfo pageInfo, string name)
         {
-            string lang = ActivityCommon.GetCurrentLanguage();
-            string langIso = ActivityCommon.GetCurrentLanguage(true);
+            string lang = ActivityCommon.GetCurrentLanguageStatic();
+            string langIso = ActivityCommon.GetCurrentLanguageStatic(true);
             JobReader.StringInfo stringInfoDefault = null;
             JobReader.StringInfo stringInfoSel = null;
             foreach (JobReader.StringInfo stringInfo in pageInfo.StringList)
@@ -5667,7 +5667,7 @@ namespace BmwDeepObd
 
             try
             {
-                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                if (ActivityCommon.IsTranslationAvailable() && _activityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
                     string xmlFileDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
                     if (!string.IsNullOrEmpty(xmlFileDir))
@@ -5693,7 +5693,7 @@ namespace BmwDeepObd
 
             try
             {
-                if (ActivityCommon.IsTranslationAvailable() && ActivityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                if (ActivityCommon.IsTranslationAvailable() && _activityCommon.IsTranslationRequired() && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
                     string xmlFileDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
                     if (!string.IsNullOrEmpty(xmlFileDir))
@@ -6338,7 +6338,7 @@ namespace BmwDeepObd
                         {
                             { new StringContent(ActivityCommon.AppId), "appid" },
                             { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", _currentVersionCode)), "appver" },
-                            { new StringContent(ActivityCommon.GetCurrentLanguage()), "lang" },
+                            { new StringContent(_activityCommon.GetCurrentLanguage()), "lang" },
                             { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
                             { new StringContent(Build.Fingerprint), "fingerprint" },
                             { new StringContent(obbName), "obb_name" },
