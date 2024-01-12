@@ -1,0 +1,141 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <ApplicationId>de.holeschak.bmw_deep_obd</ApplicationId>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);Android</DefineConstants>
+    <NoWarn>1701;1702;CA1416;CS8632;IL3000</NoWarn>
+    <AndroidKeyStore>False</AndroidKeyStore>
+    <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);Android</DefineConstants>
+    <NoWarn>1701;1702;CA1416;CS8632;IL3000</NoWarn>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidKeyStore>False</AndroidKeyStore>
+    <AndroidLinkTool>r8</AndroidLinkTool>
+    <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
+  </PropertyGroup>
+  <ItemGroup>
+    <AndroidAsset Remove="Assets\AboutAssets.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Mono.Android" RootMode="visible" />
+    <TrimmerRootAssembly Include="System.Collections" RootMode="visible" />
+    <TrimmerRootAssembly Include="Xamarin.AndroidX.Core" RootMode="visible" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Xml\BmwDeepObd.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\EdiabasLib\BmwFileReader\DetectVehicleBmw.cs" Link="DetectVehicleBmw.cs" />
+    <Compile Include="..\EdiabasLib\BmwFileReader\DetectVehicleBmwBase.cs" Link="DetectVehicleBmwBase.cs" />
+    <Compile Include="..\EdiabasLib\BmwFileReader\EcuFunctionReader.cs" Link="EcuFunctionReader.cs" />
+    <Compile Include="..\EdiabasLib\BmwFileReader\EcuFunctionStructs.cs" Link="EcuFunctionStructs.cs" />
+    <Compile Include="..\EdiabasLib\BmwFileReader\RuleEvalBmw.cs" Link="RuleEvalBmw.cs" />
+    <Compile Include="..\EdiabasLib\BmwFileReader\RulesInfo.cs" Link="RulesInfo.cs" />
+    <Compile Include="..\EdiabasLib\BmwFileReader\SerializableDictionary.cs" Link="SerializableDictionary.cs" />
+    <Compile Include="..\EdiabasLib\BmwFileReader\SgFunctions.cs" Link="SgFunctions.cs" />
+    <Compile Include="..\EdiabasLib\BmwFileReader\VehicleInfoBmw.cs" Link="VehicleInfoBmw.cs" />
+    <Compile Include="..\EdiabasLib\BmwFileReader\VehicleStructsBmw.cs" Link="VehicleStructsBmw.cs" />
+    <Compile Include="..\EdiabasLib\UdsFileReader\DataReader.cs" Link="DataReader.cs" />
+    <Compile Include="..\EdiabasLib\UdsFileReader\UdsReader.cs" Link="UdsReader.cs" />
+    <Compile Include="..\EdiabasLib\UdsFileReader\VehicleInfoVag.cs" Link="VehicleInfoVag.cs" />
+    <Compile Include="..\Tools\ApkUncompress\ApkUncompressCommon.cs" Link="ApkUncompressCommon.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreAssembly.cs" Link="AssemblyStoreAssembly.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreExplorer.cs" Link="AssemblyStoreExplorer.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreExplorerLogLevel.cs" Link="AssemblyStoreExplorerLogLevel.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreHashEntry.cs" Link="AssemblyStoreHashEntry.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreManifestEntry.cs" Link="AssemblyStoreManifestEntry.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreManifestReader.cs" Link="AssemblyStoreManifestReader.cs" />
+    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreReader.cs" Link="AssemblyStoreReader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Xml\BmwDeepObd.xsd" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AndroidFlowLayout" Version="1.9.0.1" />
+    <PackageReference Include="Base62-Net" Version="1.2.157201" />
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.3.6" />
+    <PackageReference Include="Karamunting.Android.Skydoves.Balloon" Version="1.1.5" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.8.0" />
+    <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
+    <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.8.2" />
+    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.6.1.6" />
+    <PackageReference Include="Xamarin.AndroidX.DocumentFile" Version="1.0.1.22" />
+    <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.3.2.1" />
+    <PackageReference Include="Xamarin.AndroidX.ViewPager2" Version="1.0.0.24" />
+    <PackageReference Include="Xamarin.AndroidX.WebKit" Version="1.9.0" />
+    <PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.2" />
+    <PackageReference Include="Xamarin.Google.Android.Play.Core" Version="1.10.3.9" />
+    <PackageReference Include="Xamarin.Google.Android.Vending.Expansion.Downloader" Version="2.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\CustomGaugeNetBinding\CustomGaugeNetBinding.csproj" />
+    <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\DragListViewNetBinding\DragListViewNetBinding.csproj" />
+    <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\UsbSerialNetBinding\UsbSerialNetBinding.csproj" />
+    <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HexFiles\Type2\" />
+    <Folder Include="HexFiles\Type3\" />
+    <Folder Include="HexFiles\Type4\" />
+    <Folder Include="HexFiles\Type5\" />
+    <Folder Include="HexFiles\Type6\" />
+    <Folder Include="HexFiles\Type7\" />
+    <Folder Include="HexFiles\Type8\" />
+    <Folder Include="HexFiles\Type16\" />
+    <Folder Include="VehicleInfo\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\EdiabasLib\BmwFileReader\VehicleSeries.zip" Link="VehicleInfo\VehicleSeries.zip" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\esp8266\production\CanAdapterElm.X.production.hex" Link="HexFiles\Type16\CanAdapterElm.X.production.hex" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\default\production\CanAdapterElm.X.production.hex" Link="HexFiles\Type2\CanAdapterElm.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\default\production\ELM327V15.X.production.hex" Link="HexFiles\Type2\ELM327V15.X.production.hex" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\bc04\production\CanAdapterElm.X.production.hex" Link="HexFiles\Type3\CanAdapterElm.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\def115200\production\CanAdapterElm.X.production.hex" Link="HexFiles\Type8\CanAdapterElm.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\hc04\production\CanAdapterElm.X.production.hex" Link="HexFiles\Type4\CanAdapterElm.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\spp_uart2\production\CanAdapterElm.X.production.hex" Link="HexFiles\Type7\CanAdapterElm.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\spp_uart\production\CanAdapterElm.X.production.hex" Link="HexFiles\Type5\CanAdapterElm.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\yc1021\production\CanAdapterElm.X.production.hex" Link="HexFiles\Type6\CanAdapterElm.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\bc04\production\ELM327V15.X.production.hex" Link="HexFiles\Type3\ELM327V15.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\def115200\production\ELM327V15.X.production.hex" Link="HexFiles\Type8\ELM327V15.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\hc04\production\ELM327V15.X.production.hex" Link="HexFiles\Type4\ELM327V15.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\spp_uart2\production\ELM327V15.X.production.hex" Link="HexFiles\Type7\ELM327V15.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\spp_uart\production\ELM327V15.X.production.hex" Link="HexFiles\Type5\ELM327V15.X.production.hex" />
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V15.X\dist\yc1021\production\ELM327V15.X.production.hex" Link="HexFiles\Type6\ELM327V15.X.production.hex" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;copy /y &quot;$(ProjectDir)Xml\BmwDeepObd.xsd&quot; &quot;$(ProjectDir)Xml\E61R\&quot;&#xD;&#xA;" />
+  </Target>
+</Project>
