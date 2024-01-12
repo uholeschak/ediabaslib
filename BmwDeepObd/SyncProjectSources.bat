@@ -7,13 +7,13 @@ for %%i in ("!RootDir!") do SET "RootDir=%%~fi"
 
 if "%1"=="FROM_NET" (
   set "FromNet=1"
-  set "SrcDir=!RootDir!\BmwDeepObdNet"
-  set "DstDir=!RootDir!\BmwDeepObd"
+  set "SrcDir=!RootDir!\BmwDeepObd"
+  set "DstDir=!RootDir!\BmwDeepObdXamarin"
 ) else (
   if "%1"=="TO_NET" (
     set "FromNet=0"
-    set "SrcDir=!RootDir!\BmwDeepObd"
-    set "DstDir=!RootDir!\BmwDeepObdNet"
+    set "SrcDir=!RootDir!\BmwDeepObdXamarin"
+    set "DstDir=!RootDir!\BmwDeepObd"
   ) else (
     echo valid modes: TO_NET, FROM_NET    
     exit /b 1
