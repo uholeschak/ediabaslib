@@ -20,8 +20,8 @@ For programming the firmware see: [programming](#programming-elm327-adapter-with
 
 ## Buy a preprogrammed adapter
 You could buy the preprogrammed [Bluetooth adapter](https://www.ebay.de/itm/256083282006) also at EBAY.  
-Adapters from this link include a **license** for the [BMW coding](BMW_Coding.md) function of one F series or higher vehicle.  
-If the link is outdated (what it is most of the time) all adapters are sold, in this case please simply wait for an update of the link.  
+There are also [Deep OBD OBD-II bluetooth adapters](https://shop.ibus-app.de/detail/index/sArticle/258) for BMW vehicles types `E36`, `E38`, `E39`, `E46`, `E52`, `E53`, `E83` , `E85`, `E86` with a fixed pin 7 + 8 connection available.  
+Adapters from these links include a **license** for the [BMW coding](BMW_Coding.md) function of one F series or higher vehicle.  
 
 Vehicles `E36`, `E38`, `E39`, `E46`, `E52`, `E53`, `E83` , `E85` and `E86` additionally require a connection between OBD pin 7 and 8 (or a pin7-pin8 adapter) to access all ECUs.  
 For vehicles with OBD I socket in the engine bay additionally the pin 8 of the OBD II socket has to be connected at the vehicle side ([`OBD1-OBD2.pdf`](OBD1-OBD2.pdf))!  
