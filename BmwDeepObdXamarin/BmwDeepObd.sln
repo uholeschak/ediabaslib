@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32811.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BmwDeepObd", "BmwDeepObd.csproj", "{5FC5723C-A88B-46E3-957C-FF24F9D8212F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLibAndroid", "..\EdiabasLib\EdiabasLibAndroid\EdiabasLibAndroid.csproj", "{FEDD5F23-F769-44D2-9F06-39D532008197}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsbSerialBinding", "..\EdiabasLib\EdiabasLibAndroid\UsbSerialBinding\UsbSerialBinding.csproj", "{C70078EC-34D9-46A7-A04A-4412CFE27509}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomGaugeBinding", "..\EdiabasLib\EdiabasLibAndroid\CustomGaugeBinding\CustomGaugeBinding.csproj", "{6372B7DD-E31C-48F5-8C47-F6FA2BB37070}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6C93E567-64ED-43AD-9E2D-FF2F6BAAED87}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DragListViewBinding", "..\EdiabasLib\EdiabasLibAndroid\DragListViewBinding\DragListViewBinding.csproj", "{229E4933-3700-4F8F-817B-FA3E09E92568}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5FC5723C-A88B-46E3-957C-FF24F9D8212F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FC5723C-A88B-46E3-957C-FF24F9D8212F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FC5723C-A88B-46E3-957C-FF24F9D8212F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{5FC5723C-A88B-46E3-957C-FF24F9D8212F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FC5723C-A88B-46E3-957C-FF24F9D8212F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FC5723C-A88B-46E3-957C-FF24F9D8212F}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{FEDD5F23-F769-44D2-9F06-39D532008197}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEDD5F23-F769-44D2-9F06-39D532008197}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEDD5F23-F769-44D2-9F06-39D532008197}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEDD5F23-F769-44D2-9F06-39D532008197}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C70078EC-34D9-46A7-A04A-4412CFE27509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C70078EC-34D9-46A7-A04A-4412CFE27509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C70078EC-34D9-46A7-A04A-4412CFE27509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C70078EC-34D9-46A7-A04A-4412CFE27509}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6372B7DD-E31C-48F5-8C47-F6FA2BB37070}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6372B7DD-E31C-48F5-8C47-F6FA2BB37070}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6372B7DD-E31C-48F5-8C47-F6FA2BB37070}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6372B7DD-E31C-48F5-8C47-F6FA2BB37070}.Release|Any CPU.Build.0 = Release|Any CPU
+		{229E4933-3700-4F8F-817B-FA3E09E92568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{229E4933-3700-4F8F-817B-FA3E09E92568}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{229E4933-3700-4F8F-817B-FA3E09E92568}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{229E4933-3700-4F8F-817B-FA3E09E92568}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7C83392-394A-4027-9FD3-DBE62DD54E79}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = BmwDeepObd.csproj
+	EndGlobalSection
+EndGlobal
