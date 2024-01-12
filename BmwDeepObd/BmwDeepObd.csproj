@@ -27,6 +27,9 @@
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
   </PropertyGroup>
   <ItemGroup>
+    <AndroidAsset Remove="Assets\AboutAssets.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <TrimmerRootAssembly Include="Mono.Android" RootMode="visible" />
     <TrimmerRootAssembly Include="System.Collections" RootMode="visible" />
     <TrimmerRootAssembly Include="Xamarin.AndroidX.Core" RootMode="visible" />
