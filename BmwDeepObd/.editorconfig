@@ -1,4 +1,0 @@
-﻿[*.cs]
-
-# IDE0063: Einfache using-Anweisung verwenden
-csharp_prefer_simple_using_statement = true:silent
