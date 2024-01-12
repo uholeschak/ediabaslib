@@ -1,5 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <EnableSourceControlManagerQueries>true</EnableSourceControlManagerQueries>
-  </PropertyGroup>
-</Project>
