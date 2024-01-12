@@ -296,7 +296,7 @@
       <HintPath>packages\Xamarin.Google.Android.Material.1.10.0.2\lib\monoandroid12.0\Xamarin.Google.Android.Material.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Google.Android.Play.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Xamarin.Google.Android.Play.Core.1.10.2.2\lib\monoandroid90\Xamarin.Google.Android.Play.Core.dll</HintPath>
+      <HintPath>packages\Xamarin.Google.Android.Play.Core.1.10.3.9\lib\monoandroid12.0\Xamarin.Google.Android.Play.Core.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Google.ErrorProne.Annotations, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Xamarin.Google.ErrorProne.Annotations.2.23.0.1\lib\monoandroid12.0\Xamarin.Google.ErrorProne.Annotations.dll</HintPath>
@@ -962,6 +962,7 @@
     <Error Condition="!Exists('packages\Xamarin.Google.Android.Material.1.10.0.2\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Android.Material.1.10.0.2\build\monoandroid12.0\Xamarin.Google.Android.Material.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.Tracing.Tracing.1.2.0\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.Tracing.Tracing.1.2.0\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets'))" />
     <Error Condition="!Exists('packages\Xamarin.AndroidX.WebKit.1.9.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.AndroidX.WebKit.1.9.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets'))" />
+    <Error Condition="!Exists('packages\Xamarin.Google.Android.Play.Core.1.10.3.9\build\monoandroid12.0\Xamarin.Google.Android.Play.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Xamarin.Google.Android.Play.Core.1.10.3.9\build\monoandroid12.0\Xamarin.Google.Android.Play.Core.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>SETLOCAL EnableDelayedExpansion
@@ -1036,4 +1037,5 @@ if EXIST "!cache_dir!" (
   <Import Project="packages\Xamarin.Google.Android.Material.1.10.0.2\build\monoandroid12.0\Xamarin.Google.Android.Material.targets" Condition="Exists('packages\Xamarin.Google.Android.Material.1.10.0.2\build\monoandroid12.0\Xamarin.Google.Android.Material.targets')" />
   <Import Project="packages\Xamarin.AndroidX.Tracing.Tracing.1.2.0\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets" Condition="Exists('packages\Xamarin.AndroidX.Tracing.Tracing.1.2.0\build\monoandroid12.0\Xamarin.AndroidX.Tracing.Tracing.targets')" />
   <Import Project="packages\Xamarin.AndroidX.WebKit.1.9.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets" Condition="Exists('packages\Xamarin.AndroidX.WebKit.1.9.0\build\monoandroid12.0\Xamarin.AndroidX.WebKit.targets')" />
+  <Import Project="packages\Xamarin.Google.Android.Play.Core.1.10.3.9\build\monoandroid12.0\Xamarin.Google.Android.Play.Core.targets" Condition="Exists('packages\Xamarin.Google.Android.Play.Core.1.10.3.9\build\monoandroid12.0\Xamarin.Google.Android.Play.Core.targets')" />
 </Project>
