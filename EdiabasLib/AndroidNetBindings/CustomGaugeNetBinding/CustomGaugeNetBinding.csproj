@@ -10,7 +10,4 @@
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="Setlocal EnableDelayedExpansion&#xD;&#xA;set &quot;stampFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\stamp\generator.stamp&quot;&#xD;&#xA;IF EXIST &quot;!stampFile!&quot; DEL /S &quot;!stampFile!&quot;" />
   </Target>
-  <ItemGroup>
-    <AndroidLibrary Update="CustomGauge-release.aar" Bind="true" />
-  </ItemGroup>
 </Project>
