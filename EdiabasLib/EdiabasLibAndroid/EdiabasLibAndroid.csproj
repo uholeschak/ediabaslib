@@ -38,7 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.4.2.13, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\..\BmwDeepObd\packages\SharpZipLib.1.4.2\lib\netstandard2.1\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\BmwDeepObdXamarin\packages\SharpZipLib.1.4.2\lib\netstandard2.1\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Android.Export" />
     <Reference Include="System" />
