@@ -16,9 +16,6 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.3.2.1" />
   </ItemGroup>
-  <ItemGroup>
-    <AndroidLibrary Update="library-release.aar" Bind="true" />
-  </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="Setlocal EnableDelayedExpansion&#xD;&#xA;set &quot;stampFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\stamp\generator.stamp&quot;&#xD;&#xA;IF EXIST &quot;!stampFile!&quot; DEL /S &quot;!stampFile!&quot;" />
   </Target>
