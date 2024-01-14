@@ -4,6 +4,7 @@
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
   <ItemGroup>
     <AndroidLibrary Include="CustomGauge-release.aar" Bind="true" />
