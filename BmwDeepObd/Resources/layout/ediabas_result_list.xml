@@ -27,12 +27,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:singleLine="true" />
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:singleLine="false" />
         <TextView
             android:id="@+id/textResultDesc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="italic"
-            android:singleLine="true" />
+            android:ellipsize="end"
+            android:maxLines="5"
+            android:singleLine="false" />
     </LinearLayout>
 </LinearLayout>
