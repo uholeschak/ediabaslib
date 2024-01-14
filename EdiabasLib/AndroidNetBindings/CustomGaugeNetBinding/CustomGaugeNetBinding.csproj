@@ -5,4 +5,7 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
+  <ItemGroup>
+    <AndroidLibrary Include="CustomGauge-release.aar" Bind="true" />
+  </ItemGroup>
 </Project>

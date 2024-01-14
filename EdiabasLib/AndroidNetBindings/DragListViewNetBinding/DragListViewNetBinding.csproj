@@ -12,6 +12,9 @@
     <NoWarn>1701;1702;BG8403;BG8C01;BG8605;BG8606</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <AndroidLibrary Include="library-release.aar" Bind="true" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.3.2.1" />
   </ItemGroup>
 </Project>
