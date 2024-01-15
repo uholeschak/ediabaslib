@@ -136,11 +136,13 @@ namespace BmwDeepObd
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
                 TraceActive = true;
+                SelectedJobName = string.Empty;
             }
 
             public bool ForceAppend { get; set; }
             public bool AutoStart { get; set; }
             public int AutoStartItemId { get; set; }
+            public string SelectedJobName { get; set; }
             public string SgbdFileName { get; set; }
             public string DeviceName { get; set; }
             public string DeviceAddress { get; set; }
@@ -357,7 +359,9 @@ namespace BmwDeepObd
             {
                 _instanceData.SgbdFileName = _sgbdFileNameInitial;
             }
-            ReadSgbd();
+
+            string selectJobName = _activityRecreated ? _instanceData.SelectedJobName : null;
+            ReadSgbd(selectJobName);
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -1516,6 +1520,7 @@ namespace BmwDeepObd
             }
 
             JobInfo jobInfo = GetSelectedJob();
+            _instanceData.SelectedJobName = jobInfo?.Name ?? string.Empty;
             int serviceId = GetArgAssistJobService(jobInfo);
 
             _resultSelectListAdapter.Items.Clear();
@@ -2204,7 +2209,7 @@ namespace BmwDeepObd
             _ediabas.EdInterfaceClass.TransmitCancel(false);
         }
 
-        private void ReadSgbd()
+        private void ReadSgbd(string selectJobName = null)
         {
             if (string.IsNullOrEmpty(_instanceData.SgbdFileName))
             {
@@ -2456,6 +2461,18 @@ namespace BmwDeepObd
                     _jobListTranslated = false;
                     _translateEnabled = true;
                     UpdateJobList();
+
+                    if (!string.IsNullOrEmpty(selectJobName))
+                    {
+                        for (int jobIndex = 0; jobIndex < _jobListAdapter.Items.Count; jobIndex++)
+                        {
+                            if (string.Compare(selectJobName, _jobListAdapter.Items[jobIndex].Name, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                _spinnerJobs.SetSelection(jobIndex);
+                                break;
+                            }
+                        }
+                    }
 
                     UpdateOptionsMenu();
                     UpdateDisplay();
