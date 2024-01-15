@@ -272,7 +272,10 @@ namespace BmwDeepObd
                 bool update = _lastSelectedJob != null && selectedJob == _lastSelectedJob;
 
                 NewJobSelected(update);
-                DisplayJobComments();
+                if (!update)
+                {
+                    DisplayJobComments();
+                }
             };
 
             _editTextArgs = FindViewById<EditText>(Resource.Id.editTextArgs);
