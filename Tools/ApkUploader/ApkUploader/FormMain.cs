@@ -24,6 +24,7 @@ namespace ApkUploader
 {
     public partial class FormMain : Form
     {
+        private const string AndroidManifest = "AndroidManifest.xml";
         private const string StatusCompleted = "completed";
         private const string PackageName = @"de.holeschak.bmw_deep_obd";
         private const string ExpansionKeep = @"*";
@@ -221,8 +222,13 @@ namespace ApkUploader
                     return string.Empty;
                 }
 
-                string propertiesDir = Path.Combine(parentDir, "Properties");
-                string manifestFile = Path.Combine(propertiesDir, "AndroidManifest.xml");
+                string manifestFile = Path.Combine(parentDir, AndroidManifest);
+                if (!File.Exists(manifestFile))
+                {
+                    string propertiesDir = Path.Combine(parentDir, "Properties");
+                    manifestFile = Path.Combine(propertiesDir, AndroidManifest);
+                }
+
                 if (!File.Exists(manifestFile))
                 {
                     return string.Empty;

@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>ApkUploader</RootNamespace>
     <AssemblyName>ApkUploader</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -39,8 +39,8 @@
     <Reference Include="Google.Apis, Version=1.65.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.1.65.0\lib\net45\Google.Apis.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Apis.AndroidPublisher.v3, Version=1.65.0.3295, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Apis.AndroidPublisher.v3.1.65.0.3295\lib\net45\Google.Apis.AndroidPublisher.v3.dll</HintPath>
+    <Reference Include="Google.Apis.AndroidPublisher.v3, Version=1.65.0.3297, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Apis.AndroidPublisher.v3.1.65.0.3297\lib\net45\Google.Apis.AndroidPublisher.v3.dll</HintPath>
     </Reference>
     <Reference Include="Google.Apis.Auth, Version=1.65.0.0, Culture=neutral, PublicKeyToken=4b01fa6e34db77ab, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Apis.Auth.1.65.0\lib\net461\Google.Apis.Auth.dll</HintPath>
