@@ -32,20 +32,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
-                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:minLines="1"
+                    android:maxLines="2"
                     android:layout_weight="0" />
                 <TextView
                     android:id="@+id/textItemDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textStyle="italic"
-                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:minLines="1"
+                    android:maxLines="5"
                     android:layout_weight="0" />
                 <TextView
                     android:id="@+id/textItemDetail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:minLines="1"
+                    android:maxLines="5"
                     android:layout_weight="0" />
             </LinearLayout>
         </LinearLayout>
