@@ -332,7 +332,9 @@
                     android:id="@+id/textViewTestFormatOutput"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true" />
+                    android:ellipsize="end"
+                    android:minLines="1"
+                    android:maxLines="2" />
             </LinearLayout>
             <TextView
                 android:id="@+id/textViewAddFunctions"
