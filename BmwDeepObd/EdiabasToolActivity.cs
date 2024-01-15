@@ -205,6 +205,8 @@ namespace BmwDeepObd
         private string _sgbdFileNameInitial = string.Empty;
         private List<string[]> _jobListInitial;
         private bool _activityActive;
+        private string _argAssistArgs;
+        private bool _argAssistExecute;
         private bool _translateEnabled;
         private bool _translateActive;
         private bool _jobListTranslated;
@@ -527,15 +529,14 @@ namespace BmwDeepObd
                     ArgAssistBaseActivity.IntentSgFuncInfo = null;
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
-                        _checkBoxBinArgs.Checked = false;
-                        _editTextArgs.Text = data.Extras.GetString(ArgAssistBaseActivity.ExtraArguments, "");
-                        NewJobSelected(true);
-
-                        bool execute = data.Extras.GetBoolean(ArgAssistBaseActivity.ExtraExecute, false);
-                        if (!_instanceData.Offline && !string.IsNullOrEmpty(_editTextArgs.Text) && execute)
+                        _argAssistArgs = data.Extras.GetString(ArgAssistBaseActivity.ExtraArguments, "");
+                        _argAssistExecute = data.Extras.GetBoolean(ArgAssistBaseActivity.ExtraExecute, false);
+                        if (IsJobRunning())
                         {
-                            ExecuteSelectedJob(false);
+                            break;
                         }
+
+                        SetArgAssistResult();
                     }
 
                     UpdateOptionsMenu();
@@ -2486,6 +2487,11 @@ namespace BmwDeepObd
                         }
                         _infoListAdapter.NotifyDataSetChanged();
                     }
+
+                    if (!string.IsNullOrEmpty(selectJobName))
+                    {
+                        SetArgAssistResult();
+                    }
                 });
             });
             _jobThread.Start();
@@ -2641,6 +2647,28 @@ namespace BmwDeepObd
                 NewJobSelected();
                 DisplayJobComments();
             }
+        }
+
+        private bool SetArgAssistResult()
+        {
+            if (string.IsNullOrEmpty(_argAssistArgs))
+            {
+                return false;
+            }
+
+            _checkBoxBinArgs.Checked = false;
+            _editTextArgs.Text = _argAssistArgs;
+            NewJobSelected(true);
+
+            if (!_instanceData.Offline && !string.IsNullOrEmpty(_editTextArgs.Text) && _argAssistExecute)
+            {
+                ExecuteSelectedJob(false);
+            }
+
+            _argAssistArgs = null;
+            _argAssistExecute = false;
+
+            return true;
         }
 
         private void ExecuteSelectedJob(bool continuous)
