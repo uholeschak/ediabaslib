@@ -22,6 +22,7 @@
       android:layout_gravity="left|center_vertical"
       android:textSize="28sp"
       android:layout_marginLeft="10dip"
-      android:singleLine="true"
-      android:text="filename"/>
+      android:ellipsize="end"
+      android:minLines="1"
+      android:maxLines="3" />
 </LinearLayout>
