@@ -353,6 +353,7 @@ namespace BmwDeepObd
             _activityCommon.SelectedDeepObdWifiIp = Intent.GetStringExtra(ExtraDeepObdWifiIp);
             _activityCommon.SetPreferredNetworkInterface();
 
+            ResetArgAssistResult();
             EdiabasClose(_instanceData.ForceAppend);
             ReadTranslation();
             UpdateDisplay();
@@ -1478,6 +1479,7 @@ namespace BmwDeepObd
                     }
                 }
 
+                ResetArgAssistResult();
                 ArgAssistBaseActivity.IntentSgFuncInfo = _sgFuncInfoList;
                 string arguments = _editTextArgs.Enabled ? _editTextArgs.Text : string.Empty;
                 serverIntent.PutExtra(ArgAssistBaseActivity.ExtraServiceId, serviceId);
@@ -2649,6 +2651,12 @@ namespace BmwDeepObd
             }
         }
 
+        private void ResetArgAssistResult()
+        {
+            _argAssistArgs = null;
+            _argAssistExecute = false;
+        }
+
         private bool SetArgAssistResult()
         {
             if (string.IsNullOrEmpty(_argAssistArgs))
@@ -2665,8 +2673,7 @@ namespace BmwDeepObd
                 ExecuteSelectedJob(false);
             }
 
-            _argAssistArgs = null;
-            _argAssistExecute = false;
+            ResetArgAssistResult();
 
             return true;
         }
