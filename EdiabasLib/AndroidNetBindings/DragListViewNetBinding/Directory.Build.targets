@@ -1,0 +1,5 @@
+﻿<Project>
+  <Target Name="PrepareResources">
+     <Message Text="PrepareResources disabled" Importance="High" />
+  </Target>
+</Project>
