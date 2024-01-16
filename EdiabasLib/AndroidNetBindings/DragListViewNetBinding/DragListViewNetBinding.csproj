@@ -17,6 +17,6 @@
     <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.3.2.1" />
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="Setlocal EnableDelayedExpansion&#xD;&#xA;set &quot;stampFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\stamp\generator.stamp&quot;&#xD;&#xA;set &quot;mappingFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\generated\__NamespaceMapping__.cs&quot;&#xD;&#xA;IF NOT EXIST &quot;!mappingFile!&quot; (&#xD;&#xA;  IF EXIST &quot;!stampFile!&quot; (&#xD;&#xA;    DEL /S &quot;!stampFile!&quot;&#xD;&#xA;  )&#xD;&#xA;)" />
+    <Exec Command="Setlocal EnableDelayedExpansion&#xD;&#xA;set &quot;stampFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\stamp\generator.stamp&quot;&#xD;&#xA;set &quot;mappingFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\generated\src\__NamespaceMapping__.cs&quot;&#xD;&#xA;IF NOT EXIST &quot;!mappingFile!&quot; (&#xD;&#xA;  ECHO &quot;!mappingFile!&quot; missing, deleting stamp file&#xD;&#xA;  IF EXIST &quot;!stampFile!&quot; (&#xD;&#xA;    DEL /S &quot;!stampFile!&quot;&#xD;&#xA;  )&#xD;&#xA;)" />
   </Target>
 </Project>
