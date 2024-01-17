@@ -14,6 +14,6 @@
     <NoWarn>1701;1702;CS0108;CS0114</NoWarn>
   </PropertyGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="Setlocal EnableDelayedExpansion&#xD;&#xA;set &quot;stampFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\stamp\generator.stamp&quot;&#xD;&#xA;set &quot;mappingFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\generated\src\__NamespaceMapping__.cs&quot;&#xD;&#xA;IF NOT EXIST &quot;!mappingFile!&quot; (&#xD;&#xA;  ECHO &quot;!mappingFile!&quot; missing, deleting stamp file&#xD;&#xA;  IF EXIST &quot;!stampFile!&quot; (&#xD;&#xA;    DEL /S &quot;!stampFile!&quot;&#xD;&#xA;  )&#xD;&#xA;)" />
+    <Exec Command="Setlocal EnableDelayedExpansion&#xD;&#xA;set &quot;stampFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\stamp\generator.stamp&quot;&#xD;&#xA;set &quot;mappingFile=$(ProjectDir)$(BaseIntermediateOutputPath)$(Configuration)\$(TargetFramework)\generated\src\__NamespaceMapping__.cs&quot;&#xD;&#xA;IF NOT EXIST &quot;!mappingFile!&quot; (&#xD;&#xA;  IF EXIST &quot;!stampFile!&quot; (&#xD;&#xA;    ECHO &quot;!mappingFile!&quot; missing, deleting stamp file&#xD;&#xA;    DEL /S &quot;!stampFile!&quot;&#xD;&#xA;  )&#xD;&#xA;)" />
   </Target>
 </Project>
