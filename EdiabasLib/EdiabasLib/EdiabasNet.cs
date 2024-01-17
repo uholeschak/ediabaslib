@@ -2208,7 +2208,7 @@ namespace EdiabasLib
         }
 
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
-        private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         private static readonly byte[] ByteArray0 = new byte[0];
         private static Dictionary<ErrorCodes, UInt32> _trapBitDict;
 #if !Android

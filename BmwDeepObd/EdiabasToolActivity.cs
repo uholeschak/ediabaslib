@@ -168,7 +168,7 @@ namespace BmwDeepObd
         public const string ExtraEnetIp = "enet_ip";
         public const string ExtraElmWifiIp = "elmwifi_ip";
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
-        public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        public static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
 
         private const string TranslationFileName = "TranslationEdiabas.xml";
 
