@@ -455,7 +455,7 @@ namespace BmwDeepObd
         };
 
         public const string ExtraShowTitle = "show_title";
-        public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        public static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;

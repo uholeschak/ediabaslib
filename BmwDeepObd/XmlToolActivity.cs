@@ -608,7 +608,7 @@ namespace BmwDeepObd
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public const string ExtraFileName = "file_name";
         public const string ExtraMotorbikes = "motorbikes";
-        public static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        public static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
 
         public delegate void MwTabFileSelected(string fileName);
         public delegate void UpdateEcuDelegate(bool error);
@@ -5783,11 +5783,11 @@ namespace BmwDeepObd
                                             resultInfo.EcuJob = ecuJob;
                                             resultInfo.EcuJobResult = ecuJobResult;
                                             jobInfo.Results.Add(resultInfo);
-                                            jobInfo.Comments.Add(resultTitle);
                                         }
                                     }
                                 }
 
+                                jobInfo.Comments.Add(string.Format(Culture, GetString(Resource.String.xml_tool_job_results), jobInfo.Results.Count));
                                 jobInfo.CommentsTransRequired = false;
                                 jobList.Add(jobInfo);
                                 break;
