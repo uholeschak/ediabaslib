@@ -291,7 +291,7 @@ namespace EdiabasLib
         protected const string AutoIp = "auto";
         protected const string IniFileSection = "XEthernet";
         protected const string IcomOwner = "DeepObd";
-        protected static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
+        protected static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         protected static readonly byte[] ByteArray0 = new byte[0];
         protected static readonly byte[] UdpIdentReq =
         {
