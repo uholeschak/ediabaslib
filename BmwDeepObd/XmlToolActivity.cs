@@ -5787,7 +5787,7 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                jobInfo.Comments.Add(string.Format(Culture, GetString(Resource.String.xml_tool_job_results), jobInfo.Results.Count));
+                                jobInfo.Comments.Add(string.Format(Culture, GetString(Resource.String.xml_tool_num_job_results), jobInfo.Results.Count));
                                 jobInfo.CommentsTransRequired = false;
                                 jobList.Add(jobInfo);
                                 break;

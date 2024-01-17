@@ -618,7 +618,7 @@
   <string name="xml_tool_service_open_jobs">{0} Jobs anzeigen</string>
   <string name="xml_tool_service_jobs_warning">Die Servicefunktionen sind noch experimentell!\nDie angezeigten Jobs im Ediabas Tool haben unter Umständen nur Defaultargumente, welche vor der Jobausführung angepasst werden müssen!\nDer Argumenten Assistent kann dabei hilfreich sein.\nEs ist Ihre Verantwortung die Jobs vor der Ausführung zu prüfen!\nAufgrund der Komplexität der Datenerfassung, kann es sein, dass zukünftig die Jobs Deep OBD Adaptern für die Ausführung benötigen.\nWollen Sie trotzdem fortfahren?</string>
   <string name="xml_tool_drag_list_hint">Langklick auf die ECU um die Reihenfolge zu ändern.</string>
-  <string name="xml_tool_job_results">Ergebnisse: {0}</string>
+  <string name="xml_tool_num_job_results">Anzahl Job Ergebnisse: {0}</string>
 
   <!-- XML Tool Options Menu -->
   <string name="menu_xml_tool_add_errors_page">Fehlerseite hinzufügen</string>
