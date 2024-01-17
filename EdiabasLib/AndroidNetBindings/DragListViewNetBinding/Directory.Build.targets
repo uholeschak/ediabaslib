@@ -1,5 +1,5 @@
 ﻿<Project>
-  <Target Name="PrepareResources">
-     <Message Text="PrepareResources disabled" Importance="High" />
-  </Target>
+    <Target Name="PrepareResources" DependsOnTargets="$(PrepareResourcesDependsOn)" Condition="'$(DesignTimeBuild)'!='true'">
+        <Message Text="PrepareResources modified" Importance="High" />
+    </Target>
 </Project>
