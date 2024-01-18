@@ -15,6 +15,7 @@ using BmwFileReader;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
 using BmwDeepObd.Dialogs;
+using Skydoves.BalloonLib;
 
 namespace BmwDeepObd
 {
@@ -215,6 +216,12 @@ namespace BmwDeepObd
 
         public class InstanceData
         {
+            public InstanceData()
+            {
+                ArgLimitHintShown = false;
+            }
+
+            public bool ArgLimitHintShown { get; set; }
         }
 
         public delegate void AcceptDelegate(bool accepted);
@@ -594,6 +601,8 @@ namespace BmwDeepObd
                     {
                         _selectedJob.ArgLimit = (int)_spinnerArgLimitAdapter.Items[pos].Data;
                     }
+
+                    ShowArgLimitHint();
                 }
             };
 
@@ -1977,6 +1986,7 @@ namespace BmwDeepObd
             if (jobInfo != null)
             {
                 bool bmwStatJob = IsBmwReadStatusTypeJob(_selectedJob);
+                ViewStates limitVisibilityLast = _textViewArgLimitTitle.Visibility;
                 ViewStates limitVisibility = bmwStatJob ? ViewStates.Visible : ViewStates.Gone;
                 _textViewArgLimitTitle.Visibility = limitVisibility;
                 _spinnerArgLimit.Visibility = limitVisibility;
@@ -1998,6 +2008,11 @@ namespace BmwDeepObd
                     }
 
                     _spinnerArgLimit.SetSelection(limitSelection);
+
+                    if (limitVisibilityLast != limitVisibility)
+                    {
+                        ShowArgLimitHint();
+                    }
                 }
 
                 bool udsJob = false;
@@ -2158,6 +2173,21 @@ namespace BmwDeepObd
             _spinnerJobResults.SetSelection(selection);
             _ignoreItemSelection = false;
             ResultSelected(selection);
+        }
+
+        private void ShowArgLimitHint()
+        {
+            if (_selectedJob.ArgLimit != 1)
+            {
+                if (!_instanceData.ArgLimitHintShown)
+                {
+                    _instanceData.ArgLimitHintShown = true;
+                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                    balloonBuilder.Text = GetString(Resource.String.xml_tool_ecu_arg_limit_hint);
+                    Balloon balloon = balloonBuilder.Build();
+                    balloon.Show(_spinnerArgLimit);
+                }
+            }
         }
 
         private void DisplayEcuInfo()
