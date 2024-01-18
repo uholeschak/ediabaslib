@@ -15,6 +15,7 @@ using BmwFileReader;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
 using BmwDeepObd.Dialogs;
+using Skydoves.BalloonLib;
 
 namespace BmwDeepObd
 {
@@ -1977,6 +1978,7 @@ namespace BmwDeepObd
             if (jobInfo != null)
             {
                 bool bmwStatJob = IsBmwReadStatusTypeJob(_selectedJob);
+                ViewStates limitVisibilityLast = _textViewArgLimitTitle.Visibility;
                 ViewStates limitVisibility = bmwStatJob ? ViewStates.Visible : ViewStates.Gone;
                 _textViewArgLimitTitle.Visibility = limitVisibility;
                 _spinnerArgLimit.Visibility = limitVisibility;
@@ -1998,6 +2000,14 @@ namespace BmwDeepObd
                     }
 
                     _spinnerArgLimit.SetSelection(limitSelection);
+
+                    if (limitVisibilityLast != limitVisibility && limitSelection != 1)
+                    {
+                        Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                        balloonBuilder.Text = GetString(Resource.String.xml_tool_ecu_arg_limit_hint);
+                        Balloon balloon = balloonBuilder.Build();
+                        balloon.Show(_spinnerArgLimit);
+                    }
                 }
 
                 bool udsJob = false;

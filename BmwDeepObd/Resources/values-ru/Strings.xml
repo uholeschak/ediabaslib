@@ -718,6 +718,8 @@
   <string name="xml_tool_ecu_msg_no_selection">Вы не выбрали данные для отображения.\nВыберите сначала нужные задания и результаты из списка.\nВы все равно хотите отменить?</string>
   <string name="xml_tool_ecu_msg_no_grid_selection">Вы активировали графический дисплей, но не выбрали графическое представление.\nГрафическое представление будет недоступно.\nПродолжить?</string>
   <string name="xml_tool_ecu_msg_func_not_avail">Выбранная функция недоступна.</string>
+  <!--Translate-->
+  <string name="xml_tool_ecu_arg_limit_hint">Максимальное количество аргументов для каждого запроса зависит от типа ECU.\nЕсли вы не можете прочитать все значения, вам необходимо уменьшить количество аргументов.</string>
 
   <!-- VAG Coding Activity -->
   <string name="vag_coding_title_coding">Кодировка ECU: {0}</string>
