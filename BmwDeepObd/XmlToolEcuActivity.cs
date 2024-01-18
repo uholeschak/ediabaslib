@@ -509,7 +509,7 @@ namespace BmwDeepObd
             _checkBoxShowAllJobs.Checked = showAllJobsChecked;
             _checkBoxShowAllJobs.Click += (sender, args) =>
             {
-                UpdateDisplay();
+                UpdateDisplay(true);
             };
 
             _layoutJobConfig = FindViewById<LinearLayout>(Resource.Id.layoutJobConfig);
