@@ -218,10 +218,10 @@ namespace BmwDeepObd
         {
             public InstanceData()
             {
-                ArgLimitHintShown = false;
+                ArgLimitCritical = false;
             }
 
-            public bool ArgLimitHintShown { get; set; }
+            public bool ArgLimitCritical { get; set; }
         }
 
         public delegate void AcceptDelegate(bool accepted);
@@ -1991,6 +1991,7 @@ namespace BmwDeepObd
                 _textViewArgLimitTitle.Visibility = limitVisibility;
                 _spinnerArgLimit.Visibility = limitVisibility;
 
+                ShowArgLimitHint();
                 if (limitVisibility == ViewStates.Visible)
                 {
                     if (_selectedJob.ArgLimit < 0)
@@ -2008,11 +2009,6 @@ namespace BmwDeepObd
                     }
 
                     _spinnerArgLimit.SetSelection(limitSelection);
-
-                    if (limitVisibilityLast != limitVisibility)
-                    {
-                        ShowArgLimitHint();
-                    }
                 }
 
                 bool udsJob = false;
@@ -2177,17 +2173,20 @@ namespace BmwDeepObd
 
         private void ShowArgLimitHint()
         {
-            if (_selectedJob.ArgLimit != 1)
+            bool bmwStatJob = IsBmwReadStatusTypeJob(_selectedJob);
+            bool argLimitCritical = bmwStatJob && _selectedJob.ArgLimit != 1;
+            if (argLimitCritical)
             {
-                if (!_instanceData.ArgLimitHintShown)
+                if (!_instanceData.ArgLimitCritical)
                 {
-                    _instanceData.ArgLimitHintShown = true;
                     Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
                     balloonBuilder.Text = GetString(Resource.String.xml_tool_ecu_arg_limit_hint);
                     Balloon balloon = balloonBuilder.Build();
                     balloon.Show(_spinnerArgLimit);
                 }
             }
+
+            _instanceData.ArgLimitCritical = argLimitCritical;
         }
 
         private void DisplayEcuInfo()
