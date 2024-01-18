@@ -5788,6 +5788,13 @@ namespace BmwDeepObd
                                 }
 
                                 jobInfo.Comments.Add(string.Format(Culture, GetString(Resource.String.xml_tool_num_job_results), jobInfo.Results.Count));
+                                if (jobInfo.Results.Count < 2)
+                                {
+                                    foreach (XmlToolEcuActivity.ResultInfo resultInfo in jobInfo.Results)
+                                    {
+                                        jobInfo.Comments.Add("- " +resultInfo.DisplayName);
+                                    }
+                                }
                                 jobInfo.CommentsTransRequired = false;
                                 jobList.Add(jobInfo);
                                 break;
