@@ -5792,7 +5792,12 @@ namespace BmwDeepObd
                                 {
                                     foreach (XmlToolEcuActivity.ResultInfo resultInfo in jobInfo.Results)
                                     {
-                                        jobInfo.Comments.Add("- " +resultInfo.DisplayName);
+                                        if (string.IsNullOrWhiteSpace(resultInfo.DisplayName))
+                                        {
+                                            continue;
+                                        }
+
+                                        jobInfo.Comments.Add("- " + resultInfo.DisplayName);
                                     }
                                 }
                                 jobInfo.CommentsTransRequired = false;
