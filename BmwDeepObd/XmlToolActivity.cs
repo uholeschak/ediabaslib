@@ -5788,7 +5788,8 @@ namespace BmwDeepObd
                                 }
 
                                 jobInfo.Comments.Add(string.Format(Culture, GetString(Resource.String.xml_tool_num_job_results), jobInfo.Results.Count));
-                                if (jobInfo.Results.Count < 2)
+                                int commentCount = jobInfo.Results.Count(x => !string.IsNullOrWhiteSpace(x.DisplayName));
+                                if (commentCount <= 3)
                                 {
                                     foreach (XmlToolEcuActivity.ResultInfo resultInfo in jobInfo.Results)
                                     {
