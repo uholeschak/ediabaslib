@@ -2150,10 +2150,16 @@ namespace BmwDeepObd
                 {
                     foreach (string comment in commentList)
                     {
+                        if (string.IsNullOrWhiteSpace(comment))
+                        {
+                            continue;
+                        }
+
                         if (stringBuilderComments.Length > 0)
                         {
                             stringBuilderComments.Append("\r\n");
                         }
+
                         stringBuilderComments.Append(comment);
                     }
                 }
@@ -2281,7 +2287,16 @@ namespace BmwDeepObd
                 {
                     foreach (string comment in commentList)
                     {
-                        stringBuilderComments.Append("\r\n");
+                        if (string.IsNullOrWhiteSpace(comment))
+                        {
+                            continue;
+                        }
+
+                        if (stringBuilderComments.Length > 0)
+                        {
+                            stringBuilderComments.Append("\r\n");
+                        }
+
                         stringBuilderComments.Append(comment);
                     }
                 }
@@ -2852,10 +2867,16 @@ namespace BmwDeepObd
                 {
                     foreach (string comment in commentList)
                     {
+                        if (string.IsNullOrWhiteSpace(comment))
+                        {
+                            continue;
+                        }
+
                         if (stringBuilderComments.Length > 0)
                         {
-                            stringBuilderComments.Append("; ");
+                            stringBuilderComments.Append("\r\n");
                         }
+
                         stringBuilderComments.Append(comment);
                     }
                 }
