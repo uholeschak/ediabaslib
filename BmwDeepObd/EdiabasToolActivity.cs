@@ -1785,7 +1785,16 @@ namespace BmwDeepObd
                 List<string> commentList = jobInfo.CommentsTrans ?? jobInfo.Comments;
                 foreach (string comment in commentList)
                 {
-                    stringBuilderComments.Append("\r\n");
+                    if (string.IsNullOrWhiteSpace(comment))
+                    {
+                        continue;
+                    }
+
+                    if (stringBuilderComments.Length > 0)
+                    {
+                        stringBuilderComments.Append("\r\n");
+                    }
+
                     stringBuilderComments.Append(comment);
                 }
                 _infoListAdapter.Items.Add(new TableResultItem(stringBuilderComments.ToString(), null));
@@ -1818,7 +1827,16 @@ namespace BmwDeepObd
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
                     foreach (string comment in info.CommentList)
                     {
-                        stringBuilderComments.Append("\r\n");
+                        if (string.IsNullOrWhiteSpace(comment))
+                        {
+                            continue;
+                        }
+
+                        if (stringBuilderComments.Length > 0)
+                        {
+                            stringBuilderComments.Append("\r\n");
+                        }
+
                         stringBuilderComments.Append(comment);
                     }
                     _infoListAdapter.Items.Add(new TableResultItem(stringBuilderComments.ToString(), null));
@@ -1846,7 +1864,16 @@ namespace BmwDeepObd
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
                     foreach (string comment in info.CommentList)
                     {
-                        stringBuilderComments.Append("\r\n");
+                        if (string.IsNullOrWhiteSpace(comment))
+                        {
+                            continue;
+                        }
+
+                        if (stringBuilderComments.Length > 0)
+                        {
+                            stringBuilderComments.Append("\r\n");
+                        }
+
                         stringBuilderComments.Append(comment);
                     }
                     _infoListAdapter.Items.Add(new TableResultItem(stringBuilderComments.ToString(), null));
