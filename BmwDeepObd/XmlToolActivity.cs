@@ -5787,10 +5787,14 @@ namespace BmwDeepObd
                                     }
                                 }
 
-                                jobInfo.Comments.Add(string.Format(Culture, GetString(Resource.String.xml_tool_num_job_results), jobInfo.Results.Count));
                                 int commentCount = jobInfo.Results.Count(resultInfo => !string.IsNullOrWhiteSpace(resultInfo.DisplayName));
-                                if (commentCount <= 3)
+                                if (commentCount > 3)
                                 {
+                                    jobInfo.Comments.Add(GetString(Resource.String.xml_tool_job_results));
+                                }
+                                else
+                                {
+                                    jobInfo.Comments.Add(string.Format(Culture, GetString(Resource.String.xml_tool_num_job_results), jobInfo.Results.Count));
                                     foreach (XmlToolEcuActivity.ResultInfo resultInfo in jobInfo.Results)
                                     {
                                         if (string.IsNullOrWhiteSpace(resultInfo.DisplayName))

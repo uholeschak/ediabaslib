@@ -631,6 +631,8 @@
   <!--Translate-->
   <string name="xml_tool_drag_list_hint">Нажмите и удерживайте ЭБУ, чтобы изменить порядок.</string>
   <!--Translate-->
+  <string name="xml_tool_job_results">Результаты работы:</string>
+  <!--Translate-->
   <string name="xml_tool_num_job_results">Количество результатов работы: {0}</string>
 
   <!-- XML Tool Options Menu -->
