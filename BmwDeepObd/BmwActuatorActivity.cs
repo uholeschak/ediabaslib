@@ -590,7 +590,7 @@ namespace BmwDeepObd
             return null;
         }
 
-        private void AppendSbText(StringBuilder sb, string text)
+        public static void AppendSbText(StringBuilder sb, string text)
         {
             if (!string.IsNullOrWhiteSpace(text))
             {

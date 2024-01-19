@@ -1340,6 +1340,11 @@ namespace BmwDeepObd
             return EdiabasNet.FormatResult(resultData, format) ?? string.Empty;
         }
 
+        public static void AppendSbText(StringBuilder sb, string text)
+        {
+            EdiabasToolActivity.AppendSbText(sb, text);
+        }
+
         private void EdiabasOpen()
         {
             if (_ediabas == null)
@@ -2150,17 +2155,7 @@ namespace BmwDeepObd
                 {
                     foreach (string comment in commentList)
                     {
-                        if (string.IsNullOrWhiteSpace(comment))
-                        {
-                            continue;
-                        }
-
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-
-                        stringBuilderComments.Append(comment);
+                        AppendSbText(stringBuilderComments, comment);
                     }
                 }
                 _textViewJobComments.Text = stringBuilderComments.ToString();
@@ -2287,17 +2282,7 @@ namespace BmwDeepObd
                 {
                     foreach (string comment in commentList)
                     {
-                        if (string.IsNullOrWhiteSpace(comment))
-                        {
-                            continue;
-                        }
-
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-
-                        stringBuilderComments.Append(comment);
+                        AppendSbText(stringBuilderComments, comment);
                     }
                 }
                 _textViewResultComments.Text = stringBuilderComments.ToString();
@@ -2734,17 +2719,7 @@ namespace BmwDeepObd
                 {
                     foreach (string comment in commentList)
                     {
-                        if (string.IsNullOrWhiteSpace(comment))
-                        {
-                            continue;
-                        }
-
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-
-                        stringBuilderComments.Append(comment);
+                        AppendSbText(stringBuilderComments, comment);
                     }
                 }
                 textJobDesc.Text = stringBuilderComments.ToString();
@@ -2867,17 +2842,7 @@ namespace BmwDeepObd
                 {
                     foreach (string comment in commentList)
                     {
-                        if (string.IsNullOrWhiteSpace(comment))
-                        {
-                            continue;
-                        }
-
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-
-                        stringBuilderComments.Append(comment);
+                        AppendSbText(stringBuilderComments, comment);
                     }
                 }
                 textJobDesc.Text = stringBuilderComments.ToString();
