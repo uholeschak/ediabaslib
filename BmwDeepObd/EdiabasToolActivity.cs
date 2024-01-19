@@ -3089,7 +3089,17 @@ namespace BmwDeepObd
                     StringBuilder stringBuilderComments = new StringBuilder();
                     foreach (string comment in commentList)
                     {
-                        stringBuilderComments.Append(comment + " ");
+                        if (string.IsNullOrWhiteSpace(comment))
+                        {
+                            continue;
+                        }
+
+                        if (stringBuilderComments.Length > 0)
+                        {
+                            stringBuilderComments.Append("\r\n");
+                        }
+
+                        stringBuilderComments.Append(comment);
                     }
                     textDesc.Text = stringBuilderComments.ToString();
                 }
