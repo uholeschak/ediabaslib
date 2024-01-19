@@ -1785,17 +1785,7 @@ namespace BmwDeepObd
                 List<string> commentList = jobInfo.CommentsTrans ?? jobInfo.Comments;
                 foreach (string comment in commentList)
                 {
-                    if (string.IsNullOrWhiteSpace(comment))
-                    {
-                        continue;
-                    }
-
-                    if (stringBuilderComments.Length > 0)
-                    {
-                        stringBuilderComments.Append("\r\n");
-                    }
-
-                    stringBuilderComments.Append(comment);
+                    AppendSbText(stringBuilderComments, comment);
                 }
                 _infoListAdapter.Items.Add(new TableResultItem(stringBuilderComments.ToString(), null));
             }
@@ -1827,17 +1817,7 @@ namespace BmwDeepObd
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
                     foreach (string comment in info.CommentList)
                     {
-                        if (string.IsNullOrWhiteSpace(comment))
-                        {
-                            continue;
-                        }
-
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-
-                        stringBuilderComments.Append(comment);
+                        AppendSbText(stringBuilderComments, comment);
                     }
                     _infoListAdapter.Items.Add(new TableResultItem(stringBuilderComments.ToString(), null));
                 }
@@ -1864,17 +1844,7 @@ namespace BmwDeepObd
                     stringBuilderComments.Append(info.Name + " (" + info.Type + "):");
                     foreach (string comment in info.CommentList)
                     {
-                        if (string.IsNullOrWhiteSpace(comment))
-                        {
-                            continue;
-                        }
-
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-
-                        stringBuilderComments.Append(comment);
+                        AppendSbText(stringBuilderComments, comment);
                     }
                     _infoListAdapter.Items.Add(new TableResultItem(stringBuilderComments.ToString(), null));
                 }
@@ -3027,6 +2997,19 @@ namespace BmwDeepObd
             return false;
         }
 
+        public static void AppendSbText(StringBuilder sb, string text)
+        {
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append("\r\n");
+                }
+
+                sb.Append(text);
+            }
+        }
+
         private void BroadcastReceived(Context context, Intent intent)
         {
             if (intent == null)
@@ -3116,17 +3099,7 @@ namespace BmwDeepObd
                     StringBuilder stringBuilderComments = new StringBuilder();
                     foreach (string comment in commentList)
                     {
-                        if (string.IsNullOrWhiteSpace(comment))
-                        {
-                            continue;
-                        }
-
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-
-                        stringBuilderComments.Append(comment);
+                        AppendSbText(stringBuilderComments, comment);
                     }
                     textDesc.Text = stringBuilderComments.ToString();
                 }
@@ -3220,17 +3193,7 @@ namespace BmwDeepObd
                     StringBuilder stringBuilderComments = new StringBuilder();
                     foreach (string comment in commentList)
                     {
-                        if (string.IsNullOrWhiteSpace(comment))
-                        {
-                            continue;
-                        }
-
-                        if (stringBuilderComments.Length > 0)
-                        {
-                            stringBuilderComments.Append("\r\n");
-                        }
-
-                        stringBuilderComments.Append(comment);
+                        AppendSbText(stringBuilderComments, comment);
                     }
                     textResultDesc.Text = stringBuilderComments.ToString();
                 }
