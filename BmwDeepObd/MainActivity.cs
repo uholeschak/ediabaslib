@@ -5970,10 +5970,17 @@ namespace BmwDeepObd
                             for (; ; )
                             {
                                 int activeThreads = threadList.Count(thread => thread.IsAlive);
-                                if (activeThreads < 3)
+#if NET
+                                // ToDo: Mono init bug, limit to one thread: https://github.com/dotnet/runtime/issues/96804
+                                const int maxThreads = 1;
+#else
+                                const int maxThreads = 3;
+#endif
+                                if (activeThreads < maxThreads)
                                 {
                                     break;
                                 }
+
                                 Thread.Sleep(200);
                             }
 
