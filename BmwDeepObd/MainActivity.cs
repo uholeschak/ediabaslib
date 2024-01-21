@@ -8224,9 +8224,25 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Regex regexDisplayOrder = new Regex($"(\\W{JobReader.DisplayNodeOrder}\\s*=\\s*)\"(\\d+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                Regex regexDisplayOrder = new Regex($"(<\\s*display\\s+.*\\W{JobReader.DisplayNodeOrder}\\s*=\\s*)\"(\\d+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection matches = regexDisplayOrder.Matches(fileText);
-                if (matches.Count != currentPage.DisplayList.Count)
+                int validMatchsCount = 0;
+                foreach (Match regexMatch in matches)
+                {
+                    if (regexMatch.Groups.Count != 3)
+                    {
+                        continue;
+                    }
+
+                    if (regexMatch.Groups[0].Value.Contains("\\>", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    validMatchsCount++;
+                }
+
+                if (validMatchsCount != currentPage.DisplayList.Count)
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
                     return false;
@@ -8357,7 +8373,6 @@ namespace BmwDeepObd
                 {
                     WriteFileText(fileName, fileTextMod);
                 }
-
             }
         }
 
