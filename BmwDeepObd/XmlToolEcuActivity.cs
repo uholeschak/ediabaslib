@@ -1438,7 +1438,7 @@ namespace BmwDeepObd
 
         private void UpdateDisplay(bool filterJobs = false)
         {
-            int selection = 0;
+            int selection = -1;
 
             _spinnerJobsAdapter.Items.Clear();
             List<JobInfo> jobListSort = new List<JobInfo>(_ecuInfo.JobList);
@@ -1473,12 +1473,23 @@ namespace BmwDeepObd
                         {
                             resultInfo.GroupSelected = false;
                         }
+
                         _spinnerJobsAdapter.Items.Add(job);
-                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                        if (selection < 0)
                         {
-                            if (IsVagReadJob(job, _ecuInfo))
+                            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                             {
-                                selection = _spinnerJobsAdapter.Items.Count - 1;
+                                if (IsVagReadJob(job, _ecuInfo))
+                                {
+                                    selection = _spinnerJobsAdapter.Items.Count - 1;
+                                }
+                            }
+                            else
+                            {
+                                if (job.Selected)
+                                {
+                                    selection = _spinnerJobsAdapter.Items.Count - 1;
+                                }
                             }
                         }
                     }
@@ -1506,7 +1517,8 @@ namespace BmwDeepObd
                 else
                 {
                     _ignoreItemSelection = true;
-                    _spinnerJobs.SetSelection(selection);
+                    int selectedIndex = selection < 0 ? 0 : selection;
+                    _spinnerJobs.SetSelection(selectedIndex);
                     _ignoreItemSelection = false;
                 }
 
