@@ -1477,19 +1477,17 @@ namespace BmwDeepObd
                         _spinnerJobsAdapter.Items.Add(job);
                         if (selection < 0)
                         {
-                            if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                            if (job.Selected)
                             {
-                                if (IsVagReadJob(job, _ecuInfo))
-                                {
-                                    selection = _spinnerJobsAdapter.Items.Count - 1;
-                                }
+                                selection = _spinnerJobsAdapter.Items.Count - 1;
                             }
-                            else
+                        }
+
+                        if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                        {
+                            if (selection < 0 && IsVagReadJob(job, _ecuInfo))
                             {
-                                if (job.Selected)
-                                {
-                                    selection = _spinnerJobsAdapter.Items.Count - 1;
-                                }
+                                selection = _spinnerJobsAdapter.Items.Count - 1;
                             }
                         }
                     }
