@@ -434,6 +434,9 @@ namespace BmwDeepObd
 #if DEBUG
         private static readonly string Tag = typeof(ActivityMain).FullName;
 #endif
+#if NET
+        private static readonly object CompileLock = new object();
+#endif
         private const string SharedAppName = ActivityCommon.AppNameSpace;
         private const string AppFolderName = ActivityCommon.AppNameSpace;
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
@@ -5970,13 +5973,7 @@ namespace BmwDeepObd
                             for (; ; )
                             {
                                 int activeThreads = threadList.Count(thread => thread.IsAlive);
-#if NET
-                                // ToDo: Mono init bug, limit to one thread: https://github.com/dotnet/runtime/issues/96804
-                                const int maxThreads = 1;
-#else
-                                const int maxThreads = 3;
-#endif
-                                if (activeThreads < maxThreads)
+                                if (activeThreads < 3)
                                 {
                                     break;
                                 }
@@ -6021,52 +6018,56 @@ namespace BmwDeepObd
 #if NET
                                 try
                                 {
-                                    Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
-                                    Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation.Create(
-                                        "UserCode",
-                                        new[] { syntaxTree },
-                                        referencesList,
-                                        new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary));
-
-                                    using (MemoryStream ms = new MemoryStream())
+                                    // ToDo: Mono init bug, limit to one thread: https://github.com/dotnet/runtime/issues/96804
+                                    lock (CompileLock)
                                     {
-                                        var emitResult = compilation.Emit(ms);
-                                        if (!emitResult.Success)
-                                        {
-                                            StringBuilder sb = new StringBuilder();
-                                            foreach (Microsoft.CodeAnalysis.Diagnostic diagnostic in emitResult.Diagnostics)
-                                            {
-                                                sb.AppendLine(diagnostic.ToString());
-                                            }
+                                        Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
+                                        Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation.Create(
+                                            "UserCode",
+                                            new[] { syntaxTree },
+                                            referencesList,
+                                            new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary));
 
-                                            result = sb.ToString();
-                                        }
-                                        else
+                                        using (MemoryStream ms = new MemoryStream())
                                         {
-                                            ms.Seek(0, SeekOrigin.Begin);
-                                            Assembly assembly = Assembly.Load(ms.ToArray());
-                                            Type pageClassType = assembly.GetType("PageClass");
-                                            if (pageClassType == null)
+                                            Microsoft.CodeAnalysis.Emit.EmitResult emitResult = compilation.Emit(ms);
+                                            if (!emitResult.Success)
                                             {
-                                                throw new Exception("Compiling PageClass failed");
-                                            }
-
-                                            if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
-                                                ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
-                                            {
-                                                if (pageClassType.GetMethod("ExecuteJob") == null)
+                                                StringBuilder sb = new StringBuilder();
+                                                foreach (Microsoft.CodeAnalysis.Diagnostic diagnostic in emitResult.Diagnostics)
                                                 {
-                                                    throw new Exception("No ExecuteJob method");
+                                                    sb.AppendLine(diagnostic.ToString());
                                                 }
-                                            }
 
-                                            object pageClassInstance = Activator.CreateInstance(pageClassType);
-                                            if (pageClassInstance == null)
+                                                result = sb.ToString();
+                                            }
+                                            else
                                             {
-                                                throw new Exception("Compiling PageClass failed");
-                                            }
+                                                ms.Seek(0, SeekOrigin.Begin);
+                                                Assembly assembly = Assembly.Load(ms.ToArray());
+                                                Type pageClassType = assembly.GetType("PageClass");
+                                                if (pageClassType == null)
+                                                {
+                                                    throw new Exception("Compiling PageClass failed");
+                                                }
 
-                                            infoLocal.ClassObject = pageClassInstance;
+                                                if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
+                                                    ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
+                                                {
+                                                    if (pageClassType.GetMethod("ExecuteJob") == null)
+                                                    {
+                                                        throw new Exception("No ExecuteJob method");
+                                                    }
+                                                }
+
+                                                object pageClassInstance = Activator.CreateInstance(pageClassType);
+                                                if (pageClassInstance == null)
+                                                {
+                                                    throw new Exception("Compiling PageClass failed");
+                                                }
+
+                                                infoLocal.ClassObject = pageClassInstance;
+                                            }
                                         }
                                     }
                                 }
