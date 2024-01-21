@@ -8234,23 +8234,8 @@ namespace BmwDeepObd
 
                 Regex regexDisplayOrder = new Regex($"(<\\s*display\\s+.*\\W{JobReader.DisplayNodeOrder}\\s*=\\s*)\"(\\d+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection matches = regexDisplayOrder.Matches(fileText);
-                int validMatchsCount = 0;
-                foreach (Match regexMatch in matches)
-                {
-                    if (regexMatch.Groups.Count != 3)
-                    {
-                        continue;
-                    }
-
-                    if (regexMatch.Groups[0].Value.Contains("\\>", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
-                    validMatchsCount++;
-                }
-
-                if (validMatchsCount != currentPage.DisplayList.Count)
+                int validMatchCount = GetValidEditRegExMatches(matches);
+                if (validMatchCount != currentPage.DisplayList.Count)
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
                     return false;
@@ -8336,7 +8321,7 @@ namespace BmwDeepObd
                 int replaceIndex = 0;
                 string fileTextMod = regexDisplayOrder.Replace(fileText, match =>
                 {
-                    if (match.Groups.Count == 3)
+                    if (IsValidEditRegExMatch(match))
                     {
                         int orderIndex = -1;
                         if (reset)
@@ -8409,6 +8394,35 @@ namespace BmwDeepObd
             }
 
             return true;
+        }
+
+        public bool IsValidEditRegExMatch(Match match)
+        {
+            if (match.Groups.Count != 3)
+            {
+                return false;
+            }
+
+            if (match.Groups[0].Value.Contains("\\>", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public int GetValidEditRegExMatches(MatchCollection matches)
+        {
+            int matchCount = 0;
+            foreach (Match regexMatch in matches)
+            {
+                if (IsValidEditRegExMatch(regexMatch))
+                {
+                    matchCount++;
+                }
+            }
+
+            return matchCount;
         }
 
         public class TabsFragmentStateAdapter : FragmentStateAdapter
