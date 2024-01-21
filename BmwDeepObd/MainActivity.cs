@@ -8232,9 +8232,10 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Regex regexDisplayOrder = new Regex($"(<\\s*display\\s+.*\\W{JobReader.DisplayNodeOrder}\\s*=\\s*)\"(\\d+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                string startNodeName = "display";
+                Regex regexDisplayOrder = new Regex($"(<\\s*{startNodeName}\\s+.*\\W{JobReader.DisplayNodeOrder}\\s*=\\s*)\"(\\d+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection matches = regexDisplayOrder.Matches(fileText);
-                int validMatchCount = GetValidEditRegExMatches(matches);
+                int validMatchCount = GetValidEditRegExMatches(matches, startNodeName);
                 if (validMatchCount != currentPage.DisplayList.Count)
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
@@ -8285,7 +8286,7 @@ namespace BmwDeepObd
                         return;
                     }
 
-                    DialogFinished(dialog, regexDisplayOrder, fileName, fileText);
+                    DialogFinished(dialog, regexDisplayOrder, fileName, fileText, startNodeName);
                     alertDialog.Cancel();
                 };
 
@@ -8309,7 +8310,7 @@ namespace BmwDeepObd
 
             return true;
 
-            void DialogFinished(TextListReorderDialog dialog, Regex regexDisplayOrder, string fileName, string fileText, bool reset = false)
+            void DialogFinished(TextListReorderDialog dialog, Regex regexDisplayOrder, string fileName, string fileText, string startNodeName, bool reset = false)
             {
                 if (_activityCommon == null)
                 {
@@ -8321,7 +8322,7 @@ namespace BmwDeepObd
                 int replaceIndex = 0;
                 string fileTextMod = regexDisplayOrder.Replace(fileText, match =>
                 {
-                    if (IsValidEditRegExMatch(match))
+                    if (IsValidEditRegExMatch(match, startNodeName))
                     {
                         int orderIndex = -1;
                         if (reset)
@@ -8396,27 +8397,41 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool IsValidEditRegExMatch(Match match)
+        public bool IsValidEditRegExMatch(Match match, string startNodeName)
         {
             if (match.Groups.Count != 3)
             {
                 return false;
             }
 
-            if (match.Groups[0].Value.Contains("\\>", StringComparison.OrdinalIgnoreCase))
+            if (!match.Groups[0].Success)
             {
                 return false;
+            }
+
+            string matchText = match.Groups[0].Value;
+            if (matchText.Contains("/>", StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(startNodeName))
+            {
+                if (matchText.Contains("</" + startNodeName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
             }
 
             return true;
         }
 
-        public int GetValidEditRegExMatches(MatchCollection matches)
+        public int GetValidEditRegExMatches(MatchCollection matches, string startNodeName)
         {
             int matchCount = 0;
             foreach (Match regexMatch in matches)
             {
-                if (IsValidEditRegExMatch(regexMatch))
+                if (IsValidEditRegExMatch(regexMatch, startNodeName))
                 {
                     matchCount++;
                 }
