@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading;
 using Android.Content;
 using Android.Content.PM;
-using Android.Content.Res;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Util;
