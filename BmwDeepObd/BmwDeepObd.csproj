@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0-android</TargetFramework>
     <SupportedOSPlatformVersion>21</SupportedOSPlatformVersion>
@@ -30,6 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <AndroidAsset Remove="Assets\AboutAssets.txt" />
+    <AndroidAsset Remove="Assets\Ecu.bin" />
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="Mono.Android" RootMode="visible" />
