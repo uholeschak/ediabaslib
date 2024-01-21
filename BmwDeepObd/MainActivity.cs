@@ -8224,7 +8224,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                Regex regexDisplayOrder = new Regex($"(\\W{JobReader.DisplayNodeOrder}\\s*=\\s*)\"(\\d+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                Regex regexDisplayOrder = new Regex($"(<\\s*display\\s+.*\\W{JobReader.DisplayNodeOrder}\\s*=\\s*)\"(\\d+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection matches = regexDisplayOrder.Matches(fileText);
                 if (matches.Count != currentPage.DisplayList.Count)
                 {
@@ -8357,7 +8357,6 @@ namespace BmwDeepObd
                 {
                     WriteFileText(fileName, fileTextMod);
                 }
-
             }
         }
 
