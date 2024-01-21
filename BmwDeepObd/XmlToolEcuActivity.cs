@@ -1991,7 +1991,6 @@ namespace BmwDeepObd
             if (jobInfo != null)
             {
                 bool bmwStatJob = IsBmwReadStatusTypeJob(_selectedJob);
-                ViewStates limitVisibilityLast = _textViewArgLimitTitle.Visibility;
                 ViewStates limitVisibility = bmwStatJob ? ViewStates.Visible : ViewStates.Gone;
                 _textViewArgLimitTitle.Visibility = limitVisibility;
                 _spinnerArgLimit.Visibility = limitVisibility;
