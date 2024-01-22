@@ -8419,12 +8419,10 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (!string.IsNullOrEmpty(startNodeName))
+            string matchNodeEnd = "</" + (startNodeName ?? string.Empty);
+            if (matchText.Contains(matchNodeEnd, StringComparison.OrdinalIgnoreCase))
             {
-                if (matchText.Contains("</" + startNodeName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
+                return false;
             }
 
             return true;
