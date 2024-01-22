@@ -1205,19 +1205,28 @@ namespace BmwFileReader
                 bool valid = ruleEvalBmw.EvaluateRule(serviceDataItem.InfoObjId, RuleEvalBmw.RuleType.DiagObj);
                 if (valid)
                 {
+                    VehicleStructsBmw.ServiceDataItem serviceDataItemClone = new VehicleStructsBmw.ServiceDataItem(
+                        serviceDataItem.InfoObjId, serviceDataItem.InfoObjTextHash, new List<string>(),
+                        serviceDataItem.DiagObjTextHashes, serviceDataItem.InfoDataList);
+                    int validDiagObjs = 0;
+
                     foreach (string diagObjId in serviceDataItem.DiagObjIds)
                     {
-                        if (!ruleEvalBmw.EvaluateRule(diagObjId, RuleEvalBmw.RuleType.DiagObj))
+                        if (ruleEvalBmw.EvaluateRule(diagObjId, RuleEvalBmw.RuleType.DiagObj))
                         {
-                            valid = false;
-                            break;
+                            serviceDataItemClone.DiagObjIds.Add(diagObjId);
+                            validDiagObjs++;
+                        }
+                        else
+                        {
+                            serviceDataItemClone.DiagObjIds.Add(string.Empty);
                         }
                     }
-                }
 
-                if (valid)
-                {
-                    serviceDataItems.Add(serviceDataItem);
+                    if (validDiagObjs > 0)
+                    {
+                        serviceDataItems.Add(serviceDataItemClone);
+                    }
                 }
             }
 
