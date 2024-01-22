@@ -8117,10 +8117,12 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                string startNodeName = "page";
                 string keyWord = landscape ? JobReader.PageGaugesLandscape : JobReader.PageGaugesPortrait;
-                Regex regexGauges = new Regex($"(\\W{keyWord}\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                Regex regexGauges = new Regex($"(<\\s*{startNodeName}\\s+.*\\W{keyWord}\\s*=\\s*)\"(\\w+)\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 MatchCollection matches = regexGauges.Matches(fileText);
-                if (matches.Count == 0)
+                int validMatchCount = GetValidEditRegExMatches(matches, startNodeName);
+                if (validMatchCount == 0)
                 {
                     _activityCommon.ShowAlert(GetString(Resource.String.file_editing_failed), Resource.String.alert_title_error);
                     return false;
@@ -8173,7 +8175,7 @@ namespace BmwDeepObd
                     int selectedGauges = pos + minGauges;
                     string fileTextMod = regexGauges.Replace(fileText, match =>
                     {
-                        if (match.Groups.Count == 3)
+                        if (IsValidEditRegExMatch(match, startNodeName))
                         {
                             return string.Format(CultureInfo.InvariantCulture, "{0}\"{1}\"", match.Groups[1].Value, selectedGauges);
                         }
