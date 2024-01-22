@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 public class RulesInfo
 {
-    public const string DatabaseVersion = "4.37.40";
+    public const string DatabaseVersion = "4.39.20";
 
-    public const string DatabaseDate = "09/20/2022 10:39:47";
+    public const string DatabaseDate = "11/30/2022 09:17:30";
 
-    public static List<string> RuleNames = new List<string> { "Marke", "SALAPA", "IStufeX", "Produktlinie", "Baustand", "E-Bezeichnung", "Baureihenverbund", "E-Maschine", "EcuClique", "EcuRepresentative", "Motor", "IStufe", "Motor Leistungsklasse", "Produktionsdatum", "Hybridkennzeichen", "Basisausf?hrung", "Motor ?berarbeitung", "Lenkung", "Typschl?ssel", "Baureihe", "Getriebe", "Verkaufsbezeichnung", "Motor Hubraum", "Motor Kraftstoffart/Einbaulage", "Country", "Motor 8-stellig", "Antrieb", "Motor Kraftstoffart", "elektrische Reichweite", "Karosserie", "Sicherheitsfahrzeug", "T?ren", "Montageland", "ProtectionVehicleService", "EcuVariant", "HEAT 8-stellig" };
+    public static List<string> RuleNames = new List<string> { "Marke", "SALAPA", "IStufeX", "Produktlinie", "Baustand", "E-Bezeichnung", "Baureihenverbund", "E-Maschine", "EcuClique", "EcuRepresentative", "Motor", "IStufe", "Motor Leistungsklasse", "Produktionsdatum", "Hybridkennzeichen", "Basisausf?hrung", "Motor ?berarbeitung", "Lenkung", "Typschl?ssel", "Baureihe", "Getriebe", "Verkaufsbezeichnung", "Motor Hubraum", "Motor Kraftstoffart/Einbaulage", "Country", "Motor 8-stellig", "Antrieb", "Motor Kraftstoffart", "elektrische Reichweite", "Karosserie", "Sicherheitsfahrzeug", "T?ren", "Montageland", "ProtectionVehicleService", "AE Bezeichnung", "EcuVariant", "HEAT 8-stellig" };
 
     public RuleEvalBmw RuleEvalClass { get; private set; }
 
@@ -236,6 +236,9 @@ public class RulesInfo
                 return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuRepresentative", "EME")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuRepresentative", "EDME")));
 
             case "20000135408732":
+            case "20000493595273":
+                return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("Hybridkennzeichen", "BEVE") && (RuleNum("IStufeX") >= 2107410)) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("Hybridkennzeichen", "BEVE") && (RuleNum("IStufeX") >= 2107320)) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("Hybridkennzeichen", "BEVE") && (RuleNum("IStufeX") >= 2107410)));
+
             case "20000144443271":
                 return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ZINORO")) && IsValidRuleString("EcuClique", "fle_l")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ZINORO")) && IsValidRuleString("EcuClique", "fle_r")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuClique", "fle02_l")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuClique", "fle02_r")));
 
@@ -264,9 +267,6 @@ public class RulesInfo
             case "20000493622708":
             case "20000493622839":
             case "20000493622963":
-            case "20000493593022":
-                return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G08"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && (RuleNum("IStufeX") >= 2107500)) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("SALAPA", "807")) && !(IsValidRuleString("SALAPA", "8AA"))));
-
             case "20000493593288":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G08"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && (RuleNum("IStufeX") >= 2107500)));
 
@@ -292,43 +292,6 @@ public class RulesInfo
             case "20000493596871":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Hybridkennzeichen", "BEVE") && IsValidRuleString("E-Bezeichnung", "G08") && (RuleNum("IStufeX") >= 2107400)) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G08"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("Baustand") >= 202107)));
 
-            case "20000728029791":
-                return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "807")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8AA")));
-
-            case "20000728029792":
-            case "20000728029793":
-            case "20000728029794":
-            case "20000728029795":
-            case "20000728029796":
-            case "20000728029797":
-            case "20000728029798":
-            case "20000728029799":
-            case "20000728030561":
-            case "20000728030562":
-            case "20000728030563":
-            case "20000728030564":
-            case "20000728030565":
-            case "20000728030566":
-            case "20000728030567":
-            case "20000728030568":
-            case "20000728031281":
-            case "20000728031282":
-            case "20000728031283":
-            case "20000728031284":
-            case "20000728031285":
-            case "20000728031286":
-            case "20000728031287":
-            case "20000728031288":
-            case "20000728031289":
-            case "20000728031891":
-            case "20000728031892":
-            case "20000728031893":
-            case "20000728031894":
-            case "20000728031895":
-            case "20000728031896":
-            case "20000728031897":
-            case "20000728031898":
-            case "20000728031899":
             case "20000077730922":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "F55")) && !(IsValidRuleString("E-Bezeichnung", "F56")) && !(IsValidRuleString("E-Bezeichnung", "F57"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("SALAPA", "8WE"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !((RuleNum("IStufeX") >= 2103578))));
 
@@ -740,6 +703,9 @@ public class RulesInfo
 
             case "20000142882229":
             case "20000142882311":
+            case "20000767737976":
+                return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "U006") && !((RuleNum("IStufeX") <= 2311500))) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("Baureihenverbund", "I020") && !((RuleNum("IStufeX") <= 2311500))) || (IsValidRuleString("Marke", "BMW PKW") && (RuleNum("IStufeX") >= 2407500)) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("Baureihenverbund", "J001") && !((RuleNum("IStufeX") <= 2311500))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Baureihenverbund", "G070") && !((RuleNum("IStufeX") <= 2311500))));
+
             case "20000132568604":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Motor Leistungsklasse", "T")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B47") && (IsValidRuleString("Motor Leistungsklasse", "O") || IsValidRuleString("Motor Leistungsklasse", "U"))));
 
@@ -1040,6 +1006,9 @@ public class RulesInfo
             case "20000727579717":
             case "20000727585474":
             case "20000727585475":
+            case "20000728382817":
+            case "20000728392998":
+            case "20000728392999":
             case "20000731999521":
             case "20000731999653":
             case "20000731999654":
@@ -1161,6 +1130,9 @@ public class RulesInfo
             case "20000493594087":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2203460)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2203460)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2203460)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Baureihenverbund", "S15C")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "I020"))));
 
+            case "20000642002798":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2307500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2307500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2307500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2307500)));
+
             case "20000762688075":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2311500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "I020")) && !(IsValidRuleString("Baureihenverbund", "U006")) && !(IsValidRuleString("Baureihenverbund", "G070"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2311500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2311500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2311500)));
 
@@ -1247,17 +1219,50 @@ public class RulesInfo
             case "20000346161854":
             case "20000346161857":
             case "20000439979643":
+            case "20000764399876":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "U006")) && !(IsValidRuleString("Baureihenverbund", "G070"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "G070") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "S18A") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "U006") && (RuleNum("IStufeX") >= 2211500)));
+
+            case "20000764399877":
+            case "20000764399878":
+            case "20000764399879":
+            case "20000764400101":
+            case "20000764400102":
+            case "20000764400103":
+            case "20000764400104":
+            case "20000764400105":
+            case "20000764400106":
+            case "20000764484585":
+            case "20000770104317":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "G070") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "U006")) && !(IsValidRuleString("Baureihenverbund", "G070"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "S18A") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "U006") && (RuleNum("IStufeX") >= 2211500)));
+
+            case "20000770104318":
+            case "20000770104319":
+            case "20000770104851":
+            case "20000770104852":
+            case "20000770104853":
+            case "20000770104854":
+            case "20000770104855":
+            case "20000770104856":
+            case "20000770104857":
+            case "20000764340918":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "S18A") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "I020")) && !(IsValidRuleString("Baureihenverbund", "G070"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "G070") && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("Baureihenverbund", "I020") && (RuleNum("IStufeX") >= 2211500)));
+
+            case "20000764484586":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "S18A") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "G070") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "U006")) && !(IsValidRuleString("Baureihenverbund", "G070"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Baureihenverbund", "U006") && (RuleNum("IStufeX") >= 2211500)));
+
+            case "20000764484587":
+            case "20000764484588":
+            case "20000764484589":
+            case "20000764505571":
+            case "20000764505572":
+            case "20000764505573":
+            case "20000764505574":
+            case "20000764505575":
             case "20000116545966":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuClique", "bdc_g11") && (RuleNum("IStufeX") <= 2107491)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuClique", "bdc_g05")));
 
             case "20000114482546":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && !(IsValidRuleString("E-Bezeichnung", "G18"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G18") && !(((RuleNum("IStufeX") >= 2203400) && (RuleNum("IStufeX") <= 2207460)))));
-
-            case "20000499969364":
-                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && !(IsValidRuleString("E-Bezeichnung", "G28")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G26"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && (RuleNum("IStufeX") >= 2207450)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2207450)) || IsValidRuleString("Marke", "BMW i"));
-
-            case "20000499969363":
-                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && !(IsValidRuleString("E-Bezeichnung", "G28")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G26"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2207450)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && (RuleNum("IStufeX") >= 2207450)) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2207450)));
 
             case "64643467915":
                 return (((IsValidRuleString("Marke", "TORQEEDO") && IsValidRuleString("Typschl?ssel", "9A34")) || (IsValidRuleString("Marke", "BMW i") && (IsValidRuleString("Typschl?ssel", "1Z21") || IsValidRuleString("Typschl?ssel", "1Z22") || IsValidRuleString("Typschl?ssel", "1Z23") || IsValidRuleString("Typschl?ssel", "1Z41") || IsValidRuleString("Typschl?ssel", "1Z42") || IsValidRuleString("Typschl?ssel", "1Z43") || IsValidRuleString("Typschl?ssel", "1Z61") || IsValidRuleString("Typschl?ssel", "1Z62") || IsValidRuleString("Typschl?ssel", "1Z63") || IsValidRuleString("Typschl?ssel", "1Z81") || IsValidRuleString("Typschl?ssel", "1Z82") || IsValidRuleString("Typschl?ssel", "1Z83") || IsValidRuleString("Typschl?ssel", "7Z21") || IsValidRuleString("Typschl?ssel", "7Z22") || IsValidRuleString("Typschl?ssel", "7Z23") || IsValidRuleString("Typschl?ssel", "7Z41") || IsValidRuleString("Typschl?ssel", "7Z42") || IsValidRuleString("Typschl?ssel", "7Z43") || IsValidRuleString("Typschl?ssel", "7Z61") || IsValidRuleString("Typschl?ssel", "7Z62") || IsValidRuleString("Typschl?ssel", "7Z63") || IsValidRuleString("Typschl?ssel", "7Z81") || IsValidRuleString("Typschl?ssel", "7Z82") || IsValidRuleString("Typschl?ssel", "7Z83")) && IsValidRuleString("E-Bezeichnung", "I01")) || (IsValidRuleString("Marke", "KARSAN") && IsValidRuleString("Typschl?ssel", "9A41")) || (IsValidRuleString("Marke", "DANNAR") && IsValidRuleString("Typschl?ssel", "9A43")) || (IsValidRuleString("Marke", "KARSAN") && IsValidRuleString("Typschl?ssel", "9A45")) || (IsValidRuleString("Marke", "BAOHANG") && IsValidRuleString("Typschl?ssel", "9A47")) || (IsValidRuleString("Marke", "BPW") && IsValidRuleString("Typschl?ssel", "9A54")) || (IsValidRuleString("Marke", "MOTIV") && IsValidRuleString("Typschl?ssel", "9A14"))) && IsValidRuleString("Country", "US"));
@@ -1377,8 +1382,14 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW i") && !(((RuleNum("IStufeX") >= 1407503) && (RuleNum("IStufeX") <= 1507501)))) || (IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")));
 
             case "39017773963":
-            case "20000618613583":
-                return ((IsValidRuleString("Marke", "BMW i") && !(((RuleNum("IStufeX") >= 2111500) && (RuleNum("IStufeX") <= 2207430)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2111500) && (RuleNum("IStufeX") <= 2207430)))));
+            case "20000568630477":
+                return ((IsValidRuleString("Marke", "BMW i") && !(((RuleNum("IStufeX") >= 2107320) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2111350) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207400) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207270) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "srr40ecu")));
+
+            case "20000568605124":
+                return ((IsValidRuleString("Marke", "BMW i") && !(((RuleNum("IStufeX") >= 2107320) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207270) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2111350) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW")) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207400) && (RuleNum("IStufeX") <= 2211500)))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "srr40ecu")));
+
+            case "20000563830144":
+                return ((IsValidRuleString("Marke", "BMW i") && !(((RuleNum("IStufeX") >= 2211505) && (RuleNum("IStufeX") <= 2307500)))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Produktlinie", "21LU") && !(((RuleNum("IStufeX") >= 2211505) && (RuleNum("IStufeX") <= 2307500)))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Produktlinie", "21LG") && !(((RuleNum("IStufeX") >= 2211505) && (RuleNum("IStufeX") <= 2307500)))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LU")) && IsValidRuleString("EcuClique", "BCP_SP21") && !(((RuleNum("IStufeX") >= 2211505) && (RuleNum("IStufeX") <= 2307500)))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuClique", "BCP_SP21")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Produktlinie", "21LK")));
 
             case "68092382091":
                 return ((IsValidRuleString("Marke", "BMW i") && !((RuleNum("IStufeX") == 1403490)) && !((RuleNum("IStufeX") == 1403430)) && !((RuleNum("IStufeX") == 1403420)) && !((RuleNum("IStufeX") == 1403410)) && !((RuleNum("IStufeX") == 1403400)) && !((RuleNum("IStufeX") == 1403390)) && !((RuleNum("IStufeX") == 1311500)) && !((RuleNum("IStufeX") == 1311490)) && !((RuleNum("IStufeX") == 1311430)) && !((RuleNum("IStufeX") == 1311420)) && !((RuleNum("IStufeX") == 1311411)) && !((RuleNum("IStufeX") == 1311410)) && !((RuleNum("IStufeX") == 1311401)) && !((RuleNum("IStufeX") == 1311400)) && !((RuleNum("IStufeX") == 1311390)) && !((RuleNum("IStufeX") == 1311350)) && !((RuleNum("IStufeX") == 1311341)) && !((RuleNum("IStufeX") == 1311340)) && !((RuleNum("IStufeX") == 1311330)) && !((RuleNum("IStufeX") == 1311320)) && !((RuleNum("IStufeX") == 1311311)) && !((RuleNum("IStufeX") == 1311310)) && !((RuleNum("IStufeX") == 1311300)) && !((RuleNum("IStufeX") == 1311290)) && !((RuleNum("IStufeX") == 1311220)) && !((RuleNum("IStufeX") == 1309507)) && !((RuleNum("IStufeX") == 1309506)) && !((RuleNum("IStufeX") == 1309505)) && !((RuleNum("IStufeX") == 1309504)) && !((RuleNum("IStufeX") == 1309503)) && !((RuleNum("IStufeX") == 1309502)) && !((RuleNum("IStufeX") == 1309501)) && !((RuleNum("IStufeX") == 1309500))) || IsValidRuleString("Marke", "WORKHORSE"));
@@ -1397,6 +1408,11 @@ public class RulesInfo
             case "20000099512515":
                 return ((IsValidRuleString("Marke", "BMW i") && !(IsValidRuleString("E-Bezeichnung", "I12"))) || (IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "ZINORO")));
 
+            case "20000833400552":
+                return ((IsValidRuleString("Marke", "BMW i") && !(IsValidRuleString("EcuClique", "srr40ecu")) && (RuleNum("IStufeX") >= 2107320) && (RuleNum("IStufeX") <= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuClique", "srr40ecu")) && (RuleNum("IStufeX") >= 2111350) && (RuleNum("IStufeX") <= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuClique", "srr40ecu")) && (RuleNum("IStufeX") >= 2207400) && (RuleNum("IStufeX") <= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuClique", "srr40ecu")) && (RuleNum("IStufeX") >= 2207270) && (RuleNum("IStufeX") <= 2211500)));
+
+            case "20000833400556":
+            case "20000833400557":
             case "64147613067":
                 return ((IsValidRuleString("Marke", "BMW i") && !(IsValidRuleString("IStufe", "I001-14-07-430")) && !(IsValidRuleString("IStufe", "I001-14-07-420")) && !(IsValidRuleString("IStufe", "I001-14-07-410")) && !(IsValidRuleString("IStufe", "I001-14-07-400")) && !(IsValidRuleString("IStufe", "I001-14-07-390")) && !(IsValidRuleString("IStufe", "I001-14-03-501")) && !(IsValidRuleString("IStufe", "I001-14-03-500")) && !(IsValidRuleString("IStufe", "I001-14-03-490")) && !(IsValidRuleString("IStufe", "I001-14-03-430")) && !(IsValidRuleString("IStufe", "I001-14-03-420")) && !(IsValidRuleString("IStufe", "I001-14-03-410")) && !(IsValidRuleString("IStufe", "I001-14-03-400")) && !(IsValidRuleString("IStufe", "I001-14-03-390"))) || (IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ZINORO")));
 
@@ -1488,7 +1504,7 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW i") && (RuleNum("IStufeX") >= 2111480)) || (IsValidRuleString("Marke", "BMW PKW") && (RuleNum("IStufeX") >= 2203430)));
 
             case "20000554532688":
-                return ((IsValidRuleString("Marke", "BMW i") && (RuleNum("IStufeX") >= 2203400)) || (IsValidRuleString("Marke", "BMW PKW") && (RuleNum("IStufeX") >= 2203400)));
+                return ((IsValidRuleString("Marke", "BMW i") && (RuleNum("IStufeX") >= 2203400)) || (IsValidRuleString("Marke", "BMW PKW") && (RuleNum("IStufeX") >= 2203400)) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW")));
 
             case "20000581069576":
                 return ((IsValidRuleString("Marke", "BMW i") && (RuleNum("IStufeX") >= 2207500)) || (IsValidRuleString("Marke", "BMW PKW") && (RuleNum("IStufeX") >= 2207500)));
@@ -1749,6 +1765,9 @@ public class RulesInfo
 
             case "20000576316134":
                 return ((IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2207530)) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && !(IsValidRuleString("SALAPA", "6PA")) && (RuleNum("IStufeX") == 2207520)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G28")) && !(IsValidRuleString("E-Bezeichnung", "I20")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G26"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && !(IsValidRuleString("SALAPA", "6PA")) && (RuleNum("IStufeX") == 2207520)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && !((RuleNum("IStufeX") == 2207520))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && !(IsValidRuleString("SALAPA", "6PA")) && (RuleNum("IStufeX") == 2207520)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && (RuleNum("IStufeX") >= 2207530)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2207530)));
+
+            case "20000599190741":
+                return ((IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G28")) && !(IsValidRuleString("E-Bezeichnung", "G08")) && !(IsValidRuleString("E-Bezeichnung", "I20")) && !(IsValidRuleString("E-Bezeichnung", "G26")) && !(IsValidRuleString("E-Bezeichnung", "G70")) && !(IsValidRuleString("E-Bezeichnung", "G68"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G26") && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G70") && (RuleNum("IStufeX") >= 2211500)));
 
             case "20000563840156":
                 return ((IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G70") || IsValidRuleString("E-Bezeichnung", "G73")) && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "I20")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G70")) && !(IsValidRuleString("E-Bezeichnung", "G73"))));
@@ -3200,6 +3219,24 @@ public class RulesInfo
             case "20000114521652":
                 return ((IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 1611420) && (RuleNum("IStufeX") <= 1707390)))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && !(IsValidRuleString("E-Bezeichnung", "RR31"))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && IsValidRuleString("E-Bezeichnung", "RR31") && !(((RuleNum("IStufeX") >= 1911490) && (RuleNum("IStufeX") <= 2007410)))));
 
+            case "20000568624632":
+                return ((IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2111350) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW")) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207400) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "BMW i") && !(((RuleNum("IStufeX") >= 2107320) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207270) && (RuleNum("IStufeX") <= 2211500)))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "srr40ecu")));
+
+            case "20000618613583":
+                return ((IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2111500) && (RuleNum("IStufeX") <= 2207430)))) || (IsValidRuleString("Marke", "BMW i") && !(((RuleNum("IStufeX") >= 2111500) && (RuleNum("IStufeX") <= 2207430)))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW")));
+
+            case "20000568608645":
+                return ((IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207270) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW")) || (IsValidRuleString("Marke", "BMW i") && !(((RuleNum("IStufeX") >= 2107320) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207400) && (RuleNum("IStufeX") <= 2211500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2111350) && (RuleNum("IStufeX") <= 2211500)))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "srr40ecu")));
+
+            case "20000724177641":
+                return ((IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207270) && (RuleNum("IStufeX") <= 2211530)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207400) && (RuleNum("IStufeX") <= 2211540)))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "G070"))));
+
+            case "20000696064721":
+                return ((IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207270) && (RuleNum("IStufeX") <= 2311500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207400) && (RuleNum("IStufeX") <= 2311500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "G070"))));
+
+            case "20000696064599":
+                return ((IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207400) && (RuleNum("IStufeX") <= 2311500)))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "G070"))) || (IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2207270) && (RuleNum("IStufeX") <= 2311500)))));
+
             case "20000187086722":
                 return ((IsValidRuleString("Marke", "BMW PKW") && !((RuleNum("IStufeX") <= 1411430))) || (IsValidRuleString("Marke", "BMW PKW") && !((RuleNum("IStufeX") <= 1411430))) || (IsValidRuleString("Marke", "BMW PKW") && !((RuleNum("IStufeX") <= 1411430))) || (IsValidRuleString("Marke", "BMW PKW") && !((RuleNum("IStufeX") <= 1411430))) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ZINORO")) && (IsValidRuleString("Produktlinie", "PLLI") || IsValidRuleString("Produktlinie", "PLLU"))));
 
@@ -3303,6 +3340,9 @@ public class RulesInfo
             case "5192968331":
                 return ((IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "M12"))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Maschine", "IB1"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(((RuleNum("IStufeX") >= 903510) && (RuleNum("IStufeX") <= 912512)))));
 
+            case "20000833400555":
+                return ((IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuClique", "srr40ecu")) && (RuleNum("IStufeX") >= 2207400) && (RuleNum("IStufeX") <= 2211500)) || (IsValidRuleString("Marke", "BMW i") && !(IsValidRuleString("EcuClique", "srr40ecu")) && (RuleNum("IStufeX") >= 2107320) && (RuleNum("IStufeX") <= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuClique", "srr40ecu")) && (RuleNum("IStufeX") >= 2207270) && (RuleNum("IStufeX") <= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuClique", "srr40ecu")) && (RuleNum("IStufeX") >= 2111350) && (RuleNum("IStufeX") <= 2211500)));
+
             case "13978889099":
                 return ((IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuRepresentative", "ASD")) && !(IsValidRuleString("SALAPA", "676"))) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("Lenkung", "LL") && !(IsValidRuleString("EcuRepresentative", "ASD")) && !(IsValidRuleString("SALAPA", "676"))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "E81")) && !(IsValidRuleString("E-Bezeichnung", "E82")) && !(IsValidRuleString("E-Bezeichnung", "E84")) && !(IsValidRuleString("E-Bezeichnung", "E87")) && !(IsValidRuleString("E-Bezeichnung", "E88")) && !(IsValidRuleString("E-Bezeichnung", "E90")) && !(IsValidRuleString("E-Bezeichnung", "E91")) && !(IsValidRuleString("E-Bezeichnung", "E92")) && !(IsValidRuleString("E-Bezeichnung", "E93"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "E81") || IsValidRuleString("E-Bezeichnung", "E82") || IsValidRuleString("E-Bezeichnung", "E84") || IsValidRuleString("E-Bezeichnung", "E87") || IsValidRuleString("E-Bezeichnung", "E88") || IsValidRuleString("E-Bezeichnung", "E90") || IsValidRuleString("E-Bezeichnung", "E91") || IsValidRuleString("E-Bezeichnung", "E92") || IsValidRuleString("E-Bezeichnung", "E93")) && (RuleNum("Baustand") <= 200908)));
 
@@ -3341,6 +3381,43 @@ public class RulesInfo
             case "5226912139":
                 return ((IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("SALAPA", "802")) && (RuleNum("IStufeX") >= 903500)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("SALAPA", "802")) && (RuleNum("IStufeX") >= 902500)) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("Baureihenverbund", "E060")) && !(IsValidRuleString("Baureihenverbund", "E89X")) && !(IsValidRuleString("SALAPA", "802"))));
 
+            case "20000493592633":
+                return ((IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("SALAPA", "807")) && !(IsValidRuleString("SALAPA", "8AA"))) || IsValidRuleString("Marke", "BMW i"));
+
+            case "20000493592634":
+            case "20000493592635":
+            case "20000493592636":
+            case "20000493592637":
+            case "20000493592638":
+            case "20000493592639":
+            case "20000493592761":
+            case "20000493592762":
+            case "20000493592763":
+            case "20000493592764":
+            case "20000493592765":
+            case "20000493592766":
+            case "20000493592767":
+            case "20000493592768":
+            case "20000493592899":
+            case "20000493593021":
+            case "20000493593023":
+            case "20000493593024":
+            case "20000493593152":
+            case "20000493593153":
+            case "20000493593154":
+            case "20000493593155":
+            case "20000493593156":
+            case "20000493593157":
+            case "20000493593158":
+            case "20000493593159":
+            case "20000493593283":
+            case "20000493593284":
+            case "20000493593424":
+            case "20000493593425":
+            case "20000499980796":
+            case "20000499980797":
+            case "20000499980798":
+            case "20000499980799":
             case "5329533835":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "E60") || IsValidRuleString("E-Bezeichnung", "E61") || IsValidRuleString("E-Bezeichnung", "E63") || IsValidRuleString("E-Bezeichnung", "E64") || IsValidRuleString("E-Bezeichnung", "E65") || IsValidRuleString("E-Bezeichnung", "E66") || IsValidRuleString("E-Bezeichnung", "E67") || IsValidRuleString("E-Bezeichnung", "E68") || IsValidRuleString("E-Bezeichnung", "E70") || IsValidRuleString("E-Bezeichnung", "E71") || IsValidRuleString("E-Bezeichnung", "E72") || IsValidRuleString("E-Bezeichnung", "E81") || IsValidRuleString("E-Bezeichnung", "E82") || IsValidRuleString("E-Bezeichnung", "E84") || IsValidRuleString("E-Bezeichnung", "E87") || IsValidRuleString("E-Bezeichnung", "E88") || IsValidRuleString("E-Bezeichnung", "E89") || IsValidRuleString("E-Bezeichnung", "E90") || IsValidRuleString("E-Bezeichnung", "E91") || IsValidRuleString("E-Bezeichnung", "E92") || IsValidRuleString("E-Bezeichnung", "E93"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F01") || IsValidRuleString("E-Bezeichnung", "F02") || IsValidRuleString("E-Bezeichnung", "F03") || IsValidRuleString("E-Bezeichnung", "F04") || IsValidRuleString("E-Bezeichnung", "F07") || IsValidRuleString("E-Bezeichnung", "F10") || IsValidRuleString("E-Bezeichnung", "F11") || IsValidRuleString("E-Bezeichnung", "F18")) && (RuleNum("Baustand") <= 201002)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F12") || IsValidRuleString("E-Bezeichnung", "F13")) && (RuleNum("Baustand") <= 201005)) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && (IsValidRuleString("E-Bezeichnung", "RR1") || IsValidRuleString("E-Bezeichnung", "RR2") || IsValidRuleString("E-Bezeichnung", "RR3"))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && IsValidRuleString("E-Bezeichnung", "RR4") && (RuleNum("Baustand") <= 201008)));
 
@@ -3568,7 +3645,7 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G70") || IsValidRuleString("E-Bezeichnung", "G73")) && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G07")) && !(IsValidRuleString("E-Bezeichnung", "I20")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G70")) && !(IsValidRuleString("E-Bezeichnung", "G73"))));
 
             case "20000561065988":
-                return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G70") || IsValidRuleString("E-Bezeichnung", "G73")) && (RuleNum("IStufeX") >= 2303500)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G07") || IsValidRuleString("E-Bezeichnung", "G09")) && (RuleNum("IStufeX") >= 2303500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G07")) && !(IsValidRuleString("E-Bezeichnung", "I20")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G09")) && !(IsValidRuleString("E-Bezeichnung", "G70")) && !(IsValidRuleString("E-Bezeichnung", "U11")) && !(IsValidRuleString("E-Bezeichnung", "G73"))) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2303500)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "U06") || IsValidRuleString("E-Bezeichnung", "U11")) && (RuleNum("IStufeX") >= 2303500)));
+                return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "U06") || IsValidRuleString("E-Bezeichnung", "U11")) && (RuleNum("IStufeX") >= 2307500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G07")) && !(IsValidRuleString("E-Bezeichnung", "I20")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G09")) && !(IsValidRuleString("E-Bezeichnung", "G70")) && !(IsValidRuleString("E-Bezeichnung", "U11")) && !(IsValidRuleString("E-Bezeichnung", "G73"))) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2307500)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G07") || IsValidRuleString("E-Bezeichnung", "G09")) && (RuleNum("IStufeX") >= 2303500)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G70") || IsValidRuleString("E-Bezeichnung", "G73")) && (RuleNum("IStufeX") >= 2307500)));
 
             case "20000144187592":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("Motor", "N57") || IsValidRuleString("Motor", "B57"))) || (IsValidRuleString("Marke", "INEOS") && IsValidRuleString("Motor ?berarbeitung", "2") && IsValidRuleString("Motor", "B57") && IsValidRuleString("Motor Leistungsklasse", "O")));
@@ -3689,6 +3766,9 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G05") && !(IsValidRuleString("SALAPA", "109"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "ZINORO")) && !(IsValidRuleString("E-Bezeichnung", "G05"))));
 
             case "20000187283991":
+            case "20000493593022":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && !(IsValidRuleString("SALAPA", "807")) && !(IsValidRuleString("SALAPA", "8AA")) && (RuleNum("IStufeX") >= 2107500)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "G08")) && !(IsValidRuleString("SALAPA", "807")) && !(IsValidRuleString("SALAPA", "8AA"))) || IsValidRuleString("Marke", "BMW i"));
+
             case "20000131091815":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && (IsValidRuleString("Motor 8-stellig", "B48B20M0") || IsValidRuleString("Motor 8-stellig", "B48B20O0") || IsValidRuleString("Motor 8-stellig", "B48B20M1"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G01") || IsValidRuleString("E-Bezeichnung", "G02")) && (IsValidRuleString("Motor 8-stellig", "B46B20O0") || IsValidRuleString("Motor 8-stellig", "B48B20M0") || IsValidRuleString("Motor 8-stellig", "B48B20O0") || IsValidRuleString("Motor 8-stellig", "B58B30M0") || IsValidRuleString("Motor 8-stellig", "B48B20M1"))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA")) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "G01")) && !(IsValidRuleString("E-Bezeichnung", "G02")) && !(IsValidRuleString("E-Bezeichnung", "G08"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G01") || IsValidRuleString("E-Bezeichnung", "G02")) && (IsValidRuleString("Motor 8-stellig", "B48B16M0") || IsValidRuleString("Motor 8-stellig", "B46B20O1") || IsValidRuleString("Motor 8-stellig", "B48B20O1") || IsValidRuleString("Motor 8-stellig", "B58B30M1") || IsValidRuleString("Motor 8-stellig", "B58B30O1")) && (RuleNum("Produktionsdatum") <= 202106)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && IsValidRuleString("Motor 8-stellig", "B48B20O1") && (RuleNum("Produktionsdatum") <= 202106)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G01") || IsValidRuleString("E-Bezeichnung", "G02")) && (IsValidRuleString("Motor 8-stellig", "B48B16M0") || IsValidRuleString("Motor 8-stellig", "B46B20O1") || IsValidRuleString("Motor 8-stellig", "B48B20O1") || IsValidRuleString("Motor 8-stellig", "B58B30M1") || IsValidRuleString("Motor 8-stellig", "B58B30O1")) && (RuleNum("Produktionsdatum") >= 202111)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && IsValidRuleString("Motor 8-stellig", "B48B20O1") && (RuleNum("Produktionsdatum") >= 202111)));
 
@@ -3696,7 +3776,7 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && (RuleNum("Baustand") >= 202107)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G08"))));
 
             case "20000728030569":
-                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && (RuleNum("IStufeX") >= 2107500)) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "807")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8AA")));
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && IsValidRuleString("SALAPA", "807") && (RuleNum("IStufeX") >= 2107500)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "G08")) && IsValidRuleString("SALAPA", "807")) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "G08")) && IsValidRuleString("SALAPA", "8AA")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && IsValidRuleString("SALAPA", "8AA") && (RuleNum("IStufeX") >= 2107500)));
 
             case "20000114588032":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G11") && !(((RuleNum("IStufeX") >= 1507490) && (RuleNum("IStufeX") <= 1511430)))) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("E-Bezeichnung", "G11"))));
@@ -3712,6 +3792,9 @@ public class RulesInfo
 
             case "20000142469206":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G12") && !(((RuleNum("IStufeX") >= 1607502) && (RuleNum("IStufeX") <= 1707400)))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("E-Bezeichnung", "G12"))));
+
+            case "20000499969364":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G26") && (RuleNum("IStufeX") >= 2307420)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(IsValidRuleString("E-Bezeichnung", "G28")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G26"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2207450)) || IsValidRuleString("Marke", "BMW i") || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G28") && (RuleNum("IStufeX") >= 2207450)));
 
             case "20000141012792":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G30") && IsValidRuleString("SALAPA", "807") && (RuleNum("IStufeX") <= 1807290)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G30") && IsValidRuleString("SALAPA", "807") && (RuleNum("IStufeX") >= 1911200)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G11") || IsValidRuleString("E-Bezeichnung", "G12")) && IsValidRuleString("SALAPA", "807") && (RuleNum("IStufeX") >= 1903290)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G11") || IsValidRuleString("E-Bezeichnung", "G12")) && IsValidRuleString("SALAPA", "807") && (RuleNum("IStufeX") <= 1807290)) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("SALAPA", "807"))));
@@ -3737,6 +3820,9 @@ public class RulesInfo
             case "20000818045424":
             case "20000818045425":
             case "20000818045426":
+            case "20000499969363":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2207450)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && (RuleNum("IStufeX") >= 2207450)) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2207450)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(IsValidRuleString("E-Bezeichnung", "G28")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G26"))));
+
             case "20000576325147":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2207530)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G28")) && !(IsValidRuleString("E-Bezeichnung", "I20")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G26"))) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && !(IsValidRuleString("SALAPA", "6PA")) && (RuleNum("IStufeX") == 2207520)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && !(IsValidRuleString("SALAPA", "6PA")) && (RuleNum("IStufeX") == 2207520)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && !((RuleNum("IStufeX") == 2207520))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && !(IsValidRuleString("SALAPA", "6PA")) && (RuleNum("IStufeX") == 2207520)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && (RuleNum("IStufeX") >= 2207530)) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2207530)));
 
@@ -3751,6 +3837,12 @@ public class RulesInfo
             case "20000336121338":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2207530)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && (RuleNum("IStufeX") >= 2207530)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "G28")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G26")) && !(((RuleNum("IStufeX") >= 1807290) && (RuleNum("IStufeX") <= 1811420)))) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "I20"))) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && !(IsValidRuleString("SALAPA", "6PA")) && (RuleNum("IStufeX") == 2207520)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && !(IsValidRuleString("SALAPA", "6PA")) && (RuleNum("IStufeX") == 2207520)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && !((RuleNum("IStufeX") == 2207520))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G26")) && !(IsValidRuleString("SALAPA", "6PA")) && (RuleNum("IStufeX") == 2207520)) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2207530)));
 
+            case "20000720237442":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "U06"))));
+
+            case "20000720237443":
+            case "20000720237444":
+            case "20000720241301":
             case "20000563840158":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G70") || IsValidRuleString("E-Bezeichnung", "G73")) && (RuleNum("IStufeX") >= 2211500)) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I20") && (RuleNum("IStufeX") >= 2211500)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "I20")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && !(IsValidRuleString("E-Bezeichnung", "G70")) && !(IsValidRuleString("E-Bezeichnung", "G73"))));
 
@@ -3763,6 +3855,9 @@ public class RulesInfo
 
             case "20000666261669":
             case "20000666261791":
+            case "20000714531898":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U11") && IsValidRuleString("Antrieb", "FWD") && IsValidRuleString("Motor", "B38") && (RuleNum("IStufeX") >= 2211520)) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "U11"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U11") && !(IsValidRuleString("Antrieb", "FWD"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U11") && IsValidRuleString("Antrieb", "FWD") && !(IsValidRuleString("Motor", "B38"))));
+
             case "20000360164606":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "kombsp18") && IsValidRuleString("SALAPA", "6U3")) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("EcuClique", "komb_j29")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "kombsp18") && !(IsValidRuleString("SALAPA", "6U3")) && (RuleNum("IStufeX") >= 2007480)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "kombsp18") && !(IsValidRuleString("SALAPA", "6U3")) && (RuleNum("IStufeX") >= 2007480)));
 
@@ -3845,6 +3940,45 @@ public class RulesInfo
             case "61730059787":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("SALAPA", "6WB") && !(((RuleNum("IStufeX") >= 809350) && (RuleNum("IStufeX") <= 1307490)))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("SALAPA", "6WB"))) || IsValidRuleString("Marke", "BMW i") || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && !(((RuleNum("IStufeX") >= 403500) && (RuleNum("IStufeX") <= 1303502)))));
 
+            case "20000728029791":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("SALAPA", "807")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("SALAPA", "8AA")));
+
+            case "20000728029792":
+            case "20000728029793":
+            case "20000728029794":
+            case "20000728029795":
+            case "20000728029796":
+            case "20000728029797":
+            case "20000728029798":
+            case "20000728029799":
+            case "20000728030561":
+            case "20000728030562":
+            case "20000728030563":
+            case "20000728030564":
+            case "20000728030565":
+            case "20000728030566":
+            case "20000728030567":
+            case "20000728030568":
+            case "20000728031281":
+            case "20000728031282":
+            case "20000728031283":
+            case "20000728031284":
+            case "20000728031285":
+            case "20000728031286":
+            case "20000728031287":
+            case "20000728031288":
+            case "20000728031289":
+            case "20000728031891":
+            case "20000728031892":
+            case "20000728031893":
+            case "20000728031894":
+            case "20000728031896":
+            case "20000728031897":
+            case "20000728031898":
+            case "20000728031899":
+            case "20000728031895":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("SALAPA", "8AA")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("SALAPA", "807")));
+
             case "41409077131":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("SALAPA", "920") && !((RuleNum("IStufeX") == 1203490)) && !((RuleNum("IStufeX") == 1203450))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("SALAPA", "920"))));
 
@@ -3861,43 +3995,6 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G28")) && !(IsValidRuleString("E-Bezeichnung", "G08")) && !(IsValidRuleString("E-Bezeichnung", "G26")));
 
             case "20000493622966":
-            case "20000493592633":
-                return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("SALAPA", "807")) && !(IsValidRuleString("SALAPA", "8AA")));
-
-            case "20000493592634":
-            case "20000493592635":
-            case "20000493592636":
-            case "20000493592637":
-            case "20000493592638":
-            case "20000493592639":
-            case "20000493592761":
-            case "20000493592762":
-            case "20000493592763":
-            case "20000493592764":
-            case "20000493592765":
-            case "20000493592766":
-            case "20000493592767":
-            case "20000493592768":
-            case "20000493592899":
-            case "20000493593021":
-            case "20000493593023":
-            case "20000493593024":
-            case "20000493593152":
-            case "20000493593153":
-            case "20000493593154":
-            case "20000493593155":
-            case "20000493593156":
-            case "20000493593157":
-            case "20000493593158":
-            case "20000493593159":
-            case "20000493593283":
-            case "20000493593284":
-            case "20000493593424":
-            case "20000493593425":
-            case "20000499980796":
-            case "20000499980797":
-            case "20000499980798":
-            case "20000499980799":
             case "20000493596748":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("Baustand") >= 202107));
 
@@ -5080,6 +5177,12 @@ public class RulesInfo
             case "20000554934823":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !((RuleNum("IStufeX") <= 2307500)));
 
+            case "20000576275582":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "I020")) && !(IsValidRuleString("Baureihenverbund", "U006")) && !(IsValidRuleString("Baureihenverbund", "G070")) && !(IsValidRuleString("Baureihenverbund", "J001")));
+
+            case "20000576278934":
+            case "20000576374096":
+            case "20000576383357":
             case "20000576316268":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "I020")) && !(IsValidRuleString("Baureihenverbund", "U006")) && !(IsValidRuleString("Baureihenverbund", "G070")));
 
@@ -5133,14 +5236,15 @@ public class RulesInfo
             case "20000493615599":
             case "20000493615721":
             case "20000614439865":
+            case "20000563838591":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G70")) && !(IsValidRuleString("E-Bezeichnung", "G60")));
+
+            case "20000563838593":
             case "20000563834563":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "I20")));
 
             case "20000581052386":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "U06")));
-
-            case "20000133684255":
-                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Produktlinie", "35LK")) && !(IsValidRuleString("Produktlinie", "35LR")) && !(IsValidRuleString("Produktlinie", "35LG")) && !(IsValidRuleString("Produktlinie", "35LU")));
 
             case "20000493596343":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("SALAPA", "5AZ")));
@@ -5180,6 +5284,10 @@ public class RulesInfo
             case "20000326743469":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "hu_mgu") && IsValidRuleString("EcuClique", "bdc_g05"));
 
+            case "20000720240568":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Motor Kraftstoffart/Einbaulage", "B") && (IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58")));
+
+            case "20000720240569":
             case "20000331941262":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(IsValidRuleString("E-Bezeichnung", "G11")) && !(IsValidRuleString("E-Bezeichnung", "G12"))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "G01")) && !(IsValidRuleString("EcuClique", "bdc_g05")) && !(IsValidRuleString("SALAPA", "322")) && !(IsValidRuleString("SALAPA", "6AE")) && !(IsValidRuleString("SALAPA", "32Z"))));
 
@@ -5211,10 +5319,12 @@ public class RulesInfo
             case "20000815791622":
             case "20000815791623":
             case "20000815791624":
+            case "20000563831051":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LR") || IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LU")) && (RuleNum("IStufeX") >= 2303470));
+
             case "20000563830925":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LR") || IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LU")));
 
-            case "20000563831051":
             case "20000326660064":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "BEVE"));
 
@@ -6664,6 +6774,9 @@ public class RulesInfo
                 return (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuRepresentative", "BDC")));
 
             case "61522777867":
+            case "20000326637282":
+                return (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuRepresentative", "FLEL")) && !(IsValidRuleString("EcuRepresentative", "FLER")));
+
             case "25760090763":
                 return (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("EcuRepresentative", "JBE")));
 
@@ -7044,6 +7157,10 @@ public class RulesInfo
             case "20000120142261":
                 return (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G11") || IsValidRuleString("E-Bezeichnung", "G12")) && IsValidRuleString("EcuClique", "eps_g11") && !((RuleNum("IStufeX") <= 1511490)));
 
+            case "20000833415751":
+                return (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G70") || IsValidRuleString("E-Bezeichnung", "G60")));
+
+            case "20000833415752":
             case "5349953547":
                 return (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("IStufe", "F001-09-08-410") || IsValidRuleString("IStufe", "F001-09-08-400") || IsValidRuleString("IStufe", "F001-09-06-512") || IsValidRuleString("IStufe", "F001-09-06-511") || IsValidRuleString("IStufe", "F001-09-06-510") || IsValidRuleString("IStufe", "F001-09-06-500") || IsValidRuleString("IStufe", "F001-09-03-520") || IsValidRuleString("IStufe", "F001-09-03-510") || IsValidRuleString("IStufe", "F001-09-03-500") || IsValidRuleString("IStufe", "F001-09-03-460") || IsValidRuleString("IStufe", "F001-09-03-450") || IsValidRuleString("IStufe", "F001-09-03-415") || IsValidRuleString("IStufe", "F001-09-03-410") || IsValidRuleString("IStufe", "F001-09-03-401") || IsValidRuleString("IStufe", "F001-09-03-400") || IsValidRuleString("IStufe", "F001-08-09-529") || IsValidRuleString("IStufe", "F001-08-09-528") || IsValidRuleString("IStufe", "F001-08-09-525") || IsValidRuleString("IStufe", "F001-08-09-521") || IsValidRuleString("IStufe", "F001-08-09-520") || IsValidRuleString("IStufe", "F001-08-09-515") || IsValidRuleString("IStufe", "F001-08-09-510") || IsValidRuleString("IStufe", "F001-08-09-505") || IsValidRuleString("IStufe", "F001-08-09-500") || IsValidRuleString("IStufe", "F001-08-09-455") || IsValidRuleString("IStufe", "F001-08-09-450") || IsValidRuleString("IStufe", "F001-08-09-416") || IsValidRuleString("IStufe", "F001-08-09-415") || IsValidRuleString("IStufe", "F001-08-09-410") || IsValidRuleString("IStufe", "F001-08-09-400") || IsValidRuleString("IStufe", "F001-08-09-355") || IsValidRuleString("IStufe", "F001-08-09-350")));
 
@@ -7084,6 +7201,10 @@ public class RulesInfo
             case "20000176797115":
                 return (IsValidRuleString("Marke", "BMW PKW") && (RuleNum("IStufeX") >= 2303490));
 
+            case "20000645254197":
+                return (IsValidRuleString("Marke", "BMW PKW") && (RuleNum("Produktionsdatum") <= 202208));
+
+            case "20000645254198":
             case "39426148363":
                 return (IsValidRuleString("Marke", "BMW PKW") && IsFaultRuleValid("20000109375491"));
 
@@ -7222,6 +7343,9 @@ public class RulesInfo
 
             case "20000085855252":
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "M12"));
+
+            case "20000858278841":
+                return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U11") && IsValidRuleString("Antrieb", "FWD") && IsValidRuleString("Motor", "B38") && (RuleNum("IStufeX") <= 2211510));
 
             case "20000326637222":
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "flm02_l"));
@@ -7775,6 +7899,9 @@ public class RulesInfo
             case "20000806030042":
                 return ((!(IsValidRuleString("Typschl?ssel", "0E20")) && !(IsValidRuleString("Typschl?ssel", "0E21")) && !(IsValidRuleString("Typschl?ssel", "0E23")) && !(IsValidRuleString("Typschl?ssel", "0E24")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K67")) || ((IsValidRuleString("Typschl?ssel", "0M01") || IsValidRuleString("Typschl?ssel", "0M03") || IsValidRuleString("Typschl?ssel", "0M11") || IsValidRuleString("Typschl?ssel", "0M13") || IsValidRuleString("Typschl?ssel", "0M00") || IsValidRuleString("Typschl?ssel", "0M04") || IsValidRuleString("Typschl?ssel", "0M10") || IsValidRuleString("Typschl?ssel", "0M14")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "5AC")) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K49") && IsValidRuleString("SALAPA", "224") && (RuleNum("Baustand") <= 201507)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K69") || IsValidRuleString("E-Bezeichnung", "K63") || IsValidRuleString("E-Bezeichnung", "K66") || IsValidRuleString("E-Bezeichnung", "KM3"))) || (!(IsValidRuleString("Typschl?ssel", "0F01")) && !(IsValidRuleString("Typschl?ssel", "0F02")) && !(IsValidRuleString("Typschl?ssel", "0F11")) && !(IsValidRuleString("Typschl?ssel", "0F12")) && !(IsValidRuleString("Typschl?ssel", "0613")) && !(IsValidRuleString("Typschl?ssel", "0603")) && !(IsValidRuleString("Typschl?ssel", "0612")) && !(IsValidRuleString("Typschl?ssel", "0611")) && !(IsValidRuleString("Typschl?ssel", "0602")) && !(IsValidRuleString("Typschl?ssel", "0601")) && !(IsValidRuleString("Typschl?ssel", "0F51")) && !(IsValidRuleString("Typschl?ssel", "0F53")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K48") || IsValidRuleString("E-Bezeichnung", "K61"))) || ((IsValidRuleString("Typschl?ssel", "0M71") || IsValidRuleString("Typschl?ssel", "0M73") || IsValidRuleString("Typschl?ssel", "0M81") || IsValidRuleString("Typschl?ssel", "0M83")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K54") || IsValidRuleString("E-Bezeichnung", "K53"))));
 
+            case "20000864454531":
+                return ((!(IsValidRuleString("Typschl?ssel", "0N61")) && !(IsValidRuleString("Typschl?ssel", "0N63")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K08") || IsValidRuleString("E-Bezeichnung", "K09") || IsValidRuleString("E-Bezeichnung", "K80") || IsValidRuleString("E-Bezeichnung", "K81") || IsValidRuleString("E-Bezeichnung", "K82") || IsValidRuleString("E-Bezeichnung", "K83") || IsValidRuleString("E-Bezeichnung", "K84") || IsValidRuleString("E-Bezeichnung", "K69") || IsValidRuleString("E-Bezeichnung", "K34") || IsValidRuleString("E-Bezeichnung", "K35"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51")) && !(IsValidRuleString("SALAPA", "19Z")) && (RuleNum("Baustand") >= 202007)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K54") && (RuleNum("Baustand") >= 201811)) || ((IsValidRuleString("Typschl?ssel", "0M71") || IsValidRuleString("Typschl?ssel", "0M73")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K53")) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51")) && IsValidRuleString("SALAPA", "192") && (RuleNum("Baustand") >= 201707)));
+
             case "20000725090144":
                 return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "ZINORO")) && !(IsValidRuleString("EcuClique", "atm"))) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29") && !(IsValidRuleString("EcuClique", "atm"))));
 
@@ -7817,9 +7944,6 @@ public class RulesInfo
                 return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("Motor", "B38")) && !(IsValidRuleString("Motor", "B46")) && !(IsValidRuleString("Motor", "B48")) && !(IsValidRuleString("Motor", "N63")) && !(IsValidRuleString("Motor", "S63"))) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29") && !(IsValidRuleString("Motor", "B46")) && !(IsValidRuleString("Motor", "B48"))));
 
             case "20000725220556":
-            case "20000725078302":
-                return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("SALAPA", "6WD")) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29") && IsValidRuleString("SALAPA", "6WD")));
-
             case "20000725037658":
                 return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ZINORO")) && IsValidRuleString("SALAPA", "610")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("SALAPA", "6AD")));
 
@@ -8021,6 +8145,7 @@ public class RulesInfo
             case "20000725170027":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && (IsValidRuleString("Motor Kraftstoffart/Einbaulage", "C") || IsValidRuleString("Motor Kraftstoffart/Einbaulage", "D"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("SALAPA", "536")) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29")));
 
+            case "20000816642058":
             case "20000026363037":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && (RuleNum("Baustand") >= 200403)) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && !(IsValidRuleString("E-Bezeichnung", "RR1")) && !(IsValidRuleString("E-Bezeichnung", "RR2")) && !(IsValidRuleString("E-Bezeichnung", "RR3")) && (RuleNum("Baustand") >= 201206)));
 
@@ -8121,6 +8246,7 @@ public class RulesInfo
             case "20000725170026":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("SALAPA", "536")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("Motor Kraftstoffart/Einbaulage", "C") || IsValidRuleString("Motor Kraftstoffart/Einbaulage", "D"))) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29")));
 
+            case "20000816642057":
             case "20000378318114":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("T?ren", "5")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("E-Bezeichnung", "R60")));
 
@@ -8140,6 +8266,10 @@ public class RulesInfo
             case "20000816126581":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2111535)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2111535)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2111535)) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("IStufeX") >= 2111535)));
 
+            case "20000862425685":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "6WD")) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29") && IsValidRuleString("SALAPA", "6WD")));
+
+            case "20000862816291":
             case "20000752172307":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && (IsValidRuleString("Produktlinie", "PL7") || IsValidRuleString("Produktlinie", "PL6") || IsValidRuleString("Produktlinie", "PL5"))) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "BMW PKW")) && (IsValidRuleString("E-Bezeichnung", "M13") || IsValidRuleString("E-Bezeichnung", "F46") || IsValidRuleString("E-Bezeichnung", "F45") || IsValidRuleString("E-Bezeichnung", "F48") || IsValidRuleString("E-Bezeichnung", "F49")) && IsValidRuleString("SALAPA", "1AG")) || (IsValidRuleString("Marke", "MINI PKW") && (IsValidRuleString("E-Bezeichnung", "F60") || IsValidRuleString("E-Bezeichnung", "F55") || IsValidRuleString("E-Bezeichnung", "F56") || IsValidRuleString("E-Bezeichnung", "F54") || IsValidRuleString("E-Bezeichnung", "F57")) && IsValidRuleString("SALAPA", "1AG")));
 
@@ -8150,14 +8280,17 @@ public class RulesInfo
             case "20000786302521":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("Motor", "N74") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B36") || IsValidRuleString("Motor", "B58") || IsValidRuleString("Motor", "B32") || IsValidRuleString("Motor", "B42"))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("Motor ?berarbeitung", "3")) && IsValidRuleString("Motor", "N63")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("Motor", "N74") && IsValidRuleString("SALAPA", "802")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("Motor", "N74") && IsValidRuleString("SALAPA", "8AA")));
 
+            case "20000816638335":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("SALAPA", "536")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && (IsValidRuleString("Motor Kraftstoffart/Einbaulage", "C") || IsValidRuleString("Motor Kraftstoffart/Einbaulage", "D"))));
+
             case "20000724965184":
                 return (((IsValidRuleString("Typschl?ssel", "0F01") || IsValidRuleString("Typschl?ssel", "0F02") || IsValidRuleString("Typschl?ssel", "0F11") || IsValidRuleString("Typschl?ssel", "0F12") || IsValidRuleString("Typschl?ssel", "0613") || IsValidRuleString("Typschl?ssel", "0603") || IsValidRuleString("Typschl?ssel", "0612") || IsValidRuleString("Typschl?ssel", "0611") || IsValidRuleString("Typschl?ssel", "0602") || IsValidRuleString("Typschl?ssel", "0601") || IsValidRuleString("Typschl?ssel", "0F21") || IsValidRuleString("Typschl?ssel", "0F23") || IsValidRuleString("Typschl?ssel", "0F31") || IsValidRuleString("Typschl?ssel", "0F33")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K48")) || ((IsValidRuleString("Typschl?ssel", "0F51") || IsValidRuleString("Typschl?ssel", "0F53")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K61")));
 
             case "20000822009464":
                 return (((IsValidRuleString("Typschl?ssel", "0F21") || IsValidRuleString("Typschl?ssel", "0F23") || IsValidRuleString("Typschl?ssel", "0F31") || IsValidRuleString("Typschl?ssel", "0F33") || IsValidRuleString("Typschl?ssel", "0F61") || IsValidRuleString("Typschl?ssel", "0F63")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K48") || IsValidRuleString("E-Bezeichnung", "K61"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K52") || IsValidRuleString("E-Bezeichnung", "K66") || IsValidRuleString("E-Bezeichnung", "KM3"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "519")));
 
-            case "20000822009461":
-                return (((IsValidRuleString("Typschl?ssel", "0F21") || IsValidRuleString("Typschl?ssel", "0F23") || IsValidRuleString("Typschl?ssel", "0F31") || IsValidRuleString("Typschl?ssel", "0F33") || IsValidRuleString("Typschl?ssel", "0F61") || IsValidRuleString("Typschl?ssel", "0F63")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K48") || IsValidRuleString("E-Bezeichnung", "K61"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K52") && (RuleNum("Baustand") >= 202011)) || (!(IsValidRuleString("Typschl?ssel", "0J01")) && !(IsValidRuleString("Typschl?ssel", "0J03")) && !(IsValidRuleString("Typschl?ssel", "0J11")) && !(IsValidRuleString("Typschl?ssel", "0J13")) && !(IsValidRuleString("Typschl?ssel", "0A16")) && !(IsValidRuleString("Typschl?ssel", "0A06")) && !(IsValidRuleString("Typschl?ssel", "0J31")) && !(IsValidRuleString("Typschl?ssel", "0J33")) && !(IsValidRuleString("Typschl?ssel", "0J41")) && !(IsValidRuleString("Typschl?ssel", "0J43")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K22") || IsValidRuleString("E-Bezeichnung", "K21") || IsValidRuleString("E-Bezeichnung", "K23") || IsValidRuleString("E-Bezeichnung", "K33"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K67") || IsValidRuleString("E-Bezeichnung", "K63") || IsValidRuleString("E-Bezeichnung", "K66") || IsValidRuleString("E-Bezeichnung", "KM3"))));
+            case "20000864454532":
+                return (((IsValidRuleString("Typschl?ssel", "0F21") || IsValidRuleString("Typschl?ssel", "0F23") || IsValidRuleString("Typschl?ssel", "0F31") || IsValidRuleString("Typschl?ssel", "0F33") || IsValidRuleString("Typschl?ssel", "0F61") || IsValidRuleString("Typschl?ssel", "0F63")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K48") || IsValidRuleString("E-Bezeichnung", "K61"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K52") && (RuleNum("Baustand") >= 202011)) || (!(IsValidRuleString("Typschl?ssel", "0J01")) && !(IsValidRuleString("Typschl?ssel", "0J03")) && !(IsValidRuleString("Typschl?ssel", "0J11")) && !(IsValidRuleString("Typschl?ssel", "0J13")) && !(IsValidRuleString("Typschl?ssel", "0A16")) && !(IsValidRuleString("Typschl?ssel", "0A06")) && !(IsValidRuleString("Typschl?ssel", "0J31")) && !(IsValidRuleString("Typschl?ssel", "0J33")) && !(IsValidRuleString("Typschl?ssel", "0J41")) && !(IsValidRuleString("Typschl?ssel", "0J43")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K22") || IsValidRuleString("E-Bezeichnung", "K21") || IsValidRuleString("E-Bezeichnung", "K23") || IsValidRuleString("E-Bezeichnung", "K33"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K67") || IsValidRuleString("E-Bezeichnung", "K63") || IsValidRuleString("E-Bezeichnung", "K66") || IsValidRuleString("E-Bezeichnung", "KM3"))) || ((IsValidRuleString("Typschl?ssel", "0N61") || IsValidRuleString("Typschl?ssel", "0N63")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K34")));
 
             case "20000823209194":
                 return (((IsValidRuleString("Typschl?ssel", "0J01") || IsValidRuleString("Typschl?ssel", "0J03") || IsValidRuleString("Typschl?ssel", "0J11") || IsValidRuleString("Typschl?ssel", "0J13") || IsValidRuleString("Typschl?ssel", "0J21") || IsValidRuleString("Typschl?ssel", "0J23") || IsValidRuleString("Typschl?ssel", "0J31") || IsValidRuleString("Typschl?ssel", "0J33") || IsValidRuleString("Typschl?ssel", "0J41") || IsValidRuleString("Typschl?ssel", "0J43")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K22") || IsValidRuleString("E-Bezeichnung", "K32") || IsValidRuleString("E-Bezeichnung", "K21") || IsValidRuleString("E-Bezeichnung", "K23") || IsValidRuleString("E-Bezeichnung", "K33"))) || (!(IsValidRuleString("Typschl?ssel", "0M71")) && !(IsValidRuleString("Typschl?ssel", "0M73")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K53") && !(IsValidRuleString("SALAPA", "202"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51")) && !(IsValidRuleString("SALAPA", "192")) && (RuleNum("Baustand") <= 202006)) || ((IsValidRuleString("Typschl?ssel", "0A13") || IsValidRuleString("Typschl?ssel", "0A03") || IsValidRuleString("Typschl?ssel", "0J61") || IsValidRuleString("Typschl?ssel", "0J63")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K52") && !(IsValidRuleString("SALAPA", "219"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K54") && (RuleNum("Baustand") <= 201810)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K49")));
@@ -8176,7 +8309,7 @@ public class RulesInfo
             case "20000633728721":
                 return ((IsValidRuleString("Marke", "BMW i") && !(IsValidRuleString("E-Bezeichnung", "I20"))) || (IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")));
 
-            case "20000725080594":
+            case "20000862910618":
                 return ((IsValidRuleString("Marke", "BMW i") && (IsValidRuleString("E-Bezeichnung", "I12") || IsValidRuleString("E-Bezeichnung", "I15"))) || (IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ZINORO")) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I01") && (IsValidRuleString("Hybridkennzeichen", "EREX") || IsValidRuleString("Hybridkennzeichen", "HYBR"))));
 
             case "20000725093379":
@@ -8761,9 +8894,6 @@ public class RulesInfo
             case "20000823932701":
                 return ((IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51")) && !(IsValidRuleString("SALAPA", "19Z")) && (RuleNum("Baustand") >= 202007)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K35")) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K52") && (RuleNum("Baustand") >= 202011)));
 
-            case "20000794447461":
-                return ((IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51")) && IsValidRuleString("SALAPA", "192") && (RuleNum("Baustand") >= 201707)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K08") || IsValidRuleString("E-Bezeichnung", "K09") || IsValidRuleString("E-Bezeichnung", "K80") || IsValidRuleString("E-Bezeichnung", "K81") || IsValidRuleString("E-Bezeichnung", "K82") || IsValidRuleString("E-Bezeichnung", "K83") || IsValidRuleString("E-Bezeichnung", "K84") || IsValidRuleString("E-Bezeichnung", "K69") || IsValidRuleString("E-Bezeichnung", "K34") || IsValidRuleString("E-Bezeichnung", "K35"))) || (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51")) && !(IsValidRuleString("SALAPA", "19Z")) && (RuleNum("Baustand") >= 202007)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K54") && (RuleNum("Baustand") >= 201811)) || ((IsValidRuleString("Typschl?ssel", "0M71") || IsValidRuleString("Typschl?ssel", "0M73")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K53")));
-
             case "20000794447462":
                 return ((IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51")) && IsValidRuleString("SALAPA", "202") && !(IsValidRuleString("SALAPA", "192")) && (RuleNum("Baustand") <= 201706)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K54") && IsValidRuleString("SALAPA", "202") && (RuleNum("Baustand") <= 201810)) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K53") && IsValidRuleString("SALAPA", "219")) || ((IsValidRuleString("Typschl?ssel", "0J71") || IsValidRuleString("Typschl?ssel", "0J73")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K53")) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K49") && IsValidRuleString("SALAPA", "202")) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K17")) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K52") && (RuleNum("Baustand") <= 202010)) || ((IsValidRuleString("Typschl?ssel", "0F21") || IsValidRuleString("Typschl?ssel", "0F31") || IsValidRuleString("Typschl?ssel", "0F61")) && IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K48") || IsValidRuleString("E-Bezeichnung", "K61")) && IsValidRuleString("SALAPA", "202")));
 
@@ -8947,6 +9077,7 @@ public class RulesInfo
             case "20000725177012":
             case "20000725177871":
             case "20000725184659":
+            case "20000816638851":
             case "20000724988981":
                 return ((IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("Motor", "S63"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F15") || IsValidRuleString("E-Bezeichnung", "F16") || IsValidRuleString("E-Bezeichnung", "F80") || IsValidRuleString("E-Bezeichnung", "F82") || IsValidRuleString("E-Bezeichnung", "F83") || IsValidRuleString("E-Bezeichnung", "F85") || IsValidRuleString("E-Bezeichnung", "F86")) && IsValidRuleString("SALAPA", "223")));
 
@@ -8975,6 +9106,9 @@ public class RulesInfo
 
             case "20000725191356":
             case "20000725192065":
+            case "20000816639551":
+            case "20000816639552":
+            case "20000816639553":
             case "20000725179298":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44") || IsValidRuleString("E-Bezeichnung", "G29")) && IsValidRuleString("SALAPA", "534")) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29") && IsValidRuleString("SALAPA", "534")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G14") || IsValidRuleString("E-Bezeichnung", "G15")) && !(IsValidRuleString("SALAPA", "4NB"))));
 
@@ -8986,15 +9120,42 @@ public class RulesInfo
             case "20000725183266":
             case "20000725183267":
             case "20000725183717":
+            case "20000816639555":
+            case "20000816639556":
+            case "20000816639557":
+            case "20000816639558":
+            case "20000816639559":
+            case "20000816639841":
+            case "20000816639842":
+            case "20000816639843":
+            case "20000816639845":
             case "20000725178292":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F91") || IsValidRuleString("E-Bezeichnung", "G14"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "TOYOTA")) && !(IsValidRuleString("T?ren", "2")) && !(IsValidRuleString("T?ren", "3"))));
 
+            case "20000816640896":
+                return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G07") || IsValidRuleString("E-Bezeichnung", "G09"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("SALAPA", "4NB")));
+
+            case "20000816640897":
+            case "20000816640898":
+            case "20000816640899":
+            case "20000816641261":
+            case "20000816641262":
+            case "20000816641263":
+            case "20000816641264":
+            case "20000816641265":
+            case "20000816641266":
+            case "20000816641267":
+            case "20000816641268":
+            case "20000816641269":
+            case "20000816641531":
+            case "20000816641532":
             case "20000725129808":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G11") || IsValidRuleString("E-Bezeichnung", "G12"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("SALAPA", "4NM")));
 
             case "20000725179473":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G14") || IsValidRuleString("E-Bezeichnung", "G15")) && !(IsValidRuleString("SALAPA", "4NB"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44") || IsValidRuleString("E-Bezeichnung", "G29")) && IsValidRuleString("SALAPA", "534")) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29") && IsValidRuleString("SALAPA", "534")));
 
+            case "20000816639844":
             case "20000725191543":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G20") || IsValidRuleString("E-Bezeichnung", "G21") || IsValidRuleString("E-Bezeichnung", "G22") || IsValidRuleString("E-Bezeichnung", "G23")) && IsValidRuleString("SALAPA", "534")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G28")));
 
@@ -9007,9 +9168,20 @@ public class RulesInfo
             case "20000725192067":
             case "20000725192068":
             case "20000725192261":
+            case "20000816640474":
+            case "20000816640475":
+            case "20000816640476":
+            case "20000816640477":
+            case "20000816640478":
+            case "20000816640479":
+            case "20000816640891":
+            case "20000816640892":
+            case "20000816640893":
+            case "20000816640894":
             case "20000725170025":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("Motor Kraftstoffart/Einbaulage", "C") || IsValidRuleString("Motor Kraftstoffart/Einbaulage", "D"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("SALAPA", "536")) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29")));
 
+            case "20000816642056":
             case "20000724971311":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("Motor Kraftstoffart/Einbaulage", "C") || IsValidRuleString("Motor Kraftstoffart/Einbaulage", "D"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("SALAPA", "536")));
 
@@ -9109,9 +9281,11 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G29")) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29")));
 
             case "20000725184137":
+            case "20000816638679":
             case "20000725173444":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "hka_g07")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "hka_g07")));
 
+            case "20000816639293":
             case "20000717795388":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "BEVE") && IsValidRuleString("E-Bezeichnung", "G08") && (RuleNum("Baustand") <= 202107)) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Hybridkennzeichen", "BEVE")));
 
@@ -10229,6 +10403,7 @@ public class RulesInfo
             case "20000725176861":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("SALAPA", "4NB"));
 
+            case "20000816641896":
             case "20000725133314":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("SALAPA", "4T8"));
 
@@ -10474,10 +10649,26 @@ public class RulesInfo
 
             case "20000822961587":
             case "20000822961588":
+            case "20000816638333":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && !(IsValidRuleString("SALAPA", "4NB")));
+
             case "20000739657433":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsFaultRuleValid("20000330372921"));
 
             case "20000739657435":
+            case "20000816638071":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("SALAPA", "4NB"));
+
+            case "20000816638074":
+            case "20000816638076":
+            case "20000816638079":
+            case "20000816638331":
+            case "20000816639295":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("SALAPA", "4NM"));
+
+            case "20000816639296":
+            case "20000816639297":
+            case "20000816639298":
             case "20000725140759":
                 return ((IsValidRuleString("Marke", "TOYOTA") && !(IsValidRuleString("E-Bezeichnung", "J29"))) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(IsValidRuleString("Getriebe", "AUT"))));
 
@@ -10492,6 +10683,7 @@ public class RulesInfo
 
             case "20000725185879":
             case "20000725186011":
+            case "20000816642053":
             case "20000725162409":
                 return ((IsValidRuleString("Marke", "TOYOTA") && !(IsValidRuleString("E-Bezeichnung", "J29"))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("E-Bezeichnung", "G29"))));
 
@@ -10534,6 +10726,7 @@ public class RulesInfo
 
             case "20000725181632":
             case "20000725185429":
+            case "20000816641894":
             case "20000764809519":
                 return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("EcuClique", "tee1_01"));
 
@@ -10695,7 +10888,7 @@ public class RulesInfo
 
             case "20000725181301":
             case "20000725183268":
-            case "20000725184305":
+            case "20000862946671":
             case "20000737272405":
                 return (IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("E-Bezeichnung", "K17")) && !(IsValidRuleString("E-Bezeichnung", "K07")));
 
@@ -11908,6 +12101,20 @@ public class RulesInfo
             case "20000725176628":
             case "20000725186738":
             case "20000725186927":
+            case "20000816639847":
+            case "20000816639848":
+            case "20000816639849":
+            case "20000816640211":
+            case "20000816640212":
+            case "20000816640213":
+            case "20000816640214":
+            case "20000816640215":
+            case "20000816640216":
+            case "20000816640217":
+            case "20000816640218":
+            case "20000816640219":
+            case "20000816640471":
+            case "20000816640472":
             case "20000725066459":
                 return (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G11") || IsValidRuleString("E-Bezeichnung", "G12")));
 
@@ -12208,6 +12415,9 @@ public class RulesInfo
 
             case "20000725169707":
             case "20000725180793":
+            case "20000816639291":
+            case "20000816639292":
+            case "20000816641893":
             case "20000725000678":
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "icm_25"));
 
@@ -13019,6 +13229,9 @@ public class RulesInfo
             case "2000014725343":
                 return ((!(IsValidRuleString("Typschl?ssel", "0J01")) && !(IsValidRuleString("Typschl?ssel", "0J03")) && !(IsValidRuleString("Typschl?ssel", "0J11")) && !(IsValidRuleString("Typschl?ssel", "0J13")) && !(IsValidRuleString("Typschl?ssel", "0J21")) && !(IsValidRuleString("Typschl?ssel", "0J23")) && !(IsValidRuleString("Typschl?ssel", "0A16")) && !(IsValidRuleString("Typschl?ssel", "0A06")) && !(IsValidRuleString("Typschl?ssel", "0J31")) && !(IsValidRuleString("Typschl?ssel", "0J33")) && !(IsValidRuleString("Typschl?ssel", "0J41")) && !(IsValidRuleString("Typschl?ssel", "0J43")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("EcuRepresentative", "DME")) || ((IsValidRuleString("Typschl?ssel", "0C51") || IsValidRuleString("Typschl?ssel", "0C53")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K07")));
 
+            case "20000863465492":
+                return ((((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Produktlinie", "PL5-alt")) && !(IsValidRuleString("Produktlinie", "PL6-alt")) && !(IsValidRuleString("Produktlinie", "PL3-alt")) && !(IsValidRuleString("Produktlinie", "PL0")) && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651") && IsFaultRuleValid("20000393122471")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LR") || IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LU")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F10") || IsValidRuleString("E-Bezeichnung", "F25")) && IsValidRuleString("Motor ?berarbeitung", "2") && IsValidRuleString("Motor", "N52") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F85") || IsValidRuleString("E-Bezeichnung", "F86")) && IsValidRuleString("Motor ?berarbeitung", "2") && IsValidRuleString("Motor", "S63") && IsValidRuleString("Motor Leistungsklasse", "T") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "E90") || IsValidRuleString("E-Bezeichnung", "E93") || IsValidRuleString("E-Bezeichnung", "E92") || IsValidRuleString("E-Bezeichnung", "E82") || IsValidRuleString("E-Bezeichnung", "E88")) && IsValidRuleString("Motor", "N51") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && (IsValidRuleString("E-Bezeichnung", "F02") || IsValidRuleString("E-Bezeichnung", "RR4") || IsValidRuleString("E-Bezeichnung", "RR5")) && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "N74") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "E84") && IsValidRuleString("Motor", "N20") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Basisausf?hrung", "US") && IsValidRuleString("EcuClique", "dme8ff_r")) || (IsValidRuleString("Marke", "BMW i") && (IsValidRuleString("Hybridkennzeichen", "HYBR") || IsValidRuleString("Hybridkennzeichen", "EREX")) && IsValidRuleString("E-Bezeichnung", "I01") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW i") && (IsValidRuleString("E-Bezeichnung", "I12") || IsValidRuleString("E-Bezeichnung", "I15")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "E90") || IsValidRuleString("E-Bezeichnung", "E70")) && IsValidRuleString("Motor", "M57") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "MINI PKW") && (IsValidRuleString("E-Bezeichnung", "R55") || IsValidRuleString("E-Bezeichnung", "R60") || IsValidRuleString("E-Bezeichnung", "R56") || IsValidRuleString("E-Bezeichnung", "R57") || IsValidRuleString("E-Bezeichnung", "R61") || IsValidRuleString("E-Bezeichnung", "R59") || IsValidRuleString("E-Bezeichnung", "R58")) && IsValidRuleString("Motor", "N18") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "B57") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G20") || IsValidRuleString("E-Bezeichnung", "G22")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B58")) && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("E-Bezeichnung", "F60") || IsValidRuleString("E-Bezeichnung", "F55") || IsValidRuleString("E-Bezeichnung", "F56") || IsValidRuleString("E-Bezeichnung", "F48") || IsValidRuleString("E-Bezeichnung", "F54") || IsValidRuleString("E-Bezeichnung", "F57") || IsValidRuleString("E-Bezeichnung", "F39")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B36")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "E70") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "N52") && IsValidRuleString("Basisausf?hrung", "US") && (RuleNum("IStufeX") >= 909500)) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("E-Bezeichnung", "F25") || IsValidRuleString("E-Bezeichnung", "F30") || IsValidRuleString("E-Bezeichnung", "F31")) && IsValidRuleString("Motor", "N47") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")) && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "N57") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F23") || IsValidRuleString("E-Bezeichnung", "F30") || IsValidRuleString("E-Bezeichnung", "F22") || IsValidRuleString("E-Bezeichnung", "F33") || IsValidRuleString("E-Bezeichnung", "F32") || IsValidRuleString("E-Bezeichnung", "F36") || IsValidRuleString("E-Bezeichnung", "F34")) && IsValidRuleString("Motor", "B58") && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "E60") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "N52") && IsValidRuleString("Basisausf?hrung", "US") && (RuleNum("IStufeX") >= 909500)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F25") || IsValidRuleString("E-Bezeichnung", "F23") || IsValidRuleString("E-Bezeichnung", "F26") || IsValidRuleString("E-Bezeichnung", "F30") || IsValidRuleString("E-Bezeichnung", "F22") || IsValidRuleString("E-Bezeichnung", "F33") || IsValidRuleString("E-Bezeichnung", "F32") || IsValidRuleString("E-Bezeichnung", "F31") || IsValidRuleString("E-Bezeichnung", "F36") || IsValidRuleString("E-Bezeichnung", "F34")) && (IsValidRuleString("Motor", "N20") || IsValidRuleString("Motor", "N55") || IsValidRuleString("Motor", "N26")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F16") || IsValidRuleString("E-Bezeichnung", "F15")) && (IsValidRuleString("Motor", "N20") || IsValidRuleString("Motor", "N55")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G32") || IsValidRuleString("E-Bezeichnung", "G30") || IsValidRuleString("E-Bezeichnung", "G01") || IsValidRuleString("E-Bezeichnung", "G12") || IsValidRuleString("E-Bezeichnung", "G02")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B57") || IsValidRuleString("Motor", "B58")) && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "E70") || IsValidRuleString("E-Bezeichnung", "E71")) && (IsValidRuleString("Motor", "S63") || IsValidRuleString("Motor", "N63") || IsValidRuleString("Motor", "N55") || IsValidRuleString("Motor", "M57")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F01") || IsValidRuleString("E-Bezeichnung", "F12") || IsValidRuleString("E-Bezeichnung", "F07") || IsValidRuleString("E-Bezeichnung", "F13") || IsValidRuleString("E-Bezeichnung", "F10") || IsValidRuleString("E-Bezeichnung", "F02") || IsValidRuleString("E-Bezeichnung", "F06")) && (IsValidRuleString("Motor", "S63") || IsValidRuleString("Motor", "N63") || IsValidRuleString("Motor", "N20") || IsValidRuleString("Motor", "N55")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && IsValidRuleString("Produktlinie", "35LR") && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G05") || IsValidRuleString("E-Bezeichnung", "G07") || IsValidRuleString("E-Bezeichnung", "G06")) && IsValidRuleString("Motor", "N63") && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G01") || IsValidRuleString("E-Bezeichnung", "G02")) && IsValidRuleString("Motor", "B46") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA")) && (IsValidRuleString("Produktlinie", "21LU") || IsValidRuleString("Produktlinie", "21LG") || IsValidRuleString("Produktlinie", "21LK")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")) && IsValidRuleString("Basisausf?hrung", "US"))) && (IsValidRuleString("Country", "DE") || IsValidRuleString("Country", "US")));
+
             case "20000642404003":
                 return (((IsValidRuleString("Marke", "ALPINA") || IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BRILLIANCE") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "ZINORO")) && !(IsValidRuleString("E-Bezeichnung", "F80")) && !(IsValidRuleString("E-Bezeichnung", "F82")) && !(IsValidRuleString("E-Bezeichnung", "F83")) && !(IsValidRuleString("E-Bezeichnung", "F90")) && !(IsValidRuleString("E-Bezeichnung", "F91")) && !(IsValidRuleString("E-Bezeichnung", "F92")) && !(IsValidRuleString("E-Bezeichnung", "F93"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("Hybridkennzeichen", "NOHY")));
 
@@ -13036,9 +13249,6 @@ public class RulesInfo
 
             case "2000016365430":
                 return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "ZINORO")) && (IsValidRuleString("EcuClique", "bis01") || IsValidRuleString("EcuClique", "enavevo"))) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "ZINORO")) && (IsValidRuleString("EcuClique", "hu_mgu") || IsValidRuleString("EcuClique", "nbtevo"))));
-
-            case "2000034211876":
-                return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "ZINORO")) && IsFaultRuleValid("20000182113651")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "ZINORO")) && !(IsValidRuleString("E-Bezeichnung", "I01")) && !(IsValidRuleString("E-Bezeichnung", "M12")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")) && !(IsValidRuleString("Baureihenverbund", "S15C")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "U006"))));
 
             case "20000408902461":
                 return (((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "ZINORO")) && IsValidRuleString("Motor", "N63") && IsValidRuleString("Motor ?berarbeitung", "2") && IsValidRuleString("EcuClique", "dme8ff_r")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "ZINORO")) && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("EcuClique", "dme8ff_r")));
@@ -13110,9 +13320,6 @@ public class RulesInfo
             case "2000008816963":
                 return (((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "E65") || IsValidRuleString("E-Bezeichnung", "E66") || IsValidRuleString("E-Bezeichnung", "E68")) && IsValidRuleString("SALAPA", "106")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "E67") && IsValidRuleString("Sicherheitsfahrzeug", "1") && IsValidRuleString("SALAPA", "106")) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && (IsValidRuleString("E-Bezeichnung", "RR1") || IsValidRuleString("E-Bezeichnung", "RR2") || IsValidRuleString("E-Bezeichnung", "RR3")) && IsValidRuleString("SALAPA", "106"))) && !IsValidRuleNum("ProtectionVehicleService", 0));
 
-            case "20000665950801":
-                return (((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F10") || IsValidRuleString("E-Bezeichnung", "F25")) && IsValidRuleString("Motor", "N52") && IsValidRuleString("Motor ?berarbeitung", "2") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F85") || IsValidRuleString("E-Bezeichnung", "F86")) && IsValidRuleString("Motor", "S63") && IsValidRuleString("Motor Leistungsklasse", "T") && IsValidRuleString("Motor ?berarbeitung", "2") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "E82") || IsValidRuleString("E-Bezeichnung", "E88") || IsValidRuleString("E-Bezeichnung", "E90") || IsValidRuleString("E-Bezeichnung", "E92") || IsValidRuleString("E-Bezeichnung", "E93")) && IsValidRuleString("Motor", "N51") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && (IsValidRuleString("E-Bezeichnung", "F02") || IsValidRuleString("E-Bezeichnung", "RR4") || IsValidRuleString("E-Bezeichnung", "RR5")) && IsValidRuleString("Motor", "N74") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "E84") && IsValidRuleString("Motor", "N20") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("Basisausf?hrung", "US") && IsValidRuleString("EcuClique", "dme8ff_r")) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I01") && (IsValidRuleString("Hybridkennzeichen", "EREX") || IsValidRuleString("Hybridkennzeichen", "HYBR")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW i") && (IsValidRuleString("E-Bezeichnung", "I12") || IsValidRuleString("E-Bezeichnung", "I15")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "E70") || IsValidRuleString("E-Bezeichnung", "E90")) && IsValidRuleString("Motor", "M57") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "MINI PKW") && (IsValidRuleString("E-Bezeichnung", "R55") || IsValidRuleString("E-Bezeichnung", "R56") || IsValidRuleString("E-Bezeichnung", "R57") || IsValidRuleString("E-Bezeichnung", "R58") || IsValidRuleString("E-Bezeichnung", "R59") || IsValidRuleString("E-Bezeichnung", "R60") || IsValidRuleString("E-Bezeichnung", "R61")) && IsValidRuleString("Motor", "N18") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "B57") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G20") || IsValidRuleString("E-Bezeichnung", "G22")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B58")) && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("E-Bezeichnung", "F39") || IsValidRuleString("E-Bezeichnung", "F48") || IsValidRuleString("E-Bezeichnung", "F54") || IsValidRuleString("E-Bezeichnung", "F55") || IsValidRuleString("E-Bezeichnung", "F56") || IsValidRuleString("E-Bezeichnung", "F57") || IsValidRuleString("E-Bezeichnung", "F60")) && (IsValidRuleString("Motor", "B36") || IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B48")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "E70") && IsValidRuleString("Motor", "N52") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Basisausf?hrung", "US") && (RuleNum("IStufeX") >= 909500)) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("E-Bezeichnung", "F25") || IsValidRuleString("E-Bezeichnung", "F30") || IsValidRuleString("E-Bezeichnung", "F31")) && IsValidRuleString("Motor", "N47") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")) && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "N57") && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F22") || IsValidRuleString("E-Bezeichnung", "F23") || IsValidRuleString("E-Bezeichnung", "F30") || IsValidRuleString("E-Bezeichnung", "F32") || IsValidRuleString("E-Bezeichnung", "F33") || IsValidRuleString("E-Bezeichnung", "F34") || IsValidRuleString("E-Bezeichnung", "F36")) && IsValidRuleString("Motor", "B58") && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "E60") && IsValidRuleString("Motor", "N52") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Basisausf?hrung", "US") && (RuleNum("IStufeX") >= 909500)) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F22") || IsValidRuleString("E-Bezeichnung", "F23") || IsValidRuleString("E-Bezeichnung", "F25") || IsValidRuleString("E-Bezeichnung", "F26") || IsValidRuleString("E-Bezeichnung", "F30") || IsValidRuleString("E-Bezeichnung", "F31") || IsValidRuleString("E-Bezeichnung", "F32") || IsValidRuleString("E-Bezeichnung", "F33") || IsValidRuleString("E-Bezeichnung", "F34") || IsValidRuleString("E-Bezeichnung", "F36")) && (IsValidRuleString("Motor", "N20") || IsValidRuleString("Motor", "N26") || IsValidRuleString("Motor", "N55")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F15") || IsValidRuleString("E-Bezeichnung", "F16")) && (IsValidRuleString("Motor", "N20") || IsValidRuleString("Motor", "N55")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G01") || IsValidRuleString("E-Bezeichnung", "G02") || IsValidRuleString("E-Bezeichnung", "G12") || IsValidRuleString("E-Bezeichnung", "G30") || IsValidRuleString("E-Bezeichnung", "G32")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B57") || IsValidRuleString("Motor", "B58")) && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "E70") || IsValidRuleString("E-Bezeichnung", "E71")) && (IsValidRuleString("Motor", "M57") || IsValidRuleString("Motor", "N55") || IsValidRuleString("Motor", "N63") || IsValidRuleString("Motor", "S63")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F01") || IsValidRuleString("E-Bezeichnung", "F02") || IsValidRuleString("E-Bezeichnung", "F06") || IsValidRuleString("E-Bezeichnung", "F07") || IsValidRuleString("E-Bezeichnung", "F10") || IsValidRuleString("E-Bezeichnung", "F12") || IsValidRuleString("E-Bezeichnung", "F13")) && (IsValidRuleString("Motor", "N20") || IsValidRuleString("Motor", "N55") || IsValidRuleString("Motor", "N63") || IsValidRuleString("Motor", "S63")) && IsValidRuleString("Basisausf?hrung", "US")) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && IsValidRuleString("Basisausf?hrung", "US") && IsValidRuleString("Produktlinie", "35LR") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G05") || IsValidRuleString("E-Bezeichnung", "G06") || IsValidRuleString("E-Bezeichnung", "G07")) && IsValidRuleString("Motor", "N63") && IsValidRuleString("Basisausf?hrung", "US") && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G01") || IsValidRuleString("E-Bezeichnung", "G02")) && IsValidRuleString("Motor", "B46") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("Basisausf?hrung", "US") && (IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LR") || IsValidRuleString("Produktlinie", "35LU") || IsValidRuleString("Produktlinie", "PL2") || IsValidRuleString("Produktlinie", "PL3") || IsValidRuleString("Produktlinie", "PL4") || IsValidRuleString("Produktlinie", "PL5") || IsValidRuleString("Produktlinie", "PL6") || IsValidRuleString("Produktlinie", "PL7") || IsValidRuleString("Produktlinie", "PLLI") || IsValidRuleString("Produktlinie", "PLLU")) && IsFaultRuleValid("20000393122471")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("Basisausf?hrung", "US") && (IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LR") || IsValidRuleString("Produktlinie", "35LU")))) && (IsValidRuleString("Country", "DE") || IsValidRuleString("Country", "US")));
-
             case "2000053063497":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("E-Bezeichnung", "I20")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Hybridkennzeichen", "BEVE") && IsValidRuleString("E-Bezeichnung", "G08")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Hybridkennzeichen", "BEVE") && (RuleNum("Baustand") >= 202107)));
 
@@ -13130,12 +13337,15 @@ public class RulesInfo
             case "2000081239066":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5AU") && IsValidRuleString("SALAPA", "823")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "823") && IsValidRuleString("SALAPA", "5AX")));
 
-            case "20000812389081":
+            case "20000840766552":
             case "20000789700012":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "eme_i01") || IsValidRuleString("EcuClique", "eme_i12") || IsValidRuleString("EcuClique", "eme_f18") || IsValidRuleString("EcuClique", "eme_g12") || IsValidRuleString("EcuClique", "eme_f45") || IsValidRuleString("EcuClique", "eme_f30"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "ccu_01") || IsValidRuleString("EcuClique", "CCU_22"))));
 
             case "20000789781082":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "eme_i01") || IsValidRuleString("EcuClique", "eme_i12") || IsValidRuleString("EcuClique", "eme_f18") || IsValidRuleString("EcuClique", "eme_g12") || IsValidRuleString("EcuClique", "eme_f45") || IsValidRuleString("EcuClique", "eme_f30"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "dme8ff_r")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("EcuClique", "d73n57e0") || IsValidRuleString("EcuClique", "d72n47a0") || IsValidRuleString("EcuClique", "d70bx7a0") || IsValidRuleString("EcuClique", "d75bx7a0") || IsValidRuleString("EcuClique", "d83bx7c0"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "ccu_01") || IsValidRuleString("EcuClique", "CCU_22"))));
+
+            case "20000827798812":
+                return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "gsma02qz") || IsValidRuleString("EcuClique", "gsma02pu") || IsValidRuleString("EcuClique", "gsma02pl"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Produktlinie", "21LU")));
 
             case "20000679540922":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "spnm02vl")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "spnm02vr")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "spnm03vl")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "spnm03hr")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "spnm03hl")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "spnm03vr")));
@@ -13152,7 +13362,7 @@ public class RulesInfo
             case "2000008833615":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("Motor", "N43")) && !(IsValidRuleString("Motor", "N54")) && !(IsValidRuleString("Motor", "N63")) && (IsValidRuleString("EcuClique", "me17n45") || IsValidRuleString("EcuClique", "me9e65_6") || IsValidRuleString("EcuClique", "me9k_ng4") || IsValidRuleString("EcuClique", "me9k42") || IsValidRuleString("EcuClique", "me9n45") || IsValidRuleString("EcuClique", "me9n62") || IsValidRuleString("EcuClique", "me9n62_2") || IsValidRuleString("EcuClique", "med17_2") || IsValidRuleString("EcuClique", "med17_2n") || IsValidRuleString("EcuClique", "mev17_2") || IsValidRuleString("EcuClique", "mev17_2n") || IsValidRuleString("EcuClique", "mev17n46") || IsValidRuleString("EcuClique", "mev9n46") || IsValidRuleString("EcuClique", "mev9n46l") || IsValidRuleString("EcuClique", "msd80") || IsValidRuleString("EcuClique", "msd80n43") || IsValidRuleString("EcuClique", "msv70") || IsValidRuleString("EcuClique", "msv80") || IsValidRuleString("EcuClique", "mv1722") || IsValidRuleString("EcuClique", "n62_tue") || IsValidRuleString("EcuClique", "n62_tue2") || IsValidRuleString("EcuClique", "n73_r0") || IsValidRuleString("EcuClique", "n73h_r0") || IsValidRuleString("EcuClique", "n73tu_r0"))) || IsValidRuleString("Marke", "BMW i"));
 
-            case "20000729756343":
+            case "20000831798552":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B36")) && IsValidRuleString("EcuClique", "dme8ff_r")) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("Motor ?berarbeitung", "0")) && IsValidRuleString("Motor", "N63")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "TOYOTA")) && (IsValidRuleString("Motor", "B58") || IsValidRuleString("Motor", "S58"))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("Motor ?berarbeitung", "0")) && !(IsValidRuleString("Motor ?berarbeitung", "2")) && IsValidRuleString("Motor", "S63")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("Motor", "N74")) || (IsValidRuleString("Marke", "FRAZER") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B38") && IsValidRuleString("Motor Leistungsklasse", "M")) || (IsValidRuleString("Marke", "KARMA") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "B38")) || (IsValidRuleString("Marke", "VINFAST") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B48") && (IsValidRuleString("Motor Leistungsklasse", "O") || IsValidRuleString("Motor Leistungsklasse", "M"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(IsValidRuleString("Motor ?berarbeitung", "0")) && (IsValidRuleString("Motor", "B47") || IsValidRuleString("Motor", "B37") || IsValidRuleString("Motor", "B57"))));
 
             case "20000334081671":
@@ -13226,8 +13436,11 @@ public class RulesInfo
             case "20000825129661":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (RuleNum("Baustand") >= 202207)) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (RuleNum("Baustand") >= 202111) && (RuleNum("IStufeX") >= 2203535)) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsFaultRuleValid("20000182113651")));
 
-            case "20000820343072":
-                return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && (IsValidRuleString("Motor ?berarbeitung", "0") || IsValidRuleString("Motor ?berarbeitung", "1")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("Motor", "N20")));
+            case "20000862816902":
+                return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && (IsValidRuleString("Motor ?berarbeitung", "0") || IsValidRuleString("Motor ?berarbeitung", "1")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("Motor", "N20")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && (IsValidRuleString("AE Bezeichnung", "XB1141M0") || IsValidRuleString("AE Bezeichnung", "XB1141M1") || IsValidRuleString("AE Bezeichnung", "XB1141O0") || IsValidRuleString("AE Bezeichnung", "XB1142M0") || IsValidRuleString("AE Bezeichnung", "XB1142O1") || IsValidRuleString("AE Bezeichnung", "XB1151M1") || IsValidRuleString("AE Bezeichnung", "XB2131M0") || IsValidRuleString("AE Bezeichnung", "XB2131O0"))));
+
+            case "20000827158361":
+                return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("SALAPA", "802")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("SALAPA", "8AA")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("SALAPA", "8LB")));
 
             case "20000510104931":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV")) || (IsValidRuleString("Marke", "BMW i") && (IsValidRuleString("E-Bezeichnung", "I12") || IsValidRuleString("E-Bezeichnung", "I15"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F45") || IsValidRuleString("E-Bezeichnung", "F49")) && IsValidRuleString("Hybridkennzeichen", "PHEV")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("E-Bezeichnung", "F60") && IsValidRuleString("Hybridkennzeichen", "PHEV")));
@@ -13372,7 +13585,7 @@ public class RulesInfo
             case "2000008902599":
                 return (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ZINORO")) && (IsValidRuleString("EcuClique", "ihka_f15") || IsValidRuleString("EcuClique", "ihka20") || IsValidRuleString("EcuClique", "ihka25") || IsValidRuleString("EcuClique", "ihka25_2") || IsValidRuleString("EcuClique", "ihx_i1"))) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("EcuClique", "ihx_i1")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("EcuClique", "ihx_i1")));
 
-            case "20000822711682":
+            case "20000849044791":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("Hybridkennzeichen", "PHEV") || IsValidRuleString("Hybridkennzeichen", "BEVE")) && !(IsValidRuleString("E-Bezeichnung", "G08"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G08") && (RuleNum("Baustand") >= 202107)));
 
             case "20000800375571":
@@ -13390,8 +13603,14 @@ public class RulesInfo
             case "20000802350607":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "I20")) && !(IsValidRuleString("E-Bezeichnung", "U06")) && IsValidRuleString("EcuClique", "hkfm_i20")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2303500)));
 
+            case "2000037591489":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")) && IsValidRuleString("Basisausf?hrung", "US")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsFaultRuleValid("20000393122471") && IsValidRuleString("SALAPA", "8AA")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsFaultRuleValid("20000182113651") && IsValidRuleString("SALAPA", "8AA")));
+
             case "20000823703671":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Hybridkennzeichen", "PHEV"))) || (IsValidRuleString("Marke", "JLR") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "S68") && IsValidRuleString("Motor Leistungsklasse", "T")));
+
+            case "20000833421221":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "wave_01") || IsValidRuleString("EcuClique", "wave_11"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8LB")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8LR")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8LA")));
 
             case "2000054173080":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsFaultRuleValid("20000549791631") && IsFaultRuleValid("20000419793941")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && !(IsFaultRuleValid("20000419793941"))));
@@ -13432,9 +13651,6 @@ public class RulesInfo
             case "20000724611263":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5DN")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5DW")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5DX")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5DM")));
 
-            case "20000709922365":
-                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8LB")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8LR")));
-
             case "20000778198323":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "mevd172y") || IsValidRuleString("EcuClique", "s63tu_r0") || IsValidRuleString("EcuClique", "mevd1724") || IsValidRuleString("EcuClique", "n63tu_r0") || IsValidRuleString("EcuClique", "dme_bx8") || IsValidRuleString("EcuClique", "s55") || IsValidRuleString("EcuClique", "dme8ff_r"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "d73n57e0") || IsValidRuleString("EcuClique", "d72n47a0") || IsValidRuleString("EcuClique", "d73n47a0") || IsValidRuleString("EcuClique", "d70bx7a0") || IsValidRuleString("EcuClique", "d75bx7a0") || IsValidRuleString("EcuClique", "d83bx7c0"))));
 
@@ -13446,6 +13662,9 @@ public class RulesInfo
 
             case "20000779616761":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "402")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("E-Bezeichnung", "G70")));
+
+            case "2000039252362":
+                return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA")) && (IsValidRuleString("Baureihenverbund", "S15C") || IsValidRuleString("Baureihenverbund", "S18T") || IsValidRuleString("Baureihenverbund", "S18A") || IsValidRuleString("Baureihenverbund", "U006") || IsValidRuleString("Baureihenverbund", "G070"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G14") || IsValidRuleString("E-Bezeichnung", "G15") || IsValidRuleString("E-Bezeichnung", "G16")) && IsValidRuleString("Motor", "B58")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "TOYOTA")) && (IsValidRuleString("E-Bezeichnung", "G29") || IsValidRuleString("E-Bezeichnung", "J29")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G01") || IsValidRuleString("E-Bezeichnung", "G02")) && IsValidRuleString("Motor", "B58")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G20") || IsValidRuleString("E-Bezeichnung", "G21") || IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G22") || IsValidRuleString("E-Bezeichnung", "G23") || IsValidRuleString("E-Bezeichnung", "G26")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B47") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B57") || IsValidRuleString("Motor", "B58"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G05") || IsValidRuleString("E-Bezeichnung", "G07") || IsValidRuleString("E-Bezeichnung", "G06")) && IsValidRuleString("Motor", "B57")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44")) && (IsValidRuleString("Motor", "B47") || IsValidRuleString("Motor", "B37"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G80") || IsValidRuleString("E-Bezeichnung", "G82") || IsValidRuleString("E-Bezeichnung", "G83"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44"))));
 
             case "20000687351235":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA")) && IsValidRuleString("EcuRepresentative", "SGR48")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA")) && !(IsValidRuleString("Hybridkennzeichen", "PHEV")) && !(IsValidRuleString("EcuClique", "d70bx7a0")) && !(IsValidRuleString("EcuClique", "d75bx7a0"))) || (IsValidRuleString("Marke", "VINFAST") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B48") && (IsValidRuleString("Motor Leistungsklasse", "O") || IsValidRuleString("Motor Leistungsklasse", "M"))));
@@ -13469,9 +13688,6 @@ public class RulesInfo
             case "20000679540921":
                 return (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "spnm03vl")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "spnm02vl")));
 
-            case "20000740211851":
-                return (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "gsma02qz") || IsValidRuleString("EcuClique", "gsma02pu"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Produktlinie", "21LU")));
-
             case "2000017830759":
                 return (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && !(IsValidRuleString("E-Bezeichnung", "F18"))) || IsValidRuleString("Marke", "BMW i") || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "BEVE")));
 
@@ -13484,14 +13700,17 @@ public class RulesInfo
             case "2000008824712":
                 return (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "zgw_01") || IsValidRuleString("EcuClique", "zgw_sp18"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "BCP_SP21")));
 
+            case "2000034211876":
+                return (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsFaultRuleValid("20000182113651")) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")) && !(IsValidRuleString("E-Bezeichnung", "I01")) && !(IsValidRuleString("E-Bezeichnung", "M12")) && !(IsValidRuleString("Baureihenverbund", "S15C")) && !(IsValidRuleString("Baureihenverbund", "S18T")) && !(IsValidRuleString("Baureihenverbund", "S18A")) && !(IsValidRuleString("Baureihenverbund", "U006")) && !(IsValidRuleString("Baureihenverbund", "G070"))));
+
             case "20000823118301":
                 return (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "1DE")) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I12") && IsValidRuleString("SALAPA", "1DE")) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I15") && IsValidRuleString("Basisausf?hrung", "ECE")) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I12") && IsValidRuleString("SALAPA", "1DC")) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BRILLIANCE")) && IsFaultRuleValid("20000330372921")) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("E-Bezeichnung", "I12") && (RuleNum("Produktionsdatum") >= 201803)) || (IsValidRuleString("Marke", "BRILLIANCE") && IsValidRuleString("Motor", "N18")) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "1DF")) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "1DC")));
 
             case "20000716253262":
                 return (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "WIESMANN") || IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "ALPINA")) && IsValidRuleString("EcuRepresentative", "SC48")) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "WIESMANN") || IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "ALPINA")) && IsValidRuleString("EcuRepresentative", "BATT48")));
 
-            case "20000709815256":
-                return (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsFaultRuleValid("20000330372921")) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("SALAPA", "1DF")));
+            case "20000834312453":
+                return (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("SALAPA", "1DF")) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsFaultRuleValid("20000330372921")) || (IsValidRuleString("Marke", "JLR") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "S68") && IsValidRuleString("Motor Leistungsklasse", "T")));
 
             case "2000034239981":
                 return (((IsValidRuleString("Typschl?ssel", "0612") || IsValidRuleString("Typschl?ssel", "0611") || IsValidRuleString("Typschl?ssel", "0602") || IsValidRuleString("Typschl?ssel", "0601")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K48") && !(IsValidRuleString("SALAPA", "134"))) || ((IsValidRuleString("Typschl?ssel", "0F01") || IsValidRuleString("Typschl?ssel", "0F02") || IsValidRuleString("Typschl?ssel", "0F11") || IsValidRuleString("Typschl?ssel", "0F12")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K48") && !(IsValidRuleString("SALAPA", "134"))) || ((IsValidRuleString("Typschl?ssel", "0F51") || IsValidRuleString("Typschl?ssel", "0F53")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K61") && !(IsValidRuleString("SALAPA", "134"))));
@@ -13586,9 +13805,6 @@ public class RulesInfo
             case "2000035038877":
             case "2000018440301":
                 return ((IsValidRuleString("Marke", "BMW i") && IsValidRuleString("EcuClique", "eps_i1")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "eps_i1")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("EcuClique", "eps_i1")) || (IsValidRuleString("Marke", "ZINORO") && IsValidRuleString("EcuClique", "eps_i1")));
-
-            case "20000548402315":
-                return ((IsValidRuleString("Marke", "BMW i") && IsValidRuleString("EcuClique", "eps_u06")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "eps_u06")));
 
             case "20000825070112":
                 return ((IsValidRuleString("Marke", "BMW i") && IsValidRuleString("Produktlinie", "PLLI")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Produktlinie", "PLLU")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("Produktlinie", "PLLU")) || (IsValidRuleString("Marke", "ZINORO") && IsValidRuleString("Produktlinie", "PLLU")));
@@ -13696,7 +13912,6 @@ public class RulesInfo
             case "2000008899886":
                 return ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "ZINORO")));
 
-            case "2000039288328":
             case "20000170045201":
             case "2000014981735":
             case "2000044289005":
@@ -13711,9 +13926,6 @@ public class RulesInfo
             case "2000057572583":
             case "2000059658863":
             case "2000064589228":
-            case "2000037591489":
-                return ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")) && IsValidRuleString("Basisausf?hrung", "US"));
-
             case "20000419793941":
                 return ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("Produktlinie", "PL0")) && !(IsValidRuleString("Produktlinie", "PL2")) && !(IsValidRuleString("Produktlinie", "PL3")) && !(IsValidRuleString("Produktlinie", "PL3-alt")) && !(IsValidRuleString("Produktlinie", "PL4")) && !(IsValidRuleString("Produktlinie", "PL5")) && !(IsValidRuleString("Produktlinie", "PL5-alt")) && !(IsValidRuleString("Produktlinie", "PL6-alt")));
 
@@ -13721,7 +13933,7 @@ public class RulesInfo
             case "20000458465142":
                 return ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsFaultRuleValid("20000419793941"));
 
-            case "20000755815531":
+            case "20000835950621":
             case "2000035750760":
                 return ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("EcuClique", "bdc_g05"));
 
@@ -13775,7 +13987,6 @@ public class RulesInfo
             case "2000061458921":
             case "2000062511085":
             case "2000062837283":
-            case "2000062855928":
             case "2000062860767":
             case "2000015326416":
             case "2000036361149":
@@ -13852,7 +14063,7 @@ public class RulesInfo
             case "2000017314239":
                 return ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuRepresentative", "BDC"));
 
-            case "20000610063506":
+            case "20000827799691":
                 return ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuRepresentative", "TFE"));
 
             case "20000519986641":
@@ -13924,11 +14135,9 @@ public class RulesInfo
             case "2000054417678":
                 return ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "ucap_10"));
 
-            case "2000011685859":
+            case "2000051408448":
                 return ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW")));
 
-            case "2000051408448":
-            case "20000583195853":
             case "2000065201761":
             case "2000065513042":
             case "2000015665598":
@@ -14447,9 +14656,6 @@ public class RulesInfo
             case "20000351654911":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G30") || IsValidRuleString("E-Bezeichnung", "G38")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("SALAPA", "4VC")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G30") || IsValidRuleString("E-Bezeichnung", "G38")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("SALAPA", "4VD")));
 
-            case "2000039252362":
-                return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G80") || IsValidRuleString("E-Bezeichnung", "G82") || IsValidRuleString("E-Bezeichnung", "G83"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && (IsValidRuleString("Baureihenverbund", "S15C") || IsValidRuleString("Baureihenverbund", "S18A") || IsValidRuleString("Baureihenverbund", "U006"))) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsFaultRuleValid("20000182113651")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G14") || IsValidRuleString("E-Bezeichnung", "G15") || IsValidRuleString("E-Bezeichnung", "G16")) && IsValidRuleString("Motor", "B58")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "TOYOTA")) && (IsValidRuleString("E-Bezeichnung", "G29") || IsValidRuleString("E-Bezeichnung", "J29")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G01") || IsValidRuleString("E-Bezeichnung", "G02")) && IsValidRuleString("Motor", "B58")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G20") || IsValidRuleString("E-Bezeichnung", "G21") || IsValidRuleString("E-Bezeichnung", "G22") || IsValidRuleString("E-Bezeichnung", "G23") || IsValidRuleString("E-Bezeichnung", "G26") || IsValidRuleString("E-Bezeichnung", "G28")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B47") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B57") || IsValidRuleString("Motor", "B58"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G05") || IsValidRuleString("E-Bezeichnung", "G06") || IsValidRuleString("E-Bezeichnung", "G07")) && IsValidRuleString("Motor", "B57")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44")) && (IsValidRuleString("Motor", "B37") || IsValidRuleString("Motor", "B47"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44"))));
-
             case "20000777980888":
                 return ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("EcuClique", "acc") || IsValidRuleString("EcuClique", "acc_e65") || IsValidRuleString("EcuClique", "acc2"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "lrr_60")));
 
@@ -14730,6 +14936,12 @@ public class RulesInfo
             case "20000809620491":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "eps_i20")) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("EcuClique", "eps_i20")) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && IsValidRuleString("EcuClique", "eps_i20")));
 
+            case "20000831628965":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "eps_u06")) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("EcuClique", "eps_u06")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("EcuClique", "eps_u06")));
+
+            case "2000055308075":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "eps_u06")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("EcuClique", "eps_u06")));
+
             case "20000093998261":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "fem_20")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "rem_20")));
 
@@ -14812,7 +15024,7 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuRepresentative", "FEM")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuRepresentative", "BDC")));
 
             case "2000052009106":
-                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "PHEV") && (IsValidRuleString("E-Bezeichnung", "U06") || IsValidRuleString("E-Bezeichnung", "U11"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "BEVE") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G08") || IsValidRuleString("E-Bezeichnung", "G26") || IsValidRuleString("E-Bezeichnung", "G70"))) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("Hybridkennzeichen", "BEVE") && IsValidRuleString("E-Bezeichnung", "I20")));
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "BEVE") && (IsValidRuleString("E-Bezeichnung", "G28") || IsValidRuleString("E-Bezeichnung", "G08") || IsValidRuleString("E-Bezeichnung", "G26") || IsValidRuleString("E-Bezeichnung", "G70") || IsValidRuleString("E-Bezeichnung", "U11"))) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("Hybridkennzeichen", "BEVE") && IsValidRuleString("E-Bezeichnung", "I20")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "PHEV") && (IsValidRuleString("E-Bezeichnung", "U06") || IsValidRuleString("E-Bezeichnung", "G09") || IsValidRuleString("E-Bezeichnung", "G70") || IsValidRuleString("E-Bezeichnung", "U11"))));
 
             case "20000793227071":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("Motor", "S68")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && !(IsValidRuleString("Motor ?berarbeitung", "0")) && !(IsValidRuleString("Motor ?berarbeitung", "1")) && (IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58"))));
@@ -14914,6 +15126,9 @@ public class RulesInfo
             case "2000008979047":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "S63")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && (IsValidRuleString("Motor", "N63") || IsValidRuleString("Motor", "S63"))));
 
+            case "20000863503503":
+                return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "S68")) || (IsValidRuleString("Marke", "JLR") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "S68") && IsValidRuleString("Motor Leistungsklasse", "T")));
+
             case "20000760615041":
                 return ((IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Produktlinie", "35LG")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Produktlinie", "21LG")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "G32") || IsValidRuleString("E-Bezeichnung", "G30") || IsValidRuleString("E-Bezeichnung", "G31") || IsValidRuleString("E-Bezeichnung", "G38") || IsValidRuleString("E-Bezeichnung", "F90"))) || (IsValidRuleString("Marke", "BMW i") && IsValidRuleString("Produktlinie", "21LI")) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && IsValidRuleString("Produktlinie", "35LR")));
 
@@ -14955,28 +15170,11 @@ public class RulesInfo
             case "2000053244742":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("HEAT 8-stellig", "HA0001N0") || IsValidRuleString("HEAT 8-stellig", "HA0002N0") || IsValidRuleString("HEAT 8-stellig", "HA0003N0") || IsValidRuleString("HEAT 8-stellig", "HA0004N0") || IsValidRuleString("HEAT 8-stellig", "HB0002N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N0") || IsValidRuleString("HEAT 8-stellig", "HB0003N0")));
 
-            case "20000728253093":
-            case "20000728253094":
+            case "20000862297861":
+            case "20000862297862":
             case "2000070404146":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "BCP_SP21"));
 
-            case "20000583195852":
-                return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "cvc_i20"));
-
-            case "2000058369108":
-            case "20000583195854":
-            case "2000065136108":
-            case "20000583195855":
-            case "2000065586472":
-            case "20000626058752":
-            case "2000062606711":
-            case "20000626058753":
-            case "2000065136100":
-            case "20000651360951":
-            case "2000065172719":
-            case "20000651720212":
-            case "2000073191208":
-            case "20000731911991":
             case "20000723175841":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "ib_g2x"));
 
@@ -14997,12 +15195,17 @@ public class RulesInfo
             case "2000037819778":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")));
 
-            case "2000059010891":
+            case "2000080276347":
+            case "2000058466184":
+            case "2000060872235":
             case "2000059475820":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "eme_i01") || IsValidRuleString("EcuClique", "eme_i12") || IsValidRuleString("EcuClique", "eme_f18") || IsValidRuleString("EcuClique", "eme_g12") || IsValidRuleString("EcuClique", "eme_f45") || IsValidRuleString("EcuClique", "eme_f30")));
 
             case "20000732763065":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("Produktlinie", "21LU") || IsValidRuleString("Produktlinie", "21LI") || IsValidRuleString("Produktlinie", "21LG") || IsValidRuleString("Produktlinie", "21LK")));
+
+            case "20000741522691":
+                return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsFaultRuleValid("20000549791631") && IsFaultRuleValid("20000419793941"));
 
             case "20000637453144":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "bfh_i20"));
@@ -15013,10 +15216,26 @@ public class RulesInfo
             case "2000052026725":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "spnm02vl"));
 
-            case "2000069904072":
+            case "2000011685859":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")));
 
+            case "2000069904072":
             case "2000080451928":
+            case "2000079931002":
+            case "20000862199062":
+            case "2000080050019":
+            case "2000080072973":
+            case "2000080072976":
+            case "2000080072980":
+            case "2000080228754":
+            case "2000080281211":
+            case "2000080505105":
+            case "2000080942457":
+            case "2000080942463":
+            case "2000080942469":
+            case "2000080945610":
+            case "2000081577196":
+            case "2000081588055":
             case "20000730643276":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")));
 
@@ -15039,7 +15258,7 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "ZINORO")));
 
             case "2000013992564":
-            case "20000392864903":
+            case "20000862814451":
             case "20000378179791":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && !(IsValidRuleString("EcuClique", "d83bx7c0")) && !(IsValidRuleString("EcuClique", "dme8ff_r")) && !(IsValidRuleString("EcuClique", "dme8ff_l")));
 
@@ -15161,11 +15380,11 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B37") || IsValidRuleString("Motor", "B47") || IsValidRuleString("Motor", "B57") || IsValidRuleString("Motor", "N47") || IsValidRuleString("Motor", "N57")));
 
             case "46391754251":
-            case "2000071766797":
+            case "2000079833665":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58")));
 
+            case "2000071766797":
             case "2000079701778":
-            case "2000079833665":
             case "2000071891508":
             case "2000071892122":
             case "2000059396629":
@@ -15178,6 +15397,9 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B47") || IsValidRuleString("Motor", "B37")) && (IsValidRuleString("EcuClique", "d70bx7a0") || IsValidRuleString("EcuClique", "d75bx7a0")));
 
             case "20000818035571":
+            case "20000862445811":
+                return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B47") || IsValidRuleString("Motor", "B57")) && (IsValidRuleString("Motor Leistungsklasse", "O") || IsValidRuleString("Motor Leistungsklasse", "K") || IsValidRuleString("Motor Leistungsklasse", "U") || IsValidRuleString("Motor Leistungsklasse", "T")));
+
             case "2000071893082":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58")));
 
@@ -15276,6 +15498,9 @@ public class RulesInfo
 
             case "2000008804412":
             case "2000003773487":
+            case "20000825566792":
+                return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("SALAPA", "1CE") && (RuleNum("Baustand") >= 202207));
+
             case "2000058672158":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) || (IsValidRuleString("Marke", "VINFAST") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B48") && IsValidRuleString("Motor Leistungsklasse", "O")));
 
@@ -15317,6 +15542,7 @@ public class RulesInfo
             case "2000008971691":
             case "2000011282217":
             case "2000017677030":
+            case "2000086244606":
             case "2000008981453":
             case "2000010836179":
             case "2000008972767":
@@ -15339,10 +15565,11 @@ public class RulesInfo
             case "2000080496027":
             case "2000071029223":
             case "2000064544702":
+            case "2000073648542":
+            case "2000082715855":
             case "2000078053684":
             case "20000780536792":
             case "2000072344851":
-            case "2000073648542":
             case "2000062804968":
             case "2000069776454":
             case "2000062856144":
@@ -15351,7 +15578,7 @@ public class RulesInfo
             case "20000354830363":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA")) && !(IsValidRuleString("EcuClique", "hu_mgu")));
 
-            case "20000815652477":
+            case "20000867862983":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")));
 
             case "2000033622241":
@@ -15374,7 +15601,7 @@ public class RulesInfo
             case "20000704084141":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA")) && IsValidRuleString("SALAPA", "6AE"));
 
-            case "20000447653241":
+            case "20000836030711":
                 return ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA")));
 
             case "2000012940083":
@@ -16070,9 +16297,30 @@ public class RulesInfo
             case "20000789755771":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("elektrische Reichweite", "SP052")) && !(IsValidRuleString("elektrische Reichweite", "SP054")) && !(IsValidRuleString("elektrische Reichweite", "SP056")) && !(IsValidRuleString("elektrische Reichweite", "SP051")));
 
+            case "2000059010891":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "BCP_SP21"));
+
+            case "20000828385016":
             case "2000072431258":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "bfh_i20"));
 
+            case "20000828385015":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "cvc_i20"));
+
+            case "2000058369108":
+            case "20000828385017":
+            case "2000065136108":
+            case "20000828385018":
+            case "2000065586472":
+            case "20000828385019":
+            case "2000062606711":
+            case "20000828385351":
+            case "2000065136100":
+            case "20000828385352":
+            case "2000065172719":
+            case "20000828385353":
+            case "2000073191208":
+            case "20000828385354":
             case "2000072429414":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "fah_i20"));
 
@@ -16092,6 +16340,9 @@ public class RulesInfo
 
             case "20000809423411":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Motor", "S63")) && !(IsValidRuleString("Motor", "N74")) && !(IsValidRuleString("Motor", "S68")));
+
+            case "2000062855928":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Produktlinie", "PLLI")) && !(IsValidRuleString("Produktlinie", "PLLU")) && !(IsValidRuleString("Produktlinie", "PL4")) && !(IsValidRuleString("Produktlinie", "PL7")) && !(IsValidRuleString("Produktlinie", "PL6")) && !(IsValidRuleString("Produktlinie", "PL2")));
 
             case "20000393122471":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("Country", "DE") || IsValidRuleString("Country", "AE") || IsValidRuleString("Country", "CN") || IsValidRuleString("Country", "US")));
@@ -16113,9 +16364,13 @@ public class RulesInfo
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsFaultRuleValid("20000419793941") && IsValidRuleString("EcuClique", "bdc_g05"));
 
             case "20000800729677":
+            case "20000832436131":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsFaultRuleValid("20000419793941"));
+
             case "2000068289890":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsFaultRuleValid("20000549791631") && IsFaultRuleValid("20000419793941"));
 
+            case "20000342459371":
             case "20000780565862":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "bat12haf"));
 
@@ -16145,7 +16400,7 @@ public class RulesInfo
             case "2000077847945":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "hkfm_i20"));
 
-            case "20000821867833":
+            case "20000862322821":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "ib_g70"));
 
             case "20000786830166":
@@ -16176,7 +16431,7 @@ public class RulesInfo
             case "20000708695862":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuRepresentative", "CCU"));
 
-            case "20000708695863":
+            case "20000827237784":
             case "20000719868471":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuRepresentative", "SC48"));
 
@@ -16205,16 +16460,25 @@ public class RulesInfo
             case "2000078833003":
             case "2000071626778":
             case "2000082492421":
+            case "2000061163421":
+            case "2000076303686":
+            case "2000077298383":
+            case "2000082198834":
             case "2000069138587":
             case "2000061855526":
             case "2000070710552":
+            case "2000083483480":
             case "2000070580547":
             case "2000068950894":
             case "2000070737167":
             case "2000070736981":
+            case "2000084713660":
             case "2000082507731":
             case "2000076162666":
             case "2000073453895":
+            case "2000064611852":
+            case "2000060135703":
+            case "2000061305801":
             case "2000070997838":
             case "20000697078042":
             case "2000074549534":
@@ -16264,6 +16528,9 @@ public class RulesInfo
             case "20000668164212":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("EcuClique", "mevd172") || IsValidRuleString("EcuClique", "mevd17kw") || IsValidRuleString("EcuClique", "mevd172y") || IsValidRuleString("EcuClique", "s63tu_r0") || IsValidRuleString("EcuClique", "mevd174k") || IsValidRuleString("EcuClique", "mevd1724") || IsValidRuleString("EcuClique", "mevd176k") || IsValidRuleString("EcuClique", "n63tu_r0") || IsValidRuleString("EcuClique", "s55") || IsValidRuleString("EcuClique", "n55_alp")));
 
+            case "20000829719291":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuClique", "ib_g70"));
+
             case "20000754604051":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("EcuClique", "hvsgr_01"));
 
@@ -16276,6 +16543,8 @@ public class RulesInfo
             case "2000074624648":
             case "2000070982587":
             case "2000074624624":
+            case "2000070725163":
+            case "2000070725104":
             case "2000018650646":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")));
 
@@ -16293,15 +16562,20 @@ public class RulesInfo
             case "2000071196205":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "gszf04gd"));
 
-            case "20000708423869":
+            case "20000831344101":
             case "2000076197880":
             case "2000074620425":
+            case "2000075573864":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "gszf04gf"));
+
+            case "20000831344103":
             case "2000072580107":
-            case "20000822677886":
-                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "ib_g70"));
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "lezf04vc"));
 
             case "20000764809584":
-                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "lezf04vc"));
+            case "2000085905552":
+            case "20000815579296":
+                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "lezfvh"));
 
             case "2000060811205":
                 return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuClique", "lmv_g70"));
@@ -16328,10 +16602,6 @@ public class RulesInfo
 
             case "2000051914443":
             case "2000052393310":
-            case "2000070725163":
-                return ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")));
-
-            case "2000070725104":
             case "20000712008287":
                 return ((IsValidRuleString("Marke", "ROSENBAUER") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "B57") && IsValidRuleString("Motor Leistungsklasse", "T")) || (IsValidRuleString("Marke", "OXE MARINE") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "B57") && IsValidRuleString("Motor Leistungsklasse", "T")));
 
@@ -16363,6 +16633,7 @@ public class RulesInfo
             case "2000073670870":
                 return ((IsValidRuleString("Marke", "VINFAST") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B48") && IsValidRuleString("Motor Leistungsklasse", "O")) || (IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")));
 
+            case "2000076959764":
             case "2000009778326":
                 return ((IsValidRuleString("Marke", "WORKHORSE") && IsValidRuleString("Motor", "W20")) || (IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")));
 
@@ -16382,11 +16653,17 @@ public class RulesInfo
             case "2000069602202":
                 return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) || (IsValidRuleString("Typschl?ssel", "9A14") && IsValidRuleString("Marke", "MOTIV")));
 
+            case "20000816572122":
+                return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Hybridkennzeichen", "PHEV") || IsValidRuleString("Hybridkennzeichen", "BEVE")) && (IsValidRuleString("E-Bezeichnung", "M13") || IsValidRuleString("E-Bezeichnung", "F60") || IsValidRuleString("E-Bezeichnung", "F56")));
+
             case "20000691454241":
                 return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("HEAT 8-stellig", "HA0001N0") || IsValidRuleString("HEAT 8-stellig", "HA0003N0") || IsValidRuleString("HEAT 8-stellig", "HA0004N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N0")));
 
             case "20000691454244":
                 return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("HEAT 8-stellig", "HA0002N0") || IsValidRuleString("HEAT 8-stellig", "HB0002N0")));
+
+            case "2000039288328":
+                return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("Produktlinie", "PLLI") || IsValidRuleString("Produktlinie", "PLLU") || IsValidRuleString("Produktlinie", "PL4") || IsValidRuleString("Produktlinie", "PL7") || IsValidRuleString("Produktlinie", "PL6") || IsValidRuleString("Produktlinie", "PL2")));
 
             case "2000010065868":
                 return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")));
@@ -16408,7 +16685,7 @@ public class RulesInfo
             case "2000017313610":
                 return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("EcuClique", "dme9ff_r")) && !(IsValidRuleString("EcuClique", "dme98_r")));
 
-            case "20000789700011":
+            case "20000836028443":
                 return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("Hybridkennzeichen", "BEVE")));
 
             case "20000730643271":
@@ -16440,11 +16717,11 @@ public class RulesInfo
             case "2000036029259":
                 return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "WIESMANN") || IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BRILLIANCE") || IsValidRuleString("Marke", "ALPINA")) && (IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LR") || IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LU") || IsValidRuleString("Produktlinie", "21LU") || IsValidRuleString("Produktlinie", "21LI") || IsValidRuleString("Produktlinie", "21LG")));
 
-            case "20000796719221":
-                return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")));
+            case "20000834312454":
+                return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) || (IsValidRuleString("Marke", "JLR") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "S68") && IsValidRuleString("Motor Leistungsklasse", "T")));
 
-            case "20000746246511":
-            case "20000709815259":
+            case "20000863318638":
+            case "20000834312456":
             case "2000072561065":
                 return ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")));
 
@@ -16616,10 +16893,12 @@ public class RulesInfo
             case "2000008918374":
                 return (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K48") || IsValidRuleString("E-Bezeichnung", "K61")));
 
-            case "2000077238729":
+            case "20000825098031":
                 return (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K51") || IsValidRuleString("E-Bezeichnung", "K52")));
 
-            case "20000825098031":
+            case "2000077238729":
+                return (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("E-Bezeichnung", "K50") || IsValidRuleString("E-Bezeichnung", "K54") || IsValidRuleString("E-Bezeichnung", "K53") || IsValidRuleString("E-Bezeichnung", "K51") || IsValidRuleString("E-Bezeichnung", "K52")));
+
             case "2000018344359":
                 return (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("EcuClique", "TM") || IsValidRuleString("EcuClique", "TPM4G")));
 
@@ -16666,12 +16945,11 @@ public class RulesInfo
                 return (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K07"));
 
             case "20000767157597":
+            case "20000867703513":
             case "20000767157596":
             case "2000075436731":
             case "20000758740382":
             case "20000776229942":
-            case "2000066265060":
-            case "20000766208461":
             case "20000767157592":
                 return (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K17"));
 
@@ -16825,6 +17103,7 @@ public class RulesInfo
             case "2000016690209":
             case "2000070722734":
             case "2000073691407":
+            case "2000070690343":
             case "2000076147786":
             case "2000008893208":
             case "20000146168612":
@@ -16879,8 +17158,6 @@ public class RulesInfo
             case "20000722320492":
             case "2000033407690":
             case "20000780208321":
-            case "2000036373941":
-            case "20000363738831":
             case "2000038797769":
             case "20000389791612":
             case "2000041983582":
@@ -17501,7 +17778,7 @@ public class RulesInfo
                 return (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("EcuClique", "icmv") || IsValidRuleString("EcuClique", "vdm_70")));
 
             case "2000016296618":
-                return (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("EcuClique", "ihka_g11") || IsValidRuleString("EcuClique", "ihka_g05") || IsValidRuleString("EcuClique", "ihka_g09")));
+                return (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("EcuClique", "ihka_g11") || IsValidRuleString("EcuClique", "ihka_g05") || IsValidRuleString("EcuClique", "ihka_g09") || IsValidRuleString("EcuClique", "ihkarr25")));
 
             case "2000003764602":
                 return (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("EcuClique", "ihka46") || IsValidRuleString("EcuClique", "ihka46_2") || IsValidRuleString("EcuClique", "ihka46_3") || IsValidRuleString("EcuClique", "ihka83")));
@@ -18099,7 +18376,7 @@ public class RulesInfo
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "cem_68"));
 
             case "2000003768113":
-            case "20000403882099":
+            case "20000827056451":
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "chc01"));
 
             case "2000033149986":
@@ -18242,9 +18519,6 @@ public class RulesInfo
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "eps_tk02"));
 
             case "20000328065243":
-            case "2000055308075":
-                return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "eps_u06"));
-
             case "20000142958489":
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "fem_20"));
 
@@ -18690,16 +18964,15 @@ public class RulesInfo
             case "2000018026275":
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "S63"));
 
-            case "2000079835295":
+            case "2000079833679":
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "S68"));
 
+            case "2000080655943":
+            case "2000079835295":
             case "2000080188202":
             case "2000079701925":
-            case "2000079833679":
             case "2000079835019":
             case "2000079834029":
-            case "2000080655943":
-            case "20000806559291":
             case "2000003774800":
                 return (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "S85"));
 
@@ -18911,7 +19184,7 @@ public class RulesInfo
             case "2000061426750":
             case "2000061426764":
             case "2000061426757":
-            case "20000823404254":
+            case "20000834337765":
                 return (IsValidRuleString("Marke", "JLR") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "S68") && IsValidRuleString("Motor Leistungsklasse", "T"));
 
             case "2000082266903":
@@ -18919,6 +19192,13 @@ public class RulesInfo
             case "2000082206662":
             case "2000082208934":
             case "2000082271459":
+            case "2000083433971":
+            case "2000086332664":
+            case "2000083400610":
+            case "2000083391411":
+            case "2000083401353":
+            case "2000083354692":
+            case "2000086350356":
             case "2000082201701":
             case "2000082203916":
             case "2000082206044":
@@ -18927,11 +19207,13 @@ public class RulesInfo
             case "2000082205054":
             case "2000082206350":
             case "2000082206584":
+            case "2000083402125":
             case "2000082207636":
             case "2000082208135":
             case "2000082271742":
             case "2000082271830":
             case "2000082272215":
+            case "2000083471609":
             case "2000038883166":
                 return (IsValidRuleString("Marke", "JLR") && IsValidRuleString("Motor", "N63") && IsValidRuleString("Motor Leistungsklasse", "T") && IsValidRuleString("Motor ?berarbeitung", "3"));
 
@@ -19354,7 +19636,7 @@ public class RulesInfo
             case "2000018416125":
             case "20000184101866":
             case "20000184101867":
-            case "20000815070593":
+            case "20000825121594":
                 return (IsValidRuleString("Typschl?ssel", "9A14") && IsValidRuleString("Marke", "MOTIV"));
 
             case "20000818149191":
