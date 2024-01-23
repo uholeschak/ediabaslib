@@ -171,7 +171,6 @@
   <string name="select_ecu_zip">Выбрать ECU Zip</string>
   <string name="downloading_file">Скачать файлы</string>
   <string name="download_failed">Не удалось скачать файлы.\nПожалуйста, проверьте подключение к сети.</string>
-  <!--Translate-->
   <string name="download_proxy_config">В настройках сети настроен прокси.\nЭто может вызвать проблемы с подключением.\nУдалите прокси, если это возможно.</string>
   <string name="obb_offline_extract">Хотите распаковать ECU файлы оффлайн?</string>
   <string name="obb_offline_extract_title">Распаковка оффлайн</string>
@@ -240,15 +239,12 @@
   <string name="trans_translator_deepl">DeepL</string>
   <string name="trans_translator_yandex_cloud">Yandex Cloud</string>
   <string name="trans_key_desc">Для автоматического перевода с {0} требуется (бесплатный) ключ API и учётная запись, что позволяет делать ограниченное количество переводов в день.\nИспользуйте следующие кнопки для входа в свою учетную запись, чтобы создать ключ или для отображения существующих.\nСкопируйте ключ из браузера и вставьте его в нижнее поле с помощью кнопки Вставить.\nЧтобы скопировать ключ, нажмите и удерживайте первое слово, расширьте диапазон и выберите "Копировать".</string>
-  <!--Translate-->
-  <string name="trans_key_yandex_cloud">Облако Яндекса дополнительно позволяет использовать токен OAuth и идентификатор папки вместо API-ключа.</string>
+  <string name="trans_key_yandex_cloud">Облако Яндекса позволяет использовать дополнительно токен OAuth и идентификатор папки вместо API-ключа.</string>
   <string name="trans_key_copy_title">копировать API ключ</string>
   <string name="button_api_key_create">создать API ключ</string>
   <string name="button_api_key_get">Показать API ключи</string>
   <string name="trans_key_paste_title">API ключ</string>
-  <!--Translate-->
-  <string name="folder_id_paste_title">Идентификатор каталога</string>
-  <!--Translate-->
+  <string name="folder_id_paste_title">Идентификатор папки</string>
   <string name="button_folder_id_paste">Вставить идентификатор папки</string>
   <string name="button_api_key_paste">Вставить API ключи</string>
   <string name="api_url_paste_title">API URL</string>
@@ -343,13 +339,9 @@
   <string name="menu_cfg_pages_edit">Редактировать список страниц</string>
   <string name="menu_cfg_page_menu">Редактировать текущую страницу</string>
   <string name="menu_cfg_page_edit">Редактировать текущую страницу</string>
-  <!--Translate-->
   <string name="menu_cfg_page_edit_fontsize">Размер шрифта</string>
-  <!--Translate-->
-  <string name="menu_cfg_page_edit_gauges_landscape">Ландшафт датчиков</string>
-  <!--Translate-->
-  <string name="menu_cfg_page_edit_gauges_portrait">Портрет датчиков</string>
-  <!--Translate-->
+  <string name="menu_cfg_page_edit_gauges_landscape">Графические элементы в альбомном формате</string>
+  <string name="menu_cfg_page_edit_gauges_portrait">Графические элементы в портретном формате</string>
   <string name="menu_cfg_page_edit_display_order">Порядок отображения результатов</string>
   <string name="menu_cfg_select_edit">Редактировать другой файл</string>
   <string name="menu_cfg_edit_reset">Сбросить XML редактор</string>
@@ -522,7 +514,6 @@
   <string name="settings_notification_settings">Настройки уведомлений</string>
   <string name="settings_caption_debug">Отладить</string>
   <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
-  <!--Translate-->
   <string name="settings_uncompressed_trace">Создание несжатых файлов трассировки (медленно)</string>
   <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
   <string name="settings_hci_snoop_log_config">Настроить журнал отслеживания</string>
@@ -624,11 +615,8 @@
   <string name="xml_tool_result_vin">VIN</string>
   <string name="xml_tool_service_open_jobs">Показать {0} задания</string>
   <string name="xml_tool_service_jobs_warning">Сервисные функции пока экспериментальные!\nОтображаемые задания в Ediabas Tool могут иметь только аргументы по умолчанию, которые необходимо адаптировать перед выполнением задания!\nВы обязаны проверять задания перед выполнением!\nПомощник по аргументам может быть полезен в этом случае.\nИз-за сложности сбора данных возможно, что в будущем для выполнения заданий потребуются адаптеры Deep OBD.\nХотите продолжить?</string>
-  <!--Translate-->
   <string name="xml_tool_drag_list_hint">Нажмите и удерживайте ЭБУ, чтобы изменить порядок.</string>
-  <!--Translate-->
   <string name="xml_tool_job_results">Результаты работы:</string>
-  <!--Translate-->
   <string name="xml_tool_num_job_results">Количество результатов работы: {0}</string>
 
   <!-- XML Tool Options Menu -->
