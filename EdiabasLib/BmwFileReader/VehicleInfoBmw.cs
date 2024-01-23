@@ -1205,21 +1205,18 @@ namespace BmwFileReader
                 bool valid = ruleEvalBmw.EvaluateRule(serviceDataItem.InfoObjId, RuleEvalBmw.RuleType.DiagObj);
                 if (valid)
                 {
-                    VehicleStructsBmw.ServiceDataItem serviceDataItemClone = new VehicleStructsBmw.ServiceDataItem(
-                        serviceDataItem.InfoObjId, serviceDataItem.InfoObjTextHash, new List<string>(),
-                        null, serviceDataItem.InfoDataList);
-
                     foreach (string diagObjId in serviceDataItem.DiagObjIds)
                     {
-                        if (ruleEvalBmw.EvaluateRule(diagObjId, RuleEvalBmw.RuleType.DiagObj))
+                        if (!ruleEvalBmw.EvaluateRule(diagObjId, RuleEvalBmw.RuleType.DiagObj))
                         {
-                            serviceDataItemClone.DiagObjIds.Add(diagObjId);
+                            valid = false;
+                            break;
                         }
                     }
 
-                    if (serviceDataItemClone.DiagObjIds.Count > 0)
+                    if (valid)
                     {
-                        serviceDataItems.Add(serviceDataItemClone);
+                        serviceDataItems.Add(serviceDataItem);
                     }
                 }
             }
@@ -1332,6 +1329,11 @@ namespace BmwFileReader
                 ServiceTreeItem serviceTreeItemCurrent = serviceTreeItemRoot;
                 foreach (string diagObjId in serviceDataItem.DiagObjIds)
                 {
+                    if (string.IsNullOrEmpty(diagObjId))
+                    {
+                        continue;
+                    }
+
                     ServiceTreeItem childItemDiagMatch = null;
                     foreach (ServiceTreeItem childItem in serviceTreeItemCurrent.ChildItems)
                     {
