@@ -35,6 +35,11 @@ namespace BmwFileReader
 
         public bool EvaluateRule(string id, RuleType ruleType)
         {
+            if (string.IsNullOrEmpty(id))
+            {
+                return false;
+            }
+
             lock (_lockObject)
             {
                 if (_rulesInfo == null)
