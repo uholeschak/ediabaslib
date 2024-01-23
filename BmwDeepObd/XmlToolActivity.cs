@@ -3268,7 +3268,7 @@ namespace BmwDeepObd
                     {
                         if (sbFuncNames.Length > 0)
                         {
-                            sbFuncNames.Append(", ");
+                            sbFuncNames.Append("\r\n");
                         }
 
                         sbFuncNames.Append(string.Format("{0}: {1}", GetString(Resource.String.menu_xml_tool_bmw_service), serviceCount));
@@ -3279,7 +3279,7 @@ namespace BmwDeepObd
                     {
                         if (sbFuncNames.Length > 0)
                         {
-                            sbFuncNames.Append(", ");
+                            sbFuncNames.Append("\r\n");
                         }
 
                         sbFuncNames.Append(string.Format("{0}: {1}", GetString(Resource.String.menu_xml_tool_bmw_actuator), actuatorCount));
