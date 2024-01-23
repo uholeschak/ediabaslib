@@ -1206,8 +1206,8 @@ namespace BmwFileReader
                 if (valid)
                 {
                     VehicleStructsBmw.ServiceDataItem serviceDataItemClone = new VehicleStructsBmw.ServiceDataItem(
-                        serviceDataItem.InfoObjId, null, new List<string>(),
-                        serviceDataItem.DiagObjTextHashes, serviceDataItem.InfoDataList);
+                        serviceDataItem.InfoObjId, serviceDataItem.InfoObjTextHash, new List<string>(),
+                        null, serviceDataItem.InfoDataList);
 
                     foreach (string diagObjId in serviceDataItem.DiagObjIds)
                     {
