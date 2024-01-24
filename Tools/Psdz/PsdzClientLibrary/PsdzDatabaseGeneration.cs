@@ -4608,7 +4608,7 @@ namespace PsdzClient
 
                 VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
                 rulesInfoData = new VehicleStructsBmw.RulesInfoData(versionInfo, faultRulesDict, ecuFuncRulesDict, diagObjectRulesDict);
-                if (!SaveFaultRulesClass(rulesInfoData, rulesCsFile))
+                if (!SaveRulesClass(rulesInfoData, rulesCsFile))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo SaveFaultRulesFunction failed");
                     return false;
@@ -4738,34 +4738,34 @@ namespace PsdzClient
             }
         }
 
-        public bool SaveFaultRulesClass(VehicleStructsBmw.RulesInfoData rulesInfoData, string fileName)
+        public bool SaveRulesClass(VehicleStructsBmw.RulesInfoData rulesInfoData, string fileName)
         {
             try
             {
-                log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesFunction Saving: {0}", fileName);
+                log.InfoFormat(CultureInfo.InvariantCulture, "SaveRulesClass Saving: {0}", fileName);
 
                 if (rulesInfoData == null)
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesFunction faultRulesInfoData missing");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveRulesClass faultRulesInfoData missing");
                     return false;
                 }
 
                 List<string> ruleNames = new List<string>();
                 if (!ExtractRuleNames(rulesInfoData.FaultRuleDict, ruleNames))
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractRuleNames FaultRuleDict failed");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveRulesClass ExtractRuleNames FaultRuleDict failed");
                     return false;
                 }
 
                 if (!ExtractRuleNames(rulesInfoData.EcuFuncRuleDict, ruleNames))
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractRuleNames EcuFuncRuleDict failed");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveRulesClass ExtractRuleNames EcuFuncRuleDict failed");
                     return false;
                 }
 
                 if (!ExtractRuleNames(rulesInfoData.DiagObjectRuleDict, ruleNames))
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractRuleNames DiagObjectRuleDict failed");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveRulesClass ExtractRuleNames DiagObjectRuleDict failed");
                     return false;
                 }
 
@@ -4785,7 +4785,7 @@ namespace PsdzClient
                 DbInfo dbInfo = GetDbInfo();
                 if (dbInfo == null)
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesFunction GetDbInfo failed");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "SaveRulesClass GetDbInfo failed");
                     return false;
                 }
 
@@ -4797,6 +4797,7 @@ namespace PsdzClient
 
                 List<VehicleStructsBmw.RuleInfo> diagObjectRuleList = rulesInfoData.DiagObjectRuleDict.Values.ToList();
                 List<VehicleStructsBmw.RuleInfo> diagObjectRuleListOrder = diagObjectRuleList.OrderBy(x => x.RuleFormula).ToList();
+                Dictionary<string, VehicleStructsBmw.RuleInfo> rulesFuncDict = new Dictionary<string, VehicleStructsBmw.RuleInfo>();
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append(
@@ -4836,6 +4837,8 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                         if (ruleInfoEnd == ruleInfo ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
+                            string funcName = "FaultRule_" + ruleInfo.Id.Trim();
+                            rulesFuncDict.Add(funcName, ruleInfo);
                             sb.Append(
 $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormula)};
 
@@ -4871,6 +4874,8 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                         if (ruleInfoEnd == ruleInfo ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
+                            string funcName = "EcuFuncRule_" + ruleInfo.Id.Trim();
+                            rulesFuncDict.Add(funcName, ruleInfo);
                             sb.Append(
 $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormula)};
 
@@ -4906,6 +4911,8 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                         if (ruleInfoEnd == ruleInfo ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
+                            string funcName = "DiagObjectRule_" + ruleInfo.Id.Trim();
+                            rulesFuncDict.Add(funcName, ruleInfo);
                             sb.Append(
 $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormula)};
 
