@@ -4973,7 +4973,6 @@ $@"                return {funcName}();
         }
         return false;
     }
-}
 ");
 
                 foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> funcKeyValuePair in rulesFuncDict)
@@ -4988,7 +4987,12 @@ $@"
 ");
                 }
 
-                File.WriteAllText(fileName, sb.ToString());
+                sb.Append(
+@"
+}
+                    ");
+
+            File.WriteAllText(fileName, sb.ToString());
             }
             catch (Exception ex)
             {
