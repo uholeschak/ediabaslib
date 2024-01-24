@@ -4840,7 +4840,7 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                             string funcName = "FaultRule_" + ruleInfo.Id.Trim();
                             rulesFuncDict.Add(funcName, ruleInfo);
                             sb.Append(
-$@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormula)};
+$@"                return {funcName}();
 
 "
                             );
@@ -4877,7 +4877,7 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                             string funcName = "EcuFuncRule_" + ruleInfo.Id.Trim();
                             rulesFuncDict.Add(funcName, ruleInfo);
                             sb.Append(
-$@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormula)};
+$@"                return {funcName}();
 
 "
                             );
@@ -4914,7 +4914,7 @@ $@"            case ""{ruleInfo.Id.Trim()}"":
                             string funcName = "DiagObjectRule_" + ruleInfo.Id.Trim();
                             rulesFuncDict.Add(funcName, ruleInfo);
                             sb.Append(
-$@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormula)};
+$@"                return {funcName}();
 
 "
                             );
@@ -4975,6 +4975,18 @@ $@"                return {VehicleInfoBmw.RemoveNonAsciiChars(ruleInfo.RuleFormu
     }
 }
 ");
+
+                foreach (KeyValuePair<string, VehicleStructsBmw.RuleInfo> funcKeyValuePair in rulesFuncDict)
+                {
+                    sb.Append(
+$@"
+    private bool {funcKeyValuePair.Key}()
+    {{
+        return {VehicleInfoBmw.RemoveNonAsciiChars(funcKeyValuePair.Value.RuleFormula)}
+    }}
+");
+                }
+
                 File.WriteAllText(fileName, sb.ToString());
             }
             catch (Exception ex)
