@@ -4982,7 +4982,8 @@ $@"                return {funcName}();
 $@"
     private bool {funcKeyValuePair.Key}()
     {{
-        return {VehicleInfoBmw.RemoveNonAsciiChars(funcKeyValuePair.Value.RuleFormula)}
+        bool result = {VehicleInfoBmw.RemoveNonAsciiChars(funcKeyValuePair.Value.RuleFormula)};
+        return result;
     }}
 ");
                 }
