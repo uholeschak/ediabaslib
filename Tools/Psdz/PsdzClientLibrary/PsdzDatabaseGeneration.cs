@@ -2020,6 +2020,13 @@ namespace PsdzClient
                 VehicleStructsBmw.ServiceData serviceData = null;
                 XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.ServiceData));
                 string serviceDataZipFile = Path.Combine(_databaseExtractPath, VehicleStructsBmw.ServiceDataZipFile);
+                if (serviceModules == null)
+                {
+                    log.ErrorFormat("GenerateVehicleServiceData Deleting file: '{0}'", serviceDataZipFile);
+                    File.Delete(serviceDataZipFile);
+                    return true;
+                }
+
                 if (File.Exists(serviceDataZipFile))
                 {
                     try
@@ -2204,6 +2211,9 @@ namespace PsdzClient
                     {
                         log.InfoFormat("GenerateServiceModuleData Data not valid, Valid: {0}, Complete: {1}, Progress: {2}%, Failures: {3}",
                             dataValid, completed, lastProgress, convertFailures);
+                        // delete old service data file
+                        GenerateVehicleServiceData(null);
+
                         if (progressHandler != null)
                         {
                             progressHandler.Invoke(true, lastProgress, convertFailures);
@@ -2282,10 +2292,13 @@ namespace PsdzClient
                     }
                 }
 
-                if (!GenerateVehicleServiceData(serviceModules))
+                if (checkOnly && completed)
                 {
-                    log.ErrorFormat("GenerateVehicleServiceData failed");
-                    return false;
+                    if (!GenerateVehicleServiceData(serviceModules))
+                    {
+                        log.ErrorFormat("GenerateVehicleServiceData failed");
+                        return false;
+                    }
                 }
 
                 return true;
