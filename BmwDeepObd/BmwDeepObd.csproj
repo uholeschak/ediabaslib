@@ -140,8 +140,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <Target Name="UpdateRuntimePackVersion" BeforeTargets="ProcessFrameworkReferences">
-   <ItemGroup>
-     <KnownRuntimePack Condition="%(RuntimePackLabels) == 'Mono'" LatestRuntimeFrameworkVersion="8.0.0" />
+    <Message Text="Downgrading Mono runtime to version 8.0.0" Importance="High" />
+    <ItemGroup>
+      <KnownRuntimePack Condition="%(RuntimePackLabels) == 'Mono'" LatestRuntimeFrameworkVersion="8.0.0" />
     </ItemGroup>
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
