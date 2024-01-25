@@ -2022,8 +2022,14 @@ namespace PsdzClient
                 string serviceDataZipFile = Path.Combine(_databaseExtractPath, VehicleStructsBmw.ServiceDataZipFile);
                 if (serviceModules == null)
                 {
-                    log.ErrorFormat("GenerateVehicleServiceData Deleting file: '{0}'", serviceDataZipFile);
-                    File.Delete(serviceDataZipFile);
+                    log.ErrorFormat("GenerateVehicleServiceData Data missing");
+
+                    if (File.Exists(serviceDataZipFile))
+                    {
+                        log.InfoFormat("GenerateVehicleServiceData Deleting old file: '{0}'", serviceDataZipFile);
+                        File.Delete(serviceDataZipFile);
+                    }
+
                     return true;
                 }
 
@@ -2292,7 +2298,7 @@ namespace PsdzClient
                     }
                 }
 
-                if (checkOnly && completed)
+                if (checkOnly && serviceModules.Completed)
                 {
                     if (!GenerateVehicleServiceData(serviceModules))
                     {
