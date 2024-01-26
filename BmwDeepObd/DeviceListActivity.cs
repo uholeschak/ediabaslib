@@ -1269,7 +1269,6 @@ namespace BmwDeepObd
                     }
 
                     progress.Dismiss();
-                    progress.Dispose();
 
                     switch (adapterType)
                     {

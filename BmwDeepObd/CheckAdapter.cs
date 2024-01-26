@@ -178,7 +178,6 @@ public class CheckAdapter : IDisposable
                     return;
                 }
                 progress.Dismiss();
-                progress.Dispose();
 
                 switch (adapterType)
                 {

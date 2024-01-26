@@ -167,7 +167,6 @@ namespace BmwDeepObd
                 try
                 {
                     _stopHandler.RemoveCallbacksAndMessages(null);
-                    _stopHandler.Dispose();
                 }
                 catch (Exception)
                 {
