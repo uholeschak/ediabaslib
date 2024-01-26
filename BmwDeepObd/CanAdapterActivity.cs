@@ -1033,7 +1033,6 @@ namespace BmwDeepObd
                     }
 
                     progress.Dismiss();
-                    progress.Dispose();
 
                     UpdateDisplay();
                     if (commFailed)
@@ -1257,7 +1256,6 @@ namespace BmwDeepObd
                     }
 
                     progress.Dismiss();
-                    progress.Dispose();
 
                     if (commFailed)
                     {
@@ -1465,7 +1463,6 @@ namespace BmwDeepObd
                     }
 
                     progress.Dismiss();
-                    progress.Dispose();
 
                     string message;
                     if (updateOk)

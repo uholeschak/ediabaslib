@@ -2551,7 +2551,6 @@ namespace BmwDeepObd
                         return;
                     }
                     progress.Dismiss();
-                    progress.Dispose();
                     _textViewTestFormatOutput.Text = resultText;
 
                     if (executeFailed)

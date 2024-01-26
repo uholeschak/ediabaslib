@@ -375,7 +375,6 @@ namespace BmwDeepObd
                 try
                 {
                     _updateHandler.RemoveCallbacksAndMessages(null);
-                    _updateHandler.Dispose();
                 }
                 catch (Exception)
                 {
@@ -867,7 +866,6 @@ namespace BmwDeepObd
                     if (progress != null)
                     {
                         progress.Dismiss();
-                        progress.Dispose();
                         progress = null;
                         _activityCommon.SetLock(ActivityCommon.LockType.None);
                     }
@@ -884,7 +882,6 @@ namespace BmwDeepObd
                         if (progress != null)
                         {
                             progress.Dismiss();
-                            progress.Dispose();
                             progress = null;
                             _activityCommon.SetLock(ActivityCommon.LockType.None);
                         }
