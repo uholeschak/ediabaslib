@@ -771,7 +771,7 @@ namespace BmwDeepObd
         private EthernetCallback _ethernetCallback;
         private readonly TcpClientWithTimeout.NetworkData _networkData;
         private Handler _btUpdateHandler;
-        private Java.Lang.Runnable _btUpdateRunnable;
+        private readonly Java.Lang.Runnable _btUpdateRunnable;
         private Timer _usbCheckTimer;
         private int _usbDeviceDetectCount;
         private GlobalBroadcastReceiver _gbcReceiver;
@@ -1474,7 +1474,6 @@ namespace BmwDeepObd
                         try
                         {
                             _btUpdateHandler.RemoveCallbacksAndMessages(null);
-                            _btUpdateHandler.Dispose();
                         }
                         catch (Exception)
                         {
@@ -1562,7 +1561,6 @@ namespace BmwDeepObd
                         try
                         {
                             _wakeLockScreenBright.Release();
-                            _wakeLockScreenBright.Dispose();
                         }
                         catch (Exception)
                         {
@@ -1575,7 +1573,6 @@ namespace BmwDeepObd
                         try
                         {
                             _wakeLockScreenDim.Release();
-                            _wakeLockScreenDim.Dispose();
                         }
                         catch (Exception)
                         {
@@ -1588,7 +1585,6 @@ namespace BmwDeepObd
                         try
                         {
                             _wakeLockCpu.Release();
-                            _wakeLockCpu.Dispose();
                         }
                         catch (Exception)
                         {
