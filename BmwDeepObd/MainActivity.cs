@@ -1031,7 +1031,6 @@ namespace BmwDeepObd
                 try
                 {
                     _updateHandler.RemoveCallbacksAndMessages(null);
-                    _updateHandler.Dispose();
                 }
                 catch (Exception)
                 {
@@ -6167,7 +6166,6 @@ namespace BmwDeepObd
                         PostCreateActionBarTabs();
 
                         _compileProgress.Dismiss();
-                        _compileProgress.Dispose();
                         _compileProgress = null;
                         UpdateLockState();
                         if (cpuUsage >= CpuLoadCritical)
@@ -6395,7 +6393,6 @@ namespace BmwDeepObd
                         if (_downloadProgress != null)
                         {
                             _downloadProgress.Dismiss();
-                            _downloadProgress.Dispose();
                             _downloadProgress = null;
                             UpdateLockState();
                         }
@@ -6459,7 +6456,6 @@ namespace BmwDeepObd
                                         if (!yesSelected)
                                         {
                                             _downloadProgress.Dismiss();
-                                            _downloadProgress.Dispose();
                                             _downloadProgress = null;
                                             UpdateLockState();
                                         }
@@ -6476,7 +6472,6 @@ namespace BmwDeepObd
                     }
 
                     _downloadProgress.Dismiss();
-                    _downloadProgress.Dispose();
                     _downloadProgress = null;
                     UpdateLockState();
 
@@ -6963,7 +6958,6 @@ namespace BmwDeepObd
                     if (_downloadProgress != null)
                     {
                         _downloadProgress.Dismiss();
-                        _downloadProgress.Dispose();
                         _downloadProgress = null;
                         UpdateLockState();
                     }

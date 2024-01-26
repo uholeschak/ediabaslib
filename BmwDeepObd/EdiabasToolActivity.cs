@@ -2453,7 +2453,6 @@ namespace BmwDeepObd
                         return;
                     }
                     progress.Dismiss();
-                    progress.Dispose();
 
                     if (IsJobRunning())
                     {

@@ -349,7 +349,6 @@ namespace BmwDeepObd
                 try
                 {
                     _updateHandler.RemoveCallbacksAndMessages(null);
-                    _updateHandler.Dispose();
                 }
                 catch (Exception)
                 {
@@ -1620,7 +1619,6 @@ namespace BmwDeepObd
                         return;
                     }
                     progress.Dismiss();
-                    progress.Dispose();
 
                     if (executeFailed)
                     {
