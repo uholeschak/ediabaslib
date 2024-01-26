@@ -771,7 +771,7 @@ namespace BmwDeepObd
         private EthernetCallback _ethernetCallback;
         private readonly TcpClientWithTimeout.NetworkData _networkData;
         private Handler _btUpdateHandler;
-        private Java.Lang.Runnable _btUpdateRunnable;
+        private readonly Java.Lang.Runnable _btUpdateRunnable;
         private Timer _usbCheckTimer;
         private int _usbDeviceDetectCount;
         private GlobalBroadcastReceiver _gbcReceiver;
@@ -1474,7 +1474,6 @@ namespace BmwDeepObd
                         try
                         {
                             _btUpdateHandler.RemoveCallbacksAndMessages(null);
-                            _btUpdateHandler.Dispose();
                         }
                         catch (Exception)
                         {
@@ -1562,7 +1561,6 @@ namespace BmwDeepObd
                         try
                         {
                             _wakeLockScreenBright.Release();
-                            _wakeLockScreenBright.Dispose();
                         }
                         catch (Exception)
                         {
@@ -1575,7 +1573,6 @@ namespace BmwDeepObd
                         try
                         {
                             _wakeLockScreenDim.Release();
-                            _wakeLockScreenDim.Dispose();
                         }
                         catch (Exception)
                         {
@@ -1588,7 +1585,6 @@ namespace BmwDeepObd
                         try
                         {
                             _wakeLockCpu.Release();
-                            _wakeLockCpu.Dispose();
                         }
                         catch (Exception)
                         {
@@ -5055,7 +5051,6 @@ namespace BmwDeepObd
                     if (progress != null)
                     {
                         progress.Dismiss();
-                        progress.Dispose();
                         progress = null;
                         SetLock(LockType.None);
                     }
@@ -6988,7 +6983,6 @@ namespace BmwDeepObd
                         if (progress != null)
                         {
                             progress.Dismiss();
-                            progress.Dispose();
                             progress = null;
                             SetLock(LockType.None);
                         }
@@ -7074,7 +7068,6 @@ namespace BmwDeepObd
                                         if (progress != null)
                                         {
                                             progress.Dismiss();
-                                            progress.Dispose();
                                             progress = null;
                                             SetLock(LockType.None);
                                         }
@@ -7163,7 +7156,6 @@ namespace BmwDeepObd
                         if (progress != null)
                         {
                             progress.Dismiss();
-                            progress.Dispose();
                             progress = null;
                             SetLock(LockType.None);
                         }
@@ -10165,7 +10157,7 @@ namespace BmwDeepObd
                                 finally
                                 {
                                     fsRead?.Dispose();
-                                    assetFile?.Dispose();
+                                    assetFile?.Close();
                                 }
 
                                 break;
@@ -10885,7 +10877,6 @@ namespace BmwDeepObd
                         return;
                     }
                     progress.Dismiss();
-                    progress.Dispose();
                     progress = null;
                     SetLock(LockType.None);
                     if (!result)
@@ -11092,7 +11083,6 @@ namespace BmwDeepObd
                         return;
                     }
                     progress.Dismiss();
-                    progress.Dispose();
                     progress = null;
                     SetLock(LockType.None);
                     if (!result)
@@ -11512,7 +11502,6 @@ namespace BmwDeepObd
                     }
 
                     progress.Dismiss();
-                    progress.Dispose();
                     progress = null;
                     SetLock(LockType.None);
                     if (!result && !aborted)
@@ -11728,7 +11717,6 @@ namespace BmwDeepObd
                     }
 
                     progress.Dismiss();
-                    progress.Dispose();
                     progress = null;
                     SetLock(LockType.None);
                     if (!result && !aborted)

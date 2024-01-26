@@ -1028,7 +1028,6 @@ namespace BmwDeepObd
                 try
                 {
                     _menuUpdateHandler.RemoveCallbacksAndMessages(null);
-                    _menuUpdateHandler.Dispose();
                 }
                 catch (Exception)
                 {
@@ -4225,7 +4224,6 @@ namespace BmwDeepObd
                         return;
                     }
                     progress.Dismiss();
-                    progress.Dispose();
                     progress = null;
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
 
@@ -5033,7 +5031,6 @@ namespace BmwDeepObd
                         return;
                     }
                     progress.Dismiss();
-                    progress.Dispose();
                     progress = null;
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
 
@@ -6004,7 +6001,6 @@ namespace BmwDeepObd
         private void ReadJobThreadDone(EcuInfo ecuInfo, CustomProgressDialog progress, bool readFailed)
         {
             progress.Dismiss();
-            progress.Dispose();
             _activityCommon.SetLock(ActivityCommon.LockType.None);
 
             UpdateOptionsMenu();
@@ -7535,7 +7531,6 @@ namespace BmwDeepObd
                         return;
                     }
                     progress.Dismiss();
-                    progress.Dispose();
                     progress = null;
 
                     _ecuListTranslated = false;
