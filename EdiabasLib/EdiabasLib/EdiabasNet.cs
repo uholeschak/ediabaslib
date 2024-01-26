@@ -5593,29 +5593,35 @@ namespace EdiabasLib
                 return;
             }
 
-            for (int i = 0; i < args.Length; i++)
+            List<object> argList = new List<object>();
+            foreach (object arg in args)
             {
-                if (args[i] == null)
+                if (arg is string argString)
                 {
+                    string argItem = "'" + argString + "'";
+                    argList.Add(argItem);
                     continue;
                 }
-                if (args[i] is string)
-                {
-                    args[i] = "'" + (string)args[i] + "'";
-                }
-                if (args[i] is byte[])
-                {
-                    byte[] argArray = (byte[])args[i];
-                    StringBuilder stringBuilder = new StringBuilder(argArray.Length);
-                    foreach (byte arg in argArray)
-                    {
-                        stringBuilder.Append(string.Format(Culture, "{0:X02} ", arg));
-                    }
 
-                    args[i] = "[" + stringBuilder + "]";
+                if (arg is byte[] argArray)
+                {
+                    StringBuilder stringBuilder = new StringBuilder(argArray.Length);
+                    stringBuilder.Append("[");
+                    foreach (byte argByte in argArray)
+                    {
+                        stringBuilder.Append(string.Format(Culture, "{0:X02} ", argByte));
+                    }
+                    stringBuilder.Append("]");
+
+                    string argItem = stringBuilder.ToString();
+                    argList.Add(argItem);
+                    continue;
                 }
+
+                argList.Add(arg);
             }
-            LogString(logLevel, string.Format(Culture, format, args));
+
+            LogString(logLevel, string.Format(Culture, format, argList.ToArray()));
         }
 
         public void LogString(EdLogLevel logLevel, string info)
