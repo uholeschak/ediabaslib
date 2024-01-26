@@ -201,22 +201,11 @@
 
         public void DestroyLayout(JobReader.PageInfo pageInfo)
         {
-            buttonBlockSize?.Dispose();
             buttonBlockSize = null;
-
-            buttonSepTime0?.Dispose();
             buttonSepTime0 = null;
-
-            buttonSepTime1?.Dispose();
             buttonSepTime1 = null;
-
-            buttonCan500?.Dispose();
             buttonCan500 = null;
-
-            buttonCan100?.Dispose();
             buttonCan100 = null;
-
-            buttonCanOff?.Dispose();
             buttonCanOff = null;
             //Android.Util.Log.Info("Custom", "Destroyed");
         }
