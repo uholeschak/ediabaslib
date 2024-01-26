@@ -374,10 +374,12 @@ namespace BmwFileReader
             {
                 logInfo = true;
             }
+#if false
             if (string.Compare(name, "EcuClique", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 logInfo = true;
             }
+#endif
 #endif
 
             List<string> propertyStrings = GetPropertyStrings(name);
