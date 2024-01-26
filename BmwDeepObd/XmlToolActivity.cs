@@ -3704,6 +3704,7 @@ namespace BmwDeepObd
                                                 if (!EcuListContainsAddr(ecuList, ecuAdr))
                                                 {
                                                     // address not existing
+                                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL Addr missing: {0}", ecuAdr);
                                                     EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuDesc, ecuSgbd, ecuGroup);
                                                     if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                                                     {
