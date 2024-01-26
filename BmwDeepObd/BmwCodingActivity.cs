@@ -1297,7 +1297,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas connect, SessionId={0}", sessionId);
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas connect, SessionId={0}", sessionId);
 
                 try
                 {
