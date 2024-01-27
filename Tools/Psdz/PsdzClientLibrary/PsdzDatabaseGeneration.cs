@@ -4008,7 +4008,7 @@ namespace PsdzClient
             {
                 Regex dateFormulaRegex = new Regex(@"(RuleNum\(""Baustand""\))\s*([<>=]+)\s*([0-9]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
                 Regex ecuCliqueFormulaRegex = new Regex(@"IsValidRuleString\(""EcuClique""\s*,\s*""([a-zA-Z0-9_\-]+)""\s*\)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-                RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", null, "|");
+                RuleExpression.FormulaConfig formulaConfig = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", false, null, "|");
 
                 List<string> typeKeys = GetAllTypeKeys();
                 if (typeKeys == null)
@@ -4838,9 +4838,9 @@ public class RulesInfo
         RuleEvalClass = ruleEvalBmw;
     }}
 
-    public bool IsFaultRuleValid(string id)
+    public bool IsFaultRuleValid(ulong id)
     {{
-        switch (id.Trim())
+        switch (id)
         {{
 ");
                 {
@@ -4849,7 +4849,7 @@ public class RulesInfo
                     foreach (VehicleStructsBmw.RuleInfo ruleInfo in faultRuleListOrder)
                     {
                         sb.Append(
-$@"            case ""{ruleInfo.Id.Trim()}"":
+$@"            case {ruleInfo.Id.Trim()}:
 "
                         );
 
@@ -4871,13 +4871,13 @@ $@"                return {funcName}();
                 sb.Append(
 @"        }
 
-        RuleNotFound(id.Trim());
+        RuleNotFound(id);
         return true;
     }
 
-    public bool IsEcuFuncRuleValid(string id)
+    public bool IsEcuFuncRuleValid(ulong id)
     {
-        switch (id.Trim())
+        switch (id)
         {
 ");
                 {
@@ -4886,7 +4886,7 @@ $@"                return {funcName}();
                     foreach (VehicleStructsBmw.RuleInfo ruleInfo in ecuFuncRuleListOrder)
                     {
                         sb.Append(
-$@"            case ""{ruleInfo.Id.Trim()}"":
+$@"            case {ruleInfo.Id.Trim()}:
 "
                         );
 
@@ -4908,13 +4908,13 @@ $@"                return {funcName}();
                 sb.Append(
 @"        }
 
-        RuleNotFound(id.Trim());
+        RuleNotFound(id);
         return true;
     }
 
-    public bool IsDiagObjectRuleValid(string id)
+    public bool IsDiagObjectRuleValid(ulong id)
     {
-        switch (id.Trim())
+        switch (id)
         {
 ");
                 {
@@ -4923,7 +4923,7 @@ $@"                return {funcName}();
                     foreach (VehicleStructsBmw.RuleInfo ruleInfo in diagObjectRuleListOrder)
                     {
                         sb.Append(
-$@"            case ""{ruleInfo.Id.Trim()}"":
+$@"            case {ruleInfo.Id.Trim()}:
 "
                         );
 
@@ -4945,11 +4945,11 @@ $@"                return {funcName}();
                 sb.Append(
 @"        }
 
-        RuleNotFound(id.Trim());
+        RuleNotFound(id);
         return true;
     }
 
-    private void RuleNotFound(string id)
+    private void RuleNotFound(ulong id)
     {
         if (RuleEvalClass != null)
         {
@@ -5009,7 +5009,7 @@ $@"
                 sb.Append(
 @"
 }
-                    ");
+");
 
             File.WriteAllText(fileName, sb.ToString());
             }

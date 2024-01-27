@@ -74,14 +74,22 @@ namespace PsdzClient.Core
             if (ecuPrgVar != null && ecuVar != null)
             {
                 stringBuilder.Append(formulaConfig.RuleValidFunc);
-                stringBuilder.Append("(\"");
+                stringBuilder.Append("(");
+                if (!formulaConfig.IsRuleValidNumFunc)
+                {
+                    stringBuilder.Append("\"");
+                }
                 string ruleId = ecuPrgVar.EcuVarId;
                 stringBuilder.Append(ruleId);
                 if (formulaConfig.SubRuleIds != null && !formulaConfig.SubRuleIds.Contains(ruleId))
                 {
                     formulaConfig.SubRuleIds.Add(ruleId);
                 }
-                stringBuilder.Append("\")");
+                if (!formulaConfig.IsRuleValidNumFunc)
+                {
+                    stringBuilder.Append("\"");
+                }
+                stringBuilder.Append(")");
 
                 stringBuilder.Append(" && ");
 

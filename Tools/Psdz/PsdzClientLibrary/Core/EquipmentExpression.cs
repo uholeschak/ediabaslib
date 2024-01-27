@@ -126,7 +126,11 @@ namespace PsdzClient.Core
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(formulaConfig.RuleValidFunc);
-            stringBuilder.Append("(\"");
+            stringBuilder.Append("(");
+            if (!formulaConfig.IsRuleValidNumFunc)
+            {
+                stringBuilder.Append("\"");
+            }
             if (equipmentById != null)
             {
                 string ruleId = this.value.ToString(CultureInfo.InvariantCulture);
@@ -136,7 +140,11 @@ namespace PsdzClient.Core
                     formulaConfig.SubRuleIds.Add(ruleId);
                 }
             }
-            stringBuilder.Append("\")");
+            if (!formulaConfig.IsRuleValidNumFunc)
+            {
+                stringBuilder.Append("\"");
+            }
+            stringBuilder.Append(")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
 
             return stringBuilder.ToString();

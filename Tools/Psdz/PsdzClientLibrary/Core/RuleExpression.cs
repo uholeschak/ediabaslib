@@ -13,13 +13,14 @@ namespace PsdzClient.Core
 	{
         public class FormulaConfig
         {
-            public FormulaConfig(string getStringFunc, string getLongFunc, string checkStringFunc, string checkLongFunc, string ruleValidFunc, List<string> subRuleIds = null, string operatorSeparator = null)
+            public FormulaConfig(string getStringFunc, string getLongFunc, string checkStringFunc, string checkLongFunc, string ruleValidFunc, bool isRuleValidNumFunc = false, List<string> subRuleIds = null, string operatorSeparator = null)
             {
                 GetStringFunc = getStringFunc;
                 GetLongFunc = getLongFunc;
                 CheckStringFunc = checkStringFunc;
                 CheckLongFunc = checkLongFunc;
                 RuleValidFunc = ruleValidFunc;
+                IsRuleValidNumFunc = isRuleValidNumFunc;
                 SubRuleIds = subRuleIds;
                 OperatorSeparator = operatorSeparator;
             }
@@ -29,6 +30,7 @@ namespace PsdzClient.Core
             public string CheckStringFunc { get; private set; }
             public string CheckLongFunc { get; private set; }
             public string RuleValidFunc { get; private set; }
+            public bool IsRuleValidNumFunc { get; private set; }
             public List<string> SubRuleIds { get; private set; }
             public string OperatorSeparator { get; private set; }
         }

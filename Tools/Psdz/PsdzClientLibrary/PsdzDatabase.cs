@@ -1302,7 +1302,7 @@ namespace PsdzClient
                     RuleExpression.FormulaConfig formulaConfigCurrent = formulaConfig;
                     if (formulaConfigCurrent == null)
                     {
-                        formulaConfigCurrent = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", subRuleIds);
+                        formulaConfigCurrent = new RuleExpression.FormulaConfig("RuleString", "RuleNum", "IsValidRuleString", "IsValidRuleNum", "IsFaultRuleValid", true, subRuleIds);
                     }
                     return ruleExpression.ToFormula(formulaConfigCurrent);
                 }
