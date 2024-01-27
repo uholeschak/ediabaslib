@@ -448,11 +448,13 @@ namespace BmwFileReader
                         }
                         if (string.Compare(zipEntry.Name, fileName, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            Stream zipStream = zf.GetInputStream(zipEntry);
-                            using (TextReader reader = new StreamReader(zipStream))
+                            using (Stream zipStream = zf.GetInputStream(zipEntry))
                             {
-                                XmlSerializer serializer = new XmlSerializer(type);
-                                ecuObject = serializer.Deserialize(reader);
+                                using (TextReader reader = new StreamReader(zipStream))
+                                {
+                                    XmlSerializer serializer = new XmlSerializer(type);
+                                    ecuObject = serializer.Deserialize(reader);
+                                }
                             }
                             break;
                         }

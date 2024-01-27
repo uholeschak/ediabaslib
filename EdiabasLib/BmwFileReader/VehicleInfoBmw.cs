@@ -274,11 +274,13 @@ namespace BmwFileReader
 
                                 if (string.Compare(zipEntry.Name, VehicleStructsBmw.VehicleSeriesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    Stream zipStream = zf.GetInputStream(zipEntry);
-                                    using (TextReader reader = new StreamReader(zipStream))
+                                    using (Stream zipStream = zf.GetInputStream(zipEntry))
                                     {
-                                        XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
-                                        _vehicleSeriesInfoData = serializer.Deserialize(reader) as VehicleStructsBmw.VehicleSeriesInfoData;
+                                        using (TextReader reader = new StreamReader(zipStream))
+                                        {
+                                            XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.VehicleSeriesInfoData));
+                                            _vehicleSeriesInfoData = serializer.Deserialize(reader) as VehicleStructsBmw.VehicleSeriesInfoData;
+                                        }
                                     }
                                 }
                             }
@@ -382,11 +384,13 @@ namespace BmwFileReader
                             }
                             if (string.Compare(zipEntry.Name, VehicleStructsBmw.RulesXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                Stream zipStream = zf.GetInputStream(zipEntry);
-                                using (StreamReader sr = new StreamReader(zipStream))
+                                using (Stream zipStream = zf.GetInputStream(zipEntry))
                                 {
-                                    XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.RulesInfoData));
-                                    _rulesInfoData = serializer.Deserialize(sr) as VehicleStructsBmw.RulesInfoData;
+                                    using (StreamReader sr = new StreamReader(zipStream))
+                                    {
+                                        XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.RulesInfoData));
+                                        _rulesInfoData = serializer.Deserialize(sr) as VehicleStructsBmw.RulesInfoData;
+                                    }
                                 }
 
                                 break;
@@ -435,11 +439,13 @@ namespace BmwFileReader
                             }
                             if (string.Compare(zipEntry.Name, VehicleStructsBmw.ServiceDataXmlFile, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                Stream zipStream = zf.GetInputStream(zipEntry);
-                                using (StreamReader sr = new StreamReader(zipStream))
+                                using (Stream zipStream = zf.GetInputStream(zipEntry))
                                 {
-                                    XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.ServiceData));
-                                    _serviceData = serializer.Deserialize(sr) as VehicleStructsBmw.ServiceData;
+                                    using (StreamReader sr = new StreamReader(zipStream))
+                                    {
+                                        XmlSerializer serializer = new XmlSerializer(typeof(VehicleStructsBmw.ServiceData));
+                                        _serviceData = serializer.Deserialize(sr) as VehicleStructsBmw.ServiceData;
+                                    }
                                 }
 
                                 break;
@@ -554,39 +560,41 @@ namespace BmwFileReader
 
                             if (string.Compare(zipEntry.Name, "typekeyinfo.txt", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                Stream zipStream = zf.GetInputStream(zipEntry);
-                                using (StreamReader sr = new StreamReader(zipStream))
+                                using (Stream zipStream = zf.GetInputStream(zipEntry))
                                 {
-                                    while (sr.Peek() >= 0)
+                                    using (StreamReader sr = new StreamReader(zipStream))
                                     {
-                                        string line = sr.ReadLine();
-                                        if (line == null)
+                                        while (sr.Peek() >= 0)
                                         {
-                                            break;
-                                        }
-
-                                        bool isHeader = line.StartsWith("#");
-                                        if (isHeader)
-                                        {
-                                            line = line.TrimStart('#');
-                                        }
-
-                                        string[] lineArray = line.Split('|');
-                                        if (isHeader)
-                                        {
-                                            itemNames = lineArray.ToList();
-                                            continue;
-                                        }
-
-                                        if (lineArray.Length > 1)
-                                        {
-                                            string key = lineArray[0].Trim();
-
-                                            if (!string.IsNullOrEmpty(key))
+                                            string line = sr.ReadLine();
+                                            if (line == null)
                                             {
-                                                List<string> lineList = lineArray.ToList();
-                                                lineList.RemoveAt(0);
-                                                typeKeyDict.TryAdd(key, lineList);
+                                                break;
+                                            }
+
+                                            bool isHeader = line.StartsWith("#");
+                                            if (isHeader)
+                                            {
+                                                line = line.TrimStart('#');
+                                            }
+
+                                            string[] lineArray = line.Split('|');
+                                            if (isHeader)
+                                            {
+                                                itemNames = lineArray.ToList();
+                                                continue;
+                                            }
+
+                                            if (lineArray.Length > 1)
+                                            {
+                                                string key = lineArray[0].Trim();
+
+                                                if (!string.IsNullOrEmpty(key))
+                                                {
+                                                    List<string> lineList = lineArray.ToList();
+                                                    lineList.RemoveAt(0);
+                                                    typeKeyDict.TryAdd(key, lineList);
+                                                }
                                             }
                                         }
                                     }
@@ -652,54 +660,56 @@ namespace BmwFileReader
                             }
                             if (string.Compare(zipEntry.Name, "vinranges.txt", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                Stream zipStream = zf.GetInputStream(zipEntry);
-                                using (StreamReader sr = new StreamReader(zipStream))
+                                using (Stream zipStream = zf.GetInputStream(zipEntry))
                                 {
-                                    while (sr.Peek() >= 0)
+                                    using (StreamReader sr = new StreamReader(zipStream))
                                     {
-                                        string line = sr.ReadLine();
-                                        if (line == null)
+                                        while (sr.Peek() >= 0)
                                         {
-                                            break;
-                                        }
-
-                                        bool isComment = line.StartsWith("#");
-                                        if (isComment)
-                                        {
-                                            continue;
-                                        }
-
-                                        string[] lineArray = line.Split(',');
-                                        if (lineArray.Length >= 3 &&
-                                            lineArray[0].Length == 7 && lineArray[1].Length == 7)
-                                        {
-                                            if (string.Compare(serialNumber, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
-                                                string.Compare(serialNumber, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
+                                            string line = sr.ReadLine();
+                                            if (line == null)
                                             {
-                                                string typeKey = lineArray[2];
+                                                break;
+                                            }
 
-                                                string prodYear = null;
-                                                string prodMonth = null;
-                                                if (lineArray.Length >= 5)
+                                            bool isComment = line.StartsWith("#");
+                                            if (isComment)
+                                            {
+                                                continue;
+                                            }
+
+                                            string[] lineArray = line.Split(',');
+                                            if (lineArray.Length >= 3 &&
+                                                lineArray[0].Length == 7 && lineArray[1].Length == 7)
+                                            {
+                                                if (string.Compare(serialNumber, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
+                                                    string.Compare(serialNumber, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
                                                 {
-                                                    prodYear = lineArray[3];
-                                                    prodMonth = lineArray[4];
-                                                }
+                                                    string typeKey = lineArray[2];
 
-                                                string releaseState = null;
-                                                if (lineArray.Length >= 6)
-                                                {
-                                                    releaseState = lineArray[5];
-                                                }
+                                                    string prodYear = null;
+                                                    string prodMonth = null;
+                                                    if (lineArray.Length >= 5)
+                                                    {
+                                                        prodYear = lineArray[3];
+                                                        prodMonth = lineArray[4];
+                                                    }
 
-                                                string gearBox = null;
-                                                if (lineArray.Length >= 7)
-                                                {
-                                                    gearBox = lineArray[6];
-                                                }
+                                                    string releaseState = null;
+                                                    if (lineArray.Length >= 6)
+                                                    {
+                                                        releaseState = lineArray[5];
+                                                    }
 
-                                                VinRangeInfo vinRangeInfo = new VinRangeInfo(typeKey, prodYear, prodMonth, releaseState, gearBox);
-                                                return vinRangeInfo;
+                                                    string gearBox = null;
+                                                    if (lineArray.Length >= 7)
+                                                    {
+                                                        gearBox = lineArray[6];
+                                                    }
+
+                                                    VinRangeInfo vinRangeInfo = new VinRangeInfo(typeKey, prodYear, prodMonth, releaseState, gearBox);
+                                                    return vinRangeInfo;
+                                                }
                                             }
                                         }
                                     }
