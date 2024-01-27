@@ -2903,10 +2903,13 @@ namespace EdiabasLib
 
             if (File.Exists(configFile))
             {
-                XmlDocument xdocConfig = new XmlDocument();
                 try
                 {
-                    xdocConfig.Load(configFile);
+                    XmlDocument xdocConfig = new XmlDocument();
+                    using (FileStream fs = new FileStream(configFile, FileMode.Open))
+                    {
+                        xdocConfig.Load(fs);
+                    }
                     SetConfigProperty("EdiabasIniPath", Path.GetDirectoryName(configFile));
                     ReadAllSettingsProperties(xdocConfig);
                 }
