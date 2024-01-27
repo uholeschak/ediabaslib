@@ -25,7 +25,7 @@ namespace BmwFileReader
         private RulesInfo _rulesInfo { get; }
         private readonly Dictionary<string, List<string>> _propertiesDict = new Dictionary<string, List<string>>();
         private readonly HashSet<string> _unknownNamesHash = new HashSet<string>();
-        private string _unknownId;
+        private ulong? _unknownId;
         private readonly object _lockObject = new object();
 
         public RuleEvalBmw()
@@ -38,6 +38,14 @@ namespace BmwFileReader
             if (string.IsNullOrEmpty(id))
             {
                 return false;
+            }
+
+            if (!ulong.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out ulong idValue))
+            {
+#if DEBUG
+                Log.Info(Tag, string.Format("EvaluateRule Convert id failed: '{0}'", id));
+#endif
+                return true;
             }
 
             lock (_lockObject)
@@ -56,15 +64,15 @@ namespace BmwFileReader
                     switch (ruleType)
                     {
                         case RuleType.Fault:
-                            valid = _rulesInfo.IsFaultRuleValid(id);
+                            valid = _rulesInfo.IsFaultRuleValid(idValue);
                             break;
 
                         case RuleType.EcuFunc:
-                            valid = _rulesInfo.IsEcuFuncRuleValid(id);
+                            valid = _rulesInfo.IsEcuFuncRuleValid(idValue);
                             break;
 
                         case RuleType.DiagObj:
-                            valid = _rulesInfo.IsDiagObjectRuleValid(id);
+                            valid = _rulesInfo.IsDiagObjectRuleValid(idValue);
                             break;
                     }
 
@@ -334,7 +342,7 @@ namespace BmwFileReader
             return missingRules;
         }
 
-        public void RuleNotFound(string id)
+        public void RuleNotFound(ulong id)
         {
             _unknownId = id;
         }
