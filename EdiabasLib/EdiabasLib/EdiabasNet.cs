@@ -5714,7 +5714,10 @@ namespace EdiabasLib
                                         {
                                             if (zipEntry.IsFile && string.Compare(zipEntry.Name, traceFileName, StringComparison.OrdinalIgnoreCase) == 0)
                                             {
-                                                ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(zf.GetInputStream(zipEntry), _zipStream, new byte[4096]);
+                                                using (Stream inputStream = zf.GetInputStream(zipEntry))
+                                                {
+                                                    ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(inputStream, _zipStream, new byte[4096]);
+                                                }
                                                 break;
                                             }
                                         }
