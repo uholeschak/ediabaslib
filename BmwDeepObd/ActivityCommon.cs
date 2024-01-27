@@ -10733,70 +10733,73 @@ namespace BmwDeepObd
                     {
                         continue;           // Ignore directories
                     }
-                    Stream zipStream = zf.GetInputStream(zipEntry);
-                    using (StreamReader sr = new StreamReader(zipStream))
-                    {
-                        bool exit = false;
-                        for (; ; )
-                        {
-                            string line = sr.ReadLine();
-                            if (line == null)
-                            {
-                                break;
-                            }
 
-                            if (regExLine != null)
+                    using (Stream zipStream = zf.GetInputStream(zipEntry))
+                    {
+                        using (StreamReader sr = new StreamReader(zipStream))
+                        {
+                            bool exit = false;
+                            for (; ; )
                             {
-                                MatchCollection matchesLine = regExLine.Matches(line);
-                                if ((matchesLine.Count == 1) && (matchesLine[0].Groups.Count > 1))
+                                string line = sr.ReadLine();
+                                if (line == null)
                                 {
-                                    for (int match = 1; match < matchesLine[0].Groups.Count; match++)
+                                    break;
+                                }
+
+                                if (regExLine != null)
+                                {
+                                    MatchCollection matchesLine = regExLine.Matches(line);
+                                    if ((matchesLine.Count == 1) && (matchesLine[0].Groups.Count > 1))
                                     {
-                                        if (matchesLine[0].Groups[match].Success)
+                                        for (int match = 1; match < matchesLine[0].Groups.Count; match++)
                                         {
-                                            string key = matchesLine[0].Groups[match].Value;
-                                            if (!string.IsNullOrWhiteSpace(key))
+                                            if (matchesLine[0].Groups[match].Success)
                                             {
-                                                if (wordDict.ContainsKey(key))
+                                                string key = matchesLine[0].Groups[match].Value;
+                                                if (!string.IsNullOrWhiteSpace(key))
                                                 {
-                                                    wordDict[key] += 1;
-                                                }
-                                                else
-                                                {
-                                                    wordDict[key] = 1;
+                                                    if (wordDict.ContainsKey(key))
+                                                    {
+                                                        wordDict[key] += 1;
+                                                    }
+                                                    else
+                                                    {
+                                                        wordDict[key] = 1;
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
-                            }
 
-                            string[] words = line.Split(' ', '\t', '\n', '\r');
-                            foreach (string word in words)
-                            {
-                                if (string.IsNullOrEmpty(word))
+                                string[] words = line.Split(' ', '\t', '\n', '\r');
+                                foreach (string word in words)
                                 {
-                                    continue;
-                                }
-                                if (regExWord.IsMatch(word))
-                                {
-                                    if (wordDict.ContainsKey(word))
+                                    if (string.IsNullOrEmpty(word))
                                     {
-                                        wordDict[word] += 1;
+                                        continue;
                                     }
-                                    else
+                                    if (regExWord.IsMatch(word))
                                     {
-                                        if (maxWords > 0 && wordDict.Count > maxWords)
+                                        if (wordDict.ContainsKey(word))
                                         {
-                                            exit = true;
+                                            wordDict[word] += 1;
                                         }
-                                        wordDict[word] = 1;
+                                        else
+                                        {
+                                            if (maxWords > 0 && wordDict.Count > maxWords)
+                                            {
+                                                exit = true;
+                                            }
+                                            wordDict[word] = 1;
+                                        }
                                     }
                                 }
-                            }
-                            if (exit)
-                            {
-                                break;
+                                if (exit)
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
