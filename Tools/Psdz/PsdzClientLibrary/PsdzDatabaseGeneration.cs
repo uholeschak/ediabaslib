@@ -4838,7 +4838,11 @@ public class RulesInfo
 
     private delegate bool RuleDelegate();
 
-    private Dictionary<ulong, RuleDelegate> faultRuleDict;
+    private readonly Dictionary<ulong, RuleDelegate> faultRuleDict;
+
+    private readonly Dictionary<ulong, RuleDelegate> ecuFuncRuleDict;
+
+    private readonly Dictionary<ulong, RuleDelegate> diagObjectRuleDict;
 
     public RulesInfo(RuleEvalBmw ruleEvalBmw)
     {
@@ -4874,6 +4878,68 @@ $@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
 
                 sb.Append(
 @"      };
+
+        ecuFuncRuleDict = new Dictionary<ulong, RuleDelegate>()
+        {
+");
+                {
+                    string funcNameLast = null;
+                    VehicleStructsBmw.RuleInfo ruleInfoLast = null;
+                    VehicleStructsBmw.RuleInfo ruleInfoEnd = ecuFuncRuleListOrder.Last();
+                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in ecuFuncRuleListOrder)
+                    {
+                        if (funcNameLast == null)
+                        {
+                            funcNameLast = "EcuFuncRule_" + ruleInfo.Id.Trim();
+                        }
+
+                        sb.Append(
+$@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
+");
+                        if (ruleInfoEnd == ruleInfo ||
+                            (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
+                        {
+                            rulesFuncDict.Add(funcNameLast, ruleInfo);
+                            funcNameLast = null;
+                        }
+
+                        ruleInfoLast = ruleInfo;
+                    }
+                }
+
+                sb.Append(
+@"      };
+
+        diagObjectRuleDict = new Dictionary<ulong, RuleDelegate>()
+        {
+");
+                {
+                    string funcNameLast = null;
+                    VehicleStructsBmw.RuleInfo ruleInfoLast = null;
+                    VehicleStructsBmw.RuleInfo ruleInfoEnd = diagObjectRuleListOrder.Last();
+                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in diagObjectRuleListOrder)
+                    {
+                        if (funcNameLast == null)
+                        {
+                            funcNameLast = "DiagObjectRule_" + ruleInfo.Id.Trim();
+                        }
+
+                        sb.Append(
+$@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
+");
+                        if (ruleInfoEnd == ruleInfo ||
+                            (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
+                        {
+                            rulesFuncDict.Add(funcNameLast, ruleInfo);
+                            funcNameLast = null;
+                        }
+
+                        ruleInfoLast = ruleInfo;
+                    }
+                }
+
+                sb.Append(
+@"      };
     }
 
     public bool IsFaultRuleValid(ulong id)
@@ -4889,36 +4955,10 @@ $@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
 
     public bool IsEcuFuncRuleValid(ulong id)
     {
-        switch (id)
+        if (ecuFuncRuleDict.TryGetValue(id, out RuleDelegate ruleDelegate))
         {
-");
-                {
-                    VehicleStructsBmw.RuleInfo ruleInfoLast = null;
-                    VehicleStructsBmw.RuleInfo ruleInfoEnd = ecuFuncRuleListOrder.Last();
-                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in ecuFuncRuleListOrder)
-                    {
-                        sb.Append(
-$@"            case {ruleInfo.Id.Trim()}:
-"
-                        );
-
-                        if (ruleInfoEnd == ruleInfo ||
-                            (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
-                        {
-                            string funcName = "EcuFuncRule_" + ruleInfo.Id.Trim();
-                            rulesFuncDict.Add(funcName, ruleInfo);
-                            sb.Append(
-$@"                return {funcName}();
-
-"
-                            );
-                        }
-
-                        ruleInfoLast = ruleInfo;
-                    }
-                }
-                sb.Append(
-@"        }
+            return ruleDelegate();
+        }
 
         RuleNotFound(id);
         return true;
@@ -4926,36 +4966,10 @@ $@"                return {funcName}();
 
     public bool IsDiagObjectRuleValid(ulong id)
     {
-        switch (id)
+        if (diagObjectRuleDict.TryGetValue(id, out RuleDelegate ruleDelegate))
         {
-");
-                {
-                    VehicleStructsBmw.RuleInfo ruleInfoLast = null;
-                    VehicleStructsBmw.RuleInfo ruleInfoEnd = diagObjectRuleListOrder.Last();
-                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in diagObjectRuleListOrder)
-                    {
-                        sb.Append(
-$@"            case {ruleInfo.Id.Trim()}:
-"
-                        );
-
-                        if (ruleInfoEnd == ruleInfo ||
-                            (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
-                        {
-                            string funcName = "DiagObjectRule_" + ruleInfo.Id.Trim();
-                            rulesFuncDict.Add(funcName, ruleInfo);
-                            sb.Append(
-$@"                return {funcName}();
-
-"
-                            );
-                        }
-
-                        ruleInfoLast = ruleInfo;
-                    }
-                }
-                sb.Append(
-@"        }
+            return ruleDelegate();
+        }
 
         RuleNotFound(id);
         return true;
