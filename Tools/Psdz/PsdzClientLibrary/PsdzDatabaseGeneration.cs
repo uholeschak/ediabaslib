@@ -4830,46 +4830,58 @@ public class RulesInfo
     public const string DatabaseDate = ""{dbInfo.DateTime.ToString(CultureInfo.InvariantCulture)}"";
 
     public static List<string> RuleNames = new List<string> {{ {sbRuleNames} }};
+");
 
-    public RuleEvalBmw RuleEvalClass {{ get; private set; }}
+                sb.Append(
+@"
+    public RuleEvalBmw RuleEvalClass { get; private set; }
+
+    private delegate bool RuleDelegate();
+
+    private Dictionary<ulong, RuleDelegate> faultRuleDict;
 
     public RulesInfo(RuleEvalBmw ruleEvalBmw)
-    {{
+    {
         RuleEvalClass = ruleEvalBmw;
-    }}
 
-    public bool IsFaultRuleValid(ulong id)
-    {{
-        switch (id)
-        {{
+        faultRuleDict = new Dictionary<ulong, RuleDelegate>()
+        {
 ");
                 {
+                    string funcNameLast = null;
                     VehicleStructsBmw.RuleInfo ruleInfoLast = null;
                     VehicleStructsBmw.RuleInfo ruleInfoEnd = faultRuleListOrder.Last();
                     foreach (VehicleStructsBmw.RuleInfo ruleInfo in faultRuleListOrder)
                     {
-                        sb.Append(
-$@"            case {ruleInfo.Id.Trim()}:
-"
-                        );
+                        if (funcNameLast == null)
+                        {
+                            funcNameLast = "FaultRule_" + ruleInfo.Id.Trim();
+                        }
 
+                        sb.Append(
+$@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
+");
                         if (ruleInfoEnd == ruleInfo ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
-                            string funcName = "FaultRule_" + ruleInfo.Id.Trim();
-                            rulesFuncDict.Add(funcName, ruleInfo);
-                            sb.Append(
-$@"                return {funcName}();
-
-"
-                            );
+                            rulesFuncDict.Add(funcNameLast, ruleInfo);
+                            funcNameLast = null;
                         }
 
                         ruleInfoLast = ruleInfo;
                     }
                 }
+
                 sb.Append(
-@"        }
+@"      };
+    }
+
+    public bool IsFaultRuleValid(ulong id)
+    {
+        if (faultRuleDict.TryGetValue(id, out RuleDelegate ruleDelegate))
+        {
+            return ruleDelegate();
+        }
 
         RuleNotFound(id);
         return true;
