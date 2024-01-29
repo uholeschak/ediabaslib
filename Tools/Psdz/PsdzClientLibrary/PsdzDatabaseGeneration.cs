@@ -4935,7 +4935,7 @@ $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
                         sb.Append(
 $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
 ");
-                        if (index >= ruleList.Count ||
+                        if (index + 1 >= ruleList.Count ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
                             rulesFuncDict.Add(funcNameLast, ruleInfo);
