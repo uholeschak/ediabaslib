@@ -5676,6 +5676,7 @@ namespace EdiabasLib
                             }
                             if (compressTrace != 0)
                             {
+                                bool createBom = true;
                                 if (_zipStream == null)
                                 {
                                     string zipFileName = Path.Combine(tracePath, traceFileName + ".zip");
@@ -5708,6 +5709,7 @@ namespace EdiabasLib
                                     // copy old zip content to new one
                                     if (appendZip)
                                     {
+                                        createBom = false;
                                         FileStream fs = File.OpenRead(zipFileNameOld);
                                         ICSharpCode.SharpZipLib.Zip.ZipFile zf = new ICSharpCode.SharpZipLib.Zip.ZipFile(fs);
                                         foreach (ICSharpCode.SharpZipLib.Zip.ZipEntry zipEntry in zf)
@@ -5728,21 +5730,28 @@ namespace EdiabasLib
                                 }
 
                                 newFile = true;
-                                _swLog = new StreamWriter(_zipStream, Encoding, 1024, true);
+                                _swLog = new StreamWriter(_zipStream, new UTF8Encoding(createBom), 1024, true);
                             }
                             else
 #endif
                             {
+                                long fileSize = 0;
                                 string traceFile = Path.Combine(tracePath, traceFileName);
                                 try
                                 {
-                                    if (appendTrace != 0 && File.Exists(traceFile))
+                                    if (File.Exists(traceFile))
                                     {
-                                        DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
-                                        TimeSpan diffTime = DateTime.Now - lastWriteTime;
-                                        if (diffTime.Hours > TraceAppendDiffHours)
+                                        FileInfo fileInfo = new FileInfo(traceFile);
+                                        fileSize = fileInfo.Length;
+
+                                        if (appendTrace != 0)
                                         {
-                                            appendTrace = 0;
+                                            DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
+                                            TimeSpan diffTime = DateTime.Now - lastWriteTime;
+                                            if (diffTime.Hours > TraceAppendDiffHours)
+                                            {
+                                                appendTrace = 0;
+                                            }
                                         }
                                     }
                                 }
@@ -5752,6 +5761,7 @@ namespace EdiabasLib
                                     throw;
                                 }
 
+                                bool createBom = fileSize == 0;
                                 FileMode fileMode = FileMode.Append;
                                 if (_firstLog && appendTrace == 0)
                                 {
@@ -5760,7 +5770,7 @@ namespace EdiabasLib
 
                                 newFile = true;
                                 _swLog = new StreamWriter(
-                                    new FileStream(traceFile, fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
+                                    new FileStream(traceFile, fileMode, FileAccess.Write, FileShare.ReadWrite), new UTF8Encoding(createBom))
                                     {
                                         AutoFlush = buffering == 0
                                     };
