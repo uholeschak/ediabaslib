@@ -5766,6 +5766,7 @@ namespace EdiabasLib
                                 if (_firstLog && appendTrace == 0)
                                 {
                                     fileMode = FileMode.Create;
+                                    createBom = true;
                                 }
 
                                 newFile = true;
