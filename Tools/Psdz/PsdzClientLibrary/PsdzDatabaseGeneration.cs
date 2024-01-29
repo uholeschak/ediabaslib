@@ -4866,7 +4866,7 @@ public class RulesInfo
                         }
 
                         sb.Append(
-$@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
+$@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
 ");
                         if (ruleInfoEnd == ruleInfo ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
@@ -4897,7 +4897,7 @@ $@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
                         }
 
                         sb.Append(
-$@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
+$@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
 ");
                         if (ruleInfoEnd == ruleInfo ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
@@ -4928,7 +4928,7 @@ $@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
                         }
 
                         sb.Append(
-$@"            {{ {ruleInfo.Id.Trim()}, {funcNameLast} }},
+$@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
 ");
                         if (ruleInfoEnd == ruleInfo ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
