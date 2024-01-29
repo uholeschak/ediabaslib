@@ -4855,10 +4855,11 @@ public class RulesInfo
         {
 ");
                 {
+                    List<VehicleStructsBmw.RuleInfo> ruleList = faultRuleListOrder;
                     string funcNameLast = null;
                     VehicleStructsBmw.RuleInfo ruleInfoLast = null;
-                    VehicleStructsBmw.RuleInfo ruleInfoEnd = faultRuleListOrder.Last();
-                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in faultRuleListOrder)
+                    int index = 0;
+                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in ruleList)
                     {
                         if (funcNameLast == null)
                         {
@@ -4868,7 +4869,7 @@ public class RulesInfo
                         sb.Append(
 $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
 ");
-                        if (ruleInfoEnd == ruleInfo ||
+                        if (index + 1 >= ruleList.Count ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
                             rulesFuncDict.Add(funcNameLast, ruleInfo);
@@ -4876,6 +4877,7 @@ $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
                         }
 
                         ruleInfoLast = ruleInfo;
+                        index++;
                     }
                 }
 
@@ -4886,10 +4888,11 @@ $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
         {
 ");
                 {
+                    List<VehicleStructsBmw.RuleInfo> ruleList = ecuFuncRuleListOrder;
                     string funcNameLast = null;
                     VehicleStructsBmw.RuleInfo ruleInfoLast = null;
-                    VehicleStructsBmw.RuleInfo ruleInfoEnd = ecuFuncRuleListOrder.Last();
-                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in ecuFuncRuleListOrder)
+                    int index = 0;
+                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in ruleList)
                     {
                         if (funcNameLast == null)
                         {
@@ -4899,7 +4902,7 @@ $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
                         sb.Append(
 $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
 ");
-                        if (ruleInfoEnd == ruleInfo ||
+                        if (index + 1 >= ruleList.Count ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
                             rulesFuncDict.Add(funcNameLast, ruleInfo);
@@ -4907,6 +4910,7 @@ $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
                         }
 
                         ruleInfoLast = ruleInfo;
+                        index++;
                     }
                 }
 
@@ -4917,10 +4921,11 @@ $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
         {
 ");
                 {
+                    List<VehicleStructsBmw.RuleInfo> ruleList = diagObjectRuleListOrder;
                     string funcNameLast = null;
                     VehicleStructsBmw.RuleInfo ruleInfoLast = null;
-                    VehicleStructsBmw.RuleInfo ruleInfoEnd = diagObjectRuleListOrder.Last();
-                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in diagObjectRuleListOrder)
+                    int index = 0;
+                    foreach (VehicleStructsBmw.RuleInfo ruleInfo in ruleList)
                     {
                         if (funcNameLast == null)
                         {
@@ -4930,7 +4935,7 @@ $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
                         sb.Append(
 $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
 ");
-                        if (ruleInfoEnd == ruleInfo ||
+                        if (index >= ruleList.Count ||
                             (ruleInfoLast != null && string.Compare(ruleInfo.RuleFormula, ruleInfoLast.RuleFormula, StringComparison.Ordinal) != 0))
                         {
                             rulesFuncDict.Add(funcNameLast, ruleInfo);
@@ -4938,6 +4943,7 @@ $@"            {{{ruleInfo.Id.Trim()}, {funcNameLast}}},
                         }
 
                         ruleInfoLast = ruleInfo;
+                        index++;
                     }
                 }
 
