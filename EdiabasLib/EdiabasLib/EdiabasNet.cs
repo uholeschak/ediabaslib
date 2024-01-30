@@ -29,6 +29,9 @@ namespace EdiabasLib
 
     public partial class EdiabasNet : IDisposable
     {
+#if Android && DEBUG
+        private static readonly string Tag = typeof(EdiabasNet).FullName;
+#endif
         private delegate void OperationDelegate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1);
         private delegate void VJobDelegate(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets);
         public delegate bool AbortJobDelegate();
@@ -5678,10 +5681,8 @@ namespace EdiabasLib
                             }
                             if (compressTrace != 0)
                             {
-                                bool createBom = false;
                                 if (_zipStream == null)
                                 {
-                                    createBom = true;
                                     string zipFileName = Path.Combine(tracePath, traceFileName + ".zip");
                                     string zipFileNameOld = Path.Combine(tracePath, traceFileName + ".old.zip");
                                     bool appendZip = allowAppend && File.Exists(zipFileName);
@@ -5731,11 +5732,6 @@ namespace EdiabasLib
                                                             ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(inputStream,
                                                                 _zipStream, new byte[4096]);
                                                         }
-
-                                                        if (_zipStream.Position > 0)
-                                                        {
-                                                            createBom = false;
-                                                        }
                                                         break;
                                                     }
                                                 }
@@ -5751,14 +5747,20 @@ namespace EdiabasLib
                                                 File.Delete(zipFileNameOld);
                                             }
                                         }
-                                        catch (Exception)
+#pragma warning disable CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
+                                        catch (Exception ex)
+#pragma warning restore CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
                                         {
-                                            createBom = true;
+                                            // ignored
+#if Android && DEBUG
+                                            Android.Util.Log.Debug(Tag, string.Format("LogString Exception: {0}", GetExceptionText(ex)));
+#endif
                                         }
                                     }
                                 }
 
                                 newFile = true;
+                                bool createBom = _zipStream.Position == 0;
                                 _swLog = new StreamWriter(_zipStream, new UTF8Encoding(createBom), 1024, true);
                             }
                             else
