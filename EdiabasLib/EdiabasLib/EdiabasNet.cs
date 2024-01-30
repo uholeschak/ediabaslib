@@ -5768,7 +5768,7 @@ namespace EdiabasLib
                                     }
                                     catch (Exception)
                                     {
-                                        // ignored
+                                        allowAppend = false;
                                     }
                                 }
 
