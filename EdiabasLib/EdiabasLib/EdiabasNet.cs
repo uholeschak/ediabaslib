@@ -5667,6 +5667,8 @@ namespace EdiabasLib
                             {
                                 buffering = StringToValue(traceBuffering);
                             }
+
+                            bool allowAppend = !_firstLog || appendTrace != 0;
 #if COMPRESS_TRACE
                             int compressTrace = 0;
                             string propCompress = GetConfigProperty("CompressTrace");
@@ -5681,7 +5683,8 @@ namespace EdiabasLib
                                 {
                                     string zipFileName = Path.Combine(tracePath, traceFileName + ".zip");
                                     string zipFileNameOld = Path.Combine(tracePath, traceFileName + ".old.zip");
-                                    bool appendZip = (!_firstLog || appendTrace != 0) && File.Exists(zipFileName);
+                                    bool appendZip = allowAppend && File.Exists(zipFileName);
+
                                     if (appendZip && appendTrace == 0)
                                     {
                                         FileInfo fileInfo = new FileInfo(zipFileName);
@@ -5690,6 +5693,7 @@ namespace EdiabasLib
                                             appendZip = false;
                                         }
                                     }
+
                                     if (appendZip)
                                     {
                                         if (File.Exists(zipFileNameOld))
@@ -5698,6 +5702,7 @@ namespace EdiabasLib
                                         }
                                         File.Move(zipFileName, zipFileNameOld);
                                     }
+
                                     FileStream fsOut = File.Create(zipFileName);
                                     _zipStream = new ICSharpCode.SharpZipLib.Zip.ZipOutputStream(fsOut);
                                     _zipStream.SetLevel(8);
@@ -5750,9 +5755,13 @@ namespace EdiabasLib
                                             TimeSpan diffTime = DateTime.Now - lastWriteTime;
                                             if (diffTime.Hours > TraceAppendDiffHours)
                                             {
-                                                appendTrace = 0;
+                                                allowAppend = false;
                                             }
                                         }
+                                    }
+                                    else
+                                    {
+                                        allowAppend = false;
                                     }
                                 }
                                 catch (Exception e)
@@ -5763,7 +5772,7 @@ namespace EdiabasLib
 
                                 bool createBom = fileSize == 0;
                                 FileMode fileMode = FileMode.Append;
-                                if (_firstLog && appendTrace == 0)
+                                if (!allowAppend)
                                 {
                                     fileMode = FileMode.Create;
                                     createBom = true;
