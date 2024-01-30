@@ -5724,8 +5724,7 @@ namespace EdiabasLib
                                                 zf = new ICSharpCode.SharpZipLib.Zip.ZipFile(fs);
                                                 foreach (ICSharpCode.SharpZipLib.Zip.ZipEntry zipEntry in zf)
                                                 {
-                                                    if (zipEntry.IsFile && string.Compare(zipEntry.Name, traceFileName,
-                                                            StringComparison.OrdinalIgnoreCase) == 0)
+                                                    if (zipEntry.IsFile && string.Compare(zipEntry.Name, traceFileName, StringComparison.OrdinalIgnoreCase) == 0)
                                                     {
                                                         using (Stream inputStream = zf.GetInputStream(zipEntry))
                                                         {
@@ -5733,6 +5732,10 @@ namespace EdiabasLib
                                                                 _zipStream, new byte[4096]);
                                                         }
 
+                                                        if (_zipStream.Position > 0)
+                                                        {
+                                                            createBom = false;
+                                                        }
                                                         break;
                                                     }
                                                 }
@@ -5747,8 +5750,6 @@ namespace EdiabasLib
 
                                                 File.Delete(zipFileNameOld);
                                             }
-
-                                            createBom = false;
                                         }
                                         catch (Exception)
                                         {
