@@ -5678,9 +5678,10 @@ namespace EdiabasLib
                             }
                             if (compressTrace != 0)
                             {
-                                bool createBom = true;
+                                bool createBom = false;
                                 if (_zipStream == null)
                                 {
+                                    createBom = true;
                                     string zipFileName = Path.Combine(tracePath, traceFileName + ".zip");
                                     string zipFileNameOld = Path.Combine(tracePath, traceFileName + ".old.zip");
                                     bool appendZip = allowAppend && File.Exists(zipFileName);
