@@ -5715,23 +5715,45 @@ namespace EdiabasLib
                                     // copy old zip content to new one
                                     if (appendZip)
                                     {
-                                        createBom = false;
-                                        FileStream fs = File.OpenRead(zipFileNameOld);
-                                        ICSharpCode.SharpZipLib.Zip.ZipFile zf = new ICSharpCode.SharpZipLib.Zip.ZipFile(fs);
-                                        foreach (ICSharpCode.SharpZipLib.Zip.ZipEntry zipEntry in zf)
+                                        try
                                         {
-                                            if (zipEntry.IsFile && string.Compare(zipEntry.Name, traceFileName, StringComparison.OrdinalIgnoreCase) == 0)
+                                            FileStream fs = File.OpenRead(zipFileNameOld);
+                                            ICSharpCode.SharpZipLib.Zip.ZipFile zf = null;
+                                            try
                                             {
-                                                using (Stream inputStream = zf.GetInputStream(zipEntry))
+                                                zf = new ICSharpCode.SharpZipLib.Zip.ZipFile(fs);
+                                                foreach (ICSharpCode.SharpZipLib.Zip.ZipEntry zipEntry in zf)
                                                 {
-                                                    ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(inputStream, _zipStream, new byte[4096]);
+                                                    if (zipEntry.IsFile && string.Compare(zipEntry.Name, traceFileName,
+                                                            StringComparison.OrdinalIgnoreCase) == 0)
+                                                    {
+                                                        using (Stream inputStream = zf.GetInputStream(zipEntry))
+                                                        {
+                                                            ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(inputStream,
+                                                                _zipStream, new byte[4096]);
+                                                        }
+
+                                                        break;
+                                                    }
                                                 }
-                                                break;
                                             }
+                                            finally
+                                            {
+                                                if (zf != null)
+                                                {
+                                                    zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                                                    zf.Close(); // Ensure we release resources
+                                                }
+
+                                                File.Delete(zipFileNameOld);
+                                            }
+
+                                            createBom = false;
                                         }
-                                        zf.IsStreamOwner = true; // Makes close also shut the underlying stream
-                                        zf.Close(); // Ensure we release resources
-                                        File.Delete(zipFileNameOld);
+                                        catch (Exception)
+                                        {
+                                            createBom = true;
+                                        }
                                     }
                                 }
 
