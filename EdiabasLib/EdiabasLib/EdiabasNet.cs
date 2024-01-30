@@ -5742,32 +5742,34 @@ namespace EdiabasLib
                             {
                                 long fileSize = 0;
                                 string traceFile = Path.Combine(tracePath, traceFileName);
-                                try
+                                if (allowAppend)
                                 {
-                                    if (File.Exists(traceFile))
+                                    try
                                     {
-                                        FileInfo fileInfo = new FileInfo(traceFile);
-                                        fileSize = fileInfo.Length;
-
-                                        if (appendTrace != 0)
+                                        if (File.Exists(traceFile))
                                         {
-                                            DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
-                                            TimeSpan diffTime = DateTime.Now - lastWriteTime;
-                                            if (diffTime.Hours > TraceAppendDiffHours)
+                                            FileInfo fileInfo = new FileInfo(traceFile);
+                                            fileSize = fileInfo.Length;
+
+                                            if (appendTrace != 0)
                                             {
-                                                allowAppend = false;
+                                                DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
+                                                TimeSpan diffTime = DateTime.Now - lastWriteTime;
+                                                if (diffTime.Hours > TraceAppendDiffHours)
+                                                {
+                                                    allowAppend = false;
+                                                }
                                             }
                                         }
+                                        else
+                                        {
+                                            allowAppend = false;
+                                        }
                                     }
-                                    else
+                                    catch (Exception)
                                     {
                                         allowAppend = false;
                                     }
-                                }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e);
-                                    throw;
                                 }
 
                                 bool createBom = fileSize == 0;
