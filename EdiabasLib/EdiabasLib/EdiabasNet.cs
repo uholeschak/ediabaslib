@@ -5878,6 +5878,7 @@ namespace EdiabasLib
                 {
                     try
                     {
+                        _swLog.Flush();
                         _swLog.Dispose();
                     }
 #pragma warning disable CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
