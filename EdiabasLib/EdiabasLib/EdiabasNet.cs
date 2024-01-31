@@ -2269,7 +2269,7 @@ namespace EdiabasLib
 #if COMPRESS_TRACE
         private ICSharpCode.SharpZipLib.Zip.ZipOutputStream _zipStream;
 #endif
-        private readonly object _logLock = new object();
+        private static readonly object _logLock = new object();
         private int _logLevelCached = -1;
         private readonly bool _lockTrace;
         private EdValueType _arrayMaxBufSize = 1024;
@@ -5713,9 +5713,9 @@ namespace EdiabasLib
                                     _zipStream.UseZip64 = ICSharpCode.SharpZipLib.Zip.UseZip64.Off;
                                     _zipStream.PutNextEntry(newEntry);
 
-                                    // copy old zip content to new one
                                     if (appendZip)
                                     {
+                                        // copy old zip content to new one
                                         try
                                         {
                                             FileStream fs = File.OpenRead(zipFileNameOld);
@@ -5880,9 +5880,14 @@ namespace EdiabasLib
                     {
                         _swLog.Dispose();
                     }
-                    catch (Exception)
+#pragma warning disable CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
+                    catch (Exception ex)
+#pragma warning restore CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
                     {
                         // ignored
+#if Android && DEBUG
+                        Android.Util.Log.Debug(Tag, string.Format("CloseLog swLog Exception: {0}", GetExceptionText(ex)));
+#endif
                     }
                     _swLog = null;
                 }
@@ -5896,9 +5901,14 @@ namespace EdiabasLib
                         _zipStream.Close();
                         _zipStream.Dispose();
                     }
-                    catch (Exception)
+#pragma warning disable CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
+                    catch (Exception ex)
+#pragma warning restore CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
                     {
                         // ignored
+#if Android && DEBUG
+                        Android.Util.Log.Debug(Tag, string.Format("CloseLog zipStream Exception: {0}", GetExceptionText(ex)));
+#endif
                     }
                     _zipStream = null;
                 }
