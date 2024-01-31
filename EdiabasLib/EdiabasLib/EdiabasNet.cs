@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 // ReSharper disable IntroduceOptionalParameters.Local
 // ReSharper disable NotResolvedInText
@@ -2269,7 +2270,7 @@ namespace EdiabasLib
 #if COMPRESS_TRACE
         private ICSharpCode.SharpZipLib.Zip.ZipOutputStream _zipStream;
 #endif
-        private static readonly object _logLock = new object();
+        private static Mutex _logMutex = new Mutex(false);
         private int _logLevelCached = -1;
         private readonly bool _lockTrace;
         private EdValueType _arrayMaxBufSize = 1024;
@@ -5591,6 +5592,35 @@ namespace EdiabasLib
             return columnList;
         }
 
+        private static bool AcquireLogMutex(int timeout = 10000)
+        {
+            try
+            {
+                if (!_logMutex.WaitOne(timeout))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private static void ReleaseLogMutex()
+        {
+            try
+            {
+                _logMutex.ReleaseMutex();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
         public void LogFormat(EdLogLevel logLevel, string format, params object[] args)
         {
             UpdateLogLevel();
@@ -5640,7 +5670,12 @@ namespace EdiabasLib
 
             try
             {
-                lock (_logLock)
+                if (!AcquireLogMutex())
+                {
+                    return;
+                }
+
+                try
                 {
                     bool newFile = false;
                     if (_swLog == null)
@@ -5679,6 +5714,7 @@ namespace EdiabasLib
                             {
                                 compressTrace = (int)StringToValue(propCompress);
                             }
+
                             if (compressTrace != 0)
                             {
                                 if (_zipStream == null)
@@ -5702,6 +5738,7 @@ namespace EdiabasLib
                                         {
                                             File.Delete(zipFileNameOld);
                                         }
+
                                         File.Move(zipFileName, zipFileNameOld);
                                     }
 
@@ -5729,9 +5766,9 @@ namespace EdiabasLib
                                                     {
                                                         using (Stream inputStream = zf.GetInputStream(zipEntry))
                                                         {
-                                                            ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(inputStream,
-                                                                _zipStream, new byte[4096]);
+                                                            ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(inputStream, _zipStream, new byte[4096]);
                                                         }
+
                                                         break;
                                                     }
                                                 }
@@ -5813,6 +5850,7 @@ namespace EdiabasLib
                                         AutoFlush = buffering == 0
                                     };
                             }
+
                             _firstLog = false;
                         }
                     }
@@ -5828,8 +5866,13 @@ namespace EdiabasLib
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android fingerprint: {0}", Android.OS.Build.Fingerprint));
 #endif
                         }
+
                         _swLog.WriteLine(info);
                     }
+                }
+                finally
+                {
+                    ReleaseLogMutex();
                 }
             }
             catch (Exception)
@@ -5872,7 +5915,12 @@ namespace EdiabasLib
 
         private void CloseLog()
         {
-            lock (_logLock)
+            if (!AcquireLogMutex(-1))
+            {
+                return;
+            }
+
+            try
             {
                 if (_swLog != null)
                 {
@@ -5890,6 +5938,7 @@ namespace EdiabasLib
                         Android.Util.Log.Debug(Tag, string.Format("CloseLog swLog Exception: {0}", GetExceptionText(ex)));
 #endif
                     }
+
                     _swLog = null;
                 }
 #if COMPRESS_TRACE
@@ -5911,10 +5960,15 @@ namespace EdiabasLib
                         Android.Util.Log.Debug(Tag, string.Format("CloseLog zipStream Exception: {0}", GetExceptionText(ex)));
 #endif
                     }
+
                     _zipStream = null;
                 }
 #endif
                 _logLevelCached = -1;
+            }
+            finally
+            {
+                ReleaseLogMutex();
             }
         }
 
@@ -5922,10 +5976,19 @@ namespace EdiabasLib
         {
             if (_logLevelCached < 0)
             {
-                lock (_logLock)
+                if (!AcquireLogMutex())
+                {
+                    return;
+                }
+
+                try
                 {
                     string ifhTrace = GetConfigProperty("IfhTrace");
                     _logLevelCached = (int)StringToValue(ifhTrace);
+                }
+                finally
+                {
+                    ReleaseLogMutex();
                 }
             }
         }
