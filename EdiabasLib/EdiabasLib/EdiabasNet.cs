@@ -5605,6 +5605,11 @@ namespace EdiabasLib
         {
             try
             {
+                if (_logMutex == null)
+                {
+                    return false;
+                }
+
                 if (!_logMutex.WaitOne(timeout))
                 {
                     return false;
@@ -5622,7 +5627,7 @@ namespace EdiabasLib
         {
             try
             {
-                _logMutex.ReleaseMutex();
+                _logMutex?.ReleaseMutex();
             }
             catch (Exception)
             {
