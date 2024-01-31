@@ -2270,7 +2270,7 @@ namespace EdiabasLib
 #if COMPRESS_TRACE
         private ICSharpCode.SharpZipLib.Zip.ZipOutputStream _zipStream;
 #endif
-        private static Mutex _logMutex = new Mutex(false);
+        private Mutex _logMutex = new Mutex(false);
         private int _logLevelCached = -1;
         private readonly bool _lockTrace;
         private EdValueType _arrayMaxBufSize = 1024;
@@ -2987,12 +2987,21 @@ namespace EdiabasLib
                     }
                     CloseTableFs();
                     CloseAllUserFiles();
+
                     if (_edInterfaceClass != null)
                     {
                         _edInterfaceClass.Dispose();
                         _edInterfaceClass = null;
                     }
+
                     CloseLog(); // must be closed after interface class
+
+                    if (_logMutex != null)
+                    {
+                        _logMutex.Dispose();
+                        _logMutex = null;
+                    }
+
                     lock (SharedDataLock)
                     {
                         _instanceCount--;
@@ -5592,7 +5601,7 @@ namespace EdiabasLib
             return columnList;
         }
 
-        private static bool AcquireLogMutex(int timeout = 10000)
+        private bool AcquireLogMutex(int timeout = 10000)
         {
             try
             {
@@ -5609,7 +5618,7 @@ namespace EdiabasLib
             }
         }
 
-        private static void ReleaseLogMutex()
+        private void ReleaseLogMutex()
         {
             try
             {
