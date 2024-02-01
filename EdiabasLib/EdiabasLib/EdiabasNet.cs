@@ -5607,6 +5607,9 @@ namespace EdiabasLib
             {
                 if (_logMutex == null)
                 {
+#if Android && DEBUG
+                    Android.Util.Log.Debug(Tag, "AcquireLogMutex: Mutex deleted");
+#endif
                     return false;
                 }
 
@@ -5627,7 +5630,15 @@ namespace EdiabasLib
         {
             try
             {
-                _logMutex?.ReleaseMutex();
+                if (_logMutex == null)
+                {
+#if Android && DEBUG
+                    Android.Util.Log.Debug(Tag, "ReleaseLogMutex: Mutex deleted");
+#endif
+                    return;
+                }
+
+                _logMutex.ReleaseMutex();
             }
             catch (Exception)
             {
