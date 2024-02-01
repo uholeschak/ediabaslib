@@ -1657,7 +1657,10 @@ namespace BmwDeepObd
         
             if (_detectVehicleBmw != null)
             {
-                _detectVehicleBmw.Ediabas = _ediabas;
+                lock (_detectVehicleBmw.GlobalLockObject)
+                {
+                    _detectVehicleBmw.Ediabas = _ediabas;
+                }
             }
         }
 
@@ -1683,7 +1686,10 @@ namespace BmwDeepObd
 
             if (_detectVehicleBmw != null)
             {
-                _detectVehicleBmw.Ediabas = null;
+                lock (_detectVehicleBmw.GlobalLockObject)
+                {
+                    _detectVehicleBmw.Ediabas = null;
+                }
             }
 
             _instanceData.ForceAppend = forceAppend;
@@ -2086,11 +2092,6 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (!EdiabasClose(true))
-                {
-                    return;
-                }
-
                 bool bmwServiceFunctions = false;
                 if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                 {
@@ -2101,6 +2102,12 @@ namespace BmwDeepObd
                         EcuFunctionStructs.EcuVariant ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(ecuSgbdName);
                         _ruleEvalBmw?.UpdateEvalEcuProperties(ecuVariant);
                     }
+                }
+
+                // Close after ShowBwmServiceMenu
+                if (!EdiabasClose(true))
+                {
+                    return;
                 }
 
                 XmlToolEcuActivity.IntentEcuInfo = ecuInfo;
