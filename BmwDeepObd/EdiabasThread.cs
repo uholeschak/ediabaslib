@@ -917,7 +917,11 @@ namespace BmwDeepObd
                                 ecuVariant = ActivityCommon.EcuFunctionReader.GetEcuVariantCached(sgbdResolved);
                             }
 
-                            _ruleEvalBmw.SetEvalProperties(_detectVehicleBmw, ecuVariant);
+                            if (_detectVehicleBmw != null)
+                            {
+                                _detectVehicleBmw.Ediabas = Ediabas;
+                                _ruleEvalBmw.SetEvalProperties(_detectVehicleBmw, ecuVariant);
+                            }
                         }
 
                         ForceLoadSgbd();

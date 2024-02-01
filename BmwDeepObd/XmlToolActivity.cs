@@ -1654,6 +1654,11 @@ namespace BmwDeepObd
 
             _ediabas.EdInterfaceClass.EnableTransmitCache = false;
             _activityCommon.SetEdiabasInterface(_ediabas, _instanceData.DeviceAddress);
+        
+            if (_detectVehicleBmw != null)
+            {
+                _detectVehicleBmw.Ediabas = _ediabas;
+            }
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -1675,6 +1680,12 @@ namespace BmwDeepObd
                 _ediabas.Dispose();
                 _ediabas = null;
             }
+
+            if (_detectVehicleBmw != null)
+            {
+                _detectVehicleBmw.Ediabas = null;
+            }
+
             _instanceData.ForceAppend = forceAppend;
             UpdateLogInfo();
             UpdateDisplay();
@@ -2781,6 +2792,7 @@ namespace BmwDeepObd
                     {
                         lock (detectVehicleBmw.GlobalLockObject)
                         {
+                            detectVehicleBmw.Ediabas = _ediabas;
                             if (detectVehicleBmw.Valid)
                             {
                                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(detectVehicleBmw);
@@ -3245,6 +3257,7 @@ namespace BmwDeepObd
                 {
                     lock (detectVehicleBmw.GlobalLockObject)
                     {
+                        detectVehicleBmw.Ediabas = _ediabas;
                         _ruleEvalBmw?.SetEvalProperties(detectVehicleBmw, null);
                     }
                 }
@@ -9294,6 +9307,7 @@ namespace BmwDeepObd
                 string fileName = Path.Combine(storageDir, DetectVehicleBmwFileName);
                 lock (detectVehicleBmw.GlobalLockObject)
                 {
+                    detectVehicleBmw.Ediabas = _ediabas;
                     if (!detectVehicleBmw.Valid)
                     {
                         return false;
