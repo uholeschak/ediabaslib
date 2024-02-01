@@ -1654,7 +1654,7 @@ namespace BmwDeepObd
 
             _ediabas.EdInterfaceClass.EnableTransmitCache = false;
             _activityCommon.SetEdiabasInterface(_ediabas, _instanceData.DeviceAddress);
-        
+
             if (_detectVehicleBmw != null)
             {
                 lock (_detectVehicleBmw.GlobalLockObject)
