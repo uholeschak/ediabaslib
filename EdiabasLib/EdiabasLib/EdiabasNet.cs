@@ -5607,6 +5607,9 @@ namespace EdiabasLib
             {
                 if (_logMutex == null)
                 {
+#if Android && DEBUG
+                    Android.Util.Log.Debug(Tag, "AcquireLogMutex: Mutex deleted");
+#endif
                     return false;
                 }
 
@@ -5627,7 +5630,15 @@ namespace EdiabasLib
         {
             try
             {
-                _logMutex?.ReleaseMutex();
+                if (_logMutex == null)
+                {
+#if Android && DEBUG
+                    Android.Util.Log.Debug(Tag, "ReleaseLogMutex: Mutex deleted");
+#endif
+                    return;
+                }
+
+                _logMutex.ReleaseMutex();
             }
             catch (Exception)
             {
@@ -5637,6 +5648,11 @@ namespace EdiabasLib
 
         public void LogFormat(EdLogLevel logLevel, string format, params object[] args)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+
             UpdateLogLevel();
             if ((int)logLevel > _logLevelCached)
             {
@@ -5676,6 +5692,11 @@ namespace EdiabasLib
 
         public void LogString(EdLogLevel logLevel, string info)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+
             UpdateLogLevel();
             if ((int)logLevel > _logLevelCached)
             {
