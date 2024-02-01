@@ -5648,6 +5648,11 @@ namespace EdiabasLib
 
         public void LogFormat(EdLogLevel logLevel, string format, params object[] args)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+
             UpdateLogLevel();
             if ((int)logLevel > _logLevelCached)
             {
@@ -5687,6 +5692,11 @@ namespace EdiabasLib
 
         public void LogString(EdLogLevel logLevel, string info)
         {
+            if (_disposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+
             UpdateLogLevel();
             if ((int)logLevel > _logLevelCached)
             {

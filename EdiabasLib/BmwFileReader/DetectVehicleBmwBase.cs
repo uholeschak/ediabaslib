@@ -99,7 +99,11 @@ namespace BmwFileReader
         public Dictionary<string, string> EcuNameIdentDict { get; protected set; }
 
         protected EdiabasNet _ediabas;
-        public EdiabasNet Ediabas => _ediabas;
+        public EdiabasNet Ediabas
+        {
+            get => _ediabas;
+            set => _ediabas = value;
+        }
 
         public object GlobalLockObject { get; protected set; } = new object();
 
