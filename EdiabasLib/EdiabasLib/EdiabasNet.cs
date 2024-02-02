@@ -2300,6 +2300,11 @@ namespace EdiabasLib
         private bool _jobEnd;
         private bool _requestInit = true;
 
+        public bool IsDisposed
+        {
+            get { return _disposed; }
+        }
+
         public bool JobRunning
         {
             get
