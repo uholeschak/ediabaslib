@@ -101,7 +101,17 @@ namespace BmwFileReader
         protected EdiabasNet _ediabas;
         public EdiabasNet Ediabas
         {
-            get => _ediabas;
+            get
+            {
+                if (_ediabas != null)
+                {
+                    if (_ediabas.IsDisposed)
+                    {
+                        _ediabas = null;
+                    }
+                }
+                return _ediabas;
+            }
             set => _ediabas = value;
         }
 
