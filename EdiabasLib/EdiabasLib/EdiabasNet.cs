@@ -5655,7 +5655,10 @@ namespace EdiabasLib
         {
             if (_disposed)
             {
-                throw new ObjectDisposedException(GetType().FullName);
+#if Android && DEBUG
+                Android.Util.Log.Debug(Tag, "LogFormat: Ediabas disposed");
+#endif
+                return;
             }
 
             UpdateLogLevel();
@@ -5699,7 +5702,10 @@ namespace EdiabasLib
         {
             if (_disposed)
             {
-                throw new ObjectDisposedException(GetType().FullName);
+#if Android && DEBUG
+                Android.Util.Log.Debug(Tag, "LogString: Ediabas disposed");
+#endif
+                return;
             }
 
             UpdateLogLevel();
