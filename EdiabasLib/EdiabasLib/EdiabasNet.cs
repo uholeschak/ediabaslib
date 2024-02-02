@@ -3164,10 +3164,12 @@ namespace EdiabasLib
                 }
             }
 
+            string oldValue = null;
             lock (_apiLock)
             {
                 if (_configDict.ContainsKey(key))
                 {
+                    oldValue = _configDict[key];
                     if (!string.IsNullOrEmpty(value))
                     {
                         _configDict[key] = value;
@@ -3205,15 +3207,29 @@ namespace EdiabasLib
                     _closeSgbdFs = true;
                 }
             }
-            if (string.Compare(key, "TracePath", StringComparison.OrdinalIgnoreCase) == 0)
+
+            bool closeLog = false;
+            bool valueChanged = string.Compare(oldValue ?? string.Empty, value ?? string.Empty, StringComparison.Ordinal) != 0;
+
+            if (valueChanged)
             {
-                CloseLog();
+                if (string.Compare(key, "TracePath", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    closeLog = true;
+                }
+
+                if (string.Compare(key, "IfhTrace", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    closeLog = true;
+                }
+
+                if (string.Compare(key, "IfhTraceName", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    closeLog = true;
+                }
             }
-            if (string.Compare(key, "IfhTrace", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                CloseLog();
-            }
-            if (string.Compare(key, "IfhTraceName", StringComparison.OrdinalIgnoreCase) == 0)
+
+            if (closeLog)
             {
                 CloseLog();
             }
