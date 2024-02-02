@@ -3101,6 +3101,14 @@ namespace EdiabasLib
 
         public string GetConfigProperty(string name)
         {
+            if (_disposed)
+            {
+#if Android && DEBUG
+                Android.Util.Log.Debug(Tag, "GetConfigProperty: Ediabas disposed");
+#endif
+                return null;
+            }
+
             string key = name.ToUpper(Culture);
             string value;
             lock (_apiLock)
@@ -3115,6 +3123,14 @@ namespace EdiabasLib
 
         public void SetConfigProperty(string name, string value)
         {
+            if (_disposed)
+            {
+#if Android && DEBUG
+                Android.Util.Log.Debug(Tag, "SetConfigProperty: Ediabas disposed");
+#endif
+                return;
+            }
+
             string key = name.ToUpper(Culture);
             if (_lockTrace)
             {
@@ -5610,7 +5626,7 @@ namespace EdiabasLib
         {
             try
             {
-                if (_logMutex == null)
+                if (_disposed || _logMutex == null)
                 {
 #if Android && DEBUG
                     Android.Util.Log.Debug(Tag, "AcquireLogMutex: Mutex deleted");
@@ -5635,7 +5651,7 @@ namespace EdiabasLib
         {
             try
             {
-                if (_logMutex == null)
+                if (_disposed || _logMutex == null)
                 {
 #if Android && DEBUG
                     Android.Util.Log.Debug(Tag, "ReleaseLogMutex: Mutex deleted");
