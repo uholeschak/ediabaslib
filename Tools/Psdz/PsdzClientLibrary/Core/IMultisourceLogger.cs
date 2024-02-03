@@ -1,4 +1,6 @@
-﻿namespace PsdzClientLibrary.Core
+﻿using System.Runtime.CompilerServices;
+
+namespace PsdzClientLibrary.Core
 {
     public interface IMultisourceLogger
     {
@@ -10,6 +12,6 @@
 
         void Error(string method, string msg, params object[] args);
 
-        string CurrentMethod();
+        string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null);
     }
 }

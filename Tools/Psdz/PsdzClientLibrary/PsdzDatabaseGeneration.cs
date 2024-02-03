@@ -5234,13 +5234,18 @@ $@"
                 return false;
             }
         }
-        public string GetCallingMemberName([System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
+        public string GetCallingMemberName([System.Runtime.CompilerServices.CallerMemberName] string memberName = null)
         {
-            return memberName;
+            return memberName ?? string.Empty;
         }
 
-        public string GetCallingSourceFileName([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = "")
+        public string GetCallingSourceFileName([System.Runtime.CompilerServices.CallerFilePath] string sourceFilePath = null)
         {
+            if (string.IsNullOrEmpty(sourceFilePath))
+            {
+                return string.Empty;
+            }
+
             return Path.GetFileName(sourceFilePath);
         }
     }

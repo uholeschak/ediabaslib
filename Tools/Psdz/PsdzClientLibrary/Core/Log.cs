@@ -10,7 +10,10 @@ using System.ServiceModel.Channels;
 using System.ServiceModel;
 using System.Threading;
 using System;
+using System.IO;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
+using System.Text;
 using PsdzClient;
 using PsdzClient.Core;
 
@@ -328,14 +331,26 @@ namespace PsdzClientLibrary.Core
             return "Log.BuildEntry() - failed";
         }
 
-        public static string CurrentMethod()
+        // [UH] replaced
+        public static string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null)
         {
-            MethodBase method = new StackFrame(1).GetMethod();
-            if (method != null && method.DeclaringType != null)
+            StringBuilder sb = new StringBuilder();
+            if (!string.IsNullOrEmpty(sourceFilePath))
             {
-                return method.DeclaringType.Name + "." + method.Name;
+                sb.Append(Path.GetFileName(sourceFilePath));
             }
-            return string.Empty;
+
+            if (!string.IsNullOrEmpty(memberName))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(": ");
+                }
+
+                sb.Append(memberName);
+            }
+
+            return sb.ToString();
         }
 
         private static void WriteTraceEntry(string method, string msg, TraceLevel level, EventKind evtKind, params object[] args)

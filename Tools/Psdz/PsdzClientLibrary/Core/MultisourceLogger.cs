@@ -1,6 +1,9 @@
 ﻿using log4net;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace PsdzClientLibrary.Core
 {
@@ -8,9 +11,26 @@ namespace PsdzClientLibrary.Core
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(MultisourceLogger));
 
-        public string CurrentMethod()
+        // [UH] replaced
+        public string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null)
         {
-            return Log.CurrentMethod();
+            StringBuilder sb = new StringBuilder();
+            if (!string.IsNullOrEmpty(sourceFilePath))
+            {
+                sb.Append(Path.GetFileName(sourceFilePath));
+            }
+
+            if (!string.IsNullOrEmpty(memberName))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(": ");
+                }
+
+                sb.Append(memberName);
+            }
+
+            return sb.ToString();
         }
 
         public void Info(string method, string msg, params object[] args)
