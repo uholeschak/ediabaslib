@@ -572,7 +572,7 @@ namespace BmwFileReader
                 if (!string.IsNullOrEmpty(br))
                 {
                     LogInfoFormat("Detected BR: {0}", br);
-                    string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+                    string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, Ediabas);
                     if (!string.IsNullOrEmpty(vSeries))
                     {
                         LogInfoFormat("Detected vehicle series: {0}", vSeries);
@@ -624,7 +624,7 @@ namespace BmwFileReader
         protected void SetBrInfo(string br)
         {
             LogInfoFormat("Detected BR: {0}", br);
-            string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+            string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, Ediabas);
             if (!string.IsNullOrEmpty(vSeries))
             {
                 LogInfoFormat("Detected vehicle series: {0}", vSeries);
@@ -685,7 +685,7 @@ namespace BmwFileReader
             bool dataValid = false;
             try
             {
-                string vehicleType = VehicleInfoBmw.GetVehicleTypeFromStdFa(stdFaStr, _ediabas);
+                string vehicleType = VehicleInfoBmw.GetVehicleTypeFromStdFa(stdFaStr, Ediabas);
                 if (!string.IsNullOrEmpty(vehicleType))
                 {
                     TypeKey = vehicleType;
@@ -702,7 +702,7 @@ namespace BmwFileReader
                     string br = matchBr.Groups["BR"]?.Value;
                     if (!string.IsNullOrEmpty(br))
                     {
-                        string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, _ediabas);
+                        string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, Ediabas);
                         if (!string.IsNullOrEmpty(vSeries))
                         {
                             LogInfoFormat("Detected vehicle series: {0}", vSeries);

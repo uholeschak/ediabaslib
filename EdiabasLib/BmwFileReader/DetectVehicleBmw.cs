@@ -186,6 +186,12 @@ namespace BmwFileReader
         public bool DetectVehicleBmwFast(bool detectMotorbikes = false)
         {
             LogInfoFormat("Try to detect vehicle BMW fast, Motorbikes: {0}", detectMotorbikes);
+            if (Ediabas == null)
+            {
+                LogErrorFormat("DetectVehicleBmwFast: Ediabas not initialized");
+                return false;
+            }
+
             ResetValues();
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
@@ -594,6 +600,12 @@ namespace BmwFileReader
         public bool DetectVehicleDs2()
         {
             LogInfoFormat("Try to detect DS2 vehicle");
+            if (Ediabas == null)
+            {
+                LogErrorFormat("DetectVehicleDs2: Ediabas not initialized");
+                return false;
+            }
+
             ResetValues();
 
             int jobCount = 1 + ReadVinJobsDs2.Count + ReadIdentJobsDs2.Count + ReadFaJobsDs2.Count;
@@ -1084,6 +1096,11 @@ namespace BmwFileReader
         {
             try
             {
+                if (Ediabas == null)
+                {
+                    return null;
+                }
+
                 if (string.IsNullOrEmpty(sgbd))
                 {
                     return null;
@@ -1097,7 +1114,7 @@ namespace BmwFileReader
                 _ediabas.ExecuteJob("IDENT");
 
                 string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                return ecuName.ToUpperInvariant();
+                return ecuName?.ToUpperInvariant();
             }
             catch (Exception)
             {
@@ -1109,11 +1126,11 @@ namespace BmwFileReader
 
         protected override void LogInfoFormat(string format, params object[] args)
         {
-            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, format, args);
+            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, format, args);
         }
         protected override void LogErrorFormat(string format, params object[] args)
         {
-            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, format, args);
+            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, format, args);
         }
     }
 }
