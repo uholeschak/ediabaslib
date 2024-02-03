@@ -5795,11 +5795,13 @@ namespace EdiabasLib
 
                             if (compressTrace != 0)
                             {
+                                bool createBom = false;
                                 if (_zipStream == null)
                                 {
                                     string zipFileName = Path.Combine(tracePath, traceFileName + ".zip");
                                     string zipFileNameOld = Path.Combine(tracePath, traceFileName + ".old.zip");
                                     bool appendZip = allowAppend && File.Exists(zipFileName);
+                                    createBom = true;
 
                                     if (appendZip && appendTrace == 0)
                                     {
@@ -5847,6 +5849,7 @@ namespace EdiabasLib
                                                             ICSharpCode.SharpZipLib.Core.StreamUtils.Copy(inputStream, _zipStream, new byte[4096]);
                                                         }
 
+                                                        createBom = false;
                                                         break;
                                                     }
                                                 }
@@ -5866,7 +5869,7 @@ namespace EdiabasLib
                                         catch (Exception ex)
 #pragma warning restore CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
                                         {
-                                            // ignored
+                                            createBom = false;
 #if Android && DEBUG
                                             Android.Util.Log.Debug(Tag, string.Format("LogString Exception: {0}", GetExceptionText(ex)));
 #endif
@@ -5875,7 +5878,6 @@ namespace EdiabasLib
                                 }
 
                                 newFile = true;
-                                bool createBom = _zipStream.Position == 0;
                                 _swLog = new StreamWriter(_zipStream, new UTF8Encoding(createBom), 1024, true);
                             }
                             else
