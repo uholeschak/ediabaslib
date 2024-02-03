@@ -10,19 +10,7 @@ namespace PsdzClientLibrary.Core
 
         public string CurrentMethod()
         {
-            string methodName = string.Empty;
-            StackFrame[] stackFrames = new StackTrace().GetFrames();
-            if (stackFrames != null && stackFrames.Length >= 2)
-            {
-                StackFrame callingframe = stackFrames[1];
-                MethodBase methodBase = callingframe?.GetMethod();
-                if (!string.IsNullOrEmpty(methodBase?.Name))
-                {
-                    methodName = methodBase.Name;
-                }
-            }
-
-            return methodName;
+            return Log.CurrentMethod();
         }
 
         public void Info(string method, string msg, params object[] args)
