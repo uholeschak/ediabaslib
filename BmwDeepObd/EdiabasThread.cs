@@ -505,7 +505,9 @@ namespace BmwDeepObd
                     {
                         fileMode = FileMode.Create;
                     }
-                    _swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding.UTF8);
+
+                    bool createBom = fileMode == FileMode.Create;
+                    _swDataLog = new StreamWriter(new FileStream(fileName, fileMode, FileAccess.Write, FileShare.ReadWrite), new UTF8Encoding(createBom));
                     if (fileMode == FileMode.Create)
                     {
                         // add header
