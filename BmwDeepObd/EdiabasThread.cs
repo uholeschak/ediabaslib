@@ -385,6 +385,11 @@ namespace BmwDeepObd
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    if (_detectVehicleBmw != null)
+                    {
+                        _detectVehicleBmw.Ediabas = null;
+                    }
+
                     // Dispose managed resources.
                     Ediabas.Dispose();
                     Ediabas = null;
