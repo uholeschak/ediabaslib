@@ -73,6 +73,12 @@ namespace PsdzClient
         public DetectResult DetectVehicleBmwFast(AbortDelegate abortFunc, ProgressDelegate progressFunc = null, bool detectMotorbikes = false)
         {
             LogInfoFormat("DetectVehicleBmwFast Start");
+            if (Ediabas == null)
+            {
+                LogErrorFormat("DetectVehicleBmwFast: Ediabas not initialized");
+                return DetectResult.NoResponse;
+            }
+
             ResetValues();
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
@@ -1075,6 +1081,11 @@ namespace PsdzClient
         {
             try
             {
+                if (Ediabas == null)
+                {
+                    return null;
+                }
+
                 if (string.IsNullOrEmpty(sgbd))
                 {
                     return null;
