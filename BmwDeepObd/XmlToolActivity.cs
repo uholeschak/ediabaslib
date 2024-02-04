@@ -1672,6 +1672,14 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (_detectVehicleBmw != null)
+            {
+                lock (_detectVehicleBmw.GlobalLockObject)
+                {
+                    _detectVehicleBmw.Ediabas = null;
+                }
+            }
+
             if (_sgFunctions != null)
             {
                 _sgFunctions.Dispose();
@@ -1682,14 +1690,6 @@ namespace BmwDeepObd
             {
                 _ediabas.Dispose();
                 _ediabas = null;
-            }
-
-            if (_detectVehicleBmw != null)
-            {
-                lock (_detectVehicleBmw.GlobalLockObject)
-                {
-                    _detectVehicleBmw.Ediabas = null;
-                }
             }
 
             _instanceData.ForceAppend = forceAppend;
