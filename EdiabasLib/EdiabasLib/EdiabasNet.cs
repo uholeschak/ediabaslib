@@ -5915,17 +5915,16 @@ namespace EdiabasLib
                                     }
                                 }
 
-                                bool createBom = fileSize == 0;
                                 FileMode fileMode = FileMode.Append;
                                 if (!allowAppend)
                                 {
                                     fileMode = FileMode.Create;
-                                    createBom = true;
+                                    fileSize = 0;
                                 }
 
+                                bool createBom = fileSize == 0;
                                 newFile = true;
-                                _swLog = new StreamWriter(
-                                    new FileStream(traceFile, fileMode, FileAccess.Write, FileShare.ReadWrite), new UTF8Encoding(createBom))
+                                _swLog = new StreamWriter(new FileStream(traceFile, fileMode, FileAccess.Write, FileShare.ReadWrite), new UTF8Encoding(createBom))
                                     {
                                         AutoFlush = buffering == 0
                                     };
