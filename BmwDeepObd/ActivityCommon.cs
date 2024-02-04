@@ -6389,9 +6389,19 @@ namespace BmwDeepObd
                         }
 
                         ms.Position = 0;
-                        if (!CreateZipFile(ms, TraceFileName, traceBackupFile))
+                        if (CompressTrace)
                         {
-                            return false;
+                            if (!CreateZipFile(ms, TraceFileName, traceBackupFile))
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            using (FileStream fileStream = new FileStream(traceBackupFile, FileMode.Create, FileAccess.Write))
+                            {
+                                ms.CopyTo(fileStream);
+                            }
                         }
                     }
                 }
