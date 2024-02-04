@@ -6383,7 +6383,7 @@ namespace BmwDeepObd
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        using (StreamWriter streamWriter = new StreamWriter(ms, Encoding.UTF8, 1024, true))
+                        using (StreamWriter streamWriter = new StreamWriter(ms, new UTF8Encoding(true), 1024, true))
                         {
                             streamWriter.Write(message);
                         }
