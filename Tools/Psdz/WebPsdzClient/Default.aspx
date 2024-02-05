@@ -8,6 +8,8 @@
     <style>.table { border-width: 0; border-color: transparent; }</style>
     <style>.table th { text-align: center }</style>
     <style>.dropdown { width: 100%; max-width: 100%; }</style>
+    <style>.checkbox input[type="checkbox"] { margin-right: 10px; }</style>
+    <style>.checkbox label { margin: 0; }</style>
     <div class="jumbotron">
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
@@ -21,9 +23,9 @@
                     <asp:Button ID="ButtonAbort" runat="server" CssClass="btn btn-secondary" Text="Abort" OnClick="ButtonAbort_OnClick" meta:resourcekey="ButtonAbortResource" />
                 </asp:Panel>
                 <asp:Panel ID="PanelOptions" runat="server" CssClass="panel panel-body" HorizontalAlign="Left" meta:resourcekey="PanelOptionsResource" >
-                    <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown m-1" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True" meta:resourcekey="DropDownListOptionTypeResource">
+                    <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown ml-1" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True" meta:resourcekey="DropDownListOptionTypeResource">
                     </asp:DropDownList>
-                    <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CssClass="checkbox" CellPadding="0" CellSpacing="0" RepeatColumns="1" RepeatDirection="Horizontal" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged" AutoPostBack="True" meta:resourcekey="CheckBoxListOptionsResource">
+                    <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CssClass="checkbox m-1" CellPadding="0" CellSpacing="0" RepeatColumns="1" RepeatDirection="Horizontal" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged" AutoPostBack="True" meta:resourcekey="CheckBoxListOptionsResource">
                     </asp:CheckBoxList>
                 </asp:Panel>
                 <asp:Panel ID="PanelStatus" runat="server" CssClass="panel panel-body" HorizontalAlign="Center" meta:resourcekey="PanelStatusResource" >
