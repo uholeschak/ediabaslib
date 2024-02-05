@@ -471,7 +471,9 @@ namespace BmwDeepObd
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
 
+#if !NET
         public const Bind BindAllowActivityStarts = (Bind) 0x00000200;
+#endif
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
@@ -1917,8 +1919,12 @@ namespace BmwDeepObd
                 Intent startServiceIntent = new Intent();
                 Bind bindFlags = Bind.AutoCreate;
                 if (Build.VERSION.SdkInt > BuildVersionCodes.Tiramisu)
-                {   // ToDo: use Bind enum
+                {
+#if NET
+                    bindFlags |= Bind.AllowActivityStarts;
+#else
                     bindFlags |= BindAllowActivityStarts;
+#endif
                 }
 
                 startServiceIntent.SetComponent(new ComponentName(MtcServiceConnection.ServicePkg, MtcServiceConnection.ServiceClsV1));
