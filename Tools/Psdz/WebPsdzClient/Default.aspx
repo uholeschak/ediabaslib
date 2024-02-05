@@ -33,7 +33,7 @@
                 </asp:Panel>
 
                 <asp:LinkButton ID="LinkButtonMsgModal" runat="server"></asp:LinkButton>
-                <asp:Panel ID="PanelMsgModal" runat="server" CssClass="modal-dialog" style="display:none;">
+                <asp:Panel ID="PanelMsgModal" runat="server" CssClass="modalPopup" style="display:none;">
                     <div class="jumbotron">
                         <asp:Panel ID="PanelMsgModalText" runat="server" CssClass="panel-body" HorizontalAlign="Center">
                             <asp:Literal ID="LiteralMsgModal" runat="server"></asp:Literal>
