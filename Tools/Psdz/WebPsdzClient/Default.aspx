@@ -12,7 +12,7 @@
     <div class="jumbotron">
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
-                <asp:Panel ID="PanelButtons" runat="server" CssClass="panel panel-body m-1" HorizontalAlign="Center" meta:resourcekey="PanelButtonsResource">
+                <asp:Panel ID="PanelButtons" runat="server" CssClass="panel panel-body mb-1" HorizontalAlign="Center" meta:resourcekey="PanelButtonsResource">
                     <asp:Button ID="ButtonStopHost" runat="server" CssClass="btn btn-secondary" Text="Stop Host" OnClick="ButtonStopHost_Click" meta:resourcekey="ButtonStopHostResource" />
                     <asp:Button ID="ButtonConnect" runat="server" CssClass="btn btn-secondary" Text="Connect" OnClick="ButtonConnect_OnClick" meta:resourcekey="ButtonConnectResource" />
                     <asp:Button ID="ButtonDisconnect" runat="server" CssClass="btn btn-secondary" Text="Disconnect" OnClick="ButtonDisconnect_OnClick" meta:resourcekey="ButtonDisconnectResource" />
@@ -22,14 +22,14 @@
                     <asp:Button ID="ButtonAbort" runat="server" CssClass="btn btn-secondary" Text="Abort" OnClick="ButtonAbort_OnClick" meta:resourcekey="ButtonAbortResource" />
                 </asp:Panel>
                 <asp:Panel ID="PanelOptions" runat="server" CssClass="panel panel-body" HorizontalAlign="Left" meta:resourcekey="PanelOptionsResource" >
-                    <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown ml-1" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True" meta:resourcekey="DropDownListOptionTypeResource">
+                    <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown mb-1" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True" meta:resourcekey="DropDownListOptionTypeResource">
                     </asp:DropDownList>
-                    <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CssClass="checkbox m-1" CellPadding="0" CellSpacing="0" RepeatColumns="1" RepeatDirection="Horizontal" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged" AutoPostBack="True" meta:resourcekey="CheckBoxListOptionsResource">
+                    <asp:CheckBoxList ID="CheckBoxListOptions" runat="server" CssClass="checkbox mb-1" CellPadding="0" CellSpacing="0" RepeatColumns="1" RepeatDirection="Horizontal" OnSelectedIndexChanged="CheckBoxListOptions_OnSelectedIndexChanged" AutoPostBack="True" meta:resourcekey="CheckBoxListOptionsResource">
                     </asp:CheckBoxList>
                 </asp:Panel>
                 <asp:Panel ID="PanelStatus" runat="server" CssClass="panel panel-body" HorizontalAlign="Center" meta:resourcekey="PanelStatusResource" >
-                    <asp:TextBox ID="TextBoxStatus" runat="server" CssClass="text-left m-1" ReadOnly="True" TextMode="MultiLine" Rows="10" meta:resourcekey="TextBoxStatusResource"></asp:TextBox>
-                    <asp:TextBox ID="TextBoxProgress" runat="server" CssClass="text-left m-1" ReadOnly="True" meta:resourcekey="TextBoxProgressResource"></asp:TextBox>
+                    <asp:TextBox ID="TextBoxStatus" runat="server" CssClass="text-left mb-1" ReadOnly="True" TextMode="MultiLine" Rows="10" meta:resourcekey="TextBoxStatusResource"></asp:TextBox>
+                    <asp:TextBox ID="TextBoxProgress" runat="server" CssClass="text-left mb-1" ReadOnly="True" meta:resourcekey="TextBoxProgressResource"></asp:TextBox>
                 </asp:Panel>
 
                 <asp:LinkButton ID="LinkButtonMsgModal" runat="server"></asp:LinkButton>
