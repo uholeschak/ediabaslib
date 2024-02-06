@@ -9,8 +9,8 @@ body {
 /* Wrapping element */
 /* Set some basic padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 /* Set widths on the form inputs since otherwise they're 100% wide */
@@ -27,7 +27,7 @@ button {
 */
 
 .jumbotron {
-    padding: 4rem 2rem;
+    padding: 2rem 2rem;
     margin-bottom: 2rem;
     background-color: var(--bs-gray-200);
     border-radius: .3rem;
@@ -36,7 +36,7 @@ button {
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
     .jumbotron {
-        margin-top: 20px;
+        margin-top: 1rem;
     }
 
     .body-content {
