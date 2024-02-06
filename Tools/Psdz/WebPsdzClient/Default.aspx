@@ -36,10 +36,10 @@
                 <asp:LinkButton ID="LinkButtonMsgModal" runat="server"></asp:LinkButton>
                 <asp:Panel ID="PanelMsgModal" runat="server" CssClass="modalPopup" style="display:none;">
                     <div class="jumbotron">
-                        <asp:Panel ID="PanelMsgModalText" runat="server" CssClass="panel panel-body" HorizontalAlign="Center">
+                        <asp:Panel ID="PanelMsgModalText" runat="server" CssClass="panel panel-body mb-1" HorizontalAlign="Center">
                             <asp:Literal ID="LiteralMsgModal" runat="server"></asp:Literal>
                         </asp:Panel>
-                        <asp:Panel ID="PanelMsgModalButtons" runat="server" CssClass="panel panel-body m-1" HorizontalAlign="Center">
+                        <asp:Panel ID="PanelMsgModalButtons" runat="server" CssClass="panel panel-body" HorizontalAlign="Center">
                             <asp:Button ID="ButtonMsgOk" runat="server" CssClass="btn btn-secondary" Text="Yes" meta:resourcekey="ButtonMsgOk" OnClick="ButtonMsgOk_OnClick" />
                             <asp:Button ID="ButtonMsgYes" runat="server" CssClass="btn btn-secondary" Text="Yes" meta:resourcekey="ButtonMsgYes" OnClick="ButtonMsgYes_OnClick" />
                             <asp:Button ID="ButtonMsgNo" runat="server" CssClass="btn btn-secondary" Text="No" meta:resourcekey="ButtonMsgNo" OnClick="ButtonMsgNo_OnClick" />
