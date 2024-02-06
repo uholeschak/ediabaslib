@@ -26,6 +26,13 @@ button {
 }
 */
 
+.jumbotron {
+    padding: 4rem 2rem;
+    margin-bottom: 2rem;
+    background-color: var(--bs-light);
+    border-radius: .3rem;
+}
+
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
     .jumbotron {
