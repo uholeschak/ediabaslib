@@ -453,6 +453,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+        private bool _languageSet;
+        public bool LanguageSet
+        {
+            get
+            {
+                lock (_lockObject)
+                {
+                    return _languageSet;
+                }
+            }
+            set
+            {
+                lock (_lockObject)
+                {
+                    _languageSet = value;
+                }
+            }
+        }
+
         public void SetLanguage(string language)
         {
             List<string> langList = PsdzDatabase.EcuTranslation.GetLanguages();
@@ -469,7 +488,11 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
-            if (!matched)
+            if (matched)
+            {
+                LanguageSet = true;
+            }
+            else
             {
                 log.ErrorFormat("SetLanguage Language not found: {0}", language);
             }

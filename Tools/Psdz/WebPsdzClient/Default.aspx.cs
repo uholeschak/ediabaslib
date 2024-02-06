@@ -28,6 +28,15 @@ namespace WebPsdzClient
                 return;
             }
 
+            if (sessionContainer.DeepObdVersion <= 0)
+            {   // set browser culture as session culture
+                if (!sessionContainer.LanguageSet)
+                {
+                    CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
+                    sessionContainer.SetLanguage(culture.TwoLetterISOLanguageName);
+                }
+            }
+
             string language = sessionContainer.GetLanguage();
             if (!string.IsNullOrEmpty(language))
             {
@@ -44,6 +53,7 @@ namespace WebPsdzClient
                     log.ErrorFormat("InitializeCulture Exception: {0}", ex.Message);
                 }
             }
+
             base.InitializeCulture();
         }
 
