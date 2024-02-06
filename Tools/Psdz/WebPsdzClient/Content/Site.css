@@ -29,7 +29,7 @@ button {
 .jumbotron {
     padding: 4rem 2rem;
     margin-bottom: 2rem;
-    background-color: var(--bs-light);
+    background-color: var(--bs-gray-200);
     border-radius: .3rem;
 }
 
