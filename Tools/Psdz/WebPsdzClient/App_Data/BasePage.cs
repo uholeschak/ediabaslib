@@ -18,6 +18,7 @@ namespace WebPsdzClient.App_Data
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
             {
+                base.InitializeCulture();
                 return;
             }
 
