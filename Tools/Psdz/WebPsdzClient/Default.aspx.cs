@@ -42,7 +42,7 @@ namespace WebPsdzClient
             }
             else
             {
-                Control postbackControl = GetPostBackControl(this);
+                Control postbackControl = GetPostBackControl();
                 if (postbackControl == UpdatePanelStatus)
                 {
                     UpdateStatus(true);
@@ -768,31 +768,6 @@ namespace WebPsdzClient
             log.InfoFormat("GetSelectedSwiActions Count: {0}", selectedSwiActions.Count);
 
             return selectedSwiActions;
-        }
-
-        public static Control GetPostBackControl(Page page)
-        {
-            Control control = null;
-            string ctrlname = page.Request.Params.Get("__EVENTTARGET");
-            if (!string.IsNullOrEmpty(ctrlname))
-            {
-                control = page.FindControl(ctrlname);
-            }
-            else
-            {
-                foreach (string ctl in page.Request.Form)
-                {
-                    Control c = page.FindControl(ctl);
-                    if (c is System.Web.UI.WebControls.Button)
-                    {
-                        control = c;
-                        break;
-                    }
-                }
-
-            }
-
-            return control;
         }
     }
 }

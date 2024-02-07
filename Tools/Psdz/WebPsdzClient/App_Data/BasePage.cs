@@ -67,5 +67,30 @@ namespace WebPsdzClient.App_Data
             log.ErrorFormat("GetSessionContainer No SessionContainer");
             return null;
         }
+
+        protected Control GetPostBackControl()
+        {
+            Control control = null;
+            string ctrlname = Request.Params.Get("__EVENTTARGET");
+            if (!string.IsNullOrEmpty(ctrlname))
+            {
+                control = FindControl(ctrlname);
+            }
+            else
+            {
+                foreach (string ctl in Request.Form)
+                {
+                    Control c = FindControl(ctl);
+                    if (c is System.Web.UI.WebControls.Button)
+                    {
+                        control = c;
+                        break;
+                    }
+                }
+
+            }
+
+            return control;
+        }
     }
 }
