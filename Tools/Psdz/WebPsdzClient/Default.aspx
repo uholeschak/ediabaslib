@@ -8,7 +8,7 @@
     <style>.table { border-width: 0; border-color: transparent; }</style>
     <style>.table th { text-align: center }</style>
     <style>.dropdown { width: 100%; max-width: 100%; }</style>
-    <style>.checkbox label { margin: 0; margin-left: 2rem; }</style>
+    <style>.checkbox label { margin: 0rem 0rem 0rem 1rem; }</style>
     <div class="jumbotron">
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
