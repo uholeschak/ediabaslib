@@ -65,6 +65,7 @@ namespace WebPsdzClient
         protected void Page_Load(object sender, EventArgs e)
         {
             //log.InfoFormat("_Default Page_Load");
+            Global.Page_Load(this);
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
             {

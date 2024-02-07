@@ -1,5 +1,4 @@
 ﻿<%@ Page Title="<%$Resources:Global,AccessDenied%>" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AccessDenied.aspx.cs" Inherits="WebPsdzClient.AccessDenied" %>
-<%@ OutputCache Location="None" VaryByParam="None" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
     <div class="jumbotron">

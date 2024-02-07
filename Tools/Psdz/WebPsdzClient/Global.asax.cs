@@ -10,6 +10,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
+using System.Web.UI;
 using log4net;
 using PsdzClient;
 using PsdzClient.Programming;
@@ -178,6 +179,12 @@ namespace WebPsdzClient
                 session.Contents.Remove(SessionContainerName);
                 sessionContainer.Dispose();
             }
+        }
+
+        public static void Page_Load(Page page)
+        {
+            page.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            page.Response.Cache.SetNoStore();
         }
 
         private void SetupLog4Net()

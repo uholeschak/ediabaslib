@@ -11,7 +11,7 @@ namespace WebPsdzClient
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            Global.Page_Load(this);
         }
     }
 }
