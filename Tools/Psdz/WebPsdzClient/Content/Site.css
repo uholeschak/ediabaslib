@@ -36,6 +36,8 @@ button {
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
     .jumbotron {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
         margin-top: 1rem;
     }
 
