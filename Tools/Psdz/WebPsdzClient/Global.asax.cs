@@ -183,8 +183,12 @@ namespace WebPsdzClient
 
         public static void Page_Load(Page page)
         {
-            page.Response.Cache.SetCacheability(HttpCacheability.NoCache);
-            page.Response.Cache.SetNoStore();
+            HttpCachePolicy cache = page?.Response.Cache;
+            if (cache != null)
+            {
+                cache.SetCacheability(HttpCacheability.NoCache);
+                cache.SetNoStore();
+            }
         }
 
         private void SetupLog4Net()
