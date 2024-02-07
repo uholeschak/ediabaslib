@@ -15,57 +15,19 @@ using WebPsdzClient.App_Data;
 
 namespace WebPsdzClient
 {
-    public partial class _Default : Page
+    public partial class _Default : BasePage
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
-
-        protected override void InitializeCulture()
-        {
-            SessionContainer.SetLogInfo(Session.SessionID);
-            SessionContainer sessionContainer = GetSessionContainer();
-            if (sessionContainer == null)
-            {
-                return;
-            }
-
-            if (sessionContainer.DeepObdVersion <= 0)
-            {   // set browser culture as session culture
-                if (!sessionContainer.LanguageSet)
-                {
-                    CultureInfo culture = Thread.CurrentThread.CurrentUICulture;
-                    sessionContainer.SetLanguage(culture.TwoLetterISOLanguageName);
-                }
-            }
-
-            string language = sessionContainer.GetLanguage();
-            if (!string.IsNullOrEmpty(language))
-            {
-                try
-                {
-                    CultureInfo culture = CultureInfo.CreateSpecificCulture(language.ToLowerInvariant());
-                    Thread.CurrentThread.CurrentCulture = culture;
-                    Thread.CurrentThread.CurrentUICulture = culture;
-                    Culture = culture.TwoLetterISOLanguageName;
-                    UICulture = culture.TwoLetterISOLanguageName;
-                }
-                catch (Exception ex)
-                {
-                    log.ErrorFormat("InitializeCulture Exception: {0}", ex.Message);
-                }
-            }
-
-            base.InitializeCulture();
-        }
 
         protected void Page_Init(object sender, EventArgs e)
         {
             //log.InfoFormat("_Default Page_Init");
         }
 
-        protected void Page_Load(object sender, EventArgs e)
+        protected override void Page_Load(object sender, EventArgs e)
         {
             //log.InfoFormat("_Default Page_Load");
-            Global.Page_Load(this);
+            base.Page_Load(sender, e);
             SessionContainer sessionContainer = GetSessionContainer();
             if (sessionContainer == null)
             {
@@ -446,17 +408,6 @@ namespace WebPsdzClient
 
             sessionContainer.UpdateDisplay(false);
             UpdateTimerPanel();
-        }
-
-        private SessionContainer GetSessionContainer()
-        {
-            if (Session.Contents[Global.SessionContainerName] is SessionContainer sessionContainer)
-            {
-                return sessionContainer;
-            }
-
-            log.ErrorFormat("GetSessionContainer No SessionContainer");
-            return null;
         }
 
         private void UpdateStatus(bool updatePanel = false)

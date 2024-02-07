@@ -181,16 +181,6 @@ namespace WebPsdzClient
             }
         }
 
-        public static void Page_Load(Page page)
-        {
-            HttpCachePolicy cache = page?.Response.Cache;
-            if (cache != null)
-            {
-                cache.SetCacheability(HttpCacheability.NoCache);
-                cache.SetNoStore();
-            }
-        }
-
         private void SetupLog4Net()
         {
             string logDir = Path.Combine(IstaFolder, @"logs\client");
