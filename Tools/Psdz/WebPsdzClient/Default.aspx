@@ -6,9 +6,9 @@
 
     <style>.text-left { width: 100%; max-width: 100%; resize: none; overflow: auto; }</style>
     <style>.text-left:focus { outline: none }</style>
-    <style>.table { border-width: 0; border-color: transparent; }</style>
     <style>.dropdown { width: 100%; max-width: 100%; }</style>
-    <style>.checkbox label { margin: 0rem 0rem 0rem 1rem; }</style>
+    <style>.checkbox label { margin: 0; display: contents; }</style>
+    <style>.checkbox input { margin-right: 5px; }</style>
     <div class="jumbotron">
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
