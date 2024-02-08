@@ -7,7 +7,6 @@
     <style>.text-left { width: 100%; max-width: 100%; resize: none; overflow: auto; }</style>
     <style>.text-left:focus { outline: none }</style>
     <style>.table { border-width: 0; border-color: transparent; }</style>
-    <style>.table th { text-align: center }</style>
     <style>.dropdown { width: 100%; max-width: 100%; }</style>
     <style>.checkbox label { margin: 0rem 0rem 0rem 1rem; }</style>
     <div class="jumbotron">
