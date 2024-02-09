@@ -552,27 +552,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            if (sessionContainer.DeepObdVersion > 0)
-            {
-                sessionContainer.ReloadPage();
-            }
-            else
-            {
-                try
-                {
-                    Request.ValidateInput();
-                    string url = Request.RawUrl;
-                    log.InfoFormat("UpdateOptions Reload Url: {0}", url);
-                    if (!string.IsNullOrEmpty(url))
-                    {
-                        Response.Redirect(url, false);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.ErrorFormat("UpdateOptions Exception: {0}", ex.Message);
-                }
-            }
+            sessionContainer.ReloadPage();
         }
 
         private void UpdateCurrentOptions(bool updatePanel = false)

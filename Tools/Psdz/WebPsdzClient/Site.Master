@@ -294,8 +294,8 @@
                 {
                     setTimeout(function ()
                     {
-                        console.log("Reloading page");
-                        location.reload();
+                        console.log("Reloading page delayed");
+                        location.href = location.href;
                     }, 500);
                 }
             }
