@@ -292,8 +292,22 @@
                 }
                 else
                 {
-                    setTimeout(function ()
+                    setTimeout(function reloadDelayed()
                     {
+                        if (typeof isPostBack === "function")
+                        {
+                            if (isPostBack())
+                            {
+                                console.log("PostBack is active");
+                                setTimeout(reloadDelayed, 500);
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            console.log("isPostBack not existing");
+                        }
+
                         console.log("Reloading page delayed");
                         location.href = location.href;
                     }, 500);
