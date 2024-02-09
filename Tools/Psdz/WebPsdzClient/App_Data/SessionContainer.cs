@@ -773,25 +773,35 @@ namespace WebPsdzClient.App_Data
 
         private void StopTcpServers()
         {
-            if (_enetTcpChannels.Count == 0)
+            lock (_enetTcpChannels)
             {
-                return;
-            }
-
-            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
-            {
-                TcpClientsDisconnect(enetTcpChannel);
-
-                if (enetTcpChannel.TcpServer != null)
+                if (_enetTcpChannels.Count == 0)
                 {
-                    log.ErrorFormat("StopTcpListener Stopping Port: {0}, Control: {1}", enetTcpChannel.ServerPort, enetTcpChannel.Control);
-                    enetTcpChannel.TcpServer.Stop();
-                    enetTcpChannel.TcpServer = null;
-                    enetTcpChannel.ServerPort = 0;
+                    return;
                 }
-            }
 
-            _enetTcpChannels.Clear();
+                foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+                {
+                    TcpClientsDisconnect(enetTcpChannel);
+
+                    try
+                    {
+                        if (enetTcpChannel.TcpServer != null)
+                        {
+                            log.ErrorFormat("StopTcpListener Stopping Port: {0}, Control: {1}", enetTcpChannel.ServerPort, enetTcpChannel.Control);
+                            enetTcpChannel.TcpServer.Stop();
+                            enetTcpChannel.TcpServer = null;
+                            enetTcpChannel.ServerPort = 0;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("StopTcpServers Exception: {0}", ex.Message);
+                    }
+                }
+
+                _enetTcpChannels.Clear();
+            }
         }
 
         private void TcpClientsDisconnect(EnetTcpChannel enetTcpChannel)
