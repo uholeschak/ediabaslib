@@ -61,6 +61,13 @@
         </asp:UpdatePanel>
     </div>
     <script type="text/javascript">
+        function isPostBack()
+        {
+            var postBackState = '<%= Page.IsPostBack.ToString()%>';
+            console.log("isPostBack State=" + postBackState);
+            return postBackState == 'True';
+        }
+
         function updatePanelStatus()
         {
             console.log("updatePanelStatus called");
