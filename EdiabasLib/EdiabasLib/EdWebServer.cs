@@ -407,7 +407,7 @@ namespace EdiabasLib
                 sbBody.Append(" />\r\n");
 
                 sbBody.Append("</vehicle_info>\r\n");
-                var response = new HttpResponse
+                HttpResponse response = new HttpResponse
                 {
                     StatusCode = (int)HttpStatusCode.OK,
                     ResponseReason = HttpStatusCode.OK.ToString(),
