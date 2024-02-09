@@ -290,6 +290,14 @@
                     {
                     }
                 }
+                else
+                {
+                    setTimeout(function ()
+                    {
+                        console.log("Reloading page");
+                        location.reload();
+                    }, 500);
+                }
             }
 
             $.connection.hub.qs = { 'sessionId': sessionID };
