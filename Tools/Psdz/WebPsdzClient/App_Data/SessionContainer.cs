@@ -547,20 +547,20 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private List<EnetTcpChannel> _enetTcpChannels = new List<EnetTcpChannel>();
+        private readonly List<EnetTcpChannel> _enetTcpChannels = new List<EnetTcpChannel>();
         private Thread _tcpThread;
         private Thread _vehicleThread;
         private bool _stopThread;
-        private AutoResetEvent _tcpThreadWakeEvent = new AutoResetEvent(false);
-        private AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
-        private Queue<PsdzVehicleHub.VehicleResponse> _vehicleResponses = new Queue<PsdzVehicleHub.VehicleResponse>();
-        private Dictionary<string, List<string>> _vehicleResponseDict = new Dictionary<string, List<string>>();
+        private readonly AutoResetEvent _tcpThreadWakeEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
+        private readonly Queue<PsdzVehicleHub.VehicleResponse> _vehicleResponses = new Queue<PsdzVehicleHub.VehicleResponse>();
+        private readonly Dictionary<string, List<string>> _vehicleResponseDict = new Dictionary<string, List<string>>();
 #if EDIABAS_CONNECTION
         private EdiabasNet _ediabas;
 #endif
         private bool _disposed;
         private readonly object _lockObject = new object();
-        private readonly object _vehicleLogObject = new object();
+        private readonly object _vehicleLogLockObject = new object();
         private StreamWriter _swVehicleLog;
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
@@ -665,26 +665,29 @@ namespace WebPsdzClient.App_Data
             {
                 StopTcpListener();
 
-                if (_enetTcpChannels.Count == 0)
+                lock (_enetTcpChannels)
                 {
-                    _enetTcpChannels.Add(new EnetTcpChannel(false));
-                    _enetTcpChannels.Add(new EnetTcpChannel(true));
-                }
-
-                foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
-                {
-                    if (enetTcpChannel.TcpServer == null)
+                    if (_enetTcpChannels.Count == 0)
                     {
-                        enetTcpChannel.ServerPort = 0;
-                        enetTcpChannel.TcpServer = new TcpListener(IPAddress.Loopback, 0);
-                        enetTcpChannel.TcpServer.Start();
-                        IPEndPoint ipEndPoint = enetTcpChannel.TcpServer.LocalEndpoint as IPEndPoint;
-                        if (ipEndPoint != null)
-                        {
-                            enetTcpChannel.ServerPort = ipEndPoint.Port;
-                        }
+                        _enetTcpChannels.Add(new EnetTcpChannel(false));
+                        _enetTcpChannels.Add(new EnetTcpChannel(true));
+                    }
 
-                        log.InfoFormat("StartTcpListener Port: {0}, Control: {1}", enetTcpChannel.ServerPort, enetTcpChannel.Control);
+                    foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+                    {
+                        if (enetTcpChannel.TcpServer == null)
+                        {
+                            enetTcpChannel.ServerPort = 0;
+                            enetTcpChannel.TcpServer = new TcpListener(IPAddress.Loopback, 0);
+                            enetTcpChannel.TcpServer.Start();
+                            IPEndPoint ipEndPoint = enetTcpChannel.TcpServer.LocalEndpoint as IPEndPoint;
+                            if (ipEndPoint != null)
+                            {
+                                enetTcpChannel.ServerPort = ipEndPoint.Port;
+                            }
+
+                            log.InfoFormat("StartTcpListener Port: {0}, Control: {1}", enetTcpChannel.ServerPort, enetTcpChannel.Control);
+                        }
                     }
                 }
 
@@ -1820,7 +1823,7 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            lock (_vehicleLogObject)
+            lock (_vehicleLogLockObject)
             {
                 try
                 {
@@ -1918,7 +1921,7 @@ namespace WebPsdzClient.App_Data
 
         private void CloseVehicleLog()
         {
-            lock (_vehicleLogObject)
+            lock (_vehicleLogLockObject)
             {
                 try
                 {
