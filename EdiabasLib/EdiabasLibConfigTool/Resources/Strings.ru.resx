@@ -279,6 +279,6 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
     <value>Не удалось получить режим устройства</value>
   </data>
   <data name="PatchOriginalApiDllMissing" xml:space="preserve">
-    <value>EdiabasLib {0} файл отсутствует.</value>
+    <value>Ediabas {0} файл отсутствует.</value>
   </data>
 </root>
