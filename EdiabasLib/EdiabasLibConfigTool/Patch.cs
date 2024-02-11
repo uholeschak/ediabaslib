@@ -407,6 +407,8 @@ namespace EdiabasLibConfigTool
                 {
                     sr.Append("\r\n");
                     sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api64DllName));
+                    // accept missing file
+                    //return false;
                 }
 
                 string sourceConfig = Path.Combine(sourceDir, ConfigFileName);
@@ -560,8 +562,11 @@ namespace EdiabasLibConfigTool
                 sr.AppendFormat(Resources.Strings.PatchDirectory, dirName);
                 if (!PatchFiles(sr, dirName))
                 {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                     return false;
                 }
+
                 string configFile = Path.Combine(dirName, ConfigFileName);
                 if (!UpdateConfigFile(configFile, adapterType, devInfo, wlanIface, enetConnection, pin))
                 {
@@ -569,6 +574,7 @@ namespace EdiabasLibConfigTool
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                     return false;
                 }
+
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.PatchConfigUpdateOk);
                 switch (patchType)
