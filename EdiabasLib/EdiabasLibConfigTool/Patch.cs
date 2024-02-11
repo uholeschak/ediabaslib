@@ -340,49 +340,74 @@ namespace EdiabasLibConfigTool
 #endif
                 // 32 bit
                 string dllFile32 = Path.Combine(dirName, Api32DllName);
-                string dllFile32Backup = Path.Combine(dirName, Api32DllBackupName);
-                if (!File.Exists(dllFile32Backup) && IsOriginalDll(dllFile32))
+                if (File.Exists(dllFile32))
                 {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api32DllBackupName));
-                    File.Copy(dllFile32, dllFile32Backup, false);
+                    string dllFile32Backup = Path.Combine(dirName, Api32DllBackupName);
+                    if (!File.Exists(dllFile32Backup))
+                    {
+                        if (IsOriginalDll(dllFile32))
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api32DllBackupName));
+                            File.Copy(dllFile32, dllFile32Backup, false);
+                        }
+                    }
+                    else
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api32DllBackupName));
+                    }
+
+                    if (!IsOriginalDll(dllFile32Backup))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api32DllName));
+                        return false;
+                    }
+
+                    File.Copy(sourceDll32, dllFile32, true);
                 }
                 else
                 {
                     sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api32DllBackupName));
-                }
-
-                if (!IsOriginalDll(dllFile32Backup))
-                {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api32DllName));
+                    sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api32DllName));
                     return false;
                 }
-                File.Copy(sourceDll32, dllFile32, true);
 
                 // 64 bit
                 string dllFile64 = Path.Combine(dirName, Api64DllName);
-                string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
-                if (!File.Exists(dllFile64Backup) && IsOriginalDll(dllFile64))
+                if (File.Exists(dllFile64))
                 {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api64DllBackupName));
-                    File.Copy(dllFile64, dllFile64Backup, false);
+                    string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
+                    if (!File.Exists(dllFile64Backup))
+                    {
+                        if (IsOriginalDll(dllFile64))
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api64DllBackupName));
+                            File.Copy(dllFile64, dllFile64Backup, false);
+                        }
+                    }
+                    else
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api64DllBackupName));
+                    }
+
+                    if (!IsOriginalDll(dllFile64Backup))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api64DllName));
+                        return false;
+                    }
+
+                    File.Copy(sourceDll64, dllFile64, true);
                 }
                 else
                 {
                     sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api64DllBackupName));
+                    sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api64DllName));
                 }
-
-                if (!IsOriginalDll(dllFile64Backup))
-                {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api64DllName));
-                    return false;
-                }
-                File.Copy(sourceDll64, dllFile64, true);
 
                 string sourceConfig = Path.Combine(sourceDir, ConfigFileName);
                 if (!File.Exists(sourceConfig))

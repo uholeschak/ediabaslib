@@ -279,4 +279,7 @@ mit EdiabasLib unterstützt.</value>
   <data name="WriteModeFailed" xml:space="preserve">
     <value>Adapter-Modus schreiben fehlgeschlagen</value>
   </data>
+  <data name="PatchOriginalApiDllMissing" xml:space="preserve">
+    <value>EdiabasLib {0} Datei fehlt.</value>
+  </data>
 </root>

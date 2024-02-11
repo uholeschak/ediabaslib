@@ -440,6 +440,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Ediabas {0} file is missing. ähnelt.
+        /// </summary>
+        internal static string PatchOriginalApiDllMissing {
+            get {
+                return ResourceManager.GetString("PatchOriginalApiDllMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Hint: In VAS-PC only &quot;Guided Fault Finding&quot; and &quot;Guided Functions&quot;
         ///are supported with EdiabasLib. ähnelt.
         /// </summary>

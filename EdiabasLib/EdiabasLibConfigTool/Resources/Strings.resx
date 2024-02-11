@@ -288,4 +288,7 @@ are supported with EdiabasLib.</value>
   <data name="WriteModeFailed" xml:space="preserve">
     <value>Write adapter mode failed</value>
   </data>
+  <data name="PatchOriginalApiDllMissing" xml:space="preserve">
+    <value>Ediabas {0} file is missing.</value>
+  </data>
 </root>
