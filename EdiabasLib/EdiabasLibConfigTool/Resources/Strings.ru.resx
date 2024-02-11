@@ -278,4 +278,7 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
   <data name="WriteModeFailed" xml:space="preserve">
     <value>Не удалось получить режим устройства</value>
   </data>
+  <data name="PatchOriginalApiDllMissing" xml:space="preserve">
+    <value>EdiabasLib {0} файл отсутствует.</value>
+  </data>
 </root>
