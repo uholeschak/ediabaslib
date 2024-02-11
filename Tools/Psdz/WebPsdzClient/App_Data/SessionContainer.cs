@@ -561,6 +561,7 @@ namespace WebPsdzClient.App_Data
         private bool _disposed;
         private readonly object _lockObject = new object();
         private readonly object _vehicleLogLockObject = new object();
+        private Mutex _enetTcpMutex = new Mutex(false);
         private StreamWriter _swVehicleLog;
         private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
         private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
@@ -574,6 +575,7 @@ namespace WebPsdzClient.App_Data
         private const long Nr78Delay = 1000;
         private const long Nr78FirstDelay = 4000;
         private const long Nr78RetryMax = VehicleReceiveTimeout / Nr78Delay;
+        private const int EnetTcpMutexTimeout = 30000;
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
         private const string SqlDataBase = ";Database=bmw_coding";
 
@@ -665,7 +667,13 @@ namespace WebPsdzClient.App_Data
             {
                 StopTcpListener();
 
-                lock (_enetTcpChannels)
+                if (_enetTcpMutex != null && !_enetTcpMutex.WaitOne(EnetTcpMutexTimeout))
+                {
+                    log.ErrorFormat("StartTcpListener Aquire mutex failed");
+                    return false; 
+                }
+
+                try
                 {
                     if (_enetTcpChannels.Count == 0)
                     {
@@ -686,43 +694,48 @@ namespace WebPsdzClient.App_Data
                                 enetTcpChannel.ServerPort = ipEndPoint.Port;
                             }
 
-                            log.InfoFormat("StartTcpListener Port: {0}, Control: {1}", enetTcpChannel.ServerPort, enetTcpChannel.Control);
+                            log.InfoFormat("StartTcpListener Port: {0}, Control: {1}", enetTcpChannel.ServerPort,
+                                enetTcpChannel.Control);
                         }
                     }
-                }
 
-                if (_vehicleThread != null)
-                {
-                    if (!_vehicleThread.IsAlive)
+                    if (_vehicleThread != null)
                     {
-                        _vehicleThread = null;
+                        if (!_vehicleThread.IsAlive)
+                        {
+                            _vehicleThread = null;
+                        }
+                    }
+
+                    if (_vehicleThread == null)
+                    {
+                        _stopThread = false;
+                        _vehicleThreadWakeEvent.Reset();
+                        _vehicleThread = new Thread(VehicleThread);
+                        _vehicleThread.Priority = ThreadPriority.Normal;
+                        _vehicleThread.Start();
+                    }
+
+                    if (_tcpThread != null)
+                    {
+                        if (!_tcpThread.IsAlive)
+                        {
+                            _tcpThread = null;
+                        }
+                    }
+
+                    if (_tcpThread == null)
+                    {
+                        _stopThread = false;
+                        _tcpThreadWakeEvent.Reset();
+                        _tcpThread = new Thread(TcpThread);
+                        _tcpThread.Priority = ThreadPriority.Normal;
+                        _tcpThread.Start();
                     }
                 }
-
-                if (_vehicleThread == null)
+                finally
                 {
-                    _stopThread = false;
-                    _vehicleThreadWakeEvent.Reset();
-                    _vehicleThread = new Thread(VehicleThread);
-                    _vehicleThread.Priority = ThreadPriority.Normal;
-                    _vehicleThread.Start();
-                }
-
-                if (_tcpThread != null)
-                {
-                    if (!_tcpThread.IsAlive)
-                    {
-                        _tcpThread = null;
-                    }
-                }
-
-                if (_tcpThread == null)
-                {
-                    _stopThread = false;
-                    _tcpThreadWakeEvent.Reset();
-                    _tcpThread = new Thread(TcpThread);
-                    _tcpThread.Priority = ThreadPriority.Normal;
-                    _tcpThread.Start();
+                    _enetTcpMutex?.ReleaseMutex();
                 }
 
                 return true;
@@ -739,31 +752,45 @@ namespace WebPsdzClient.App_Data
         {
             try
             {
-                if (_tcpThread != null)
+                if (_enetTcpMutex != null && !_enetTcpMutex.WaitOne(EnetTcpMutexTimeout))
                 {
-                    _stopThread = true;
-                    _tcpThreadWakeEvent.Set();
-                    if (!_tcpThread.Join(ThreadFinishTimeout))
-                    {
-                        log.ErrorFormat("StopTcpListener Stopping thread failed");
-                    }
-
-                    _tcpThread = null;
+                    log.ErrorFormat("StopTcpListener Aquire mutex failed");
+                    return false;
                 }
 
-                if (_vehicleThread != null)
+                try
                 {
-                    _stopThread = true;
-                    _vehicleThreadWakeEvent.Set();
-                    if (!_vehicleThread.Join(ThreadFinishTimeout))
+                    if (_tcpThread != null)
                     {
-                        log.ErrorFormat("StopTcpListener Stopping vehicle thread failed");
+                        _stopThread = true;
+                        _tcpThreadWakeEvent.Set();
+                        if (!_tcpThread.Join(ThreadFinishTimeout))
+                        {
+                            log.ErrorFormat("StopTcpListener Stopping thread failed");
+                        }
+
+                        _tcpThread = null;
                     }
 
-                    _vehicleThread = null;
+                    if (_vehicleThread != null)
+                    {
+                        _stopThread = true;
+                        _vehicleThreadWakeEvent.Set();
+                        if (!_vehicleThread.Join(ThreadFinishTimeout))
+                        {
+                            log.ErrorFormat("StopTcpListener Stopping vehicle thread failed");
+                        }
+
+                        _vehicleThread = null;
+                    }
+
+                    StopTcpServers();
+                }
+                finally
+                {
+                    _enetTcpMutex?.ReleaseMutex();
                 }
 
-                StopTcpServers();
                 return true;
             }
             catch (Exception ex)
@@ -776,35 +803,32 @@ namespace WebPsdzClient.App_Data
 
         private void StopTcpServers()
         {
-            lock (_enetTcpChannels)
+            if (_enetTcpChannels.Count == 0)
             {
-                if (_enetTcpChannels.Count == 0)
-                {
-                    return;
-                }
-
-                foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
-                {
-                    TcpClientsDisconnect(enetTcpChannel);
-
-                    try
-                    {
-                        if (enetTcpChannel.TcpServer != null)
-                        {
-                            log.ErrorFormat("StopTcpListener Stopping Port: {0}, Control: {1}", enetTcpChannel.ServerPort, enetTcpChannel.Control);
-                            enetTcpChannel.TcpServer.Stop();
-                            enetTcpChannel.TcpServer = null;
-                            enetTcpChannel.ServerPort = 0;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        log.ErrorFormat("StopTcpServers Exception: {0}", ex.Message);
-                    }
-                }
-
-                _enetTcpChannels.Clear();
+                return;
             }
+
+            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            {
+                TcpClientsDisconnect(enetTcpChannel);
+
+                try
+                {
+                    if (enetTcpChannel.TcpServer != null)
+                    {
+                        log.ErrorFormat("StopTcpListener Stopping Port: {0}, Control: {1}", enetTcpChannel.ServerPort, enetTcpChannel.Control);
+                        enetTcpChannel.TcpServer.Stop();
+                        enetTcpChannel.TcpServer = null;
+                        enetTcpChannel.ServerPort = 0;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("StopTcpServers Exception: {0}", ex.Message);
+                }
+            }
+
+            _enetTcpChannels.Clear();
         }
 
         private void TcpClientsDisconnect(EnetTcpChannel enetTcpChannel)
@@ -2899,6 +2923,12 @@ namespace WebPsdzClient.App_Data
                     _ediabas = null;
                 }
 #endif
+                if (_enetTcpMutex != null)
+                {
+                    _enetTcpMutex.Dispose();
+                    _enetTcpMutex = null;
+                }
+
                 lock (SessionContainers)
                 {
                     SessionContainers.Remove(this);
