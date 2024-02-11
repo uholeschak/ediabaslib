@@ -292,14 +292,14 @@
                 }
                 else
                 {
-                    setTimeout(function reloadDelayed()
+                    setTimeout(function reloadPage()
                     {
                         if (typeof isPostBack === "function")
                         {
                             if (isPostBack())
                             {
                                 console.log("PostBack is active");
-                                setTimeout(reloadDelayed, 500);
+                                setTimeout(reloadPage, 500);
                                 return;
                             }
                         }
