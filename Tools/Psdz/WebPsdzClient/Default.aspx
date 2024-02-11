@@ -12,14 +12,14 @@
     <div class="jumbotron">
         <asp:UpdatePanel ID="UpdatePanelStatus" runat="server" UpdateMode="Conditional" ChildrenAsTriggers="False">
             <ContentTemplate>
-                <asp:Panel ID="PanelButtons" runat="server" CssClass="panel panel-body mb-1" HorizontalAlign="Center" meta:resourcekey="PanelButtonsResource">
-                    <asp:Button ID="ButtonStopHost" runat="server" CssClass="btn btn-secondary" Text="Stop Host" OnClick="ButtonStopHost_Click" meta:resourcekey="ButtonStopHostResource" />
-                    <asp:Button ID="ButtonConnect" runat="server" CssClass="btn btn-secondary" Text="Connect" OnClick="ButtonConnect_OnClick" meta:resourcekey="ButtonConnectResource" />
-                    <asp:Button ID="ButtonDisconnect" runat="server" CssClass="btn btn-secondary" Text="Disconnect" OnClick="ButtonDisconnect_OnClick" meta:resourcekey="ButtonDisconnectResource" />
-                    <asp:Button ID="ButtonCreateOptions" runat="server" CssClass="btn btn-secondary" Text="Create Options" OnClick="ButtonCreateOptions_OnClick" meta:resourcekey="ButtonCreateOptionsResource" />
-                    <asp:Button ID="ButtonModifyFa" runat="server" CssClass="btn btn-secondary" Text="Modify FA" OnClick="ButtonModifyFa_OnClick" meta:resourcekey="ButtonModifyFaResource" />
-                    <asp:Button ID="ButtonExecuteTal" runat="server" CssClass="btn btn-secondary" Text="Execute TAL" OnClick="ButtonExecuteTal_OnClick" meta:resourcekey="ButtonExecuteTalResource" />
-                    <asp:Button ID="ButtonAbort" runat="server" CssClass="btn btn-secondary" Text="Abort" OnClick="ButtonAbort_OnClick" meta:resourcekey="ButtonAbortResource" />
+                <asp:Panel ID="PanelButtons" runat="server" CssClass="panel panel-body" HorizontalAlign="Center" meta:resourcekey="PanelButtonsResource">
+                    <asp:Button ID="ButtonStopHost" runat="server" CssClass="btn btn-secondary mb-1" Text="Stop Host" OnClick="ButtonStopHost_Click" meta:resourcekey="ButtonStopHostResource" />
+                    <asp:Button ID="ButtonConnect" runat="server" CssClass="btn btn-secondary mb-1" Text="Connect" OnClick="ButtonConnect_OnClick" meta:resourcekey="ButtonConnectResource" />
+                    <asp:Button ID="ButtonDisconnect" runat="server" CssClass="btn btn-secondary mb-1" Text="Disconnect" OnClick="ButtonDisconnect_OnClick" meta:resourcekey="ButtonDisconnectResource" />
+                    <asp:Button ID="ButtonCreateOptions" runat="server" CssClass="btn btn-secondary mb-1" Text="Create Options" OnClick="ButtonCreateOptions_OnClick" meta:resourcekey="ButtonCreateOptionsResource" />
+                    <asp:Button ID="ButtonModifyFa" runat="server" CssClass="btn btn-secondary mb-1" Text="Modify FA" OnClick="ButtonModifyFa_OnClick" meta:resourcekey="ButtonModifyFaResource" />
+                    <asp:Button ID="ButtonExecuteTal" runat="server" CssClass="btn btn-secondary mb-1" Text="Execute TAL" OnClick="ButtonExecuteTal_OnClick" meta:resourcekey="ButtonExecuteTalResource" />
+                    <asp:Button ID="ButtonAbort" runat="server" CssClass="btn btn-secondary mb-1" Text="Abort" OnClick="ButtonAbort_OnClick" meta:resourcekey="ButtonAbortResource" />
                 </asp:Panel>
                 <asp:Panel ID="PanelOptions" runat="server" CssClass="panel panel-body" HorizontalAlign="Left" meta:resourcekey="PanelOptionsResource" >
                     <asp:DropDownList ID="DropDownListOptionType" CssClass="dropdown mb-1" runat="server" OnSelectedIndexChanged="DropDownListOptionType_OnSelectedIndexChanged" AutoPostBack="True" meta:resourcekey="DropDownListOptionTypeResource">
