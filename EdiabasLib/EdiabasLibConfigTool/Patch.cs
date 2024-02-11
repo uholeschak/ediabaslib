@@ -340,7 +340,27 @@ namespace EdiabasLibConfigTool
 #endif
                 // 32 bit
                 string dllFile32 = Path.Combine(dirName, Api32DllName);
-                if (File.Exists(dllFile32))
+                bool dll32Exits = File.Exists(dllFile32);
+                if (!dll32Exits)
+                {
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api32DllName));
+                    return false;
+                }
+
+                // 64 bit
+                string dllFile64 = Path.Combine(dirName, Api64DllName);
+                bool dll64Exits = File.Exists(dllFile64);
+                if (!dll64Exits)
+                {
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api64DllName));
+                    // accept missing file
+                    //return false;
+                }
+
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                if (dll32Exits)
                 {
                     string dllFile32Backup = Path.Combine(dirName, Api32DllBackupName);
                     if (!File.Exists(dllFile32Backup))
@@ -367,16 +387,9 @@ namespace EdiabasLibConfigTool
 
                     File.Copy(sourceDll32, dllFile32, true);
                 }
-                else
-                {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api32DllName));
-                    return false;
-                }
 
-                // 64 bit
-                string dllFile64 = Path.Combine(dirName, Api64DllName);
-                if (File.Exists(dllFile64))
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                if (dll64Exits)
                 {
                     string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
                     if (!File.Exists(dllFile64Backup))
@@ -402,13 +415,6 @@ namespace EdiabasLibConfigTool
                     }
 
                     File.Copy(sourceDll64, dllFile64, true);
-                }
-                else
-                {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api64DllName));
-                    // accept missing file
-                    //return false;
                 }
 
                 string sourceConfig = Path.Combine(sourceDir, ConfigFileName);
@@ -542,17 +548,30 @@ namespace EdiabasLibConfigTool
                 {
                     return false;
                 }
-                string dllFileBackup = Path.Combine(dirName, Api32DllBackupName);
-                if (!File.Exists(dllFileBackup))
+
+                string dllFile32 = Path.Combine(dirName, Api32DllName);
+                if (File.Exists(dllFile32))
                 {
-                    return false;
+                    if (!IsOriginalDll(dllFile32))
+                    {
+                        return true;
+                    }
+                }
+
+                string dllFile64 = Path.Combine(dirName, Api64DllName);
+                if (File.Exists(dllFile64))
+                {
+                    if (!IsOriginalDll(dllFile64))
+                    {
+                        return true;
+                    }
                 }
             }
             catch (Exception)
             {
                 return false;
             }
-            return true;
+            return false;
         }
 
         public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
