@@ -366,29 +366,32 @@ namespace EdiabasLibConfigTool
 
                 // 64 bit
                 string dllFile64 = Path.Combine(dirName, Api64DllName);
-                string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
-                if (!File.Exists(dllFile64Backup))
+                if (File.Exists(dllFile64))
                 {
-                    if (IsOriginalDll(dllFile64))
+                    string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
+                    if (!File.Exists(dllFile64Backup))
+                    {
+                        if (IsOriginalDll(dllFile64))
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api64DllBackupName));
+                            File.Copy(dllFile64, dllFile64Backup, false);
+                        }
+                    }
+                    else
                     {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api64DllBackupName));
-                        File.Copy(dllFile64, dllFile64Backup, false);
+                        sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api64DllBackupName));
                     }
-                }
-                else
-                {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api64DllBackupName));
-                }
 
-                if (!IsOriginalDll(dllFile64Backup))
-                {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api64DllName));
-                    return false;
+                    if (!IsOriginalDll(dllFile64Backup))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api64DllName));
+                        return false;
+                    }
+                    File.Copy(sourceDll64, dllFile64, true);
                 }
-                File.Copy(sourceDll64, dllFile64, true);
 
                 string sourceConfig = Path.Combine(sourceDir, ConfigFileName);
                 if (!File.Exists(sourceConfig))
