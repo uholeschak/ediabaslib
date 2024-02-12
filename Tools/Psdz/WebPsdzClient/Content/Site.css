@@ -37,7 +37,7 @@ html {
 }
 
 /* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 768px) and (min-height: 500px) {
     html {
         font-size: 100%
     }
