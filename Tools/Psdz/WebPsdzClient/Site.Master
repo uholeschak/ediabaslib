@@ -4,9 +4,9 @@
 
 <html lang="en">
 <head runat="server">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, minimum-scale=0.2" />
     <title><%: Page.Title %></title>
 
     <asp:PlaceHolder runat="server">
