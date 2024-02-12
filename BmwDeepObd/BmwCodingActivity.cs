@@ -221,7 +221,6 @@ namespace BmwDeepObd
                     webSettings.BuiltInZoomControls = true;
                     webSettings.LoadWithOverviewMode = true;
                     webSettings.UseWideViewPort = true;
-                    webSettings.TextZoom = 50;
                     webSettings.CacheMode = CacheModes.NoCache;
 
                     string userAgent = webSettings.UserAgentString;
