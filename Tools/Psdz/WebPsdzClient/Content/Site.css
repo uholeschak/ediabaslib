@@ -25,6 +25,9 @@ button {
     padding: 10px
 }
 */
+html {
+    font-size: 50%
+}
 
 .jumbotron {
     padding: 2rem 2rem;
@@ -35,6 +38,10 @@ button {
 
 /* Responsive: Portrait tablets and up */
 @media screen and (min-width: 768px) {
+    html {
+        font-size: 100%
+    }
+
     .jumbotron {
         padding-top: 4rem;
         padding-bottom: 4rem;
