@@ -1490,15 +1490,14 @@ namespace PsdzClient
             log.InfoFormat("PsdzDatabase: ISTA framework path: {0}", _frameworkPath);
 
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
-            SQLiteConnectionStringBuilder connectionString = new SQLiteConnectionStringBuilder
+            SQLiteConnectionStringBuilder sqliteConnectionString = new SQLiteConnectionStringBuilder
             {
                 DataSource = databaseFile,
                 Password = DatabasePassword,
                 ReadOnly = true
             };
-            _mDbConnection = new SQLiteConnection(connectionString.ConnectionString);
 
-            _mDbConnection.SetPassword(DatabasePassword);
+            _mDbConnection = new SQLiteConnection(sqliteConnectionString.ConnectionString);
             _mDbConnection.Open();
 
 #if MS_SQLITE
