@@ -199,6 +199,7 @@ namespace BmwDeepObd
             public bool BatteryWarningShown { get; set; }
             public bool ConfigMatchVehicleShown { get; set; }
             public bool DataLogTemporaryShown { get; set; }
+            public bool MtcBtDisconnectWarnShown { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool VerifyEcuMd5 { get; set; }
@@ -603,6 +604,7 @@ namespace BmwDeepObd
             }, BroadcastReceived);
             if (_activityRecreated && _instanceData != null)
             {
+                _activityCommon.MtcBtDisconnectWarnShown = _instanceData.MtcBtDisconnectWarnShown;
                 _activityCommon.SelectedInterface = _instanceData.SelectedInterface;
                 _activityCommon.SelectedEnetIp = _instanceData.SelectedEnetIp;
                 _activityCommon.SelectedElmWifiIp = _instanceData.SelectedElmWifiIp;
@@ -797,6 +799,7 @@ namespace BmwDeepObd
         protected override void OnSaveInstanceState(Bundle outState)
         {
             StoreTranslation();
+            _instanceData.MtcBtDisconnectWarnShown = _activityCommon.MtcBtDisconnectWarnShown;
             _instanceData.SelectedInterface = _activityCommon.SelectedInterface;
             _instanceData.SelectedEnetIp = _activityCommon.SelectedEnetIp;
             _instanceData.SelectedElmWifiIp = _activityCommon.SelectedElmWifiIp;
@@ -875,7 +878,6 @@ namespace BmwDeepObd
             _activityActive = true;
             if (_activityCommon != null)
             {
-                _activityCommon.MtcBtDisconnectWarnShown = false;
                 _activityCommon.NotificationManagerCompat?.Cancel(CustomDownloadNotification.NotificationId);
             }
 
