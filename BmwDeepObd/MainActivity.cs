@@ -3951,7 +3951,7 @@ namespace BmwDeepObd
                 {
                     if (_activityCommon.MtcBtService)
                     {
-                        _instanceData.MtcBtDisconnectWarnShown = true;
+                        _activityCommon.MtcBtDisconnectWarnShown = false;
                     }
                 }
 
