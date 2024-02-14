@@ -222,6 +222,7 @@ namespace BmwDeepObd
             public string SelectedEnetIp { get; set; }
             public string SelectedElmWifiIp { get; set; }
             public string SelectedDeepObdWifiIp { get; set; }
+            public bool MtcBtDisconnectWarnShown { get; set; }
         }
 
         [XmlInclude(typeof(ActivityCommon.SerialInfoEntry))]
@@ -327,6 +328,7 @@ namespace BmwDeepObd
                 SelectedEnetIp = activityCommon.SelectedEnetIp;
                 SelectedElmWifiIp = activityCommon.SelectedElmWifiIp;
                 SelectedDeepObdWifiIp = activityCommon.SelectedDeepObdWifiIp;
+                MtcBtDisconnectWarnShown = activityCommon.MtcBtDisconnectWarnShown;
                 DeviceName = instanceData.DeviceName;
                 DeviceAddress = instanceData.DeviceAddress;
                 ConfigFileName = instanceData.ConfigFileName;
@@ -370,6 +372,7 @@ namespace BmwDeepObd
             [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
             [XmlElement("ElmWifiIp")] public string SelectedElmWifiIp { get; set; }
             [XmlElement("DeepObdWifiIp")] public string SelectedDeepObdWifiIp { get; set; }
+            [XmlElement("MtcBtDisconnectWarnShown")] public bool MtcBtDisconnectWarnShown { get; set; }
             [XmlElement("DeviceName")] public string DeviceName { get; set; }
             [XmlElement("DeviceAddress")] public string DeviceAddress { get; set; }
             [XmlElement("ConfigFile")] public string ConfigFileName { get; set; }
@@ -607,6 +610,7 @@ namespace BmwDeepObd
                 _activityCommon.SelectedEnetIp = _instanceData.SelectedEnetIp;
                 _activityCommon.SelectedElmWifiIp = _instanceData.SelectedElmWifiIp;
                 _activityCommon.SelectedDeepObdWifiIp = _instanceData.SelectedDeepObdWifiIp;
+                _activityCommon.MtcBtDisconnectWarnShown = _instanceData.MtcBtDisconnectWarnShown;
             }
 
             GetSettings();
@@ -801,6 +805,7 @@ namespace BmwDeepObd
             _instanceData.SelectedEnetIp = _activityCommon.SelectedEnetIp;
             _instanceData.SelectedElmWifiIp = _activityCommon.SelectedElmWifiIp;
             _instanceData.SelectedDeepObdWifiIp = _activityCommon.SelectedDeepObdWifiIp;
+            _instanceData.MtcBtDisconnectWarnShown = _activityCommon.MtcBtDisconnectWarnShown;
             StoreInstanceState(outState, _instanceData);
             base.OnSaveInstanceState(outState);
         }
@@ -875,7 +880,6 @@ namespace BmwDeepObd
             _activityActive = true;
             if (_activityCommon != null)
             {
-                _activityCommon.MtcBtDisconnectWarnShown = false;
                 _activityCommon.NotificationManagerCompat?.Cancel(CustomDownloadNotification.NotificationId);
             }
 
@@ -3123,6 +3127,7 @@ namespace BmwDeepObd
                 storageClassAttributes.Add(storageType, nameof(storageData.SelectedEnetIp), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.SelectedElmWifiIp), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.SelectedDeepObdWifiIp), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.MtcBtDisconnectWarnShown), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.DeviceName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.DeviceAddress), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.ConfigFileName), ignoreXmlAttributes);

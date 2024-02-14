@@ -949,8 +949,6 @@ namespace BmwDeepObd
 
         public long MtcServiceStartTime { get; private set; }
 
-        public bool MtcBtDisconnectWarnShown { get; set; }
-
         public static object GlobalLockObject => LockObject;
 
         public static object GlobalSettingLockObject => SettingsLockObject;
@@ -1254,6 +1252,8 @@ namespace BmwDeepObd
         public string SelectedElmWifiIp { get; set; }
 
         public string SelectedDeepObdWifiIp { get; set; }
+
+        public bool MtcBtDisconnectWarnShown { get; set; }
 
         public bool AdapterCheckRequired => _selectedInterface == InterfaceType.ElmWifi || _selectedInterface == InterfaceType.DeepObdWifi;
 

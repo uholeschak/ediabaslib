@@ -221,7 +221,6 @@ namespace BmwDeepObd
                     webSettings.BuiltInZoomControls = true;
                     webSettings.LoadWithOverviewMode = true;
                     webSettings.UseWideViewPort = true;
-                    webSettings.TextZoom = 50;
                     webSettings.CacheMode = CacheModes.NoCache;
 
                     string userAgent = webSettings.UserAgentString;
@@ -1879,16 +1878,6 @@ namespace BmwDeepObd
             {
 #if DEBUG
                 Android.Util.Log.Debug(Tag, string.Format("VehicleSendCallback: {0}", value));
-#endif
-            }
-        }
-
-        private class ConnectStatusCallback : Java.Lang.Object, IValueCallback
-        {
-            public void OnReceiveValue(Java.Lang.Object value)
-            {
-#if DEBUG
-                Android.Util.Log.Debug(Tag, string.Format("ConnectStatusCallback: {0}", value));
 #endif
             }
         }
