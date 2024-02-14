@@ -3947,6 +3947,14 @@ namespace BmwDeepObd
             if (_instanceData.CommErrorsCount >= ActivityCommon.MinSendCommErrors && responseCount > 0 &&
                 _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
             {
+                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
+                {
+                    if (_activityCommon.MtcBtService)
+                    {
+                        _instanceData.MtcBtDisconnectWarnShown = true;
+                    }
+                }
+
                 _activityCommon.RequestSendTraceFile(_instanceData.AppDataPath, _instanceData.TraceDir, GetType());
             }
         }
