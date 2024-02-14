@@ -3949,9 +3949,9 @@ namespace BmwDeepObd
             {
                 if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Bluetooth)
                 {
-                    if (_activityCommon.MtcBtService)
+                    if (_activityCommon.MtcBtService && !_activityCommon.MtcBtConnected)
                     {
-                        _instanceData.MtcBtDisconnectWarnShown = true;
+                        _activityCommon.MtcBtDisconnectWarnShown = false;
                     }
                 }
 
