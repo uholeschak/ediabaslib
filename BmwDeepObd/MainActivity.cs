@@ -3230,6 +3230,7 @@ namespace BmwDeepObd
                     _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
                     _activityCommon.SelectedElmWifiIp = storageData.SelectedElmWifiIp;
                     _activityCommon.SelectedDeepObdWifiIp = storageData.SelectedDeepObdWifiIp;
+                    _activityCommon.MtcBtDisconnectWarnShown = storageData.MtcBtDisconnectWarnShown;
                     _instanceData.DeviceName = storageData.DeviceName;
                     _instanceData.DeviceAddress = storageData.DeviceAddress;
                     _instanceData.ConfigFileName = storageData.ConfigFileName;
