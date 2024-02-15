@@ -3600,6 +3600,10 @@ namespace BmwDeepObd
                 }
 
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu file list count: {0}", ecuFileNameList.Count);
+                foreach (string fileName in ecuFileNameList)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu file name: {0}", fileName);
+                }
 
                 if (ecuFileNameList.Count > 0 && detectedVin != null && !_ediabasJobAbort)
                 {
@@ -3903,9 +3907,15 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (ecuListUse != null)
+                if (ecuListUse == null)
                 {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ecus detected");
+                }
+                else
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deteted ecu count: {0}", ecuListUse.Count);
                     _ecuList.AddRange(ecuListUse.OrderBy(x => x.Name));
+
                     if (!string.IsNullOrEmpty(ecuFileNameUse))
                     {
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected functional ecu file: {0}", ecuFileNameUse);
