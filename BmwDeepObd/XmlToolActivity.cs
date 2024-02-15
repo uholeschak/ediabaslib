@@ -3622,6 +3622,7 @@ namespace BmwDeepObd
                         {
                             if (_ediabasJobAbort)
                             {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu detection aborted at: {0}", fileName);
                                 ecuListUse = null;
                                 break;
                             }
@@ -3629,7 +3630,7 @@ namespace BmwDeepObd
                             ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
                             ForceLoadSgbd();
 
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ecu file resolved: {0}", fileName);
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu file resolved: {0}", fileName);
                             if (_ediabas.IsJobExisting("IDENT_FUNKTIONAL"))
                             {
                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has IDENT_FUNKTIONAL: {0}", fileName);
@@ -3953,6 +3954,7 @@ namespace BmwDeepObd
                                 {
                                     if (_ediabasJobAbort)
                                     {
+                                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vin job aborted at: {0}", vinJob.JobName);
                                         break;
                                     }
 
@@ -4533,6 +4535,7 @@ namespace BmwDeepObd
                         string ecuDesc = string.Empty;
                         if (_ediabasJobAbort)
                         {
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Group detect aborted at: {0}", ecuGroup);
                             break;
                         }
 
