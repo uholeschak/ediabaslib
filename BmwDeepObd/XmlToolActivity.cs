@@ -3600,6 +3600,10 @@ namespace BmwDeepObd
                 }
 
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu file list count: {0}", ecuFileNameList.Count);
+                foreach (string fileName in ecuFileNameList)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu file name: {0}", fileName);
+                }
 
                 if (ecuFileNameList.Count > 0 && detectedVin != null && !_ediabasJobAbort)
                 {
@@ -3612,7 +3616,7 @@ namespace BmwDeepObd
                         bool singleEcu = false;
                         bool detetedEcus = false;
 
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ecu file name: {0}", fileName);
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ecu file name for ident: {0}", fileName);
 
                         try
                         {
@@ -3625,9 +3629,10 @@ namespace BmwDeepObd
                             ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
                             ForceLoadSgbd();
 
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ecu file resolved: {0}", fileName);
                             if (_ediabas.IsJobExisting("IDENT_FUNKTIONAL"))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL: {0}", fileName);
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has IDENT_FUNKTIONAL: {0}", fileName);
 
                                 for (int identRetry = 0; identRetry < 10; identRetry++)
                                 {
@@ -3787,7 +3792,7 @@ namespace BmwDeepObd
                             }
                             else if(_ediabas.IsJobExisting("IDENT"))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT: {0}", fileName);
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has IDENT: {0}", fileName);
 
                                 _ediabas.ArgString = string.Empty;
                                 _ediabas.ArgBinaryStd = null;
@@ -3868,7 +3873,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ident function for: {0}", fileName);
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has no ident function: {0}", fileName);
                             }
                         }
                         catch (Exception ex)
@@ -3902,9 +3907,15 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (ecuListUse != null)
+                if (ecuListUse == null)
                 {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ecus detected");
+                }
+                else
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deteted ecu count: {0}", ecuListUse.Count);
                     _ecuList.AddRange(ecuListUse.OrderBy(x => x.Name));
+
                     if (!string.IsNullOrEmpty(ecuFileNameUse))
                     {
                         _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected functional ecu file: {0}", ecuFileNameUse);
