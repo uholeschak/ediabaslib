@@ -3630,10 +3630,10 @@ namespace BmwDeepObd
                             ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
                             ForceLoadSgbd();
 
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu file resolved: {0}", fileName);
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu file resolved: {0}", _ediabas.SgbdFileName);
                             if (_ediabas.IsJobExisting("IDENT_FUNKTIONAL"))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has IDENT_FUNKTIONAL: {0}", fileName);
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has IDENT_FUNKTIONAL job: {0}", fileName);
 
                                 for (int identRetry = 0; identRetry < 10; identRetry++)
                                 {
@@ -3793,7 +3793,7 @@ namespace BmwDeepObd
                             }
                             else if(_ediabas.IsJobExisting("IDENT"))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has IDENT: {0}", fileName);
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has IDENT job: {0}", fileName);
 
                                 _ediabas.ArgString = string.Empty;
                                 _ediabas.ArgBinaryStd = null;
@@ -3866,6 +3866,11 @@ namespace BmwDeepObd
 
                                                 ecuList.Add(ecuInfo);
                                             }
+                                        }
+                                        else
+                                        {
+                                            string ecuSgbdName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Single ECU not detected: {0}", ecuSgbdName);
                                         }
 
                                         dictIndex++;
