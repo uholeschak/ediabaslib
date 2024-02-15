@@ -3612,7 +3612,7 @@ namespace BmwDeepObd
                         bool singleEcu = false;
                         bool detetedEcus = false;
 
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ecu file name: {0}", fileName);
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ecu file name for ident: {0}", fileName);
 
                         try
                         {
@@ -3625,9 +3625,10 @@ namespace BmwDeepObd
                             ActivityCommon.ResolveSgbdFile(_ediabas, fileName);
                             ForceLoadSgbd();
 
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ecu file resolved: {0}", fileName);
                             if (_ediabas.IsJobExisting("IDENT_FUNKTIONAL"))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL: {0}", fileName);
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has IDENT_FUNKTIONAL: {0}", fileName);
 
                                 for (int identRetry = 0; identRetry < 10; identRetry++)
                                 {
@@ -3787,7 +3788,7 @@ namespace BmwDeepObd
                             }
                             else if(_ediabas.IsJobExisting("IDENT"))
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT: {0}", fileName);
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has IDENT: {0}", fileName);
 
                                 _ediabas.ArgString = string.Empty;
                                 _ediabas.ArgBinaryStd = null;
@@ -3868,7 +3869,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ident function for: {0}", fileName);
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Has no ident function: {0}", fileName);
                             }
                         }
                         catch (Exception ex)
