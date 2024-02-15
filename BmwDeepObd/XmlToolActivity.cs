@@ -3599,6 +3599,8 @@ namespace BmwDeepObd
                     }
                 }
 
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu file list count: {0}", ecuFileNameList.Count);
+
                 if (ecuFileNameList.Count > 0 && detectedVin != null && !_ediabasJobAbort)
                 {
                     List<EcuInfo> ecuList = new List<EcuInfo>();
@@ -3609,6 +3611,8 @@ namespace BmwDeepObd
                     {
                         bool singleEcu = false;
                         bool detetedEcus = false;
+
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ecu file name: {0}", fileName);
 
                         try
                         {
@@ -3623,6 +3627,8 @@ namespace BmwDeepObd
 
                             if (_ediabas.IsJobExisting("IDENT_FUNKTIONAL"))
                             {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL: {0}", fileName);
+
                                 for (int identRetry = 0; identRetry < 10; identRetry++)
                                 {
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ecu ident retry: {0}", identRetry + 1);
@@ -3781,6 +3787,8 @@ namespace BmwDeepObd
                             }
                             else if(_ediabas.IsJobExisting("IDENT"))
                             {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT: {0}", fileName);
+
                                 _ediabas.ArgString = string.Empty;
                                 _ediabas.ArgBinaryStd = null;
                                 _ediabas.ResultsRequests = string.Empty;
@@ -3858,10 +3866,14 @@ namespace BmwDeepObd
                                     }
                                 }
                             }
+                            else
+                            {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No ident function for: {0}", fileName);
+                            }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ident exception: {0}", EdiabasNet.GetExceptionText(ex));
                         }
 
                         if (detetedEcus)
