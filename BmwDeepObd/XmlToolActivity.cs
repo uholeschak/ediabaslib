@@ -3942,7 +3942,12 @@ namespace BmwDeepObd
                             {
                                 if (!EcuListContainsAddr(_ecuList, ecuInfoAdd.Address))
                                 {
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Additional ecu added: {0}", ecuInfoAdd.Name);
                                     ecuInfoAddList.Add(new EcuInfo(ecuInfoAdd.Name, ecuInfoAdd.Address, string.Empty, string.Empty, ecuInfoAdd.Grp));
+                                }
+                                else
+                                {
+                                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Additional ecu already present: {0}", ecuInfoAdd.Name);
                                 }
                             }
                         }
