@@ -3926,6 +3926,10 @@ namespace BmwDeepObd
                     .SetTitle(Resource.String.alert_title_warning)
                     .SetPositiveButton(Resource.String.button_yes, (s, e) =>
                     {
+                        if (bound)
+                        {
+                            MtcBtDisconnectWarnShown = true;
+                        }
                     })
                     .SetNegativeButton(Resource.String.button_no, (s, e) =>
                     {
@@ -3947,10 +3951,6 @@ namespace BmwDeepObd
                     };
                 }
 
-                if (bound)
-                {
-                    MtcBtDisconnectWarnShown = true;
-                }
                 return true;
             }
             if (_selectedInterface == InterfaceType.ElmWifi || _selectedInterface == InterfaceType.DeepObdWifi)
