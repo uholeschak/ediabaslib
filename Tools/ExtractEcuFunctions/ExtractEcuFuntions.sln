@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractEcuFunctions", "Extr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeEcuFunctions", "MergeEcuFunctions\MergeEcuFunctions.csproj", "{71A5092A-37F7-48ED-82DF-0FE9C4995BC5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTest", "SqlTest\SqlTest.csproj", "{19E75B16-2EED-4480-8AA4-576C3CEB6774}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{71A5092A-37F7-48ED-82DF-0FE9C4995BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71A5092A-37F7-48ED-82DF-0FE9C4995BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71A5092A-37F7-48ED-82DF-0FE9C4995BC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19E75B16-2EED-4480-8AA4-576C3CEB6774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19E75B16-2EED-4480-8AA4-576C3CEB6774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19E75B16-2EED-4480-8AA4-576C3CEB6774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19E75B16-2EED-4480-8AA4-576C3CEB6774}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
