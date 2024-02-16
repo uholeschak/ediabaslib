@@ -1431,8 +1431,7 @@ namespace ExtractEcuFunctions
                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                     if (crypto != null)
                     {
-                        CryptoStream crStream = new CryptoStream(fsOut,
-                            crypto.CreateEncryptor(), CryptoStreamMode.Write);
+                        CryptoStream crStream = new CryptoStream(fsOut, crypto.CreateEncryptor(), CryptoStreamMode.Write);
                         zipStream = new ZipOutputStream(crStream);
                     }
                     else
