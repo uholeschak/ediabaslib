@@ -32,7 +32,6 @@ namespace PsdzClient
     {
         public const string DiagObjServiceRoot = "DiagnosticObjectServicefunctionRoot";
         public const string AblFilter = "ABL";
-        public const string DatabasePassword = "6505EFBDC3E5F324";
 
         public const string SqlTitleItemsC =
             "C.TITLE_DEDE, C.TITLE_ENGB, C.TITLE_ENUS, " +
@@ -1489,7 +1488,7 @@ namespace PsdzClient
             SQLiteConnectionStringBuilder sqliteConnectionString = new SQLiteConnectionStringBuilder
             {
                 DataSource = databaseFile,
-                Password = DatabasePassword,
+                Password = DatabaseFunctions.DatabasePassword,
                 ReadOnly = true
             };
 

@@ -3,6 +3,8 @@ using System.Data.SQLite;
 
 public static class DatabaseFunctions
 {
+    public const string DatabasePassword = "6505EFBDC3E5F324";
+
     public const string SqlTitleItems =
         "TITLE_DEDE, TITLE_ENGB, TITLE_ENUS, " +
         "TITLE_FR, TITLE_TH, TITLE_SV, " +

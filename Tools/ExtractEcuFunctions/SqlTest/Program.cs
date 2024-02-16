@@ -40,7 +40,7 @@ namespace SqlTest
                     string typeKeyClassId = GetNodeClassId(sqliteConnection, @"Typschluessel");
 
                     Console.WriteLine("RootEBezeichnung: {0}", rootENameClassId);
-                    Console.WriteLine("Typschluessel: {0}", rootENameClassId);
+                    Console.WriteLine("Typschluessel: {0}", typeKeyClassId);
                 }
             }
             catch (Exception ex)

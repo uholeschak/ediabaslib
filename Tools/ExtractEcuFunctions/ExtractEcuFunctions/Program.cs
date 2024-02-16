@@ -17,7 +17,7 @@ namespace ExtractEcuFunctions
 {
     static class Program
     {
-        const string DbPassword = "6505EFBDC3E5F324";
+        const string DbPassword = DatabaseFunctions.DatabasePassword;
 
         public class DbInfo
         {
