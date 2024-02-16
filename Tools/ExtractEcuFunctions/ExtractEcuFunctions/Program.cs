@@ -234,10 +234,24 @@ namespace ExtractEcuFunctions
                     processThread.Join();
                 }
 
+                outTextWriter?.WriteLine("Creating ZIP file");
                 if (!CreateZipFile(outDirSub, zipFile))
                 {
                     outTextWriter?.WriteLine("Create ZIP failed");
                     return 1;
+                }
+
+                outTextWriter?.WriteLine("Deleting output directory");
+                try
+                {
+                    if (Directory.Exists(outDirSub))
+                    {
+                        Directory.Delete(outDirSub, true);
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             }
             catch (Exception e)
