@@ -25,6 +25,7 @@ namespace SqlTest
                     return 1;
                 }
 
+                // https://www.bricelam.net/2023/11/10/more-sqlite-encryption.html
                 SqliteConnectionStringBuilder connectionBuilder = new SqliteConnectionStringBuilder
                 {
                     DataSource = "file:" + databaseFile + "?cipher=rc4",
