@@ -1,5 +1,4 @@
-﻿//#define MS_SQLITE
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -1424,9 +1423,6 @@ namespace PsdzClient
         private string _testModulePath;
         private string _frameworkPath;
         private SQLiteConnection _mDbConnection;
-#if MS_SQLITE
-        private Microsoft.Data.Sqlite.SqliteConnection _sqliteConnection;
-#endif
         private string _rootENameClassId;
         private string _typeKeyClassId;
         private Harmony _harmony;
@@ -1500,25 +1496,9 @@ namespace PsdzClient
             _mDbConnection = new SQLiteConnection(sqliteConnectionString.ConnectionString);
             _mDbConnection.Open();
 
-#if MS_SQLITE
-            Microsoft.Data.Sqlite.SqliteConnectionStringBuilder connectionBuilder = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder
-            {
-                DataSource = databaseFile,
-                Mode = Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly,
-                Password = DatabasePassword
-            };
-
-            _sqliteConnection = new Microsoft.Data.Sqlite.SqliteConnection(connectionBuilder.ConnectionString);
-            _sqliteConnection.Open();
-#endif
-
-#if MS_SQLITE
-            _rootENameClassId = GetNodeClassId(_sqliteConnection, @"RootEBezeichnung");
-            _typeKeyClassId = GetNodeClassId(_sqliteConnection, @"Typschluessel");
-#else
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
-#endif
+
             _harmony = new Harmony("de.holeschak.PsdzClient");
             _xepRuleDict = null;
             _diagObjRootNodes = null;
@@ -1545,27 +1525,6 @@ namespace PsdzClient
                 }
             };
         }
-
-#if MS_SQLITE
-        public static string GetNodeClassId(Microsoft.Data.Sqlite.SqliteConnection sqliteConnection, string nodeClassName)
-        {
-            string result = string.Empty;
-            string sql = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE NAME = '{0}'", nodeClassName);
-            using (Microsoft.Data.Sqlite.SqliteCommand command = sqliteConnection.CreateCommand())
-            {
-                command.CommandText = sql;
-                using (Microsoft.Data.Sqlite.SqliteDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        result = reader["ID"].ToString();
-                    }
-                }
-            }
-
-            return result;
-        }
-#endif
 
         // ToDo: Check on update
         public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegister, Vehicle vehicle)
@@ -5313,13 +5272,7 @@ namespace PsdzClient
                     _mDbConnection.Dispose();
                     _mDbConnection = null;
                 }
-#if MS_SQLITE
-                if (_sqliteConnection != null)
-                {
-                    _sqliteConnection.Dispose();
-                    _sqliteConnection = null;
-                }
-#endif
+
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
