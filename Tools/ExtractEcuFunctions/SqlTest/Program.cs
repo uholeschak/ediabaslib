@@ -27,9 +27,9 @@ namespace SqlTest
 
                 SqliteConnectionStringBuilder connectionBuilder = new SqliteConnectionStringBuilder
                 {
-                    DataSource = databaseFile,
+                    DataSource = "file:" + databaseFile + "?cipher=rc4",
                     Mode = SqliteOpenMode.ReadOnly,
-                    Password = DatabasePassword
+                    Password = DatabasePassword,
                 };
 
                 using (SqliteConnection sqliteConnection = new SqliteConnection(connectionBuilder.ConnectionString))
