@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtractEcuFunctions", "ExtractEcuFunctions\ExtractEcuFunctions.csproj", "{95B96797-C984-4888-8256-7266940E3D9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExtractEcuFunctions", "ExtractEcuFunctions\ExtractEcuFunctions.csproj", "{95B96797-C984-4888-8256-7266940E3D9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergeEcuFunctions", "MergeEcuFunctions\MergeEcuFunctions.csproj", "{71A5092A-37F7-48ED-82DF-0FE9C4995BC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MergeEcuFunctions", "MergeEcuFunctions\MergeEcuFunctions.csproj", "{71A5092A-37F7-48ED-82DF-0FE9C4995BC5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTest", "SqlTest\SqlTest.csproj", "{19E75B16-2EED-4480-8AA4-576C3CEB6774}"
 EndProject

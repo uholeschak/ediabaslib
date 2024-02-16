@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Common\DatabaseFunctions.cs" Link="DatabaseFunctions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.2" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" Version="2.1.8" />
   </ItemGroup>

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data.SQLite;
-
+﻿
 public static class DatabaseFunctions
 {
     public const string DatabasePassword = "6505EFBDC3E5F324";
@@ -14,13 +12,15 @@ public static class DatabaseFunctions
         "TITLE_PT, TITLE_ZHTW, TITLE_JA, " +
         "TITLE_CSCZ, TITLE_PLPL";
 
-    public static string GetNodeClassId(SQLiteConnection mDbConnection, string nodeClassName)
+#if NET
+    public static string GetNodeClassId(Microsoft.Data.Sqlite.SqliteConnection sqliteConnection, string nodeClassName)
     {
         string result = string.Empty;
         string sql = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE NAME = '{0}'", nodeClassName);
-        using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+        using (Microsoft.Data.Sqlite.SqliteCommand command = sqliteConnection.CreateCommand())
         {
-            using (SQLiteDataReader reader = command.ExecuteReader())
+            command.CommandText = sql;
+            using (Microsoft.Data.Sqlite.SqliteDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
@@ -31,4 +31,23 @@ public static class DatabaseFunctions
 
         return result;
     }
+#else
+    public static string GetNodeClassId(System.Data.SQLite.SQLiteConnection mDbConnection, string nodeClassName)
+    {
+        string result = string.Empty;
+        string sql = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE NAME = '{0}'", nodeClassName);
+        using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(sql, mDbConnection))
+        {
+            using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    result = reader["ID"].ToString();
+                }
+            }
+        }
+
+        return result;
+    }
+#endif
 }

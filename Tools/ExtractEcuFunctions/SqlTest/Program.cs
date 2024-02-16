@@ -6,8 +6,6 @@ namespace SqlTest
 {
     internal class Program
     {
-        public const string DatabasePassword = "6505EFBDC3E5F324";
-
         static int Main(string[] args)
         {
             if (args.Length < 1)
@@ -30,15 +28,15 @@ namespace SqlTest
                 {
                     DataSource = "file:" + databaseFile + "?cipher=rc4",
                     Mode = SqliteOpenMode.ReadOnly,
-                    Password = DatabasePassword,
+                    Password = DatabaseFunctions.DatabasePassword,
                 };
 
                 using (SqliteConnection sqliteConnection = new SqliteConnection(connectionBuilder.ConnectionString))
                 {
                     sqliteConnection.Open();
 
-                    string rootENameClassId = GetNodeClassId(sqliteConnection, @"RootEBezeichnung");
-                    string typeKeyClassId = GetNodeClassId(sqliteConnection, @"Typschluessel");
+                    string rootENameClassId = DatabaseFunctions.GetNodeClassId(sqliteConnection, @"RootEBezeichnung");
+                    string typeKeyClassId = DatabaseFunctions.GetNodeClassId(sqliteConnection, @"Typschluessel");
 
                     Console.WriteLine("RootEBezeichnung: {0}", rootENameClassId);
                     Console.WriteLine("Typschluessel: {0}", typeKeyClassId);
@@ -51,25 +49,6 @@ namespace SqlTest
             }
 
             return 0;
-        }
-
-        public static string GetNodeClassId(SqliteConnection sqliteConnection, string nodeClassName)
-        {
-            string result = string.Empty;
-            string sql = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE NAME = '{0}'", nodeClassName);
-            using (SqliteCommand command = sqliteConnection.CreateCommand())
-            {
-                command.CommandText = sql;
-                using (SqliteDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        result = reader["ID"].ToString();
-                    }
-                }
-            }
-
-            return result;
         }
     }
 }
