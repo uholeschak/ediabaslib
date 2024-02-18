@@ -1422,10 +1422,10 @@ namespace PsdzClient
         private string _databaseExtractPath;
         private string _testModulePath;
         private string _frameworkPath;
+        private Harmony _harmony;
         private SqliteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
-        private Harmony _harmony;
         private Dictionary<string, XepRule> _xepRuleDict;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
@@ -1485,6 +1485,28 @@ namespace PsdzClient
 
             log.InfoFormat("PsdzDatabase: ISTA framework path: {0}", _frameworkPath);
 
+            _harmony = new Harmony("de.holeschak.PsdzClient");
+
+            // patch SQLitePCLRaw.batteries_v2 Init method
+            MethodInfo methodCallSqliteInitInitPrefix = typeof(PsdzDatabase).GetMethod("CallSqliteInitInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+            if (methodCallSqliteInitInitPrefix != null)
+            {
+                Type sqliteBatteriesType = Type.GetType("SQLitePCL.Batteries_V2, SQLitePCLRaw.batteries_v2");
+                if (sqliteBatteriesType != null)
+                {
+                    MethodInfo methodInit = sqliteBatteriesType.GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
+                    _harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitInitPrefix));
+                }
+                else
+                {
+                    log.ErrorFormat("PsdzDatabase: SQLitePCL.Batteries_V2 not existing");
+                }
+            }
+            else
+            {
+                log.ErrorFormat("PsdzDatabase: Methid CallSqliteInitInitPrefix not existing");
+            }
+
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
             SqliteConnectionStringBuilder sqliteConnectionString = new SqliteConnectionStringBuilder
             {
@@ -1493,15 +1515,12 @@ namespace PsdzClient
                 Password = DatabaseFunctions.DatabasePassword,
             };
 
-            SqlLoader.Init();
-
             _mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString);
             _mDbConnection.Open();
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
 
-            _harmony = new Harmony("de.holeschak.PsdzClient");
             _xepRuleDict = null;
             _diagObjRootNodes = null;
             _diagObjRootNodeIdSet = null;
@@ -5314,6 +5333,13 @@ namespace PsdzClient
                 language == null || language.ToLowerInvariant() == "cs" ? reader[prefix + "_CSCZ"].ToString() : string.Empty,
                 language == null || language.ToLowerInvariant() == "pl" ? reader[prefix + "_PLPL"].ToString() : string.Empty
                 );
+        }
+
+        private static bool CallSqliteInitInitPrefix()
+        {
+            log.InfoFormat("CallSqliteInitInitPrefix");
+            SqlLoader.Init();
+            return false;
         }
 
         public void Dispose()
