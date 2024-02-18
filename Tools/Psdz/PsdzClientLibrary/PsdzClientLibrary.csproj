@@ -675,6 +675,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
+    <Compile Include="SqlLoader.cs" />
     <Compile Include="Utility\FormatConverter.cs" />
     <Compile Include="Utility\ParentProcess.cs" />
     <Compile Include="Utility\SgbmIdParser.cs" />

@@ -1493,10 +1493,7 @@ namespace PsdzClient
                 Password = DatabaseFunctions.DatabasePassword,
             };
 
-            NativeLibrary.Load("e_sqlite3mc", Assembly.GetExecutingAssembly(),
-                NativeLibrary.WHERE_RUNTIME_RID | NativeLibrary.WHERE_ADJACENT | NativeLibrary.WHERE_CODEBASE);
-            Batteries_V2.Init();
-            //Batteries_V2.DoDynamic_cdecl("e_sqlite3mc", NativeLibrary.WHERE_RUNTIME_RID | NativeLibrary.WHERE_ADJACENT | NativeLibrary.WHERE_CODEBASE);
+            SqlLoader.Init();
 
             _mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString);
             _mDbConnection.Open();
