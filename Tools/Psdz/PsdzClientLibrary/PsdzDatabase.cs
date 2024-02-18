@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -21,6 +20,7 @@ using HarmonyLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using log4net;
+using Microsoft.Data.Sqlite;
 using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
@@ -1421,7 +1421,7 @@ namespace PsdzClient
         private string _databaseExtractPath;
         private string _testModulePath;
         private string _frameworkPath;
-        private SQLiteConnection _mDbConnection;
+        private SqliteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
         private Harmony _harmony;
@@ -1485,14 +1485,14 @@ namespace PsdzClient
             log.InfoFormat("PsdzDatabase: ISTA framework path: {0}", _frameworkPath);
 
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
-            SQLiteConnectionStringBuilder sqliteConnectionString = new SQLiteConnectionStringBuilder
+            SqliteConnectionStringBuilder sqliteConnectionString = new SqliteConnectionStringBuilder
             {
-                DataSource = databaseFile,
+                DataSource = "file:" + databaseFile + "?cipher=rc4",
+                Mode = SqliteOpenMode.ReadOnly,
                 Password = DatabaseFunctions.DatabasePassword,
-                ReadOnly = true
             };
 
-            _mDbConnection = new SQLiteConnection(sqliteConnectionString.ConnectionString);
+            _mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString);
             _mDbConnection.Open();
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
@@ -1674,9 +1674,10 @@ namespace PsdzClient
             {
                 EcuTranslation xmlTranslation = null;
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, INFOOBJECT_ID, " + SqlXmlItems + " FROM XEP_REFSPTEXTCOLL WHERE (INFOOBJECT_ID = '{0}')", idInfoObject);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -1755,9 +1756,10 @@ namespace PsdzClient
             {
                 EcuTranslation xmlTranslation = null;
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, XMLID, " + SqlXmlItems + " FROM XEP_SPINTTEXTITEMS WHERE (ID = {0})", id);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -1835,9 +1837,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, XMLID, " + SqlXmlItems + " FROM XEP_SPTEXTITEMS WHERE (CONTROLID = {0})", controlId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -1910,14 +1913,20 @@ namespace PsdzClient
                     return null;
                 }
 
-                string connection = "Data Source=\"" + databaseFile + "\";";
-                using (SQLiteConnection mDbConnection = new SQLiteConnection(connection))
+                SqliteConnectionStringBuilder sqliteConnectionString = new SqliteConnectionStringBuilder
+                {
+                    DataSource = "file:" + databaseFile,
+                    Mode = SqliteOpenMode.ReadOnly,
+                };
+
+                using (SqliteConnection mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString))
                 {
                     mDbConnection.Open();
                     string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, DATA FROM XMLVALUEPRIMITIVE WHERE (ID = '{0}')", id);
-                    using (SQLiteCommand command = new SQLiteCommand(sql, mDbConnection))
+                    using (SqliteCommand command = _mDbConnection.CreateCommand())
                     {
-                        using (SQLiteDataReader reader = command.ExecuteReader())
+                        command.CommandText = sql;
+                        using (SqliteDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
@@ -2162,9 +2171,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, FAULTMEMORYDELETEWAITINGTIME, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2193,9 +2203,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, FAULTMEMORYDELETEWAITINGTIME, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (ID = {0})", varId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2224,13 +2235,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ECUCLIQUEID FROM XEP_REFECUCLIQUES WHERE (ECUCLIQUEID = {0})", ecuCliquesId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
+                            string id = reader["ID"].ToString()?.Trim();
                             EcuVar ecuVar = GetEcuVariantById(id);
                             if (ecuVar != null)
                             {
@@ -2334,9 +2346,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE UPPER(NAME) = UPPER('{0}')", bnTnName);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2379,9 +2392,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, FLASHLIMIT, ECUVARIANTID FROM XEP_ECUPROGRAMMINGVARIANT WHERE ID = {0}", prgId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2442,9 +2456,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, OBDIDENTIFICATION, FAULTMEMORYDELETEIDENTIFICATIO, FAULTMEMORYDELETEWAITINGTIME, NAME, VIRTUELL, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM, DIAGNOSTIC_ADDRESS FROM XEP_ECUGROUPS WHERE (ID = {0})", groupId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2473,9 +2488,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, OBDIDENTIFICATION, FAULTMEMORYDELETEIDENTIFICATIO, FAULTMEMORYDELETEWAITINGTIME, NAME, VIRTUELL, SICHERHEITSRELEVANT, VALIDTO, VALIDFROM, DIAGNOSTIC_ADDRESS FROM XEP_ECUGROUPS WHERE (NAME = '{0}' COLLATE UTF8CI)", groupName);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2505,9 +2521,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME, " + DatabaseFunctions.SqlTitleItems + " FROM XEP_EQUIPMENT WHERE (ID = {0})", equipmentId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2536,9 +2553,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, CLIQUENKURZBEZEICHNUNG, " + DatabaseFunctions.SqlTitleItems + ", ECUREPID FROM XEP_ECUCLIQUES WHERE (ID = {0})", ecuCliqueId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2567,9 +2585,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ECUCLIQUEID FROM XEP_REFECUCLIQUES WHERE (ID = {0})", ecuRefId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2614,9 +2633,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NODECLASS, " + DatabaseFunctions.SqlTitleItems + ", MOTORCYCLESEQUENCE, VEHICLESEQUENCE FROM XEP_CHARACTERISTICROOTS WHERE (ID = {0})", characteristicRootsId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2650,15 +2670,16 @@ namespace PsdzClient
                     @", C.STATICCLASSVARIABLES, C.STATICCLASSVARIABLESMOTORRAD, C.PARENTID, C.ISTA_VISIBLE, C.NAME, C.LEGACY_NAME, V.DRIVEID, CR.NODECLASS" +
                     @" AS PARENTNODECLASS FROM xep_vehicles V JOIN xep_characteristics C on C.ID = V.CHARACTERISTICID JOIN xep_characteristicroots CR on CR.ID = C.PARENTID" +
                     @" WHERE TYPEKEYID = {0} AND CR.NODECLASS IS NOT NULL", typeKeyId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             Characteristics characteristics = ReadXepCharacteristics(reader);
-                            characteristics.DriveId = reader["DRIVEID"].ToString().Trim();
-                            characteristics.RootNodeClass = reader["PARENTNODECLASS"].ToString().Trim();
+                            characteristics.DriveId = reader["DRIVEID"].ToString()?.Trim();
+                            characteristics.RootNodeClass = reader["PARENTNODECLASS"].ToString()?.Trim();
                             characteristicsList.Add(characteristics);
                         }
                     }
@@ -2689,9 +2710,10 @@ namespace PsdzClient
                     @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
                     @" FROM VINRANGES WHERE ('{0}' BETWEEN VINBANDFROM AND VINBANDTO) AND (VIN17_4_7 = '{1}')",
                     vin7.ToUpper(CultureInfo.InvariantCulture), vin17_4_7.ToUpper(CultureInfo.InvariantCulture));
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2757,9 +2779,10 @@ namespace PsdzClient
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
                     @" FROM VINRANGES WHERE (VIN17_4_7 = '{0}')", vin17_4_7.ToUpper(CultureInfo.InvariantCulture));
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -2798,13 +2821,14 @@ namespace PsdzClient
             try
             {
                 string sql = @"SELECT DISTINCT TYPSCHLUESSEL FROM VINRANGES";
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string typeKey = reader["TYPSCHLUESSEL"].ToString().Trim();
+                            string typeKey = reader["TYPSCHLUESSEL"].ToString()?.Trim();
                             typeKeys.AddIfNotContains(typeKey);
                         }
                     }
@@ -2846,14 +2870,15 @@ namespace PsdzClient
                 }
 
                 string sql = @"SELECT DISTINCT PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH FROM VINRANGES WHERE TYPSCHLUESSEL IN(" + sbSql + ")";
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string prodYear = reader["PRODUCTIONDATEYEAR"].ToString().Trim();
-                            string prodMonth = reader["PRODUCTIONDATEMONTH"].ToString().Trim();
+                            string prodYear = reader["PRODUCTIONDATEYEAR"].ToString()?.Trim();
+                            string prodMonth = reader["PRODUCTIONDATEMONTH"].ToString()?.Trim();
                             if (!string.IsNullOrEmpty(prodYear) && !string.IsNullOrEmpty(prodMonth))
                             {
                                 ProductionDate productionDate = new ProductionDate(prodYear, prodMonth);
@@ -3007,9 +3032,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", NAME, PRODUCT_TYPE FROM XEP_SALAPAS WHERE (ID = {0})", salapaId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3048,14 +3074,15 @@ namespace PsdzClient
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT SA.Name AS SANAME, LINK.VERB AS VERB FROM STD_TYPEKEY_SA_LINK LINK JOIN XEP_SALAPAS SA ON SA.ID = SALAPA_OID" +
                     @" WHERE VEHICLETYPE_ID = {0} AND UPPER(SA_GROUP) = 'TRANSMISSION'", typeKeyId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string saName = reader["SANAME"].ToString().Trim();
-                            string verb = reader["VERB"].ToString().Trim();
+                            string saName = reader["SANAME"].ToString()?.Trim();
+                            string verb = reader["VERB"].ToString()?.Trim();
                             Tuple<string, string> item = new Tuple<string, string>(saName, verb);
                             saList.Add(item);
                         }
@@ -3092,9 +3119,10 @@ namespace PsdzClient
             {
                 string tmpSalesKey = salesKey.TrimStart('0');
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, " + DatabaseFunctions.SqlTitleItems + ", NAME, PRODUCT_TYPE FROM XEP_SALAPAS WHERE (NAME = '{0}' AND PRODUCT_TYPE = '{1}')", tmpSalesKey, productType);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3125,9 +3153,10 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, STEUERGERAETEKUERZEL FROM XEP_ECUREPS WHERE (ID = {0})", ecuId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3169,9 +3198,10 @@ namespace PsdzClient
                     @"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
                     @", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUVARIANTS_SWIACTION WHERE ECUVARIANT_ID = {0})",
                     ecuInfo.EcuVar.Id);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3203,9 +3233,10 @@ namespace PsdzClient
                     @"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
                     @", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUGROUPS_SWIACTION WHERE ECUGROUP_ID = {0})",
                     ecuInfo.EcuVar.EcuGroupId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3239,9 +3270,10 @@ namespace PsdzClient
                     @"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
                     @", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_ECUPRGVARI_SWIACTION WHERE ECUPROGRAMMINGVARIANT_ID = {0})",
                     prgId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3278,9 +3310,10 @@ namespace PsdzClient
                     @"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
                     ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_ID FROM XEP_REF_SWIREGISTER_SWIACTION WHERE SWI_REGISTER_ID = {0})",
                     swiRegister.Id);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3329,9 +3362,10 @@ namespace PsdzClient
                     @"SELECT ID, NAME, ACTIONCATEGORY, SELECTABLE, SHOW_IN_PLAN, EXECUTABLE, " + DatabaseFunctions.SqlTitleItems +
                     ", NODECLASS FROM XEP_SWIACTION WHERE ID IN (SELECT SWI_ACTION_TARGET_ID FROM XEP_REF_SWIACTION_SWIACTION WHERE SWI_ACTION_ID = {0})",
                     id);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3393,9 +3427,10 @@ namespace PsdzClient
                 string selection = parentId != null ? string.Format(CultureInfo.InvariantCulture, @"= {0}", parentId) : @"IS NULL";
                 string sql = @"SELECT ID, NODECLASS, PARENTID, NAME, REMARK, SORT, TITLEID, " + DatabaseFunctions.SqlTitleItems +
                              @", VERSIONNUMBER, IDENTIFIER FROM XEP_SWIREGISTER WHERE PARENTID " + selection;
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3438,14 +3473,15 @@ namespace PsdzClient
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT INFOOBJECTID, LINK_TYPE_ID, PRIORITY FROM XEP_REFINFOOBJECTS WHERE ID IN (SELECT ID FROM XEP_SWIACTION WHERE ID = {0})",
                     swiAction.Id);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
-                            string linkTypeId = reader["LINK_TYPE_ID"].ToString().Trim();
+                            string infoObjId = reader["INFOOBJECTID"].ToString()?.Trim();
+                            string linkTypeId = reader["LINK_TYPE_ID"].ToString()?.Trim();
                             SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, linkTypeId);
                             if (swiInfoObj != null)
                             {
@@ -3476,13 +3512,14 @@ namespace PsdzClient
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT DIAGNOSISOBJECTCONTROLID, PRIORITY FROM XEP_REF_SWIACTION_DIAGOBJECTS WHERE SWI_ACTION_ID IN (SELECT ID FROM XEP_SWIACTION WHERE ID = {0})",
                     swiAction.Id);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string controlId = reader["DIAGNOSISOBJECTCONTROLID"].ToString().Trim();
+                            string controlId = reader["DIAGNOSISOBJECTCONTROLID"].ToString()?.Trim();
                             List<SwiDiagObj> swiDiagObjs = GetDiagObjectsByControlId(controlId, vehicle, ffmDynamicResolver, getHidden: true);
                             if (swiDiagObjs != null)
                             {
@@ -3532,9 +3569,10 @@ namespace PsdzClient
                     DatabaseFunctions.SqlTitleItems + ", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, NAME, INFORMATIONSTYP, " +
                     @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER, FLOWXML FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0}",
                     infoObjectId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3567,9 +3605,10 @@ namespace PsdzClient
                     DatabaseFunctions.SqlTitleItems + ", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, NAME, INFORMATIONSTYP, " +
                     @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER, FLOWXML FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0}",
                     infoObjectId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3603,13 +3642,14 @@ namespace PsdzClient
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT ID, INFOOBJECTID FROM XEP_REFINFOOBJECTS WHERE ID = {0}", diagnosisObjectControlId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
+                            string infoObjId = reader["INFOOBJECTID"].ToString()?.Trim();
                             if (vehicle == null || IsInfoObjectValid(infoObjId, vehicle, ffmDynamicResolver))
                             {
                                 List<SwiInfoObj> infoObjs = SelectXepInfoObjects(infoObjId, vehicle, ffmDynamicResolver, typeFilter);
@@ -3647,9 +3687,10 @@ namespace PsdzClient
                     @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER, FLOWXML FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.ID = {0} AND XEP_INFOOBJECTS.GENERELL = 0",
                     infoObjectId);
                 //sql = EnrichQueryForServicePrograms(sql);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3733,13 +3774,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT CONTROLID FROM XEP_INFOOBJECTS WHERE ID = {0}", id);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            controlId = reader["CONTROLID"].ToString().Trim();
+                            controlId = reader["CONTROLID"].ToString()?.Trim();
                             break;
                         }
                     }
@@ -3765,13 +3807,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_INFOOBJECTS WHERE IDENTIFIER = '{0}'", identifier);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            controlId = reader["ID"].ToString().Trim();
+                            controlId = reader["ID"].ToString()?.Trim();
                             break;
                         }
                     }
@@ -3799,13 +3842,14 @@ namespace PsdzClient
                 List<string> idList = new List<string>();
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT ID FROM XEP_REFINFOOBJECTS WHERE INFOOBJECTID = {0} AND (LINK_TYPE_ID = 'DiagobjDocumentLink' OR LINK_TYPE_ID = 'DiagobjServiceprogramLink')", infoObjectId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string item = reader["ID"].ToString().Trim();
+                            string item = reader["ID"].ToString()?.Trim();
                             if (!string.IsNullOrEmpty(item))
                             {
                                 idList.AddIfNotContains(item);
@@ -3847,9 +3891,10 @@ namespace PsdzClient
                     DatabaseFunctions.SqlTitleItems + ", GENERELL, TELESERVICEKENNUNG, FAHRZEUGKOMMUNIKATION, MESSTECHNIK, VERSTECKT, NAME, INFORMATIONSTYP, " +
                     @"IDENTIFIKATOR, INFORMATIONSFORMAT, SINUMMER, ZIELISTUFE, CONTROLID, INFOTYPE, INFOFORMAT, DOCNUMBER, PRIORITY, IDENTIFIER, FLOWXML FROM XEP_INFOOBJECTS WHERE XEP_INFOOBJECTS.CONTROLID = {0}",
                     controlId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3940,9 +3985,10 @@ namespace PsdzClient
                     @"SELECT " + DiagObjectItems + 
                     @" FROM XEP_DIAGNOSISOBJECTS WHERE (NODECLASS IN (SELECT ID FROM XEP_NODECLASSES WHERE (NAME = '{0}')))",
                     nodeclassName);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -3985,9 +4031,10 @@ namespace PsdzClient
                     @"SELECT " + DiagObjectItems +
                     @" FROM XEP_DIAGNOSISOBJECTS WHERE XEP_DIAGNOSISOBJECTS.CONTROLID IN (SELECT DIAGNOSISOBJECTCONTROLID FROM XEP_REFDIAGNOSISTREE WHERE ID = {0})",
                     controlId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -4032,9 +4079,10 @@ namespace PsdzClient
                     @"SELECT " + DiagObjectItems +
                     @" FROM XEP_DIAGNOSISOBJECTS WHERE XEP_DIAGNOSISOBJECTS.CONTROLID IN (SELECT DIAGNOSISOBJECTCONTROLID FROM XEP_REFDIAGNOSISTREE WHERE ID = {0}{1})",
                     controlId, hiddenRule);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -4081,9 +4129,10 @@ namespace PsdzClient
                     @"SELECT " + DiagObjectItems +
                     @" FROM XEP_DIAGNOSISOBJECTS WHERE (ID = {0})",
                     diagObjectId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -4123,9 +4172,10 @@ namespace PsdzClient
                     @"SELECT " + DiagObjectItems +
                     @" FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID = {0}{1})",
                     controlId, hiddenRule);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -4312,9 +4362,10 @@ namespace PsdzClient
                 string sql = string.Format(CultureInfo.InvariantCulture,
                     @"SELECT " + DiagObjectItems +
                     @" FROM XEP_DIAGNOSISOBJECTS WHERE (CONTROLID == 0)");
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
@@ -4415,13 +4466,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_REFDIAGNOSISTREE WHERE (DIAGNOSISOBJECTCONTROLID = {0})", controlId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
+                            string id = reader["ID"].ToString()?.Trim();
                             idList.Add(id);
                         }
                     }
@@ -4460,13 +4512,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT CONTROLID FROM XEP_DIAGNOSISOBJECTS WHERE (ID = {0})", diagObjectId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            controlId = reader["CONTROLID"].ToString().Trim();
+                            controlId = reader["CONTROLID"].ToString()?.Trim();
                             break;
                         }
                     }
@@ -4494,13 +4547,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME FROM XEP_DIAGCODE WHERE (ID = {0})", diagnosisCodeId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            diagnosisCode = reader["NAME"].ToString().Trim();
+                            diagnosisCode = reader["NAME"].ToString()?.Trim();
                             break;
                         }
                     }
@@ -4523,13 +4577,14 @@ namespace PsdzClient
             try
             {
                 string sql = @"SELECT ID, RULE FROM XEP_RULES";
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string id = reader["ID"].ToString().Trim();
+                            string id = reader["ID"].ToString()?.Trim();
                             byte[] rule = (byte[])reader["RULE"];
                             XepRule xepRule = new XepRule(id, rule);
                             xepRuleDict.Add(id, xepRule);
@@ -4640,15 +4695,16 @@ namespace PsdzClient
                 string sql = "SELECT I.ID AS INFOOBJECTID, I.IDENTIFIER AS INFOOBJECTIDENTIFIER, C.CONTENT_DEDE AS CONTENT_DEDE FROM XEP_INFOOBJECTS I " +
                              "INNER JOIN XEP_REFCONTENTS R ON R.ID = I.CONTROLID " +
                              "INNER JOIN XEP_IOCONTENTS C ON C.CONTROLID = R.CONTENTCONTROLID WHERE I.IDENTIFIER LIKE 'BNT-XML-%'";
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string infoObjId = reader["INFOOBJECTID"].ToString().Trim();
-                            string infoObjIdent = reader["INFOOBJECTIDENTIFIER"].ToString().Trim();
-                            string docId = reader["CONTENT_DEDE"].ToString().Trim();
+                            string infoObjId = reader["INFOOBJECTID"].ToString()?.Trim();
+                            string infoObjIdent = reader["INFOOBJECTIDENTIFIER"].ToString()?.Trim();
+                            string docId = reader["CONTENT_DEDE"].ToString()?.Trim();
                             BordnetsData bordnetsData = new BordnetsData(infoObjId, infoObjIdent, docId);
                             boardnetsList.Add(bordnetsData);
                         }
@@ -4731,13 +4787,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, TITLE_DEDE FROM XEP_CHARACTERISTICS WHERE (ID = {0})", characteristicId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            titleDe = reader["TITLE_DEDE"].ToString().Trim();
+                            titleDe = reader["TITLE_DEDE"].ToString()?.Trim();
                         }
                     }
                 }
@@ -4789,13 +4846,14 @@ namespace PsdzClient
                 {
                     sql += string.Format(CultureInfo.InvariantCulture, @" AND (NODECLASS = {0})", nodeclass);
                 }
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            charId = reader["ID"].ToString().Trim();
+                            charId = reader["ID"].ToString()?.Trim();
                         }
                     }
                 }
@@ -4822,13 +4880,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID FROM XEP_CHARACTERISTICS WHERE (NAME = '{0}') AND (NODECLASS = {1})", typeKey, _typeKeyClassId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            typeId = reader["ID"].ToString().Trim();
+                            typeId = reader["ID"].ToString()?.Trim();
                             if (isAlpina)
                             {
                                 typeId = GetAlpinaTypeKeyId(typeId);
@@ -4871,13 +4930,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, ALPINA_ID FROM XEP_TYPEKEY_MAPPING WHERE (ID = {0})", typeId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            alpinaId = reader["ALPINA_ID"].ToString().Trim();
+                            alpinaId = reader["ALPINA_ID"].ToString()?.Trim();
                             break;
                         }
                     }
@@ -4905,13 +4965,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NAME FROM XEP_ISTUFEN WHERE (ID = {0})", iStufenId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            iLevel = reader["NAME"].ToString().Trim();
+                            iLevel = reader["NAME"].ToString()?.Trim();
                         }
                     }
                 }
@@ -4938,13 +4999,14 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, LAENDERKUERZEL FROM XEP_COUNTRIES WHERE (ID = {0})", countryId);
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            country = reader["LAENDERKUERZEL"].ToString().Trim();
+                            country = reader["LAENDERKUERZEL"].ToString()?.Trim();
                         }
                     }
                 }
@@ -4967,13 +5029,14 @@ namespace PsdzClient
             try
             {
                 string sql = @"SELECT VERSION, CREATIONDATE FROM RG_VERSION";
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string version = reader["VERSION"].ToString().Trim();
+                            string version = reader["VERSION"].ToString()?.Trim();
                             DateTime dateTime = reader.GetDateTime(1);
                             dbInfo = new DbInfo(version, dateTime);
                             break;
@@ -5042,190 +5105,190 @@ namespace PsdzClient
             return result;
         }
 
-        private static Equipment ReadXepEquipment(SQLiteDataReader reader)
+        private static Equipment ReadXepEquipment(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
             return new Equipment(id, name, GetTranslation(reader));
         }
 
-        private static EcuClique ReadXepEcuClique(SQLiteDataReader reader)
+        private static EcuClique ReadXepEcuClique(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string cliqueName = reader["CLIQUENKURZBEZEICHNUNG"].ToString().Trim();
-            string ecuRepId = reader["ECUREPID"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string cliqueName = reader["CLIQUENKURZBEZEICHNUNG"].ToString()?.Trim();
+            string ecuRepId = reader["ECUREPID"].ToString()?.Trim();
             return new EcuClique(id, cliqueName, ecuRepId, GetTranslation(reader));
         }
 
-        private static EcuRefClique ReadXepEcuRefClique(SQLiteDataReader reader)
+        private static EcuRefClique ReadXepEcuRefClique(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string ecuCliqueId = reader["ECUCLIQUEID"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string ecuCliqueId = reader["ECUCLIQUEID"].ToString()?.Trim();
             return new EcuRefClique(id, ecuCliqueId);
         }
 
-        private static CharacteristicRoots ReadXepCharacteristicRoots(SQLiteDataReader reader)
+        private static CharacteristicRoots ReadXepCharacteristicRoots(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string nodeClass = reader["NODECLASS"].ToString().Trim();
-            string motorCycSeq = reader["MOTORCYCLESEQUENCE"].ToString().Trim();
-            string vehicleSeq = reader["VEHICLESEQUENCE"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string nodeClass = reader["NODECLASS"].ToString()?.Trim();
+            string motorCycSeq = reader["MOTORCYCLESEQUENCE"].ToString()?.Trim();
+            string vehicleSeq = reader["VEHICLESEQUENCE"].ToString()?.Trim();
             return new CharacteristicRoots(id, nodeClass, motorCycSeq, vehicleSeq, GetTranslation(reader));
         }
 
-        private static Characteristics ReadXepCharacteristics(SQLiteDataReader reader)
+        private static Characteristics ReadXepCharacteristics(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string nodeClass = reader["NODECLASS"].ToString().Trim();
-            string titleId = reader["TITLEID"].ToString().Trim();
-            string istaVisible = reader["ISTA_VISIBLE"].ToString().Trim();
-            string staticClassVar = reader["STATICCLASSVARIABLES"].ToString().Trim();
-            string staticClassVarMCycle = reader["STATICCLASSVARIABLESMOTORRAD"].ToString().Trim();
-            string parentId = reader["PARENTID"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
-            string legacyName = reader["LEGACY_NAME"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string nodeClass = reader["NODECLASS"].ToString()?.Trim();
+            string titleId = reader["TITLEID"].ToString()?.Trim();
+            string istaVisible = reader["ISTA_VISIBLE"].ToString()?.Trim();
+            string staticClassVar = reader["STATICCLASSVARIABLES"].ToString()?.Trim();
+            string staticClassVarMCycle = reader["STATICCLASSVARIABLESMOTORRAD"].ToString()?.Trim();
+            string parentId = reader["PARENTID"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
+            string legacyName = reader["LEGACY_NAME"].ToString()?.Trim();
             return new Characteristics(id, nodeClass, titleId, istaVisible, staticClassVar, staticClassVarMCycle, parentId, name, legacyName, GetTranslation(reader));
         }
 
-        private static VinRanges ReadXepVinRanges(SQLiteDataReader reader)
+        private static VinRanges ReadXepVinRanges(SqliteDataReader reader)
         {
-            string changeDate = reader["CHANGEDATE"].ToString().Trim();
-            string productionMonth = reader["PRODUCTIONDATEMONTH"].ToString().Trim();
-            string productionYear = reader["PRODUCTIONDATEYEAR"].ToString().Trim();
-            string releaseState = reader["RELEASESTATE"].ToString().Trim();
-            string typeKey = reader["TYPSCHLUESSEL"].ToString().Trim();
-            string vinBandFrom = reader["VINBANDFROM"].ToString().Trim();
-            string vinBandTo = reader["VINBANDTO"].ToString().Trim();
-            string gearboxType = reader["GEARBOX_TYPE"].ToString().Trim();
-            string vin17_4_7 = reader["VIN17_4_7"].ToString().Trim();
+            string changeDate = reader["CHANGEDATE"].ToString()?.Trim();
+            string productionMonth = reader["PRODUCTIONDATEMONTH"].ToString()?.Trim();
+            string productionYear = reader["PRODUCTIONDATEYEAR"].ToString()?.Trim();
+            string releaseState = reader["RELEASESTATE"].ToString()?.Trim();
+            string typeKey = reader["TYPSCHLUESSEL"].ToString()?.Trim();
+            string vinBandFrom = reader["VINBANDFROM"].ToString()?.Trim();
+            string vinBandTo = reader["VINBANDTO"].ToString()?.Trim();
+            string gearboxType = reader["GEARBOX_TYPE"].ToString()?.Trim();
+            string vin17_4_7 = reader["VIN17_4_7"].ToString()?.Trim();
             return new VinRanges(changeDate, productionMonth, productionYear, releaseState, typeKey, vinBandFrom, vinBandTo, gearboxType, vin17_4_7);
         }
 
-        private static SaLaPa ReadXepSaLaPa(SQLiteDataReader reader)
+        private static SaLaPa ReadXepSaLaPa(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
-            string productType = reader["PRODUCT_TYPE"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
+            string productType = reader["PRODUCT_TYPE"].ToString()?.Trim();
             return new SaLaPa(id, name, productType, GetTranslation(reader));
         }
 
-        private static EcuReps ReadXepEcuReps(SQLiteDataReader reader)
+        private static EcuReps ReadXepEcuReps(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string ecuShortcut = reader["STEUERGERAETEKUERZEL"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string ecuShortcut = reader["STEUERGERAETEKUERZEL"].ToString()?.Trim();
             return new EcuReps(id, ecuShortcut);
         }
 
-        private static EcuVar ReadXepEcuVar(SQLiteDataReader reader)
+        private static EcuVar ReadXepEcuVar(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string faultMemDelWaitTime = reader["FAULTMEMORYDELETEWAITINGTIME"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
-            string validFrom = reader["VALIDFROM"].ToString().Trim();
-            string validTo = reader["VALIDTO"].ToString().Trim();
-            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
-            string ecuGroupId = reader["ECUGROUPID"].ToString().Trim();
-            string sort = reader["SORT"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string faultMemDelWaitTime = reader["FAULTMEMORYDELETEWAITINGTIME"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
+            string validFrom = reader["VALIDFROM"].ToString()?.Trim();
+            string validTo = reader["VALIDTO"].ToString()?.Trim();
+            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString()?.Trim();
+            string ecuGroupId = reader["ECUGROUPID"].ToString()?.Trim();
+            string sort = reader["SORT"].ToString()?.Trim();
             return new EcuVar(id, faultMemDelWaitTime, name, validFrom, validTo, safetyRelevant, ecuGroupId, sort, GetTranslation(reader));
         }
 
-        private static EcuPrgVar ReadXepEcuPrgVar(SQLiteDataReader reader)
+        private static EcuPrgVar ReadXepEcuPrgVar(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
-            string flashLimit = reader["FLASHLIMIT"].ToString().Trim();
-            string ecuVarId = reader["ECUVARIANTID"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
+            string flashLimit = reader["FLASHLIMIT"].ToString()?.Trim();
+            string ecuVarId = reader["ECUVARIANTID"].ToString()?.Trim();
             return new EcuPrgVar(id, name, flashLimit, ecuVarId);
         }
 
-        private static EcuGroup ReadXepEcuGroup(SQLiteDataReader reader)
+        private static EcuGroup ReadXepEcuGroup(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string obdIdent = reader["OBDIDENTIFICATION"].ToString().Trim();
-            string faultMemDelIdent = reader["FAULTMEMORYDELETEIDENTIFICATIO"].ToString().Trim();
-            string faultMemDelWaitTime = reader["FAULTMEMORYDELETEWAITINGTIME"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
-            string virt = reader["VIRTUELL"].ToString().Trim();
-            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
-            string validFrom = reader["VALIDFROM"].ToString().Trim();
-            string validTo = reader["VALIDTO"].ToString().Trim();
-            string diagAddr = reader["DIAGNOSTIC_ADDRESS"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string obdIdent = reader["OBDIDENTIFICATION"].ToString()?.Trim();
+            string faultMemDelIdent = reader["FAULTMEMORYDELETEIDENTIFICATIO"].ToString()?.Trim();
+            string faultMemDelWaitTime = reader["FAULTMEMORYDELETEWAITINGTIME"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
+            string virt = reader["VIRTUELL"].ToString()?.Trim();
+            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString()?.Trim();
+            string validFrom = reader["VALIDFROM"].ToString()?.Trim();
+            string validTo = reader["VALIDTO"].ToString()?.Trim();
+            string diagAddr = reader["DIAGNOSTIC_ADDRESS"].ToString()?.Trim();
             return new EcuGroup(id, obdIdent, faultMemDelIdent, faultMemDelWaitTime, name, virt, safetyRelevant, validFrom, validTo, diagAddr);
         }
 
-        private static SwiAction ReadXepSwiAction(SQLiteDataReader reader, SwiActionSource swiActionSource)
+        private static SwiAction ReadXepSwiAction(SqliteDataReader reader, SwiActionSource swiActionSource)
         {
-            string id = reader["ID"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
-            string actionCategory = reader["ACTIONCATEGORY"].ToString().Trim();
-            string selectable = reader["SELECTABLE"].ToString().Trim();
-            string showInPlan = reader["SHOW_IN_PLAN"].ToString().Trim();
-            string executable = reader["EXECUTABLE"].ToString().Trim();
-            string nodeClass = reader["NODECLASS"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
+            string actionCategory = reader["ACTIONCATEGORY"].ToString()?.Trim();
+            string selectable = reader["SELECTABLE"].ToString()?.Trim();
+            string showInPlan = reader["SHOW_IN_PLAN"].ToString()?.Trim();
+            string executable = reader["EXECUTABLE"].ToString()?.Trim();
+            string nodeClass = reader["NODECLASS"].ToString()?.Trim();
             return new SwiAction(swiActionSource, id, name, actionCategory, selectable, showInPlan, executable, nodeClass, GetTranslation(reader));
         }
 
-        private static SwiRegister ReadXepSwiRegister(SQLiteDataReader reader)
+        private static SwiRegister ReadXepSwiRegister(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string nodeClass = reader["NODECLASS"].ToString().Trim();
-            string parentId = reader["PARENTID"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
-            string remark = reader["REMARK"].ToString().Trim();
-            string sort = reader["SORT"].ToString().Trim();
-            string versionNum = reader["VERSIONNUMBER"].ToString().Trim();
-            string identifer = reader["IDENTIFIER"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string nodeClass = reader["NODECLASS"].ToString()?.Trim();
+            string parentId = reader["PARENTID"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
+            string remark = reader["REMARK"].ToString()?.Trim();
+            string sort = reader["SORT"].ToString()?.Trim();
+            string versionNum = reader["VERSIONNUMBER"].ToString()?.Trim();
+            string identifer = reader["IDENTIFIER"].ToString()?.Trim();
             return new SwiRegister(id, nodeClass, name, parentId, remark, sort, versionNum, identifer, GetTranslation(reader));
         }
 
-        private static SwiInfoObj ReadXepSwiInfoObj(SQLiteDataReader reader, SwiInfoObj.SwiActionDatabaseLinkType? linkType = null)
+        private static SwiInfoObj ReadXepSwiInfoObj(SqliteDataReader reader, SwiInfoObj.SwiActionDatabaseLinkType? linkType = null)
         {
-            string id = reader["ID"].ToString().Trim();
-            string nodeClass = reader["NODECLASS"].ToString().Trim();
-            string assembly = reader["ASSEMBLY"].ToString().Trim();
-            string versionNum = reader["VERSIONNUMBER"].ToString().Trim();
-            string programType = reader["PROGRAMTYPE"].ToString().Trim();
-            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
-            string titleId = reader["TITLEID"].ToString().Trim();
-            string general = reader["GENERELL"].ToString().Trim();
-            string telSrvId = reader["TELESERVICEKENNUNG"].ToString().Trim();
-            string vehicleComm = reader["FAHRZEUGKOMMUNIKATION"].ToString().Trim();
-            string measurement = reader["MESSTECHNIK"].ToString().Trim();
-            string hidden = reader["VERSTECKT"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
-            string informationType = reader["INFORMATIONSTYP"].ToString().Trim();
-            string identification = reader["IDENTIFIKATOR"].ToString().Trim();
-            string informationFormat = reader["INFORMATIONSFORMAT"].ToString().Trim();
-            string siNumber = reader["SINUMMER"].ToString().Trim();
-            string targetILevel = reader["ZIELISTUFE"].ToString().Trim();
-            string controlId = reader["CONTROLID"].ToString().Trim();
-            string infoType = reader["INFOTYPE"].ToString().Trim();
-            string infoFormat = reader["INFOFORMAT"].ToString().Trim();
-            string docNum = reader["DOCNUMBER"].ToString().Trim();
-            string priority = reader["PRIORITY"].ToString().Trim();
-            string identifier = reader["IDENTIFIER"].ToString().Trim();
-            string flowXml = reader["FLOWXML"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string nodeClass = reader["NODECLASS"].ToString()?.Trim();
+            string assembly = reader["ASSEMBLY"].ToString()?.Trim();
+            string versionNum = reader["VERSIONNUMBER"].ToString()?.Trim();
+            string programType = reader["PROGRAMTYPE"].ToString()?.Trim();
+            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString()?.Trim();
+            string titleId = reader["TITLEID"].ToString()?.Trim();
+            string general = reader["GENERELL"].ToString()?.Trim();
+            string telSrvId = reader["TELESERVICEKENNUNG"].ToString()?.Trim();
+            string vehicleComm = reader["FAHRZEUGKOMMUNIKATION"].ToString()?.Trim();
+            string measurement = reader["MESSTECHNIK"].ToString()?.Trim();
+            string hidden = reader["VERSTECKT"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
+            string informationType = reader["INFORMATIONSTYP"].ToString()?.Trim();
+            string identification = reader["IDENTIFIKATOR"].ToString()?.Trim();
+            string informationFormat = reader["INFORMATIONSFORMAT"].ToString()?.Trim();
+            string siNumber = reader["SINUMMER"].ToString()?.Trim();
+            string targetILevel = reader["ZIELISTUFE"].ToString()?.Trim();
+            string controlId = reader["CONTROLID"].ToString()?.Trim();
+            string infoType = reader["INFOTYPE"].ToString()?.Trim();
+            string infoFormat = reader["INFOFORMAT"].ToString()?.Trim();
+            string docNum = reader["DOCNUMBER"].ToString()?.Trim();
+            string priority = reader["PRIORITY"].ToString()?.Trim();
+            string identifier = reader["IDENTIFIER"].ToString()?.Trim();
+            string flowXml = reader["FLOWXML"].ToString()?.Trim();
             return new SwiInfoObj(linkType, id, nodeClass, assembly, versionNum, programType, safetyRelevant, titleId, general,
                 telSrvId, vehicleComm, measurement, hidden, name, informationType, identification, informationFormat, siNumber, targetILevel, controlId,
                 infoType, infoFormat, docNum, priority, identifier, flowXml, GetTranslation(reader));
         }
 
-        private static SwiDiagObj ReadXepSwiDiagObj(SQLiteDataReader reader)
+        private static SwiDiagObj ReadXepSwiDiagObj(SqliteDataReader reader)
         {
-            string id = reader["ID"].ToString().Trim();
-            string nodeClass = reader["NODECLASS"].ToString().Trim();
-            string titleId = reader["TITLEID"].ToString().Trim();
-            string versionNum = reader["VERSIONNUMBER"].ToString().Trim();
-            string name = reader["NAME"].ToString().Trim();
-            string failWeight = reader["FAILUREWEIGHT"].ToString().Trim();
-            string hidden = reader["VERSTECKT"].ToString().Trim();
-            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString().Trim();
-            string controlId = reader["CONTROLID"].ToString().Trim();
-            string sortOrder = reader["SORT_ORDER"].ToString().Trim();
+            string id = reader["ID"].ToString()?.Trim();
+            string nodeClass = reader["NODECLASS"].ToString()?.Trim();
+            string titleId = reader["TITLEID"].ToString()?.Trim();
+            string versionNum = reader["VERSIONNUMBER"].ToString()?.Trim();
+            string name = reader["NAME"].ToString()?.Trim();
+            string failWeight = reader["FAILUREWEIGHT"].ToString()?.Trim();
+            string hidden = reader["VERSTECKT"].ToString()?.Trim();
+            string safetyRelevant = reader["SICHERHEITSRELEVANT"].ToString()?.Trim();
+            string controlId = reader["CONTROLID"].ToString()?.Trim();
+            string sortOrder = reader["SORT_ORDER"].ToString()?.Trim();
             return new SwiDiagObj(id, nodeClass, titleId, versionNum, name, failWeight, hidden, safetyRelevant, controlId, sortOrder, GetTranslation(reader));
         }
 
-        private static EcuTranslation GetTranslation(SQLiteDataReader reader, string prefix = "TITLE", string language = null)
+        private static EcuTranslation GetTranslation(SqliteDataReader reader, string prefix = "TITLE", string language = null)
         {
             return new EcuTranslation(
                 language == null || language.ToLowerInvariant() == "de" ? reader[prefix + "_DEDE"].ToString() : string.Empty,
@@ -5268,6 +5331,7 @@ namespace PsdzClient
             {
                 if (_mDbConnection != null)
                 {
+                    _mDbConnection.Close();
                     _mDbConnection.Dispose();
                     _mDbConnection = null;
                 }

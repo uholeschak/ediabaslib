@@ -12,7 +12,6 @@ public static class DatabaseFunctions
         "TITLE_PT, TITLE_ZHTW, TITLE_JA, " +
         "TITLE_CSCZ, TITLE_PLPL";
 
-#if NET || MS_SQLITE
     public static string GetNodeClassId(Microsoft.Data.Sqlite.SqliteConnection sqliteConnection, string nodeClassName)
     {
         string result = string.Empty;
@@ -31,23 +30,4 @@ public static class DatabaseFunctions
 
         return result;
     }
-#else
-    public static string GetNodeClassId(System.Data.SQLite.SQLiteConnection mDbConnection, string nodeClassName)
-    {
-        string result = string.Empty;
-        string sql = string.Format(@"SELECT ID FROM XEP_NODECLASSES WHERE NAME = '{0}'", nodeClassName);
-        using (System.Data.SQLite.SQLiteCommand command = new System.Data.SQLite.SQLiteCommand(sql, mDbConnection))
-        {
-            using (System.Data.SQLite.SQLiteDataReader reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    result = reader["ID"].ToString();
-                }
-            }
-        }
-
-        return result;
-    }
-#endif
 }

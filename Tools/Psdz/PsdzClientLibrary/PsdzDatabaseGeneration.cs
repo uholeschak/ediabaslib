@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -18,6 +17,7 @@ using BmwFileReader;
 using HarmonyLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.Data.Sqlite;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClientLibrary.Core;
@@ -5068,14 +5068,15 @@ $@"
             {
                 List<EcuFunctionStructs.EcuFaultCode> ecuFaultCodeList = new List<EcuFunctionStructs.EcuFaultCode>();
                 string sql = @"SELECT ID, CODE, DATATYPE, RELEVANCE FROM XEP_FAULTCODES";
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             EcuFunctionStructs.EcuFaultCode ecuFaultCode = new EcuFunctionStructs.EcuFaultCode(
-                                reader["ID"].ToString().Trim(),
+                                reader["ID"].ToString()?.Trim(),
                                 reader["CODE"].ToString(),
                                 reader["DATATYPE"].ToString(),
                                 reader["RELEVANCE"].ToString());
@@ -5127,13 +5128,14 @@ $@"
             {
                 List<string> ecuFixedFuncList = new List<string>();
                 string sql = @"SELECT ID FROM XEP_ECUFIXEDFUNCTIONS";
-                using (SQLiteCommand command = new SQLiteCommand(sql, _mDbConnection))
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
-                    using (SQLiteDataReader reader = command.ExecuteReader())
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            ecuFixedFuncList.Add(reader["ID"].ToString().Trim());
+                            ecuFixedFuncList.Add(reader["ID"].ToString()?.Trim());
                         }
                     }
                 }
