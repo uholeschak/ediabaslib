@@ -1923,7 +1923,7 @@ namespace PsdzClient
                 {
                     mDbConnection.Open();
                     string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, DATA FROM XMLVALUEPRIMITIVE WHERE (ID = '{0}')", id);
-                    using (SqliteCommand command = _mDbConnection.CreateCommand())
+                    using (SqliteCommand command = mDbConnection.CreateCommand())
                     {
                         command.CommandText = sql;
                         using (SqliteDataReader reader = command.ExecuteReader())
