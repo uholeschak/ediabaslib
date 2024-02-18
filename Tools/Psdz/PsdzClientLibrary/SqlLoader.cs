@@ -21,7 +21,7 @@ namespace PsdzClientLibrary
         public static IGetFunctionPointer MakeDynamic(string name, int flags)
         {
             Assembly assembly = typeof(raw).Assembly;
-            return (IGetFunctionPointer)new MyGetFunctionPointer(NativeLibrary.Load(name, assembly, flags));
+            return new MyGetFunctionPointer(NativeLibrary.Load(name, assembly, flags));
         }
 
         private class MyGetFunctionPointer : IGetFunctionPointer
