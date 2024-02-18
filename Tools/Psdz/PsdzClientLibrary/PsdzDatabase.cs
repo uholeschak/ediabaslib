@@ -1491,16 +1491,9 @@ namespace PsdzClient
             MethodInfo methodCallSqliteInitInitPrefix = typeof(PsdzDatabase).GetMethod("CallSqliteInitInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
             if (methodCallSqliteInitInitPrefix != null)
             {
-                Type sqliteBatteriesType = Type.GetType("SQLitePCL.Batteries_V2, SQLitePCLRaw.batteries_v2");
-                if (sqliteBatteriesType != null)
-                {
-                    MethodInfo methodInit = sqliteBatteriesType.GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
-                    _harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitInitPrefix));
-                }
-                else
-                {
-                    log.ErrorFormat("PsdzDatabase: SQLitePCL.Batteries_V2 not existing");
-                }
+                Type sqliteBatteriesType = typeof(Batteries_V2);
+                MethodInfo methodInit = sqliteBatteriesType.GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
+                _harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitInitPrefix));
             }
             else
             {
