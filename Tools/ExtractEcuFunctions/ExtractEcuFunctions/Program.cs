@@ -1199,9 +1199,9 @@ namespace ExtractEcuFunctions
                             EcuFunctionStructs.EcuJobResult ecuJobResult = new EcuFunctionStructs.EcuJobResult(
                                 reader["RESULTID"].ToString()?.Trim(),
                                 GetTranslation(reader),
-                                reader["FUNCTIONNAMERESULT"].ToString().Trim(),
+                                reader["FUNCTIONNAMERESULT"].ToString()?.Trim(),
                                 reader["ADAPTERPATH"].ToString(),
-                                reader["NAME"].ToString().Trim(),
+                                reader["NAME"].ToString()?.Trim(),
                                 reader["STEUERGERAETEFUNKTIONENRELEVAN"].ToString(),
                                 reader["LOCATION"].ToString(),
                                 reader["UNIT"].ToString(),
@@ -1273,7 +1273,7 @@ namespace ExtractEcuFunctions
                     while (reader.Read())
                     {
                         string nodeClass = reader["NODECLASS"].ToString();
-                        EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFunctionStructs.EcuFixedFuncStruct(reader["ID"]?.ToString().Trim(),
+                        EcuFunctionStructs.EcuFixedFuncStruct ecuFixedFuncStruct = new EcuFunctionStructs.EcuFixedFuncStruct(reader["ID"]?.ToString()?.Trim(),
                             nodeClass,
                             GetNodeClassName(mDbConnection, nodeClass),
                             GetTranslation(reader),
