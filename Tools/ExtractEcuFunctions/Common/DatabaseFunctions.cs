@@ -12,7 +12,7 @@ public static class DatabaseFunctions
         "TITLE_PT, TITLE_ZHTW, TITLE_JA, " +
         "TITLE_CSCZ, TITLE_PLPL";
 
-#if NET
+#if NET || MS_SQLITE
     public static string GetNodeClassId(Microsoft.Data.Sqlite.SqliteConnection sqliteConnection, string nodeClassName)
     {
         string result = string.Empty;
