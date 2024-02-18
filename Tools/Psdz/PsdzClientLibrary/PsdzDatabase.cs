@@ -25,6 +25,7 @@ using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClientLibrary;
+using SQLitePCL;
 
 namespace PsdzClient
 {
@@ -1492,7 +1493,11 @@ namespace PsdzClient
                 Password = DatabaseFunctions.DatabasePassword,
             };
 
-            SQLitePCL.Batteries_V2.Init();
+            NativeLibrary.Load("e_sqlite3mc", Assembly.GetExecutingAssembly(),
+                NativeLibrary.WHERE_RUNTIME_RID | NativeLibrary.WHERE_ADJACENT | NativeLibrary.WHERE_CODEBASE);
+            Batteries_V2.Init();
+            //Batteries_V2.DoDynamic_cdecl("e_sqlite3mc", NativeLibrary.WHERE_RUNTIME_RID | NativeLibrary.WHERE_ADJACENT | NativeLibrary.WHERE_CODEBASE);
+
             _mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString);
             _mDbConnection.Open();
 
