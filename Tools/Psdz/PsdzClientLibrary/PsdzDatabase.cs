@@ -1492,6 +1492,7 @@ namespace PsdzClient
                 Password = DatabaseFunctions.DatabasePassword,
             };
 
+            SQLitePCL.Batteries_V2.Init();
             _mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString);
             _mDbConnection.Open();
 
