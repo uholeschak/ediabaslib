@@ -2,7 +2,6 @@
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Configuration;
-using System.Data.Entity;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
