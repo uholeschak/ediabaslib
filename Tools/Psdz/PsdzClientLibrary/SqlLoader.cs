@@ -1,6 +1,7 @@
 ﻿using SQLitePCL;
 using System.Reflection;
 using System;
+using System.IO;
 
 namespace PsdzClientLibrary
 {
@@ -8,7 +9,15 @@ namespace PsdzClientLibrary
     {
         public static void Init()
         {
-            DoDynamic_cdecl("e_sqlite3mc", NativeLibrary.WHERE_RUNTIME_RID | NativeLibrary.WHERE_ADJACENT | NativeLibrary.WHERE_CODEBASE);
+            string codeBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+            if (!string.IsNullOrEmpty(codeBase))
+            {
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                string rid = (IntPtr.Size == 8) ? "win-x64" : "win-x86";
+                string libPath = Path.Combine(path, "runtimes", rid, "native", "e_sqlite3mc");
+                DoDynamic_cdecl(libPath, NativeLibrary.WHERE_PLAIN);
+            }
         }
 
         public static void DoDynamic_cdecl(string name, int flags)
