@@ -5319,13 +5319,6 @@ namespace PsdzClient
                 );
         }
 
-        private static bool CallSqliteInitInitPrefix()
-        {
-            log.InfoFormat("CallSqliteInitInitPrefix");
-            SqlLoader.Init();
-            return false;
-        }
-
         public void Dispose()
         {
             Dispose(true);
