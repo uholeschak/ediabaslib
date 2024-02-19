@@ -111,7 +111,7 @@ namespace PsdzClientLibrary
         {
             if (!string.IsNullOrEmpty(typeName))
             {
-                if (typeName.StartsWith("Windows.Storage"))
+                if (typeName.StartsWith("Windows.Storage.", StringComparison.OrdinalIgnoreCase))
                 {
                     __result = null;
                     return false;
