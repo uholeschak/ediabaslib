@@ -50,6 +50,7 @@ namespace PsdzClientLibrary
                 }
             }
 
+            // https://github.com/ericsink/SQLitePCL.raw/issues/405
             // Another option is setting shadowCopyBinAssemblies to false in the web.config file, section system.web.
             // <hostingEnvironment shadowCopyBinAssemblies="false" />
             if (!patchedSqliteInit)
@@ -57,11 +58,8 @@ namespace PsdzClientLibrary
                 harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitPrefix));
             }
 
-            // Trust assemblies in web.config file, section system.web.
-            // Create publicKey with: sn -Tp <assembly>
-            // <fullTrustAssemblies>
-            //   <add assemblyName="Microsoft.Data.Sqlite" version="8.0.2.0" publicKey="xxxxx" />
-            // </fullTrustAssemblies>
+            // Fixed in the next update
+            // https://github.com/dotnet/efcore/issues/32614
             if (!patchedGetType)
             {
                 harmony.Patch(methodGetType, new HarmonyMethod(methodCallGetTypePrefix));
