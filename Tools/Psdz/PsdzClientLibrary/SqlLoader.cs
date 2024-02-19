@@ -57,6 +57,11 @@ namespace PsdzClientLibrary
                 harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitPrefix));
             }
 
+            // Trust assemblies in web.config file, section system.web.
+            // Create publicKey with: sn -Tp <assembly>
+            // <fullTrustAssemblies>
+            //   <add assemblyName="Microsoft.Data.Sqlite" version="8.0.2.0" publicKey="xxxxx" />
+            // </fullTrustAssemblies>
             if (!patchedGetType)
             {
                 harmony.Patch(methodGetType, new HarmonyMethod(methodCallGetTypePrefix));
