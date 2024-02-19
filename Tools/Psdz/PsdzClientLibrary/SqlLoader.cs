@@ -10,8 +10,8 @@ namespace PsdzClientLibrary
     {
         public static bool PatchLoader(Harmony harmony)
         {
-            MethodInfo methodCallSqliteInitInitPrefix = typeof(SqlLoader).GetMethod("CallSqliteInitInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
-            if (methodCallSqliteInitInitPrefix == null)
+            MethodInfo methodCallSqliteInitPrefix = typeof(SqlLoader).GetMethod("CallSqliteInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+            if (methodCallSqliteInitPrefix == null)
             {
                 return false;
             }
@@ -35,13 +35,13 @@ namespace PsdzClientLibrary
                 return false;
             }
 
-            bool patchedGetDatabase = false;
+            bool patchedSqliteInit = false;
             bool patchedGetType = false;
             foreach (MethodBase methodBase in harmony.GetPatchedMethods())
             {
                 if (methodBase == methodInit)
                 {
-                    patchedGetDatabase = true;
+                    patchedSqliteInit = true;
                 }
 
                 if (methodBase == methodGetType)
@@ -50,9 +50,11 @@ namespace PsdzClientLibrary
                 }
             }
 
-            if (!patchedGetDatabase)
+            // Another option is setting shadowCopyBinAssemblies to false in the web.config file, section system.web.
+            // <hostingEnvironment shadowCopyBinAssemblies="false" />
+            if (!patchedSqliteInit)
             {
-                harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitInitPrefix));
+                harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitPrefix));
             }
 
             if (!patchedGetType)
@@ -101,7 +103,7 @@ namespace PsdzClientLibrary
                 return NativeLibrary.TryGetExport(this._dll, name, out address) ? address : IntPtr.Zero;
             }
         }
-        private static bool CallSqliteInitInitPrefix()
+        private static bool CallSqliteInitPrefix()
         {
             Init();
             return false;
