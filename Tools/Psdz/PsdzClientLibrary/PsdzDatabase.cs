@@ -1493,11 +1493,32 @@ namespace PsdzClient
             {
                 Type sqliteBatteriesType = typeof(Batteries_V2);
                 MethodInfo methodInit = sqliteBatteriesType.GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
-                _harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitInitPrefix));
+                if (methodInit != null)
+                {
+                    bool patchedGetDatabase = false;
+
+                    foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
+                    {
+                        if (methodBase == methodInit)
+                        {
+                            patchedGetDatabase = true;
+                        }
+                    }
+
+                    if (!patchedGetDatabase)
+                    {
+                        log.InfoFormat("PsdzDatabase Patching: {0}", methodInit.Name);
+                        _harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitInitPrefix));
+                    }
+                }
+                else
+                {
+                    log.ErrorFormat("PsdzDatabase: Method Init not existing");
+                }
             }
             else
             {
-                log.ErrorFormat("PsdzDatabase: Methid CallSqliteInitInitPrefix not existing");
+                log.ErrorFormat("PsdzDatabase: Method CallSqliteInitInitPrefix not existing");
             }
 
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
