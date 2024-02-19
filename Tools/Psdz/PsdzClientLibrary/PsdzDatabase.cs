@@ -1486,39 +1486,9 @@ namespace PsdzClient
             log.InfoFormat("PsdzDatabase: ISTA framework path: {0}", _frameworkPath);
 
             _harmony = new Harmony("de.holeschak.PsdzClient");
-
-            // patch SQLitePCLRaw.batteries_v2 Init method
-            MethodInfo methodCallSqliteInitInitPrefix = typeof(PsdzDatabase).GetMethod("CallSqliteInitInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
-            if (methodCallSqliteInitInitPrefix != null)
+            if (!SqlLoader.PatchLoader(_harmony))
             {
-                Type sqliteBatteriesType = typeof(Batteries_V2);
-                MethodInfo methodInit = sqliteBatteriesType.GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
-                if (methodInit != null)
-                {
-                    bool patchedGetDatabase = false;
-
-                    foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
-                    {
-                        if (methodBase == methodInit)
-                        {
-                            patchedGetDatabase = true;
-                        }
-                    }
-
-                    if (!patchedGetDatabase)
-                    {
-                        log.InfoFormat("PsdzDatabase Patching: {0}", methodInit.Name);
-                        _harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitInitPrefix));
-                    }
-                }
-                else
-                {
-                    log.ErrorFormat("PsdzDatabase: Method Init not existing");
-                }
-            }
-            else
-            {
-                log.ErrorFormat("PsdzDatabase: Method CallSqliteInitInitPrefix not existing");
+                log.ErrorFormat("PsdzDatabase: PatchLoader failed");
             }
 
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
