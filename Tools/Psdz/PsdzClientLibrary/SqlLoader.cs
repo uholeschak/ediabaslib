@@ -6,63 +6,98 @@ using HarmonyLib;
 
 namespace PsdzClientLibrary
 {
-    public class SqlLoader
+    public static class SqlLoader
     {
+        private static bool _isPatched;
+        private static readonly string[] _testTypes =
+        {
+            "Windows.Storage.ApplicationData, Windows, ContentType=WindowsRuntime",
+            "Windows.Storage.ApplicationData, Microsoft.Windows.SDK.NET",
+            "Windows.Storage.StorageFolder, Windows, ContentType=WindowsRuntime",
+            "Windows.Storage.StorageFolder, Microsoft.Windows.SDK.NET"
+        };
+
         public static bool PatchLoader(Harmony harmony)
         {
-            MethodInfo methodCallSqliteInitPrefix = typeof(SqlLoader).GetMethod("CallSqliteInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
-            if (methodCallSqliteInitPrefix == null)
+            if (_isPatched)
             {
-                return false;
+                return true;
             }
 
-            MethodInfo methodCallGetTypePrefix = typeof(SqlLoader).GetMethod("CallGetTypePrefix", BindingFlags.NonPublic | BindingFlags.Static);
-            if (methodCallGetTypePrefix == null)
+            try
             {
-                return false;
-            }
+                bool patchSqliteInitRequired = false;
+                bool patchGetTypeRequired = false;
 
-            MethodInfo methodInit = typeof(Batteries_V2).GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
-            if (methodInit == null)
-            {
-                return false;
-            }
-
-            MethodInfo methodGetType = typeof(Type).GetMethod("GetType", BindingFlags.Public | BindingFlags.Static,
-                null, new Type[] { typeof(string) }, null);
-            if (methodGetType == null)
-            {
-                return false;
-            }
-
-            bool patchedSqliteInit = false;
-            bool patchedGetType = false;
-            foreach (MethodBase methodBase in harmony.GetPatchedMethods())
-            {
-                if (methodBase == methodInit)
+                try
                 {
-                    patchedSqliteInit = true;
+                    foreach (string testType in _testTypes)
+                    {
+                        Type dummy = Type.GetType(testType);
+                    }
+                }
+                catch (Exception)
+                {
+                    patchGetTypeRequired = true;
                 }
 
-                if (methodBase == methodGetType)
+                string location = Path.GetDirectoryName(typeof(SqlLoader).Assembly.Location);
+                if (!string.IsNullOrEmpty(location))
                 {
-                    patchedGetType = true;
+                    string libPath = Path.Combine(location, "runtimes");
+                    if (!Directory.Exists(libPath))
+                    {
+                        patchSqliteInitRequired = true;
+                    }
+                }
+
+                // https://github.com/ericsink/SQLitePCL.raw/issues/405
+                // Another option is setting shadowCopyBinAssemblies to false in the web.config file, section system.web.
+                // <hostingEnvironment shadowCopyBinAssemblies="false" />
+                if (patchSqliteInitRequired)
+                {
+                    MethodInfo methodCallSqliteInitPrefix = typeof(SqlLoader).GetMethod("CallSqliteInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                    if (methodCallSqliteInitPrefix == null)
+                    {
+                        return false;
+                    }
+
+                    MethodInfo methodInit = typeof(Batteries_V2).GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
+                    if (methodInit == null)
+                    {
+                        return false;
+                    }
+
+                    harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitPrefix));
+                }
+
+                // Fixed in the next update
+                // https://github.com/dotnet/efcore/issues/32614
+                if (patchGetTypeRequired)
+                {
+                    MethodInfo methodCallGetTypePrefix = typeof(SqlLoader).GetMethod("CallGetTypePrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                    if (methodCallGetTypePrefix == null)
+                    {
+                        return false;
+                    }
+
+                    MethodInfo methodGetType = typeof(Type).GetMethod("GetType", BindingFlags.Public | BindingFlags.Static,
+                        null, new Type[] { typeof(string) }, null);
+                    if (methodGetType == null)
+                    {
+                        return false;
+                    }
+
+                    harmony.Patch(methodGetType, new HarmonyMethod(methodCallGetTypePrefix));
                 }
             }
-
-            // https://github.com/ericsink/SQLitePCL.raw/issues/405
-            // Another option is setting shadowCopyBinAssemblies to false in the web.config file, section system.web.
-            // <hostingEnvironment shadowCopyBinAssemblies="false" />
-            if (!patchedSqliteInit)
+            catch (Exception)
             {
-                harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitPrefix));
+                return false;
             }
-
-            // Fixed in the next update
-            // https://github.com/dotnet/efcore/issues/32614
-            if (!patchedGetType)
+            finally
             {
-                harmony.Patch(methodGetType, new HarmonyMethod(methodCallGetTypePrefix));
+                _isPatched = true;
             }
 
             return true;
