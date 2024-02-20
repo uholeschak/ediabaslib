@@ -51,8 +51,9 @@ namespace PsdzClientLibrary
                 string location = Path.GetDirectoryName(typeof(SqliteConnection).Assembly.Location);
                 if (!string.IsNullOrEmpty(location))
                 {
-                    string libPath = Path.Combine(location, "runtimes");
-                    if (!Directory.Exists(libPath))
+                    string libPath = GetLibPath(location);
+                    string libName = libPath + ".dll";
+                    if (!File.Exists(libName))
                     {
                         patchSqliteInitRequired = true;
                     }
@@ -124,8 +125,7 @@ namespace PsdzClientLibrary
             {
                 UriBuilder uriBuilder = new UriBuilder(codeBase);
                 string path = Uri.UnescapeDataString(new Uri(uriBuilder.Path).LocalPath);
-                string rid = (IntPtr.Size == 8) ? "win-x64" : "win-x86";
-                string libPath = Path.Combine(path, "runtimes", rid, "native", "e_sqlite3mc");
+                string libPath = GetLibPath(path);
                 DoDynamic_cdecl(libPath, NativeLibrary.WHERE_PLAIN);
             }
         }
@@ -155,6 +155,14 @@ namespace PsdzClientLibrary
                 return NativeLibrary.TryGetExport(this._dll, name, out address) ? address : IntPtr.Zero;
             }
         }
+
+        private static string GetLibPath(string path)
+        {
+            string ridBack = (IntPtr.Size == 8) ? "x64" : "x86";
+            string rid = "win-" + ridBack;
+            return Path.Combine(path, "runtimes", rid, "native", "e_sqlite3mc");
+        }
+
         private static bool CallSqliteInitPrefix()
         {
             Init();
