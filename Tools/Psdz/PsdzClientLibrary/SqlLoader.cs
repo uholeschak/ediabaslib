@@ -3,12 +3,15 @@ using System.Reflection;
 using System;
 using System.IO;
 using HarmonyLib;
+using Microsoft.Data.Sqlite;
+using log4net;
 
 namespace PsdzClientLibrary
 {
     public static class SqlLoader
     {
-        private static bool _isPatched;
+        private static readonly ILog log = LogManager.GetLogger(typeof(SqlLoader));
+
         private static readonly string[] _testTypes =
         {
             "Windows.Storage.ApplicationData, Windows, ContentType=WindowsRuntime",
@@ -17,8 +20,11 @@ namespace PsdzClientLibrary
             "Windows.Storage.StorageFolder, Microsoft.Windows.SDK.NET"
         };
 
+        private static bool _isPatched;
+
         public static bool PatchLoader(Harmony harmony)
         {
+            log.InfoFormat("PatchLoader: Is patched: {0}", _isPatched);
             if (_isPatched)
             {
                 return true;
@@ -36,12 +42,13 @@ namespace PsdzClientLibrary
                         Type dummy = Type.GetType(testType);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    log.InfoFormat("PatchLoader: GetType Exception: {0}", ex.Message);
                     patchGetTypeRequired = true;
                 }
 
-                string location = Path.GetDirectoryName(typeof(SqlLoader).Assembly.Location);
+                string location = Path.GetDirectoryName(typeof(SqliteConnection).Assembly.Location);
                 if (!string.IsNullOrEmpty(location))
                 {
                     string libPath = Path.Combine(location, "runtimes");
@@ -56,15 +63,18 @@ namespace PsdzClientLibrary
                 // <hostingEnvironment shadowCopyBinAssemblies="false" />
                 if (patchSqliteInitRequired)
                 {
+                    log.InfoFormat("PatchLoader: Patching Init");
                     MethodInfo methodCallSqliteInitPrefix = typeof(SqlLoader).GetMethod("CallSqliteInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                     if (methodCallSqliteInitPrefix == null)
                     {
+                        log.ErrorFormat("PatchLoader: CallSqliteInitPrefix method missing");
                         return false;
                     }
 
                     MethodInfo methodInit = typeof(Batteries_V2).GetMethod("Init", BindingFlags.Public | BindingFlags.Static);
                     if (methodInit == null)
                     {
+                        log.ErrorFormat("PatchLoader: Init method missing");
                         return false;
                     }
 
@@ -75,9 +85,11 @@ namespace PsdzClientLibrary
                 // https://github.com/dotnet/efcore/issues/32614
                 if (patchGetTypeRequired)
                 {
+                    log.InfoFormat("PatchLoader: Patching GetType");
                     MethodInfo methodCallGetTypePrefix = typeof(SqlLoader).GetMethod("CallGetTypePrefix", BindingFlags.NonPublic | BindingFlags.Static);
                     if (methodCallGetTypePrefix == null)
                     {
+                        log.ErrorFormat("PatchLoader: CallGetTypePrefix method missing");
                         return false;
                     }
 
@@ -85,14 +97,16 @@ namespace PsdzClientLibrary
                         null, new Type[] { typeof(string) }, null);
                     if (methodGetType == null)
                     {
+                        log.ErrorFormat("PatchLoader: GetType method missing");
                         return false;
                     }
 
                     harmony.Patch(methodGetType, new HarmonyMethod(methodCallGetTypePrefix));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.ErrorFormat("PatchLoader: GetType Exception: {0}", ex.Message);
                 return false;
             }
             finally
