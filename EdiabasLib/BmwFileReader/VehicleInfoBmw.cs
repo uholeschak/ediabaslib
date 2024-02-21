@@ -757,11 +757,17 @@ namespace BmwFileReader
                 return null;
             }
 
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Type key: {0}", vinRangeInfo.TypeKey);
             Dictionary<string, string> propertyDict = _typeKeyInfo.GetTypeKeyProperties(vinRangeInfo.TypeKey);
             if (propertyDict == null)
             {
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "No type key properties present");
                 return null;
+            }
+
+            foreach (KeyValuePair<string, string> keyValuePair in propertyDict)
+            {
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Property: {0}, Value: {1}", keyValuePair.Key, keyValuePair.Value);
             }
 
             return propertyDict;
