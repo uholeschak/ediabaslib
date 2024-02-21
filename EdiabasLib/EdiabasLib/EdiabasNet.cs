@@ -5959,15 +5959,16 @@ namespace EdiabasLib
                         {
                             string currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Date: {0}", currDateTime));
+
+                            string logInfo = LogInfo;
+                            if (!string.IsNullOrEmpty(logInfo))
+                            {
+                                _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, logInfo));
+                            }
 #if Android
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android version: {0}", (long)Android.OS.Build.VERSION.SdkInt));
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android fingerprint: {0}", Android.OS.Build.Fingerprint));
 #endif
-                            string logInfo = LogInfo;
-                            if (!string.IsNullOrEmpty(logInfo))
-                            {
-                                _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Info: {0}", logInfo));
-                            }
                         }
 
                         _swLog.WriteLine(info);
