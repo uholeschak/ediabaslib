@@ -1035,11 +1035,14 @@ namespace BmwFileReader
         {
             if (TypeKeyProperties != null)
             {
+                LogInfoFormat("UpdateTypeKeyProperties");
+
                 if (TypeKeyProperties.TryGetValue(VehicleInfoBmw.VehicleSeriesName, out string vehicleSeriesProp))
                 {
                     if (!string.IsNullOrEmpty(vehicleSeriesProp))
                     {
                         Series = vehicleSeriesProp;
+                        LogInfoFormat("Series: {0}", Series);
                     }
                 }
 
