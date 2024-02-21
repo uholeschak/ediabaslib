@@ -5597,6 +5597,14 @@ namespace BmwDeepObd
 
         public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)
         {
+            PackageInfo packageInfo = GetPackageInfo();
+            if (packageInfo != null)
+            {
+                string versionName = packageInfo.VersionName ?? string.Empty;
+                long versionCode = PackageInfoCompat.GetLongVersionCode(packageInfo);
+                ediabas.LogInfo = string.Format(CultureInfo.InvariantCulture, "App version code: {0}\nApp version name: {1}", versionCode, versionName);
+            }
+
             object connectParameter = null;
             if (ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
             {
