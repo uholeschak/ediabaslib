@@ -5962,12 +5962,12 @@ namespace EdiabasLib
 #if Android
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android version: {0}", (long)Android.OS.Build.VERSION.SdkInt));
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android fingerprint: {0}", Android.OS.Build.Fingerprint));
+#endif
                             string logInfo = LogInfo;
                             if (!string.IsNullOrEmpty(logInfo))
                             {
                                 _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Info: {0}", logInfo));
                             }
-#endif
                         }
 
                         _swLog.WriteLine(info);
