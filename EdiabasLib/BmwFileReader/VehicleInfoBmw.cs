@@ -173,8 +173,10 @@ namespace BmwFileReader
 
         public class VinRangeInfo
         {
-            public VinRangeInfo(string typeKey, string prodYear, string prodMonth, string releaseState, string gearBox)
+            public VinRangeInfo(string rangeStart, string rangeEnd, string typeKey, string prodYear, string prodMonth, string releaseState, string gearBox)
             {
+                RangeStart = rangeStart;
+                RangeEnd = rangeEnd;
                 TypeKey = typeKey;
                 ProdYear = prodYear;
                 ProdMonth = prodMonth;
@@ -182,6 +184,8 @@ namespace BmwFileReader
                 GearBox = gearBox;
             }
 
+            public string RangeStart { get; }
+            public string RangeEnd { get; }
             public string TypeKey { get; }
             public string ProdYear { get; }
             public string ProdMonth { get; }
@@ -644,11 +648,14 @@ namespace BmwFileReader
                 return null;
             }
 
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matching Vin serial: {0}", serialNumber);
             try
             {
                 ZipFile zf = null;
                 try
                 {
+                    VinRangeInfo vinRangeInfo = null;
+
                     using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, EcuFunctionReader.EcuFuncFileName)))
                     {
                         zf = new ZipFile(fs);
@@ -686,6 +693,8 @@ namespace BmwFileReader
                                                     string.Compare(serialNumber, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
                                                 {
                                                     string typeKey = lineArray[2];
+                                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Serial matched: '{0}'-'{1}', TypeKey='{2}'",
+                                                        lineArray[0], lineArray[1], typeKey);
 
                                                     string prodYear = null;
                                                     string prodMonth = null;
@@ -707,8 +716,14 @@ namespace BmwFileReader
                                                         gearBox = lineArray[6];
                                                     }
 
-                                                    VinRangeInfo vinRangeInfo = new VinRangeInfo(typeKey, prodYear, prodMonth, releaseState, gearBox);
-                                                    return vinRangeInfo;
+                                                    vinRangeInfo = new VinRangeInfo(lineArray[0], lineArray[1], typeKey, prodYear, prodMonth, releaseState, gearBox);
+
+                                                    if (string.Compare(serialNumber, lineArray[0], StringComparison.OrdinalIgnoreCase) == 0 &&
+                                                        string.Compare(serialNumber, lineArray[1], StringComparison.OrdinalIgnoreCase) == 0)
+                                                    {
+                                                        // exact match
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
@@ -717,8 +732,14 @@ namespace BmwFileReader
                                 break;
                             }
                         }
-                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Type key not found in vin ranges");
-                        return null;
+
+                        if (vinRangeInfo == null)
+                        {
+                            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Type key not found in vin ranges");
+                            return null;
+                        }
+
+                        return vinRangeInfo;
                     }
                 }
                 finally
