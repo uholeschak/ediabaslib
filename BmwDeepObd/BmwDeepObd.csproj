@@ -80,7 +80,7 @@
     <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.3.2.1" />
     <PackageReference Include="Xamarin.AndroidX.Startup.StartupRuntime" Version="1.1.1.10" />
     <PackageReference Include="Xamarin.AndroidX.ViewPager2" Version="1.0.0.24" />
-    <PackageReference Include="Xamarin.AndroidX.WebKit" Version="1.9.0" />
+    <PackageReference Include="Xamarin.AndroidX.WebKit" Version="1.10.0" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.2" />
     <PackageReference Include="Xamarin.Google.Android.Play.Core" Version="1.10.3.9" />
     <PackageReference Include="Xamarin.Google.Android.Vending.Expansion.Downloader" Version="2.1.0" />
