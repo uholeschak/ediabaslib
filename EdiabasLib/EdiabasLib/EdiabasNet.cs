@@ -2251,6 +2251,7 @@ namespace EdiabasLib
         private List<Dictionary<string, ResultData>> _resultSetsTemp;
         private readonly Dictionary<string, string> _configDict = new Dictionary<string, string>();
         private readonly Dictionary<string, string> _groupMappingDict = new Dictionary<string, string>();
+        private string _logInfo;
         private long _infoProgressRange;
         private long _infoProgressPos;
         private string _infoProgressText = string.Empty;
@@ -2530,6 +2531,24 @@ namespace EdiabasLib
                             }
                         }
                     }
+                }
+            }
+        }
+
+        public string LogInfo
+        {
+            get
+            {
+                lock (_apiLock)
+                {
+                    return _logInfo;
+                }
+            }
+            set
+            {
+                lock (_apiLock)
+                {
+                    _logInfo = value;
                 }
             }
         }
@@ -5943,6 +5962,11 @@ namespace EdiabasLib
 #if Android
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android version: {0}", (long)Android.OS.Build.VERSION.SdkInt));
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android fingerprint: {0}", Android.OS.Build.Fingerprint));
+                            string logInfo = LogInfo;
+                            if (!string.IsNullOrEmpty(logInfo))
+                            {
+                                _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Info: {0}", logInfo));
+                            }
 #endif
                         }
 
