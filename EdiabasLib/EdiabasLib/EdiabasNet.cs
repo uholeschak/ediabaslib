@@ -5963,7 +5963,7 @@ namespace EdiabasLib
                             string logInfo = LogInfo;
                             if (!string.IsNullOrEmpty(logInfo))
                             {
-                                _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, logInfo));
+                                _swLog.WriteLine(logInfo);
                             }
 #if Android
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android version: {0}", (long)Android.OS.Build.VERSION.SdkInt));
