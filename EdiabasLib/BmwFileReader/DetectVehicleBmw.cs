@@ -1042,7 +1042,7 @@ namespace BmwFileReader
                     if (!string.IsNullOrEmpty(vehicleSeriesProp))
                     {
                         Series = vehicleSeriesProp;
-                        LogInfoFormat("Series: {0}", Series);
+                        LogInfoFormat("Series: {0}", vehicleSeriesProp);
                     }
                 }
 
@@ -1051,7 +1051,7 @@ namespace BmwFileReader
                     if (!string.IsNullOrEmpty(productTypeProp))
                     {
                         ProductType = productTypeProp;
-                        LogInfoFormat("Product type: {0}", ProductType);
+                        LogInfoFormat("Product type: {0}", productTypeProp);
                     }
                 }
 
@@ -1069,7 +1069,7 @@ namespace BmwFileReader
                     if (!string.IsNullOrEmpty(transmissionProp))
                     {
                         TransmissionType = transmissionProp;
-                        LogInfoFormat("Transmission: {0}", brandProp);
+                        LogInfoFormat("Transmission: {0}", transmissionProp);
                     }
                 }
 
@@ -1078,7 +1078,7 @@ namespace BmwFileReader
                     if (!string.IsNullOrEmpty(motorProp))
                     {
                         Motor = motorProp;
-                        LogInfoFormat("Motor: {0}", brandProp);
+                        LogInfoFormat("Motor: {0}", motorProp);
                     }
                 }
             }
