@@ -2713,7 +2713,7 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE" +
+                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
                     @" FROM VINRANGES WHERE ('{0}' BETWEEN VINBANDFROM AND VINBANDTO)", vin.ToUpper(CultureInfo.InvariantCulture));
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
@@ -2723,6 +2723,9 @@ namespace PsdzClient
                         while (reader.Read())
                         {
                             VinRanges vinRanges = ReadXepVinRanges(reader);
+                            // clear invalid types
+                            vinRanges.GearboxType = string.Empty;
+                            vinRanges.Vin17_4_7 = string.Empty;
                             vinRangesList.Add(vinRanges);
                         }
                     }
