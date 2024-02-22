@@ -566,9 +566,9 @@ namespace BmwFileReader
                             {
                                 using (Stream zipStream = zf.GetInputStream(zipEntry))
                                 {
-                                    using (StreamReader sr = new StreamReader(zipStream))
+                                    using (StreamReader sr = new StreamReader(zipStream, Encoding.ASCII, false, 0x1000))
                                     {
-                                        while (sr.Peek() >= 0)
+                                        while (!sr.EndOfStream)
                                         {
                                             string line = sr.ReadLine();
                                             if (line == null)
@@ -649,6 +649,8 @@ namespace BmwFileReader
             }
 
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matching Vin serial: {0}", serialNumber);
+            string serialStart = serialNumber.Substring(0, 2);
+
             try
             {
                 ZipFile zf = null;
@@ -669,9 +671,9 @@ namespace BmwFileReader
                             {
                                 using (Stream zipStream = zf.GetInputStream(zipEntry))
                                 {
-                                    using (StreamReader sr = new StreamReader(zipStream))
+                                    using (StreamReader sr = new StreamReader(zipStream, Encoding.ASCII, false, 0x1000))
                                     {
-                                        while (sr.Peek() >= 0)
+                                        while (!sr.EndOfStream)
                                         {
                                             string line = sr.ReadLine();
                                             if (line == null)
@@ -681,6 +683,11 @@ namespace BmwFileReader
 
                                             bool isComment = line.StartsWith("#");
                                             if (isComment)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (!line.StartsWith(serialStart, StringComparison.OrdinalIgnoreCase))
                                             {
                                                 continue;
                                             }
