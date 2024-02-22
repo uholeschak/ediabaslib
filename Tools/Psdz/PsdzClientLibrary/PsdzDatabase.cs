@@ -2701,9 +2701,58 @@ namespace PsdzClient
             return characteristicsList;
         }
 
-        public VinRanges GetVinRangesByVin17(string vin17_4_7, string vin7, bool returnFirstEntryWithoutCheck)
+        public VinRanges GetVinRangesByVin(string vin)
         {
-            log.InfoFormat("GetVinRangesByVin17 Vin17_4_7: {0}, Vin7: {1}", vin17_4_7, vin7);
+            log.InfoFormat("GetVinRangesByVin Vin: {0}", vin);
+            if (string.IsNullOrEmpty(vin))
+            {
+                return null;
+            }
+
+            List<VinRanges> vinRangesList = new List<VinRanges>();
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture,
+                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
+                    @" FROM VINRANGES WHERE ('{0}' BETWEEN VINBANDFROM AND VINBANDTO)", vin.ToUpper(CultureInfo.InvariantCulture));
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            VinRanges vinRanges = ReadXepVinRanges(reader);
+                            vinRangesList.Add(vinRanges);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetVinRangesByVin Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            if (vinRangesList.Count > 1)
+            {
+                log.InfoFormat("GetVinRangesByVin List count: {0}", vinRangesList.Count);
+            }
+
+            if (vinRangesList.Count == 1)
+            {
+                VinRanges vinRanges = vinRangesList.First();
+                log.InfoFormat("GetVinRangesByVin TypeKey: {0}", vinRanges.TypeKey);
+                return vinRanges;
+            }
+
+            log.ErrorFormat("GetVinRangesByVin Not found: {0}", vin);
+            return null;
+        }
+
+        public VinRanges GetVinRangesByVin17(string vin17_4_7, string vin7, bool returnFirstEntryWithoutCheck, bool vehicleHasOnlyVin7)
+        {
+            log.InfoFormat("GetVinRangesByVin17 Vin17_4_7: {0}, Vin7: {1}, FirstEntry: {2}, OnlyVin7: {3}", vin17_4_7, vin7, returnFirstEntryWithoutCheck, vehicleHasOnlyVin7);
             if (string.IsNullOrEmpty(vin17_4_7) || string.IsNullOrEmpty(vin7))
             {
                 return null;
@@ -2760,6 +2809,11 @@ namespace PsdzClient
             {
                 log.ErrorFormat("GetVinRangesByVin17 List2 count: {0}", vinRangesList.Count);
                 return null;
+            }
+
+            if (vehicleHasOnlyVin7)
+            {
+                return GetVinRangesByVin(vin7);
             }
 
             if (returnFirstEntryWithoutCheck)
