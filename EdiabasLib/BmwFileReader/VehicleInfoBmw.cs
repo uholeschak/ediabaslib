@@ -633,14 +633,18 @@ namespace BmwFileReader
             {
                 return null;
             }
-            string serialNumber;
+
+            string vin7 = string.Empty;
+            string vinType = string.Empty;
+
             if (vin.Length == 7)
             {
-                serialNumber = vin;
+                vin7 = vin;
             }
             else if (vin.Length == 17)
             {
-                serialNumber = vin.Substring(10, 7);
+                vin7 = vin.Substring(10, 7);
+                vinType = vin.Substring(3, 4);
             }
             else
             {
@@ -648,8 +652,8 @@ namespace BmwFileReader
                 return null;
             }
 
-            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matching Vin serial: {0}", serialNumber);
-            string serialStart = serialNumber.Substring(0, 2);
+            ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matching Vin7: {0}, VinType: {1}", vin7, vinType);
+            string vin7Start = vin7.Substring(0, 1);
 
             try
             {
@@ -687,7 +691,7 @@ namespace BmwFileReader
                                                 continue;
                                             }
 
-                                            if (!line.StartsWith(serialStart, StringComparison.OrdinalIgnoreCase))
+                                            if (!line.StartsWith(vin7Start, StringComparison.OrdinalIgnoreCase))
                                             {
                                                 continue;
                                             }
@@ -696,8 +700,8 @@ namespace BmwFileReader
                                             if (lineArray.Length >= 3 &&
                                                 lineArray[0].Length == 7 && lineArray[1].Length == 7)
                                             {
-                                                if (string.Compare(serialNumber, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
-                                                    string.Compare(serialNumber, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
+                                                if (string.Compare(vin7, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
+                                                    string.Compare(vin7, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
                                                 {
                                                     string typeKey = lineArray[2];
                                                     ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Serial matched: '{0}'-'{1}', TypeKey='{2}'",
@@ -725,8 +729,8 @@ namespace BmwFileReader
 
                                                     vinRangeInfo = new VinRangeInfo(lineArray[0], lineArray[1], typeKey, prodYear, prodMonth, releaseState, gearBox);
 
-                                                    if (string.Compare(serialNumber, lineArray[0], StringComparison.OrdinalIgnoreCase) == 0 &&
-                                                        string.Compare(serialNumber, lineArray[1], StringComparison.OrdinalIgnoreCase) == 0)
+                                                    if (string.Compare(vin7, lineArray[0], StringComparison.OrdinalIgnoreCase) == 0 &&
+                                                        string.Compare(vin7, lineArray[1], StringComparison.OrdinalIgnoreCase) == 0)
                                                     {
                                                         // exact match
                                                         break;
