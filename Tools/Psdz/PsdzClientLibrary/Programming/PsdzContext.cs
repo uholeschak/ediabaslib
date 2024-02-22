@@ -593,7 +593,7 @@ namespace PsdzClient.Programming
                 }
             }
 
-            PsdzDatabase.VinRanges vinRangesByVin = programmingService.PsdzDatabase.GetVinRangesByVin17(VecInfo.VINType, VecInfo.VIN7, true, VecInfo.IsVehicleWithOnlyVin7());
+            PsdzDatabase.VinRanges vinRangesByVin = programmingService.PsdzDatabase.GetVinRangesByVin17(VecInfo.VINType, VecInfo.VIN7, false, false);
             if (vinRangesByVin != null)
             {
                 VecInfo.VINRangeType = vinRangesByVin.TypeKey;

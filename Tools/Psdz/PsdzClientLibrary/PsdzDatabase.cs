@@ -2713,7 +2713,7 @@ namespace PsdzClient
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
+                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE" +
                     @" FROM VINRANGES WHERE ('{0}' BETWEEN VINBANDFROM AND VINBANDTO)", vin.ToUpper(CultureInfo.InvariantCulture));
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
