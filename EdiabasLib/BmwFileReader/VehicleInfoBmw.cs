@@ -813,6 +813,11 @@ namespace BmwFileReader
                                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Too many range matches");
                                 return null;
                             }
+
+                            VinRangeInfo vinRangeInfo = vinRangeList2[0];
+                            // remove gear box
+                            return new VinRangeInfo(vinRangeInfo.RangeStart, vinRangeInfo.RangeEnd, vinRangeInfo.TypeKey, vinRangeInfo.ProdYear,
+                                vinRangeInfo.ProdMonth, vinRangeInfo.ReleaseState, string.Empty);
                         }
 
                         return vinRangeList2[0];
