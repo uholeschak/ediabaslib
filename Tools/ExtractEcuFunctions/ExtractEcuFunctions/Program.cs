@@ -608,8 +608,8 @@ namespace ExtractEcuFunctions
                     string vinRangeFile = Path.Combine(outDirSub, "vinranges.txt");
                     using (StreamWriter swVinranges = new StreamWriter(vinRangeFile))
                     {
-                        string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.TYPSCHLUESSEL AS TYPEKEY" +
-                                     @", v.PRODUCTIONDATEYEAR AS PRODYEAR, v.PRODUCTIONDATEMONTH AS PRODMONTH, v.RELEASESTATE AS RELEASESTATE, v.GEARBOX_TYPE AS GEARBOX FROM VINRANGES v";
+                        string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.VIN17_4_7 AS VIN17_4_7, v.TYPSCHLUESSEL AS TYPEKEY" +
+                                     @", v.PRODUCTIONDATEYEAR AS PRODYEAR, v.PRODUCTIONDATEMONTH AS PRODMONTH, v.RELEASESTATE AS RELEASESTATE, v.GEARBOX_TYPE AS GEARBOX_TYPE FROM VINRANGES v";
                         using (SqliteCommand command = mDbConnection.CreateCommand())
                         {
                             command.CommandText = sql;
@@ -617,8 +617,8 @@ namespace ExtractEcuFunctions
                             {
                                 while (reader.Read())
                                 {
-                                    swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["TYPEKEY"] + "," + reader["PRODYEAR"] + "," + reader["PRODMONTH"] +
-                                                          "," + reader["RELEASESTATE"] + "," + reader["GEARBOX"]);
+                                    swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["VIN17_4_7"] + "," + reader["TYPEKEY"] + "," + reader["PRODYEAR"] + "," + reader["PRODMONTH"] +
+                                                          "," + reader["RELEASESTATE"] + "," + reader["GEARBOX_TYPE"]);
                                 }
                             }
                         }
