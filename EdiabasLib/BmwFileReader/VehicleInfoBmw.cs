@@ -653,14 +653,15 @@ namespace BmwFileReader
             }
 
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Matching Vin7: {0}, VinType: {1}", vin7, vinType);
-            string vin7Start = vin7.Substring(0, 1);
+            string bandType = vin7.Substring(0, 1).ToLowerInvariant();
+            string fileName = string.Format(CultureInfo.InvariantCulture, "vinranges_{0}.txt", bandType);
 
             try
             {
                 ZipFile zf = null;
                 try
                 {
-                    VinRangeInfo vinRangeInfo = null;
+                    List<VinRangeInfo> vinRangeList = new List<VinRangeInfo>();
 
                     using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, EcuFunctionReader.EcuFuncFileName)))
                     {
@@ -671,7 +672,8 @@ namespace BmwFileReader
                             {
                                 continue; // Ignore directories
                             }
-                            if (string.Compare(zipEntry.Name, "vinranges.txt", StringComparison.OrdinalIgnoreCase) == 0)
+
+                            if (string.Compare(zipEntry.Name, fileName, StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 using (Stream zipStream = zf.GetInputStream(zipEntry))
                                 {
@@ -687,11 +689,6 @@ namespace BmwFileReader
 
                                             bool isComment = line.StartsWith("#");
                                             if (isComment)
-                                            {
-                                                continue;
-                                            }
-
-                                            if (!line.StartsWith(vin7Start, StringComparison.OrdinalIgnoreCase))
                                             {
                                                 continue;
                                             }
@@ -727,14 +724,7 @@ namespace BmwFileReader
                                                         gearBox = lineArray[7];
                                                     }
 
-                                                    vinRangeInfo = new VinRangeInfo(lineArray[0], lineArray[1], typeKey, prodYear, prodMonth, releaseState, gearBox);
-
-                                                    if (string.Compare(vin7, lineArray[0], StringComparison.OrdinalIgnoreCase) == 0 &&
-                                                        string.Compare(vin7, lineArray[1], StringComparison.OrdinalIgnoreCase) == 0)
-                                                    {
-                                                        // exact match
-                                                        break;
-                                                    }
+                                                    vinRangeList.Add(new VinRangeInfo(lineArray[0], lineArray[1], typeKey, prodYear, prodMonth, releaseState, gearBox));
                                                 }
                                             }
                                         }
@@ -744,13 +734,13 @@ namespace BmwFileReader
                             }
                         }
 
-                        if (vinRangeInfo == null)
+                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN ranges count: {0}", vinRangeList.Count);
+                        if (vinRangeList.Count < 1)
                         {
-                            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Type key not found in vin ranges");
                             return null;
                         }
 
-                        return vinRangeInfo;
+                        return vinRangeList[0];
                     }
                 }
                 finally
