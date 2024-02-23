@@ -605,22 +605,59 @@ namespace ExtractEcuFunctions
                     mDbConnection.Open();
 
                     outTextWriter?.WriteLine("*** Write VinRanges start ***");
-                    string vinRangeFile = Path.Combine(outDirSub, "vinranges.txt");
-                    using (StreamWriter swVinranges = new StreamWriter(vinRangeFile))
+                    string vinRangeSpecFile = null;
+                    StreamWriter swVinrangesSpec = null;
+
+                    try
                     {
-                        string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.VIN17_4_7 AS VIN17_4_7, v.TYPSCHLUESSEL AS TYPEKEY" +
-                                     @", v.PRODUCTIONDATEYEAR AS PRODYEAR, v.PRODUCTIONDATEMONTH AS PRODMONTH, v.RELEASESTATE AS RELEASESTATE, v.GEARBOX_TYPE AS GEARBOX_TYPE FROM VINRANGES v";
-                        using (SqliteCommand command = mDbConnection.CreateCommand())
+                        string vinRangeFile = Path.Combine(outDirSub, "vinranges.txt");
+                        using (StreamWriter swVinranges = new StreamWriter(vinRangeFile))
                         {
-                            command.CommandText = sql;
-                            using (SqliteDataReader reader = command.ExecuteReader())
+                            string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.VIN17_4_7 AS VIN17_4_7, v.TYPSCHLUESSEL AS TYPEKEY" +
+                                         @", v.PRODUCTIONDATEYEAR AS PRODYEAR, v.PRODUCTIONDATEMONTH AS PRODMONTH, v.RELEASESTATE AS RELEASESTATE, v.GEARBOX_TYPE AS GEARBOX_TYPE FROM VINRANGES v";
+                            using (SqliteCommand command = mDbConnection.CreateCommand())
                             {
-                                while (reader.Read())
+                                command.CommandText = sql;
+                                using (SqliteDataReader reader = command.ExecuteReader())
                                 {
-                                    swVinranges.WriteLine(reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["VIN17_4_7"] + "," + reader["TYPEKEY"] + "," + reader["PRODYEAR"] + "," + reader["PRODMONTH"] +
-                                                          "," + reader["RELEASESTATE"] + "," + reader["GEARBOX_TYPE"]);
+                                    while (reader.Read())
+                                    {
+                                        string line = reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["VIN17_4_7"] + "," + reader["TYPEKEY"] + "," + reader["PRODYEAR"] + "," + reader["PRODMONTH"] +
+                                                      "," + reader["RELEASESTATE"] + "," + reader["GEARBOX_TYPE"];
+                                        if (line.Length > 0)
+                                        {
+                                            swVinranges.WriteLine(line);
+
+                                            string lineStart = line.Substring(0, 1).ToLowerInvariant();
+                                            string vinRangeSpecFileNew = Path.Combine(outDirSub, $"vinranges_{lineStart}.txt");
+
+                                            if (string.IsNullOrEmpty(vinRangeSpecFile) || string.Compare(vinRangeSpecFile, vinRangeSpecFileNew, StringComparison.OrdinalIgnoreCase) != 0)
+                                            {
+                                                if (swVinrangesSpec != null)
+                                                {
+                                                    swVinrangesSpec.Dispose();
+                                                    swVinrangesSpec = null;
+                                                }
+                                            }
+
+                                            if (swVinrangesSpec == null)
+                                            {
+                                                swVinrangesSpec = new StreamWriter(vinRangeSpecFileNew, true);
+                                                vinRangeSpecFile = vinRangeSpecFileNew;
+                                            }
+
+                                            swVinrangesSpec.WriteLine(line);
+                                        }
+                                    }
                                 }
                             }
+                        }
+                    }
+                    finally
+                    {
+                        if (swVinrangesSpec != null)
+                        {
+                            swVinrangesSpec.Dispose();
                         }
                     }
                 }
