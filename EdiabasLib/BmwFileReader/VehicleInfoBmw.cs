@@ -566,7 +566,7 @@ namespace BmwFileReader
                             {
                                 using (Stream zipStream = zf.GetInputStream(zipEntry))
                                 {
-                                    using (StreamReader sr = new StreamReader(zipStream, Encoding.UTF8, false, 0x1000))
+                                    using (StreamReader sr = new StreamReader(zipStream, Encoding.UTF8, true, 0x1000))
                                     {
                                         while (!sr.EndOfStream)
                                         {
@@ -675,7 +675,7 @@ namespace BmwFileReader
                             {
                                 using (Stream zipStream = zf.GetInputStream(zipEntry))
                                 {
-                                    using (StreamReader sr = new StreamReader(zipStream, Encoding.UTF8, false, 0x1000))
+                                    using (StreamReader sr = new StreamReader(zipStream, Encoding.UTF8, true, 0x1000))
                                     {
                                         while (!sr.EndOfStream)
                                         {
