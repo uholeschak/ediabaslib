@@ -700,8 +700,14 @@ namespace BmwFileReader
                                                 if (string.Compare(vin7, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
                                                     string.Compare(vin7, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
                                                 {
+                                                    if (!string.IsNullOrEmpty(vinType) &&
+                                                        string.Compare(vinType, lineArray[2], StringComparison.OrdinalIgnoreCase) != 0)
+                                                    {
+                                                        continue;
+                                                    }
+
                                                     string typeKey = lineArray[3];
-                                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vin7 matched: '{0}'-'{1}', TypeKey='{2}'",
+                                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vin matched: '{0}'-'{1}', TypeKey='{2}'",
                                                         lineArray[0], lineArray[1], typeKey);
 
                                                     string prodYear = null;
@@ -738,6 +744,15 @@ namespace BmwFileReader
                         if (vinRangeList.Count < 1)
                         {
                             return null;
+                        }
+
+                        if (vinRangeList.Count > 1)
+                        {
+                            if (!string.IsNullOrEmpty(vinType))
+                            {
+                                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Too many range matches");
+                                return null;
+                            }
                         }
 
                         return vinRangeList[0];
