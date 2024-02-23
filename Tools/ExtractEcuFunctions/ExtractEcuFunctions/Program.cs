@@ -611,7 +611,7 @@ namespace ExtractEcuFunctions
                     try
                     {
                         string vinRangeFile = Path.Combine(outDirSub, "vinranges.txt");
-                        using (StreamWriter swVinranges = new StreamWriter(vinRangeFile))
+                        using (StreamWriter swVinranges = new StreamWriter(vinRangeFile, false, Encoding.ASCII, 0x1000))
                         {
                             string sql = @"SELECT v.VINBANDFROM AS VINBANDFROM, v.VINBANDTO AS VINBANDTO, v.VIN17_4_7 AS VIN17_4_7, v.TYPSCHLUESSEL AS TYPEKEY" +
                                          @", v.PRODUCTIONDATEYEAR AS PRODYEAR, v.PRODUCTIONDATEMONTH AS PRODMONTH, v.RELEASESTATE AS RELEASESTATE, v.GEARBOX_TYPE AS GEARBOX_TYPE FROM VINRANGES v";
@@ -642,7 +642,7 @@ namespace ExtractEcuFunctions
 
                                             if (swVinrangesSpec == null)
                                             {
-                                                swVinrangesSpec = new StreamWriter(vinRangeSpecFileNew, true);
+                                                swVinrangesSpec = new StreamWriter(vinRangeSpecFileNew, true, Encoding.ASCII, 0x1000);
                                                 vinRangeSpecFile = vinRangeSpecFileNew;
                                             }
 
