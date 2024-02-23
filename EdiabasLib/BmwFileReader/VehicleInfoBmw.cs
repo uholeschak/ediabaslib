@@ -92,6 +92,54 @@ namespace BmwFileReader
             }
         }
 
+        public class VIN7Comparer : IComparer<string>
+        {
+            public int Compare(string x, string y)
+            {
+                if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                {
+                    return 0;
+                }
+
+                if (x.Length != 7 || y.Length != 7)
+                {
+                    return 0;
+                }
+
+                int num = 0;
+                for (int i = 0; i < 7; i++)
+                {
+                    if (char.IsDigit(x[i]))
+                    {
+                        if (!char.IsDigit(y[i]))
+                        {
+                            return 1;
+                        }
+
+                        num = x[i].CompareTo(y[i]);
+                        if (num != 0)
+                        {
+                            return num;
+                        }
+                    }
+                    else
+                    {
+                        if (char.IsDigit(y[i]))
+                        {
+                            return -1;
+                        }
+
+                        num = x[i].CompareTo(y[i]);
+                        if (num != 0)
+                        {
+                            return num;
+                        }
+                    }
+                }
+                return num;
+            }
+        }
+
 #if Android
         public class TypeKeyInfo
         {
@@ -634,12 +682,13 @@ namespace BmwFileReader
                 return null;
             }
 
-            string vin7 = string.Empty;
-            string vinType = string.Empty;
+            string vin7;
+            string vinType;
 
             if (vin.Length == 7)
             {
                 vin7 = vin;
+                vinType = null;
             }
             else if (vin.Length == 17)
             {
@@ -746,7 +795,18 @@ namespace BmwFileReader
                             return null;
                         }
 
-                        if (vinRangeList.Count > 1)
+                        IComparer<string> comparer = new VIN7Comparer();
+                        List<VinRangeInfo> vinRangeList2 = new List<VinRangeInfo>();
+                        foreach (VinRangeInfo vinRange in vinRangeList)
+                        {
+                            if (comparer.Compare(vinRange.RangeStart, vin7) <= 0 && comparer.Compare(vinRange.RangeEnd, vin7) >= 0)
+                            {
+                                vinRangeList2.Add(vinRange);
+                            }
+                        }
+
+                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN ranges filter count: {0}", vinRangeList2.Count);
+                        if (vinRangeList2.Count > 1)
                         {
                             if (!string.IsNullOrEmpty(vinType))
                             {
@@ -755,7 +815,7 @@ namespace BmwFileReader
                             }
                         }
 
-                        return vinRangeList[0];
+                        return vinRangeList2[0];
                     }
                 }
                 finally
