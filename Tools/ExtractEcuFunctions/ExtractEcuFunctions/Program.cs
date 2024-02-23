@@ -622,38 +622,50 @@ namespace ExtractEcuFunctions
                                 {
                                     while (reader.Read())
                                     {
-                                        string line = reader["VINBANDFROM"] + "," + reader["VINBANDTO"] + "," + reader["VIN17_4_7"] + "," + reader["TYPEKEY"] + "," + reader["PRODYEAR"] + "," + reader["PRODMONTH"] +
+                                        string vinbandFrom = reader["VINBANDFROM"].ToString();
+                                        string vinbandTo = reader["VINBANDTO"].ToString();
+                                        string line = vinbandFrom + "," + vinbandTo + "," + reader["VIN17_4_7"] + "," + reader["TYPEKEY"] + "," + reader["PRODYEAR"] + "," + reader["PRODMONTH"] +
                                                       "," + reader["RELEASESTATE"] + "," + reader["GEARBOX_TYPE"];
-                                        if (line.Length > 0)
+
+                                        if (!string.IsNullOrEmpty(vinbandFrom) && !string.IsNullOrEmpty(vinbandTo))
                                         {
                                             swVinranges.WriteLine(line);
 
-                                            string lineStart = line.Substring(0, 1).ToLowerInvariant();
-                                            string vinRangeSpecFileNew = Path.Combine(outDirSub, $"vinranges_{lineStart}.txt");
-
-                                            if (string.IsNullOrEmpty(vinRangeSpecFile) || string.Compare(vinRangeSpecFile, vinRangeSpecFileNew, StringComparison.OrdinalIgnoreCase) != 0)
+                                            char bandStart = vinbandFrom.ToLowerInvariant()[0];
+                                            char bandEnd = vinbandFrom.ToLowerInvariant()[0];
+                                            if (bandStart != bandEnd)
                                             {
-                                                if (swVinrangesSpec != null)
-                                                {
-                                                    swVinrangesSpec.Dispose();
-                                                    swVinrangesSpec = null;
-                                                }
+                                                outTextWriter?.WriteLine("*** Band range detected: {0}-{1}", vinbandFrom, vinbandTo);
                                             }
 
-                                            if (swVinrangesSpec == null)
+                                            for (char band = bandStart; band <= bandEnd; band++)
                                             {
-                                                if (File.Exists(vinRangeSpecFileNew))
-                                                {
-                                                    swVinrangesSpec = new StreamWriter(vinRangeSpecFileNew, true, new UTF8Encoding(false), 0x1000);
-                                                }
-                                                else
-                                                {
-                                                    swVinrangesSpec = new StreamWriter(vinRangeSpecFileNew, false, new UTF8Encoding(true), 0x1000);
-                                                }
-                                                vinRangeSpecFile = vinRangeSpecFileNew;
-                                            }
+                                                string vinRangeSpecFileNew = Path.Combine(outDirSub, $"vinranges_{band}.txt");
 
-                                            swVinrangesSpec.WriteLine(line);
+                                                if (string.IsNullOrEmpty(vinRangeSpecFile) || string.Compare(vinRangeSpecFile, vinRangeSpecFileNew, StringComparison.OrdinalIgnoreCase) != 0)
+                                                {
+                                                    if (swVinrangesSpec != null)
+                                                    {
+                                                        swVinrangesSpec.Dispose();
+                                                        swVinrangesSpec = null;
+                                                    }
+                                                }
+
+                                                if (swVinrangesSpec == null)
+                                                {
+                                                    if (File.Exists(vinRangeSpecFileNew))
+                                                    {
+                                                        swVinrangesSpec = new StreamWriter(vinRangeSpecFileNew, true, new UTF8Encoding(false), 0x1000);
+                                                    }
+                                                    else
+                                                    {
+                                                        swVinrangesSpec = new StreamWriter(vinRangeSpecFileNew, false, new UTF8Encoding(true), 0x1000);
+                                                    }
+                                                    vinRangeSpecFile = vinRangeSpecFileNew;
+                                                }
+
+                                                swVinrangesSpec.WriteLine(line);
+                                            }
                                         }
                                     }
                                 }
