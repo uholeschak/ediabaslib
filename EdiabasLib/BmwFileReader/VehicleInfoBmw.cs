@@ -231,10 +231,11 @@ namespace BmwFileReader
 
         public class VinRangeInfo
         {
-            public VinRangeInfo(string rangeFrom, string rangeTo, string typeKey, string prodYear, string prodMonth, string releaseState, string gearBox)
+            public VinRangeInfo(string rangeFrom, string rangeTo, string vin17_4_7, string typeKey, string prodYear, string prodMonth, string releaseState, string gearBox)
             {
                 RangeFrom = rangeFrom;
                 RangeTo = rangeTo;
+                Vin17_4_7 = vin17_4_7;
                 TypeKey = typeKey;
                 ProdYear = prodYear;
                 ProdMonth = prodMonth;
@@ -244,6 +245,7 @@ namespace BmwFileReader
 
             public string RangeFrom { get; }
             public string RangeTo { get; }
+            public string Vin17_4_7 { get; }
             public string TypeKey { get; }
             public string ProdYear { get; }
             public string ProdMonth { get; }
@@ -784,6 +786,7 @@ namespace BmwFileReader
                                                         continue;
                                                     }
 
+                                                    string vin17_4_7 = lineArray[2];
                                                     string typeKey = lineArray[3];
                                                     ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN matched: '{0}'-'{1}', TypeKey='{2}'",
                                                         lineArray[0], lineArray[1], typeKey);
@@ -808,7 +811,7 @@ namespace BmwFileReader
                                                         gearBox = lineArray[7];
                                                     }
 
-                                                    vinRangeList.Add(new VinRangeInfo(rangeFrom, rangeTo, typeKey, prodYear, prodMonth, releaseState, gearBox));
+                                                    vinRangeList.Add(new VinRangeInfo(rangeFrom, rangeTo, vin17_4_7, typeKey, prodYear, prodMonth, releaseState, gearBox));
 
                                                     if (string.Compare(rangeFrom, vin7, StringComparison.OrdinalIgnoreCase) == 0 &&
                                                         string.Compare(rangeTo, vin7, StringComparison.OrdinalIgnoreCase) == 0)
@@ -834,13 +837,13 @@ namespace BmwFileReader
                         {
                             if (!string.IsNullOrEmpty(vinType))
                             {
-                                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Too many range matches");
+                                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Too many VIN range matches");
                                 return null;
                             }
 
                             VinRangeInfo vinRangeInfo = vinRangeList[0];
-                            // remove gear box
-                            return new VinRangeInfo(vinRangeInfo.RangeFrom, vinRangeInfo.RangeTo, vinRangeInfo.TypeKey, vinRangeInfo.ProdYear,
+                            // remove vin17_4_7 and gear box
+                            return new VinRangeInfo(vinRangeInfo.RangeFrom, vinRangeInfo.RangeTo, string.Empty, vinRangeInfo.TypeKey, vinRangeInfo.ProdYear,
                                 vinRangeInfo.ProdMonth, vinRangeInfo.ReleaseState, string.Empty);
                         }
 
