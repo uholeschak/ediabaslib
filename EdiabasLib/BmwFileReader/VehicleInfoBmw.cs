@@ -92,51 +92,61 @@ namespace BmwFileReader
             }
         }
 
-        public class VIN7Comparer : IComparer<string>
+        public class EbcdicVIN7Comparer : IComparer<string>
         {
             public int Compare(string x, string y)
             {
-                if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
+                if (x == null)
                 {
-                    return 0;
-                }
-
-                if (x.Length != 7 || y.Length != 7)
-                {
-                    return 0;
-                }
-
-                int num = 0;
-                for (int i = 0; i < 7; i++)
-                {
-                    if (char.IsDigit(x[i]))
+                    if (y == null)
                     {
-                        if (!char.IsDigit(y[i]))
+                        throw new ArgumentNullException("y");
+                    }
+                    return 1;
+                }
+                else
+                {
+                    if (y == null)
+                    {
+                        throw new ArgumentNullException("x");
+                    }
+                    if (x.Length == 7)
+                    {
+                        if (y.Length == 7)
                         {
-                            return 1;
-                        }
-
-                        num = x[i].CompareTo(y[i]);
-                        if (num != 0)
-                        {
+                            int num = 0;
+                            for (int i = 0; i < 7; i++)
+                            {
+                                if (char.IsDigit(x[i]))
+                                {
+                                    if (!char.IsDigit(y[i]))
+                                    {
+                                        return 1;
+                                    }
+                                    num = x[i].CompareTo(y[i]);
+                                    if (num != 0)
+                                    {
+                                        return num;
+                                    }
+                                }
+                                else
+                                {
+                                    if (char.IsDigit(y[i]))
+                                    {
+                                        return -1;
+                                    }
+                                    num = x[i].CompareTo(y[i]);
+                                    if (num != 0)
+                                    {
+                                        return num;
+                                    }
+                                }
+                            }
                             return num;
                         }
                     }
-                    else
-                    {
-                        if (char.IsDigit(y[i]))
-                        {
-                            return -1;
-                        }
-
-                        num = x[i].CompareTo(y[i]);
-                        if (num != 0)
-                        {
-                            return num;
-                        }
-                    }
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Vin must be of length 7: {0}, {1}", x, y));
                 }
-                return num;
             }
         }
 
@@ -221,10 +231,10 @@ namespace BmwFileReader
 
         public class VinRangeInfo
         {
-            public VinRangeInfo(string rangeStart, string rangeEnd, string typeKey, string prodYear, string prodMonth, string releaseState, string gearBox)
+            public VinRangeInfo(string rangeFrom, string rangeTo, string typeKey, string prodYear, string prodMonth, string releaseState, string gearBox)
             {
-                RangeStart = rangeStart;
-                RangeEnd = rangeEnd;
+                RangeFrom = rangeFrom;
+                RangeTo = rangeTo;
                 TypeKey = typeKey;
                 ProdYear = prodYear;
                 ProdMonth = prodMonth;
@@ -232,8 +242,8 @@ namespace BmwFileReader
                 GearBox = gearBox;
             }
 
-            public string RangeStart { get; }
-            public string RangeEnd { get; }
+            public string RangeFrom { get; }
+            public string RangeTo { get; }
             public string TypeKey { get; }
             public string ProdYear { get; }
             public string ProdMonth { get; }
@@ -710,6 +720,7 @@ namespace BmwFileReader
                 ZipFile zf = null;
                 try
                 {
+                    IComparer<string> comparer = new EbcdicVIN7Comparer();
                     List<VinRangeInfo> vinRangeList = new List<VinRangeInfo>();
 
                     using (FileStream fs = File.OpenRead(Path.Combine(databaseDir, EcuFunctionReader.EcuFuncFileName)))
@@ -746,8 +757,10 @@ namespace BmwFileReader
                                             if (lineArray.Length >= 4 &&
                                                 lineArray[0].Length == 7 && lineArray[1].Length == 7)
                                             {
-                                                if (string.Compare(vin7, lineArray[0], StringComparison.OrdinalIgnoreCase) >= 0 &&
-                                                    string.Compare(vin7, lineArray[1], StringComparison.OrdinalIgnoreCase) <= 0)
+                                                string rangeFrom = lineArray[0];
+                                                string rangeTo = lineArray[1];
+                                                if (string.Compare(vin7, rangeFrom, StringComparison.OrdinalIgnoreCase) >= 0 &&
+                                                    string.Compare(vin7, rangeTo, StringComparison.OrdinalIgnoreCase) <= 0)
                                                 {
                                                     if (!string.IsNullOrEmpty(vinType) &&
                                                         string.Compare(vinType, lineArray[2], StringComparison.OrdinalIgnoreCase) != 0)
@@ -755,8 +768,24 @@ namespace BmwFileReader
                                                         continue;
                                                     }
 
+                                                    bool rangeValid;
+                                                    try
+                                                    {
+                                                        rangeValid = comparer.Compare(rangeFrom, vin7) <= 0 && comparer.Compare(rangeTo, vin7) >= 0;
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        rangeValid = false;
+                                                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN range exception: {0}", EdiabasNet.GetExceptionText(ex));
+                                                    }
+
+                                                    if (!rangeValid)
+                                                    {
+                                                        continue;
+                                                    }
+
                                                     string typeKey = lineArray[3];
-                                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vin matched: '{0}'-'{1}', TypeKey='{2}'",
+                                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN matched: '{0}'-'{1}', TypeKey='{2}'",
                                                         lineArray[0], lineArray[1], typeKey);
 
                                                     string prodYear = null;
@@ -779,7 +808,7 @@ namespace BmwFileReader
                                                         gearBox = lineArray[7];
                                                     }
 
-                                                    vinRangeList.Add(new VinRangeInfo(lineArray[0], lineArray[1], typeKey, prodYear, prodMonth, releaseState, gearBox));
+                                                    vinRangeList.Add(new VinRangeInfo(rangeFrom, rangeTo, typeKey, prodYear, prodMonth, releaseState, gearBox));
                                                 }
                                             }
                                         }
@@ -795,18 +824,7 @@ namespace BmwFileReader
                             return null;
                         }
 
-                        IComparer<string> comparer = new VIN7Comparer();
-                        List<VinRangeInfo> vinRangeList2 = new List<VinRangeInfo>();
-                        foreach (VinRangeInfo vinRange in vinRangeList)
-                        {
-                            if (comparer.Compare(vinRange.RangeStart, vin7) <= 0 && comparer.Compare(vinRange.RangeEnd, vin7) >= 0)
-                            {
-                                vinRangeList2.Add(vinRange);
-                            }
-                        }
-
-                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN ranges filter count: {0}", vinRangeList2.Count);
-                        if (vinRangeList2.Count > 1)
+                        if (vinRangeList.Count > 1)
                         {
                             if (!string.IsNullOrEmpty(vinType))
                             {
@@ -814,13 +832,13 @@ namespace BmwFileReader
                                 return null;
                             }
 
-                            VinRangeInfo vinRangeInfo = vinRangeList2[0];
+                            VinRangeInfo vinRangeInfo = vinRangeList[0];
                             // remove gear box
-                            return new VinRangeInfo(vinRangeInfo.RangeStart, vinRangeInfo.RangeEnd, vinRangeInfo.TypeKey, vinRangeInfo.ProdYear,
+                            return new VinRangeInfo(vinRangeInfo.RangeFrom, vinRangeInfo.RangeTo, vinRangeInfo.TypeKey, vinRangeInfo.ProdYear,
                                 vinRangeInfo.ProdMonth, vinRangeInfo.ReleaseState, string.Empty);
                         }
 
-                        return vinRangeList2[0];
+                        return vinRangeList[0];
                     }
                 }
                 finally
