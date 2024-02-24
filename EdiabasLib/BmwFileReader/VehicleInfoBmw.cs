@@ -809,6 +809,12 @@ namespace BmwFileReader
                                                     }
 
                                                     vinRangeList.Add(new VinRangeInfo(rangeFrom, rangeTo, typeKey, prodYear, prodMonth, releaseState, gearBox));
+
+                                                    if (string.Compare(rangeFrom, vin7, StringComparison.OrdinalIgnoreCase) == 0 &&
+                                                        string.Compare(rangeTo, vin7, StringComparison.OrdinalIgnoreCase) == 0)
+                                                    {
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
