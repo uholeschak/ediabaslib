@@ -759,65 +759,64 @@ namespace BmwFileReader
                                             if (lineArray.Length >= 4 &&
                                                 lineArray[0].Length == 7 && lineArray[1].Length == 7)
                                             {
-                                                string rangeFrom = lineArray[0];
-                                                string rangeTo = lineArray[1];
-                                                if (string.Compare(vin7, rangeFrom, StringComparison.OrdinalIgnoreCase) >= 0 &&
-                                                    string.Compare(vin7, rangeTo, StringComparison.OrdinalIgnoreCase) <= 0)
+                                                try
                                                 {
-                                                    if (!string.IsNullOrEmpty(vinType) &&
-                                                        string.Compare(vinType, lineArray[2], StringComparison.OrdinalIgnoreCase) != 0)
-                                                    {
-                                                        continue;
-                                                    }
 
-                                                    bool rangeValid;
-                                                    try
-                                                    {
-                                                        rangeValid = comparer.Compare(rangeFrom, vin7) <= 0 && comparer.Compare(rangeTo, vin7) >= 0;
-                                                    }
-                                                    catch (Exception ex)
-                                                    {
-                                                        rangeValid = false;
-                                                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN range exception: {0}", EdiabasNet.GetExceptionText(ex));
-                                                    }
+                                                    string rangeFrom = lineArray[0];
+                                                    string rangeTo = lineArray[1];
+                                                    int rangeFromCompare = string.Compare(vin7, rangeFrom, StringComparison.OrdinalIgnoreCase);
+                                                    int rangeToCompare = string.Compare(vin7, rangeTo, StringComparison.OrdinalIgnoreCase);
 
-                                                    if (!rangeValid)
+                                                    if (rangeFromCompare >= 0 && rangeToCompare <= 0)
                                                     {
-                                                        continue;
+                                                        if (!string.IsNullOrEmpty(vinType) &&
+                                                            string.Compare(vinType, lineArray[2], StringComparison.OrdinalIgnoreCase) != 0)
+                                                        {
+                                                            continue;
+                                                        }
+
+                                                        bool rangeValid = comparer.Compare(rangeFrom, vin7) <= 0 && comparer.Compare(rangeTo, vin7) >= 0;
+                                                        if (!rangeValid)
+                                                        {
+                                                            continue;
+                                                        }
+
+                                                        string vin17_4_7 = lineArray[2];
+                                                        string typeKey = lineArray[3];
+                                                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN matched: '{0}'-'{1}', TypeKey='{2}'",
+                                                            lineArray[0], lineArray[1], typeKey);
+
+                                                        string prodYear = null;
+                                                        string prodMonth = null;
+                                                        if (lineArray.Length >= 6)
+                                                        {
+                                                            prodYear = lineArray[4];
+                                                            prodMonth = lineArray[5];
+                                                        }
+
+                                                        string releaseState = null;
+                                                        if (lineArray.Length >= 7)
+                                                        {
+                                                            releaseState = lineArray[6];
+                                                        }
+
+                                                        string gearBox = null;
+                                                        if (lineArray.Length >= 8)
+                                                        {
+                                                            gearBox = lineArray[7];
+                                                        }
+
+                                                        vinRangeList.Add(new VinRangeInfo(rangeFrom, rangeTo, vin17_4_7, typeKey, prodYear, prodMonth, releaseState, gearBox));
+                                                        if (rangeFromCompare == 0 && rangeToCompare == 0)
+                                                        {
+                                                            // exact match
+                                                            break;
+                                                        }
                                                     }
-
-                                                    string vin17_4_7 = lineArray[2];
-                                                    string typeKey = lineArray[3];
-                                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN matched: '{0}'-'{1}', TypeKey='{2}'",
-                                                        lineArray[0], lineArray[1], typeKey);
-
-                                                    string prodYear = null;
-                                                    string prodMonth = null;
-                                                    if (lineArray.Length >= 6)
-                                                    {
-                                                        prodYear = lineArray[4];
-                                                        prodMonth = lineArray[5];
-                                                    }
-
-                                                    string releaseState = null;
-                                                    if (lineArray.Length >= 7)
-                                                    {
-                                                        releaseState = lineArray[6];
-                                                    }
-
-                                                    string gearBox = null;
-                                                    if (lineArray.Length >= 8)
-                                                    {
-                                                        gearBox = lineArray[7];
-                                                    }
-
-                                                    vinRangeList.Add(new VinRangeInfo(rangeFrom, rangeTo, vin17_4_7, typeKey, prodYear, prodMonth, releaseState, gearBox));
-
-                                                    if (string.Compare(rangeFrom, vin7, StringComparison.OrdinalIgnoreCase) == 0 &&
-                                                        string.Compare(rangeTo, vin7, StringComparison.OrdinalIgnoreCase) == 0)
-                                                    {
-                                                        break;
-                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VIN range exception: {0}", EdiabasNet.GetExceptionText(ex));
                                                 }
                                             }
                                         }
