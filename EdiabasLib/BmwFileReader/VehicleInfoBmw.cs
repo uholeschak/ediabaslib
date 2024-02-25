@@ -694,13 +694,12 @@ namespace BmwFileReader
                 return null;
             }
 
-            string vin7;
-            string vinType;
+            string vin7 = null;
+            string vinType = null;
 
             if (vin.Length == 7)
             {
                 vin7 = vin;
-                vinType = null;
             }
             else if (vin.Length == 17)
             {
@@ -761,7 +760,6 @@ namespace BmwFileReader
                                             {
                                                 try
                                                 {
-
                                                     string rangeFrom = lineArray[0];
                                                     string rangeTo = lineArray[1];
                                                     int rangeFromCompare = string.Compare(vin7, rangeFrom, StringComparison.OrdinalIgnoreCase);
@@ -806,10 +804,15 @@ namespace BmwFileReader
                                                             gearBox = lineArray[7];
                                                         }
 
+                                                        bool exactMatch = rangeFromCompare == 0 && rangeToCompare == 0;
+                                                        if (exactMatch)
+                                                        {   // remove all other matches
+                                                            vinRangeList.Clear();
+                                                        }
+
                                                         vinRangeList.Add(new VinRangeInfo(rangeFrom, rangeTo, vin17_4_7, typeKey, prodYear, prodMonth, releaseState, gearBox));
-                                                        if (rangeFromCompare == 0 && rangeToCompare == 0)
+                                                        if (exactMatch)
                                                         {
-                                                            // exact match
                                                             break;
                                                         }
                                                     }
