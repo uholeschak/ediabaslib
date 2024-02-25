@@ -84,6 +84,7 @@
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.3" />
     <PackageReference Include="Xamarin.Google.Android.Play.Core" Version="1.10.3.9" />
     <PackageReference Include="Xamarin.Google.Android.Vending.Expansion.Downloader" Version="2.1.0" />
+    <PackageReference Include="Xamarin.Kotlin.StdLib.Jdk7" Version="1.9.22.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdiabasLib\AndroidNetBindings\CustomGaugeNetBinding\CustomGaugeNetBinding.csproj" />
