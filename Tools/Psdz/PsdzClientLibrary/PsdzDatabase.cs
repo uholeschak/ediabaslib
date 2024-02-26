@@ -2703,9 +2703,10 @@ namespace PsdzClient
 
         public VinRanges GetVinRangesByVin(string vin)
         {
-            log.InfoFormat("GetVinRangesByVin Vin: {0}", vin);
+            log.InfoFormat("GetVinRangesByVin Vin: {0}", vin ?? string.Empty);
             if (string.IsNullOrEmpty(vin))
             {
+                log.ErrorFormat("GetVinRangesByVin Empty Vin");
                 return null;
             }
 
@@ -2755,9 +2756,11 @@ namespace PsdzClient
 
         public VinRanges GetVinRangesByVin17(string vin17_4_7, string vin7, bool returnFirstEntryWithoutCheck, bool vehicleHasOnlyVin7)
         {
-            log.InfoFormat("GetVinRangesByVin17 Vin17_4_7: {0}, Vin7: {1}, FirstEntry: {2}, OnlyVin7: {3}", vin17_4_7, vin7, returnFirstEntryWithoutCheck, vehicleHasOnlyVin7);
+            log.InfoFormat("GetVinRangesByVin17 Vin17_4_7: {0}, Vin7: {1}, FirstEntry: {2}, OnlyVin7: {3}",
+                vin17_4_7 ?? string.Empty, vin7 ?? string.Empty, returnFirstEntryWithoutCheck, vehicleHasOnlyVin7);
             if (string.IsNullOrEmpty(vin17_4_7) || string.IsNullOrEmpty(vin7))
             {
+                log.ErrorFormat("GetVinRangesByVin17 Empty Vin");
                 return null;
             }
 
@@ -2830,9 +2833,10 @@ namespace PsdzClient
 
         public VinRanges GetVinRangesByVin17_4_7(string vin17_4_7)
         {
-            log.InfoFormat("GetVinRangesByVin17_4_7 Vin17_4_7: {0}", vin17_4_7);
+            log.InfoFormat("GetVinRangesByVin17_4_7 Vin17_4_7: {0}", vin17_4_7 ?? string.Empty);
             if (string.IsNullOrEmpty(vin17_4_7))
             {
+                log.ErrorFormat("GetVinRangesByVin17_4_7 Empty Vin");
                 return null;
             }
 
