@@ -2792,7 +2792,7 @@ namespace PsdzClient
 
             if (vinRangesList.Count > 1)
             {
-                log.InfoFormat("GetVinRangesByVin17 List count: {0}", vinRangesList.Count);
+                log.InfoFormat("GetVinRangesByVin17 Found more than one entry: {0}", vinRangesList.Count);
             }
 
             IComparer<string> comparer = new EbcdicVIN7Comparer();
@@ -2813,7 +2813,7 @@ namespace PsdzClient
             }
             if (vinRangesList2.Count > 1)
             {
-                log.ErrorFormat("GetVinRangesByVin17 List2 count: {0}", vinRangesList.Count);
+                log.ErrorFormat("GetVinRangesByVin17 Too many items after filter: {0}", vinRangesList.Count);
                 return null;
             }
 
