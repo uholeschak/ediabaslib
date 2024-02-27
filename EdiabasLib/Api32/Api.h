@@ -450,6 +450,7 @@ APIBOOL apiResultBinary(APIBINARY *,APIWORD *,const char *,APIWORD);
 APIBOOL apiResultByte(APIBYTE *,const char *,APIWORD);
 APIBOOL apiResultChar(APICHAR *,const char *,APIWORD);
 APIBOOL apiResultDWord(APIDWORD *,const char *,APIWORD);
+APIBOOL apiResultQWord(APIQWORD*, const char*, APIWORD);
 APIBOOL apiResultFormat(APIRESULTFORMAT *,const char *,APIWORD);
 APIBOOL apiResultInt(APIINTEGER *,const char *,APIWORD);
 APIBOOL apiResultLong(APILONG *,const char *,APIWORD);

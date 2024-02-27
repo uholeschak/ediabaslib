@@ -714,6 +714,31 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultDWord(unsigned int handle,
     return APITRUE;
 }
 
+DLLEXPORT APIBOOL FAR PASCAL __apiResultQWord(unsigned int handle,
+    APIQWORD far* buf, const char far* result,
+    APIWORD set)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:___apiResultQWord=___apiResultQWord@16")
+#endif
+    Ediabas::ApiInternal^ apiInternal = GlobalObjects::GetApiInstance(handle);
+    if (apiInternal == nullptr)
+    {
+        return APIFALSE;
+    }
+
+    uint64_t buffer;
+    if (!apiInternal->apiResultQWord(
+        buffer,
+        ConvertCString(result),
+        set))
+    {
+        return APIFALSE;
+    }
+    *buf = buffer;
+    return APITRUE;
+}
+
 DLLEXPORT APIBOOL FAR PASCAL __apiResultReal(unsigned int handle,
                             APIREAL far *buf,const char far *result,
                             APIWORD set)
