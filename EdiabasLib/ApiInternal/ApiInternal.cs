@@ -944,7 +944,7 @@ namespace Ediabas
 
         public bool apiResultQWord(out UInt64 buffer, string result, ushort rset)
         {
-            logFormat(ApiLogLevel.Normal, "apiResultDWord({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultQWord({0}, {1})", result, rset);
 
             buffer = 0;
             if (!waitJobFinish())
