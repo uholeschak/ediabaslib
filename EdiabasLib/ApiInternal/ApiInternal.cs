@@ -919,6 +919,52 @@ namespace Ediabas
             return true;
         }
 
+        public bool apiResultLongLong(out Int64 buffer, string result, ushort rset)
+        {
+            logFormat(ApiLogLevel.Normal, "apiResultLongLong({0}, {1})", result, rset);
+
+            buffer = 0;
+            if (!waitJobFinish())
+            {
+                logFormat(ApiLogLevel.Normal, "={0}", false);
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
+            Int64 int64Buffer;
+            if (!getResultInt64(out int64Buffer, result, rset))
+            {
+                return false;
+            }
+            buffer = int64Buffer;
+
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
+            return true;
+        }
+
+        public bool apiResultQWord(out UInt64 buffer, string result, ushort rset)
+        {
+            logFormat(ApiLogLevel.Normal, "apiResultDWord({0}, {1})", result, rset);
+
+            buffer = 0;
+            if (!waitJobFinish())
+            {
+                logFormat(ApiLogLevel.Normal, "={0}", false);
+                return false;
+            }
+
+            setLocalError(EDIABAS_ERR_NONE);
+            Int64 int64Buffer;
+            if (!getResultInt64(out int64Buffer, result, rset))
+            {
+                return false;
+            }
+            buffer = (UInt64)int64Buffer;
+
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
+            return true;
+        }
+
         public bool apiResultReal(out double buffer, string result, ushort rset)
         {
             logFormat(ApiLogLevel.Normal, "apiResultReal({0}, {1})", result, rset);
