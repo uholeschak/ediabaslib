@@ -411,6 +411,8 @@ typedef short APIINTEGER;               /* 16 bit           */
 typedef unsigned short APIWORD;         /* 16 bit, unsigned */
 typedef long APILONG;                   /* 32 bit           */
 typedef unsigned long APIDWORD;         /* 32 bit, unsigned */
+typedef int64_t APILONGLONG;            /* 64 bit           */
+typedef uint64_t APIQWORD;              /* 64 bit, unsigned */
 typedef APICHAR APITEXT;                /* 8 bit            */
 typedef APIBYTE APIBINARY;              /* 8 bit, unsigned  */
 typedef double APIREAL;
@@ -451,6 +453,7 @@ APIBOOL apiResultDWord(APIDWORD *,const char *,APIWORD);
 APIBOOL apiResultFormat(APIRESULTFORMAT *,const char *,APIWORD);
 APIBOOL apiResultInt(APIINTEGER *,const char *,APIWORD);
 APIBOOL apiResultLong(APILONG *,const char *,APIWORD);
+APIBOOL apiResultLongLong(APILONGLONG*, const char*, APIWORD);
 APIBOOL apiResultName(char *,APIWORD,APIWORD);
 APIBOOL apiResultNumber(APIWORD *,APIWORD);
 APIBOOL apiResultReal(APIREAL *,const char *,APIWORD);

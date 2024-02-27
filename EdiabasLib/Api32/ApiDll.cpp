@@ -664,6 +664,31 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultLong(unsigned int handle,
     return APITRUE;
 }
 
+DLLEXPORT APIBOOL FAR PASCAL __apiResultLongLong(unsigned int handle,
+    APILONGLONG far* buf, const char far* result,
+    APIWORD set)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:___apiResultLongLong=___apiResultLongLong@16")
+#endif
+    Ediabas::ApiInternal^ apiInternal = GlobalObjects::GetApiInstance(handle);
+    if (apiInternal == nullptr)
+    {
+        return APIFALSE;
+    }
+
+    int64_t buffer;
+    if (!apiInternal->apiResultLongLong(
+        buffer,
+        ConvertCString(result),
+        set))
+    {
+        return APIFALSE;
+    }
+    *buf = buffer;
+    return APITRUE;
+}
+
 DLLEXPORT APIBOOL FAR PASCAL __apiResultDWord(unsigned int handle,
                             APIDWORD far *buf,const char far *result,
                             APIWORD set)
