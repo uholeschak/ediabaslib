@@ -1855,7 +1855,7 @@ namespace BmwDeepObd
                         {
                             if (string.IsNullOrEmpty(SelectedDeepObdWifiIp))
                             {
-                                return IsValidEthernetConnection();
+                                return IsValidEthernetConnection(SelectedDeepObdWifiIp);
                             }
                         }
 
@@ -3815,13 +3815,30 @@ namespace BmwDeepObd
             return string.Empty;
         }
 
-        public bool IsValidEthernetConnection()
+        public bool IsValidEthernetConnection(string ipAddrMatch = null)
         {
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
                 {
                     return false;
+                }
+
+                Java.Net.Inet4Address inet4AddrCheck = null;
+                if (!string.IsNullOrEmpty(ipAddrMatch))
+                {
+                    try
+                    {
+                        Java.Net.InetAddress inetAddrMatch = Java.Net.InetAddress.GetByName(ipAddrMatch);
+                        if (inetAddrMatch is Java.Net.Inet4Address inet4AddrMatch)
+                        {
+                            inet4AddrCheck = inet4AddrMatch;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        inet4AddrCheck = null;
+                    }
                 }
 
                 bool result = false;
@@ -3838,8 +3855,32 @@ namespace BmwDeepObd
                                 {
                                     if (inet4Address.IsSiteLocalAddress || inet4Address.IsLinkLocalAddress)
                                     {
-                                        result = true;
-                                        break;
+                                        if (inet4AddrCheck != null)
+                                        {
+                                            byte[] linkAddrBytes = inet4Address.GetAddress();
+                                            byte[] ipAddrCheckBytes = inet4AddrCheck.GetAddress();
+                                            if (linkAddrBytes != null && linkAddrBytes.Length == ipAddrCheckBytes.Length)
+                                            {
+                                                for (int bit = linkAddress.PrefixLength; bit < linkAddrBytes.Length * 8; bit++)
+                                                {
+                                                    int index = bit >> 3;
+                                                    byte mask = (byte)(0x80 >> (bit & 0x07));
+                                                    linkAddrBytes[index] |= mask;
+                                                    ipAddrCheckBytes[index] |= mask;
+                                                }
+
+                                                if (linkAddrBytes.SequenceEqual(ipAddrCheckBytes))
+                                                {
+                                                    result = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            result = true;
+                                            break;
+                                        }
                                     }
                                 }
                             }
