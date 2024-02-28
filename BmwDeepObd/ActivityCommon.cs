@@ -1846,10 +1846,19 @@ namespace BmwDeepObd
                             return true;
                         }
 
-                        if (_selectedInterface == InterfaceType.Enet && IsValidEthernetConnection())
+                        if (_selectedInterface == InterfaceType.Enet)
                         {
-                            return true;
+                            return IsValidEthernetConnection();
                         }
+
+                        if (_selectedInterface == InterfaceType.DeepObdWifi)
+                        {
+                            if (string.IsNullOrEmpty(SelectedDeepObdWifiIp))
+                            {
+                                return IsValidEthernetConnection();
+                            }
+                        }
+
                         return false;
 
                     case InterfaceType.Ftdi:
