@@ -123,7 +123,7 @@ namespace EdiabasCall
                 string[] versionParts = apiVersion.Split('.');
                 if (versionParts.Length == 3)
                 {
-                    apiVerNum = (long.Parse(versionParts[0]) << 16) + (long.Parse(versionParts[1]) << 8) + long.Parse(versionParts[2]);
+                    apiVerNum = (long.Parse(versionParts[0]) << 8) + (long.Parse(versionParts[1]) << 4) + long.Parse(versionParts[2]);
                 }
 
                 if (apiVerNum >= 0x0760)
