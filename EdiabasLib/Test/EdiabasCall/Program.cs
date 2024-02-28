@@ -548,9 +548,9 @@ namespace EdiabasCall
                                                                     resultText += string.Format(Culture, " {0}", resultLong);
                                                                 }
                                                             }
-                                                            catch (Exception)
+                                                            catch (Exception ex)
                                                             {
-                                                                // ignored
+                                                                resultText += string.Format(Culture, " '{0}'", ex.Message);
                                                             }
 
                                                             try
@@ -560,9 +560,9 @@ namespace EdiabasCall
                                                                     resultText += string.Format(Culture, " {0}", resultUlong);
                                                                 }
                                                             }
-                                                            catch (Exception)
+                                                            catch (Exception ex)
                                                             {
-                                                                // ignored
+                                                                resultText += string.Format(Culture, " '{0}'", ex.Message);
                                                             }
                                                         }
                                                     }
