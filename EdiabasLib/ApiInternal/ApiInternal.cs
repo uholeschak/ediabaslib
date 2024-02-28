@@ -919,7 +919,7 @@ namespace Ediabas
             return true;
         }
 
-        public bool apiResultLongLong(out Int64 buffer, string result, ushort rset)
+        public bool apiResultLongLong(out long buffer, string result, ushort rset)
         {
             logFormat(ApiLogLevel.Normal, "apiResultLongLong({0}, {1})", result, rset);
 
@@ -942,7 +942,7 @@ namespace Ediabas
             return true;
         }
 
-        public bool apiResultQWord(out UInt64 buffer, string result, ushort rset)
+        public bool apiResultQWord(out ulong buffer, string result, ushort rset)
         {
             logFormat(ApiLogLevel.Normal, "apiResultQWord({0}, {1})", result, rset);
 
@@ -959,7 +959,7 @@ namespace Ediabas
             {
                 return false;
             }
-            buffer = (UInt64)int64Buffer;
+            buffer = (ulong)int64Buffer;
 
             logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;

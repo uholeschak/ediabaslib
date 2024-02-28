@@ -498,6 +498,16 @@ namespace Ediabas
             return _apiInternal.apiResultDWord(out buffer, result, rset);
         }
 
+        public static bool apiResultLongLong(out long buffer, string result, ushort rset)
+        {
+            return _apiInternal.apiResultLongLong(out buffer, result, rset);
+        }
+
+        public static bool apiResultQWord(out ulong buffer, string result, ushort rset)
+        {
+            return _apiInternal.apiResultQWord(out buffer, result, rset);
+        }
+
         public static bool apiResultReal(out double buffer, string result, ushort rset)
         {
             return _apiInternal.apiResultReal(out buffer, result, rset);
