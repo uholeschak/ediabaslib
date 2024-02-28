@@ -140,14 +140,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <!-- Downgrade Mono runtime to version 8.0.0
-  <Target Name="UpdateRuntimePackVersion" BeforeTargets="ProcessFrameworkReferences">
-    <Message Text="Downgrading Mono runtime to version 8.0.0" Importance="High" />
-    <ItemGroup>
-      <KnownRuntimePack Condition="%(RuntimePackLabels) == 'Mono'" LatestRuntimeFrameworkVersion="8.0.0" />
-    </ItemGroup>
-  </Target>
-  -->
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;copy /y &quot;$(ProjectDir)Xml\BmwDeepObd.xsd&quot; &quot;$(ProjectDir)Xml\E61R\&quot;&#xD;&#xA;" />
   </Target>
