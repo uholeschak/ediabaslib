@@ -3859,7 +3859,7 @@ namespace BmwDeepObd
                                         {
                                             byte[] linkAddrBytes = inet4Address.GetAddress();
                                             byte[] ipAddrCheckBytes = inet4AddrCheck.GetAddress();
-                                            if (linkAddrBytes != null && linkAddrBytes.Length == ipAddrCheckBytes.Length)
+                                            if (linkAddrBytes != null && ipAddrCheckBytes  != null && linkAddrBytes.Length == ipAddrCheckBytes.Length)
                                             {
                                                 for (int bit = linkAddress.PrefixLength; bit < linkAddrBytes.Length * 8; bit++)
                                                 {
