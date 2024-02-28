@@ -34,6 +34,7 @@ namespace EdiabasCall
         private static string _lastJobInfo = string.Empty;
         private static int _lastJobProgress = -1;
         private static bool _api6;
+        private static bool _api76;
 
         static int Main(string[] args)
         {
@@ -117,6 +118,18 @@ namespace EdiabasCall
                     _api6 = true;
                 }
                 _outputWriter.WriteLine("API Version: " + apiVersion);
+
+                long apiVerNum = 0;
+                string[] versionParts = apiVersion.Split('.');
+                if (versionParts.Length == 3)
+                {
+                    apiVerNum = (long.Parse(versionParts[0]) << 16) + (long.Parse(versionParts[1]) << 8) + long.Parse(versionParts[2]);
+                }
+
+                if (apiVerNum >= 0x0760)
+                {
+                    _api76 = true;
+                }
 
                 string configString = "EcuPath=" + Path.GetDirectoryName(sgbdFile);
                 if (!string.IsNullOrEmpty(cfgString))
@@ -524,30 +537,33 @@ namespace EdiabasCall
                                                         resultText += string.Format(Culture, " {0}", resultDouble);
                                                     }
 
-                                                    if (_apiHandle != 0)
+                                                    if (_api76)
                                                     {
-                                                        try
+                                                        if (_apiHandle != 0)
                                                         {
-                                                            if (__apiResultLongLong(_apiHandle, out long resultLong, resultName, set))
+                                                            try
                                                             {
-                                                                resultText += string.Format(Culture, " {0}", resultLong);
+                                                                if (__apiResultLongLong(_apiHandle, out long resultLong, resultName, set))
+                                                                {
+                                                                    resultText += string.Format(Culture, " {0}", resultLong);
+                                                                }
                                                             }
-                                                        }
-                                                        catch (Exception)
-                                                        {
-                                                            // ignored
-                                                        }
+                                                            catch (Exception)
+                                                            {
+                                                                // ignored
+                                                            }
 
-                                                        try
-                                                        {
-                                                            if (__apiResultQWord(_apiHandle, out ulong resultUlong, resultName, set))
+                                                            try
                                                             {
-                                                                resultText += string.Format(Culture, " {0}", resultUlong);
+                                                                if (__apiResultQWord(_apiHandle, out ulong resultUlong, resultName, set))
+                                                                {
+                                                                    resultText += string.Format(Culture, " {0}", resultUlong);
+                                                                }
                                                             }
-                                                        }
-                                                        catch (Exception)
-                                                        {
-                                                            // ignored
+                                                            catch (Exception)
+                                                            {
+                                                                // ignored
+                                                            }
                                                         }
                                                     }
                                                 }
