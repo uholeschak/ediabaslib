@@ -20,6 +20,12 @@ namespace EdiabasCall
         [DllImport("api32.dll", EntryPoint = "__apiResultChar")]
         private static extern bool __api32ResultChar(uint handle, out byte buf, string result, ushort set);
 
+        [DllImport("api32.dll", EntryPoint = "__apiResultLongLong")]
+        private static extern bool __apiResultLongLong(uint handle, out long buf, string result, ushort set);
+
+        [DllImport("api32.dll", EntryPoint = "__apiResultQWord")]
+        private static extern bool __apiResultQWord(uint handle, out ulong buf, string result, ushort set);
+
         private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         private static TextWriter _outputWriter;
@@ -516,6 +522,33 @@ namespace EdiabasCall
                                                     if (API.apiResultReal(out double resultDouble, resultName, set))
                                                     {
                                                         resultText += string.Format(Culture, " {0}", resultDouble);
+                                                    }
+
+                                                    if (_apiHandle != 0)
+                                                    {
+                                                        try
+                                                        {
+                                                            if (__apiResultLongLong(_apiHandle, out long resultLong, resultName, set))
+                                                            {
+                                                                resultText += string.Format(Culture, " {0}", resultLong);
+                                                            }
+                                                        }
+                                                        catch (Exception)
+                                                        {
+                                                            // ignored
+                                                        }
+
+                                                        try
+                                                        {
+                                                            if (__apiResultQWord(_apiHandle, out ulong resultUlong, resultName, set))
+                                                            {
+                                                                resultText += string.Format(Culture, " {0}", resultUlong);
+                                                            }
+                                                        }
+                                                        catch (Exception)
+                                                        {
+                                                            // ignored
+                                                        }
                                                     }
                                                 }
                                                 break;
