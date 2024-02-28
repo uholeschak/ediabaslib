@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -176,21 +175,25 @@ namespace EdiabasLib
                                             {
                                                 byte[] linkAddrBytes = interfaceAddress.Address.GetAddress();
                                                 byte[] inet4AddrBytes = inet4Addr.GetAddress();
-                                                if (linkAddrBytes.Length == inet4AddrBytes.Length)
-                                                {
-                                                    for (int bit = interfaceAddress.NetworkPrefixLength; bit < linkAddrBytes.Length * 8; bit++)
-                                                    {
-                                                        int index = bit >> 3;
-                                                        byte mask = (byte)(0x80 >> (bit & 0x07));
-                                                        linkAddrBytes[index] |= mask;
-                                                        inet4AddrBytes[index] |= mask;
-                                                    }
-                                                }
 
-                                                if (linkAddrBytes.SequenceEqual(inet4AddrBytes))
+                                                if (linkAddrBytes != null && inet4AddrBytes != null)
                                                 {
-                                                    linkValid = true;
-                                                    break;
+                                                    if (linkAddrBytes.Length == inet4AddrBytes.Length)
+                                                    {
+                                                        for (int bit = interfaceAddress.NetworkPrefixLength; bit < linkAddrBytes.Length * 8; bit++)
+                                                        {
+                                                            int index = bit >> 3;
+                                                            byte mask = (byte)(0x80 >> (bit & 0x07));
+                                                            linkAddrBytes[index] |= mask;
+                                                            inet4AddrBytes[index] |= mask;
+                                                        }
+                                                    }
+
+                                                    if (linkAddrBytes.SequenceEqual(inet4AddrBytes))
+                                                    {
+                                                        linkValid = true;
+                                                        break;
+                                                    }
                                                 }
                                             }
                                         }
