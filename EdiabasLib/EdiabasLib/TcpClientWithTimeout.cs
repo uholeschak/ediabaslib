@@ -298,6 +298,40 @@ namespace EdiabasLib
                 return null;
             }
         }
+
+        public static bool IsIpMatchingSubnet(Java.Net.Inet4Address ipAddr, Java.Net.Inet4Address networkAddr, int prefixLen)
+        {
+            try
+            {
+                byte[] ipAddrBytes = ipAddr.GetAddress();
+                byte[] networkBytes = networkAddr.GetAddress();
+
+                if (ipAddrBytes != null && networkBytes != null)
+                {
+                    if (ipAddrBytes.Length == networkBytes.Length)
+                    {
+                        for (int bit = prefixLen; bit < networkBytes.Length * 8; bit++)
+                        {
+                            int index = bit >> 3;
+                            byte mask = (byte)(0x80 >> (bit & 0x07));
+                            ipAddrBytes[index] |= mask;
+                            networkBytes[index] |= mask;
+                        }
+                    }
+
+                    if (ipAddrBytes.SequenceEqual(networkBytes))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 #endif
 
         public static IPAddress PrefixLenToMask(int prefixLen)

@@ -3857,23 +3857,10 @@ namespace BmwDeepObd
                                     {
                                         if (inet4AddrCheck != null)
                                         {
-                                            byte[] linkAddrBytes = inet4Address.GetAddress();
-                                            byte[] ipAddrCheckBytes = inet4AddrCheck.GetAddress();
-                                            if (linkAddrBytes != null && linkAddrBytes.Length == ipAddrCheckBytes.Length)
+                                            if (TcpClientWithTimeout.IsIpMatchingSubnet(inet4AddrCheck, inet4Address, linkAddress.PrefixLength))
                                             {
-                                                for (int bit = linkAddress.PrefixLength; bit < linkAddrBytes.Length * 8; bit++)
-                                                {
-                                                    int index = bit >> 3;
-                                                    byte mask = (byte)(0x80 >> (bit & 0x07));
-                                                    linkAddrBytes[index] |= mask;
-                                                    ipAddrCheckBytes[index] |= mask;
-                                                }
-
-                                                if (linkAddrBytes.SequenceEqual(ipAddrCheckBytes))
-                                                {
-                                                    result = true;
-                                                    break;
-                                                }
+                                                result = true;
+                                                break;
                                             }
                                         }
                                         else
