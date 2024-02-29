@@ -12,7 +12,7 @@ using NDesk.Options;
 
 namespace EdiabasCall
 {
-    class Program
+    static class Program
     {
         [DllImport("api32.dll", EntryPoint = "__apiResultText")]
         private static extern bool __api32ResultText(uint handle, byte[] buf, string result, ushort set, string format);

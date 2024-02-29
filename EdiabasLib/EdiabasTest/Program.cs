@@ -11,13 +11,14 @@ using NDesk.Options;
 
 namespace EdiabasTest
 {
-    class Program
+    static class Program
     {
         private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
         private static TextWriter _outputWriter;
         private static bool _compareOutput;
         private static List<List<Dictionary<string, EdiabasNet.ResultData>>> _apiResultList;
+        private static bool _api76;
 
         static int Main(string[] args)
         {
@@ -97,6 +98,13 @@ namespace EdiabasTest
                 }
 
                 _outputWriter.WriteLine("API Version: {0}.{1}.{2}", (EdiabasNet.EdiabasVersion >> 8) & 0xF, (EdiabasNet.EdiabasVersion >> 4) & 0xF, EdiabasNet.EdiabasVersion & 0xF);
+
+#pragma warning disable CS0162 // Unreachable code detected
+                if (EdiabasNet.EdiabasVersion >= 0x0760)
+                {
+                    _api76 = true;
+                }
+#pragma warning restore CS0162 // Unreachable code detected
 
                 if (storeResults)
                 {
@@ -401,6 +409,11 @@ namespace EdiabasTest
                                     resultText += string.Format(Culture, " {0}", (int)value);
                                     resultText += string.Format(Culture, " {0}", (uint)value);
                                     resultText += string.Format(Culture, " {0}", (double)value);
+                                    if (_api76)
+                                    {
+                                        resultText += string.Format(Culture, " {0}", value);
+                                        resultText += string.Format(Culture, " {0}", (ulong)value);
+                                    }
                                 }
                                 else
                                 {
@@ -413,6 +426,11 @@ namespace EdiabasTest
                                     resultText += string.Format(Culture, " {0}", (int)value);
                                     resultText += string.Format(Culture, " {0}", (uint)value);
                                     resultText += string.Format(Culture, " {0}", valueDouble);
+                                    if (_api76)
+                                    {
+                                        resultText += string.Format(Culture, " {0}", value);
+                                        resultText += string.Format(Culture, " {0}", (ulong)valueDouble);
+                                    }
                                 }
                             }
                         }
