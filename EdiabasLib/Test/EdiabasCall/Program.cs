@@ -539,6 +539,7 @@ namespace EdiabasCall
 
                                                     if (_api76)
                                                     {
+#if EDIABAS
                                                         if (_apiHandle != 0)
                                                         {
                                                             try
@@ -565,6 +566,16 @@ namespace EdiabasCall
                                                                 resultText += string.Format(Culture, " '{0}'", ex.Message);
                                                             }
                                                         }
+#else
+                                                        if (API.apiResultLongLong(out long resultLong, resultName, set))
+                                                        {
+                                                            resultText += string.Format(Culture, " {0}", resultLong);
+                                                        }
+                                                        if (API.apiResultQWord(out ulong resultUlong, resultName, set))
+                                                        {
+                                                            resultText += string.Format(Culture, " {0}", resultUlong);
+                                                        }
+#endif
                                                     }
                                                 }
                                                 break;
