@@ -171,29 +171,12 @@ namespace EdiabasLib
 
                                         foreach (Java.Net.InterfaceAddress interfaceAddress in interfaceAdresses)
                                         {
-                                            if (interfaceAddress.Address is Java.Net.Inet4Address)
+                                            if (interfaceAddress.Address is Java.Net.Inet4Address interface4Addr)
                                             {
-                                                byte[] linkAddrBytes = interfaceAddress.Address.GetAddress();
-                                                byte[] inet4AddrBytes = inet4Addr.GetAddress();
-
-                                                if (linkAddrBytes != null && inet4AddrBytes != null)
+                                                if (IsIpMatchingSubnet(inet4Addr, interface4Addr, interfaceAddress.NetworkPrefixLength))
                                                 {
-                                                    if (linkAddrBytes.Length == inet4AddrBytes.Length)
-                                                    {
-                                                        for (int bit = interfaceAddress.NetworkPrefixLength; bit < linkAddrBytes.Length * 8; bit++)
-                                                        {
-                                                            int index = bit >> 3;
-                                                            byte mask = (byte)(0x80 >> (bit & 0x07));
-                                                            linkAddrBytes[index] |= mask;
-                                                            inet4AddrBytes[index] |= mask;
-                                                        }
-                                                    }
-
-                                                    if (linkAddrBytes.SequenceEqual(inet4AddrBytes))
-                                                    {
-                                                        linkValid = true;
-                                                        break;
-                                                    }
+                                                    linkValid = true;
+                                                    break;
                                                 }
                                             }
                                         }
