@@ -1846,17 +1846,17 @@ namespace BmwDeepObd
                             return true;
                         }
 
-                        if (_selectedInterface == InterfaceType.Enet)
+                        switch (_selectedInterface)
                         {
-                            return IsValidEthernetConnection();
-                        }
+                            case InterfaceType.Enet:
+                                return IsValidEthernetConnection();
 
-                        if (_selectedInterface == InterfaceType.DeepObdWifi)
-                        {
-                            if (string.IsNullOrEmpty(SelectedDeepObdWifiIp))
-                            {
-                                return IsValidEthernetConnection(SelectedDeepObdWifiIp);
-                            }
+                            case InterfaceType.DeepObdWifi:
+                                if (!string.IsNullOrEmpty(SelectedDeepObdWifiIp))
+                                {
+                                    return IsValidEthernetConnection(SelectedDeepObdWifiIp);
+                                }
+                                break;
                         }
 
                         return false;
