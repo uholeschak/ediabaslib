@@ -3822,6 +3822,14 @@ namespace BmwDeepObd
 
         public bool IsValidEthernetConnection(string ipAddrMatch = null)
         {
+            return IsValidEthernetConnection(ipAddrMatch, out _, out _);
+        }
+
+        public bool IsValidEthernetConnection(string ipAddrMatch, out string localAddress, out string localMask)
+        {
+            localAddress = null;
+            localMask = null;
+
             try
             {
                 if (Build.VERSION.SdkInt < BuildVersionCodes.Lollipop)
@@ -3865,12 +3873,17 @@ namespace BmwDeepObd
                                             if (TcpClientWithTimeout.IsIpMatchingSubnet(inet4AddrCheck, inet4Address, linkAddress.PrefixLength))
                                             {
                                                 result = true;
-                                                break;
                                             }
                                         }
                                         else
                                         {
                                             result = true;
+                                        }
+
+                                        if (result)
+                                        {
+                                            localAddress = TcpClientWithTimeout.ConvertIpAddress(linkAddress.Address);
+                                            localMask = TcpClientWithTimeout.PrefixLenToMask(linkAddress.PrefixLength).ToString();
                                             break;
                                         }
                                     }
@@ -5187,7 +5200,12 @@ namespace BmwDeepObd
                 string ipPort = string.Empty;
                 StringBuilder sbInfo = new StringBuilder();
 
-                IsValidWifiConnection(out string localAddress, out string localMask, out string dhcpServerAddress, out _);
+                if (!IsValidWifiConnection(out string localAddress, out string localMask, out string dhcpServerAddress, out _))
+                {
+                    dhcpServerAddress = null;
+                    IsValidEthernetConnection(null, out localAddress, out localMask);
+                }
+
                 if (!string.IsNullOrEmpty(dhcpServerAddress))
                 {
                     ipAddr = dhcpServerAddress;
