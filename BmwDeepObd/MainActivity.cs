@@ -1350,7 +1350,7 @@ namespace BmwDeepObd
             }
 
             bool commActive = IsCommActive();
-            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(true);
             bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
             JobReader.PageInfo currentPage = GetSelectedPage();
@@ -7661,6 +7661,7 @@ namespace BmwDeepObd
                 }
                 StoreSettings();
                 UpdateOptionsMenu();
+                UpdateDisplay();
             });
         }
 

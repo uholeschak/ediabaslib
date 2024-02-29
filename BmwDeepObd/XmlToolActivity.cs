@@ -1277,7 +1277,7 @@ namespace BmwDeepObd
             }
 
             bool commActive = IsJobRunning();
-            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(true);
 
             IMenuItem selInterfaceMenu = menu.FindItem(Resource.Id.menu_tool_sel_interface);
             if (selInterfaceMenu != null)

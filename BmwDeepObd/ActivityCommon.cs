@@ -1820,7 +1820,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool IsInterfaceAvailable()
+        public bool IsInterfaceAvailable(bool ignoreIp = false)
         {
             try
             {
@@ -1852,6 +1852,11 @@ namespace BmwDeepObd
                                 return IsValidEthernetConnection();
 
                             case InterfaceType.DeepObdWifi:
+                                if (ignoreIp)
+                                {
+                                    return IsValidEthernetConnection();
+                                }
+
                                 if (!string.IsNullOrEmpty(SelectedDeepObdWifiIp))
                                 {
                                     return IsValidEthernetConnection(SelectedDeepObdWifiIp);
