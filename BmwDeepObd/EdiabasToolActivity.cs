@@ -615,7 +615,7 @@ namespace BmwDeepObd
             }
 
             bool commActive = IsJobRunning();
-            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(true);
             bool fixedSgbd = !string.IsNullOrEmpty(_sgbdFileNameInitial);
 
             IMenuItem offlineMenu = menu.FindItem(Resource.Id.menu_tool_offline);

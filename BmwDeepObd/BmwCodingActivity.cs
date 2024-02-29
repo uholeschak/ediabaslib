@@ -552,7 +552,7 @@ namespace BmwDeepObd
             }
 
             bool commActive = IsEdiabasConnected();
-            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable();
+            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(true);
 
             IMenuItem logSubMenu = menu.FindItem(Resource.Id.menu_submenu_log);
             logSubMenu?.SetEnabled(interfaceAvailable && !commActive);
