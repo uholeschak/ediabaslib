@@ -4050,6 +4050,14 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                if (_selectedInterface == InterfaceType.DeepObdWifi)
+                {
+                    if (!string.IsNullOrEmpty(SelectedInterfaceIp))
+                    {
+                        return false;
+                    }
+                }
+
                 bool ignoreDismiss = false;
                 int resourceId = _selectedInterface == InterfaceType.ElmWifi
                     ? Resource.String.elmwifi_adapter_warn
