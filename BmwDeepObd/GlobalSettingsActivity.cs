@@ -35,7 +35,7 @@ namespace BmwDeepObd
         public const string ExtraImportFile = "import_file";
         public const string ExtraSettingsMode = "settigs_mode";
 
-        public const string SettingsFileName = "DeepObdSetting.xml";
+        public const string SettingsFileName = "DeepObdSettings.xml";
         public const string ExportsDir = "Exports";
 
         private enum ActivityRequest
