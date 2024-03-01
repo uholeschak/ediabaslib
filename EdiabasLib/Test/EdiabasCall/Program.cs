@@ -548,14 +548,6 @@ namespace EdiabasCall
                                                                 {
                                                                     resultText += string.Format(Culture, " {0}", resultLong);
                                                                 }
-                                                            }
-                                                            catch (Exception ex)
-                                                            {
-                                                                resultText += string.Format(Culture, " '{0}'", ex.Message);
-                                                            }
-
-                                                            try
-                                                            {
                                                                 if (__apiResultQWord(_apiHandle, out ulong resultUlong, resultName, set))
                                                                 {
                                                                     resultText += string.Format(Culture, " {0}", resultUlong);
