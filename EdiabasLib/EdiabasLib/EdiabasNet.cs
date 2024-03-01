@@ -2301,6 +2301,14 @@ namespace EdiabasLib
         private bool _jobEnd;
         private bool _requestInit = true;
 
+        public static string EdiabasVersionString
+        {
+            get
+            {
+                return string.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}", (EdiabasVersion >> 8) & 0xF, (EdiabasVersion >> 4) & 0xF, EdiabasVersion & 0xF);
+            }
+        }
+
         public bool IsDisposed
         {
             get { return _disposed; }
@@ -2886,7 +2894,7 @@ namespace EdiabasLib
 
             _jobRunning = false;
             _lockTrace = false;
-            SetConfigProperty("EdiabasVersion", "7.3.0");
+            SetConfigProperty("EdiabasVersion", EdiabasVersionString);
             SetConfigProperty("Simulation", "0");
             SetConfigProperty("BipDebugLevel", "0");
             SetConfigProperty("ApiTrace", "0");
