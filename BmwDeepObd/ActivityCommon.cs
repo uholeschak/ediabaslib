@@ -1078,6 +1078,8 @@ namespace BmwDeepObd
 
         public static bool CompressTrace { get; set; }
 
+        public static bool DisableNetworkCheck { get; set; }
+
         public static TranslatorType SelectedTranslator => _translatorType;
 
         public TranslatorType Translator
@@ -1799,6 +1801,10 @@ namespace BmwDeepObd
                     case InterfaceType.Enet:
                     case InterfaceType.ElmWifi:
                     case InterfaceType.DeepObdWifi:
+                        if (DisableNetworkCheck)
+                        {
+                            return true;
+                        }
                         if (IsEmulator())
                         {
                             return true;
@@ -1836,6 +1842,11 @@ namespace BmwDeepObd
                     case InterfaceType.Enet:
                     case InterfaceType.ElmWifi:
                     case InterfaceType.DeepObdWifi:
+                        if (DisableNetworkCheck)
+                        {
+                            return true;
+                        }
+
                         if (IsEmulator())
                         {
                             return true;
