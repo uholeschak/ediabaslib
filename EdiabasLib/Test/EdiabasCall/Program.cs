@@ -356,7 +356,7 @@ namespace EdiabasCall
                         {
                             if (API.apiResultName(out string resultName, result, set))
                             {
-                                string resultText = string.Empty;
+                                StringBuilder sbResult = new StringBuilder();
 
                                 if (API.apiResultFormat(out int resultFormat, resultName, set))
                                 {
@@ -368,14 +368,14 @@ namespace EdiabasCall
                                                 {
                                                     if (API.apiResultChar(out char resultChar, resultName, set))
                                                     {
-                                                        resultText = string.Format(Culture, "C: {0} 0x{0:X02}", (sbyte)resultChar);
+                                                        sbResult.Append(string.Format(Culture, "C: {0} 0x{0:X02}", (sbyte)resultChar));
                                                     }
                                                 }
                                                 else
                                                 {
                                                     if (__api32ResultChar(_apiHandle, out byte resultByte, resultName, set))
                                                     {
-                                                        resultText = string.Format(Culture, "C: {0} 0x{0:X02}", (sbyte)resultByte);
+                                                        sbResult.Append(string.Format(Culture, "C: {0} 0x{0:X02}", (sbyte)resultByte));
                                                     }
                                                 }
                                                 break;
@@ -385,7 +385,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultByte(out byte resultByte, resultName, set))
                                                 {
-                                                    resultText = string.Format(Culture, "B: {0} 0x{0:X02}", resultByte);
+                                                    sbResult.Append(string.Format(Culture, "B: {0} 0x{0:X02}", resultByte));
                                                 }
                                                 break;
                                             }
@@ -394,7 +394,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultInt(out short resultShort, resultName, set))
                                                 {
-                                                    resultText = string.Format(Culture, "I: {0} 0x{0:X04}", resultShort);
+                                                    sbResult.Append(string.Format(Culture, "I: {0} 0x{0:X04}", resultShort));
                                                 }
                                                 break;
                                             }
@@ -403,7 +403,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultWord(out ushort resultWord, resultName, set))
                                                 {
-                                                    resultText = string.Format(Culture, "W: {0} 0x{0:X04}", resultWord);
+                                                    sbResult.Append(string.Format(Culture, "W: {0} 0x{0:X04}", resultWord));
                                                 }
                                                 break;
                                             }
@@ -412,7 +412,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultLong(out int resultInt, resultName, set))
                                                 {
-                                                    resultText = string.Format(Culture, "L: {0} 0x{0:X08}", resultInt);
+                                                    sbResult.Append(string.Format(Culture, "L: {0} 0x{0:X08}", resultInt));
                                                 }
                                                 break;
                                             }
@@ -421,7 +421,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultDWord(out uint resultUint, resultName, set))
                                                 {
-                                                    resultText = string.Format(Culture, "D: {0} 0x{0:X08}", resultUint);
+                                                    sbResult.Append(string.Format(Culture, "D: {0} 0x{0:X08}", resultUint));
                                                 }
                                                 break;
                                             }
@@ -430,7 +430,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultReal(out double resultDouble, resultName, set))
                                                 {
-                                                    resultText = string.Format(Culture, "R: {0}", resultDouble);
+                                                    sbResult.Append(string.Format(Culture, "R: {0}", resultDouble));
                                                 }
                                                 break;
                                             }
@@ -441,7 +441,7 @@ namespace EdiabasCall
                                                 {
                                                     if (API.apiResultText(out string resultString, resultName, set, ""))
                                                     {
-                                                        resultText = resultString;
+                                                        sbResult.Append(resultString);
                                                     }
                                                 }
                                                 else
@@ -454,7 +454,7 @@ namespace EdiabasCall
                                                         {
                                                             length = API.APIMAXTEXT;
                                                         }
-                                                        resultText = Encoding.GetString(dataBuffer, 0, length);
+                                                        sbResult.Append(Encoding.GetString(dataBuffer, 0, length));
                                                     }
                                                 }
                                                 break;
@@ -469,7 +469,7 @@ namespace EdiabasCall
                                                     {
                                                         for (int i = 0; i < resultLengthShort; i++)
                                                         {
-                                                            resultText += string.Format(Culture, "{0:X02} ", resultByteArray[i]);
+                                                            sbResult.Append(string.Format(Culture, "{0:X02} ", resultByteArray[i]));
                                                         }
                                                     }
                                                     break;
@@ -478,7 +478,7 @@ namespace EdiabasCall
                                                 {
                                                     for (int i = 0; i < resultLength; i++)
                                                     {
-                                                        resultText += string.Format(Culture, "{0:X02} ", resultByteArray[i]);
+                                                        sbResult.Append(string.Format(Culture, "{0:X02} ", resultByteArray[i]));
                                                     }
                                                 }
                                                 break;
@@ -494,47 +494,47 @@ namespace EdiabasCall
                                                 break;
 
                                             default:
-                                                resultText += " ALL: ";
+                                                sbResult.Append(" ALL: ");
                                                 {
                                                     if (_apiHandle == 0)
                                                     {
                                                         if (API.apiResultChar(out char resultChar, resultName, set))
                                                         {
-                                                            resultText += string.Format(Culture, " {0}", (sbyte) resultChar);
+                                                            sbResult.Append(string.Format(Culture, " {0}", (sbyte) resultChar));
                                                         }
                                                     }
                                                     else
                                                     {
                                                         if (__api32ResultChar(_apiHandle, out byte resultByte, resultName, set))
                                                         {
-                                                            resultText += string.Format(Culture, " {0}", (sbyte) resultByte);
+                                                            sbResult.Append(string.Format(Culture, " {0}", (sbyte) resultByte));
                                                         }
                                                     }
                                                 }
                                                 {
                                                     if (API.apiResultByte(out byte resultByte, resultName, set))
                                                     {
-                                                        resultText += string.Format(Culture, " {0}", resultByte);
+                                                        sbResult.Append(string.Format(Culture, " {0}", resultByte));
                                                     }
                                                     if (API.apiResultInt(out short resultShort, resultName, set))
                                                     {
-                                                        resultText += string.Format(Culture, " {0}", resultShort);
+                                                        sbResult.Append(string.Format(Culture, " {0}", resultShort));
                                                     }
                                                     if (API.apiResultWord(out ushort resultWord, resultName, set))
                                                     {
-                                                        resultText += string.Format(Culture, " {0}", resultWord);
+                                                        sbResult.Append(string.Format(Culture, " {0}", resultWord));
                                                     }
                                                     if (API.apiResultLong(out int resultInt, resultName, set))
                                                     {
-                                                        resultText += string.Format(Culture, " {0}", resultInt);
+                                                        sbResult.Append(string.Format(Culture, " {0}", resultInt));
                                                     }
                                                     if (API.apiResultDWord(out uint resultUint, resultName, set))
                                                     {
-                                                        resultText += string.Format(Culture, " {0}", resultUint);
+                                                        sbResult.Append(string.Format(Culture, " {0}", resultUint));
                                                     }
                                                     if (API.apiResultReal(out double resultDouble, resultName, set))
                                                     {
-                                                        resultText += string.Format(Culture, " {0}", resultDouble);
+                                                        sbResult.Append(string.Format(Culture, " {0}", resultDouble));
                                                     }
 
                                                     if (_api76)
@@ -546,26 +546,26 @@ namespace EdiabasCall
                                                             {
                                                                 if (__apiResultLongLong(_apiHandle, out long resultLong, resultName, set))
                                                                 {
-                                                                    resultText += string.Format(Culture, " {0}", resultLong);
+                                                                    sbResult.Append(string.Format(Culture, " {0}", resultLong));
                                                                 }
                                                                 if (__apiResultQWord(_apiHandle, out ulong resultUlong, resultName, set))
                                                                 {
-                                                                    resultText += string.Format(Culture, " {0}", resultUlong);
+                                                                    sbResult.Append(string.Format(Culture, " {0}", resultUlong));
                                                                 }
                                                             }
                                                             catch (Exception ex)
                                                             {
-                                                                resultText += string.Format(Culture, " '{0}'", ex.Message);
+                                                                sbResult.Append(string.Format(Culture, " '{0}'", ex.Message));
                                                             }
                                                         }
 #else
                                                         if (API.apiResultLongLong(out long resultLong, resultName, set))
                                                         {
-                                                            resultText += string.Format(Culture, " {0}", resultLong);
+                                                            sbResult.Append(string.Format(Culture, " {0}", resultLong));
                                                         }
                                                         if (API.apiResultQWord(out ulong resultUlong, resultName, set))
                                                         {
-                                                            resultText += string.Format(Culture, " {0}", resultUlong);
+                                                            sbResult.Append(string.Format(Culture, " {0}", resultUlong));
                                                         }
 #endif
                                                     }
@@ -587,7 +587,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultText(out string resultString, resultName, set, formatString))
                                                 {
-                                                    resultText += string.Format(" F({0}): '{1}'", formatString, resultString);
+                                                    sbResult.Append(string.Format(" F({0}): '{1}'", formatString, resultString));
                                                 }
                                             }
                                             else
@@ -600,7 +600,7 @@ namespace EdiabasCall
                                                     {
                                                         length = API.APIMAXTEXT;
                                                     }
-                                                    resultText += string.Format(" F({0}): '{1}'", formatString, Encoding.GetString(dataBuffer, 0, length));
+                                                    sbResult.Append(string.Format(" F({0}): '{1}'", formatString, Encoding.GetString(dataBuffer, 0, length)));
                                                 }
                                             }
                                         }
@@ -609,7 +609,7 @@ namespace EdiabasCall
 
                                 if (!resultDict.ContainsKey(resultName))
                                 {
-                                    resultDict.Add(resultName, resultText);
+                                    resultDict.Add(resultName, sbResult.ToString());
                                 }
                             }
                         }
