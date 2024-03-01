@@ -36,6 +36,7 @@ namespace BmwDeepObd
         public const string ExtraSettingsMode = "settigs_mode";
 
         public const string SettingsFileName = "DeepObdSetting.xml";
+        public const string ExportsDir = "Exports";
 
         private enum ActivityRequest
         {
@@ -151,7 +152,7 @@ namespace BmwDeepObd
             {
                 if (!string.IsNullOrEmpty(_appDataDir))
                 {
-                    _exportFileName = Path.Combine(_appDataDir, SettingsFileName);
+                    _exportFileName = Path.Combine(_appDataDir, ExportsDir, SettingsFileName);
                     allowExport = true;
                     allowImport = true;
                 }

@@ -3350,6 +3350,24 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                string settingsDir = Path.GetDirectoryName(fileName);
+                if (string.IsNullOrEmpty(settingsDir))
+                {
+                    return false;
+                }
+
+                if (!Directory.Exists(settingsDir))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(settingsDir);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
                 lock (ActivityCommon.GlobalSettingLockObject)
                 {
                     StorageData storageData = new StorageData(this, true);
