@@ -433,6 +433,7 @@ namespace BmwDeepObd
             [XmlElement("ScanAllEcus")] public bool ScanAllEcus { get; set; }
             [XmlElement("CollectDebugInfo")] public bool CollectDebugInfo { get; set; }
             [XmlElement("CompressTrace")] public bool CompressTrace { get; set; }
+            // hidden settings
             [XmlElement("DisableNetworkCheck")] public bool DisableNetworkCheck { get; set; }
         }
 
@@ -7735,7 +7736,7 @@ namespace BmwDeepObd
                 // ignored
             }
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
-            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".cccfg;.ccpages;.ccpage");
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".cccfg;.ccpages;.ccpage;.xml");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestEditConfig);
         }
 
