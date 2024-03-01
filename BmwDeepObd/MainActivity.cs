@@ -307,6 +307,7 @@ namespace BmwDeepObd
                 ScanAllEcus = ActivityCommon.ScanAllEcus;
                 CollectDebugInfo = ActivityCommon.CollectDebugInfo;
                 CompressTrace = ActivityCommon.CompressTrace;
+                DisableNetworkCheck = ActivityCommon.DisableNetworkCheck;
             }
 
             public void InitData(ActivityMain activityMain, bool storage = false)
@@ -432,6 +433,7 @@ namespace BmwDeepObd
             [XmlElement("ScanAllEcus")] public bool ScanAllEcus { get; set; }
             [XmlElement("CollectDebugInfo")] public bool CollectDebugInfo { get; set; }
             [XmlElement("CompressTrace")] public bool CompressTrace { get; set; }
+            [XmlElement("DisableNetworkCheck")] public bool DisableNetworkCheck { get; set; }
         }
 
 #if DEBUG
@@ -3296,6 +3298,7 @@ namespace BmwDeepObd
                     ActivityCommon.ScanAllEcus = storageData.ScanAllEcus;
                     ActivityCommon.CollectDebugInfo = storageData.CollectDebugInfo;
                     ActivityCommon.CompressTrace = storageData.CompressTrace;
+                    ActivityCommon.DisableNetworkCheck = storageData.DisableNetworkCheck;
 
                     CheckSettingsVersionChange();
                 }
