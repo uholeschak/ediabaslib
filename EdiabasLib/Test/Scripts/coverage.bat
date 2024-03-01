@@ -1,8 +1,9 @@
 @echo off
 SETLOCAL EnableDelayedExpansion
 
-rem start CarSimulator with e61.txt config first
-rem for EDIABAS set the COM port in obd.ini (max COM9)
+rem Start CarSimulator with e61.txt config first
+rem For EDIABAS set the COM port in obd.ini (max COM9)
+rem Arguments: <test type:lib|apilib|ediabas> <interface: ENET|STD:OBD> <port: COM4>
 
 set BATPATH=%~dp0
 set OPEN_COVER=%OPENCOVER_PATH%\OpenCover.Console.exe
