@@ -77,8 +77,8 @@ This page allows to change some global app settings.
   * _Bluetooth HCI snoop log file_: Current Bluetooth HCI snoop log file name. You could enable HCI snoop logging with the button _Configure snoop log_.
 * _Settings_ options:
   * _Default settings_: Restore the default settings for the global settings page.
-  * _Export settings_: Export settings to _DeepObbSettings.xml_ in the selected storage media folder. You could select if you also want to export private data.  
+  * _Export settings_: Export settings to _DeepObbSettings.xml_ in the selected storage media folder subdirectory _Exports_. You could select if you also want to export private data.  
   You should not pass on private data files to other people.
-  * _Import settings_: Import settings from _DeepObbSettings.xml_ in the selected storage media folder.
+  * _Import settings_: Import settings from _DeepObbSettings.xml_ in the selected storage media folder subdirectory _Exports_.
 
 ![Global settings](GlobalSettings_AppGlobalSettingsSmall.png)
