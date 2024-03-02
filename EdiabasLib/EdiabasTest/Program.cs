@@ -99,12 +99,10 @@ namespace EdiabasTest
 
                 _outputWriter.WriteLine("API Version: {0}", EdiabasNet.EdiabasVersionString);
 
-#pragma warning disable CS0162 // Unreachable code detected
-                if (EdiabasNet.EdiabasVersion >= 0x0760)
+                if (EdiabasNet.IsMinVersion760)
                 {
                     _api76 = true;
                 }
-#pragma warning restore CS0162 // Unreachable code detected
 
                 if (storeResults)
                 {
