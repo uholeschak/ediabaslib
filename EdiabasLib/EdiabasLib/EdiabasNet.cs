@@ -2309,6 +2309,14 @@ namespace EdiabasLib
             }
         }
 
+        public static bool IsMinVersion760
+        {
+            get
+            {
+                return EdiabasVersion >= 0x760;
+            }
+        }
+
         public bool IsDisposed
         {
             get { return _disposed; }
