@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EdiabasCall</RootNamespace>
     <AssemblyName>EdiabasCall</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -39,6 +39,9 @@
   <ItemGroup>
     <Reference Include="apiNET32">
       <HintPath>$(EDIABAS_PATH)\Bin\apiNET32.dll</HintPath>
+    </Reference>
+    <Reference Include="apiNET432">
+      <HintPath>$(EDIABAS_PATH)\Bin\apiNET432.dll</HintPath>
     </Reference>
     <Reference Include="NDesk.Options">
       <HintPath>.\NDesk.Options.dll</HintPath>
