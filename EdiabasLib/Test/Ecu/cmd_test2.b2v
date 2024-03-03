@@ -2039,8 +2039,33 @@ job(  name      : TEST_DIVS_FLAGS;
 
 #asm
 					enewset
+					move		L4,#10
+					move		L5,#-2
+					move		L6,#$7FFFFFFF
+					comp		L6,#-4
+					setc
+					divs		L4,L5
+#endasm
+	calc_flags();
+#asm
+					ergl		"VALUE_RES_FLGA4", L4
+					ergl		"VALUE_RES_FLGB4", L5
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+}
+
+////////////////////////////////////////////////////////////////////////
+
+job(  name      : TEST_DIVS_ZERO;
+      comment   : Test math zero division;
+   ) 
+{
+#asm
+					enewset
 					clrt
-					move		L4,#$0001
+					move		L4, #$FFFFFFFF
 					settmr		L4
 					move		L4,#10
 					move		L5,#0
@@ -2061,23 +2086,6 @@ job(  name      : TEST_DIVS_FLAGS;
 					clrt
 					move		L4,#0
 					settmr		L4
-#endasm
-
-#asm
-					enewset
-					move		L4,#10
-					move		L5,#-2
-					move		L6,#$7FFFFFFF
-					comp		L6,#-4
-					setc
-					divs		L4,L5
-#endasm
-	calc_flags();
-#asm
-					ergl		"VALUE_RES_FLGA4", L4
-					ergl		"VALUE_RES_FLGB4", L5
-					ergs		"FLAGS", S1
-					ergs		"JUMPS", S2
 #endasm
 
 }
