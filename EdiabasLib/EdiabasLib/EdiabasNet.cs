@@ -591,7 +591,7 @@ namespace EdiabasLib
             public Object OpData3;
         }
 
-        public const int EdiabasVersion = 0x730;
+        public const int EdiabasVersion = 0x760;
         public const int TraceAppendDiffHours = 1;
 
         public enum ErrorCodes : uint
@@ -2256,6 +2256,8 @@ namespace EdiabasLib
         private long _infoProgressPos;
         private string _infoProgressText = string.Empty;
         private string _resultJobStatus = string.Empty;
+        private string _groupName = string.Empty;
+        private string _familyName = string.Empty;
         private string _sgbdFileName = string.Empty;
         private string _sgbdFileResolveLast = string.Empty;
         private string _ecuPath = string.Empty;
@@ -2681,6 +2683,28 @@ namespace EdiabasLib
                 foreach (StringData data in _stringRegisters)
                 {
                     data.NewArrayLength(_arrayMaxBufSize);
+                }
+            }
+        }
+
+        public string GroupName
+        {
+            get
+            {
+                lock (_apiLock)
+                {
+                    return _groupName;
+                }
+            }
+        }
+
+        public string FamilyName
+        {
+            get
+            {
+                lock (_apiLock)
+                {
+                    return _familyName;
                 }
             }
         }
@@ -4107,6 +4131,11 @@ namespace EdiabasLib
             }
 
             resultDictSystem.Add("VARIANTE", new ResultData(ResultType.TypeS, "VARIANTE", Path.GetFileNameWithoutExtension(SgbdFileName ?? string.Empty).ToUpper(Culture)));
+            if (IsMinVersion760)
+            {
+                resultDictSystem.Add("GRUPPE", new ResultData(ResultType.TypeS, "GRUPPE", GroupName.ToLower(Culture)));
+                resultDictSystem.Add("FAMILIE", new ResultData(ResultType.TypeS, "FAMILIE", FamilyName.ToLower(Culture)));
+            }
             resultDictSystem.Add("OBJECT", new ResultData(ResultType.TypeS, "OBJECT", objectName));
             resultDictSystem.Add("JOBNAME", new ResultData(ResultType.TypeS, "JOBNAME", jobInfo.JobName));
             resultDictSystem.Add("SAETZE", new ResultData(ResultType.TypeW, "SAETZE", (Int64)setCount));
@@ -4739,38 +4768,66 @@ namespace EdiabasLib
                 return;
             }
 
-            UInt32 fileType = GetFileType(Path.Combine(EcuPath, fileName ?? String.Empty));
-            if (fileType == 0)
-            {       // group file
-                string key = baseFileName;
-                string variantName;
-                bool mappingFound;
-                lock (_apiLock)
-                {
-                    mappingFound = _groupMappingDict.TryGetValue(key, out variantName);
-                }
-                if (!mappingFound)
-                {
-                    SgbdFileName = baseFileName + ".grp";
-                    variantName = ExecuteIdentJob().ToLower(Culture);
-                    if (variantName.Length == 0)
-                    {
-                        LogFormat(EdLogLevel.Error, "ResolveSgbdFile: No variant found");
-                        throw new ArgumentOutOfRangeException("variantName", "ResolveSgbdFile: No variant found");
-                    }
+            try
+            {
+                UInt32 fileType = GetFileType(Path.Combine(EcuPath, fileName ?? String.Empty));
+                if (fileType == 0)
+                {       // group file
+                    string key = baseFileName;
+                    string variantName;
+                    bool mappingFound;
                     lock (_apiLock)
                     {
-                        _groupMappingDict.Add(key, variantName);
+                        mappingFound = _groupMappingDict.TryGetValue(key, out variantName);
                     }
+                    if (!mappingFound)
+                    {
+                        SgbdFileName = baseFileName + ".grp";
+                        variantName = ExecuteIdentJob().ToLower(Culture);
+                        if (variantName.Length == 0)
+                        {
+                            LogFormat(EdLogLevel.Error, "ResolveSgbdFile: No variant found");
+                            throw new ArgumentOutOfRangeException("variantName", "ResolveSgbdFile: No variant found");
+                        }
+                        lock (_apiLock)
+                        {
+                            _groupMappingDict.Add(key, variantName);
+                        }
+                    }
+
+                    lock (_apiLock)
+                    {
+                        _groupName = baseFileName;
+                        _familyName = string.Empty;
+                    }
+                    SgbdFileName = variantName + ".prg";
                 }
-                SgbdFileName = variantName + ".prg";
+                else
+                {
+                    lock (_apiLock)
+                    {
+                        _groupName = string.Empty;
+                        _familyName = string.Empty;
+                    }
+                    SgbdFileName = baseFileName + ".prg";
+                }
+
+                LogFormat(EdLogLevel.Info, "ResolveSgbdFile resolved: {0}", SgbdFileName);
+                _sgbdFileResolveLast = baseFileName;
             }
-            else
+            catch (Exception ex)
             {
-                SgbdFileName = baseFileName + ".prg";
+                LogString(EdLogLevel.Info, "ResolveSgbdFile Exception: " + GetExceptionText(ex));
+                lock (_apiLock)
+                {
+                    _groupName = string.Empty;
+                    _familyName = string.Empty;
+                    _sgbdFileName = string.Empty;
+                }
+                _sgbdFileResolveLast = string.Empty;
+
+                throw;
             }
-            LogFormat(EdLogLevel.Info, "ResolveSgbdFile resolved: {0}", SgbdFileName);
-            _sgbdFileResolveLast = baseFileName;
         }
 
         public UInt32 GetFileType(string fileName)
