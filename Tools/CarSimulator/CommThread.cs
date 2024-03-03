@@ -2497,7 +2497,7 @@ namespace CarSimulator
                     Array.Copy(dataBuffer, ack, ack.Length);
                     ack[5] = 0x02;
 
-#if true
+#if false
                     DebugLogData("Send Ack: ", ack, ack.Length);
 #endif
                     if (recLen == 14 && ack[8] == 0x19)
