@@ -931,11 +931,16 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            Int64 int64Buffer;
-            if (!getResultInt64(out int64Buffer, result, rset))
+            if (!getResultInt64(out Int64 int64Buffer, out EdiabasLib.EdiabasNet.ResultType resultType, result, rset))
             {
                 return false;
             }
+
+            if (resultType != EdiabasLib.EdiabasNet.ResultType.TypeLL)
+            {
+                int64Buffer &= 0xFFFFFFFF;
+            }
+
             buffer = int64Buffer;
 
             logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
@@ -954,11 +959,16 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            Int64 int64Buffer;
-            if (!getResultInt64(out int64Buffer, result, rset))
+            if (!getResultInt64(out Int64 int64Buffer, out EdiabasLib.EdiabasNet.ResultType resultType, result, rset))
             {
                 return false;
             }
+
+            if (resultType != EdiabasLib.EdiabasNet.ResultType.TypeLL)
+            {
+                int64Buffer &= 0xFFFFFFFF;
+            }
+
             buffer = (ulong)int64Buffer;
 
             logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
@@ -1596,13 +1606,21 @@ namespace Ediabas
 
         private bool getResultInt64(out Int64 buffer, string result, ushort rset)
         {
+            return getResultInt64(out buffer, out _, result, rset);
+        }
+
+        private bool getResultInt64(out Int64 buffer, out EdiabasNet.ResultType resultType, string result, ushort rset)
+        {
             buffer = 0;
+            resultType = EdiabasNet.ResultType.TypeL;
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {
                 logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
             }
+
+            resultType = resultData.ResType;
             if ((resultData.OpData is long))
             {
                 buffer = (Int64)resultData.OpData;
