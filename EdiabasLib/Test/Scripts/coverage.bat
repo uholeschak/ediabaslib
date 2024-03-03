@@ -73,8 +73,9 @@ if exist "!OUTFILE!" del "!OUTFILE!"
  -j \"TEST_SHMID\" -j \"TEST_BASE1_TABLE1\" -j \"TEST_SHMID\" -j \"TEST_BASE1_TABLE2\" -j \"TEST_SHMID\" -j \"TEST_BASE2_TABLE1\" -j \"TEST_SHMID\" -j \"TEST_BASE2_TABLE2\" -j \"TEST_SHMID\" !"^"=!^
  -j \"TEST_ERGSYI_FLAGS#^!INITIALISIERUNG;1\" -j \"TEST_SHMID\" -j \"TEST_ERGSYI_FLAGS#^!INITIALISIERUNG;0\" -j \"TEST_SHMID\" -j \"TEST_ERGSYI_FLAGS#^!INITIALISIERUNG;1\" -j \"TEST_SHMID###STDARG2\" -j \"TEST_ERGSYI_FLAGS#^!INITIALISIERUNG;2\" -j \"TEST_SHMID\" -j \"TEST_ERGSYI_FLAGS#^!INITIALISIERUN;1\" -j \"TEST_SHMID\""
 "%OPEN_COVER%" "-output:results12.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_ident.grp\" -j \"TEST_SHMID#ARGS##STDARGS\" -j \"TEST_SHMID#ARGS##STDARGS\""
-"%OPEN_COVER%" "-output:results13.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"_VERSIONINFO\" -j "_JOBS" -j \"_JOBCOMMENTS#INITIALISIERUNG\"
+"%OPEN_COVER%" "-output:results13.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"_VERSIONINFO\" -j "_JOBS" -j \"_JOBCOMMENTS#INITIALISIERUNG\""
 "%OPEN_COVER%" "-output:results14.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --cfg=\"SystemResults=0\" -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"_VERSIONINFO\" -j "_JOBS" -j \"_JOBCOMMENTS#INITIALISIERUNG\" -j \"_JOBCOMMENTS#MISSING\" -j \"_JOBCOMMENTS\" -j \"TEST_SHMID###STDARG1\""
+"%OPEN_COVER%" "-output:results15.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_DIVS_ZERO\""
 set TIMESTR=%TIME:~0,2%;%TIME:~3,2%;%TIME:~6,2%
 set TIMESTR=!TIMESTR:^ =0!
 "%OPEN_COVER%" "-output:results15.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_TIME_FLAGS#!TIMESTR!\""

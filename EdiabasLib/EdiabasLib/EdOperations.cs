@@ -481,7 +481,14 @@ namespace EdiabasLib
             }
             catch (Exception)
             {
-                ediabas.SetError(ErrorCodes.EDIABAS_BIP_0007);
+                if (IsMinVersion760)
+                {
+                    ediabas.RaiseError(ErrorCodes.EDIABAS_BIP_0007);
+                }
+                else
+                {
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0007);
+                }
                 error = true;
             }
             ediabas._flags.Overflow = false;
