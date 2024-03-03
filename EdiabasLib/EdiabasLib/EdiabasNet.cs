@@ -2910,6 +2910,12 @@ namespace EdiabasLib
                     {ErrorCodes.EDIABAS_IFH_0015, 25},
                     {ErrorCodes.EDIABAS_IFH_0016, 26}
                 };
+
+                if (IsMinVersion760)
+                {
+                    _trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0011, 8);
+                    _trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0069, 28);
+                }
             }
 
             _byteRegisters = new byte[32];
