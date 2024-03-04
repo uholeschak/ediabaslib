@@ -50,7 +50,14 @@ namespace EdiabasLib
             }
 
             string valueStr = arg1.GetStringData();
-            EdFloatType result = StringToFloat(valueStr);
+            EdFloatType result = StringToFloat(valueStr, out bool valid);
+            if (IsMinVersion760)
+            {
+                if (!valid)
+                {
+                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
+                }
+            }
 
             arg0.SetRawData(result);
         }
