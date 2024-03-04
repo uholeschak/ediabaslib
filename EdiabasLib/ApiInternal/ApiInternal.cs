@@ -936,9 +936,9 @@ namespace Ediabas
                 return false;
             }
 
-            if (resultType != EdiabasLib.EdiabasNet.ResultType.TypeLL)
+            if (resultType != EdiabasLib.EdiabasNet.ResultType.TypeQ)
             {
-                int64Buffer &= 0xFFFFFFFF;
+                int64Buffer &= UInt32.MaxValue;
             }
 
             buffer = int64Buffer;
@@ -964,9 +964,9 @@ namespace Ediabas
                 return false;
             }
 
-            if (resultType != EdiabasLib.EdiabasNet.ResultType.TypeLL)
+            if (resultType != EdiabasLib.EdiabasNet.ResultType.TypeQ)
             {
-                int64Buffer &= 0xFFFFFFFF;
+                int64Buffer &= UInt32.MaxValue;
             }
 
             buffer = (ulong)int64Buffer;

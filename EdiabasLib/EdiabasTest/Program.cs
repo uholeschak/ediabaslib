@@ -410,6 +410,10 @@ namespace EdiabasTest
                                     sbResult.Append(string.Format(Culture, " {0}", (double)value));
                                     if (_api76)
                                     {
+                                        if (resultData.ResType != EdiabasNet.ResultType.TypeQ)
+                                        {
+                                            value &= UInt32.MaxValue;
+                                        }
                                         sbResult.Append(string.Format(Culture, " {0}", value));
                                         sbResult.Append(string.Format(Culture, " {0}", (ulong)value));
                                     }
@@ -427,8 +431,12 @@ namespace EdiabasTest
                                     sbResult.Append(string.Format(Culture, " {0}", valueDouble));
                                     if (_api76)
                                     {
+                                        if (resultData.ResType != EdiabasNet.ResultType.TypeQ)
+                                        {
+                                            value &= UInt32.MaxValue;
+                                        }
                                         sbResult.Append(string.Format(Culture, " {0}", value));
-                                        sbResult.Append(string.Format(Culture, " {0}", (ulong)valueDouble));
+                                        sbResult.Append(string.Format(Culture, " {0}", (ulong)value));
                                     }
                                 }
                             }
