@@ -2493,27 +2493,27 @@ namespace CarSimulator
                     }
 #endif
 
-                    byte[] ack = new byte[recLen];
-                    Array.Copy(dataBuffer, ack, ack.Length);
-                    ack[5] = 0x02;
+                    int ackLen = recLen;
+                    if (ackLen > 13)
+                    {
+                        ackLen = 13;
+                        Debug.WriteLine("Ack length limited");
+                    }
 
+                    byte[] ack = new byte[ackLen];
+                    Array.Copy(dataBuffer, ack, ack.Length);
+
+                    int ackPayloadLength = ackLen - 6;
+                    ack[0] = (byte)((ackPayloadLength >> 24) & 0xFF);
+                    ack[1] = (byte)((ackPayloadLength >> 16) & 0xFF);
+                    ack[2] = (byte)((ackPayloadLength >> 8) & 0xFF);
+                    ack[3] = (byte)(ackPayloadLength & 0xFF);
+                    ack[4] = 0x00;
+                    ack[5] = 0x02;
 #if false
                     DebugLogData("Send Ack: ", ack, ack.Length);
 #endif
-                    if (recLen == 14 && ack[8] == 0x19)
-                    {
-                        Debug.WriteLine("FS_LESEN_DETAIL Ack");
-                        int ackLength = payloadLength - 1;
-                        ack[0] = (byte)((ackLength >> 24) & 0xFF);
-                        ack[1] = (byte)((ackLength >> 16) & 0xFF);
-                        ack[2] = (byte)((ackLength >> 8) & 0xFF);
-                        ack[3] = (byte)(ackLength & 0xFF);
-                        WriteNetworkStream(bmwTcpClientData, ack, 0, ackLength + 8 - 2);
-                    }
-                    else
-                    {
-                        WriteNetworkStream(bmwTcpClientData, ack, 0, ack.Length);
-                    }
+                    WriteNetworkStream(bmwTcpClientData, ack, 0, ackLen);
 
                     // create BMW-FAST telegram
                     byte sourceAddr = dataBuffer[6];
