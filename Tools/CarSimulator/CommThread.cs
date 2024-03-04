@@ -278,7 +278,6 @@ namespace CarSimulator
         private const int MaxBufferLength = 0x10000;
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
-        private const int MaxBMWTcpAckLength = 13;
         private const int Kwp2000Nr2123Retries = 3;
         private const int ResetAdaptionChannel = 0;
         private const int DefaultAdaptionChannelValue = 0x1234;
@@ -2495,9 +2494,9 @@ namespace CarSimulator
 #endif
 
                     int ackLen = recLen;
-                    if (ackLen > MaxBMWTcpAckLength)
+                    if (ackLen > EdInterfaceEnet.MaxAckLength)
                     {
-                        ackLen = MaxBMWTcpAckLength;
+                        ackLen = EdInterfaceEnet.MaxAckLength;
                         Debug.WriteLine("Ack length limited");
                     }
 

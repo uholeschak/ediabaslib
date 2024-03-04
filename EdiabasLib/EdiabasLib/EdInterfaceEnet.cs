@@ -282,6 +282,7 @@ namespace EdiabasLib
 
         private bool _disposed;
         private static Mutex _interfaceMutex;
+        public const int MaxAckLength = 13;
         protected const string MutexName = "EdiabasLib_InterfaceEnet";
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
@@ -2143,11 +2144,12 @@ namespace EdiabasLib
                     }
                 }
 
-                if ((recLen < 6) || (recLen > sendLength) || (AckBuffer[5] != 0x02))
+                if ((recLen < 6) || (recLen > sendLength) || (recLen > MaxAckLength) || (AckBuffer[5] != 0x02))
                 {
                     if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
                     return false;
                 }
+
                 AckBuffer[4] = DataBuffer[4];
                 AckBuffer[5] = DataBuffer[5];
                 for (int i = 4; i < recLen; i++)
