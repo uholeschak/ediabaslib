@@ -19,6 +19,7 @@ namespace EdiabasTest
         private static bool _compareOutput;
         private static List<List<Dictionary<string, EdiabasNet.ResultData>>> _apiResultList;
         private static bool _api76;
+        private static bool _errorPrinted;
 
         static int Main(string[] args)
         {
@@ -185,6 +186,7 @@ namespace EdiabasTest
                             return 1;
                         }
 
+                        _errorPrinted = false;
                         ediabas.ArgBinary = null;
                         ediabas.ArgBinaryStd = null;
                         ediabas.ResultsRequests = string.Empty;
@@ -314,8 +316,14 @@ namespace EdiabasTest
 
         static void ErrorRaisedFunc(EdiabasNet.ErrorCodes error)
         {
+            if (_errorPrinted)
+            {
+                return;
+            }
+
             string errorText = EdiabasNet.GetErrorDescription(error);
             _outputWriter.WriteLine(string.Format(Culture, "Error occured: 0x{0:X08} {1}", (UInt32)error, errorText));
+            _errorPrinted = true;
         }
 
         static void PrintResults(List<string> formatList, bool printAllTypes, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
