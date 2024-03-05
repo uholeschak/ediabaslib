@@ -94,6 +94,8 @@ namespace Best1Net
                 }
 
                 bool best32Started = false;
+                int bestVerSize = 16;
+                IntPtr bestVerPtr = Marshal.AllocHGlobal(bestVerSize);
                 IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
                 IntPtr passwordPtr = Marshal.StringToHGlobalAnsi("");
@@ -101,7 +103,7 @@ namespace Best1Net
 
                 try
                 {
-                    int startResult = __best32Startup(0x20000, IntPtr.Zero, 0, IntPtr.Zero, 0);
+                    int startResult = __best32Startup(0x20000, IntPtr.Zero, 0, bestVerPtr, bestVerSize);
                     Console.WriteLine("Best32 start result: {0}", startResult);
                     if (startResult != 1)
                     {
@@ -109,6 +111,9 @@ namespace Best1Net
                         return 1;
                     }
                     best32Started = true;
+
+                    string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
+                    Console.WriteLine("Best version: {0}", bestVer);
 
                     int initResult = __best1Init(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 0, 0, passwordPtr, configFilePtr, 0);
                     Console.WriteLine("Best1 init result: {0}", initResult);
@@ -133,10 +138,10 @@ namespace Best1Net
                     IntPtr bestVersionPtr = __best1AsmVersion();
                     if (IntPtr.Zero != bestVersionPtr)
                     {
-                        byte[] versionArray = new byte[4];
-                        Marshal.Copy(bestVersionPtr, versionArray, 0, versionArray.Length);
+                        byte[] asmVerArray = new byte[4];
+                        Marshal.Copy(bestVersionPtr, asmVerArray, 0, asmVerArray.Length);
 
-                        Console.WriteLine("Asm version: {0}", BitConverter.ToString(versionArray));
+                        Console.WriteLine("Asm version: {0}", BitConverter.ToString(asmVerArray));
                     }
                 }
                 finally
@@ -144,6 +149,11 @@ namespace Best1Net
                     if (best32Started)
                     {
                         __best32Shutdown();
+                    }
+
+                    if (bestVerPtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(bestVerPtr);
                     }
 
                     if (inputFilePtr != IntPtr.Zero)
@@ -185,7 +195,7 @@ namespace Best1Net
 
         private static int ProgressEvent(int value)
         {
-            Console.WriteLine("Line: {0}", value);
+            //Console.WriteLine("Line: {0}", value);
             return 0;
         }
 
