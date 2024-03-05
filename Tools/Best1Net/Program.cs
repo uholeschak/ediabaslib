@@ -47,8 +47,12 @@ namespace Best1Net
                 }
 
                 __best2Init();
-                IntPtr bestVersion = __best1AsmVersion();
-                Console.WriteLine("Best version: {0}", bestVersion);
+                IntPtr bestVersionPtr = __best1AsmVersion();
+                if (IntPtr.Zero != bestVersionPtr)
+                {
+                    string bestVersion = Marshal.PtrToStringAnsi(bestVersionPtr);
+                    Console.WriteLine("Best version: {0}", bestVersion);
+                }
             }
             catch (Exception e)
             {
