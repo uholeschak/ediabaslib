@@ -1612,7 +1612,7 @@ namespace Ediabas
         private bool getResultInt64(out Int64 buffer, out EdiabasNet.ResultType resultType, string result, ushort rset)
         {
             buffer = 0;
-            resultType = EdiabasNet.ResultType.TypeL;
+            resultType = EdiabasNet.ResultType.TypeLL;
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {

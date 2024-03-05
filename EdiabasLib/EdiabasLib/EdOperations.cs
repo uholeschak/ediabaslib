@@ -55,7 +55,17 @@ namespace EdiabasLib
             {
                 if (!valid)
                 {
-                    ediabas.SetError(ErrorCodes.EDIABAS_BIP_0011);
+                    int compatMode = 0;
+                    string compatModeProp = ediabas.GetConfigProperty("CompatMode");
+                    if (compatModeProp != null)
+                    {
+                        compatMode = (int)StringToValue(compatModeProp);
+                    }
+
+                    if (compatMode == 0)
+                    {
+                        ediabas.RaiseError(ErrorCodes.EDIABAS_BIP_0011);
+                    }
                 }
             }
 
