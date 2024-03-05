@@ -8,13 +8,25 @@ namespace Best1Net
     {
         public const string BestDllName = "Best32.dll";
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int ProgressDelegate(int value);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int ErrorTextDelegate([MarshalAs(UnmanagedType.LPStr)] string text);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int ErrorValueDelegate(uint value, [MarshalAs(UnmanagedType.LPStr)] string text);
+
         [DllImport(BestDllName)]
         public static extern IntPtr __best1AsmVersion();
 
         [DllImport(BestDllName)]
         public static extern int __best1Init([MarshalAs(UnmanagedType.LPStr)] string inputFile, [MarshalAs(UnmanagedType.LPStr)] string outputFile, int val1,
             [MarshalAs(UnmanagedType.LPStr)] string revUser, int generateMapfile, int val3, [MarshalAs(UnmanagedType.LPStr)] string password,
-            [MarshalAs(UnmanagedType.LPStr)] string fileName, int val5);
+            [MarshalAs(UnmanagedType.LPStr)] string configFile, int val5);
+
+        [DllImport(BestDllName)]
+        public static extern ErrorValueDelegate __best1Config(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
 
         [DllImport(BestDllName)]
         public static extern int __best1Asm([MarshalAs(UnmanagedType.LPStr)] string mapFile, [MarshalAs(UnmanagedType.LPStr)] string infoFile);
@@ -77,9 +89,20 @@ namespace Best1Net
                 }
 
                 string password = "";
-                string fileName = "";
-                int initResult = __best1Init(inputFile, outputFile, 0, null, 0, 0, password, fileName, 0);
-                Console.WriteLine("Best1 init: {0}", initResult);
+                string configFile = "";
+                int initResult = __best1Init(inputFile, outputFile, 0, null, 0, 0, password, configFile, 0);
+                Console.WriteLine("Best1 init result: {0}", initResult);
+
+                if (initResult != 0)
+                {
+                    Console.WriteLine("Best1 init failed");
+                    return 1;
+                }
+
+                ErrorValueDelegate configResult = __best1Config(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
+
+                //int asmResult = __best1Asm(null, null);
+                //Console.WriteLine("Best1 asm result: {0}", asmResult);
 
                 IntPtr bestVersionPtr = __best1AsmVersion();
                 if (IntPtr.Zero != bestVersionPtr)
@@ -101,6 +124,24 @@ namespace Best1Net
                 }
             }
 
+            return 0;
+        }
+
+        private static int ProgressEvent(int value)
+        {
+            Console.WriteLine("Progress: {0}", value);
+            return 0;
+        }
+
+        private static int ErrorTextEvent(string text)
+        {
+            Console.WriteLine("Error: {0}", text);
+            return 0;
+        }
+
+        private static int ErrorValueEvent(uint value, string text)
+        {
+            Console.WriteLine("Error value: {0}: {1}", value, text);
             return 0;
         }
     }
