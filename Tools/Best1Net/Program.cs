@@ -21,7 +21,7 @@ namespace Best1Net
         public static extern IntPtr __best1AsmVersion();
 
         [DllImport(BestDllName)]
-        public static extern int __best1Init([MarshalAs(UnmanagedType.LPStr)] string inputFile, [MarshalAs(UnmanagedType.LPStr)] string outputFile, int val1,
+        public static extern int __best1Init(IntPtr inputFile, IntPtr outputFile, int val1,
             [MarshalAs(UnmanagedType.LPStr)] string revUser, int generateMapfile, int val3, [MarshalAs(UnmanagedType.LPStr)] string password,
             [MarshalAs(UnmanagedType.LPStr)] string configFile, int val5);
 
@@ -91,30 +91,47 @@ namespace Best1Net
                     return 1;
                 }
 
-                string password = "";
-                string configFile = "";
-                int initResult = __best1Init(inputFile, outputFile, 0, null, 0, 0, password, configFile, 0);
-                Console.WriteLine("Best1 init result: {0}", initResult);
-
-                if (initResult != 0)
+                IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
+                IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
+                try
                 {
-                    Console.WriteLine("Best1 init failed");
-                    return 1;
+                    string password = "";
+                    string configFile = "";
+                    int initResult = __best1Init(inputFilePtr, outputFilePtr, 0, null, 0, 0, password, configFile, 0);
+                    Console.WriteLine("Best1 init result: {0}", initResult);
+
+                    if (initResult != 0)
+                    {
+                        Console.WriteLine("Best1 init failed");
+                        return 1;
+                    }
+
+                    ErrorValueDelegate configResult = __best1Config(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
+                    int optionsResult = __best1Options(0);
+
+                    int asmResult = __best1Asm(null, null);
+                    Console.WriteLine("Best1 asm result: {0}", asmResult);
+
+                    IntPtr bestVersionPtr = __best1AsmVersion();
+                    if (IntPtr.Zero != bestVersionPtr)
+                    {
+                        byte[] versionArray = new byte[0x6C];
+                        Marshal.Copy(bestVersionPtr, versionArray, 0, versionArray.Length);
+
+                        Console.WriteLine("Best version: {0}", BitConverter.ToString(versionArray));
+                    }
                 }
-
-                ErrorValueDelegate configResult = __best1Config(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
-                int optionsResult = __best1Options(0);
-
-                int asmResult = __best1Asm(null, null);
-                Console.WriteLine("Best1 asm result: {0}", asmResult);
-
-                IntPtr bestVersionPtr = __best1AsmVersion();
-                if (IntPtr.Zero != bestVersionPtr)
+                finally
                 {
-                    byte[] versionArray = new byte[0x6C];
-                    Marshal.Copy(bestVersionPtr, versionArray, 0, versionArray.Length);
+                    if (inputFilePtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(inputFilePtr);
+                    }
 
-                    Console.WriteLine("Best version: {0}", BitConverter.ToString(versionArray));
+                    if (outputFilePtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(outputFilePtr);
+                    }
                 }
             }
             catch (Exception e)
