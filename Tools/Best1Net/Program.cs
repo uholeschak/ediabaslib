@@ -12,20 +12,42 @@ namespace Best1Net
         public static extern IntPtr __best1AsmVersion();
 
         [DllImport(BestDllName)]
-        public static extern void __best1Init([MarshalAs(UnmanagedType.LPStr)] string inputFile, [MarshalAs(UnmanagedType.LPStr)] string outputFile, int generateMapfile,
+        public static extern int __best1Init([MarshalAs(UnmanagedType.LPStr)] string inputFile, [MarshalAs(UnmanagedType.LPStr)] string outputFile, int generateMapfile,
             [MarshalAs(UnmanagedType.LPStr)] string revUser, int val2, int val3, [MarshalAs(UnmanagedType.LPStr)] string password, int val4, int val5);
 
         [DllImport(BestDllName)]
-        public static extern void __best1Asm([MarshalAs(UnmanagedType.LPStr)] string mapFile, [MarshalAs(UnmanagedType.LPStr)] string infoFile);
+        public static extern int __best1Asm([MarshalAs(UnmanagedType.LPStr)] string mapFile, [MarshalAs(UnmanagedType.LPStr)] string infoFile);
 
         [DllImport(BestDllName)]
-        public static extern void __best2Init();
+        public static extern int __best2Init();
 
         static int Main(string[] args)
         {
             IntPtr libHandle = IntPtr.Zero;
             try
             {
+                if (args.Length < 1)
+                {
+                    Console.WriteLine("Usage: Best1Net <inputFile>");
+                    return 1;
+                }
+
+                string inputFile = args[0];
+                if (!File.Exists(inputFile))
+                {
+                    Console.WriteLine("Input file not found");
+                    return 1;
+                }
+
+                string fileExt = Path.GetExtension(inputFile);
+                string outExt = ".prg";
+                if (string.Compare(fileExt, ".b1g", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    outExt = ".grp";
+                }
+
+                string outputFile = Path.ChangeExtension(inputFile, outExt);
+
                 string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
                 if (string.IsNullOrEmpty(ediabasPath))
                 {
@@ -52,6 +74,10 @@ namespace Best1Net
                     Console.WriteLine("{0} not loaded", BestDllName);
                     return 1;
                 }
+
+                string password = "";
+                int initResult = __best1Init(inputFile, outputFile, 0, null, 0, 0, password, 0, 0);
+                Console.WriteLine("Best1 init: {0}", initResult);
 
                 IntPtr bestVersionPtr = __best1AsmVersion();
                 if (IntPtr.Zero != bestVersionPtr)
