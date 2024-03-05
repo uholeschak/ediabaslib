@@ -22,8 +22,7 @@ namespace Best1Net
 
         [DllImport(BestDllName)]
         public static extern int __best1Init(IntPtr inputFile, IntPtr outputFile, int val1,
-            [MarshalAs(UnmanagedType.LPStr)] string revUser, int generateMapfile, int val3, [MarshalAs(UnmanagedType.LPStr)] string password,
-            [MarshalAs(UnmanagedType.LPStr)] string configFile, int val5);
+            IntPtr revUser, int generateMapfile, int val3, IntPtr password, IntPtr configFile, int val5);
 
         [DllImport(BestDllName)]
         public static extern ErrorValueDelegate __best1Config(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
@@ -93,11 +92,12 @@ namespace Best1Net
 
                 IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
+                IntPtr passwordPtr = Marshal.StringToHGlobalAnsi("");
+                IntPtr configFilePtr = Marshal.StringToHGlobalAnsi("");
+
                 try
                 {
-                    string password = "";
-                    string configFile = "";
-                    int initResult = __best1Init(inputFilePtr, outputFilePtr, 0, null, 0, 0, password, configFile, 0);
+                    int initResult = __best1Init(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 0, 0, passwordPtr, configFilePtr, 0);
                     Console.WriteLine("Best1 init result: {0}", initResult);
 
                     if (initResult != 0)
@@ -131,6 +131,16 @@ namespace Best1Net
                     if (outputFilePtr != IntPtr.Zero)
                     {
                         Marshal.FreeHGlobal(outputFilePtr);
+                    }
+
+                    if (passwordPtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(passwordPtr);
+                    }
+
+                    if (configFilePtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(configFilePtr);
                     }
                 }
             }
