@@ -29,6 +29,9 @@ namespace Best1Net
         public static extern ErrorValueDelegate __best1Config(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
 
         [DllImport(BestDllName)]
+        public static extern int __best1Options(int mapOptions);
+
+        [DllImport(BestDllName)]
         public static extern int __best1Asm([MarshalAs(UnmanagedType.LPStr)] string mapFile, [MarshalAs(UnmanagedType.LPStr)] string infoFile);
 
         [DllImport(BestDllName)]
@@ -100,6 +103,7 @@ namespace Best1Net
                 }
 
                 ErrorValueDelegate configResult = __best1Config(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
+                int optionsResult = __best1Options(0);
 
                 //int asmResult = __best1Asm(null, null);
                 //Console.WriteLine("Best1 asm result: {0}", asmResult);
@@ -107,8 +111,10 @@ namespace Best1Net
                 IntPtr bestVersionPtr = __best1AsmVersion();
                 if (IntPtr.Zero != bestVersionPtr)
                 {
-                    string bestVersion = Marshal.PtrToStringAnsi(bestVersionPtr);
-                    Console.WriteLine("Best version: {0}", bestVersion);
+                    byte[] versionArray = new byte[0x6C];
+                    Marshal.Copy(bestVersionPtr, versionArray, 0, versionArray.Length);
+
+                    Console.WriteLine("Best version: {0}", BitConverter.ToString(versionArray));
                 }
             }
             catch (Exception e)
