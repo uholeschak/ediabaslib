@@ -12,6 +12,10 @@ namespace Best1Net
         public static extern IntPtr __best1AsmVersion();
 
         [DllImport(BestDllName)]
+        public static extern void __best1Init([MarshalAs(UnmanagedType.LPStr)] string inputFile, [MarshalAs(UnmanagedType.LPStr)] string outputFile, int val1,
+            [MarshalAs(UnmanagedType.LPStr)] string name1, int val2, int val3, [MarshalAs(UnmanagedType.LPStr)] string name2, int val4, int val5);
+
+        [DllImport(BestDllName)]
         public static extern void __best2Init();
 
         static int Main(string[] args)
@@ -46,7 +50,6 @@ namespace Best1Net
                     return 1;
                 }
 
-                __best2Init();
                 IntPtr bestVersionPtr = __best1AsmVersion();
                 if (IntPtr.Zero != bestVersionPtr)
                 {
