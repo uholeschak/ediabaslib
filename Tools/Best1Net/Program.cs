@@ -18,6 +18,12 @@ namespace Best1Net
         public delegate int ErrorValueDelegate(uint value, [MarshalAs(UnmanagedType.LPStr)] string text);
 
         [DllImport(BestDllName)]
+        public static extern int __best32Startup(int version, IntPtr infoText, int printInfo, IntPtr verBuffer, int verSize);
+
+        [DllImport(BestDllName)]
+        public static extern int __best32Shutdown();
+
+        [DllImport(BestDllName)]
         public static extern IntPtr __best1AsmVersion();
 
         [DllImport(BestDllName)]
@@ -32,9 +38,6 @@ namespace Best1Net
 
         [DllImport(BestDllName)]
         public static extern int __best1Asm([MarshalAs(UnmanagedType.LPStr)] string mapFile, [MarshalAs(UnmanagedType.LPStr)] string infoFile);
-
-        [DllImport(BestDllName)]
-        public static extern int __best2Init();
 
         static int Main(string[] args)
         {
@@ -66,14 +69,14 @@ namespace Best1Net
                 string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
                 if (string.IsNullOrEmpty(ediabasPath))
                 {
-                    Console.WriteLine("EDIABS path not found");
+                    Console.WriteLine("EDIABAS path not found");
                     return 1;
                 }
 
                 string ediabasBinPath = Path.Combine(ediabasPath, "bin");
                 if (!Directory.Exists(ediabasBinPath))
                 {
-                    Console.WriteLine("EDIABS bin path not found");
+                    Console.WriteLine("EDIABAS bin path not found");
                     return 1;
                 }
 
@@ -90,6 +93,7 @@ namespace Best1Net
                     return 1;
                 }
 
+                bool best32Started = false;
                 IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
                 IntPtr passwordPtr = Marshal.StringToHGlobalAnsi("");
@@ -97,6 +101,15 @@ namespace Best1Net
 
                 try
                 {
+                    int startResult = __best32Startup(0x20000, IntPtr.Zero, 0, IntPtr.Zero, 0);
+                    Console.WriteLine("Best32 start result: {0}", startResult);
+                    if (startResult != 1)
+                    {
+                        Console.WriteLine("Best32 startup failed");
+                        return 1;
+                    }
+                    best32Started = true;
+
                     int initResult = __best1Init(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 0, 0, passwordPtr, configFilePtr, 0);
                     Console.WriteLine("Best1 init result: {0}", initResult);
 
@@ -123,6 +136,11 @@ namespace Best1Net
                 }
                 finally
                 {
+                    if (best32Started)
+                    {
+                        __best32Shutdown();
+                    }
+
                     if (inputFilePtr != IntPtr.Zero)
                     {
                         Marshal.FreeHGlobal(inputFilePtr);
