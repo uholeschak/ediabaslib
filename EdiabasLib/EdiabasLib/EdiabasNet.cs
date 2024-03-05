@@ -2946,6 +2946,7 @@ namespace EdiabasLib
             SetConfigProperty("CompressTrace", "0");
 #endif
             SetConfigProperty("LockTrace", "0");
+            SetConfigProperty("CompatMode", "1");
 
             SetConfigProperty("UbattHandling", "0");
             SetConfigProperty("IgnitionHandling", "0");
