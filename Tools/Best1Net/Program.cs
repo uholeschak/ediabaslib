@@ -110,8 +110,8 @@ namespace Best1Net
                         Console.WriteLine("Best32 startup failed");
                         return 1;
                     }
-                    best32Started = true;
 
+                    best32Started = true;
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
@@ -195,7 +195,16 @@ namespace Best1Net
 
         private static int ProgressEvent(int value)
         {
-            //Console.WriteLine("Line: {0}", value);
+            if (value >= 0)
+            {
+                Console.SetCursorPosition(0, Console.CursorTop);
+                Console.Write("Line: {0}", value);
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Done");
+            }
             return 0;
         }
 
