@@ -6,6 +6,11 @@ namespace Best1Net
 {
     internal class Program
     {
+        public const string BestDllName = "Best32.dll";
+
+        [DllImport(BestDllName)]
+        public static extern IntPtr __best1AsmVersion();
+
         static int Main(string[] args)
         {
             IntPtr libHandle = IntPtr.Zero;
@@ -25,20 +30,21 @@ namespace Best1Net
                     return 1;
                 }
 
-                string bestDllPath = Path.Combine(ediabasBinPath, "Best32.dll");
+                string bestDllPath = Path.Combine(ediabasBinPath, BestDllName);
                 if (!File.Exists(bestDllPath))
                 {
-                    Console.WriteLine("Best32.dll not found");
+                    Console.WriteLine("{0} not found", BestDllName);
                     return 1;
                 }
 
                 if (!NativeLibrary.TryLoad(bestDllPath, out libHandle))
                 {
-                    Console.WriteLine("Best32.dll not loaded");
+                    Console.WriteLine("{0} not loaded", BestDllName);
                     return 1;
                 }
 
-                Console.WriteLine("Library loaded");
+                IntPtr bestVersion = __best1AsmVersion();
+                Console.WriteLine("Best version: {0}", bestVersion);
             }
             catch (Exception e)
             {
