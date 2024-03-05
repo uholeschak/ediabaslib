@@ -13,7 +13,8 @@ namespace Best1Net
 
         [DllImport(BestDllName)]
         public static extern int __best1Init([MarshalAs(UnmanagedType.LPStr)] string inputFile, [MarshalAs(UnmanagedType.LPStr)] string outputFile, int val1,
-            [MarshalAs(UnmanagedType.LPStr)] string revUser, int generateMapfile, int val3, [MarshalAs(UnmanagedType.LPStr)] string password, int val4, int val5);
+            [MarshalAs(UnmanagedType.LPStr)] string revUser, int generateMapfile, int val3, [MarshalAs(UnmanagedType.LPStr)] string password,
+            [MarshalAs(UnmanagedType.LPStr)] string fileName, int val5);
 
         [DllImport(BestDllName)]
         public static extern int __best1Asm([MarshalAs(UnmanagedType.LPStr)] string mapFile, [MarshalAs(UnmanagedType.LPStr)] string infoFile);
@@ -76,7 +77,8 @@ namespace Best1Net
                 }
 
                 string password = "";
-                int initResult = __best1Init(inputFile, outputFile, 0, null, 0, 0, password, 0, 0);
+                string fileName = "";
+                int initResult = __best1Init(inputFile, outputFile, 0, null, 0, 0, password, fileName, 0);
                 Console.WriteLine("Best1 init: {0}", initResult);
 
                 IntPtr bestVersionPtr = __best1AsmVersion();
