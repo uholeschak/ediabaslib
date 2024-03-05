@@ -105,8 +105,8 @@ namespace Best1Net
                 ErrorValueDelegate configResult = __best1Config(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
                 int optionsResult = __best1Options(0);
 
-                //int asmResult = __best1Asm(null, null);
-                //Console.WriteLine("Best1 asm result: {0}", asmResult);
+                int asmResult = __best1Asm(null, null);
+                Console.WriteLine("Best1 asm result: {0}", asmResult);
 
                 IntPtr bestVersionPtr = __best1AsmVersion();
                 if (IntPtr.Zero != bestVersionPtr)
