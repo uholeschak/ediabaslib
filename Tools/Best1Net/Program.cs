@@ -124,14 +124,19 @@ namespace Best1Net
 
                     int asmResult = __best1Asm(null, null);
                     Console.WriteLine("Best1 asm result: {0}", asmResult);
+                    if (asmResult != 0)
+                    {
+                        Console.WriteLine("Best1 asm failed");
+                        return 1;
+                    }
 
                     IntPtr bestVersionPtr = __best1AsmVersion();
                     if (IntPtr.Zero != bestVersionPtr)
                     {
-                        byte[] versionArray = new byte[0x6C];
+                        byte[] versionArray = new byte[4];
                         Marshal.Copy(bestVersionPtr, versionArray, 0, versionArray.Length);
 
-                        Console.WriteLine("Best version: {0}", BitConverter.ToString(versionArray));
+                        Console.WriteLine("Asm version: {0}", BitConverter.ToString(versionArray));
                     }
                 }
                 finally
@@ -180,7 +185,7 @@ namespace Best1Net
 
         private static int ProgressEvent(int value)
         {
-            Console.WriteLine("Progress: {0}", value);
+            Console.WriteLine("Line: {0}", value);
             return 0;
         }
 
