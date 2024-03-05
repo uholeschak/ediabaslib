@@ -11,6 +11,9 @@ namespace Best1Net
         [DllImport(BestDllName)]
         public static extern IntPtr __best1AsmVersion();
 
+        [DllImport(BestDllName)]
+        public static extern void __best2Init();
+
         static int Main(string[] args)
         {
             IntPtr libHandle = IntPtr.Zero;
@@ -43,6 +46,7 @@ namespace Best1Net
                     return 1;
                 }
 
+                __best2Init();
                 IntPtr bestVersion = __best1AsmVersion();
                 Console.WriteLine("Best version: {0}", bestVersion);
             }
