@@ -68,6 +68,9 @@ namespace Best1Net
             [Option('i', "inputfile", Required = true, HelpText = "Input file to compile.")]
             public string InputFile { get; set; }
 
+            [Option('u', "userName", Required = false, HelpText = "Specify user name.")]
+            public string UserName { get; set; }
+
             [Option('m', "mapfile", Required = false, HelpText = "Set to create map file.")]
             public bool CreateMapFile { get; set; }
         }
@@ -79,12 +82,14 @@ namespace Best1Net
             try
             {
                 string inputFile = null;
+                string userName = null;
                 int generateMapFile = 0;
                 bool hasErrors = false;
                 Parser.Default.ParseArguments<Options>(args)
                     .WithParsed<Options>(o =>
                     {
                         inputFile = o.InputFile;
+                        userName = o.UserName;
                         generateMapFile = o.CreateMapFile ? 1: 0;
                     })
                     .WithNotParsed(e =>
@@ -154,6 +159,11 @@ namespace Best1Net
                 IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
                 IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
+                IntPtr userNamePtr = IntPtr.Zero;
+                if (!string.IsNullOrEmpty(userName))
+                {
+                    userNamePtr = Marshal.StringToHGlobalAnsi(userName);
+                }
                 IntPtr passwordPtr = Marshal.StringToHGlobalAnsi("");
                 IntPtr configFilePtr = Marshal.StringToHGlobalAnsi("");
 
@@ -172,9 +182,9 @@ namespace Best1Net
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
-                    int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, generateMapFile,
+                    int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, 0, userNamePtr, generateMapFile,
                             0, passwordPtr, configFilePtr, 0) :
-                        __best1Init32(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, generateMapFile,
+                        __best1Init32(inputFilePtr, outputFilePtr, 0, userNamePtr, generateMapFile,
                             0, passwordPtr, configFilePtr, 0);
                     //Console.WriteLine("Best1 init result: {0}", initResult);
 
@@ -243,6 +253,11 @@ namespace Best1Net
                     if (mapFilePtr != IntPtr.Zero)
                     {
                         Marshal.FreeHGlobal(mapFilePtr);
+                    }
+
+                    if (userNamePtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(userNamePtr);
                     }
 
                     if (passwordPtr != IntPtr.Zero)
