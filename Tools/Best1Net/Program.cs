@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommandLine;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -62,19 +63,40 @@ namespace Best1Net
         [DllImport(Best64DllName, EntryPoint = "__best1Asm")]
         public static extern int __best1Asm64(IntPtr mapFile, IntPtr infoFile);
 
+        public class Options
+        {
+            [Option('i', "inputfile", Required = true, HelpText = "Input file to compile.")]
+            public string InputFile { get; set; }
+
+            [Option('m', "mapfile", Required = false, HelpText = "Set to create map file.")]
+            public bool CreateMapFile { get; set; }
+        }
+
         static int Main(string[] args)
         {
             bool is64Bit = Environment.Is64BitProcess;
             IntPtr libHandle = IntPtr.Zero;
             try
             {
-                if (args.Length < 1)
+                string inputFile = null;
+                int generateMapFile = 0;
+                bool hasErrors = false;
+                Parser.Default.ParseArguments<Options>(args)
+                    .WithParsed<Options>(o =>
+                    {
+                        inputFile = o.InputFile;
+                        generateMapFile = o.CreateMapFile ? 1: 0;
+                    })
+                    .WithNotParsed(e =>
+                    {
+                        hasErrors = true;
+                    });
+
+                if (hasErrors)
                 {
-                    Console.WriteLine("Usage: Best1Net <inputFile>");
                     return 1;
                 }
 
-                string inputFile = args[0];
                 if (!File.Exists(inputFile))
                 {
                     Console.WriteLine("Input file not found");
@@ -90,6 +112,12 @@ namespace Best1Net
 
                 string outputFile = Path.ChangeExtension(inputFile, outExt);
                 string mapFile = Path.ChangeExtension(inputFile, ".map");
+
+                Console.WriteLine("Output file: {0}", outputFile);
+                if (generateMapFile != 0)
+                {
+                    Console.WriteLine("Map file: {0}", mapFile);
+                }
 
                 string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
                 if (string.IsNullOrEmpty(ediabasPath))
@@ -119,6 +147,7 @@ namespace Best1Net
                     return 1;
                 }
 
+                //Console.ReadKey();
                 bool best32Started = false;
                 int bestVerSize = 16;
                 IntPtr bestVerPtr = Marshal.AllocHGlobal(bestVerSize);
@@ -143,8 +172,10 @@ namespace Best1Net
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
-                    int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 1, 0, passwordPtr, configFilePtr, 0) :
-                        __best1Init32(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 1, 0, passwordPtr, configFilePtr, 0);
+                    int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, generateMapFile,
+                            0, passwordPtr, configFilePtr, 0) :
+                        __best1Init32(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, generateMapFile,
+                            0, passwordPtr, configFilePtr, 0);
                     //Console.WriteLine("Best1 init result: {0}", initResult);
 
                     if (initResult != 0)
