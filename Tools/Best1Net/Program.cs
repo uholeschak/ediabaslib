@@ -251,8 +251,7 @@ namespace Best1Net
                     if (IntPtr.Zero != bestVersionPtr)
                     {
                         Int32 asmVer = Marshal.ReadInt32(bestVersionPtr);
-                        int verNum = (asmVer >> 8) & 0xFFFF;
-                        Console.WriteLine("Asm version: {0}", verNum);
+                        Console.WriteLine("BIP version: {0}.{1}.{2}", (asmVer >> 16) & 0xFF, (asmVer >> 8) & 0xFF, asmVer & 0xFF);
                     }
                 }
                 finally
