@@ -5,8 +5,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
-    <PlatformTarget>x86</PlatformTarget>
-    <Platforms>AnyCPU;x86</Platforms>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
 </Project>
