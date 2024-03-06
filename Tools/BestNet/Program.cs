@@ -11,13 +11,22 @@ namespace Best1Net
         public const string Best64DllName = "Best64.dll";
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int ProgressDelegate(int value);
+        public delegate int Best1ProgressDelegate(int value);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int ErrorTextDelegate([MarshalAs(UnmanagedType.LPStr)] string text);
+        public delegate int Best1ErrorTextDelegate([MarshalAs(UnmanagedType.LPStr)] string text);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate int ErrorValueDelegate(uint value, [MarshalAs(UnmanagedType.LPStr)] string text);
+        public delegate int Best1ErrorValueDelegate(uint value, [MarshalAs(UnmanagedType.LPStr)] string text);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int Best2ProgressDelegate(int value1, int value2, int value3);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int Best2ErrorTextDelegate([MarshalAs(UnmanagedType.LPStr)] string text);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate int Best2ErrorValueDelegate(uint value, [MarshalAs(UnmanagedType.LPStr)] string text);
 
         [DllImport(Best32DllName, EntryPoint = "__best32Startup")]
         public static extern int __best32Startup32(int version, IntPtr infoText, int printInfo, IntPtr verBuffer, int verSize);
@@ -46,10 +55,10 @@ namespace Best1Net
             IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr configFile, int val5);
 
         [DllImport(Best32DllName, EntryPoint = "__best1Config")]
-        public static extern ErrorValueDelegate __best1Config32(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
+        public static extern Best1ErrorValueDelegate __best1Config32(Best1ProgressDelegate progressCallback, Best1ErrorTextDelegate errorTextCallback, Best1ErrorValueDelegate errorValueCallback);
 
         [DllImport(Best64DllName, EntryPoint = "__best1Config")]
-        public static extern ErrorValueDelegate __best1Config64(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
+        public static extern Best1ErrorValueDelegate __best1Config64(Best1ProgressDelegate progressCallback, Best1ErrorTextDelegate errorTextCallback, Best1ErrorValueDelegate errorValueCallback);
 
         [DllImport(Best32DllName, EntryPoint = "__best1Options")]
         public static extern int __best1Options32(int mapOptions);
@@ -68,6 +77,12 @@ namespace Best1Net
 
         [DllImport(Best64DllName, EntryPoint = "__best2Init")]
         public static extern int __best2Init64();
+
+        [DllImport(Best32DllName, EntryPoint = "__best2Config")]
+        public static extern int __best2Config32(Best2ProgressDelegate progressCallback, Best2ErrorTextDelegate errorTextCallback, Best2ErrorValueDelegate errorValueCallback);
+
+        [DllImport(Best64DllName, EntryPoint = "__best2Config")]
+        public static extern int __best2Config64(Best2ProgressDelegate progressCallback, Best2ErrorTextDelegate errorTextCallback, Best2ErrorValueDelegate errorValueCallback);
 
         public class Options
         {
@@ -247,6 +262,14 @@ namespace Best1Net
                             Console.WriteLine("Best2 init failed");
                             return 1;
                         }
+
+                        int configResult = is64Bit ? __best2Config64(Best2ProgressEvent, Best2ErrorTextEvent, Best2ErrorValueEvent) :
+                            __best2Config32(Best2ProgressEvent, Best2ErrorTextEvent, Best2ErrorValueEvent);
+                        if (configResult != 0)
+                        {
+                            Console.WriteLine("Best2 config failed");
+                            return 1;
+                        }
                     }
                     else
                     {
@@ -262,7 +285,7 @@ namespace Best1Net
                             return 1;
                         }
 
-                        ErrorValueDelegate configResult = is64Bit ? __best1Config64(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent) :
+                        Best1ErrorValueDelegate configResult = is64Bit ? __best1Config64(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent) :
                             __best1Config32(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent);
                         if (configResult == null)
                         {
@@ -378,6 +401,24 @@ namespace Best1Net
         }
 
         private static int Best1ErrorValueEvent(uint value, string text)
+        {
+            Console.WriteLine("Error value: {0}: {1}", value, text);
+            return 0;
+        }
+
+        private static int Best2ProgressEvent(int value1, int value2, int value3)
+        {
+            Console.Write("Progress: {0}, {1}, {2}", value1, value2, value3);
+            return 0;
+        }
+
+        private static int Best2ErrorTextEvent(string text)
+        {
+            Console.WriteLine("Error: {0}", text);
+            return 0;
+        }
+
+        private static int Best2ErrorValueEvent(uint value, string text)
         {
             Console.WriteLine("Error value: {0}: {1}", value, text);
             return 0;
