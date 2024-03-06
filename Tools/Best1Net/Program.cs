@@ -6,7 +6,8 @@ namespace Best1Net
 {
     internal class Program
     {
-        public const string BestDllName = "Best32.dll";
+        public const string Best32DllName = "Best32.dll";
+        public const string Best64DllName = "Best64.dll";
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int ProgressDelegate(int value);
@@ -17,33 +18,56 @@ namespace Best1Net
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int ErrorValueDelegate(uint value, [MarshalAs(UnmanagedType.LPStr)] string text);
 
-        [DllImport(BestDllName, EntryPoint = "__best32Startup")]
+        [DllImport(Best32DllName, EntryPoint = "__best32Startup")]
         public static extern int __best32Startup32(int version, IntPtr infoText, int printInfo, IntPtr verBuffer, int verSize);
 
-        [DllImport(BestDllName, EntryPoint = "__best32Shutdown")]
+        [DllImport(Best64DllName, EntryPoint = "__best32Startup")]
+        public static extern int __best32Startup64(int version, IntPtr infoText, int printInfo, IntPtr verBuffer, int verSize);
+
+        [DllImport(Best32DllName, EntryPoint = "__best32Shutdown")]
         public static extern int __best32Shutdown32();
 
-        [DllImport(BestDllName, EntryPoint = "__best1AsmVersion")]
+        [DllImport(Best64DllName, EntryPoint = "__best32Shutdown")]
+        public static extern int __best32Shutdown64();
+
+        [DllImport(Best32DllName, EntryPoint = "__best1AsmVersion")]
         public static extern IntPtr __best1AsmVersion32();
 
-        [DllImport(BestDllName, EntryPoint = "__best1Init")]
+        [DllImport(Best64DllName, EntryPoint = "__best1AsmVersion")]
+        public static extern IntPtr __best1AsmVersion64();
+
+        [DllImport(Best32DllName, EntryPoint = "__best1Init")]
         public static extern int __best1Init32(IntPtr inputFile, IntPtr outputFile, int val1,
             IntPtr revUser, int generateMapfile, int val3, IntPtr password, IntPtr configFile, int val5);
 
-        [DllImport(BestDllName, EntryPoint = "__best1Config")]
+        [DllImport(Best64DllName, EntryPoint = "__best1Init")]
+        public static extern int __best1Init64(IntPtr inputFile, IntPtr outputFile, int val1,
+            IntPtr revUser, int generateMapfile, int val3, IntPtr password, IntPtr configFile, int val5);
+
+        [DllImport(Best32DllName, EntryPoint = "__best1Config")]
         public static extern ErrorValueDelegate __best1Config32(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
 
-        [DllImport(BestDllName, EntryPoint = "__best1Options")]
+        [DllImport(Best64DllName, EntryPoint = "__best1Config")]
+        public static extern ErrorValueDelegate __best1Config64(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
+
+        [DllImport(Best32DllName, EntryPoint = "__best1Options")]
         public static extern int __best1Options32(int mapOptions);
 
-        [DllImport(BestDllName, EntryPoint = "__best1Asm")]
+        [DllImport(Best64DllName, EntryPoint = "__best1Options")]
+        public static extern int __best1Options64(int mapOptions);
+
+        [DllImport(Best32DllName, EntryPoint = "__best1Asm")]
         public static extern int __best1Asm32(IntPtr mapFile, IntPtr infoFile);
+
+        [DllImport(Best64DllName, EntryPoint = "__best1Asm")]
+        public static extern int __best1Asm64(IntPtr mapFile, IntPtr infoFile);
 
         static int Main(string[] args)
         {
             IntPtr libHandle = IntPtr.Zero;
             try
             {
+                bool is64Bit = Environment.Is64BitProcess;
                 if (args.Length < 1)
                 {
                     Console.WriteLine("Usage: Best1Net <inputFile>");
@@ -81,16 +105,17 @@ namespace Best1Net
                     return 1;
                 }
 
-                string bestDllPath = Path.Combine(ediabasBinPath, BestDllName);
+                string bestDllName = is64Bit ? Best64DllName : Best32DllName;
+                string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
                 if (!File.Exists(bestDllPath))
                 {
-                    Console.WriteLine("{0} not found", BestDllName);
+                    Console.WriteLine("{0} not found", bestDllName);
                     return 1;
                 }
 
                 if (!NativeLibrary.TryLoad(bestDllPath, out libHandle))
                 {
-                    Console.WriteLine("{0} not loaded", BestDllName);
+                    Console.WriteLine("{0} not loaded", bestDllName);
                     return 1;
                 }
 
