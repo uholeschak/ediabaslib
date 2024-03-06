@@ -23,21 +23,21 @@ namespace Best1Net
         [DllImport(BestDllName, EntryPoint = "__best32Shutdown")]
         public static extern int __best32Shutdown32();
 
-        [DllImport(BestDllName)]
-        public static extern IntPtr __best1AsmVersion();
+        [DllImport(BestDllName, EntryPoint = "__best1AsmVersion")]
+        public static extern IntPtr __best1AsmVersion32();
 
-        [DllImport(BestDllName)]
-        public static extern int __best1Init(IntPtr inputFile, IntPtr outputFile, int val1,
+        [DllImport(BestDllName, EntryPoint = "__best1Init")]
+        public static extern int __best1Init32(IntPtr inputFile, IntPtr outputFile, int val1,
             IntPtr revUser, int generateMapfile, int val3, IntPtr password, IntPtr configFile, int val5);
 
-        [DllImport(BestDllName)]
-        public static extern ErrorValueDelegate __best1Config(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
+        [DllImport(BestDllName, EntryPoint = "__best1Config")]
+        public static extern ErrorValueDelegate __best1Config32(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
 
-        [DllImport(BestDllName)]
-        public static extern int __best1Options(int mapOptions);
+        [DllImport(BestDllName, EntryPoint = "__best1Options")]
+        public static extern int __best1Options32(int mapOptions);
 
-        [DllImport(BestDllName)]
-        public static extern int __best1Asm([MarshalAs(UnmanagedType.LPStr)] string mapFile, [MarshalAs(UnmanagedType.LPStr)] string infoFile);
+        [DllImport(BestDllName, EntryPoint = "__best1Asm")]
+        public static extern int __best1Asm32([MarshalAs(UnmanagedType.LPStr)] string mapFile, [MarshalAs(UnmanagedType.LPStr)] string infoFile);
 
         static int Main(string[] args)
         {
@@ -115,7 +115,7 @@ namespace Best1Net
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
-                    int initResult = __best1Init(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 0, 0, passwordPtr, configFilePtr, 0);
+                    int initResult = __best1Init32(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 0, 0, passwordPtr, configFilePtr, 0);
                     Console.WriteLine("Best1 init result: {0}", initResult);
 
                     if (initResult != 0)
@@ -124,10 +124,10 @@ namespace Best1Net
                         return 1;
                     }
 
-                    ErrorValueDelegate configResult = __best1Config(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
-                    int optionsResult = __best1Options(0);
+                    ErrorValueDelegate configResult = __best1Config32(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
+                    int optionsResult = __best1Options32(0);
 
-                    int asmResult = __best1Asm(null, null);
+                    int asmResult = __best1Asm32(null, null);
                     Console.WriteLine("Best1 asm result: {0}", asmResult);
                     if (asmResult != 0)
                     {
@@ -135,7 +135,7 @@ namespace Best1Net
                         return 1;
                     }
 
-                    IntPtr bestVersionPtr = __best1AsmVersion();
+                    IntPtr bestVersionPtr = __best1AsmVersion32();
                     if (IntPtr.Zero != bestVersionPtr)
                     {
                         byte[] asmVerArray = new byte[4];
