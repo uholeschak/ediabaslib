@@ -38,12 +38,12 @@ namespace Best1Net
         public static extern IntPtr __best1AsmVersion64();
 
         [DllImport(Best32DllName, EntryPoint = "__best1Init")]
-        public static extern int __best1Init32(IntPtr inputFile, IntPtr outputFile, int val1,
-            IntPtr revUser, int generateMapfile, int fileType, IntPtr password, IntPtr configFile, int val5);
+        public static extern int __best1Init32(IntPtr inputFile, IntPtr outputFile, int revision,
+            IntPtr userName, int generateMapfile, int fileType, IntPtr password, IntPtr configFile, int val5);
 
         [DllImport(Best64DllName, EntryPoint = "__best1Init")]
-        public static extern int __best1Init64(IntPtr inputFile, IntPtr outputFile, int val1,
-            IntPtr revUser, int generateMapfile, int fileType, IntPtr password, IntPtr configFile, int val5);
+        public static extern int __best1Init64(IntPtr inputFile, IntPtr outputFile, int revision,
+            IntPtr userName, int generateMapfile, int fileType, IntPtr password, IntPtr configFile, int val5);
 
         [DllImport(Best32DllName, EntryPoint = "__best1Config")]
         public static extern ErrorValueDelegate __best1Config32(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
@@ -71,6 +71,9 @@ namespace Best1Net
             [Option('o', "outputfile", Required = false, HelpText = "Optional output file name.")]
             public string OutputFile { get; set; }
 
+            [Option('r', "revision", Required = false, HelpText = "Specify revision <X.Y>.")]
+            public string RevisionString { get; set; }
+
             [Option('u', "userName", Required = false, HelpText = "Specify user name.")]
             public string UserName { get; set; }
 
@@ -86,6 +89,7 @@ namespace Best1Net
             {
                 string inputFile = null;
                 string outputFile = null;
+                string revisionString = null;
                 string userName = null;
                 int generateMapFile = 0;
                 bool hasErrors = false;
@@ -94,6 +98,7 @@ namespace Best1Net
                     {
                         inputFile = o.InputFile;
                         outputFile = o.OutputFile;
+                        revisionString = o.RevisionString;
                         userName = o.UserName;
                         generateMapFile = o.CreateMapFile ? 1: 0;
                     })
@@ -134,6 +139,21 @@ namespace Best1Net
                 {
                     Console.WriteLine("Map file: {0}", mapFile);
                 }
+
+                int revision = 0;
+                if (!string.IsNullOrEmpty(revisionString))
+                {
+                    string[] revParts = revisionString.Split('.');
+                    if (revParts.Length == 2)
+                    {
+                        if (int.TryParse(revParts[0], out int major) && int.TryParse(revParts[1], out int minor))
+                        {
+                            revision = ((major & 0xFFFF) << 16) | (minor & 0xFFFF);
+                        }
+                    }
+                }
+
+                Console.WriteLine("Revision: {0}.{1}", (revision >> 16) & 0xFFFF, revision & 0xFFFF);
 
                 string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
                 if (string.IsNullOrEmpty(ediabasPath))
@@ -193,9 +213,9 @@ namespace Best1Net
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
-                    int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, 0, userNamePtr, generateMapFile,
+                    int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
                             fileType, passwordPtr, configFilePtr, 0) :
-                        __best1Init32(inputFilePtr, outputFilePtr, 0, userNamePtr, generateMapFile,
+                        __best1Init32(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
                             fileType, passwordPtr, configFilePtr, 0);
                     //Console.WriteLine("Best1 init result: {0}", initResult);
 
