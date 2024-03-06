@@ -37,7 +37,7 @@ namespace Best1Net
         public static extern int __best1Options32(int mapOptions);
 
         [DllImport(BestDllName, EntryPoint = "__best1Asm")]
-        public static extern int __best1Asm32([MarshalAs(UnmanagedType.LPStr)] string mapFile, [MarshalAs(UnmanagedType.LPStr)] string infoFile);
+        public static extern int __best1Asm32(IntPtr mapFile, IntPtr infoFile);
 
         static int Main(string[] args)
         {
@@ -65,6 +65,7 @@ namespace Best1Net
                 }
 
                 string outputFile = Path.ChangeExtension(inputFile, outExt);
+                string mapFile = Path.ChangeExtension(inputFile, ".map");
 
                 string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
                 if (string.IsNullOrEmpty(ediabasPath))
@@ -98,6 +99,7 @@ namespace Best1Net
                 IntPtr bestVerPtr = Marshal.AllocHGlobal(bestVerSize);
                 IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
+                IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
                 IntPtr passwordPtr = Marshal.StringToHGlobalAnsi("");
                 IntPtr configFilePtr = Marshal.StringToHGlobalAnsi("");
 
@@ -134,7 +136,7 @@ namespace Best1Net
                     int optionsResult = __best1Options32(0);
                     // the option result is the specified value
 
-                    int asmResult = __best1Asm32(null, null);
+                    int asmResult = __best1Asm32(mapFilePtr, IntPtr.Zero);
                     //Console.WriteLine("Best1 asm result: {0}", asmResult);
                     if (asmResult != 0)
                     {
@@ -169,6 +171,11 @@ namespace Best1Net
                     if (outputFilePtr != IntPtr.Zero)
                     {
                         Marshal.FreeHGlobal(outputFilePtr);
+                    }
+
+                    if (mapFilePtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(mapFilePtr);
                     }
 
                     if (passwordPtr != IntPtr.Zero)
