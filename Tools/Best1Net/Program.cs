@@ -39,11 +39,11 @@ namespace Best1Net
 
         [DllImport(Best32DllName, EntryPoint = "__best1Init")]
         public static extern int __best1Init32(IntPtr inputFile, IntPtr outputFile, int revision,
-            IntPtr userName, int generateMapfile, int fileType, IntPtr password, IntPtr configFile, int val5);
+            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr configFile, int val5);
 
         [DllImport(Best64DllName, EntryPoint = "__best1Init")]
         public static extern int __best1Init64(IntPtr inputFile, IntPtr outputFile, int revision,
-            IntPtr userName, int generateMapfile, int fileType, IntPtr password, IntPtr configFile, int val5);
+            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr configFile, int val5);
 
         [DllImport(Best32DllName, EntryPoint = "__best1Config")]
         public static extern ErrorValueDelegate __best1Config32(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
@@ -195,7 +195,9 @@ namespace Best1Net
                 {
                     userNamePtr = Marshal.StringToHGlobalAnsi(userName);
                 }
-                IntPtr passwordPtr = Marshal.StringToHGlobalAnsi("");
+
+                string dateStr = DateTime.Now.ToString("ddd MMM dd HH:mm:ss yyy");
+                IntPtr datePtr = Marshal.StringToHGlobalAnsi(dateStr);
                 IntPtr configFilePtr = Marshal.StringToHGlobalAnsi("");
 
                 try
@@ -214,9 +216,9 @@ namespace Best1Net
                     Console.WriteLine("Best version: {0}", bestVer);
 
                     int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, passwordPtr, configFilePtr, 0) :
+                            fileType, datePtr, configFilePtr, 0) :
                         __best1Init32(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, passwordPtr, configFilePtr, 0);
+                            fileType, datePtr, configFilePtr, 0);
                     //Console.WriteLine("Best1 init result: {0}", initResult);
 
                     if (initResult != 0)
@@ -291,9 +293,9 @@ namespace Best1Net
                         Marshal.FreeHGlobal(userNamePtr);
                     }
 
-                    if (passwordPtr != IntPtr.Zero)
+                    if (datePtr != IntPtr.Zero)
                     {
-                        Marshal.FreeHGlobal(passwordPtr);
+                        Marshal.FreeHGlobal(datePtr);
                     }
 
                     if (configFilePtr != IntPtr.Zero)
