@@ -262,8 +262,8 @@ namespace Best1Net
                             return 1;
                         }
 
-                        ErrorValueDelegate configResult = is64Bit ? __best1Config64(ProgressEvent, ErrorTextEvent, ErrorValueEvent) :
-                            __best1Config32(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
+                        ErrorValueDelegate configResult = is64Bit ? __best1Config64(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent) :
+                            __best1Config32(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent);
                         if (configResult == null)
                         {
                             Console.WriteLine("Best1 config failed");
@@ -356,7 +356,7 @@ namespace Best1Net
             return 0;
         }
 
-        private static int ProgressEvent(int value)
+        private static int Best1ProgressEvent(int value)
         {
             if (value >= 0)
             {
@@ -371,13 +371,13 @@ namespace Best1Net
             return 0;
         }
 
-        private static int ErrorTextEvent(string text)
+        private static int Best1ErrorTextEvent(string text)
         {
             Console.WriteLine("Error: {0}", text);
             return 0;
         }
 
-        private static int ErrorValueEvent(uint value, string text)
+        private static int Best1ErrorValueEvent(uint value, string text)
         {
             Console.WriteLine("Error value: {0}: {1}", value, text);
             return 0;
