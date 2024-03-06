@@ -39,11 +39,11 @@ namespace Best1Net
 
         [DllImport(Best32DllName, EntryPoint = "__best1Init")]
         public static extern int __best1Init32(IntPtr inputFile, IntPtr outputFile, int val1,
-            IntPtr revUser, int generateMapfile, int val3, IntPtr password, IntPtr configFile, int val5);
+            IntPtr revUser, int generateMapfile, int fileType, IntPtr password, IntPtr configFile, int val5);
 
         [DllImport(Best64DllName, EntryPoint = "__best1Init")]
         public static extern int __best1Init64(IntPtr inputFile, IntPtr outputFile, int val1,
-            IntPtr revUser, int generateMapfile, int val3, IntPtr password, IntPtr configFile, int val5);
+            IntPtr revUser, int generateMapfile, int fileType, IntPtr password, IntPtr configFile, int val5);
 
         [DllImport(Best32DllName, EntryPoint = "__best1Config")]
         public static extern ErrorValueDelegate __best1Config32(ProgressDelegate progressCallback, ErrorTextDelegate errorTextCallback, ErrorValueDelegate errorValueCallback);
@@ -68,6 +68,9 @@ namespace Best1Net
             [Option('i', "inputfile", Required = true, HelpText = "Input file to compile.")]
             public string InputFile { get; set; }
 
+            [Option('o', "outputfile", Required = false, HelpText = "Optional output file name.")]
+            public string OutputFile { get; set; }
+
             [Option('u', "userName", Required = false, HelpText = "Specify user name.")]
             public string UserName { get; set; }
 
@@ -82,6 +85,7 @@ namespace Best1Net
             try
             {
                 string inputFile = null;
+                string outputFile = null;
                 string userName = null;
                 int generateMapFile = 0;
                 bool hasErrors = false;
@@ -89,6 +93,7 @@ namespace Best1Net
                     .WithParsed<Options>(o =>
                     {
                         inputFile = o.InputFile;
+                        outputFile = o.OutputFile;
                         userName = o.UserName;
                         generateMapFile = o.CreateMapFile ? 1: 0;
                     })
@@ -109,14 +114,20 @@ namespace Best1Net
                 }
 
                 string fileExt = Path.GetExtension(inputFile);
+                int fileType = 1;
                 string outExt = ".prg";
                 if (string.Compare(fileExt, ".b1g", StringComparison.OrdinalIgnoreCase) == 0)
                 {
+                    fileType = 0;
                     outExt = ".grp";
                 }
 
-                string outputFile = Path.ChangeExtension(inputFile, outExt);
-                string mapFile = Path.ChangeExtension(inputFile, ".map");
+                if (string.IsNullOrEmpty(outputFile))
+                {
+                    outputFile = Path.ChangeExtension(inputFile, outExt);
+                }
+
+                string mapFile = Path.ChangeExtension(outputFile, ".map");
 
                 Console.WriteLine("Output file: {0}", outputFile);
                 if (generateMapFile != 0)
@@ -183,9 +194,9 @@ namespace Best1Net
                     Console.WriteLine("Best version: {0}", bestVer);
 
                     int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, 0, userNamePtr, generateMapFile,
-                            0, passwordPtr, configFilePtr, 0) :
+                            fileType, passwordPtr, configFilePtr, 0) :
                         __best1Init32(inputFilePtr, outputFilePtr, 0, userNamePtr, generateMapFile,
-                            0, passwordPtr, configFilePtr, 0);
+                            fileType, passwordPtr, configFilePtr, 0);
                     //Console.WriteLine("Best1 init result: {0}", initResult);
 
                     if (initResult != 0)
