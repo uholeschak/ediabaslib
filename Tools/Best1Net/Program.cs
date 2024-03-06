@@ -117,7 +117,7 @@ namespace Best1Net
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
-                    int initResult = __best1Init32(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 0, 0, passwordPtr, configFilePtr, 0);
+                    int initResult = __best1Init32(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 1, 0, passwordPtr, configFilePtr, 0);
                     //Console.WriteLine("Best1 init result: {0}", initResult);
 
                     if (initResult != 0)
