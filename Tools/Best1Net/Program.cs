@@ -17,11 +17,11 @@ namespace Best1Net
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int ErrorValueDelegate(uint value, [MarshalAs(UnmanagedType.LPStr)] string text);
 
-        [DllImport(BestDllName)]
-        public static extern int __best32Startup(int version, IntPtr infoText, int printInfo, IntPtr verBuffer, int verSize);
+        [DllImport(BestDllName, EntryPoint = "__best32Startup")]
+        public static extern int __best32Startup32(int version, IntPtr infoText, int printInfo, IntPtr verBuffer, int verSize);
 
-        [DllImport(BestDllName)]
-        public static extern int __best32Shutdown();
+        [DllImport(BestDllName, EntryPoint = "__best32Shutdown")]
+        public static extern int __best32Shutdown32();
 
         [DllImport(BestDllName)]
         public static extern IntPtr __best1AsmVersion();
@@ -103,7 +103,7 @@ namespace Best1Net
 
                 try
                 {
-                    int startResult = __best32Startup(0x20000, IntPtr.Zero, 0, bestVerPtr, bestVerSize);
+                    int startResult = __best32Startup32(0x20000, IntPtr.Zero, 0, bestVerPtr, bestVerSize);
                     Console.WriteLine("Best32 start result: {0}", startResult);
                     if (startResult != 1)
                     {
@@ -148,7 +148,7 @@ namespace Best1Net
                 {
                     if (best32Started)
                     {
-                        __best32Shutdown();
+                        __best32Shutdown32();
                     }
 
                     if (bestVerPtr != IntPtr.Zero)
