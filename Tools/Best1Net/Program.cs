@@ -104,7 +104,7 @@ namespace Best1Net
                 try
                 {
                     int startResult = __best32Startup32(0x20000, IntPtr.Zero, 0, bestVerPtr, bestVerSize);
-                    Console.WriteLine("Best32 start result: {0}", startResult);
+                    //Console.WriteLine("Best32 start result: {0}", startResult);
                     if (startResult != 1)
                     {
                         Console.WriteLine("Best32 startup failed");
@@ -116,7 +116,7 @@ namespace Best1Net
                     Console.WriteLine("Best version: {0}", bestVer);
 
                     int initResult = __best1Init32(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 0, 0, passwordPtr, configFilePtr, 0);
-                    Console.WriteLine("Best1 init result: {0}", initResult);
+                    //Console.WriteLine("Best1 init result: {0}", initResult);
 
                     if (initResult != 0)
                     {
@@ -125,10 +125,17 @@ namespace Best1Net
                     }
 
                     ErrorValueDelegate configResult = __best1Config32(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
+                    if (configResult == null)
+                    {
+                        Console.WriteLine("Best1 config failed");
+                        return 1;
+                    }
+
                     int optionsResult = __best1Options32(0);
+                    // the option result is the specified value
 
                     int asmResult = __best1Asm32(null, null);
-                    Console.WriteLine("Best1 asm result: {0}", asmResult);
+                    //Console.WriteLine("Best1 asm result: {0}", asmResult);
                     if (asmResult != 0)
                     {
                         Console.WriteLine("Best1 asm failed");
@@ -138,10 +145,8 @@ namespace Best1Net
                     IntPtr bestVersionPtr = __best1AsmVersion32();
                     if (IntPtr.Zero != bestVersionPtr)
                     {
-                        byte[] asmVerArray = new byte[4];
-                        Marshal.Copy(bestVersionPtr, asmVerArray, 0, asmVerArray.Length);
-
-                        Console.WriteLine("Asm version: {0}", BitConverter.ToString(asmVerArray));
+                        Int32 asmVer = Marshal.ReadInt32(bestVersionPtr);
+                        Console.WriteLine("Asm version: {0:X08}", asmVer);
                     }
                 }
                 finally
