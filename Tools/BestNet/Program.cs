@@ -63,6 +63,12 @@ namespace Best1Net
         [DllImport(Best64DllName, EntryPoint = "__best1Asm")]
         public static extern int __best1Asm64(IntPtr mapFile, IntPtr infoFile);
 
+        [DllImport(Best32DllName, EntryPoint = "__best2Init")]
+        public static extern int __best2Init32();
+
+        [DllImport(Best64DllName, EntryPoint = "__best2Init")]
+        public static extern int __best2Init64();
+
         public class Options
         {
             [Option('i', "inputfile", Required = true, HelpText = "Input file to compile.")]
@@ -118,10 +124,55 @@ namespace Best1Net
                     return 1;
                 }
 
+                string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
+                if (string.IsNullOrEmpty(ediabasPath))
+                {
+                    Console.WriteLine("EDIABAS path not found");
+                    return 1;
+                }
+
+                string ediabasBinPath = Path.Combine(ediabasPath, "bin");
+                if (!Directory.Exists(ediabasBinPath))
+                {
+                    Console.WriteLine("EDIABAS bin path not found");
+                    return 1;
+                }
+
                 string fileExt = Path.GetExtension(inputFile);
+                bool best2Api;
+
+                if (fileExt.StartsWith(".b1", StringComparison.OrdinalIgnoreCase))
+                {
+                    best2Api = false;
+                }
+                else if (fileExt.StartsWith(".b2", StringComparison.OrdinalIgnoreCase))
+                {
+                    best2Api = true;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input file extension");
+                    return 1;
+                }
+
+                string bestDllName = is64Bit ? Best64DllName : Best32DllName;
+                string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
+                if (!File.Exists(bestDllPath))
+                {
+                    Console.WriteLine("{0} not found", bestDllName);
+                    return 1;
+                }
+
+                if (!NativeLibrary.TryLoad(bestDllPath, out libHandle))
+                {
+                    Console.WriteLine("{0} not loaded", bestDllName);
+                    return 1;
+                }
+
                 int fileType = 1;
                 string outExt = ".prg";
-                if (string.Compare(fileExt, ".b1g", StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(fileExt, ".b1g", StringComparison.OrdinalIgnoreCase) == 0 ||
+                    string.Compare(fileExt, ".b2g", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     fileType = 0;
                     outExt = ".grp";
@@ -155,34 +206,6 @@ namespace Best1Net
 
                 Console.WriteLine("Revision: {0}.{1}", (revision >> 16) & 0xFFFF, revision & 0xFFFF);
 
-                string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
-                if (string.IsNullOrEmpty(ediabasPath))
-                {
-                    Console.WriteLine("EDIABAS path not found");
-                    return 1;
-                }
-
-                string ediabasBinPath = Path.Combine(ediabasPath, "bin");
-                if (!Directory.Exists(ediabasBinPath))
-                {
-                    Console.WriteLine("EDIABAS bin path not found");
-                    return 1;
-                }
-
-                string bestDllName = is64Bit ? Best64DllName : Best32DllName;
-                string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
-                if (!File.Exists(bestDllPath))
-                {
-                    Console.WriteLine("{0} not found", bestDllName);
-                    return 1;
-                }
-
-                if (!NativeLibrary.TryLoad(bestDllPath, out libHandle))
-                {
-                    Console.WriteLine("{0} not loaded", bestDllName);
-                    return 1;
-                }
-
                 //Console.ReadKey();
                 bool best32Started = false;
                 int bestVerSize = 16;
@@ -215,43 +238,56 @@ namespace Best1Net
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
-                    int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, datePtr, configFilePtr, 0) :
-                        __best1Init32(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, datePtr, configFilePtr, 0);
-                    //Console.WriteLine("Best1 init result: {0}", initResult);
-
-                    if (initResult != 0)
+                    if (best2Api)
                     {
-                        Console.WriteLine("Best1 init failed");
-                        return 1;
+                        int initResult = is64Bit ? __best2Init64() : __best2Init32();
+                        Console.WriteLine("Best2 init result: {0}", initResult);
+                        if (initResult != 0)
+                        {
+                            Console.WriteLine("Best2 init failed");
+                            return 1;
+                        }
                     }
-
-                    ErrorValueDelegate configResult = is64Bit ? __best1Config64(ProgressEvent, ErrorTextEvent, ErrorValueEvent) :
-                        __best1Config32(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
-                    if (configResult == null)
+                    else
                     {
-                        Console.WriteLine("Best1 config failed");
-                        return 1;
-                    }
+                        int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
+                                fileType, datePtr, configFilePtr, 0) :
+                            __best1Init32(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
+                                fileType, datePtr, configFilePtr, 0);
+                        //Console.WriteLine("Best1 init result: {0}", initResult);
 
-                    int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
-                    // the option result is the specified value
+                        if (initResult != 0)
+                        {
+                            Console.WriteLine("Best1 init failed");
+                            return 1;
+                        }
 
-                    int asmResult = is64Bit ? __best1Asm64(mapFilePtr, IntPtr.Zero) :
-                        __best1Asm32(mapFilePtr, IntPtr.Zero);
-                    //Console.WriteLine("Best1 asm result: {0}", asmResult);
-                    if (asmResult != 0)
-                    {
-                        Console.WriteLine("Best1 asm failed");
-                        return 1;
-                    }
+                        ErrorValueDelegate configResult = is64Bit ? __best1Config64(ProgressEvent, ErrorTextEvent, ErrorValueEvent) :
+                            __best1Config32(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
+                        if (configResult == null)
+                        {
+                            Console.WriteLine("Best1 config failed");
+                            return 1;
+                        }
 
-                    IntPtr bestVersionPtr = is64Bit ? __best1AsmVersion64() : __best1AsmVersion32();
-                    if (IntPtr.Zero != bestVersionPtr)
-                    {
-                        Int32 asmVer = Marshal.ReadInt32(bestVersionPtr);
-                        Console.WriteLine("BIP version: {0}.{1}.{2}", (asmVer >> 16) & 0xFF, (asmVer >> 8) & 0xFF, asmVer & 0xFF);
+                        int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
+                        // the option result is the specified value
+
+                        int asmResult = is64Bit ? __best1Asm64(mapFilePtr, IntPtr.Zero) :
+                            __best1Asm32(mapFilePtr, IntPtr.Zero);
+                        //Console.WriteLine("Best1 asm result: {0}", asmResult);
+                        if (asmResult != 0)
+                        {
+                            Console.WriteLine("Best1 asm failed");
+                            return 1;
+                        }
+
+                        IntPtr bestVersionPtr = is64Bit ? __best1AsmVersion64() : __best1AsmVersion32();
+                        if (IntPtr.Zero != bestVersionPtr)
+                        {
+                            Int32 asmVer = Marshal.ReadInt32(bestVersionPtr);
+                            Console.WriteLine("BIP version: {0}.{1}.{2}", (asmVer >> 16) & 0xFF, (asmVer >> 8) & 0xFF, asmVer & 0xFF);
+                        }
                     }
                 }
                 finally
