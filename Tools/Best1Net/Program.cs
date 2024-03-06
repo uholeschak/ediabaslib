@@ -64,10 +64,10 @@ namespace Best1Net
 
         static int Main(string[] args)
         {
+            bool is64Bit = Environment.Is64BitProcess;
             IntPtr libHandle = IntPtr.Zero;
             try
             {
-                bool is64Bit = Environment.Is64BitProcess;
                 if (args.Length < 1)
                 {
                     Console.WriteLine("Usage: Best1Net <inputFile>");
@@ -130,7 +130,8 @@ namespace Best1Net
 
                 try
                 {
-                    int startResult = __best32Startup32(0x20000, IntPtr.Zero, 0, bestVerPtr, bestVerSize);
+                    int startResult = is64Bit ? __best32Startup64(0x20000, IntPtr.Zero, 0, bestVerPtr, bestVerSize) :
+                        __best32Startup32(0x20000, IntPtr.Zero, 0, bestVerPtr, bestVerSize);
                     //Console.WriteLine("Best32 start result: {0}", startResult);
                     if (startResult != 1)
                     {
@@ -142,7 +143,8 @@ namespace Best1Net
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
-                    int initResult = __best1Init32(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 1, 0, passwordPtr, configFilePtr, 0);
+                    int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 1, 0, passwordPtr, configFilePtr, 0) :
+                        __best1Init32(inputFilePtr, outputFilePtr, 0, IntPtr.Zero, 1, 0, passwordPtr, configFilePtr, 0);
                     //Console.WriteLine("Best1 init result: {0}", initResult);
 
                     if (initResult != 0)
@@ -151,17 +153,19 @@ namespace Best1Net
                         return 1;
                     }
 
-                    ErrorValueDelegate configResult = __best1Config32(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
+                    ErrorValueDelegate configResult = is64Bit ? __best1Config64(ProgressEvent, ErrorTextEvent, ErrorValueEvent) :
+                        __best1Config32(ProgressEvent, ErrorTextEvent, ErrorValueEvent);
                     if (configResult == null)
                     {
                         Console.WriteLine("Best1 config failed");
                         return 1;
                     }
 
-                    int optionsResult = __best1Options32(0);
+                    int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
                     // the option result is the specified value
 
-                    int asmResult = __best1Asm32(mapFilePtr, IntPtr.Zero);
+                    int asmResult = is64Bit ? __best1Asm64(mapFilePtr, IntPtr.Zero) :
+                        __best1Asm32(mapFilePtr, IntPtr.Zero);
                     //Console.WriteLine("Best1 asm result: {0}", asmResult);
                     if (asmResult != 0)
                     {
@@ -169,7 +173,7 @@ namespace Best1Net
                         return 1;
                     }
 
-                    IntPtr bestVersionPtr = __best1AsmVersion32();
+                    IntPtr bestVersionPtr = is64Bit ? __best1AsmVersion64() : __best1AsmVersion32();
                     if (IntPtr.Zero != bestVersionPtr)
                     {
                         Int32 asmVer = Marshal.ReadInt32(bestVersionPtr);
@@ -180,7 +184,14 @@ namespace Best1Net
                 {
                     if (best32Started)
                     {
-                        __best32Shutdown32();
+                        if (is64Bit)
+                        {
+                            __best32Shutdown64();
+                        }
+                        else
+                        {
+                            __best32Shutdown32();
+                        }
                     }
 
                     if (bestVerPtr != IntPtr.Zero)
