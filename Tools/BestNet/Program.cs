@@ -93,10 +93,10 @@ namespace BestNet
         public static extern void __best2Options64(int option1, int option2, int option3);
 
         [DllImport(Best32DllName, EntryPoint = "__best2Cc")]
-        public static extern int __best2Cc32(IntPtr inputFile, IntPtr incDir, IntPtr[] libFiles, IntPtr outputFile, int value1);
+        public static extern int __best2Cc32(IntPtr inputFile, IntPtr outputFile, IntPtr[] libFiles, IntPtr incDir, int value1);
 
         [DllImport(Best64DllName, EntryPoint = "__best2Cc")]
-        public static extern int __best2Cc64(IntPtr inputFile, IntPtr incDir, IntPtr[] libFiles, IntPtr outputFile, int value1);
+        public static extern int __best2Cc64(IntPtr inputFile, IntPtr outputFile, IntPtr[] libFiles, IntPtr incDir, int value1);
 
         [DllImport(Best32DllName, EntryPoint = "__best2CcTotal")]
         public static extern int __best2CcTotal32();
@@ -369,8 +369,9 @@ namespace BestNet
                             libFilesPtr[i] = Marshal.StringToHGlobalAnsi(libFiles[i]);
                         }
 
-                        int ccResult = is64Bit ? __best2Cc64(inputFilePtr, incDirPtr, libFilesPtr, outputFilePtr, 0) :
-                            __best2Cc32(inputFilePtr, incDirPtr, libFilesPtr, outputFilePtr, 0);
+                        //Console.ReadKey();
+                        int ccResult = is64Bit ? __best2Cc64(inputFilePtr, outputFilePtr, libFilesPtr, incDirPtr, 0) :
+                            __best2Cc32(inputFilePtr, outputFilePtr, libFilesPtr, incDirPtr, 0);
                         Console.WriteLine("Best2 CC result: {0}", ccResult);
 
                         int ccTotal = is64Bit ? __best2CcTotal64() : __best2CcTotal32();
