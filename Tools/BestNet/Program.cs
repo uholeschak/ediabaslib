@@ -90,6 +90,12 @@ namespace Best1Net
         [DllImport(Best64DllName, EntryPoint = "__best2Options")]
         public static extern void __best2Options64(int option1, int option2, int option3);
 
+        [DllImport(Best32DllName, EntryPoint = "__best2Cc")]
+        public static extern int __best2Cc32(IntPtr inputFile, IntPtr incDir, IntPtr[] libFiles, IntPtr outputFile, int value1);
+
+        [DllImport(Best64DllName, EntryPoint = "__best2Cc")]
+        public static extern int __best2Cc64(IntPtr inputFile, IntPtr incDir, IntPtr[] libFiles, IntPtr outputFile, int value1);
+
         [DllImport(Best32DllName, EntryPoint = "__best2CcTotal")]
         public static extern int __best2CcTotal32();
 
@@ -249,9 +255,8 @@ namespace Best1Net
                 bool best32Started = false;
                 int bestVerSize = 16;
                 IntPtr bestVerPtr = Marshal.AllocHGlobal(bestVerSize);
-                int bestRevSize = 0x40;
-                IntPtr bestRevPtr = Marshal.AllocHGlobal(bestRevSize);
-                IntPtr bestRevValuePtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(uint)));
+                IntPtr bestRevPtr = IntPtr.Zero;
+                IntPtr bestRevValuePtr = IntPtr.Zero;
 
                 IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
@@ -313,6 +318,10 @@ namespace Best1Net
 
                         int asmTotal = is64Bit ? __best2AsmTotal64() : __best2AsmTotal32();
                         Console.WriteLine("Best2 ASM total: {0}", asmTotal);
+
+                        int bestRevSize = 0x40;
+                        bestRevPtr = Marshal.AllocHGlobal(bestRevSize);
+                        bestRevValuePtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(uint)));
 
                         int revValue = is64Bit ? __best2Rev64(bestRevValuePtr, bestRevPtr) : __best2Rev32(bestRevValuePtr, bestRevPtr);
                         Int32 revValueBuf = Marshal.ReadInt32(bestRevValuePtr);
