@@ -84,6 +84,12 @@ namespace Best1Net
         [DllImport(Best64DllName, EntryPoint = "__best2Config")]
         public static extern int __best2Config64(Best2ProgressDelegate progressCallback, Best2ErrorTextDelegate errorTextCallback, Best2ErrorValueDelegate errorValueCallback);
 
+        [DllImport(Best32DllName, EntryPoint = "__best2Options")]
+        public static extern void __best2Options32(int option1, int option2, int option3);
+
+        [DllImport(Best64DllName, EntryPoint = "__best2Options")]
+        public static extern void __best2Options64(int option1, int option2, int option3);
+
         public class Options
         {
             [Option('i', "inputfile", Required = true, HelpText = "Input file to compile.")]
@@ -269,6 +275,15 @@ namespace Best1Net
                         {
                             Console.WriteLine("Best2 config failed");
                             return 1;
+                        }
+
+                        if (is64Bit)
+                        {
+                            __best2Options64(0, 0, 0);
+                        }
+                        else
+                        {
+                            __best2Options32(0, 0, 0);
                         }
                     }
                     else
