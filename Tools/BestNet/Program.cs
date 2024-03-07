@@ -1,9 +1,11 @@
 ﻿using CommandLine;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace Best1Net
+namespace BestNet
 {
     internal class Program
     {
@@ -130,6 +132,9 @@ namespace Best1Net
 
             [Option('m', "mapfile", Required = false, HelpText = "Set to create map file.")]
             public bool CreateMapFile { get; set; }
+
+            [Option('l', "libfile", Required = false, HelpText = "Specify lib file name.")]
+            public IEnumerable<string> LibFiles { get; set; }
         }
 
         static int Main(string[] args)
@@ -143,6 +148,7 @@ namespace Best1Net
                 string revisionString = null;
                 string userName = null;
                 int generateMapFile = 0;
+                List<string> libFiles = null;
                 bool hasErrors = false;
                 Parser.Default.ParseArguments<Options>(args)
                     .WithParsed<Options>(o =>
@@ -152,6 +158,7 @@ namespace Best1Net
                         revisionString = o.RevisionString;
                         userName = o.UserName;
                         generateMapFile = o.CreateMapFile ? 1: 0;
+                        libFiles = o.LibFiles?.ToList();
                     })
                     .WithNotParsed(e =>
                     {
@@ -261,6 +268,9 @@ namespace Best1Net
                 IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
                 IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
+                IntPtr incDirPtr = IntPtr.Zero;
+                IntPtr[] libFilesPtr = Array.Empty<nint>();
+
                 IntPtr userNamePtr = IntPtr.Zero;
                 if (!string.IsNullOrEmpty(userName))
                 {
@@ -286,32 +296,82 @@ namespace Best1Net
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
+                    // BEST1 init
+                    int init1Result = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
+                            fileType, datePtr, configFilePtr, 0) :
+                        __best1Init32(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
+                            fileType, datePtr, configFilePtr, 0);
+                    //Console.WriteLine("Best1 init result: {0}", initResult);
+
+                    if (init1Result != 0)
+                    {
+                        Console.WriteLine("Best1 init failed");
+                        return 1;
+                    }
+
+                    Best1ErrorValueDelegate config1Result = is64Bit ? __best1Config64(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent) :
+                        __best1Config32(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent);
+                    if (config1Result == null)
+                    {
+                        Console.WriteLine("Best1 config failed");
+                        return 1;
+                    }
+
+                    int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
+                    // the option result is the specified value
+
+                    // BEST2 init
+                    int initResult = is64Bit ? __best2Init64() : __best2Init32();
+                    Console.WriteLine("Best2 init result: {0}", initResult);
+                    if (initResult != 0)
+                    {
+                        Console.WriteLine("Best2 init failed");
+                        return 1;
+                    }
+
+                    int configResult = is64Bit ? __best2Config64(Best2ProgressEvent, Best2ErrorTextEvent, Best2ErrorValueEvent) :
+                        __best2Config32(Best2ProgressEvent, Best2ErrorTextEvent, Best2ErrorValueEvent);
+                    if (configResult != 0)
+                    {
+                        Console.WriteLine("Best2 config failed");
+                        return 1;
+                    }
+
+                    if (is64Bit)
+                    {
+                        __best2Options64(0, 0, 0);
+                    }
+                    else
+                    {
+                        __best2Options32(0, 0, 0);
+                    }
+
                     if (best2Api)
                     {
-                        int initResult = is64Bit ? __best2Init64() : __best2Init32();
-                        Console.WriteLine("Best2 init result: {0}", initResult);
-                        if (initResult != 0)
+                        string incDir = Path.GetDirectoryName(inputFile);
+                        if (string.IsNullOrEmpty(incDir))
                         {
-                            Console.WriteLine("Best2 init failed");
+                            Console.WriteLine("Best2 unable to determine include dir");
                             return 1;
                         }
 
-                        int configResult = is64Bit ? __best2Config64(Best2ProgressEvent, Best2ErrorTextEvent, Best2ErrorValueEvent) :
-                            __best2Config32(Best2ProgressEvent, Best2ErrorTextEvent, Best2ErrorValueEvent);
-                        if (configResult != 0)
+                        incDirPtr = Marshal.StringToHGlobalAnsi(incDir);
+
+                        if (libFiles == null || libFiles.Count == 0)
                         {
-                            Console.WriteLine("Best2 config failed");
+                            Console.WriteLine("Best2 lib files missing");
                             return 1;
                         }
 
-                        if (is64Bit)
+                        libFilesPtr = new IntPtr[libFiles.Count];
+                        for (int i = 0; i < libFiles.Count; i++)
                         {
-                            __best2Options64(0, 0, 0);
+                            libFilesPtr[i] = Marshal.StringToHGlobalAnsi(libFiles[i]);
                         }
-                        else
-                        {
-                            __best2Options32(0, 0, 0);
-                        }
+
+                        int ccResult = is64Bit ? __best2Cc64(inputFilePtr, incDirPtr, libFilesPtr, outputFilePtr, 0) :
+                            __best2Cc32(inputFilePtr, incDirPtr, libFilesPtr, outputFilePtr, 0);
+                        Console.WriteLine("Best2 CC result: {0}", ccResult);
 
                         int ccTotal = is64Bit ? __best2CcTotal64() : __best2CcTotal32();
                         Console.WriteLine("Best2 CC total: {0}", ccTotal);
@@ -334,29 +394,6 @@ namespace Best1Net
                     }
                     else
                     {
-                        int initResult = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                                fileType, datePtr, configFilePtr, 0) :
-                            __best1Init32(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                                fileType, datePtr, configFilePtr, 0);
-                        //Console.WriteLine("Best1 init result: {0}", initResult);
-
-                        if (initResult != 0)
-                        {
-                            Console.WriteLine("Best1 init failed");
-                            return 1;
-                        }
-
-                        Best1ErrorValueDelegate configResult = is64Bit ? __best1Config64(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent) :
-                            __best1Config32(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent);
-                        if (configResult == null)
-                        {
-                            Console.WriteLine("Best1 config failed");
-                            return 1;
-                        }
-
-                        int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
-                        // the option result is the specified value
-
                         int asmResult = is64Bit ? __best1Asm64(mapFilePtr, IntPtr.Zero) :
                             __best1Asm32(mapFilePtr, IntPtr.Zero);
                         //Console.WriteLine("Best1 asm result: {0}", asmResult);
@@ -416,6 +453,19 @@ namespace Best1Net
                     if (mapFilePtr != IntPtr.Zero)
                     {
                         Marshal.FreeHGlobal(mapFilePtr);
+                    }
+
+                    if (incDirPtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(incDirPtr);
+                    }
+
+                    foreach (IntPtr libFilePtr in libFilesPtr)
+                    {
+                        if (libFilePtr != IntPtr.Zero)
+                        {
+                            Marshal.FreeHGlobal(libFilePtr);
+                        }
                     }
 
                     if (userNamePtr != IntPtr.Zero)
