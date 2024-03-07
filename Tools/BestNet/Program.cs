@@ -349,13 +349,6 @@ namespace BestNet
 
                     if (best2Api)
                     {
-                        string incDir = Path.GetDirectoryName(inputFile);
-                        if (string.IsNullOrEmpty(incDir))
-                        {
-                            Console.WriteLine("Best2 unable to determine include dir");
-                            return 1;
-                        }
-
                         string infoFile = Path.ChangeExtension(inputFile, ".info");
                         infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
 
