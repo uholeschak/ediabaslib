@@ -90,6 +90,12 @@ namespace Best1Net
         [DllImport(Best64DllName, EntryPoint = "__best2Options")]
         public static extern void __best2Options64(int option1, int option2, int option3);
 
+        [DllImport(Best32DllName, EntryPoint = "__best2CcTotal")]
+        public static extern int __best2CcTotal32();
+
+        [DllImport(Best64DllName, EntryPoint = "__best2CcTotal")]
+        public static extern int __best2CcTotal64();
+
         public class Options
         {
             [Option('i', "inputfile", Required = true, HelpText = "Input file to compile.")]
@@ -285,6 +291,9 @@ namespace Best1Net
                         {
                             __best2Options32(0, 0, 0);
                         }
+
+                        int ccTotal = is64Bit ? __best2CcTotal64() : __best2CcTotal32();
+                        Console.WriteLine("Best2 CC total: {0}", ccTotal);
                     }
                     else
                     {
