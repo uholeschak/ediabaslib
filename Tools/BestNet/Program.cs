@@ -93,10 +93,10 @@ namespace BestNet
         public static extern void __best2Options64(int option1, int option2, int option3);
 
         [DllImport(Best32DllName, EntryPoint = "__best2Cc")]
-        public static extern int __best2Cc32(IntPtr inputFile, IntPtr outAsmFile, IntPtr[] libFiles, IntPtr incDir, IntPtr outputFile);
+        public static extern int __best2Cc32(IntPtr inputFile, IntPtr outAsmFile, IntPtr[] libFiles, IntPtr infoFile, IntPtr outputFile);
 
         [DllImport(Best64DllName, EntryPoint = "__best2Cc")]
-        public static extern int __best2Cc64(IntPtr inputFile, IntPtr outAsmFile, IntPtr[] libFiles, IntPtr incDir, IntPtr outputFile);
+        public static extern int __best2Cc64(IntPtr inputFile, IntPtr outAsmFile, IntPtr[] libFiles, IntPtr infoFile, IntPtr outputFile);
 
         [DllImport(Best32DllName, EntryPoint = "__best2CcTotal")]
         public static extern int __best2CcTotal32();
@@ -269,7 +269,7 @@ namespace BestNet
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
                 IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
                 IntPtr asmOutFilePtr = IntPtr.Zero;
-                IntPtr incDirPtr = IntPtr.Zero;
+                IntPtr infoFilePtr = IntPtr.Zero;
                 IntPtr[] libFilesPtr = new IntPtr[] { IntPtr.Zero };
 
                 IntPtr userNamePtr = IntPtr.Zero;
@@ -356,7 +356,8 @@ namespace BestNet
                             return 1;
                         }
 
-                        incDirPtr = Marshal.StringToHGlobalAnsi(incDir);
+                        string infoFile = Path.ChangeExtension(inputFile, ".info");
+                        infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
 
                         if (libFiles == null || libFiles.Count == 0)
                         {
@@ -380,9 +381,9 @@ namespace BestNet
                         string asmOutFile = Path.ChangeExtension(inputFile, asmExt);
                         asmOutFilePtr = Marshal.StringToHGlobalAnsi(asmOutFile);
 
-                        Console.ReadKey();
-                        int ccResult = is64Bit ? __best2Cc64(inputFilePtr, asmOutFilePtr, libFilesPtr, incDirPtr, outputFilePtr) :
-                            __best2Cc32(inputFilePtr, asmOutFilePtr, libFilesPtr, incDirPtr, outputFilePtr);
+                        //Console.ReadKey();
+                        int ccResult = is64Bit ? __best2Cc64(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, outputFilePtr) :
+                            __best2Cc32(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, outputFilePtr);
                         Console.WriteLine("Best2 CC result: {0}", ccResult);
 
                         int ccTotal = is64Bit ? __best2CcTotal64() : __best2CcTotal32();
@@ -472,9 +473,9 @@ namespace BestNet
                         Marshal.FreeHGlobal(asmOutFilePtr);
                     }
 
-                    if (incDirPtr != IntPtr.Zero)
+                    if (infoFilePtr != IntPtr.Zero)
                     {
-                        Marshal.FreeHGlobal(incDirPtr);
+                        Marshal.FreeHGlobal(infoFilePtr);
                     }
 
                     foreach (IntPtr libFilePtr in libFilesPtr)
@@ -522,7 +523,7 @@ namespace BestNet
             if (value >= 0)
             {
                 Console.SetCursorPosition(0, Console.CursorTop);
-                Console.Write("Line: {0}", value);
+                Console.Write("Line: {0}                             ", value);
             }
             else
             {
@@ -546,7 +547,16 @@ namespace BestNet
 
         private static int Best2ProgressEvent(int value1, int value2, int value3)
         {
-            Console.Write("Progress: {0}, {1}, {2}", value1, value2, value3);
+            if (value1 >= 0)
+            {
+                Console.SetCursorPosition(0, Console.CursorTop);
+                Console.Write("Line: {0}, {1}, {2}                             ", value1, value2, value3);
+            }
+            else
+            {
+                Console.WriteLine();
+                Console.WriteLine("Done");
+            }
             return 0;
         }
 
