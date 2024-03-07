@@ -102,6 +102,12 @@ namespace Best1Net
         [DllImport(Best64DllName, EntryPoint = "__best2AsmTotal")]
         public static extern int __best2AsmTotal64();
 
+        [DllImport(Best32DllName, EntryPoint = "__best2Rev")]
+        public static extern int __best2Rev32(IntPtr value, IntPtr buffer);
+
+        [DllImport(Best64DllName, EntryPoint = "__best2Rev")]
+        public static extern int __best2Rev64(IntPtr value, IntPtr buffer);
+
         public class Options
         {
             [Option('i', "inputfile", Required = true, HelpText = "Input file to compile.")]
@@ -243,6 +249,10 @@ namespace Best1Net
                 bool best32Started = false;
                 int bestVerSize = 16;
                 IntPtr bestVerPtr = Marshal.AllocHGlobal(bestVerSize);
+                int bestRevSize = 0x40;
+                IntPtr bestRevPtr = Marshal.AllocHGlobal(bestRevSize);
+                IntPtr bestRevValuePtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(uint)));
+
                 IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
                 IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
@@ -303,6 +313,15 @@ namespace Best1Net
 
                         int asmTotal = is64Bit ? __best2AsmTotal64() : __best2AsmTotal32();
                         Console.WriteLine("Best2 ASM total: {0}", asmTotal);
+
+                        int revValue = is64Bit ? __best2Rev64(bestRevValuePtr, bestRevPtr) : __best2Rev32(bestRevValuePtr, bestRevPtr);
+                        Int32 revValueBuf = Marshal.ReadInt32(bestRevValuePtr);
+                        if (revValue != revValueBuf)
+                        {
+                            Console.WriteLine("Best2 revision value mismatch: {0}, {1}", revValue, revValueBuf);
+                        }
+                        string revString = Marshal.PtrToStringAnsi(bestRevPtr);
+                        Console.WriteLine("Best2 revision: {0}, '{1}'", revValue, revString);
                     }
                     else
                     {
@@ -363,6 +382,16 @@ namespace Best1Net
                     if (bestVerPtr != IntPtr.Zero)
                     {
                         Marshal.FreeHGlobal(bestVerPtr);
+                    }
+
+                    if (bestRevPtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(bestRevPtr);
+                    }
+
+                    if (bestRevValuePtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(bestRevValuePtr);
                     }
 
                     if (inputFilePtr != IntPtr.Zero)
