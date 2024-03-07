@@ -269,7 +269,7 @@ namespace BestNet
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
                 IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
                 IntPtr incDirPtr = IntPtr.Zero;
-                IntPtr[] libFilesPtr = Array.Empty<nint>();
+                IntPtr[] libFilesPtr = new IntPtr[] { IntPtr.Zero };
 
                 IntPtr userNamePtr = IntPtr.Zero;
                 if (!string.IsNullOrEmpty(userName))
@@ -363,11 +363,12 @@ namespace BestNet
                             return 1;
                         }
 
-                        libFilesPtr = new IntPtr[libFiles.Count];
+                        libFilesPtr = new IntPtr[libFiles.Count + 1];
                         for (int i = 0; i < libFiles.Count; i++)
                         {
                             libFilesPtr[i] = Marshal.StringToHGlobalAnsi(libFiles[i]);
                         }
+                        libFilesPtr[libFiles.Count] = IntPtr.Zero;
 
                         //Console.ReadKey();
                         int ccResult = is64Bit ? __best2Cc64(inputFilePtr, outputFilePtr, libFilesPtr, incDirPtr, 0) :
