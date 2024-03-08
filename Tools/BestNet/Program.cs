@@ -178,6 +178,13 @@ namespace BestNet
                     return 1;
                 }
 
+                if (string.IsNullOrEmpty(inputFile))
+                {
+                    Console.WriteLine("Input file not specified");
+                    return 1;
+                }
+
+                inputFile = Path.GetFullPath(inputFile);
                 if (!File.Exists(inputFile))
                 {
                     Console.WriteLine("Input file not found");
@@ -253,6 +260,7 @@ namespace BestNet
                 {
                     outputFile = Path.ChangeExtension(inputFile, outExt);
                 }
+                outputFile = Path.GetFullPath(outputFile);
 
                 string mapFile = Path.ChangeExtension(outputFile, mapExt);
                 string infoFile = Path.ChangeExtension(outputFile, infoExt);
