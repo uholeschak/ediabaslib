@@ -135,6 +135,9 @@ namespace BestNet
 
             [Option('l', "libfile", Required = false, HelpText = "Specify lib file name.")]
             public IEnumerable<string> LibFiles { get; set; }
+
+            [Option('d', "incDirs", Required = false, HelpText = "Include directories, separated by ;")]
+            public string IncDirs { get; set; }
         }
 
         static int _lastBest1OutLine = -1;
@@ -152,6 +155,7 @@ namespace BestNet
                 string userName = null;
                 int generateMapFile = 0;
                 List<string> libFiles = null;
+                string incDirs = null;
                 bool hasErrors = false;
                 Parser.Default.ParseArguments<Options>(args)
                     .WithParsed<Options>(o =>
@@ -162,6 +166,7 @@ namespace BestNet
                         userName = o.UserName;
                         generateMapFile = o.CreateMapFile ? 1: 0;
                         libFiles = o.LibFiles?.ToList();
+                        incDirs = o.IncDirs;
                     })
                     .WithNotParsed(e =>
                     {
@@ -366,7 +371,13 @@ namespace BestNet
                         }
                         libFilesPtr[libFiles.Count] = IntPtr.Zero;
 
-                        string incDir = Path.GetDirectoryName(inputFile) ?? string.Empty;
+                        string incDir = incDirs;
+                        if (string.IsNullOrEmpty(incDirs))
+                        {
+                            incDir = Path.GetDirectoryName(inputFile);
+                        }
+
+                        incDir ??= string.Empty;
                         incDirsFilePtr = Marshal.StringToHGlobalAnsi(incDir);
 
                         //Console.ReadKey();
