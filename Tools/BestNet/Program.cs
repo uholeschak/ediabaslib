@@ -247,7 +247,7 @@ namespace BestNet
                 }
 
                 string mapFile = Path.ChangeExtension(outputFile, mapExt);
-                string infoFile = Path.ChangeExtension(inputFile, infoExt);
+                string infoFile = Path.ChangeExtension(outputFile, infoExt);
 
                 Console.WriteLine("Output file: {0}", outputFile);
                 if (generateMapFile != 0)
@@ -358,7 +358,7 @@ namespace BestNet
                             return 1;
                         }
 
-                        string asmOutFile = Path.ChangeExtension(inputFile, asmExt);
+                        string asmOutFile = Path.ChangeExtension(outputFile, asmExt);
                         asmOutFilePtr = Marshal.StringToHGlobalAnsi(asmOutFile);
 
                         string incDir = Path.GetDirectoryName(inputFile) ?? string.Empty;
