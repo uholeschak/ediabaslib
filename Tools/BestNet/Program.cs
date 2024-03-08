@@ -375,7 +375,8 @@ namespace BestNet
                         libFilesPtr = new IntPtr[libFiles.Count + 1];
                         for (int i = 0; i < libFiles.Count; i++)
                         {
-                            libFilesPtr[i] = Marshal.StringToHGlobalAnsi(libFiles[i]);
+                            string libFile = Path.GetFullPath(libFiles[i]);
+                            libFilesPtr[i] = Marshal.StringToHGlobalAnsi(libFile);
                         }
                         libFilesPtr[libFiles.Count] = IntPtr.Zero;
 
