@@ -137,6 +137,9 @@ namespace BestNet
             public IEnumerable<string> LibFiles { get; set; }
         }
 
+        static int _lastBest1OutLine = -1;
+        static int _lastBest2OutLine = -1;
+
         static int Main(string[] args)
         {
             bool is64Bit = Environment.Is64BitProcess;
@@ -546,14 +549,19 @@ namespace BestNet
         {
             if (value >= 0)
             {
-                Console.SetCursorPosition(0, Console.CursorTop);
-                Console.Write("Line: {0}                             ", value);
+                if (_lastBest1OutLine != value && value % 100 == 0)
+                {
+                    Console.SetCursorPosition(0, Console.CursorTop);
+                    Console.Write("Line: {0}                             ", value);
+                }
             }
             else
             {
                 Console.WriteLine();
                 Console.WriteLine("Done");
             }
+
+            _lastBest1OutLine = value;
             return 0;
         }
 
@@ -573,14 +581,19 @@ namespace BestNet
         {
             if (value1 >= 0)
             {
-                Console.SetCursorPosition(0, Console.CursorTop);
-                Console.Write("Line: {0}, {1}, {2}                             ", value1, value2, value3);
+                if (value1 != _lastBest2OutLine && value1 % 10 == 0)
+                {
+                    Console.SetCursorPosition(0, Console.CursorTop);
+                    Console.Write("Line: {0}, {1}, {2}                             ", value1, value2, value3);
+                }
             }
             else
             {
                 Console.WriteLine();
                 Console.WriteLine("Done");
             }
+
+            _lastBest2OutLine = value1;
             return 0;
         }
 
