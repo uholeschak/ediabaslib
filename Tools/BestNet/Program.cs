@@ -254,6 +254,7 @@ namespace BestNet
                 {
                     Console.WriteLine("Map file: {0}", mapFile);
                 }
+                Console.WriteLine("Info file: {0}", infoFile);
 
                 int revision = 0;
                 if (!string.IsNullOrEmpty(revisionString))
