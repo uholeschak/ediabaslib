@@ -415,7 +415,7 @@ namespace BestNet
                         Int32 revValueBuf = Marshal.ReadInt32(bestRevValuePtr);
                         if (revValue != revValueBuf)
                         {
-                            Console.WriteLine("Best2 revision value mismatch: {0}, {1}", revValue, revValueBuf);
+                            Console.WriteLine("Best2 revision mismatch: {0:X08}, {1:X08}", revValue, revValueBuf);
                         }
                         string revString = Marshal.PtrToStringAnsi(bestRevPtr);
                         Console.WriteLine("Best2 revision: {0}.{1}, '{2}'", (revValue >> 16) & 0xFFFF, revValue & 0xFFFF, revString);
