@@ -418,7 +418,7 @@ namespace BestNet
                             Console.WriteLine("Best2 revision value mismatch: {0}, {1}", revValue, revValueBuf);
                         }
                         string revString = Marshal.PtrToStringAnsi(bestRevPtr);
-                        Console.WriteLine("Best2 revision: {0}, '{1}'", revValue, revString);
+                        Console.WriteLine("Best2 revision: {0}.{1}, '{2}'", (revValue >> 16) & 0xFFFF, revValue & 0xFFFF, revString);
 
                         if (!File.Exists(asmOutFile))
                         {
