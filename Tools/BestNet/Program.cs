@@ -391,7 +391,12 @@ namespace BestNet
                         //Console.ReadKey();
                         int ccResult = is64Bit ? __best2Cc64(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, incDirsFilePtr) :
                             __best2Cc32(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, incDirsFilePtr);
-                        Console.WriteLine("Best2 CC result: {0}", ccResult);
+                        //Console.WriteLine("Best2 CC result: {0}", ccResult);
+                        if (ccResult != 0)
+                        {
+                            Console.WriteLine("Best2 CC failed");
+                            return 1;
+                        }
 
                         int ccTotal = is64Bit ? __best2CcTotal64() : __best2CcTotal32();
                         Console.WriteLine("Best2 CC total: {0}", ccTotal);
