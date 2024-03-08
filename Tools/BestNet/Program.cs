@@ -93,10 +93,10 @@ namespace BestNet
         public static extern void __best2Options64(int option1, int option2, int option3);
 
         [DllImport(Best32DllName, EntryPoint = "__best2Cc")]
-        public static extern int __best2Cc32(IntPtr inputFile, IntPtr outAsmFile, IntPtr[] libFiles, IntPtr infoFile, IntPtr outputFile);
+        public static extern int __best2Cc32(IntPtr inputFile, IntPtr outAsmFile, IntPtr[] libFiles, IntPtr infoFile, IntPtr incDirs);
 
         [DllImport(Best64DllName, EntryPoint = "__best2Cc")]
-        public static extern int __best2Cc64(IntPtr inputFile, IntPtr outAsmFile, IntPtr[] libFiles, IntPtr infoFile, IntPtr outputFile);
+        public static extern int __best2Cc64(IntPtr inputFile, IntPtr outAsmFile, IntPtr[] libFiles, IntPtr infoFile, IntPtr incDirs);
 
         [DllImport(Best32DllName, EntryPoint = "__best2CcTotal")]
         public static extern int __best2CcTotal32();
@@ -282,6 +282,7 @@ namespace BestNet
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
                 IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
                 IntPtr asmOutFilePtr = IntPtr.Zero;
+                IntPtr incDirsFilePtr = IntPtr.Zero;
                 IntPtr infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
                 IntPtr[] libFilesPtr = new IntPtr[] { IntPtr.Zero };
 
@@ -384,9 +385,12 @@ namespace BestNet
                         string asmOutFile = Path.ChangeExtension(inputFile, asmExt);
                         asmOutFilePtr = Marshal.StringToHGlobalAnsi(asmOutFile);
 
+                        string incDir = Path.GetDirectoryName(inputFile) ?? string.Empty;
+                        incDirsFilePtr = Marshal.StringToHGlobalAnsi(incDir);
+
                         //Console.ReadKey();
-                        int ccResult = is64Bit ? __best2Cc64(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, outputFilePtr) :
-                            __best2Cc32(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, outputFilePtr);
+                        int ccResult = is64Bit ? __best2Cc64(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, incDirsFilePtr) :
+                            __best2Cc32(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, incDirsFilePtr);
                         Console.WriteLine("Best2 CC result: {0}", ccResult);
 
                         int ccTotal = is64Bit ? __best2CcTotal64() : __best2CcTotal32();
@@ -474,6 +478,11 @@ namespace BestNet
                     if (asmOutFilePtr != IntPtr.Zero)
                     {
                         Marshal.FreeHGlobal(asmOutFilePtr);
+                    }
+
+                    if (incDirsFilePtr != IntPtr.Zero)
+                    {
+                        Marshal.FreeHGlobal(incDirsFilePtr);
                     }
 
                     if (infoFilePtr != IntPtr.Zero)
