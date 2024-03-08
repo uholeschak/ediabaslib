@@ -299,7 +299,7 @@ namespace BestNet
                 IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
                 IntPtr asmOutFilePtr = IntPtr.Zero;
                 IntPtr incDirsFilePtr = IntPtr.Zero;
-                IntPtr infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
+                IntPtr infoFilePtr = IntPtr.Zero;
                 IntPtr[] libFilesPtr = new IntPtr[] { IntPtr.Zero };
 
                 IntPtr userNamePtr = IntPtr.Zero;
@@ -371,6 +371,8 @@ namespace BestNet
                             Console.WriteLine("Best2 lib files missing");
                             return 1;
                         }
+
+                        infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
 
                         libFilesPtr = new IntPtr[libFiles.Count + 1];
                         for (int i = 0; i < libFiles.Count; i++)
@@ -450,8 +452,8 @@ namespace BestNet
                     int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
                     // the option result is the specified value
 
-                    int asmResult = is64Bit ? __best1Asm64(mapFilePtr, IntPtr.Zero) :
-                        __best1Asm32(mapFilePtr, IntPtr.Zero);
+                    int asmResult = is64Bit ? __best1Asm64(mapFilePtr, infoFilePtr) :
+                        __best1Asm32(mapFilePtr, infoFilePtr);
                     //Console.WriteLine("Best1 asm result: {0}", asmResult);
                     if (asmResult != 0)
                     {
