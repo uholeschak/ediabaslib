@@ -223,11 +223,22 @@ namespace BestNet
 
                 int fileType = 1;
                 string outExt = ".prg";
+                string asmExt = ".b1v";
+                string mapExt = ".m1v";
+                string infoExt = ".biv";
                 if (string.Compare(fileExt, ".b1g", StringComparison.OrdinalIgnoreCase) == 0 ||
                     string.Compare(fileExt, ".b2g", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     fileType = 0;
                     outExt = ".grp";
+                    asmExt = ".b1g";
+                    mapExt = ".m1g";
+                    infoExt = ".big";
+                }
+
+                if (!best2Api)
+                {
+                    asmExt = null;
                 }
 
                 if (string.IsNullOrEmpty(outputFile))
@@ -235,7 +246,8 @@ namespace BestNet
                     outputFile = Path.ChangeExtension(inputFile, outExt);
                 }
 
-                string mapFile = Path.ChangeExtension(outputFile, ".map");
+                string mapFile = Path.ChangeExtension(outputFile, mapExt);
+                string infoFile = Path.ChangeExtension(inputFile, infoExt);
 
                 Console.WriteLine("Output file: {0}", outputFile);
                 if (generateMapFile != 0)
@@ -269,7 +281,7 @@ namespace BestNet
                 IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
                 IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
                 IntPtr asmOutFilePtr = IntPtr.Zero;
-                IntPtr infoFilePtr = IntPtr.Zero;
+                IntPtr infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
                 IntPtr[] libFilesPtr = new IntPtr[] { IntPtr.Zero };
 
                 IntPtr userNamePtr = IntPtr.Zero;
@@ -349,9 +361,6 @@ namespace BestNet
 
                     if (best2Api)
                     {
-                        string infoFile = Path.ChangeExtension(inputFile, ".info");
-                        infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
-
                         if (libFiles == null || libFiles.Count == 0)
                         {
                             Console.WriteLine("Best2 lib files missing");
@@ -365,10 +374,10 @@ namespace BestNet
                         }
                         libFilesPtr[libFiles.Count] = IntPtr.Zero;
 
-                        string asmExt = ".b1v";
-                        if (string.Compare(fileExt, ".b2g", StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.IsNullOrEmpty(asmExt))
                         {
-                            asmExt = ".b1g";
+                            Console.WriteLine("Best2 asm extension missing");
+                            return 1;
                         }
 
                         string asmOutFile = Path.ChangeExtension(inputFile, asmExt);
