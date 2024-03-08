@@ -11,6 +11,7 @@ namespace BestNet
     {
         public const string Best32DllName = "Best32.dll";
         public const string Best64DllName = "Best64.dll";
+        public const string StdLibName = "B2Runtim.lib";
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int Best1ProgressDelegate(int value);
@@ -205,6 +206,20 @@ namespace BestNet
                     return 1;
                 }
 
+                string bestDllName = is64Bit ? Best64DllName : Best32DllName;
+                string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
+                if (!File.Exists(bestDllPath))
+                {
+                    Console.WriteLine("{0} not found", bestDllName);
+                    return 1;
+                }
+
+                if (!NativeLibrary.TryLoad(bestDllPath, out libHandle))
+                {
+                    Console.WriteLine("{0} not loaded", bestDllName);
+                    return 1;
+                }
+
                 string fileExt = Path.GetExtension(inputFile);
                 bool best2Api;
 
@@ -219,20 +234,6 @@ namespace BestNet
                 else
                 {
                     Console.WriteLine("Invalid input file extension");
-                    return 1;
-                }
-
-                string bestDllName = is64Bit ? Best64DllName : Best32DllName;
-                string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
-                if (!File.Exists(bestDllPath))
-                {
-                    Console.WriteLine("{0} not found", bestDllName);
-                    return 1;
-                }
-
-                if (!NativeLibrary.TryLoad(bestDllPath, out libHandle))
-                {
-                    Console.WriteLine("{0} not loaded", bestDllName);
                     return 1;
                 }
 
@@ -368,8 +369,15 @@ namespace BestNet
 
                         if (libFiles == null || libFiles.Count == 0)
                         {
-                            Console.WriteLine("Best2 lib files missing");
-                            return 1;
+                            string stdLibFile = Path.Combine(ediabasBinPath, StdLibName);
+                            if (!File.Exists(stdLibFile))
+                            {
+                                Console.WriteLine("Standard lib not found: {0}", stdLibFile);
+                                return 1;
+                            }
+
+                            libFiles = new List<string> { stdLibFile };
+                            Console.WriteLine("Using standard lib: {0}", stdLibFile);
                         }
 
                         infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
