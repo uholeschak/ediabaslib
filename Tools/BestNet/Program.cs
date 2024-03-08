@@ -311,30 +311,6 @@ namespace BestNet
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
                     Console.WriteLine("Best version: {0}", bestVer);
 
-                    // BEST1 init
-                    int init1Result = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, datePtr, configFilePtr, 0) :
-                        __best1Init32(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, datePtr, configFilePtr, 0);
-                    //Console.WriteLine("Best1 init result: {0}", initResult);
-
-                    if (init1Result != 0)
-                    {
-                        Console.WriteLine("Best1 init failed");
-                        return 1;
-                    }
-
-                    Best1ErrorValueDelegate config1Result = is64Bit ? __best1Config64(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent) :
-                        __best1Config32(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent);
-                    if (config1Result == null)
-                    {
-                        Console.WriteLine("Best1 config failed");
-                        return 1;
-                    }
-
-                    int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
-                    // the option result is the specified value
-
                     // BEST2 init
                     int initResult = is64Bit ? __best2Init64() : __best2Init32();
                     Console.WriteLine("Best2 init result: {0}", initResult);
@@ -419,6 +395,30 @@ namespace BestNet
                     }
                     else
                     {
+                        // BEST1 init
+                        int init1Result = is64Bit ? __best1Init64(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
+                                fileType, datePtr, configFilePtr, 0) :
+                            __best1Init32(inputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
+                                fileType, datePtr, configFilePtr, 0);
+                        //Console.WriteLine("Best1 init result: {0}", initResult);
+
+                        if (init1Result != 0)
+                        {
+                            Console.WriteLine("Best1 init failed");
+                            return 1;
+                        }
+
+                        Best1ErrorValueDelegate config1Result = is64Bit ? __best1Config64(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent) :
+                            __best1Config32(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent);
+                        if (config1Result == null)
+                        {
+                            Console.WriteLine("Best1 config failed");
+                            return 1;
+                        }
+
+                        int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
+                        // the option result is the specified value
+
                         int asmResult = is64Bit ? __best1Asm64(mapFilePtr, IntPtr.Zero) :
                             __best1Asm32(mapFilePtr, IntPtr.Zero);
                         //Console.WriteLine("Best1 asm result: {0}", asmResult);
