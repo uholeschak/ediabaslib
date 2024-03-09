@@ -587,7 +587,7 @@ namespace BestNet
             }
             else
             {
-                Console.WriteLine();
+                AdaptConsoleCursor();
                 Console.WriteLine("Done");
             }
 
@@ -597,12 +597,14 @@ namespace BestNet
 
         private static int Best1ErrorTextEvent(string text)
         {
+            AdaptConsoleCursor();
             Console.WriteLine("Error: {0}", text);
             return 0;
         }
 
         private static int Best1ErrorValueEvent(uint value, string text)
         {
+            AdaptConsoleCursor();
             Console.WriteLine("Error value: {0}: {1}", value, text);
             return 0;
         }
@@ -619,7 +621,7 @@ namespace BestNet
             }
             else
             {
-                Console.WriteLine();
+                AdaptConsoleCursor();
                 Console.WriteLine("Done");
             }
 
@@ -629,14 +631,24 @@ namespace BestNet
 
         private static int Best2ErrorTextEvent(string text)
         {
+            AdaptConsoleCursor();
             Console.WriteLine("Error: {0}", text);
             return 0;
         }
 
         private static int Best2ErrorValueEvent(uint value, string text)
         {
+            AdaptConsoleCursor();
             Console.WriteLine("Error value: {0}: {1}", value, text);
             return 0;
+        }
+
+        private static void AdaptConsoleCursor()
+        {
+            if (Console.GetCursorPosition().Left > 0)
+            {
+                Console.WriteLine();
+            }
         }
     }
 }
