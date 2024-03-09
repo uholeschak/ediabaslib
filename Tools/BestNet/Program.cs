@@ -402,6 +402,7 @@ namespace BestNet
                         //Console.ReadKey();
                         int ccResult = is64Bit ? __best2Cc64(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, incDirsFilePtr) :
                             __best2Cc32(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, incDirsFilePtr);
+                        AdaptConsoleCursor();
                         //Console.WriteLine("Best2 CC result: {0}", ccResult);
                         if (ccResult != 0)
                         {
@@ -462,6 +463,7 @@ namespace BestNet
 
                     int asmResult = is64Bit ? __best1Asm64(mapFilePtr, infoFilePtr) :
                         __best1Asm32(mapFilePtr, infoFilePtr);
+                    AdaptConsoleCursor();
                     //Console.WriteLine("Best1 asm result: {0}", asmResult);
                     if (asmResult != 0)
                     {
