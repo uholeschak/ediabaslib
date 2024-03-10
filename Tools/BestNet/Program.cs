@@ -1,7 +1,6 @@
 ﻿using CommandLine;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -52,11 +51,11 @@ namespace BestNet
 
         [DllImport(Best32DllName, EntryPoint = "__best1Init")]
         public static extern int __best1Init32(IntPtr inputFile, IntPtr outputFile, int revision,
-            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr passwordLabel, int val5);
+            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr passwordLabel, IntPtr passwordBuffer);
 
         [DllImport(Best64DllName, EntryPoint = "__best1Init")]
         public static extern int __best1Init64(IntPtr inputFile, IntPtr outputFile, int revision,
-            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr passwordLabel, int val5);
+            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr passwordLabel, IntPtr passwordBuffer);
 
         [DllImport(Best32DllName, EntryPoint = "__best1Config")]
         public static extern Best1ErrorValueDelegate __best1Config32(Best1ProgressDelegate progressCallback, Best1ErrorTextDelegate errorTextCallback, Best1ErrorValueDelegate errorValueCallback);
@@ -320,6 +319,8 @@ namespace BestNet
                 IntPtr datePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(dateStr));
                 string password = passwordLabel ?? string.Empty;
                 IntPtr passwordLabelPtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(password));
+                int passwordBufferSize = 10 * 10;
+                IntPtr passwordBufferPtr = StoreIntPtr(Marshal.AllocHGlobal(passwordBufferSize));
 
                 try
                 {
@@ -446,9 +447,9 @@ namespace BestNet
                     IntPtr best1InputFilePtr = asmOutFilePtr != IntPtr.Zero ? asmOutFilePtr : inputFilePtr;
                     // BEST1 init
                     int init1Result = is64Bit ? __best1Init64(best1InputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, datePtr, passwordLabelPtr, 0) :
+                            fileType, datePtr, passwordLabelPtr, passwordBufferPtr) :
                         __best1Init32(best1InputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, datePtr, passwordLabelPtr, 0);
+                            fileType, datePtr, passwordLabelPtr, passwordBufferPtr);
                     //WriteNewConsoleLine("Best1 init result: {0}", initResult);
 
                     if (init1Result != 0)
@@ -593,7 +594,7 @@ namespace BestNet
             }
         }
 
-        private static void WriteNewConsoleLine([StringSyntax("CompositeFormat")] string format, object? arg0 = null, object? arg1 = null, object? arg2 = null)
+        private static void WriteNewConsoleLine(string format, object arg0 = null, object arg1 = null, object arg2 = null)
         {
             AdaptConsoleCursor();
             Console.WriteLine(format, arg0, arg1, arg2);
