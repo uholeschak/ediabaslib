@@ -297,9 +297,9 @@ namespace BestNet
                             revision = ((major & 0xFFFF) << 16) | (minor & 0xFFFF);
                         }
                     }
-                }
 
-                WriteNewConsoleLine("Revision: {0}.{1}", (revision >> 16) & 0xFFFF, revision & 0xFFFF);
+                    WriteNewConsoleLine("Revision: {0}.{1}", (revision >> 16) & 0xFFFF, revision & 0xFFFF);
+                }
 
                 //Console.ReadKey();
                 bool best32Started = false;
