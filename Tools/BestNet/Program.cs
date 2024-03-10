@@ -137,6 +137,9 @@ namespace BestNet
             [Option('m', "mapfile", Required = false, HelpText = "Set to create map file.")]
             public bool CreateMapFile { get; set; }
 
+            [Option('k', "keepFiles", Required = false, HelpText = "Set to keep intermediate files.")]
+            public bool KeepFiles { get; set; }
+
             [Option('l', "libfile", Required = false, HelpText = "Specify lib file name.")]
             public IEnumerable<string> LibFiles { get; set; }
 
@@ -160,6 +163,7 @@ namespace BestNet
                 string userName = null;
                 string passwordLabel = null;
                 int generateMapFile = 0;
+                bool keepFiles = false;
                 List<string> libFiles = null;
                 string incDirs = null;
                 bool hasErrors = false;
@@ -172,6 +176,7 @@ namespace BestNet
                         userName = o.UserName;
                         passwordLabel = o.PasswordLabel;
                         generateMapFile = o.CreateMapFile ? 1: 0;
+                        keepFiles = o.KeepFiles;
                         libFiles = o.LibFiles?.ToList();
                         incDirs = o.IncDirs;
                     })
@@ -248,6 +253,7 @@ namespace BestNet
                 string asmExt = ".b1v";
                 string mapExt = ".m1v";
                 string infoExt = ".biv";
+                string preproExt = ".p2v";
                 if (string.Compare(fileExt, ".b1g", StringComparison.OrdinalIgnoreCase) == 0 ||
                     string.Compare(fileExt, ".b2g", StringComparison.OrdinalIgnoreCase) == 0)
                 {
@@ -256,6 +262,7 @@ namespace BestNet
                     asmExt = ".b1g";
                     mapExt = ".m1g";
                     infoExt = ".big";
+                    preproExt = ".p2g";
                 }
 
                 if (!best2Api)
@@ -270,14 +277,14 @@ namespace BestNet
                 outputFile = Path.GetFullPath(outputFile);
 
                 string mapFile = Path.ChangeExtension(outputFile, mapExt);
-                string infoFile = Path.ChangeExtension(outputFile, infoExt);
+                string asmOutFile = null;
+                string infoFile = null;
 
                 WriteNewConsoleLine("Output file: {0}", outputFile);
                 if (generateMapFile != 0)
                 {
                     WriteNewConsoleLine("Map file: {0}", mapFile);
                 }
-                WriteNewConsoleLine("Info file: {0}", infoFile);
 
                 int revision = 0;
                 if (!string.IsNullOrEmpty(revisionString))
@@ -305,8 +312,8 @@ namespace BestNet
                 IntPtr outputFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(outputFile));
                 IntPtr mapFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(mapFile));
                 IntPtr asmOutFilePtr = IntPtr.Zero;
-                IntPtr incDirsFilePtr = IntPtr.Zero;
                 IntPtr infoFilePtr = IntPtr.Zero;
+                IntPtr incDirsFilePtr = IntPtr.Zero;
                 IntPtr[] libFilesPtr = new IntPtr[] { IntPtr.Zero };
 
                 IntPtr userNamePtr = IntPtr.Zero;
@@ -384,10 +391,21 @@ namespace BestNet
                             return 1;
                         }
 
-                        string asmOutFile = Path.ChangeExtension(outputFile, asmExt);
+                        asmOutFile = Path.ChangeExtension(outputFile, asmExt);
                         asmOutFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(asmOutFile));
 
-                        WriteNewConsoleLine("Intermediate asm output file: {0}", asmOutFile);
+                        if (keepFiles)
+                        {
+                            WriteNewConsoleLine("Asm output file: {0}", asmOutFile);
+                        }
+
+                        infoFile = Path.ChangeExtension(outputFile, infoExt);
+                        infoFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(infoFile));
+
+                        if (keepFiles)
+                        {
+                            WriteNewConsoleLine("Info file: {0}", infoFile);
+                        }
 
                         if (libFiles == null || libFiles.Count == 0)
                         {
@@ -401,8 +419,6 @@ namespace BestNet
                             libFiles = new List<string> { stdLibFile };
                             WriteNewConsoleLine("Using standard lib: {0}", stdLibFile);
                         }
-
-                        infoFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(infoFile));
 
                         libFilesPtr = new IntPtr[libFiles.Count + 1];
                         for (int i = 0; i < libFiles.Count; i++)
@@ -496,6 +512,31 @@ namespace BestNet
                     {
                         Int32 asmVer = Marshal.ReadInt32(bestVersionPtr);
                         WriteNewConsoleLine("BIP version: {0}.{1}.{2}", (asmVer >> 16) & 0xFF, (asmVer >> 8) & 0xFF, asmVer & 0xFF);
+                    }
+
+                    if (best2Api && !keepFiles)
+                    {
+                        if (!string.IsNullOrEmpty(asmOutFile))
+                        {
+                            if (File.Exists(asmOutFile))
+                            {
+                                File.Delete(asmOutFile);
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(infoFile))
+                        {
+                            if (File.Exists(infoFile))
+                            {
+                                File.Delete(infoFile);
+                            }
+                        }
+
+                        string preproFile = Path.ChangeExtension(outputFile, preproExt);
+                        if (File.Exists(preproFile))
+                        {
+                            File.Delete(preproFile);
+                        }
                     }
                 }
                 finally
