@@ -144,6 +144,7 @@ namespace BestNet
 
         static int _lastBest1OutLine = -1;
         static int _lastBest2OutLine = -1;
+        static readonly List<IntPtr> _freeIntPtrList = new List<IntPtr>();
 
         static int Main(string[] args)
         {
@@ -292,13 +293,13 @@ namespace BestNet
                 //Console.ReadKey();
                 bool best32Started = false;
                 int bestVerSize = 16;
-                IntPtr bestVerPtr = Marshal.AllocHGlobal(bestVerSize);
+                IntPtr bestVerPtr = StoreIntPtr(Marshal.AllocHGlobal(bestVerSize));
                 IntPtr bestRevPtr = IntPtr.Zero;
                 IntPtr bestRevValuePtr = IntPtr.Zero;
 
-                IntPtr inputFilePtr = Marshal.StringToHGlobalAnsi(inputFile);
-                IntPtr outputFilePtr = Marshal.StringToHGlobalAnsi(outputFile);
-                IntPtr mapFilePtr = Marshal.StringToHGlobalAnsi(mapFile);
+                IntPtr inputFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(inputFile));
+                IntPtr outputFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(outputFile));
+                IntPtr mapFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(mapFile));
                 IntPtr asmOutFilePtr = IntPtr.Zero;
                 IntPtr incDirsFilePtr = IntPtr.Zero;
                 IntPtr infoFilePtr = IntPtr.Zero;
@@ -307,12 +308,12 @@ namespace BestNet
                 IntPtr userNamePtr = IntPtr.Zero;
                 if (!string.IsNullOrEmpty(userName))
                 {
-                    userNamePtr = Marshal.StringToHGlobalAnsi(userName);
+                    userNamePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(userName));
                 }
 
                 string dateStr = DateTime.Now.ToString("ddd MMM dd HH:mm:ss yyy");
-                IntPtr datePtr = Marshal.StringToHGlobalAnsi(dateStr);
-                IntPtr configFilePtr = Marshal.StringToHGlobalAnsi("");
+                IntPtr datePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(dateStr));
+                IntPtr configFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(""));
 
                 try
                 {
@@ -364,7 +365,7 @@ namespace BestNet
                         }
 
                         string asmOutFile = Path.ChangeExtension(outputFile, asmExt);
-                        asmOutFilePtr = Marshal.StringToHGlobalAnsi(asmOutFile);
+                        asmOutFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(asmOutFile));
 
                         WriteNewConsoleLine("Intermediate asm output file: {0}", asmOutFile);
 
@@ -381,13 +382,13 @@ namespace BestNet
                             WriteNewConsoleLine("Using standard lib: {0}", stdLibFile);
                         }
 
-                        infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
+                        infoFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(infoFile));
 
                         libFilesPtr = new IntPtr[libFiles.Count + 1];
                         for (int i = 0; i < libFiles.Count; i++)
                         {
                             string libFile = Path.GetFullPath(libFiles[i]);
-                            libFilesPtr[i] = Marshal.StringToHGlobalAnsi(libFile);
+                            libFilesPtr[i] = StoreIntPtr(Marshal.StringToHGlobalAnsi(libFile));
                         }
                         libFilesPtr[libFiles.Count] = IntPtr.Zero;
 
@@ -398,7 +399,7 @@ namespace BestNet
                         }
 
                         incDir ??= string.Empty;
-                        incDirsFilePtr = Marshal.StringToHGlobalAnsi(incDir);
+                        incDirsFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(incDir));
 
                         //Console.ReadKey();
                         int ccResult = is64Bit ? __best2Cc64(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, incDirsFilePtr) :
@@ -417,8 +418,8 @@ namespace BestNet
                         WriteNewConsoleLine("Best2 ASM total: {0}", asmTotal);
 
                         int bestRevSize = 0x40;
-                        bestRevPtr = Marshal.AllocHGlobal(bestRevSize);
-                        bestRevValuePtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(uint)));
+                        bestRevPtr = StoreIntPtr(Marshal.AllocHGlobal(bestRevSize));
+                        bestRevValuePtr = StoreIntPtr(Marshal.AllocHGlobal(Marshal.SizeOf(typeof(uint))));
 
                         int revValue = is64Bit ? __best2Rev64(bestRevValuePtr, bestRevPtr) : __best2Rev32(bestRevValuePtr, bestRevPtr);
                         Int32 revValueBuf = Marshal.ReadInt32(bestRevValuePtr);
@@ -491,72 +492,12 @@ namespace BestNet
                         }
                     }
 
-                    if (bestVerPtr != IntPtr.Zero)
+                    foreach (IntPtr intPtr in _freeIntPtrList)
                     {
-                        Marshal.FreeHGlobal(bestVerPtr);
-                    }
-
-                    if (bestRevPtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(bestRevPtr);
-                    }
-
-                    if (bestRevValuePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(bestRevValuePtr);
-                    }
-
-                    if (inputFilePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(inputFilePtr);
-                    }
-
-                    if (outputFilePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(outputFilePtr);
-                    }
-
-                    if (mapFilePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(mapFilePtr);
-                    }
-
-                    if (asmOutFilePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(asmOutFilePtr);
-                    }
-
-                    if (incDirsFilePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(incDirsFilePtr);
-                    }
-
-                    if (infoFilePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(infoFilePtr);
-                    }
-
-                    foreach (IntPtr libFilePtr in libFilesPtr)
-                    {
-                        if (libFilePtr != IntPtr.Zero)
+                        if (intPtr != IntPtr.Zero)
                         {
-                            Marshal.FreeHGlobal(libFilePtr);
+                            Marshal.FreeHGlobal(intPtr);
                         }
-                    }
-
-                    if (userNamePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(userNamePtr);
-                    }
-
-                    if (datePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(datePtr);
-                    }
-
-                    if (configFilePtr != IntPtr.Zero)
-                    {
-                        Marshal.FreeHGlobal(configFilePtr);
                     }
                 }
             }
@@ -650,6 +591,15 @@ namespace BestNet
         {
             AdaptConsoleCursor();
             Console.WriteLine(format, arg0, arg1, arg2);
+        }
+
+        private static IntPtr StoreIntPtr(IntPtr intPtr)
+        {
+            if (intPtr != IntPtr.Zero && !_freeIntPtrList.Contains(intPtr))
+            {
+                _freeIntPtrList.Add(intPtr);
+            }
+            return intPtr;
         }
     }
 }
