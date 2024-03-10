@@ -52,11 +52,11 @@ namespace BestNet
 
         [DllImport(Best32DllName, EntryPoint = "__best1Init")]
         public static extern int __best1Init32(IntPtr inputFile, IntPtr outputFile, int revision,
-            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr configFile, int val5);
+            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr passwordLabel, int val5);
 
         [DllImport(Best64DllName, EntryPoint = "__best1Init")]
         public static extern int __best1Init64(IntPtr inputFile, IntPtr outputFile, int revision,
-            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr configFile, int val5);
+            IntPtr userName, int generateMapfile, int fileType, IntPtr dateString, IntPtr passwordLabel, int val5);
 
         [DllImport(Best32DllName, EntryPoint = "__best1Config")]
         public static extern Best1ErrorValueDelegate __best1Config32(Best1ProgressDelegate progressCallback, Best1ErrorTextDelegate errorTextCallback, Best1ErrorValueDelegate errorValueCallback);
@@ -132,6 +132,9 @@ namespace BestNet
             [Option('u', "userName", Required = false, HelpText = "Specify user name.")]
             public string UserName { get; set; }
 
+            [Option('p', "password", Required = false, HelpText = "Specify password label or @<password label file>")]
+            public string PasswordLabel { get; set; }
+
             [Option('m', "mapfile", Required = false, HelpText = "Set to create map file.")]
             public bool CreateMapFile { get; set; }
 
@@ -156,6 +159,7 @@ namespace BestNet
                 string outputFile = null;
                 string revisionString = null;
                 string userName = null;
+                string passwordLabel = null;
                 int generateMapFile = 0;
                 List<string> libFiles = null;
                 string incDirs = null;
@@ -167,6 +171,7 @@ namespace BestNet
                         outputFile = o.OutputFile;
                         revisionString = o.RevisionString;
                         userName = o.UserName;
+                        passwordLabel = o.PasswordLabel;
                         generateMapFile = o.CreateMapFile ? 1: 0;
                         libFiles = o.LibFiles?.ToList();
                         incDirs = o.IncDirs;
@@ -313,7 +318,8 @@ namespace BestNet
 
                 string dateStr = DateTime.Now.ToString("ddd MMM dd HH:mm:ss yyy");
                 IntPtr datePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(dateStr));
-                IntPtr configFilePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(""));
+                string password = passwordLabel ?? string.Empty;
+                IntPtr passwordLabelPtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(password));
 
                 try
                 {
@@ -440,9 +446,9 @@ namespace BestNet
                     IntPtr best1InputFilePtr = asmOutFilePtr != IntPtr.Zero ? asmOutFilePtr : inputFilePtr;
                     // BEST1 init
                     int init1Result = is64Bit ? __best1Init64(best1InputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, datePtr, configFilePtr, 0) :
+                            fileType, datePtr, passwordLabelPtr, 0) :
                         __best1Init32(best1InputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
-                            fileType, datePtr, configFilePtr, 0);
+                            fileType, datePtr, passwordLabelPtr, 0);
                     //WriteNewConsoleLine("Best1 init result: {0}", initResult);
 
                     if (init1Result != 0)
