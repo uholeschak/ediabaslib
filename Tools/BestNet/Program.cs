@@ -532,10 +532,14 @@ namespace BestNet
                     IntPtr pwdPtr = passwordBufferPtr;
                     for (int i = 0; i < MaxPasswords; i++)
                     {
-                        string resultPassword = Marshal.PtrToStringAnsi(pwdPtr);
-                        if (!string.IsNullOrEmpty(resultPassword))
+                        string resultPassword = Marshal.PtrToStringAnsi(pwdPtr, MaxPasswordLen);
+                        if (resultPassword != null)
                         {
-                            WriteNewConsoleLine("Password {0}: '{1}'", i + 1, resultPassword);
+                            resultPassword = resultPassword.Trim('\0');
+                            if (!string.IsNullOrEmpty(resultPassword))
+                            {
+                                WriteNewConsoleLine("Password {0}: '{1}'", i + 1, resultPassword);
+                            }
                         }
 
                         pwdPtr = IntPtr.Add(pwdPtr, MaxPasswordLen);
