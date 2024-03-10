@@ -324,12 +324,13 @@ namespace BestNet
                 int maxPasswordLen = 10;
                 int passwordBufferSize = maxPasswords * maxPasswordLen;
                 IntPtr passwordBufferPtr = StoreIntPtr(Marshal.AllocHGlobal(passwordBufferSize));
+                // generate dummy passwords
                 int bufferIdx = 0;
                 for (int i = 0; i < maxPasswords; i++)
                 {
                     for (int j = 0; j < maxPasswordLen; j++)
                     {
-                        Marshal.WriteByte(passwordBufferPtr, bufferIdx, (byte)('a' + j));
+                        Marshal.WriteByte(passwordBufferPtr, bufferIdx, (byte)('a' + i + j));
                         bufferIdx++;
                     }
                 }
@@ -350,14 +351,6 @@ namespace BestNet
                     WriteNewConsoleLine("Best version: {0}", bestVer);
 
                     // BEST2 init
-                    int initResult = is64Bit ? __best2Init64() : __best2Init32();
-                    WriteNewConsoleLine("Best2 init result: {0}", initResult);
-                    if (initResult != 0)
-                    {
-                        WriteNewConsoleLine("Best2 init failed");
-                        return 1;
-                    }
-
                     int configResult = is64Bit ? __best2Config64(Best2ProgressEvent, Best2ErrorTextEvent, Best2ErrorValueEvent) :
                         __best2Config32(Best2ProgressEvent, Best2ErrorTextEvent, Best2ErrorValueEvent);
                     if (configResult != 0)
@@ -373,6 +366,14 @@ namespace BestNet
                     else
                     {
                         __best2Options32(0, 0, 0);
+                    }
+
+                    int initResult = is64Bit ? __best2Init64() : __best2Init32();
+                    WriteNewConsoleLine("Best2 init result: {0}", initResult);
+                    if (initResult != 0)
+                    {
+                        WriteNewConsoleLine("Best2 init failed");
+                        return 1;
                     }
 
                     if (best2Api)
@@ -456,8 +457,19 @@ namespace BestNet
                         }
                     }
 
-                    IntPtr best1InputFilePtr = asmOutFilePtr != IntPtr.Zero ? asmOutFilePtr : inputFilePtr;
                     // BEST1 init
+                    Best1ErrorValueDelegate config1Result = is64Bit ? __best1Config64(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent) :
+                        __best1Config32(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent);
+                    if (config1Result == null)
+                    {
+                        WriteNewConsoleLine("Best1 config failed");
+                        return 1;
+                    }
+
+                    int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
+                    // the option result is the specified value
+
+                    IntPtr best1InputFilePtr = asmOutFilePtr != IntPtr.Zero ? asmOutFilePtr : inputFilePtr;
                     int init1Result = is64Bit ? __best1Init64(best1InputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
                             fileType, datePtr, passwordLabelPtr, passwordBufferPtr) :
                         __best1Init32(best1InputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
@@ -469,17 +481,6 @@ namespace BestNet
                         WriteNewConsoleLine("Best1 init failed");
                         return 1;
                     }
-
-                    Best1ErrorValueDelegate config1Result = is64Bit ? __best1Config64(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent) :
-                        __best1Config32(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent);
-                    if (config1Result == null)
-                    {
-                        WriteNewConsoleLine("Best1 config failed");
-                        return 1;
-                    }
-
-                    int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
-                    // the option result is the specified value
 
                     int asmResult = is64Bit ? __best1Asm64(mapFilePtr, infoFilePtr) :
                         __best1Asm32(mapFilePtr, infoFilePtr);
