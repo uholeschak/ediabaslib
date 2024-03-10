@@ -12,6 +12,8 @@ namespace BestNet
         public const string Best32DllName = "Best32.dll";
         public const string Best64DllName = "Best64.dll";
         public const string StdLibName = "B2Runtim.lib";
+        public const int MaxPasswords = 10;
+        public const int MaxPasswordLen = 10;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int Best1ProgressDelegate(int value);
@@ -323,19 +325,12 @@ namespace BestNet
                 string password = passwordLabel ?? string.Empty;
                 IntPtr passwordLabelPtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(password));
 
-                int maxPasswords = 10;
-                int maxPasswordLen = 10;
-                int passwordBufferSize = maxPasswords * maxPasswordLen;
+                int passwordBufferSize = MaxPasswords * MaxPasswordLen;
                 IntPtr passwordBufferPtr = StoreIntPtr(Marshal.AllocHGlobal(passwordBufferSize));
-                // generate dummy passwords
-                int bufferIdx = 0;
-                for (int i = 0; i < maxPasswords; i++)
+                // erase password buffer
+                for (int i = 0; i < passwordBufferSize; i++)
                 {
-                    for (int j = 0; j < maxPasswordLen; j++)
-                    {
-                        Marshal.WriteByte(passwordBufferPtr, bufferIdx, (byte)('a' + i + j));
-                        bufferIdx++;
-                    }
+                    Marshal.WriteByte(passwordBufferPtr, i, 0);
                 }
 
                 try
@@ -532,6 +527,21 @@ namespace BestNet
                     {
                         Int32 asmVer = Marshal.ReadInt32(bestVersionPtr);
                         WriteNewConsoleLine("BIP version: {0}.{1}.{2}", (asmVer >> 16) & 0xFF, (asmVer >> 8) & 0xFF, asmVer & 0xFF);
+                    }
+
+                    IntPtr pwdPtr = passwordBufferPtr;
+                    for (int i = 0; i < MaxPasswords; i++)
+                    {
+                        string resultPassword = Marshal.PtrToStringAnsi(pwdPtr);
+                        if (!string.IsNullOrEmpty(resultPassword))
+                        {
+                            WriteNewConsoleLine("Password {0}: '{1}'", i + 1, resultPassword);
+                            pwdPtr = IntPtr.Add(pwdPtr, MaxPasswordLen);
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
 
                     if (best2Api && !keepFiles)
