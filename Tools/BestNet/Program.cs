@@ -536,12 +536,9 @@ namespace BestNet
                         if (!string.IsNullOrEmpty(resultPassword))
                         {
                             WriteNewConsoleLine("Password {0}: '{1}'", i + 1, resultPassword);
-                            pwdPtr = IntPtr.Add(pwdPtr, MaxPasswordLen);
                         }
-                        else
-                        {
-                            break;
-                        }
+
+                        pwdPtr = IntPtr.Add(pwdPtr, MaxPasswordLen);
                     }
 
                     if (best2Api && !keepFiles)
