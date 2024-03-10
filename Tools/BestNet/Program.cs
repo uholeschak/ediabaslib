@@ -319,8 +319,20 @@ namespace BestNet
                 IntPtr datePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(dateStr));
                 string password = passwordLabel ?? string.Empty;
                 IntPtr passwordLabelPtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(password));
-                int passwordBufferSize = 10 * 10;
+
+                int maxPasswords = 10;
+                int maxPasswordLen = 10;
+                int passwordBufferSize = maxPasswords * maxPasswordLen;
                 IntPtr passwordBufferPtr = StoreIntPtr(Marshal.AllocHGlobal(passwordBufferSize));
+                int bufferIdx = 0;
+                for (int i = 0; i < maxPasswords; i++)
+                {
+                    for (int j = 0; j < maxPasswordLen; j++)
+                    {
+                        Marshal.WriteByte(passwordBufferPtr, bufferIdx, (byte)('a' + j));
+                        bufferIdx++;
+                    }
+                }
 
                 try
                 {
