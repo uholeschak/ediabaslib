@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -181,28 +182,28 @@ namespace BestNet
 
                 if (string.IsNullOrEmpty(inputFile))
                 {
-                    Console.WriteLine("Input file not specified");
+                    WriteNewConsoleLine("Input file not specified");
                     return 1;
                 }
 
                 inputFile = Path.GetFullPath(inputFile);
                 if (!File.Exists(inputFile))
                 {
-                    Console.WriteLine("Input file not found");
+                    WriteNewConsoleLine("Input file not found");
                     return 1;
                 }
 
                 string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
                 if (string.IsNullOrEmpty(ediabasPath))
                 {
-                    Console.WriteLine("EDIABAS path not found");
+                    WriteNewConsoleLine("EDIABAS path not found");
                     return 1;
                 }
 
                 string ediabasBinPath = Path.Combine(ediabasPath, "bin");
                 if (!Directory.Exists(ediabasBinPath))
                 {
-                    Console.WriteLine("EDIABAS bin path not found");
+                    WriteNewConsoleLine("EDIABAS bin path not found");
                     return 1;
                 }
 
@@ -210,13 +211,13 @@ namespace BestNet
                 string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
                 if (!File.Exists(bestDllPath))
                 {
-                    Console.WriteLine("{0} not found", bestDllName);
+                    WriteNewConsoleLine("{0} not found", bestDllName);
                     return 1;
                 }
 
                 if (!NativeLibrary.TryLoad(bestDllPath, out libHandle))
                 {
-                    Console.WriteLine("{0} not loaded", bestDllName);
+                    WriteNewConsoleLine("{0} not loaded", bestDllName);
                     return 1;
                 }
 
@@ -233,7 +234,7 @@ namespace BestNet
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input file extension");
+                    WriteNewConsoleLine("Invalid input file extension");
                     return 1;
                 }
 
@@ -266,12 +267,12 @@ namespace BestNet
                 string mapFile = Path.ChangeExtension(outputFile, mapExt);
                 string infoFile = Path.ChangeExtension(outputFile, infoExt);
 
-                Console.WriteLine("Output file: {0}", outputFile);
+                WriteNewConsoleLine("Output file: {0}", outputFile);
                 if (generateMapFile != 0)
                 {
-                    Console.WriteLine("Map file: {0}", mapFile);
+                    WriteNewConsoleLine("Map file: {0}", mapFile);
                 }
-                Console.WriteLine("Info file: {0}", infoFile);
+                WriteNewConsoleLine("Info file: {0}", infoFile);
 
                 int revision = 0;
                 if (!string.IsNullOrEmpty(revisionString))
@@ -286,7 +287,7 @@ namespace BestNet
                     }
                 }
 
-                Console.WriteLine("Revision: {0}.{1}", (revision >> 16) & 0xFFFF, revision & 0xFFFF);
+                WriteNewConsoleLine("Revision: {0}.{1}", (revision >> 16) & 0xFFFF, revision & 0xFFFF);
 
                 //Console.ReadKey();
                 bool best32Started = false;
@@ -317,23 +318,23 @@ namespace BestNet
                 {
                     int startResult = is64Bit ? __best32Startup64(0x20000, IntPtr.Zero, 0, bestVerPtr, bestVerSize) :
                         __best32Startup32(0x20000, IntPtr.Zero, 0, bestVerPtr, bestVerSize);
-                    //Console.WriteLine("Best32 start result: {0}", startResult);
+                    //WriteNewConsoleLine("Best32 start result: {0}", startResult);
                     if (startResult != 1)
                     {
-                        Console.WriteLine("Best32 startup failed");
+                        WriteNewConsoleLine("Best32 startup failed");
                         return 1;
                     }
 
                     best32Started = true;
                     string bestVer = Marshal.PtrToStringAnsi(bestVerPtr);
-                    Console.WriteLine("Best version: {0}", bestVer);
+                    WriteNewConsoleLine("Best version: {0}", bestVer);
 
                     // BEST2 init
                     int initResult = is64Bit ? __best2Init64() : __best2Init32();
-                    Console.WriteLine("Best2 init result: {0}", initResult);
+                    WriteNewConsoleLine("Best2 init result: {0}", initResult);
                     if (initResult != 0)
                     {
-                        Console.WriteLine("Best2 init failed");
+                        WriteNewConsoleLine("Best2 init failed");
                         return 1;
                     }
 
@@ -341,7 +342,7 @@ namespace BestNet
                         __best2Config32(Best2ProgressEvent, Best2ErrorTextEvent, Best2ErrorValueEvent);
                     if (configResult != 0)
                     {
-                        Console.WriteLine("Best2 config failed");
+                        WriteNewConsoleLine("Best2 config failed");
                         return 1;
                     }
 
@@ -358,26 +359,26 @@ namespace BestNet
                     {
                         if (string.IsNullOrEmpty(asmExt))
                         {
-                            Console.WriteLine("Best2 asm extension missing");
+                            WriteNewConsoleLine("Best2 asm extension missing");
                             return 1;
                         }
 
                         string asmOutFile = Path.ChangeExtension(outputFile, asmExt);
                         asmOutFilePtr = Marshal.StringToHGlobalAnsi(asmOutFile);
 
-                        Console.WriteLine("Intermediate asm output file: {0}", asmOutFile);
+                        WriteNewConsoleLine("Intermediate asm output file: {0}", asmOutFile);
 
                         if (libFiles == null || libFiles.Count == 0)
                         {
                             string stdLibFile = Path.Combine(ediabasBinPath, StdLibName);
                             if (!File.Exists(stdLibFile))
                             {
-                                Console.WriteLine("Standard lib not found: {0}", stdLibFile);
+                                WriteNewConsoleLine("Standard lib not found: {0}", stdLibFile);
                                 return 1;
                             }
 
                             libFiles = new List<string> { stdLibFile };
-                            Console.WriteLine("Using standard lib: {0}", stdLibFile);
+                            WriteNewConsoleLine("Using standard lib: {0}", stdLibFile);
                         }
 
                         infoFilePtr = Marshal.StringToHGlobalAnsi(infoFile);
@@ -402,19 +403,18 @@ namespace BestNet
                         //Console.ReadKey();
                         int ccResult = is64Bit ? __best2Cc64(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, incDirsFilePtr) :
                             __best2Cc32(inputFilePtr, asmOutFilePtr, libFilesPtr, infoFilePtr, incDirsFilePtr);
-                        AdaptConsoleCursor();
-                        //Console.WriteLine("Best2 CC result: {0}", ccResult);
+                        //WriteNewConsoleLine("Best2 CC result: {0}", ccResult);
                         if (ccResult != 0)
                         {
-                            Console.WriteLine("Best2 CC failed");
+                            WriteNewConsoleLine("Best2 CC failed");
                             return 1;
                         }
 
                         int ccTotal = is64Bit ? __best2CcTotal64() : __best2CcTotal32();
-                        Console.WriteLine("Best2 CC total: {0}", ccTotal);
+                        WriteNewConsoleLine("Best2 CC total: {0}", ccTotal);
 
                         int asmTotal = is64Bit ? __best2AsmTotal64() : __best2AsmTotal32();
-                        Console.WriteLine("Best2 ASM total: {0}", asmTotal);
+                        WriteNewConsoleLine("Best2 ASM total: {0}", asmTotal);
 
                         int bestRevSize = 0x40;
                         bestRevPtr = Marshal.AllocHGlobal(bestRevSize);
@@ -424,14 +424,14 @@ namespace BestNet
                         Int32 revValueBuf = Marshal.ReadInt32(bestRevValuePtr);
                         if (revValue != revValueBuf)
                         {
-                            Console.WriteLine("Best2 revision mismatch: {0:X08}, {1:X08}", revValue, revValueBuf);
+                            WriteNewConsoleLine("Best2 revision mismatch: {0:X08}, {1:X08}", revValue, revValueBuf);
                         }
                         string revString = Marshal.PtrToStringAnsi(bestRevPtr);
-                        Console.WriteLine("Best2 revision: {0}.{1}, '{2}'", (revValue >> 16) & 0xFFFF, revValue & 0xFFFF, revString);
+                        WriteNewConsoleLine("Best2 revision: {0}.{1}, '{2}'", (revValue >> 16) & 0xFFFF, revValue & 0xFFFF, revString);
 
                         if (!File.Exists(asmOutFile))
                         {
-                            Console.WriteLine("Best2 generated asm output file not found: {0}", asmOutFile);
+                            WriteNewConsoleLine("Best2 generated asm output file not found: {0}", asmOutFile);
                             return 1;
                         }
                     }
@@ -442,11 +442,11 @@ namespace BestNet
                             fileType, datePtr, configFilePtr, 0) :
                         __best1Init32(best1InputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
                             fileType, datePtr, configFilePtr, 0);
-                    //Console.WriteLine("Best1 init result: {0}", initResult);
+                    //WriteNewConsoleLine("Best1 init result: {0}", initResult);
 
                     if (init1Result != 0)
                     {
-                        Console.WriteLine("Best1 init failed");
+                        WriteNewConsoleLine("Best1 init failed");
                         return 1;
                     }
 
@@ -454,7 +454,7 @@ namespace BestNet
                         __best1Config32(Best1ProgressEvent, Best1ErrorTextEvent, Best1ErrorValueEvent);
                     if (config1Result == null)
                     {
-                        Console.WriteLine("Best1 config failed");
+                        WriteNewConsoleLine("Best1 config failed");
                         return 1;
                     }
 
@@ -463,11 +463,10 @@ namespace BestNet
 
                     int asmResult = is64Bit ? __best1Asm64(mapFilePtr, infoFilePtr) :
                         __best1Asm32(mapFilePtr, infoFilePtr);
-                    AdaptConsoleCursor();
-                    //Console.WriteLine("Best1 asm result: {0}", asmResult);
+                    //WriteNewConsoleLine("Best1 asm result: {0}", asmResult);
                     if (asmResult != 0)
                     {
-                        Console.WriteLine("Best1 asm failed");
+                        WriteNewConsoleLine("Best1 asm failed");
                         return 1;
                     }
 
@@ -475,7 +474,7 @@ namespace BestNet
                     if (IntPtr.Zero != bestVersionPtr)
                     {
                         Int32 asmVer = Marshal.ReadInt32(bestVersionPtr);
-                        Console.WriteLine("BIP version: {0}.{1}.{2}", (asmVer >> 16) & 0xFF, (asmVer >> 8) & 0xFF, asmVer & 0xFF);
+                        WriteNewConsoleLine("BIP version: {0}.{1}.{2}", (asmVer >> 16) & 0xFF, (asmVer >> 8) & 0xFF, asmVer & 0xFF);
                     }
                 }
                 finally
@@ -563,7 +562,7 @@ namespace BestNet
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: {0}", e.Message);
+                WriteNewConsoleLine("Exception: {0}", e.Message);
                 return 1;
             }
             finally
@@ -589,8 +588,7 @@ namespace BestNet
             }
             else
             {
-                AdaptConsoleCursor();
-                Console.WriteLine("Done");
+                WriteNewConsoleLine("Done");
             }
 
             _lastBest1OutLine = value;
@@ -599,15 +597,13 @@ namespace BestNet
 
         private static int Best1ErrorTextEvent(string text)
         {
-            AdaptConsoleCursor();
-            Console.WriteLine("Error: {0}", text);
+            WriteNewConsoleLine("Error: {0}", text);
             return 0;
         }
 
         private static int Best1ErrorValueEvent(uint value, string text)
         {
-            AdaptConsoleCursor();
-            Console.WriteLine("Error value: {0}: {1}", value, text);
+            WriteNewConsoleLine("Error value: {0}: {1}", value, text);
             return 0;
         }
 
@@ -623,8 +619,7 @@ namespace BestNet
             }
             else
             {
-                AdaptConsoleCursor();
-                Console.WriteLine("Done");
+                WriteNewConsoleLine("Done");
             }
 
             _lastBest2OutLine = value1;
@@ -633,15 +628,13 @@ namespace BestNet
 
         private static int Best2ErrorTextEvent(string text)
         {
-            AdaptConsoleCursor();
-            Console.WriteLine("Error: {0}", text);
+            WriteNewConsoleLine("Error: {0}", text);
             return 0;
         }
 
         private static int Best2ErrorValueEvent(uint value, string text)
         {
-            AdaptConsoleCursor();
-            Console.WriteLine("Error value: {0}: {1}", value, text);
+            WriteNewConsoleLine("Error value: {0}: {1}", value, text);
             return 0;
         }
 
@@ -651,6 +644,12 @@ namespace BestNet
             {
                 Console.WriteLine();
             }
+        }
+
+        private static void WriteNewConsoleLine([StringSyntax("CompositeFormat")] string format, object? arg0 = null, object? arg1 = null, object? arg2 = null)
+        {
+            AdaptConsoleCursor();
+            Console.WriteLine(format, arg0, arg1, arg2);
         }
     }
 }
