@@ -286,7 +286,7 @@ namespace BestNet
                     WriteNewConsoleLine("Map file: {0}", mapFile);
                 }
 
-                int revision = 0;
+                int? revision = null;
                 if (!string.IsNullOrEmpty(revisionString))
                 {
                     string[] revParts = revisionString.Split('.');
@@ -297,9 +297,10 @@ namespace BestNet
                             revision = ((major & 0xFFFF) << 16) | (minor & 0xFFFF);
                         }
                     }
-
-                    WriteNewConsoleLine("Revision: {0}.{1}", (revision >> 16) & 0xFFFF, revision & 0xFFFF);
                 }
+
+                int asmRevValue = 0;
+                string asmUserName = null;
 
                 //Console.ReadKey();
                 bool best32Started = false;
@@ -315,12 +316,7 @@ namespace BestNet
                 IntPtr infoFilePtr = IntPtr.Zero;
                 IntPtr incDirsFilePtr = IntPtr.Zero;
                 IntPtr[] libFilesPtr = new IntPtr[] { IntPtr.Zero };
-
                 IntPtr userNamePtr = IntPtr.Zero;
-                if (!string.IsNullOrEmpty(userName))
-                {
-                    userNamePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(userName));
-                }
 
                 string dateStr = DateTime.Now.ToString("ddd MMM dd HH:mm:ss yyy");
                 IntPtr datePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(dateStr));
@@ -463,8 +459,11 @@ namespace BestNet
                         {
                             WriteNewConsoleLine("Best2 revision mismatch: {0:X08}, {1:X08}", revValue, revValueBuf);
                         }
+
                         string revString = Marshal.PtrToStringAnsi(bestRevPtr);
                         WriteNewConsoleLine("Best2 revision: {0}.{1}, '{2}'", (revValue >> 16) & 0xFFFF, revValue & 0xFFFF, revString);
+                        asmRevValue = revValueBuf;
+                        asmUserName = revString;
 
                         if (!File.Exists(asmOutFile))
                         {
@@ -485,10 +484,31 @@ namespace BestNet
                     int optionsResult = is64Bit ? __best1Options64(0) : __best1Options32(0);
                     // the option result is the specified value
 
+                    if (revision.HasValue)
+                    {
+                        asmRevValue = revision.Value;
+                    }
+
+                    if (!string.IsNullOrEmpty(userName))
+                    {
+                        asmUserName = userName;
+                    }
+
+                    if (!string.IsNullOrEmpty(asmUserName))
+                    {
+                        userNamePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(asmUserName));
+                    }
+
+                    WriteNewConsoleLine("Asm revision: {0}.{1}", (asmRevValue >> 16) & 0xFFFF, asmRevValue & 0xFFFF);
+                    if (!string.IsNullOrEmpty(asmUserName))
+                    {
+                        WriteNewConsoleLine("Asm user name: {0}", asmUserName);
+                    }
+
                     IntPtr best1InputFilePtr = asmOutFilePtr != IntPtr.Zero ? asmOutFilePtr : inputFilePtr;
-                    int init1Result = is64Bit ? __best1Init64(best1InputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
+                    int init1Result = is64Bit ? __best1Init64(best1InputFilePtr, outputFilePtr, asmRevValue, userNamePtr, generateMapFile,
                             fileType, datePtr, passwordLabelPtr, passwordBufferPtr) :
-                        __best1Init32(best1InputFilePtr, outputFilePtr, revision, userNamePtr, generateMapFile,
+                        __best1Init32(best1InputFilePtr, outputFilePtr, asmRevValue, userNamePtr, generateMapFile,
                             fileType, datePtr, passwordLabelPtr, passwordBufferPtr);
                     //WriteNewConsoleLine("Best1 init result: {0}", initResult);
 
