@@ -15,6 +15,7 @@ namespace BestNet
         public const string StdLibName = "B2Runtim.lib";
         public const int MaxPasswords = 10;
         public const int MaxPasswordLen = 10;
+        public const int MinBestVersion = 0x0760;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int Best1ProgressDelegate(int value);
@@ -255,9 +256,9 @@ namespace BestNet
                 }
 
                 long bestDllVerNum = (long.Parse(versionParts[0]) << 8) + (long.Parse(versionParts[1]) << 4) + long.Parse(versionParts[2]);
-                if (bestDllVerNum < 0x0760)
+                if (bestDllVerNum < MinBestVersion)
                 {
-                    WriteNewConsoleLine("File version too small: {0}", bestDllVersion);
+                    WriteNewConsoleLine("Minimum best version required: {0:X03}", MinBestVersion);
                     return 1;
                 }
 
