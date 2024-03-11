@@ -239,9 +239,25 @@ namespace BestNet
                 }
 
                 FileVersionInfo bestDllVersionInfo = FileVersionInfo.GetVersionInfo(bestDllPath);
-                if (string.IsNullOrEmpty(bestDllVersionInfo.FileVersion))
+                string bestDllVersion = bestDllVersionInfo.FileVersion;
+                if (string.IsNullOrEmpty(bestDllVersion))
                 {
                     WriteNewConsoleLine("No file version found in: {0}", bestDllName);
+                    return 1;
+                }
+
+                WriteNewConsoleLine("Best file version: {0}", bestDllVersion);
+                string[] versionParts = bestDllVersion.Split('.');
+                if (versionParts.Length != 3)
+                {
+                    WriteNewConsoleLine("Invalid file version: {0}", bestDllVersion);
+                    return 1;
+                }
+
+                long bestDllVerNum = (long.Parse(versionParts[0]) << 8) + (long.Parse(versionParts[1]) << 4) + long.Parse(versionParts[2]);
+                if (bestDllVerNum < 0x0760)
+                {
+                    WriteNewConsoleLine("File version too small: {0}", bestDllVersion);
                     return 1;
                 }
 
