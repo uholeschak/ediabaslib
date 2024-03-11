@@ -1,4 +1,5 @@
 ;Test program for command execution test
+;Compile with BestNet -i cmd_test1.b1v
 
 #SSIZE 2048
 
