@@ -15,7 +15,7 @@ namespace BestNet
         public const string StdLibName = "B2Runtim.lib";
         public const int MaxPasswords = 10;
         public const int MaxPasswordLen = 10;
-        public const int MinBestVersion = 0x0760;
+        public const int MinBestVersion = 0x00070600;
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int Best1ProgressDelegate(int value);
@@ -212,17 +212,11 @@ namespace BestNet
                     return 1;
                 }
 
+                string bestDllName = is64Bit ? Best64DllName : Best32DllName;
                 string ediabasBinPath = ediabasDir;
                 if (string.IsNullOrEmpty(ediabasBinPath))
                 {
-                    string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
-                    if (string.IsNullOrEmpty(ediabasPath))
-                    {
-                        WriteNewConsoleLine("EDIABAS path not found");
-                        return 1;
-                    }
-
-                    ediabasBinPath = Path.Combine(ediabasPath, "bin");
+                    ediabasBinPath = DetectBestDllFolder(bestDllName);
                 }
 
                 if (!Directory.Exists(ediabasBinPath))
@@ -231,7 +225,6 @@ namespace BestNet
                     return 1;
                 }
 
-                string bestDllName = is64Bit ? Best64DllName : Best32DllName;
                 string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
                 if (!File.Exists(bestDllPath))
                 {
@@ -239,26 +232,10 @@ namespace BestNet
                     return 1;
                 }
 
-                FileVersionInfo bestDllVersionInfo = FileVersionInfo.GetVersionInfo(bestDllPath);
-                string bestDllVersion = bestDllVersionInfo.FileVersion;
-                if (string.IsNullOrEmpty(bestDllVersion))
-                {
-                    WriteNewConsoleLine("No file version found in: {0}", bestDllName);
-                    return 1;
-                }
-
-                WriteNewConsoleLine("Best file version: {0}", bestDllVersion);
-                string[] versionParts = bestDllVersion.Split('.');
-                if (versionParts.Length != 3)
-                {
-                    WriteNewConsoleLine("Invalid file version: {0}", bestDllVersion);
-                    return 1;
-                }
-
-                long bestDllVerNum = (long.Parse(versionParts[0]) << 8) + (long.Parse(versionParts[1]) << 4) + long.Parse(versionParts[2]);
+                long bestDllVerNum = GetBestDllVersion(bestDllPath);
                 if (bestDllVerNum < MinBestVersion)
                 {
-                    WriteNewConsoleLine("Minimum best version required: {0:X03}", MinBestVersion);
+                    WriteNewConsoleLine("Minimum best version required: {0:X06}", MinBestVersion);
                     return 1;
                 }
 
@@ -718,6 +695,62 @@ namespace BestNet
         {
             AdaptConsoleCursor();
             Console.WriteLine(format, arg0, arg1, arg2);
+        }
+
+        private static string DetectBestDllFolder(string bestDllName)
+        {
+            try
+            {
+                string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
+                if (string.IsNullOrEmpty(ediabasPath))
+                {
+                    return null;
+                }
+
+                string ediabasBinPath = Path.Combine(ediabasPath, "bin");
+                if (!Directory.Exists(ediabasBinPath))
+                {
+                    return null;
+                }
+
+                string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
+                if (!File.Exists(bestDllPath))
+                {
+                    return null;
+                }
+
+                long bestDllVerNum = GetBestDllVersion(bestDllPath);
+                if (bestDllVerNum < MinBestVersion)
+                {
+                    return null;
+                }
+
+                return ediabasBinPath;
+            }
+            catch (Exception)
+            {
+                return null;
+
+            }
+        }
+
+        private static long GetBestDllVersion(string bestDllPath)
+        {
+            FileVersionInfo bestDllVersionInfo = FileVersionInfo.GetVersionInfo(bestDllPath);
+            string bestDllVersion = bestDllVersionInfo.FileVersion;
+            if (string.IsNullOrEmpty(bestDllVersion))
+            {
+                return 0;
+            }
+
+            string[] versionParts = bestDllVersion.Split('.');
+            if (versionParts.Length != 3)
+            {
+                return 0;
+            }
+
+            long bestDllVerNum = (long.Parse(versionParts[0]) << 16) + (long.Parse(versionParts[1]) << 8) + long.Parse(versionParts[2]);
+            return bestDllVerNum;
         }
 
         private static IntPtr StoreIntPtr(IntPtr intPtr)
