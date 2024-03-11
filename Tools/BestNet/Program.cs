@@ -1,10 +1,13 @@
 ﻿using CommandLine;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+
+#pragma warning disable CA1416
 
 namespace BestNet
 {
@@ -703,6 +706,22 @@ namespace BestNet
 
             try
             {
+                using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+                {
+                    using (RegistryKey key = localMachine32.OpenSubKey(@"SOFTWARE\BMWGroup\ISPI\ISTA"))
+                    {
+                        string path = key?.GetValue("InstallLocation", null) as string;
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            string ediabasBinPath = Path.Combine(path, @"Ediabas", @"bin");
+                            if (Directory.Exists(ediabasBinPath))
+                            {
+                                ediabasPathList.Add(ediabasBinPath);
+                            }
+                        }
+                    }
+                }
+
                 string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
                 if (!string.IsNullOrEmpty(ediabasPath))
                 {
