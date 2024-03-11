@@ -147,6 +147,9 @@ namespace BestNet
 
             [Option('d', "incDirs", Required = false, HelpText = "Include directories, separated by ;")]
             public string IncDirs { get; set; }
+
+            [Option('e', "ediabasDir", Required = false, HelpText = "Specify EDIABAS bin directory for bestXX.dll selection.")]
+            public string EdiabasDir { get; set; }
         }
 
         static int _lastBest1OutLine = -1;
@@ -168,6 +171,7 @@ namespace BestNet
                 bool keepFiles = false;
                 List<string> libFiles = null;
                 string incDirs = null;
+                string ediabasDir = null;
                 bool hasErrors = false;
                 Parser.Default.ParseArguments<Options>(args)
                     .WithParsed<Options>(o =>
@@ -181,6 +185,7 @@ namespace BestNet
                         keepFiles = o.KeepFiles;
                         libFiles = o.LibFiles?.ToList();
                         incDirs = o.IncDirs;
+                        ediabasDir = o.EdiabasDir;
                     })
                     .WithNotParsed(e =>
                     {
@@ -205,14 +210,19 @@ namespace BestNet
                     return 1;
                 }
 
-                string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
-                if (string.IsNullOrEmpty(ediabasPath))
+                string ediabasBinPath = ediabasDir;
+                if (string.IsNullOrEmpty(ediabasBinPath))
                 {
-                    WriteNewConsoleLine("EDIABAS path not found");
-                    return 1;
+                    string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
+                    if (string.IsNullOrEmpty(ediabasPath))
+                    {
+                        WriteNewConsoleLine("EDIABAS path not found");
+                        return 1;
+                    }
+
+                    ediabasBinPath = Path.Combine(ediabasPath, "bin");
                 }
 
-                string ediabasBinPath = Path.Combine(ediabasPath, "bin");
                 if (!Directory.Exists(ediabasBinPath))
                 {
                     WriteNewConsoleLine("EDIABAS bin path not found");
