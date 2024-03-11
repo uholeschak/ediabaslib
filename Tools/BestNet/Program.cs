@@ -699,39 +699,38 @@ namespace BestNet
 
         private static string DetectBestDllFolder(string bestDllName)
         {
+            List<string> ediabasPathList = new List<string>();
+
             try
             {
                 string ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
-                if (string.IsNullOrEmpty(ediabasPath))
+                if (!string.IsNullOrEmpty(ediabasPath))
                 {
-                    return null;
+                    string ediabasBinPath = Path.Combine(ediabasPath, "bin");
+                    if (Directory.Exists(ediabasBinPath))
+                    {
+                        ediabasPathList.Add(ediabasBinPath);
+                    }
                 }
 
-                string ediabasBinPath = Path.Combine(ediabasPath, "bin");
-                if (!Directory.Exists(ediabasBinPath))
+                foreach (string ediabasBinPath in ediabasPathList)
                 {
-                    return null;
+                    string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
+                    if (File.Exists(bestDllPath))
+                    {
+                        long bestDllVerNum = GetBestDllVersion(bestDllPath);
+                        if (bestDllVerNum >= MinBestVersion)
+                        {
+                            return ediabasBinPath;
+                        }
+                    }
                 }
-
-                string bestDllPath = Path.Combine(ediabasBinPath, bestDllName);
-                if (!File.Exists(bestDllPath))
-                {
-                    return null;
-                }
-
-                long bestDllVerNum = GetBestDllVersion(bestDllPath);
-                if (bestDllVerNum < MinBestVersion)
-                {
-                    return null;
-                }
-
-                return ediabasBinPath;
             }
             catch (Exception)
             {
                 return null;
-
             }
+            return null;
         }
 
         private static long GetBestDllVersion(string bestDllPath)
