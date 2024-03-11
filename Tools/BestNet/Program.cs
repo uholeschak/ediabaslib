@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -234,6 +235,13 @@ namespace BestNet
                 if (!File.Exists(bestDllPath))
                 {
                     WriteNewConsoleLine("{0} not found", bestDllName);
+                    return 1;
+                }
+
+                FileVersionInfo bestDllVersionInfo = FileVersionInfo.GetVersionInfo(bestDllPath);
+                if (string.IsNullOrEmpty(bestDllVersionInfo.FileVersion))
+                {
+                    WriteNewConsoleLine("No file version found in: {0}", bestDllName);
                     return 1;
                 }
 
