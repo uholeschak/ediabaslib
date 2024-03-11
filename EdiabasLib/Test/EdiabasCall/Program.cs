@@ -14,17 +14,32 @@ namespace EdiabasCall
 {
     static class Program
     {
-        [DllImport("api32.dll", EntryPoint = "__apiResultText")]
+        public const string Api32DllName = "api32.dll";
+        public const string Api64DllName = "api64.dll";
+
+        [DllImport(Api32DllName, EntryPoint = "__apiResultText")]
         private static extern bool __api32ResultText(uint handle, byte[] buf, string result, ushort set, string format);
 
-        [DllImport("api32.dll", EntryPoint = "__apiResultChar")]
+        [DllImport(Api64DllName, EntryPoint = "__apiResultText")]
+        private static extern bool __api64ResultText(uint handle, byte[] buf, string result, ushort set, string format);
+
+        [DllImport(Api32DllName, EntryPoint = "__apiResultChar")]
         private static extern bool __api32ResultChar(uint handle, out byte buf, string result, ushort set);
 
-        [DllImport("api32.dll", EntryPoint = "__apiResultLongLong")]
-        private static extern bool __apiResultLongLong(uint handle, out long buf, string result, ushort set);
+        [DllImport(Api64DllName, EntryPoint = "__apiResultChar")]
+        private static extern bool __api64ResultChar(uint handle, out byte buf, string result, ushort set);
 
-        [DllImport("api32.dll", EntryPoint = "__apiResultQWord")]
-        private static extern bool __apiResultQWord(uint handle, out ulong buf, string result, ushort set);
+        [DllImport(Api32DllName, EntryPoint = "__apiResultLongLong")]
+        private static extern bool __api32ResultLongLong(uint handle, out long buf, string result, ushort set);
+
+        [DllImport(Api64DllName, EntryPoint = "__apiResultLongLong")]
+        private static extern bool __api64ResultLongLong(uint handle, out long buf, string result, ushort set);
+
+        [DllImport(Api32DllName, EntryPoint = "__apiResultQWord")]
+        private static extern bool __api32ResultQWord(uint handle, out ulong buf, string result, ushort set);
+
+        [DllImport(Api64DllName, EntryPoint = "__apiResultQWord")]
+        private static extern bool __api64ResultQWord(uint handle, out ulong buf, string result, ushort set);
 
         private static readonly CultureInfo Culture = CultureInfo.CreateSpecificCulture("en");
         private static readonly Encoding Encoding = Encoding.GetEncoding(1252);
@@ -33,11 +48,14 @@ namespace EdiabasCall
         private static List<API.APIRESULTFIELD> _apiResultFields;
         private static string _lastJobInfo = string.Empty;
         private static int _lastJobProgress = -1;
+        private static bool _is64Bit;
         private static bool _api6;
         private static bool _api76;
 
         static int Main(string[] args)
         {
+            _is64Bit = Environment.Is64BitProcess;
+
             string cfgString = null;
             string sgbdFile = null;
             string outFile = null;
@@ -373,7 +391,11 @@ namespace EdiabasCall
                                                 }
                                                 else
                                                 {
-                                                    if (__api32ResultChar(_apiHandle, out byte resultByte, resultName, set))
+                                                    // ReSharper disable once InlineOutVariableDeclaration
+                                                    byte resultByte;
+                                                    bool apiResult = _is64Bit ? __api64ResultChar(_apiHandle, out resultByte, resultName, set) :
+                                                        __api32ResultChar(_apiHandle, out resultByte, resultName, set);
+                                                    if (apiResult)
                                                     {
                                                         sbResult.Append(string.Format(Culture, "C: {0} 0x{0:X02}", (sbyte)resultByte));
                                                     }
@@ -447,7 +469,9 @@ namespace EdiabasCall
                                                 else
                                                 {
                                                     byte[] dataBuffer = new byte[API.APIMAXTEXT];
-                                                    if (__api32ResultText(_apiHandle, dataBuffer, resultName, set, ""))
+                                                    bool apiResult = _is64Bit ? __api64ResultText(_apiHandle, dataBuffer, resultName, set, "") :
+                                                        __api32ResultText(_apiHandle, dataBuffer, resultName, set, "");
+                                                    if (apiResult)
                                                     {
                                                         int length = Array.IndexOf(dataBuffer, (byte)0);
                                                         if (length < 0)
@@ -505,7 +529,11 @@ namespace EdiabasCall
                                                     }
                                                     else
                                                     {
-                                                        if (__api32ResultChar(_apiHandle, out byte resultByte, resultName, set))
+                                                        // ReSharper disable once InlineOutVariableDeclaration
+                                                        byte resultByte;
+                                                        bool apiResult = _is64Bit ? __api64ResultChar(_apiHandle, out resultByte, resultName, set) :
+                                                            __api32ResultChar(_apiHandle, out resultByte, resultName, set);
+                                                        if (apiResult)
                                                         {
                                                             sbResult.Append(string.Format(Culture, " {0}", (sbyte) resultByte));
                                                         }
@@ -544,11 +572,20 @@ namespace EdiabasCall
                                                         {
                                                             try
                                                             {
-                                                                if (__apiResultLongLong(_apiHandle, out long resultLong, resultName, set))
+                                                                // ReSharper disable once InlineOutVariableDeclaration
+                                                                long resultLong;
+                                                                bool apiResultLL = _is64Bit ? __api64ResultLongLong(_apiHandle, out resultLong, resultName, set) :
+                                                                    __api32ResultLongLong(_apiHandle, out resultLong, resultName, set);
+                                                                if (apiResultLL)
                                                                 {
                                                                     sbResult.Append(string.Format(Culture, " {0}", resultLong));
                                                                 }
-                                                                if (__apiResultQWord(_apiHandle, out ulong resultUlong, resultName, set))
+
+                                                                // ReSharper disable once InlineOutVariableDeclaration
+                                                                ulong resultUlong;
+                                                                bool apiResultQW = _is64Bit ? __api64ResultQWord(_apiHandle, out resultUlong, resultName, set) :
+                                                                    __api32ResultQWord(_apiHandle, out resultUlong, resultName, set);
+                                                                if (apiResultQW)
                                                                 {
                                                                     sbResult.Append(string.Format(Culture, " {0}", resultUlong));
                                                                 }
