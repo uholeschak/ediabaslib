@@ -2096,6 +2096,18 @@ namespace EdiabasLib
             public bool Overflow;
         }
 
+        private class VariantInfo
+        {
+            public VariantInfo(string variantName, string familyName)
+            {
+                VariantName = variantName;
+                FamilyName = familyName;
+            }
+
+            public string VariantName { get; private set; }
+            public string FamilyName { get; private set; }
+        }
+
         private class ArgInfo
         {
             public ArgInfo()
@@ -2250,7 +2262,7 @@ namespace EdiabasLib
         private List<Dictionary<string, ResultData>> _resultSets;
         private List<Dictionary<string, ResultData>> _resultSetsTemp;
         private readonly Dictionary<string, string> _configDict = new Dictionary<string, string>();
-        private readonly Dictionary<string, string> _groupMappingDict = new Dictionary<string, string>();
+        private readonly Dictionary<string, VariantInfo> _groupMappingDict = new Dictionary<string, VariantInfo>();
         private string _logInfo;
         private long _infoProgressRange;
         private long _infoProgressPos;
@@ -4781,14 +4793,18 @@ namespace EdiabasLib
                 if (fileType == 0)
                 {       // group file
                     string key = baseFileName;
-                    string variantName;
+                    string variantName = string.Empty;
                     string familyName = string.Empty;
-                    bool mappingFound;
                     lock (_apiLock)
                     {
-                        mappingFound = _groupMappingDict.TryGetValue(key, out variantName);
+                        if (_groupMappingDict.TryGetValue(key, out VariantInfo variantInfo))
+                        {
+                            variantName = variantInfo.VariantName;
+                            familyName = variantInfo.FamilyName;
+                        }
                     }
-                    if (!mappingFound)
+
+                    if (string.IsNullOrEmpty(variantName))
                     {
                         SgbdFileName = baseFileName + ".grp";
                         variantName = ExecuteIdentJob(out string family).ToLower(Culture);
@@ -4797,14 +4813,14 @@ namespace EdiabasLib
                             familyName = family.ToLower(Culture);
                         }
 
-                        if (variantName.Length == 0)
+                        if (string.IsNullOrEmpty(variantName))
                         {
                             LogFormat(EdLogLevel.Error, "ResolveSgbdFile: No variant found");
                             throw new ArgumentOutOfRangeException("variantName", "ResolveSgbdFile: No variant found");
                         }
                         lock (_apiLock)
                         {
-                            _groupMappingDict.Add(key, variantName);
+                            _groupMappingDict.Add(key, new VariantInfo(variantName, fileName));
                         }
                     }
 
@@ -4813,6 +4829,7 @@ namespace EdiabasLib
                         _groupName = baseFileName;
                         _familyName = familyName;
                     }
+
                     SgbdFileName = variantName + ".prg";
                 }
                 else
