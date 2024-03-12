@@ -418,7 +418,14 @@ namespace EdiabasTest
                                     sbResult.Append(string.Format(Culture, " {0}", (double)value));
                                     if (_api76)
                                     {
-                                        sbResult.Append(string.Format(Culture, " {0}", (int)value));
+                                        if (resultData.ResType == EdiabasNet.ResultType.TypeD)
+                                        {
+                                            sbResult.Append(string.Format(Culture, " {0}", (uint)value));
+                                        }
+                                        else
+                                        {
+                                            sbResult.Append(string.Format(Culture, " {0}", (int)value));
+                                        }
                                         sbResult.Append(string.Format(Culture, " {0}", (uint)value));
                                     }
                                 }
