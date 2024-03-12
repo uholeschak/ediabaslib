@@ -1304,8 +1304,6 @@ namespace EdiabasLib
             TypeR,  // float
             TypeS,  // string
             TypeY,  // array
-            TypeQ, // 64 bit
-            TypeLL,// 64 bit signed
         }
 
         private enum RegisterType : byte
