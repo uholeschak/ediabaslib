@@ -4782,6 +4782,7 @@ namespace EdiabasLib
                 {       // group file
                     string key = baseFileName;
                     string variantName;
+                    string familyName = string.Empty;
                     bool mappingFound;
                     lock (_apiLock)
                     {
@@ -4790,7 +4791,12 @@ namespace EdiabasLib
                     if (!mappingFound)
                     {
                         SgbdFileName = baseFileName + ".grp";
-                        variantName = ExecuteIdentJob().ToLower(Culture);
+                        variantName = ExecuteIdentJob(out string family).ToLower(Culture);
+                        if (!string.IsNullOrEmpty(family))
+                        {
+                            familyName = family.ToLower(Culture);
+                        }
+
                         if (variantName.Length == 0)
                         {
                             LogFormat(EdLogLevel.Error, "ResolveSgbdFile: No variant found");
@@ -4805,7 +4811,7 @@ namespace EdiabasLib
                     lock (_apiLock)
                     {
                         _groupName = baseFileName;
-                        _familyName = string.Empty;
+                        _familyName = familyName;
                     }
                     SgbdFileName = variantName + ".prg";
                 }
@@ -4968,8 +4974,9 @@ namespace EdiabasLib
             }
         }
 
-        private string ExecuteIdentJob()
+        private string ExecuteIdentJob(out string familyName)
         {
+            familyName = string.Empty;
             bool jobRunningOld = JobRunning;
             bool jobStdOld = _jobStd;
             try
@@ -4990,6 +4997,15 @@ namespace EdiabasLib
                 if (_resultSets.Count > 1)
                 {
                     ResultData result;
+                    if (_resultSets[1].TryGetValue("FAMILIE", out result))
+                    {
+                        if (result.OpData is string)
+                        {
+                            familyName = (string)result.OpData;
+                            LogString(EdLogLevel.Info, "executeIdentJob family: " + familyName);
+                        }
+                    }
+
                     if (_resultSets[1].TryGetValue("VARIANTE", out result))
                     {
                         if (result.OpData is string)
