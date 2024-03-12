@@ -936,7 +936,14 @@ namespace Ediabas
                 return false;
             }
 
-            buffer = (int) int64Buffer;
+            if (resultType == EdiabasNet.ResultType.TypeD)
+            {
+                buffer = (uint)int64Buffer;
+            }
+            else
+            {
+                buffer = (int)int64Buffer;
+            }
 
             logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
