@@ -271,6 +271,7 @@ namespace CarSimulator
         private const int EnetControlPort = 6811;
         private const int EnetDiagPrgPort = 51560;
         private const int EnetControlPrgPort = 51561;
+        private const int DoIpPort = 13400;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
         // Otherwise ther is packet loss in the ICOM internally!
@@ -313,6 +314,8 @@ namespace CarSimulator
         private readonly List<BmwTcpChannel> _bmwTcpChannels;
         private UdpClient _udpClient;
         private bool _udpError;
+        private UdpClient _udpDoIpClient;
+        private bool _udpDoIpError;
         private UdpClient _srvLocClient;
         private IcomDhcpServer _icomDhcpServer;
         private bool _srvLocError;
@@ -757,6 +760,8 @@ namespace CarSimulator
             _bmwTcpChannels = new List<BmwTcpChannel>();
             _udpClient = null;
             _udpError = false;
+            _udpDoIpClient = null;
+            _udpDoIpError = false;
             _srvLocClient = null;
             _srvLocError = false;
             _icomUp = false;
@@ -954,6 +959,7 @@ namespace CarSimulator
 
                     UpdateIcomStatus(true);
                     UdpConnect();
+                    UdpDoIpConnect();
                     SrvLocConnect();
                 }
                 catch (Exception)
@@ -1085,6 +1091,7 @@ namespace CarSimulator
             Connected = false;
 
             UdpDisconnect();
+            UdpDoIpDisconnect();
             SrvLocDisconnect();
 
             foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
@@ -1194,6 +1201,46 @@ namespace CarSimulator
             catch (Exception)
             {
                 _udpError = true;
+            }
+        }
+
+        private void UdpDoIpConnect()
+        {
+            _udpDoIpError = false;
+            _udpDoIpClient = new UdpClient(DoIpPort);
+            StartUdpDoIpListen();
+        }
+
+        private void UdpDoIpDisconnect()
+        {
+            try
+            {
+                if (_udpDoIpClient != null)
+                {
+                    _udpDoIpClient.Close();
+                    _udpDoIpClient.Dispose();
+                    _udpDoIpClient = null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private void UdpDoIpRecover()
+        {
+            try
+            {
+                if (_udpDoIpError)
+                {
+                    UdpDoIpDisconnect();
+                    UdpDoIpConnect();
+                }
+            }
+            catch (Exception)
+            {
+                _udpDoIpError = true;
             }
         }
 
@@ -1904,6 +1951,37 @@ namespace CarSimulator
 
             return result;
         }
+
+        private void StartUdpDoIpListen()
+        {
+            _udpDoIpClient?.BeginReceive(UdpDoIpReceiver, new Object());
+        }
+
+        private void UdpDoIpReceiver(IAsyncResult ar)
+        {
+            try
+            {
+                UdpClient udpClientLocal = _udpDoIpClient;
+                if (udpClientLocal == null)
+                {
+                    return;
+                }
+                IPEndPoint ip = new IPEndPoint(IPAddress.Any, 0);
+                byte[] bytes = udpClientLocal.EndReceive(ar, ref ip);
+#if true
+                if (bytes != null)
+                {
+                    DebugLogData("DoIp Udp: ", bytes, bytes.Length);
+                }
+#endif
+                StartUdpDoIpListen();
+            }
+            catch (Exception)
+            {
+                _udpDoIpError = true;
+            }
+        }
+
 
         private IPAddress GetLocalIpAddress(IPAddress remoteIp, bool broadcast,
             out System.Net.NetworkInformation.NetworkInterface networkAdapter, out byte[] networkMask)
