@@ -115,10 +115,11 @@ namespace CarSimulator
 
         private class BmwTcpClientData
         {
-            public BmwTcpClientData(BmwTcpChannel bmwTcpChannel, int index)
+            public BmwTcpClientData(BmwTcpChannel bmwTcpChannel, int index, bool isDoIp)
             {
                 BmwTcpChannel = bmwTcpChannel;
                 Index = index;
+                IsDoIp = isDoIp;
                 TcpClientConnection = null;
                 TcpClientStream = null;
                 LastTcpRecTick = DateTime.MinValue.Ticks;
@@ -127,6 +128,7 @@ namespace CarSimulator
 
             public readonly BmwTcpChannel BmwTcpChannel;
             public readonly int Index;
+            public readonly bool IsDoIp;
             public TcpClient TcpClientConnection;
             public NetworkStream TcpClientStream;
             public long LastTcpRecTick;
@@ -137,25 +139,31 @@ namespace CarSimulator
 
         private class BmwTcpChannel
         {
-            public BmwTcpChannel(int diagPort, int controPort)
+            public BmwTcpChannel(int diagPort, int controPort, int doIpPort = -1)
             {
                 DiagPort = diagPort;
                 ControlPort = controPort;
+                DoIpPort = doIpPort;
                 TcpClientDiagList = new List<BmwTcpClientData>();
                 TcpClientControlList = new List<BmwTcpClientData>();
+                TcpClientDoIpList = new List<BmwTcpClientData>();
                 for (int i = 0; i < 10; i++)
                 {
-                    TcpClientDiagList.Add(new BmwTcpClientData(this, i));
-                    TcpClientControlList.Add(new BmwTcpClientData(this, i));
+                    TcpClientDiagList.Add(new BmwTcpClientData(this, i, false));
+                    TcpClientControlList.Add(new BmwTcpClientData(this, i, false));
+                    TcpClientDoIpList.Add(new BmwTcpClientData(this, i, true));
                 }
             }
 
             public readonly int DiagPort;
             public readonly int ControlPort;
+            public readonly int DoIpPort;
             public TcpListener TcpServerDiag;
             public readonly List<BmwTcpClientData> TcpClientDiagList;
             public TcpListener TcpServerControl;
             public readonly List<BmwTcpClientData> TcpClientControlList;
+            public TcpListener TcpServerDoIp;
+            public readonly List<BmwTcpClientData> TcpClientDoIpList;
         }
 
         private class Tp20Channel
@@ -274,7 +282,7 @@ namespace CarSimulator
         private const int DoIpPort = 13400;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
-        // Otherwise ther is packet loss in the ICOM internally!
+        // Otherwise, there is packet loss in the ICOM internally!
         // Use PC connection via WiFi or 100Mbit network, this also reduces the traffic.
         private const int MaxBufferLength = 0x10000;
         private const int TcpSendBufferSize = 1400;
@@ -945,7 +953,7 @@ namespace CarSimulator
                     }
 
                     _bmwTcpChannels.Clear();
-                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort));
+                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpPort));
                     _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPrgPort, EnetControlPrgPort));
 
                     foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
@@ -955,6 +963,12 @@ namespace CarSimulator
 
                         bmwTcpChannel.TcpServerControl = new TcpListener(IPAddress.Any, bmwTcpChannel.ControlPort);
                         bmwTcpChannel.TcpServerControl.Start();
+
+                        if (bmwTcpChannel.DoIpPort > 0)
+                        {
+                            bmwTcpChannel.TcpServerDoIp = new TcpListener(IPAddress.Any, bmwTcpChannel.DoIpPort);
+                            bmwTcpChannel.TcpServerDoIp.Start();
+                        }
                     }
 
                     UpdateIcomStatus(true);
@@ -1127,6 +1141,25 @@ namespace CarSimulator
                     {
                         bmwTcpChannel.TcpServerControl.Stop();
                         bmwTcpChannel.TcpServerControl = null;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                // DoIp
+                foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDoIpList)
+                {
+                    DoIpClose(bmwTcpClientData);
+                }
+
+                try
+                {
+                    if (bmwTcpChannel.TcpServerDoIp != null)
+                    {
+                        bmwTcpChannel.TcpServerDoIp.Stop();
+                        bmwTcpChannel.TcpServerDoIp = null;
                     }
                 }
                 catch (Exception)
@@ -1676,6 +1709,11 @@ namespace CarSimulator
                             }
                         }
 
+                        if (bmwTcpClientData.IsDoIp)
+                        {
+                            return ReceiveDoIp(receiveData, bmwTcpClientData);
+                        }
+
                         return ReceiveEnet(receiveData, bmwTcpClientData);
                     }
 
@@ -1976,14 +2014,14 @@ namespace CarSimulator
 #endif
                 if (bytes != null && bytes.Length >= 8)
                 {
-                    byte version = bytes[0];
-                    byte versionInv = bytes[1];
+                    byte protoVersion = bytes[0];
+                    byte protoVersionInv = bytes[1];
                     bool valid = true;
                     Debug.WriteLine("DoIp Udp request from: {0}:{1}", ip.Address, ip.Port);
 
-                    if (version != (byte)~versionInv)
+                    if (protoVersion != (byte)~protoVersionInv)
                     {
-                        Debug.WriteLine("Invalid version: {0}:{1}", version, versionInv);
+                        Debug.WriteLine("Invalid version: {0}:{1}", protoVersion, protoVersionInv);
                         valid = false;
                     }
 
@@ -2016,8 +2054,8 @@ namespace CarSimulator
                     byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
                     resData.AddRange(vinBytes);
                     // log address
-                    resData.Add(0xE4);
-                    resData.Add(0x00);
+                    resData.Add(0x0E);
+                    resData.Add(0x11);
                     // MAC
                     byte[] macBytes = EdiabasNet.HexToByteArray(TestMac);
                     resData.AddRange(macBytes);
@@ -2770,6 +2808,179 @@ namespace CarSimulator
                 return false;
             }
             return true;
+        }
+
+        private void DoIpClose(BmwTcpClientData bmwTcpClientData)
+        {
+            try
+            {
+                if (bmwTcpClientData.TcpClientStream != null)
+                {
+                    bmwTcpClientData.TcpClientStream.Close();
+                    bmwTcpClientData.TcpClientStream = null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            try
+            {
+                if (bmwTcpClientData.TcpClientConnection != null)
+                {
+                    Debug.WriteLine("DoIp Closed[{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort);
+                    bmwTcpClientData.TcpClientConnection.Close();
+                    bmwTcpClientData.TcpClientConnection = null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private bool ReceiveDoIp(byte[] receiveData, BmwTcpClientData bmwTcpClientData)
+        {
+            if (bmwTcpClientData == null)
+            {
+                return false;
+            }
+
+            if (bmwTcpClientData.BmwTcpChannel?.TcpServerDoIp == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                if (!IsTcpClientConnected(bmwTcpClientData.TcpClientConnection))
+                {
+                    DoIpClose(bmwTcpClientData);
+                    if (!bmwTcpClientData.BmwTcpChannel.TcpServerDoIp.Pending())
+                    {
+                        return false;
+                    }
+
+                    Debug.WriteLine("DoIp connect request [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort);
+                    bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmwTcpChannel.TcpServerDoIp.AcceptTcpClient();
+                    bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
+                    bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
+                    bmwTcpClientData.TcpClientConnection.NoDelay = true;
+                    bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
+                    bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                    bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
+                    Debug.WriteLine("DoIp connected [{0}], Port={1}, Local={2}, Remote={3}",
+                        bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort,
+                        bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
+                        bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("DoIp exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, ex.Message);
+                DoIpClose(bmwTcpClientData);
+            }
+
+            try
+            {
+                if (bmwTcpClientData.TcpClientStream != null && bmwTcpClientData.TcpClientStream.DataAvailable)
+                {
+                    bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                    byte[] dataBuffer = new byte[MaxBufferLength];
+                    int recLen = bmwTcpClientData.TcpClientStream.Read(dataBuffer, 0, 8);
+                    if (recLen < 8)
+                    {
+                        return false;
+                    }
+                    int payloadLength = (((int)dataBuffer[4] << 24) | ((int)dataBuffer[5] << 16) | ((int)dataBuffer[6] << 8) | dataBuffer[7]);
+                    if (payloadLength > dataBuffer.Length - 8)
+                    {
+                        while (bmwTcpClientData.TcpClientStream.DataAvailable)
+                        {
+                            bmwTcpClientData.TcpClientStream.ReadByte();
+                        }
+                        return false;
+                    }
+                    if (payloadLength > 0)
+                    {
+                        recLen += bmwTcpClientData.TcpClientStream.Read(dataBuffer, 8, payloadLength);
+                    }
+                    if (recLen < payloadLength + 8)
+                    {
+                        return false;
+                    }
+#if true
+                    DebugLogData("DoIp Rec: ", dataBuffer, recLen);
+#endif
+                    int dataLen = payloadLength;
+
+                    byte protoVersion = dataBuffer[0];
+                    byte protoVersionInv = dataBuffer[1];
+                    if (protoVersion != (byte)~protoVersionInv)
+                    {
+                        Debug.WriteLine("DoIp protocol version invalid [{0}], {1}: {2}", bmwTcpClientData.Index, protoVersion, protoVersionInv);
+                        DoIpClose(bmwTcpClientData);
+                        return false;
+                    }
+                    uint payloadType = (((uint)dataBuffer[2] << 8) | dataBuffer[3]);
+
+                    return false;
+                    // create BMW-FAST telegram
+                    byte sourceAddr = dataBuffer[6];
+                    byte targetAddr = dataBuffer[7];
+                    int len;
+                    if (sourceAddr == TcpTesterAddr) sourceAddr = 0xF1;
+                    if (dataLen > 0x3F)
+                    {
+                        if (dataLen > 0xFF)
+                        {
+                            receiveData[0] = 0x80;
+                            receiveData[1] = targetAddr;
+                            receiveData[2] = sourceAddr;
+                            receiveData[3] = 0;
+                            receiveData[4] = (byte)(dataLen >> 8);
+                            receiveData[5] = (byte)(dataLen & 0xFF);
+                            Array.Copy(dataBuffer, 8, receiveData, 6, dataLen);
+                            len = dataLen + 6;
+                        }
+                        else
+                        {
+                            receiveData[0] = 0x80;
+                            receiveData[1] = targetAddr;
+                            receiveData[2] = sourceAddr;
+                            receiveData[3] = (byte)dataLen;
+                            Array.Copy(dataBuffer, 8, receiveData, 4, dataLen);
+                            len = dataLen + 4;
+                        }
+                    }
+                    else
+                    {
+                        receiveData[0] = (byte)(0x80 | dataLen);
+                        receiveData[1] = targetAddr;
+                        receiveData[2] = sourceAddr;
+                        Array.Copy(dataBuffer, 8, receiveData, 3, dataLen);
+                        len = dataLen + 3;
+                    }
+
+                    if (IsFunctionalAddress(targetAddr))
+                    {   // functional address
+                        receiveData[0] |= 0xC0;
+                    }
+                    receiveData[len] = CalcChecksumBmwFast(receiveData, len);
+                    return true;
+                }
+                else
+                {
+                    Thread.Sleep(10);
+                }
+            }
+            catch (Exception)
+            {
+                Thread.Sleep(10);
+                return false;
+            }
+            return false;
         }
 
         public bool IsTcpClientConnected(TcpClient tcpClient)
@@ -4800,6 +5011,16 @@ namespace CarSimulator
                     {
                         if (bmwTcpClientData.TcpClientConnection != null ||
                             bmwTcpChannel.TcpServerDiag.Pending())
+                        {
+                            SerialTransmission(bmwTcpClientData);
+                            transmitted = true;
+                        }
+                    }
+
+                    foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDoIpList)
+                    {
+                        if (bmwTcpClientData.TcpClientConnection != null ||
+                            (bmwTcpChannel.TcpServerDoIp != null && bmwTcpChannel.TcpServerDoIp.Pending()))
                         {
                             SerialTransmission(bmwTcpClientData);
                             transmitted = true;
