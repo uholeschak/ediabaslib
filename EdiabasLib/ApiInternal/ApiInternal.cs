@@ -936,12 +936,7 @@ namespace Ediabas
                 return false;
             }
 
-            if (resultType != EdiabasLib.EdiabasNet.ResultType.TypeQ && resultType != EdiabasLib.EdiabasNet.ResultType.TypeLL)
-            {
-                int64Buffer &= UInt32.MaxValue;
-            }
-
-            buffer = int64Buffer;
+            buffer = (int) int64Buffer;
 
             logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
@@ -964,12 +959,7 @@ namespace Ediabas
                 return false;
             }
 
-            if (resultType != EdiabasLib.EdiabasNet.ResultType.TypeQ && resultType != EdiabasLib.EdiabasNet.ResultType.TypeLL)
-            {
-                int64Buffer &= UInt32.MaxValue;
-            }
-
-            buffer = (ulong)int64Buffer;
+            buffer = (uint)int64Buffer;
 
             logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
@@ -1612,7 +1602,7 @@ namespace Ediabas
         private bool getResultInt64(out Int64 buffer, out EdiabasNet.ResultType resultType, string result, ushort rset)
         {
             buffer = 0;
-            resultType = EdiabasNet.ResultType.TypeLL;
+            resultType = EdiabasNet.ResultType.TypeL;
             EdiabasNet.ResultData resultData = getResultData(result, rset);
             if (resultData == null)
             {

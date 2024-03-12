@@ -418,12 +418,8 @@ namespace EdiabasTest
                                     sbResult.Append(string.Format(Culture, " {0}", (double)value));
                                     if (_api76)
                                     {
-                                        if (resultData.ResType != EdiabasNet.ResultType.TypeQ && resultData.ResType != EdiabasNet.ResultType.TypeLL)
-                                        {
-                                            value &= UInt32.MaxValue;
-                                        }
-                                        sbResult.Append(string.Format(Culture, " {0}", value));
-                                        sbResult.Append(string.Format(Culture, " {0}", (ulong)value));
+                                        sbResult.Append(string.Format(Culture, " {0}", (int)value));
+                                        sbResult.Append(string.Format(Culture, " {0}", (uint)value));
                                     }
                                 }
                                 else
@@ -439,12 +435,8 @@ namespace EdiabasTest
                                     sbResult.Append(string.Format(Culture, " {0}", valueDouble));
                                     if (_api76)
                                     {
-                                        if (resultData.ResType != EdiabasNet.ResultType.TypeQ && resultData.ResType != EdiabasNet.ResultType.TypeLL)
-                                        {
-                                            value &= UInt32.MaxValue;
-                                        }
-                                        sbResult.Append(string.Format(Culture, " {0}", value));
-                                        sbResult.Append(string.Format(Culture, " {0}", (ulong)value));
+                                        sbResult.Append(string.Format(Culture, " {0}", (int)value));
+                                        sbResult.Append(string.Format(Culture, " {0}", (uint)value));
                                     }
                                 }
                             }
