@@ -37,6 +37,7 @@ IDENTIFIKATION#
 identpar:
 					shmset		"ID",S0
 					ergs		"VARIANTE","cmd_test1"
+					ergs		"FAMILIE","Family_Cmd_Test1"
 					eoj
 					eoj
 
