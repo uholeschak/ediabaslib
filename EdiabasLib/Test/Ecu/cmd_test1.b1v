@@ -1,5 +1,10 @@
-;Test program for command execution test
-;Compile with BestNet -i cmd_test1.b1v
+;ECU:Test groupfile
+;ORIGIN:Holeschak
+;REVISION:1.000
+;AUTHOR:Ulrich
+;ECUCOMMENT:Test program for command execution test
+;ECUCOMMENT:Compile with BestNet -i cmd_test1.b1v
+
 
 #SSIZE 2048
 
