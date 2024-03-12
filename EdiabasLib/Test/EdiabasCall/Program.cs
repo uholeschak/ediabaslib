@@ -630,7 +630,9 @@ namespace EdiabasCall
                                             else
                                             {
                                                 byte[] dataBuffer = new byte[API.APIMAXTEXT];
-                                                if (__api32ResultText(_apiHandle, dataBuffer, resultName, set, formatString))
+                                                bool apiResult = _is64Bit ? __api64ResultText(_apiHandle, dataBuffer, resultName, set, formatString) :
+                                                    __api32ResultText(_apiHandle, dataBuffer, resultName, set, formatString);
+                                                if (apiResult)
                                                 {
                                                     int length = Array.IndexOf(dataBuffer, (byte)0);
                                                     if (length < 0)
