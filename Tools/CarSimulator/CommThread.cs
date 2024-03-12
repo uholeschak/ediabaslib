@@ -1974,6 +1974,25 @@ namespace CarSimulator
                     DebugLogData("DoIp Udp: ", bytes, bytes.Length);
                 }
 #endif
+                if (bytes != null && bytes.Length >= 8)
+                {
+                    byte version = bytes[0];
+                    byte versionInv = bytes[1];
+                    bool valid = true;
+                    Debug.WriteLine("DoIp Udp request from: {0}:{1}", ip.Address, ip.Port);
+
+                    if (version != (byte)~versionInv)
+                    {
+                        Debug.WriteLine("Invalid version: {0}:{1}", version, versionInv);
+                        valid = false;
+                    }
+
+                    if (valid)
+                    {
+                        SendDoIpUdpMessage(bytes, ip, DoIpPort);
+                    }
+                }
+
                 StartUdpDoIpListen();
             }
             catch (Exception)
@@ -1982,6 +2001,59 @@ namespace CarSimulator
             }
         }
 
+        private bool SendDoIpUdpMessage(byte[] request, IPEndPoint ipEnd, int localPort)
+        {
+            uint payloadType = (((uint)request[2] << 8) | request[3]);
+            uint payloadLength = (((uint)request[4] << 24) | ((uint)request[5] << 16) | ((uint)request[6] << 8) | request[7]);
+            uint resPayloadType = 0x0000;
+            List<byte> resData = new List<byte>();
+            switch (payloadType)
+            {
+                case 0x0001: // ident request
+                {
+                    // ident response
+                    resPayloadType = 0x0004;
+                    byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
+                    resData.AddRange(vinBytes);
+                    // log address
+                    resData.Add(0xE4);
+                    resData.Add(0x00);
+                    // MAC
+                    byte[] macBytes = EdiabasNet.HexToByteArray(TestMac);
+                    resData.AddRange(macBytes);
+                    // GID
+                    resData.AddRange(macBytes);
+                    // further action required
+                    resData.Add(0x00);
+                    // VIN sync status
+                    resData.Add(0x00);
+                    break;
+                }
+            }
+
+            if (resData.Count == 0)
+            {
+                return false;
+            }
+
+            List<byte> responseList = new List<byte>();
+            uint resPayloadLength = (uint)resData.Count;
+            byte resVersion = 0x03;
+            responseList.Add(resVersion);
+            responseList.Add((byte)~resVersion);
+            responseList.Add((byte)(resPayloadType >> 8));
+            responseList.Add((byte)resPayloadType);
+            responseList.Add((byte)(resPayloadLength >> 24));
+            responseList.Add((byte)(resPayloadLength >> 16));
+            responseList.Add((byte)(resPayloadLength >> 8));
+            responseList.Add((byte)resPayloadLength);
+            responseList.AddRange(resData);
+
+            byte[] resBytes = responseList.ToArray();
+            DebugLogData("DoIp Res: ", resBytes, resBytes.Length);
+
+            return SendUdpPacketTo(resBytes, ipEnd, localPort);
+        }
 
         private IPAddress GetLocalIpAddress(IPAddress remoteIp, bool broadcast,
             out System.Net.NetworkInformation.NetworkInterface networkAdapter, out byte[] networkMask)
