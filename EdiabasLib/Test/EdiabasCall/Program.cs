@@ -308,6 +308,7 @@ namespace EdiabasCall
                         PrintResults(formatList, printAllTypes);
                     }
 
+                    // for alive check
                     //Console.WriteLine("Press Key to continue");
                     //Console.ReadKey(true);
                 }
