@@ -2933,7 +2933,8 @@ namespace CarSimulator
                     List<byte> resData = new List<byte>();
                     switch (payloadType)
                     {
-                        case 0x0005:    // routing activation request
+                        case 0x0005: // routing activation request
+                        {
                             if (payloadLength < 11)
                             {
                                 Debug.WriteLine("DoIp routing activate length too short: {0}", payloadLength);
@@ -2956,8 +2957,10 @@ namespace CarSimulator
                             resData.Add(0x00);
                             resData.Add(0x00);
                             break;
+                        }
 
-                        case 0x8001:    // diagostic message
+                        case 0x8001: // diagostic message
+                        {
                             if (payloadLength < 5)
                             {
                                 Debug.WriteLine("DoIp diag msg length too short: {0}", payloadLength);
@@ -2965,7 +2968,16 @@ namespace CarSimulator
                             }
 
                             dataLen = payloadLength - 4;
+
+                            resPayloadType = 0x8002;        // diagnostic message ack
+                            resData.Add(dataBuffer[10]);    // source address
+                            resData.Add(dataBuffer[11]);
+                            resData.Add(dataBuffer[8]);     // target address
+                            resData.Add(dataBuffer[9]);
+                            resData.Add(0x00);          // ACK
+                            resData.AddRange(dataBuffer.Skip(12).Take(dataLen));
                             break;
+                        }
                     }
 
                     if (resData.Count > 0)
@@ -3087,7 +3099,7 @@ namespace CarSimulator
 
                 int resPayloadLength = dataLength + 4;
                 List<byte> responseList = new List<byte>();
-                uint resPayloadType = 0x8002;    // Positive diag message response
+                uint resPayloadType = 0x8001;    // Diagnostic message
                 responseList.Add(DoIpProtoVer);
                 responseList.Add(unchecked((byte)~DoIpProtoVer));
                 responseList.Add((byte)(resPayloadType >> 8));
@@ -3100,7 +3112,6 @@ namespace CarSimulator
                 responseList.Add((byte)sourceAddr);
                 responseList.Add((byte)(targetAddr >> 8));
                 responseList.Add((byte)targetAddr);
-                responseList.Add(0x00); // ACK
                 responseList.AddRange(sendData.Skip(dataOffset).Take(dataLength));
                 byte[] resBytes = responseList.ToArray();
 #if true
