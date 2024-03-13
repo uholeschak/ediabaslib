@@ -327,6 +327,7 @@ namespace CarSimulator
         private bool _udpError;
         private UdpClient _udpDoIpClient;
         private bool _udpDoIpError;
+        private string _lastDoIpIdentAddr;
         private UdpClient _srvLocClient;
         private IcomDhcpServer _icomDhcpServer;
         private bool _srvLocError;
@@ -773,6 +774,7 @@ namespace CarSimulator
             _udpError = false;
             _udpDoIpClient = null;
             _udpDoIpError = false;
+            _lastDoIpIdentAddr = null;
             _srvLocClient = null;
             _srvLocError = false;
             _icomUp = false;
@@ -1243,6 +1245,7 @@ namespace CarSimulator
         private void UdpDoIpConnect()
         {
             _udpDoIpError = false;
+            _lastDoIpIdentAddr = null;
             _udpDoIpClient = new UdpClient(DoIpDiagPort);
             StartUdpDoIpListen();
         }
@@ -1874,7 +1877,7 @@ namespace CarSimulator
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("WriteNetworkStream exception: {0}", ex.Message);
+                    Debug.WriteLine("WriteNetworkStream exception: {0}", (object)ex.Message);
                     throw;
                 }
             }
@@ -1989,7 +1992,7 @@ namespace CarSimulator
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine("Send exception: {0}", ex.Message);
+                        Debug.WriteLine("Send exception: {0}", (object)ex.Message);
                     }
                 }
             }
@@ -2097,6 +2100,23 @@ namespace CarSimulator
             byte[] resBytes = responseList.ToArray();
             DebugLogData("DoIp Res: ", resBytes, resBytes.Length);
 
+            bool sendPacket = true;
+            string ipEndString = ipEnd.Address.ToString();
+            if (!string.IsNullOrEmpty(_lastDoIpIdentAddr))
+            {
+                if (string.Compare(ipEndString, _lastDoIpIdentAddr, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    sendPacket = false;
+                }
+            }
+
+            if (!sendPacket)
+            {
+                Debug.WriteLine("DoIp Udp: Not sending to: {0}", (object)ipEndString);
+                return true;
+            }
+
+            _lastDoIpIdentAddr = ipEndString;
             return SendUdpPacketTo(resBytes, ipEnd, localPort);
         }
 
@@ -2227,7 +2247,7 @@ namespace CarSimulator
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("DHCP Server exception: {0}", ex.Message);
+                    Debug.WriteLine("DHCP Server exception: {0}", (object)ex.Message);
                 }
 
                 IPAddress ipIcom = IPAddress.Parse(IcomVehicleAddress);
@@ -2269,7 +2289,7 @@ namespace CarSimulator
                     return;
                 }
 
-                Debug.WriteLine("Sending ICOM Dhcp request, discover={0}", discover);
+                Debug.WriteLine("Sending ICOM Dhcp request, discover={0}", (object) discover);
                 byte[] macId = networkAdapter.GetPhysicalAddress().GetAddressBytes();
                 byte[] localIpBytes = ipIcomLocal.GetAddressBytes();
 
@@ -2340,7 +2360,7 @@ namespace CarSimulator
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Sending ICOM Dhcp request failed: {0}", ex.Message);
+                Debug.WriteLine("Sending ICOM Dhcp request failed: {0}", (object)ex.Message);
             }
         }
 
@@ -2971,9 +2991,12 @@ namespace CarSimulator
                         {
                             if (payloadLength < 11)
                             {
-                                Debug.WriteLine("DoIp routing activate length too short: {0}", payloadLength);
+                                Debug.WriteLine("DoIp routing activate length too short: {0}", (object)payloadLength);
                                 break;
                             }
+
+                            // enbale full searching
+                            _lastDoIpIdentAddr = null;
 
                             uint srcAddr = (((uint)dataBuffer[8] << 8) | dataBuffer[9]);
                             resPayloadType = 0x0006;    // routing activation response
@@ -2994,7 +3017,7 @@ namespace CarSimulator
                         {
                             if (payloadLength < 5)
                             {
-                                Debug.WriteLine("DoIp diag msg length too short: {0}", payloadLength);
+                                Debug.WriteLine("DoIp diag msg length too short: {0}", (object)payloadLength);
                                 break;
                             }
 
@@ -3248,7 +3271,7 @@ namespace CarSimulator
                             if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                             {
 #if CAN_DEBUG
-                                Debug.WriteLine("Send Status failed: {0}", stsResult);
+                                Debug.WriteLine("Send Status failed: {0}", (object)stsResult);
 #endif
                             }
                         }
@@ -3322,7 +3345,7 @@ namespace CarSimulator
                                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                                     {
 #if CAN_DEBUG
-                                        Debug.WriteLine("Send FC failed: {0}", stsResult);
+                                        Debug.WriteLine("Send FC failed: {0}", (object)stsResult);
 #endif
                                         _receiveStopWatch.Stop();
                                         return false;
@@ -3436,7 +3459,7 @@ namespace CarSimulator
                                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                                 {
 #if CAN_DEBUG
-                                    Debug.WriteLine("Send FC failed: {0}", stsResult);
+                                    Debug.WriteLine("Send FC failed: {0}", (object)stsResult);
 #endif
                                     _receiveStopWatch.Stop();
                                     return false;
@@ -3579,7 +3602,7 @@ namespace CarSimulator
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                 {
 #if CAN_DEBUG
-                    Debug.WriteLine("Send SF failed: {0}", stsResult);
+                    Debug.WriteLine("Send SF failed: {0}", (object)stsResult);
 #endif
                     return false;
                 }
@@ -3605,7 +3628,7 @@ namespace CarSimulator
             if (stsResult != TPCANStatus.PCAN_ERROR_OK)
             {
 #if CAN_DEBUG
-                Debug.WriteLine("Send FF failed: {0}", stsResult);
+                Debug.WriteLine("Send FF failed: {0}", (object)stsResult);
 #endif
                 return false;
             }
@@ -3641,7 +3664,7 @@ namespace CarSimulator
                                         break;
                                     }
 #if CAN_DEBUG
-                                    Debug.WriteLine("Unexpected frame type: {0}, aborting", frameType);
+                                    Debug.WriteLine("Unexpected frame type: {0}, aborting", (object)frameType);
 #endif
                                     return false;
                                 }
@@ -3698,7 +3721,7 @@ namespace CarSimulator
                     if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                     {
 #if CAN_DEBUG
-                        Debug.WriteLine("Send SF failed: {0}", stsResult);
+                        Debug.WriteLine("Send SF failed: {0}", (object) stsResult);
 #endif
                         return false;
                     }
@@ -3765,7 +3788,7 @@ namespace CarSimulator
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
                 {
 #if CAN_DEBUG
-                    Debug.WriteLine("Send CC failed: {0}", stsResult);
+                    Debug.WriteLine("Send CC failed: {0}", (object) stsResult);
 #endif
                     return false;
                 }
@@ -3853,7 +3876,7 @@ namespace CarSimulator
                         }
                         testerAddr = (uint) testerId;
 #if CAN_DEBUG
-                        // Debug.WriteLine("Tester ID {0:X03}", testerAddr);
+                        // Debug.WriteLine("Tester ID {0:X03}", (object) testerAddr);
 #endif
                         switch (frameType)
                         {
@@ -4123,7 +4146,7 @@ namespace CarSimulator
             }
             uint testerAddr = (uint)testerId;
 #if CAN_DEBUG
-            // Debug.WriteLine("Tester ID {0:X03}", testerAddr);
+            // Debug.WriteLine("Tester ID {0:X03}", (object) testerAddr);
 #endif
             int dataOffset = 3;
             int dataLength = sendData[0] & 0x3F;
@@ -4302,7 +4325,7 @@ namespace CarSimulator
                         if ((Stopwatch.GetTimestamp() - channel.LastAccessTick) > 5000 * TickResolMs)
                         {
 #if CAN_DEBUG
-                            Debug.WriteLine("Timeout channel {0:X04}", channel.TxId);
+                            Debug.WriteLine("Timeout channel {0:X04}", (object)channel.TxId);
 #endif
                             removeChannel = true;
                         }
@@ -4312,7 +4335,7 @@ namespace CarSimulator
                         if ((Stopwatch.GetTimestamp() - channel.LastKeepAliveTick) > 3000 * TickResolMs)
                         {
 #if CAN_DEBUG
-                            Debug.WriteLine("Keep alive timeout channel {0:X04}", channel.TxId);
+                            Debug.WriteLine("Keep alive timeout channel {0:X04}", (object)channel.TxId);
 #endif
                             removeChannel = true;
                         }
@@ -4341,7 +4364,7 @@ namespace CarSimulator
                     if (!channel.WaitForKeepAliveResp && ((Stopwatch.GetTimestamp() - channel.LastKeepAliveTick) > 1000 * TickResolMs))
                     {
 #if CAN_DEBUG
-                        Debug.WriteLine("Send keep alive channel {0:X04}", channel.TxId);
+                        Debug.WriteLine("Send keep alive channel {0:X04}", (object) channel.TxId);
 #endif
                         sendMsg.ID = (uint)(channel.RxId);
                         sendMsg.LEN = 1;
@@ -4362,7 +4385,7 @@ namespace CarSimulator
                         if ((Stopwatch.GetTimestamp() - channel.AckWaitStartTick) > Tp20T1 * TickResolMs)
                         {
 #if CAN_DEBUG
-                            Debug.WriteLine("ACK timeout channel {0:X04}", channel.TxId);
+                            Debug.WriteLine("ACK timeout channel {0:X04}", (object)channel.TxId);
 #endif
                             channel.SendData.Clear();
                             channel.WaitForAck = false;
@@ -4506,7 +4529,7 @@ namespace CarSimulator
                         if (configData != null && configData.Length == 2 && canMsg.DATA[0] != 0x1F)
                         {
                             // don't ignore did
-                            Debug.WriteLine("Ignore Tp20 ECU: {0:X02}", canMsg.DATA[0]);
+                            Debug.WriteLine("Ignore Tp20 ECU: {0:X02}", (object) canMsg.DATA[0]);
                             configData = null;
                         }
 #endif
@@ -5108,7 +5131,7 @@ namespace CarSimulator
                     _kwp1281InvBlockEndIndex = 0;
                 }
 #endif
-                Debug.WriteLine("Send {0:X02}", buffer[0]);
+                Debug.WriteLine("Send {0:X02}", (object)buffer[0]);
                 if (!SendData(buffer, 0, 1))
                 {
                     return false;
@@ -5170,7 +5193,7 @@ namespace CarSimulator
                 }
                 if (recData[blockLen] != 0x03)
                 {
-                    Debug.WriteLine("Block end invalid {0:X02}", recData[blockLen]);
+                    Debug.WriteLine("Block end invalid {0:X02}", (object)recData[blockLen]);
                     return false;
                 }
                 return true;
@@ -5873,7 +5896,7 @@ namespace CarSimulator
                         _receiveData[3] == 0x23)
                     {
                         // dummy error response for service 23
-                        Debug.WriteLine("Dummy service 23: {0:X02}", _receiveData[4]);
+                        Debug.WriteLine("Dummy service 23: {0:X02}", (object)_receiveData[4]);
                         _sendData[0] = 0x83;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
@@ -5916,13 +5939,13 @@ namespace CarSimulator
                             {
                                 if (subFunction == 0x01)
                                 {
-                                    Debug.WriteLine("Request seed 8 SubFunc: {0:X02}", subFunction);
+                                    Debug.WriteLine("Request seed 8 SubFunc: {0:X02}", (object)subFunction);
                                     byte[] dummyResponse = { 0x8A, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset], 0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
                                     ObdSend(dummyResponse, bmwTcpClientData);
                                 }
                                 else
                                 {
-                                    Debug.WriteLine("Request seed 20 SubFunc: {0:X02}", subFunction);
+                                    Debug.WriteLine("Request seed 20 SubFunc: {0:X02}", (object)subFunction);
                                     byte[] dummyResponse = { 0x96, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset],
                                         0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78,
                                         0x12, 0x34, 0x56, 0x78, 0x12, 0x34, 0x56, 0x78,
@@ -5932,7 +5955,7 @@ namespace CarSimulator
                             }
                             else
                             {
-                                Debug.WriteLine("Request seed 4 SubFunc: {0:X02}", subFunction);
+                                Debug.WriteLine("Request seed 4 SubFunc: {0:X02}", (object)subFunction);
                                 byte[] dummyResponse = { 0x86, _receiveData[2], _receiveData[1], 0x67, _receiveData[4 + offset], 0x12, 0x34, 0x56, 0x78, 0x00 };   // send seed
                                 ObdSend(dummyResponse, bmwTcpClientData);
                             }
@@ -5946,7 +5969,7 @@ namespace CarSimulator
                             }
                             else
                             {
-                                Debug.WriteLine("Dummy service 27: SubFunc: {0:X02}", subFunction);
+                                Debug.WriteLine("Dummy service 27: SubFunc: {0:X02}", (object)subFunction);
                             }
                             byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x67, subFunction, 0x00 };   // positive ACK
                             ObdSend(dummyResponse, bmwTcpClientData);
@@ -6054,7 +6077,7 @@ namespace CarSimulator
                                 case 0x01:
                                 {
                                     int index = (_receiveData[10 + offset] << 8) | _receiveData[11 + offset];
-                                    Debug.WriteLine("RC_RLEBI_IDR Type1 Index:{0}", index);
+                                    Debug.WriteLine("RC_RLEBI_IDR Type1 Index:{0}", (object)index);
                                     byte[] response =
                                     {
                                         0x9F, 0xF1, 0x63, 0x71, 0x01, 0x10, 0x02, 0x01,
@@ -6079,7 +6102,7 @@ namespace CarSimulator
                                 case 0x02:
                                 {
                                     int index = (_receiveData[13 + offset] << 8) | _receiveData[14 + offset];
-                                    Debug.WriteLine("RC_RLEBI_IDR Type2 Index:{0}", index);
+                                    Debug.WriteLine("RC_RLEBI_IDR Type2 Index:{0}", (object)index);
                                     byte[] response =
                                     {
                                         0x9F, 0xF1, 0x63, 0x71, 0x01, 0x10, 0x02, 0x02,
@@ -6096,7 +6119,7 @@ namespace CarSimulator
                                 }
 
                                 default:
-                                    Debug.WriteLine("Ignoring RC_RLEBI_IDR Type:{0}", idType);
+                                    Debug.WriteLine("Ignoring RC_RLEBI_IDR Type:{0}", (object)idType);
                                     break;
 
                             }
@@ -6104,7 +6127,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x0F && _receiveData[6 + offset] == 0x01)
                         {
-                            Debug.WriteLine("MCD3_FinalizeECUCoding {0}", state);
+                            Debug.WriteLine("MCD3_FinalizeECUCoding {0}", (object)state);
                             _sendData[0] = 0x87;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6121,7 +6144,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x0F && _receiveData[6 + offset] == 0x0B)
                         {
-                            Debug.WriteLine("executeDiagnosticService {0}", state);
+                            Debug.WriteLine("executeDiagnosticService {0}", (object)state);
                             _sendData[0] = 0x8B;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6142,7 +6165,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x70 && _receiveData[6 + offset] == 0x00)
                         {
-                            Debug.WriteLine("RC_PAD processingApplicationData {0}", state);
+                            Debug.WriteLine("RC_PAD processingApplicationData {0}", (object)state);
                             _sendData[0] = 0x85;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6157,7 +6180,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x33)
                         {
-                            Debug.WriteLine("RC_GET_PARAM_N11_CSM {0}", state);
+                            Debug.WriteLine("RC_GET_PARAM_N11_CSM {0}", (object)state);
                             int parLen = 16 * 2;
                             _sendData[0] = 0x80;
                             _sendData[1] = 0xF1;
@@ -6192,7 +6215,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[4 + offset] == 0x01 && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x12)
                         {
-                            Debug.WriteLine("RC_STKL StoreTransportKeyList {0}", state);
+                            Debug.WriteLine("RC_STKL StoreTransportKeyList {0}", (object)state);
                             _sendData[0] = 0x87;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6209,7 +6232,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x0C)
                         {
-                            Debug.WriteLine("RC_SKE StartKeyExchange {0}", state);
+                            Debug.WriteLine("RC_SKE StartKeyExchange {0}", (object)state);
                             _sendData[0] = 0x87;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6226,7 +6249,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x13)
                         {
-                            Debug.WriteLine("InitSignalKeyDeployment {0}", state);
+                            Debug.WriteLine("InitSignalKeyDeployment {0}", (object)state);
                             _sendData[0] = 0x8A;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6246,7 +6269,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x32)
                         {
-                            Debug.WriteLine("RC_RESET_STATE_CSM Reset State F11 CSM {0}", state);
+                            Debug.WriteLine("RC_RESET_STATE_CSM Reset State F11 CSM {0}", (object)state);
                             _sendData[0] = 0x87;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6263,7 +6286,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x34)
                         {
-                            Debug.WriteLine("RC_EXT_INIT, Externer Init F25 {0}", state);
+                            Debug.WriteLine("RC_EXT_INIT, Externer Init F25 {0}", (object)state);
                             _sendData[0] = 0x86;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6279,7 +6302,7 @@ namespace CarSimulator
 
                         if (!found && _receiveData[5 + offset] == 0x02 && _receiveData[6 + offset] == 0x11)
                         {
-                            Debug.WriteLine("RC_EA, ExternalAuthentication {0}", state);
+                            Debug.WriteLine("RC_EA, ExternalAuthentication {0}", (object)state);
                             _sendData[0] = 0x86;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6295,7 +6318,7 @@ namespace CarSimulator
 
                         if (!found)
                         {
-                            Debug.WriteLine("Default response {0}", state);
+                            Debug.WriteLine("Default response {0}", (object)state);
                             _sendData[0] = 0x84;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
@@ -6370,7 +6393,7 @@ namespace CarSimulator
                     {
                         byte sequence = _receiveData[4];
                         // dummy ok response for service 36 (transfer data, TD)
-                        Debug.WriteLine("Dummy service 36: Seq={0}", sequence);
+                        Debug.WriteLine("Dummy service 36: Seq={0}", (object)sequence);
                         _sendData[0] = 0x82 + 0x30;
                         _sendData[1] = 0xF1;
                         _sendData[2] = _receiveData[1];
