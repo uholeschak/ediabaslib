@@ -282,6 +282,7 @@ namespace CarSimulator
         private const int EnetControlPrgPort = 51561;
         private const int DoIpDiagPort = 13400;
         private const int DoIpProtoVer = 0x03;
+        private const int DoIpGwAddr = 0x000A;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
         // Otherwise, there is packet loss in the ICOM internally!
@@ -2060,13 +2061,13 @@ namespace CarSimulator
                     byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
                     resData.AddRange(vinBytes);
                     // log address
-                    resData.Add(0x0E);
-                    resData.Add(0x11);
+                    resData.Add((byte)(DoIpGwAddr >> 8));
+                    resData.Add((byte)DoIpGwAddr);
                     // MAC
                     byte[] macBytes = EdiabasNet.HexToByteArray(TestMac);
                     resData.AddRange(macBytes);
                     // GID
-                    resData.AddRange(macBytes);
+                    resData.AddRange(new byte[6]);
                     // further action required
                     resData.Add(0x00);
                     // VIN sync status
@@ -2947,15 +2948,12 @@ namespace CarSimulator
                             resData.Add((byte)(srcAddr >> 8));
                             resData.Add((byte)srcAddr);
                             // log address
-                            resData.Add(0x0E);
-                            resData.Add(0x11);
+                            resData.Add((byte)(DoIpGwAddr >> 8));
+                            resData.Add((byte)DoIpGwAddr);
                             // response code
-                            resData.Add(0x10);
+                                resData.Add(0x10);
                             // reserved
-                            resData.Add(0x00);
-                            resData.Add(0x00);
-                            resData.Add(0x00);
-                            resData.Add(0x00);
+                            resData.AddRange(new byte[4]);
                             break;
                         }
 
