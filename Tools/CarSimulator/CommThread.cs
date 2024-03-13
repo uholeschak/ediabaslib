@@ -2890,6 +2890,38 @@ namespace CarSimulator
 
             try
             {
+                if (bmwTcpClientData.TcpClientStream != null)
+                {
+                    if ((Stopwatch.GetTimestamp() - bmwTcpClientData.LastTcpRecTick) > 2000 * TickResolMs)
+                    {
+                        bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+
+                        List<byte> responseList = new List<byte>();
+                        uint resPayloadType = 0x0007;   // keep alive check
+                        uint resPayloadLength = 0;
+                        responseList.Add(DoIpProtoVer);
+                        responseList.Add(unchecked((byte)~DoIpProtoVer));
+                        responseList.Add((byte)(resPayloadType >> 8));
+                        responseList.Add((byte)resPayloadType);
+                        responseList.Add((byte)(resPayloadLength >> 24));
+                        responseList.Add((byte)(resPayloadLength >> 16));
+                        responseList.Add((byte)(resPayloadLength >> 8));
+                        responseList.Add((byte)resPayloadLength);
+
+                        byte[] resBytes = responseList.ToArray();
+                        WriteNetworkStream(bmwTcpClientData, resBytes, 0, resBytes.Length);
+                        Debug.WriteLine("DoIp Alive Check [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("DoIp Keep alive exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, ex.Message);
+                // ignored
+            }
+
+            try
+            {
                 if (bmwTcpClientData.TcpClientStream != null && bmwTcpClientData.TcpClientStream.DataAvailable)
                 {
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
