@@ -282,7 +282,7 @@ namespace CarSimulator
         private const int EnetControlPrgPort = 51561;
         private const int DoIpDiagPort = 13400;
         private const int DoIpProtoVer = 0x03;
-        private const int DoIpGwAddr = 0x000A;
+        private const int DoIpGwAddr = 0x1010;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
         // Otherwise, there is packet loss in the ICOM internally!
@@ -2062,12 +2062,12 @@ namespace CarSimulator
                     resData.AddRange(vinBytes);
                     // log address
                     resData.Add((byte)(DoIpGwAddr >> 8));
-                    resData.Add((byte)DoIpGwAddr);
+                    resData.Add((byte)(DoIpGwAddr & 0xFF));
                     // MAC
                     byte[] macBytes = EdiabasNet.HexToByteArray(TestMac);
                     resData.AddRange(macBytes);
                     // GID
-                    byte[] gidBytes = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
+                    byte[] gidBytes = macBytes;
                     resData.AddRange(gidBytes);
                     // further action required
                     resData.Add(0x00);
@@ -2085,7 +2085,7 @@ namespace CarSimulator
             List<byte> responseList = new List<byte>();
             uint resPayloadLength = (uint)resData.Count;
             responseList.Add(DoIpProtoVer);
-            responseList.Add(unchecked((byte)~DoIpProtoVer));
+            responseList.Add(~DoIpProtoVer & 0xFF);
             responseList.Add((byte)(resPayloadType >> 8));
             responseList.Add((byte)resPayloadType);
             responseList.Add((byte)(resPayloadLength >> 24));
@@ -2901,7 +2901,7 @@ namespace CarSimulator
                         uint resPayloadType = 0x0007;   // keep alive check
                         uint resPayloadLength = 0;
                         responseList.Add(DoIpProtoVer);
-                        responseList.Add(unchecked((byte)~DoIpProtoVer));
+                        responseList.Add(~DoIpProtoVer & 0xFF);
                         responseList.Add((byte)(resPayloadType >> 8));
                         responseList.Add((byte)resPayloadType);
                         responseList.Add((byte)(resPayloadLength >> 24));
@@ -2982,7 +2982,7 @@ namespace CarSimulator
                             resData.Add((byte)srcAddr);
                             // log address
                             resData.Add((byte)(DoIpGwAddr >> 8));
-                            resData.Add((byte)DoIpGwAddr);
+                            resData.Add((byte)(DoIpGwAddr & 0xFF));
                             // response code
                                 resData.Add(0x10);
                             // reserved
@@ -3023,7 +3023,7 @@ namespace CarSimulator
                         List<byte> responseList = new List<byte>();
                         uint resPayloadLength = (uint)resData.Count;
                         responseList.Add(DoIpProtoVer);
-                        responseList.Add(unchecked((byte)~DoIpProtoVer));
+                        responseList.Add(~DoIpProtoVer & 0xFF);
                         responseList.Add((byte)(resPayloadType >> 8));
                         responseList.Add((byte)resPayloadType);
                         responseList.Add((byte)(resPayloadLength >> 24));
@@ -3139,9 +3139,9 @@ namespace CarSimulator
                 List<byte> responseList = new List<byte>();
                 uint resPayloadType = 0x8001;    // Diagnostic message
                 responseList.Add(DoIpProtoVer);
-                responseList.Add(unchecked((byte)~DoIpProtoVer));
+                responseList.Add(~DoIpProtoVer & 0xFF);
                 responseList.Add((byte)(resPayloadType >> 8));
-                responseList.Add(unchecked((byte)resPayloadType));
+                responseList.Add((byte)(resPayloadType & 0xFF));
                 responseList.Add((byte)(resPayloadLength >> 24));
                 responseList.Add((byte)(resPayloadLength >> 16));
                 responseList.Add((byte)(resPayloadLength >> 8));
