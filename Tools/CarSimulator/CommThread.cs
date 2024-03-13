@@ -2064,10 +2064,10 @@ namespace CarSimulator
                     resData.Add((byte)(DoIpGwAddr >> 8));
                     resData.Add((byte)(DoIpGwAddr & 0xFF));
                     // MAC
-                    byte[] macBytes = EdiabasNet.HexToByteArray(TestMac);
+                    byte[] macBytes = new byte[6];
                     resData.AddRange(macBytes);
                     // GID
-                    byte[] gidBytes = macBytes;
+                    byte[] gidBytes = new byte[6];
                     resData.AddRange(gidBytes);
                     // further action required
                     resData.Add(0x00);
