@@ -283,6 +283,7 @@ namespace EdiabasLib
         private bool _disposed;
         private static Mutex _interfaceMutex;
         public const int MaxAckLength = 13;
+        public const int MaxDoIpAckLength = 5;
         protected const string MutexName = "EdiabasLib_InterfaceEnet";
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
