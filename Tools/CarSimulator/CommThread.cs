@@ -2970,9 +2970,9 @@ namespace CarSimulator
                             dataLen = payloadLength - 4;
 
                             int previousDataLen = dataLen;
-                            if (previousDataLen > 16)
+                            if (previousDataLen > EdInterfaceEnet.MaxDoIpAckLength)
                             {
-                                previousDataLen = 16;
+                                previousDataLen = EdInterfaceEnet.MaxDoIpAckLength;
                                 Debug.WriteLine("Ack length limited");
                             }
 
