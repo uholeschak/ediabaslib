@@ -280,7 +280,8 @@ namespace CarSimulator
         private const int EnetControlPort = 6811;
         private const int EnetDiagPrgPort = 51560;
         private const int EnetControlPrgPort = 51561;
-        private const int DoIpPort = 13400;
+        private const int DoIpDiagPort = 13400;
+        private const int DoIpProtoVer = 0x03;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
         // Otherwise, there is packet loss in the ICOM internally!
@@ -954,7 +955,7 @@ namespace CarSimulator
                     }
 
                     _bmwTcpChannels.Clear();
-                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpPort));
+                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpDiagPort));
                     _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPrgPort, EnetControlPrgPort));
 
                     foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
@@ -1241,7 +1242,7 @@ namespace CarSimulator
         private void UdpDoIpConnect()
         {
             _udpDoIpError = false;
-            _udpDoIpClient = new UdpClient(DoIpPort);
+            _udpDoIpClient = new UdpClient(DoIpDiagPort);
             StartUdpDoIpListen();
         }
 
@@ -1612,6 +1613,10 @@ namespace CarSimulator
 
                     if (bmwTcpClientData != null)
                     {
+                        if (bmwTcpClientData.IsDoIp)
+                        {
+                            return SendDoIp(sendData, bmwTcpClientData);
+                        }
                         return SendEnet(sendData, bmwTcpClientData);
                     }
                     if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
@@ -2028,7 +2033,7 @@ namespace CarSimulator
 
                     if (valid)
                     {
-                        SendDoIpUdpMessage(bytes, ip, DoIpPort);
+                        SendDoIpUdpMessage(bytes, ip, DoIpDiagPort);
                     }
                 }
 
@@ -2077,9 +2082,8 @@ namespace CarSimulator
 
             List<byte> responseList = new List<byte>();
             uint resPayloadLength = (uint)resData.Count;
-            byte resVersion = 0x03;
-            responseList.Add(resVersion);
-            responseList.Add((byte)~resVersion);
+            responseList.Add(DoIpProtoVer);
+            responseList.Add(unchecked((byte)~DoIpProtoVer));
             responseList.Add((byte)(resPayloadType >> 8));
             responseList.Add((byte)resPayloadType);
             responseList.Add((byte)(resPayloadLength >> 24));
@@ -2968,9 +2972,8 @@ namespace CarSimulator
                     {
                         List<byte> responseList = new List<byte>();
                         uint resPayloadLength = (uint)resData.Count;
-                        byte resVersion = 0x03;
-                        responseList.Add(resVersion);
-                        responseList.Add((byte)~resVersion);
+                        responseList.Add(DoIpProtoVer);
+                        responseList.Add(unchecked((byte)~DoIpProtoVer));
                         responseList.Add((byte)(resPayloadType >> 8));
                         responseList.Add((byte)resPayloadType);
                         responseList.Add((byte)(resPayloadLength >> 24));
@@ -3050,6 +3053,69 @@ namespace CarSimulator
             }
             return false;
         }
+
+        private bool SendDoIp(byte[] sendData, BmwTcpClientData bmwTcpClientData)
+        {
+            if (bmwTcpClientData?.TcpClientStream == null)
+            {
+                return false;
+            }
+            try
+            {
+                uint targetAddr = sendData[1];
+                uint sourceAddr = sendData[2];
+                if (targetAddr == 0xF1)
+                {
+                    targetAddr = DoIpTesterAddr;
+                }
+
+                int dataOffset = 3;
+                int dataLength = sendData[0] & 0x3F;
+                if (dataLength == 0)
+                {   // with length byte
+                    if (sendData[3] == 0)
+                    {
+                        dataLength = (sendData[4] << 8) | sendData[5];
+                        dataOffset = 6;
+                    }
+                    else
+                    {
+                        dataLength = sendData[3];
+                        dataOffset = 4;
+                    }
+                }
+
+                int resPayloadLength = dataLength + 4;
+                List<byte> responseList = new List<byte>();
+                uint resPayloadType = 0x8002;    // Positive diag message response
+                responseList.Add(DoIpProtoVer);
+                responseList.Add(unchecked((byte)~DoIpProtoVer));
+                responseList.Add((byte)(resPayloadType >> 8));
+                responseList.Add(unchecked((byte)resPayloadType));
+                responseList.Add((byte)(resPayloadLength >> 24));
+                responseList.Add((byte)(resPayloadLength >> 16));
+                responseList.Add((byte)(resPayloadLength >> 8));
+                responseList.Add((byte)resPayloadLength);
+                responseList.Add((byte)(sourceAddr >> 8));
+                responseList.Add((byte)sourceAddr);
+                responseList.Add((byte)(targetAddr >> 8));
+                responseList.Add((byte)targetAddr);
+                responseList.Add(0x00); // ACK
+                responseList.AddRange(sendData.Skip(dataOffset).Take(dataLength));
+                byte[] resBytes = responseList.ToArray();
+#if true
+                DebugLogData("DoIp Send: ", resBytes, resBytes.Length);
+#endif
+                WriteNetworkStream(bmwTcpClientData, resBytes, 0, resBytes.Length);
+                bmwTcpClientData.TcpLastResponse = resBytes;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
 
         public bool IsTcpClientConnected(TcpClient tcpClient)
         {
