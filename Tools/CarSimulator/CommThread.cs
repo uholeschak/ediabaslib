@@ -282,7 +282,7 @@ namespace CarSimulator
         private const int EnetControlPrgPort = 51561;
         private const int DoIpDiagPort = 13400;
         private const int DoIpProtoVer = 0x03;
-        private const int DoIpGwAddr = 0x1010;
+        private const int DoIpGwAddr = 0x0010;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
         // Otherwise, there is packet loss in the ICOM internally!
