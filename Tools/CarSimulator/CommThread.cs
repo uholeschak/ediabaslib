@@ -2897,6 +2897,7 @@ namespace CarSimulator
                     bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
+                    bmwTcpClientData.TcpNackIndex = 0;
                     Debug.WriteLine("DoIp connected [{0}], Port={1}, Local={2}, Remote={3}",
                         bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
@@ -3020,7 +3021,21 @@ namespace CarSimulator
                                 Debug.WriteLine("DoIp diag msg length too short: {0}", (object)payloadLength);
                                 break;
                             }
-
+#if false
+                                if (bmwTcpClientData.TcpNackIndex >= 5)
+                            {
+                                Debug.WriteLine("Send NAck");
+                                bmwTcpClientData.TcpNackIndex = 0;
+                                resPayloadType = 0x8003;        // diagnostic message nack
+                                resData.Add(dataBuffer[10]);    // source address
+                                resData.Add(dataBuffer[11]);
+                                resData.Add(dataBuffer[8]);     // target address
+                                resData.Add(dataBuffer[9]);
+                                resData.Add(0x05);         // out of memory
+                                break;
+                            }
+                            bmwTcpClientData.TcpNackIndex++;
+#endif
                             dataLen = payloadLength - 4;
 
                             int previousDataLen = dataLen;
