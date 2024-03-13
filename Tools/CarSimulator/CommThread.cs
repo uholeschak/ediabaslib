@@ -275,6 +275,7 @@ namespace CarSimulator
 
         private static readonly long TickResolMs = Stopwatch.Frequency/1000;
         private const byte TcpTesterAddr = 0xF4;
+        private const int DoIpTesterAddr = 0x0EF3;
         private const int EnetDiagPort = 6801;
         private const int EnetControlPort = 6811;
         private const int EnetDiagPrgPort = 51560;
@@ -2913,8 +2914,6 @@ namespace CarSimulator
 #if true
                     DebugLogData("DoIp Rec: ", dataBuffer, recLen);
 #endif
-                    int dataLen = payloadLength;
-
                     byte protoVersion = dataBuffer[0];
                     byte protoVersionInv = dataBuffer[1];
                     if (protoVersion != (byte)~protoVersionInv)
@@ -2925,6 +2924,7 @@ namespace CarSimulator
                     }
                     uint payloadType = (((uint)dataBuffer[2] << 8) | dataBuffer[3]);
 
+                    int dataLen = 0;
                     uint resPayloadType = 0x0000;
                     List<byte> resData = new List<byte>();
                     switch (payloadType)
@@ -2932,7 +2932,7 @@ namespace CarSimulator
                         case 0x0005:    // routing activation request
                             if (payloadLength < 11)
                             {
-                                Debug.WriteLine("DoIp Payload length too short: {0}", payloadLength);
+                                Debug.WriteLine("DoIp routing activate length too short: {0}", payloadLength);
                                 break;
                             }
 
@@ -2951,6 +2951,16 @@ namespace CarSimulator
                             resData.Add(0x00);
                             resData.Add(0x00);
                             resData.Add(0x00);
+                            break;
+
+                        case 0x8001:    // diagostic message
+                            if (payloadLength < 5)
+                            {
+                                Debug.WriteLine("DoIp diag msg length too short: {0}", payloadLength);
+                                break;
+                            }
+
+                            dataLen = payloadLength - 4;
                             break;
                     }
 
@@ -2975,54 +2985,62 @@ namespace CarSimulator
                         WriteNetworkStream(bmwTcpClientData, resBytes, 0, resBytes.Length);
                     }
 
-                    return false;
-                    // create BMW-FAST telegram
-                    byte sourceAddr = dataBuffer[6];
-                    byte targetAddr = dataBuffer[7];
-                    int len;
-                    if (sourceAddr == TcpTesterAddr) sourceAddr = 0xF1;
-                    if (dataLen > 0x3F)
+                    if (dataLen > 0)
                     {
-                        if (dataLen > 0xFF)
+                        // create BMW-FAST telegram
+                        int len;
+                        uint srcAddr = (((uint)dataBuffer[8] << 8) | dataBuffer[9]);
+                        uint targAddr = (((uint)dataBuffer[10] << 8) | dataBuffer[11]);
+                        byte sourceAddr = (byte)srcAddr;
+                        byte targetAddr = (byte)targAddr;
+                        if (srcAddr == DoIpTesterAddr)
                         {
-                            receiveData[0] = 0x80;
-                            receiveData[1] = targetAddr;
-                            receiveData[2] = sourceAddr;
-                            receiveData[3] = 0;
-                            receiveData[4] = (byte)(dataLen >> 8);
-                            receiveData[5] = (byte)(dataLen & 0xFF);
-                            Array.Copy(dataBuffer, 8, receiveData, 6, dataLen);
-                            len = dataLen + 6;
+                            sourceAddr = 0xF1;
+                        }
+
+                        if (dataLen > 0x3F)
+                        {
+                            if (dataLen > 0xFF)
+                            {
+                                receiveData[0] = 0x80;
+                                receiveData[1] = targetAddr;
+                                receiveData[2] = sourceAddr;
+                                receiveData[3] = 0;
+                                receiveData[4] = (byte)(dataLen >> 8);
+                                receiveData[5] = (byte)(dataLen & 0xFF);
+                                Array.Copy(dataBuffer, 12, receiveData, 6, dataLen);
+                                len = dataLen + 6;
+                            }
+                            else
+                            {
+                                receiveData[0] = 0x80;
+                                receiveData[1] = targetAddr;
+                                receiveData[2] = sourceAddr;
+                                receiveData[3] = (byte)dataLen;
+                                Array.Copy(dataBuffer, 12, receiveData, 4, dataLen);
+                                len = dataLen + 4;
+                            }
                         }
                         else
                         {
-                            receiveData[0] = 0x80;
+                            receiveData[0] = (byte)(0x80 | dataLen);
                             receiveData[1] = targetAddr;
                             receiveData[2] = sourceAddr;
-                            receiveData[3] = (byte)dataLen;
-                            Array.Copy(dataBuffer, 8, receiveData, 4, dataLen);
-                            len = dataLen + 4;
+                            Array.Copy(dataBuffer, 12, receiveData, 3, dataLen);
+                            len = dataLen + 3;
                         }
+
+                        if (IsFunctionalAddress(targetAddr))
+                        {   // functional address
+                            receiveData[0] |= 0xC0;
+                        }
+                        receiveData[len] = CalcChecksumBmwFast(receiveData, len);
+                        return true;
                     }
                     else
                     {
-                        receiveData[0] = (byte)(0x80 | dataLen);
-                        receiveData[1] = targetAddr;
-                        receiveData[2] = sourceAddr;
-                        Array.Copy(dataBuffer, 8, receiveData, 3, dataLen);
-                        len = dataLen + 3;
+                        Thread.Sleep(10);
                     }
-
-                    if (IsFunctionalAddress(targetAddr))
-                    {   // functional address
-                        receiveData[0] |= 0xC0;
-                    }
-                    receiveData[len] = CalcChecksumBmwFast(receiveData, len);
-                    return true;
-                }
-                else
-                {
-                    Thread.Sleep(10);
                 }
             }
             catch (Exception)
