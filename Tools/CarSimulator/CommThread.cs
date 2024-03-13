@@ -2925,6 +2925,56 @@ namespace CarSimulator
                     }
                     uint payloadType = (((uint)dataBuffer[2] << 8) | dataBuffer[3]);
 
+                    uint resPayloadType = 0x0000;
+                    List<byte> resData = new List<byte>();
+                    switch (payloadType)
+                    {
+                        case 0x0005:    // routing activation request
+                            if (payloadLength < 11)
+                            {
+                                Debug.WriteLine("DoIp Payload length too short: {0}", payloadLength);
+                                break;
+                            }
+
+                            uint srcAddr = (((uint)dataBuffer[8] << 8) | dataBuffer[9]);
+                            resPayloadType = 0x0006;    // routing activation response
+                            // tester address
+                            resData.Add((byte)(srcAddr >> 8));
+                            resData.Add((byte)srcAddr);
+                            // log address
+                            resData.Add(0x0E);
+                            resData.Add(0x11);
+                            // response code
+                            resData.Add(0x10);
+                            // reserved
+                            resData.Add(0x00);
+                            resData.Add(0x00);
+                            resData.Add(0x00);
+                            resData.Add(0x00);
+                            break;
+                    }
+
+                    if (resData.Count > 0)
+                    {
+                        List<byte> responseList = new List<byte>();
+                        uint resPayloadLength = (uint)resData.Count;
+                        byte resVersion = 0x03;
+                        responseList.Add(resVersion);
+                        responseList.Add((byte)~resVersion);
+                        responseList.Add((byte)(resPayloadType >> 8));
+                        responseList.Add((byte)resPayloadType);
+                        responseList.Add((byte)(resPayloadLength >> 24));
+                        responseList.Add((byte)(resPayloadLength >> 16));
+                        responseList.Add((byte)(resPayloadLength >> 8));
+                        responseList.Add((byte)resPayloadLength);
+                        responseList.AddRange(resData);
+
+                        byte[] resBytes = responseList.ToArray();
+                        DebugLogData("DoIp Res: ", resBytes, resBytes.Length);
+
+                        WriteNetworkStream(bmwTcpClientData, resBytes, 0, resBytes.Length);
+                    }
+
                     return false;
                     // create BMW-FAST telegram
                     byte sourceAddr = dataBuffer[6];
