@@ -2067,7 +2067,8 @@ namespace CarSimulator
                     byte[] macBytes = EdiabasNet.HexToByteArray(TestMac);
                     resData.AddRange(macBytes);
                     // GID
-                    resData.AddRange(new byte[6]);
+                    byte[] gidBytes = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x01 };
+                    resData.AddRange(gidBytes);
                     // further action required
                     resData.Add(0x00);
                     // VIN sync status
