@@ -2978,7 +2978,7 @@ namespace CarSimulator
                     if (protoVersion != (byte)~protoVersionInv)
                     {
                         Debug.WriteLine("DoIp protocol version invalid [{0}], {1}: {2}", bmwTcpClientData.Index, protoVersion, protoVersionInv);
-                        SendDoIpError(0x00, bmwTcpClientData);  // invalid procotol information
+                        SendDoIpError(0x00, bmwTcpClientData);  // incorrect pattern format
                         DoIpClose(bmwTcpClientData);
                         return false;
                     }
