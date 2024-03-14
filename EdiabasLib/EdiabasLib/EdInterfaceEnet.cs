@@ -291,6 +291,7 @@ namespace EdiabasLib
         protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
+        protected const string AutoIpAll = ":all";
         protected const string IniFileSection = "XEthernet";
         protected const string IcomOwner = "DeepObd";
         protected static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
@@ -465,13 +466,6 @@ namespace EdiabasLib
 
                         if (hostValid)
                         {
-                            string iniHostIdentService = ediabasIni.GetValue(IniFileSection, "HostIdentService", string.Empty);
-                            if (IsIpv4Address(iniHostIdentService))
-                            {
-                                HostIdentServiceProtected = iniHostIdentService;
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using host ident service from ini file: {0}", HostIdentServiceProtected);
-                            }
-
                             string iniControlPort = ediabasIni.GetValue(IniFileSection, "ControlPort", string.Empty);
                             if (!string.IsNullOrEmpty(iniControlPort))
                             {
@@ -1216,9 +1210,24 @@ namespace EdiabasLib
                     UdpEvent.Reset();
                     bool broadcastSend = false;
                     string configData = remoteHostConfig.Remove(0, AutoIp.Length);
+
+                    if (!((configData.Length > 0) && (configData[0] == ':')))
+                    {
+                        if (IsIpv4Address(HostIdentServiceProtected))
+                        {
+                            if (IPAddress.TryParse(HostIdentServiceProtected, out IPAddress ipAddressHostIdent))
+                            {
+                                if (ipAddressHostIdent.Equals(IPAddress.Broadcast))
+                                {
+                                    configData = AutoIpAll;
+                                }
+                            }
+                        }
+                    }
+
                     if ((configData.Length > 0) && (configData[0] == ':'))
                     {
-                        string adapterName = configData.StartsWith(":all", StringComparison.OrdinalIgnoreCase) ? string.Empty : configData.Remove(0, 1);
+                        string adapterName = configData.StartsWith(AutoIpAll, StringComparison.OrdinalIgnoreCase) ? string.Empty : configData.Remove(0, 1);
 
 #if Android
                         Java.Util.IEnumeration networkInterfaces = Java.Net.NetworkInterface.NetworkInterfaces;
