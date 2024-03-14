@@ -665,12 +665,6 @@ namespace EdiabasLib
                     return Int64.MinValue;
                 }
 
-                if (SharedDataActive.DiagDoIp)
-                {
-                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
-                    return Int64.MinValue;
-                }
-
                 try
                 {
                     lock (SharedDataActive.TcpControlTimerLock)
@@ -933,7 +927,9 @@ namespace EdiabasLib
                 {
                     SharedDataActive.TcpDiagRecQueue.Clear();
                 }
-                StartReadTcpDiag(6);
+
+                int readLen = SharedDataActive.DiagDoIp ? 8 : 6;
+                StartReadTcpDiag(readLen);
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), diagPort);
                 SharedDataActive.ReconnectRequired = false;
             }
@@ -1922,11 +1918,6 @@ namespace EdiabasLib
 
         protected bool TcpControlConnect()
         {
-            if (SharedDataActive.DiagDoIp)
-            {
-                return false;
-            }
-
             if (SharedDataActive.TcpControlClient != null)
             {
                 return true;
