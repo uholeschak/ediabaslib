@@ -2919,6 +2919,7 @@ namespace CarSimulator
                     {
                         bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
 
+                        // the message is acknowledged by Ediabas, but there is no timeout processing
                         List<byte> responseList = new List<byte>();
                         uint resPayloadType = 0x0007;   // keep alive check
                         uint resPayloadLength = 0;
