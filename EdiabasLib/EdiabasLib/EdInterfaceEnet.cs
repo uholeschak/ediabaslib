@@ -259,6 +259,7 @@ namespace EdiabasLib
             public EnetConnection EnetHostConn;
             public TcpClient TcpDiagClient;
             public NetworkStream TcpDiagStream;
+            public bool DiagDoIp;
             public AutoResetEvent TcpDiagStreamRecEvent;
             public ManualResetEvent TransmitCancelEvent;
             public TcpClient TcpControlClient;
@@ -329,6 +330,7 @@ namespace EdiabasLib
         protected int UdpSrvLocPort = 427;
         protected int ControlPort = 6811;
         protected int DiagnosticPort = 6801;
+        protected int DoIpPort = 13400;
         protected int ConnectTimeout = 5000;
         protected int AddRecTimeoutProtected = 1000;
         protected int AddRecTimeoutIcomProtected = 2000;
@@ -414,6 +416,18 @@ namespace EdiabasLib
                     DiagnosticPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = EdiabasProtected?.GetConfigProperty("EnetDoIPPort");
+                if (prop != null)
+                {
+                    DoIpPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("PortDoIP");
+                if (prop != null)
+                {
+                    DoIpPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutConnect");
                 if (prop != null)
                 {
@@ -478,6 +492,13 @@ namespace EdiabasLib
                             {
                                 DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
+                            }
+
+                            string iniPortDoIP = ediabasIni.GetValue(IniFileSection, "PortDoIP", string.Empty);
+                            if (!string.IsNullOrEmpty(iniPortDoIP))
+                            {
+                                DoIpPort = (int)EdiabasNet.StringToValue(iniPortDoIP);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using DoIp port from ini file: {0}", DoIpPort);
                             }
                         }
                     }
@@ -643,6 +664,13 @@ namespace EdiabasLib
                     EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
+
+                if (SharedDataActive.DiagDoIp)
+                {
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                    return Int64.MinValue;
+                }
+
                 try
                 {
                     lock (SharedDataActive.TcpControlTimerLock)
@@ -842,7 +870,7 @@ namespace EdiabasLib
                     SharedDataActive.EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort);
                 }
 
-                int diagPort = DiagnosticPort;
+                int diagPort = SharedDataActive.DiagDoIp ? DoIpPort : DiagnosticPort;
                 if (SharedDataActive.EnetHostConn.DiagPort >= 0)
                 {
                     diagPort = SharedDataActive.EnetHostConn.DiagPort;
@@ -1894,10 +1922,16 @@ namespace EdiabasLib
 
         protected bool TcpControlConnect()
         {
+            if (SharedDataActive.DiagDoIp)
+            {
+                return false;
+            }
+
             if (SharedDataActive.TcpControlClient != null)
             {
                 return true;
             }
+
             if (SharedDataActive.EnetHostConn == null)
             {
                 return false;
