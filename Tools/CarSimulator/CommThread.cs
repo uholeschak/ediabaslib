@@ -2978,6 +2978,7 @@ namespace CarSimulator
                     if (protoVersion != (byte)~protoVersionInv)
                     {
                         Debug.WriteLine("DoIp protocol version invalid [{0}], {1}: {2}", bmwTcpClientData.Index, protoVersion, protoVersionInv);
+                        SendDoIpError(0x00, bmwTcpClientData);  // invalid procotol information
                         DoIpClose(bmwTcpClientData);
                         return false;
                     }
@@ -3022,7 +3023,7 @@ namespace CarSimulator
                                 break;
                             }
 #if false
-                                if (bmwTcpClientData.TcpNackIndex >= 5)
+                            if (bmwTcpClientData.TcpNackIndex >= 5)
                             {
                                 Debug.WriteLine("Send NAck");
                                 bmwTcpClientData.TcpNackIndex = 0;
@@ -3203,6 +3204,34 @@ namespace CarSimulator
             return true;
         }
 
+        private bool SendDoIpError(byte errorCode, BmwTcpClientData bmwTcpClientData)
+        {
+            try
+            {
+                uint resPayloadType = 0x0000;   // error response
+                List<byte> responseList = new List<byte>();
+                uint resPayloadLength = 1;
+                responseList.Add(DoIpProtoVer);
+                responseList.Add(~DoIpProtoVer & 0xFF);
+                responseList.Add((byte)(resPayloadType >> 8));
+                responseList.Add((byte)resPayloadType);
+                responseList.Add((byte)(resPayloadLength >> 24));
+                responseList.Add((byte)(resPayloadLength >> 16));
+                responseList.Add((byte)(resPayloadLength >> 8));
+                responseList.Add((byte)resPayloadLength);
+                responseList.Add(errorCode);
+
+                byte[] resBytes = responseList.ToArray();
+                DebugLogData("DoIp Send Error: ", resBytes, resBytes.Length);
+
+                WriteNetworkStream(bmwTcpClientData, resBytes, 0, resBytes.Length);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
 
         public bool IsTcpClientConnected(TcpClient tcpClient)
         {
