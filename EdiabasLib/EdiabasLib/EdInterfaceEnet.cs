@@ -323,7 +323,7 @@ namespace EdiabasLib
 
         protected string RemoteHostProtected = AutoIp;
         protected int TesterAddress = 0xF4;
-        protected string AutoIpBroadcastAddress = @"169.254.255.255";
+        protected string HostIdentServiceProtected = "255.255.255.255";
         protected int UdpIdentPort = 6811;
         protected int UdpSrvLocPort = 427;
         protected int ControlPort = 6811;
@@ -375,6 +375,12 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     RemoteHostProtected = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("HostIdentService");
+                if (prop != null)
+                {
+                    HostIdentServiceProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetTesterAddress");
@@ -1123,6 +1129,18 @@ namespace EdiabasLib
             }
         }
 
+        public string HostIdentService
+        {
+            get
+            {
+                return HostIdentServiceProtected;
+            }
+            set
+            {
+                HostIdentServiceProtected = value;
+            }
+        }
+
         public int AddRecTimeout
         {
             get
@@ -1317,8 +1335,8 @@ namespace EdiabasLib
                     {
                         try
                         {
-                            IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpIdentPort);
-                            IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Parse(AutoIpBroadcastAddress), UdpSrvLocPort);
+                            IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), UdpIdentPort);
+                            IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), UdpSrvLocPort);
 
                             EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
                             TcpClientWithTimeout.ExecuteNetworkCommand(() =>
