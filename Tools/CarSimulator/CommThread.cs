@@ -2907,6 +2907,7 @@ namespace CarSimulator
             catch (Exception ex)
             {
                 Debug.WriteLine("DoIp exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, ex.Message);
+                SendDoIpError(0x00, bmwTcpClientData);  // incorrect pattern format
                 DoIpClose(bmwTcpClientData);
             }
 
