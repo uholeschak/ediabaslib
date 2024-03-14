@@ -465,6 +465,13 @@ namespace EdiabasLib
 
                         if (hostValid)
                         {
+                            string iniHostIdentService = ediabasIni.GetValue(IniFileSection, "HostIdentService", string.Empty);
+                            if (IsIpv4Address(iniHostIdentService))
+                            {
+                                HostIdentServiceProtected = iniHostIdentService;
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using host ident service from ini file: {0}", HostIdentServiceProtected);
+                            }
+
                             string iniControlPort = ediabasIni.GetValue(IniFileSection, "ControlPort", string.Empty);
                             if (!string.IsNullOrEmpty(iniControlPort))
                             {
