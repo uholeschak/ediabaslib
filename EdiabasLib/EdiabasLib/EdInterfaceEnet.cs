@@ -2214,10 +2214,12 @@ namespace EdiabasLib
                                 SharedDataActive.TcpDiagBuffer[4] = 0x00;    // payload length
                                 SharedDataActive.TcpDiagBuffer[5] = 0x00;
                                 SharedDataActive.TcpDiagBuffer[6] = 0x00;
-                                SharedDataActive.TcpDiagBuffer[7] = 0x00;
+                                SharedDataActive.TcpDiagBuffer[7] = 0x02;
+                                SharedDataActive.TcpDiagBuffer[8] = (byte)(DoIpTesterAddress >> 8);
+                                SharedDataActive.TcpDiagBuffer[9] = (byte) (DoIpTesterAddress & 0xFF);
                                 lock (SharedDataActive.TcpDiagStreamSendLock)
                                 {
-                                    networkStream.Write(SharedDataActive.TcpDiagBuffer, 0, 8);
+                                    networkStream.Write(SharedDataActive.TcpDiagBuffer, 0, 10);
                                 }
                                 break;
 
