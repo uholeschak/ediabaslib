@@ -2157,10 +2157,47 @@ namespace EdiabasLib
             {
                 if (SharedDataActive.TcpDiagRecLen >= 8)
                 {   // header received
-                    long telLen = (((long)SharedDataActive.TcpDiagBuffer[4] << 24) | ((long)SharedDataActive.TcpDiagBuffer[5] << 16) | ((long)SharedDataActive.TcpDiagBuffer[6] << 8) | SharedDataActive.TcpDiagBuffer[7]) + 4;
+                    long telLen = (((long)SharedDataActive.TcpDiagBuffer[4] << 24) | ((long)SharedDataActive.TcpDiagBuffer[5] << 16) | ((long)SharedDataActive.TcpDiagBuffer[6] << 8) | SharedDataActive.TcpDiagBuffer[7]) + 8;
                     if (SharedDataActive.TcpDiagRecLen == telLen)
                     {   // telegram received
                         // ToDo: check for ack/nack
+                        byte protoVersion = SharedDataActive.TcpDiagBuffer[0];
+                        byte protoVersionInv = SharedDataActive.TcpDiagBuffer[1];
+                        if (protoVersion != (byte)~protoVersionInv)
+                        {
+                            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                "*** Protocol version invalid");
+                            InterfaceDisconnect(true);
+                            return nextReadLength;
+                        }
+
+                        uint payloadType = (((uint)SharedDataActive.TcpDiagBuffer[2] << 8) | SharedDataActive.TcpDiagBuffer[3]);
+                        switch (payloadType)
+                        {
+                            case 0x0000:    // error response
+                                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                    "*** Error response");
+                                InterfaceDisconnect(true);
+                                return nextReadLength;
+
+                            case 0x0005:    // routing activation request
+                            case 0x8001:    // diagostic message
+                            case 0x8002:    // diagnostic message ack
+                            case 0x8003:    // diagnostic message nack
+                                lock (SharedDataActive.TcpDiagStreamRecLock)
+                                {
+                                    if (SharedDataActive.TcpDiagRecQueue.Count > 256)
+                                    {
+                                        SharedDataActive.TcpDiagRecQueue.Dequeue();
+                                    }
+                                    byte[] recTelTemp = new byte[telLen];
+                                    Array.Copy(SharedDataActive.TcpDiagBuffer, recTelTemp, SharedDataActive.TcpDiagRecLen);
+                                    SharedDataActive.TcpDiagRecQueue.Enqueue(recTelTemp);
+                                    SharedDataActive.TcpDiagStreamRecEvent.Set();
+                                }
+                                break;
+                        }
+
                         SharedDataActive.TcpDiagRecLen = 0;
                     }
                     else if (SharedDataActive.TcpDiagRecLen > telLen)
