@@ -885,6 +885,7 @@ namespace EdiabasLib
                 }
 
                 int diagPort;
+                //SharedDataActive.DiagDoIp = SharedDataActive.EnetHostConn.ConnectionType != EnetConnection.InterfaceType.Icom;
                 if (SharedDataActive.DiagDoIp)
                 {
                     diagPort = DoIpPort;
@@ -2183,10 +2184,15 @@ namespace EdiabasLib
                                 InterfaceDisconnect(true);
                                 return nextReadLength;
 
+                            case 0x8003:    // diagnostic message nack
+                                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                    "*** NACK response");
+                                InterfaceDisconnect(true);
+                                return nextReadLength;
+
                             case 0x0006:    // routing activation response
                             case 0x8001:    // diagostic message
                             case 0x8002:    // diagnostic message ack
-                            case 0x8003:    // diagnostic message nack
                                 lock (SharedDataActive.TcpDiagStreamRecLock)
                                 {
                                     if (SharedDataActive.TcpDiagRecQueue.Count > 256)
@@ -2204,7 +2210,7 @@ namespace EdiabasLib
                                 SharedDataActive.TcpDiagBuffer[0] = DoIpProtoVer;
                                 SharedDataActive.TcpDiagBuffer[1] = ~DoIpProtoVer & 0xFF;
                                 SharedDataActive.TcpDiagBuffer[2] = 0x00;    // alive check response
-                                SharedDataActive.TcpDiagBuffer[3] = 0x07;
+                                SharedDataActive.TcpDiagBuffer[3] = 0x08;
                                 SharedDataActive.TcpDiagBuffer[4] = 0x00;    // payload length
                                 SharedDataActive.TcpDiagBuffer[5] = 0x00;
                                 SharedDataActive.TcpDiagBuffer[6] = 0x00;
@@ -2406,7 +2412,7 @@ namespace EdiabasLib
                 int payloadLength = dataLength + 4;
                 DataBuffer[0] = DoIpProtoVer;
                 DataBuffer[1] = ~DoIpProtoVer & 0xFF;
-                DataBuffer[2] = 0x00;   // diagostic message
+                DataBuffer[2] = 0x80;   // diagostic message
                 DataBuffer[3] = 0x01;
                 DataBuffer[4] = (byte)((payloadLength >> 24) & 0xFF);
                 DataBuffer[5] = (byte)((payloadLength >> 16) & 0xFF);
@@ -2453,12 +2459,6 @@ namespace EdiabasLib
                 if (recLen >= 8)
                 {
                     payloadType = (((uint)AckBuffer[2] << 8) | AckBuffer[3]);
-                }
-
-                if (payloadType == 0x8003)
-                {
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Nack received");
-                    return false;
                 }
 
                 if (payloadType != 0x8002)
@@ -2607,7 +2607,7 @@ namespace EdiabasLib
                     receiveData[1] = targetAddr;
                     receiveData[2] = sourceAddr;
                     receiveData[3] = (byte)dataLen;
-                    Array.Copy(DataBuffer, 8, receiveData, 4, dataLen);
+                    Array.Copy(DataBuffer, 12, receiveData, 4, dataLen);
                     len = dataLen + 4;
                 }
                 else
@@ -2615,7 +2615,7 @@ namespace EdiabasLib
                     receiveData[0] = (byte)(0x80 | dataLen);
                     receiveData[1] = targetAddr;
                     receiveData[2] = sourceAddr;
-                    Array.Copy(DataBuffer, 8, receiveData, 3, dataLen);
+                    Array.Copy(DataBuffer, 12, receiveData, 3, dataLen);
                     len = dataLen + 3;
                 }
                 receiveData[len] = CalcChecksumBmwFast(receiveData, len);
@@ -2720,12 +2720,12 @@ namespace EdiabasLib
                 if (recLen >= 8)
                 {
                     uint payloadType = (((uint)receiveData[2] << 8) | receiveData[3]);
-                    if ((payloadType == 0x8002) || (payloadType == 0x8003))
+                    if (payloadType == 0x8002)
                     {   // ACK or NACK received
                         return recLen;
                     }
                 }
-                if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLen, "*** Ack or nack expected");
+                if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLen, "*** Ack expected");
                 if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
                 {
                     if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ack timeout");
