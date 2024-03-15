@@ -2163,7 +2163,6 @@ namespace EdiabasLib
                     long telLen = (((long)SharedDataActive.TcpDiagBuffer[4] << 24) | ((long)SharedDataActive.TcpDiagBuffer[5] << 16) | ((long)SharedDataActive.TcpDiagBuffer[6] << 8) | SharedDataActive.TcpDiagBuffer[7]) + 8;
                     if (SharedDataActive.TcpDiagRecLen == telLen)
                     {   // telegram received
-                        // ToDo: check for ack/nack
                         byte protoVersion = SharedDataActive.TcpDiagBuffer[0];
                         byte protoVersionInv = SharedDataActive.TcpDiagBuffer[1];
                         if (protoVersion != (byte)~protoVersionInv)
@@ -2509,6 +2508,33 @@ namespace EdiabasLib
                     ((receiveData[5] == 0x02) || (receiveData[5] == 0xFF)))
                 {   // ACK or NACK received
                     return recLen;
+                }
+                if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLen, "*** Ack or nack expected");
+                if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
+                {
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ack timeout");
+                    return -1;
+                }
+            }
+        }
+
+        protected int ReceiveDoIpAck(byte[] receiveData, int timeout, bool enableLogging)
+        {
+            long startTick = Stopwatch.GetTimestamp();
+            for (; ; )
+            {
+                int recLen = ReceiveTelegram(receiveData, timeout);
+                if (recLen < 0)
+                {
+                    return recLen;
+                }
+                if (recLen >= 8)
+                {
+                    uint payloadType = (((uint)receiveData[2] << 8) | receiveData[3]);
+                    if ((payloadType == 0x8002) || (payloadType == 0x8003))
+                    {   // ACK or NACK received
+                        return recLen;
+                    }
                 }
                 if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLen, "*** Ack or nack expected");
                 if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
