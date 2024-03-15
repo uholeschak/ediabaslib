@@ -302,6 +302,8 @@ namespace EdiabasLib
         private static Mutex _interfaceMutex;
         public const int MaxAckLength = 13;
         public const int MaxDoIpAckLength = 5;
+        public const int DoIpProtoVer = 0x03;
+        public const int DoIpGwAddr = 0x0010;
         protected const string MutexName = "EdiabasLib_InterfaceEnet";
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
@@ -2119,7 +2121,8 @@ namespace EdiabasLib
                                 break;
 
                             default:
-                                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen, "*** Ignoring unknown telegram type");
+                                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                    "*** Ignoring unknown telegram type");
                                 break;
                         }
                         SharedDataActive.TcpDiagRecLen = 0;
@@ -2180,7 +2183,7 @@ namespace EdiabasLib
                                 InterfaceDisconnect(true);
                                 return nextReadLength;
 
-                            case 0x0005:    // routing activation request
+                            case 0x0006:    // routing activation response
                             case 0x8001:    // diagostic message
                             case 0x8002:    // diagnostic message ack
                             case 0x8003:    // diagnostic message nack
@@ -2195,6 +2198,26 @@ namespace EdiabasLib
                                     SharedDataActive.TcpDiagRecQueue.Enqueue(recTelTemp);
                                     SharedDataActive.TcpDiagStreamRecEvent.Set();
                                 }
+                                break;
+
+                            case 0x0007:   // keep alive check
+                                SharedDataActive.TcpDiagBuffer[0] = DoIpProtoVer;
+                                SharedDataActive.TcpDiagBuffer[1] = ~DoIpProtoVer & 0xFF;
+                                SharedDataActive.TcpDiagBuffer[2] = 0x00;    // alive check response
+                                SharedDataActive.TcpDiagBuffer[3] = 0x07;
+                                SharedDataActive.TcpDiagBuffer[4] = 0x00;    // payload length
+                                SharedDataActive.TcpDiagBuffer[5] = 0x00;
+                                SharedDataActive.TcpDiagBuffer[6] = 0x00;
+                                SharedDataActive.TcpDiagBuffer[7] = 0x00;
+                                lock (SharedDataActive.TcpDiagStreamSendLock)
+                                {
+                                    networkStream.Write(SharedDataActive.TcpDiagBuffer, 0, 8);
+                                }
+                                break;
+
+                            default:
+                                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen, 
+                                    "*** Ignoring unknown telegram type");
                                 break;
                         }
 
