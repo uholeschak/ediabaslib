@@ -2489,7 +2489,7 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool ReceiveData(byte[] receiveData, int timeout)
+        protected bool ReceiveEnetData(byte[] receiveData, int timeout)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -2526,8 +2526,79 @@ namespace EdiabasLib
                     receiveData[2] = sourceAddr;
                     receiveData[3] = 0x00;
                     receiveData[4] = (byte)(dataLen >> 8);
-                    receiveData[5] = (byte)dataLen;
+                    receiveData[5] = (byte)(dataLen & 0xFF);
                     Array.Copy(DataBuffer, 8, receiveData, 6, dataLen);
+                    len = dataLen + 6;
+                }
+                else if (dataLen > 0x3F)
+                {
+                    receiveData[0] = 0x80;
+                    receiveData[1] = targetAddr;
+                    receiveData[2] = sourceAddr;
+                    receiveData[3] = (byte)dataLen;
+                    Array.Copy(DataBuffer, 8, receiveData, 4, dataLen);
+                    len = dataLen + 4;
+                }
+                else
+                {
+                    receiveData[0] = (byte)(0x80 | dataLen);
+                    receiveData[1] = targetAddr;
+                    receiveData[2] = sourceAddr;
+                    Array.Copy(DataBuffer, 8, receiveData, 3, dataLen);
+                    len = dataLen + 3;
+                }
+                receiveData[len] = CalcChecksumBmwFast(receiveData, len);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            IncResponseCount(1);
+            return true;
+        }
+
+        protected bool ReceiveDoIpData(byte[] receiveData, int timeout)
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return false;
+            }
+            try
+            {
+                int recLen = ReceiveTelegram(DataBuffer, timeout);
+                if (recLen < 8)
+                {
+                    return false;
+                }
+
+                uint payloadType = (((uint)DataBuffer[2] << 8) | DataBuffer[3]);
+                if (payloadType != 0x8001)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data payload type: {0:X04}", payloadType);
+                    return false;
+                }
+
+                int payloadLen = (((int)DataBuffer[4] << 24) | ((int)DataBuffer[5] << 16) | ((int)DataBuffer[6] << 8) | DataBuffer[7]);
+                int dataLen = payloadLen - 4;
+                if ((dataLen < 1) || ((dataLen + 12) > recLen) || (dataLen > 0xFFFF))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data length: {0}", dataLen);
+                    return false;
+                }
+                // create BMW-FAST telegram
+                byte sourceAddr = DataBuffer[9];
+                byte targetAddr = 0xF1;
+                int len;
+                if (dataLen > 0xFF)
+                {
+                    receiveData[0] = 0x80;
+                    receiveData[1] = targetAddr;
+                    receiveData[2] = sourceAddr;
+                    receiveData[3] = 0x00;
+                    receiveData[4] = (byte)(dataLen >> 8);
+                    receiveData[5] = (byte)(dataLen & 0xFF);
+                    Array.Copy(DataBuffer, 12, receiveData, 6, dataLen);
                     len = dataLen + 6;
                 }
                 else if (dataLen > 0x3F)
@@ -2780,10 +2851,21 @@ namespace EdiabasLib
                     timeout += AddRecTimeout;
                 }
 
-                if (!ReceiveData(receiveData, timeout))
+                if (SharedDataActive.DiagDoIp)
                 {
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    if (!ReceiveDoIpData(receiveData, timeout))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                }
+                else
+                {
+                    if (!ReceiveEnetData(receiveData, timeout))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
                 }
 
                 int recLength = TelLengthBmwFast(receiveData);
