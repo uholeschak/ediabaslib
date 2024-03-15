@@ -2063,7 +2063,7 @@ namespace EdiabasLib
                     SharedDataActive.TcpDiagRecLen += recLen;
                 }
 
-                int nextReadLength = TcpDiagEnetReceiver(networkStream);
+                int nextReadLength = SharedDataActive.DiagDoIp ? TcpDiagDoIpReceiver(networkStream) : TcpDiagEnetReceiver(networkStream);
                 if (recLen > 0)
                 {
                     StartReadTcpDiag(nextReadLength);
@@ -2150,7 +2150,46 @@ namespace EdiabasLib
             return nextReadLength;
         }
 
-        protected bool SendData(byte[] sendData, int length, bool enableLogging)
+        protected int TcpDiagDoIpReceiver(NetworkStream networkStream)
+        {
+            int nextReadLength = 8;
+            try
+            {
+                if (SharedDataActive.TcpDiagRecLen >= 8)
+                {   // header received
+                    long telLen = (((long)SharedDataActive.TcpDiagBuffer[4] << 24) | ((long)SharedDataActive.TcpDiagBuffer[5] << 16) | ((long)SharedDataActive.TcpDiagBuffer[6] << 8) | SharedDataActive.TcpDiagBuffer[7]) + 4;
+                    if (SharedDataActive.TcpDiagRecLen == telLen)
+                    {   // telegram received
+                        // ToDo: check for ack/nack
+                        SharedDataActive.TcpDiagRecLen = 0;
+                    }
+                    else if (SharedDataActive.TcpDiagRecLen > telLen)
+                    {
+                        SharedDataActive.TcpDiagRecLen = 0;
+                    }
+                    else if (telLen > SharedDataActive.TcpDiagBuffer.Length)
+                    {   // telegram too large -> remove all
+                        while (SharedDataActive.TcpDiagStream.DataAvailable)
+                        {
+                            SharedDataActive.TcpDiagStream.ReadByte();
+                        }
+                        SharedDataActive.TcpDiagRecLen = 0;
+                    }
+                    else
+                    {
+                        nextReadLength = (int)telLen;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                SharedDataActive.TcpDiagRecLen = 0;
+            }
+
+            return nextReadLength;
+        }
+
+        protected bool SendEnetData(byte[] sendData, int length, bool enableLogging)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -2166,7 +2205,11 @@ namespace EdiabasLib
 
                 byte targetAddr = sendData[1];
                 byte sourceAddr = sendData[2];
-                if (sourceAddr == 0xF1) sourceAddr = (byte)TesterAddress;
+                if (sourceAddr == 0xF1)
+                {
+                    sourceAddr = (byte)TesterAddress;
+                }
+
                 int dataOffset = 3;
                 int dataLength = sendData[0] & 0x3F;
                 if (dataLength == 0)
@@ -2199,7 +2242,7 @@ namespace EdiabasLib
                 }
 
                 // wait for ack
-                int recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                int recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                 if (recLen < 0)
                 {
                     if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
@@ -2216,7 +2259,7 @@ namespace EdiabasLib
                     {
                         WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                     }
-                    recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                    recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
@@ -2231,7 +2274,7 @@ namespace EdiabasLib
                     {
                         WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                     }
-                    recLen = ReceiveAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                    recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
@@ -2262,6 +2305,11 @@ namespace EdiabasLib
                 return false;
             }
             return true;
+        }
+
+        protected bool SendDoIpData(byte[] sendData, int length, bool enableLogging)
+        {
+            return false;
         }
 
         protected bool ReceiveData(byte[] receiveData, int timeout)
@@ -2387,7 +2435,7 @@ namespace EdiabasLib
             return recLen;
         }
 
-        protected int ReceiveAck(byte[] receiveData, int timeout, bool enableLogging)
+        protected int ReceiveEnetAck(byte[] receiveData, int timeout, bool enableLogging)
         {
             long startTick = Stopwatch.GetTimestamp();
             for (;;)
@@ -2497,10 +2545,21 @@ namespace EdiabasLib
                 int sendLength = TelLengthBmwFast(sendData);
                 if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendLength, "Send");
 
-                if (!SendData(sendData, sendLength, enableLogging))
+                if (SharedDataActive.DiagDoIp)
                 {
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    if (!SendDoIpData(sendData, sendLength, enableLogging))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
+                }
+                else
+                {
+                    if (!SendEnetData(sendData, sendLength, enableLogging))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                    }
                 }
             }
 
