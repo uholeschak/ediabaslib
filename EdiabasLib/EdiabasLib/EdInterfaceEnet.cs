@@ -344,6 +344,7 @@ namespace EdiabasLib
 
         protected string RemoteHostProtected = AutoIp;
         protected int TesterAddress = 0xF4;
+        protected int DoIpTesterAddress = 0x0EF3;
         protected string HostIdentServiceProtected = "255.255.255.255";
         protected int UdpIdentPort = 6811;
         protected int UdpSrvLocPort = 427;
@@ -2163,7 +2164,6 @@ namespace EdiabasLib
                     long telLen = (((long)SharedDataActive.TcpDiagBuffer[4] << 24) | ((long)SharedDataActive.TcpDiagBuffer[5] << 16) | ((long)SharedDataActive.TcpDiagBuffer[6] << 8) | SharedDataActive.TcpDiagBuffer[7]) + 8;
                     if (SharedDataActive.TcpDiagRecLen == telLen)
                     {   // telegram received
-                        // ToDo: check for ack/nack
                         byte protoVersion = SharedDataActive.TcpDiagBuffer[0];
                         byte protoVersionInv = SharedDataActive.TcpDiagBuffer[1];
                         if (protoVersion != (byte)~protoVersionInv)
@@ -2358,7 +2358,6 @@ namespace EdiabasLib
                         return false;
                     }
                 }
-
             }
             catch (Exception)
             {
@@ -2369,10 +2368,128 @@ namespace EdiabasLib
 
         protected bool SendDoIpData(byte[] sendData, int length, bool enableLogging)
         {
-            return false;
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return false;
+            }
+            try
+            {
+                lock (SharedDataActive.TcpDiagStreamRecLock)
+                {
+                    SharedDataActive.TcpDiagStreamRecEvent.Reset();
+                    SharedDataActive.TcpDiagRecQueue.Clear();
+                }
+
+                uint targetAddr = sendData[1];
+                uint sourceAddr = sendData[2];
+                if (sourceAddr == 0xF1)
+                {
+                    sourceAddr = (uint)DoIpTesterAddress;
+                }
+
+                int dataOffset = 3;
+                int dataLength = sendData[0] & 0x3F;
+                if (dataLength == 0)
+                {   // with length byte
+                    if (sendData[3] == 0)
+                    {
+                        dataLength = (sendData[4] << 8) | sendData[5];
+                        dataOffset = 6;
+                    }
+                    else
+                    {
+                        dataLength = sendData[3];
+                        dataOffset = 4;
+                    }
+                }
+
+                int payloadLength = dataLength + 4;
+                DataBuffer[0] = DoIpProtoVer;
+                DataBuffer[1] = ~DoIpProtoVer & 0xFF;
+                DataBuffer[2] = 0x00;   // diagostic message
+                DataBuffer[3] = 0x01;
+                DataBuffer[4] = (byte)((payloadLength >> 24) & 0xFF);
+                DataBuffer[5] = (byte)((payloadLength >> 16) & 0xFF);
+                DataBuffer[6] = (byte)((payloadLength >> 8) & 0xFF);
+                DataBuffer[7] = (byte)(payloadLength & 0xFF);
+                DataBuffer[8] = (byte)(sourceAddr >> 8);
+                DataBuffer[9] = (byte)sourceAddr;
+                DataBuffer[10] = (byte)(targetAddr >> 8);
+                DataBuffer[11] = (byte)targetAddr;
+                Array.Copy(sendData, dataOffset, DataBuffer, 12, dataLength);
+                int sendLength = dataLength + 12;
+                lock (SharedDataActive.TcpDiagStreamSendLock)
+                {
+                    WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                }
+
+                // wait for ack
+                int recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                if (recLen < 0)
+                {
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
+                    InterfaceDisconnect(true);
+                    if (!InterfaceConnect(true))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                        SharedDataActive.ReconnectRequired = true;
+                        return false;
+                    }
+
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
+                    lock (SharedDataActive.TcpDiagStreamSendLock)
+                    {
+                        WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                    }
+                    recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                    if (recLen < 0)
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                        return false;
+                    }
+                }
+
+                uint payloadType = 0x0000;
+                if (recLen >= 8)
+                {
+                    payloadType = (((uint)AckBuffer[2] << 8) | AckBuffer[3]);
+                }
+
+                if (payloadType == 0x8003)
+                {
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Nack received");
+                    return false;
+                }
+
+                if (payloadType != 0x8002)
+                {   // No Ack
+                    if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** No Ack received");
+                    return false;
+                }
+
+                if ((recLen < 13) || (recLen - 1 > sendLength) || (recLen - 13 > MaxDoIpAckLength) || (AckBuffer[12] != 0x00))
+                {
+                    if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
+                    return false;
+                }
+
+                for (int i = 13; i < recLen; i++)
+                {
+                    if (AckBuffer[i] != DataBuffer[i - 1])
+                    {
+                        if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data not matching");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
-        protected bool ReceiveData(byte[] receiveData, int timeout)
+        protected bool ReceiveEnetData(byte[] receiveData, int timeout)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -2409,8 +2526,79 @@ namespace EdiabasLib
                     receiveData[2] = sourceAddr;
                     receiveData[3] = 0x00;
                     receiveData[4] = (byte)(dataLen >> 8);
-                    receiveData[5] = (byte)dataLen;
+                    receiveData[5] = (byte)(dataLen & 0xFF);
                     Array.Copy(DataBuffer, 8, receiveData, 6, dataLen);
+                    len = dataLen + 6;
+                }
+                else if (dataLen > 0x3F)
+                {
+                    receiveData[0] = 0x80;
+                    receiveData[1] = targetAddr;
+                    receiveData[2] = sourceAddr;
+                    receiveData[3] = (byte)dataLen;
+                    Array.Copy(DataBuffer, 8, receiveData, 4, dataLen);
+                    len = dataLen + 4;
+                }
+                else
+                {
+                    receiveData[0] = (byte)(0x80 | dataLen);
+                    receiveData[1] = targetAddr;
+                    receiveData[2] = sourceAddr;
+                    Array.Copy(DataBuffer, 8, receiveData, 3, dataLen);
+                    len = dataLen + 3;
+                }
+                receiveData[len] = CalcChecksumBmwFast(receiveData, len);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            IncResponseCount(1);
+            return true;
+        }
+
+        protected bool ReceiveDoIpData(byte[] receiveData, int timeout)
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return false;
+            }
+            try
+            {
+                int recLen = ReceiveTelegram(DataBuffer, timeout);
+                if (recLen < 8)
+                {
+                    return false;
+                }
+
+                uint payloadType = (((uint)DataBuffer[2] << 8) | DataBuffer[3]);
+                if (payloadType != 0x8001)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data payload type: {0:X04}", payloadType);
+                    return false;
+                }
+
+                int payloadLen = (((int)DataBuffer[4] << 24) | ((int)DataBuffer[5] << 16) | ((int)DataBuffer[6] << 8) | DataBuffer[7]);
+                int dataLen = payloadLen - 4;
+                if ((dataLen < 1) || ((dataLen + 12) > recLen) || (dataLen > 0xFFFF))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid data length: {0}", dataLen);
+                    return false;
+                }
+                // create BMW-FAST telegram
+                byte sourceAddr = DataBuffer[9];
+                byte targetAddr = 0xF1;
+                int len;
+                if (dataLen > 0xFF)
+                {
+                    receiveData[0] = 0x80;
+                    receiveData[1] = targetAddr;
+                    receiveData[2] = sourceAddr;
+                    receiveData[3] = 0x00;
+                    receiveData[4] = (byte)(dataLen >> 8);
+                    receiveData[5] = (byte)(dataLen & 0xFF);
+                    Array.Copy(DataBuffer, 12, receiveData, 6, dataLen);
                     len = dataLen + 6;
                 }
                 else if (dataLen > 0x3F)
@@ -2509,6 +2697,33 @@ namespace EdiabasLib
                     ((receiveData[5] == 0x02) || (receiveData[5] == 0xFF)))
                 {   // ACK or NACK received
                     return recLen;
+                }
+                if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLen, "*** Ack or nack expected");
+                if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
+                {
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Ack timeout");
+                    return -1;
+                }
+            }
+        }
+
+        protected int ReceiveDoIpAck(byte[] receiveData, int timeout, bool enableLogging)
+        {
+            long startTick = Stopwatch.GetTimestamp();
+            for (; ; )
+            {
+                int recLen = ReceiveTelegram(receiveData, timeout);
+                if (recLen < 0)
+                {
+                    return recLen;
+                }
+                if (recLen >= 8)
+                {
+                    uint payloadType = (((uint)receiveData[2] << 8) | receiveData[3]);
+                    if ((payloadType == 0x8002) || (payloadType == 0x8003))
+                    {   // ACK or NACK received
+                        return recLen;
+                    }
                 }
                 if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, recLen, "*** Ack or nack expected");
                 if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
@@ -2636,10 +2851,21 @@ namespace EdiabasLib
                     timeout += AddRecTimeout;
                 }
 
-                if (!ReceiveData(receiveData, timeout))
+                if (SharedDataActive.DiagDoIp)
                 {
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    if (!ReceiveDoIpData(receiveData, timeout))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
+                }
+                else
+                {
+                    if (!ReceiveEnetData(receiveData, timeout))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
+                    }
                 }
 
                 int recLength = TelLengthBmwFast(receiveData);
