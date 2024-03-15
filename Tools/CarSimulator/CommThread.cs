@@ -3039,6 +3039,21 @@ namespace CarSimulator
                             }
                             bmwTcpClientData.TcpNackIndex++;
 #endif
+#if false
+                            if (bmwTcpClientData.TcpNackIndex >= 5)
+                            {
+                                Debug.WriteLine("Send Ack error");
+                                bmwTcpClientData.TcpNackIndex = 0;
+                                resPayloadType = 0x8002;        // diagnostic message ack
+                                resData.Add(dataBuffer[10]);    // source address
+                                resData.Add(dataBuffer[11]);
+                                resData.Add(dataBuffer[8]);     // target address
+                                resData.Add(dataBuffer[9]);
+                                resData.Add(0x01);         // invalid
+                                break;
+                            }
+                            bmwTcpClientData.TcpNackIndex++;
+#endif
                             dataLen = payloadLength - 4;
 
                             int previousDataLen = dataLen;
