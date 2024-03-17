@@ -965,6 +965,16 @@ namespace EdiabasLib
                 StartReadTcpDiag(readLen);
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), diagPort);
                 SharedDataActive.ReconnectRequired = false;
+
+                if (SharedDataActive.DiagDoIp)
+                {
+                    if (!SendDoIpRoutingRequest())
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sending DoIp routing request failed");
+                        InterfaceDisconnect(reconnect);
+                        return false;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -2734,6 +2744,38 @@ namespace EdiabasLib
                     return -1;
                 }
             }
+        }
+
+        protected bool SendDoIpRoutingRequest()
+        {
+            try
+            {
+                int payloadLength = 11;
+                DataBuffer[0] = DoIpProtoVer;
+                DataBuffer[1] = ~DoIpProtoVer & 0xFF;
+                DataBuffer[2] = 0x00;   // routing activation request
+                DataBuffer[3] = 0x05;
+                DataBuffer[4] = (byte)((payloadLength >> 24) & 0xFF);
+                DataBuffer[5] = (byte)((payloadLength >> 16) & 0xFF);
+                DataBuffer[6] = (byte)((payloadLength >> 8) & 0xFF);
+                DataBuffer[7] = (byte)(payloadLength & 0xFF);
+                DataBuffer[8] = (byte)(DoIpTesterAddress >> 8);
+                DataBuffer[9] = (byte)(DoIpTesterAddress & 0xFF);
+                DataBuffer[10] = 0x00;  // activation type default
+                Array.Clear(DataBuffer, 11, 8); // ISO and OEM reserved
+
+                int sendLength = payloadLength + 8;
+                lock (SharedDataActive.TcpDiagStreamSendLock)
+                {
+                    WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
