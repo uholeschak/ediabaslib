@@ -44,7 +44,8 @@ namespace EdiabasLib
         {
             public enum InterfaceType
             {
-                Direct,
+                DirectEnet,
+                DirectDoIp,
                 Enet,
                 Icom
             }
@@ -900,7 +901,18 @@ namespace EdiabasLib
                 SharedDataActive.EnetHostConn = null;
                 if (RemoteHostProtected.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
                 {
-                    List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries);
+                    List<EnetConnection.InterfaceType> interfaceTypes = new List<EnetConnection.InterfaceType>();
+                    if (protocolHsfz)
+                    {
+                        interfaceTypes.Add(EnetConnection.InterfaceType.DirectEnet);
+                    }
+
+                    if (protocolDoIp)
+                    {
+                        interfaceTypes.Add(EnetConnection.InterfaceType.DirectDoIp);
+                    }
+
+                    List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries, interfaceTypes);
                     if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
                     {
                         return false;
@@ -918,7 +930,7 @@ namespace EdiabasLib
                     }
 
                     string hostIp = hostParts[0];
-                    EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.Direct;
+                    EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.DirectEnet;
                     int hostDiagPort = -1;
                     int hostControlPort = -1;
                     if (hostParts.Length >= 2)
@@ -1342,13 +1354,30 @@ namespace EdiabasLib
 
         public List<EnetConnection> DetectedVehicles(string remoteHostConfig)
         {
-            return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries);
+            return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries, null);
         }
 
-        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries)
+        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries, List<EnetConnection.InterfaceType> interfaceTypes)
         {
             if (!remoteHostConfig.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
             {
+                return null;
+            }
+
+            bool protocolHsfz = true;
+            bool protocolDoIp = true;
+            if (interfaceTypes != null)
+            {
+                protocolHsfz = interfaceTypes.Contains(EnetConnection.InterfaceType.DirectEnet);
+                protocolDoIp = interfaceTypes.Contains(EnetConnection.InterfaceType.DirectDoIp);
+            }
+
+            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DetectedVehicles: HSFZ={0}, DoIp={1}",
+                protocolHsfz, protocolDoIp));
+
+            if (!protocolHsfz && !protocolDoIp)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: No protocol specified");
                 return null;
             }
 
@@ -1431,32 +1460,38 @@ namespace EdiabasLib
                                                 try
                                                 {
                                                     IPAddress broadcastAddress = IPAddress.Parse(broadcastAddressName);
-                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ident broadcast={1} Port={2}",
-                                                        netInterface.Name, broadcastAddress, UdpIdentPort));
-                                                    IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
-
-                                                    TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                                    if (protocolHsfz)
                                                     {
-                                                        UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                                                    }, ipUdpIdent.Address, SharedDataActive.NetworkData);
+                                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': Ident broadcast={1} Port={2}",
+                                                            netInterface.Name, broadcastAddress, UdpIdentPort));
 
-                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': SrvLoc broadcast={1} Port={2}",
-                                                        netInterface.Name, broadcastAddress, UdpSrvLocPort));
-                                                    IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
+                                                        IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
+                                                        TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                                        {
+                                                            UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                                                        }, ipUdpIdent.Address, SharedDataActive.NetworkData);
 
-                                                    TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': SrvLoc broadcast={1} Port={2}",
+                                                            netInterface.Name, broadcastAddress, UdpSrvLocPort));
+
+                                                        IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
+                                                        TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                                        {
+                                                            UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                                        }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
+                                                    }
+
+                                                    if (protocolDoIp)
                                                     {
-                                                        UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
-                                                    }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
+                                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': DoIp ident broadcast={1} Port={2}",
+                                                            netInterface.Name, broadcastAddress, DoIpPort));
 
-                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': DoIp ident broadcast={1} Port={2}",
-                                                        netInterface.Name, broadcastAddress, DoIpPort));
-                                                    IPEndPoint ipUdpDoIpIdent = new IPEndPoint(broadcastAddress, DoIpPort);
-
-                                                    TcpClientWithTimeout.ExecuteNetworkCommand(() =>
-                                                    {
-                                                        UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
-                                                    }, ipUdpDoIpIdent.Address, SharedDataActive.NetworkData);
+                                                        IPEndPoint ipUdpDoIpIdent = new IPEndPoint(broadcastAddress, DoIpPort);
+                                                        TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                                        {
+                                                            UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
+                                                        }, ipUdpDoIpIdent.Address, SharedDataActive.NetworkData);
+                                                    }
 
                                                     broadcastSend = true;
                                                 }
@@ -1493,22 +1528,31 @@ namespace EdiabasLib
                                                     {
                                                         ipBytes[i] |= (byte)(~maskBytes[i]);
                                                     }
+
                                                     IPAddress broadcastAddress = new IPAddress(ipBytes);
+                                                    if (protocolHsfz)
+                                                    {
+                                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending ident: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
+                                                            adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpIdentPort));
 
-                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending ident: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
-                                                        adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpIdentPort));
-                                                    IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
-                                                    UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                                                        IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
+                                                        UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
 
-                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
-                                                        adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpSrvLocPort));
-                                                    IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
-                                                    UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
+                                                            adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpSrvLocPort));
 
-                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending DoIp ident: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
-                                                        adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, DoIpPort));
-                                                    IPEndPoint ipUdpDoIpIdent = new IPEndPoint(broadcastAddress, DoIpPort);
-                                                    UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
+                                                        IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
+                                                        UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                                    }
+
+                                                    if (protocolDoIp)
+                                                    {
+                                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending DoIp ident: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
+                                                            adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, DoIpPort));
+
+                                                        IPEndPoint ipUdpDoIpIdent = new IPEndPoint(broadcastAddress, DoIpPort);
+                                                        UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
+                                                    }
 
                                                     broadcastSend = true;
                                                 }
@@ -1528,27 +1572,32 @@ namespace EdiabasLib
                     {
                         try
                         {
-                            IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), UdpIdentPort);
-                            IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), UdpSrvLocPort);
-                            IPEndPoint ipUdpDoIpIdent = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), DoIpPort);
-
-                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
-                            TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                            if (protocolHsfz)
                             {
-                                UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-                            }, ipUdpIdent.Address, SharedDataActive.NetworkData);
+                                IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), UdpIdentPort);
+                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
+                                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                {
+                                    UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                                }, ipUdpIdent.Address, SharedDataActive.NetworkData);
 
-                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address , UdpSrvLocPort));
-                            TcpClientWithTimeout.ExecuteNetworkCommand(() =>
-                            {
-                                UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
-                            }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
+                                IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), UdpSrvLocPort);
+                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address, UdpSrvLocPort));
+                                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                {
+                                    UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
+                            }
 
-                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending DoIp broadcast to: {0}:{1}", ipUdpSvrLoc.Address, DoIpPort));
-                            TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                            if (protocolDoIp)
                             {
-                                UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
-                            }, ipUdpDoIpIdent.Address, SharedDataActive.NetworkData);
+                                IPEndPoint ipUdpDoIpIdent = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), DoIpPort);
+                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending DoIp broadcast to: {0}:{1}", ipUdpDoIpIdent.Address, DoIpPort));
+                                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                {
+                                    UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
+                                }, ipUdpDoIpIdent.Address, SharedDataActive.NetworkData);
+                            }
 
                             broadcastSend = true;
                         }
@@ -1652,7 +1701,7 @@ namespace EdiabasLib
                         (UdpBuffer[13] == '1') &&
                         (UdpBuffer[14] == '0'))
                     {
-                        addListConn = new EnetConnection(EnetConnection.InterfaceType.Direct, recIp);
+                        addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectEnet, recIp);
                         try
                         {
                             vehicleMac = Encoding.ASCII.GetString(UdpBuffer, 15 + 6, 12);
@@ -1672,6 +1721,25 @@ namespace EdiabasLib
                             {
                                 // ignored
                             }
+                        }
+                    }
+                }
+                else if (recPort == DoIpPort)
+                {
+                    if ((recLen >= (8 + 17 + 2 + 6 + 6 + 2)) &&
+                        (UdpBuffer[0] == DoIpProtoVer) &&
+                        (UdpBuffer[1] == (~DoIpProtoVer & 0xFF)) &&
+                        (UdpBuffer[2] == 0x00) &&
+                        (UdpBuffer[3] == 0x04))
+                    {
+                        addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectDoIp, recIp);
+                        try
+                        {
+                            vehicleVin = Encoding.ASCII.GetString(UdpBuffer, 8, 17);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
                         }
                     }
                 }
