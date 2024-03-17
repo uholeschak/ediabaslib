@@ -984,6 +984,13 @@ namespace EdiabasLib
                         InterfaceDisconnect(reconnect);
                         return false;
                     }
+
+                    if (!WaitForDoIpRoutingResponse(ConnectTimeout + TcpAckTimeout, true))
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Receiving DoIp routing response failed");
+                        InterfaceDisconnect(reconnect);
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -2223,14 +2230,21 @@ namespace EdiabasLib
                                     SharedDataActive.TcpDiagBuffer[9] != (DoIpTesterAddress & 0xFF) ||
                                     SharedDataActive.TcpDiagBuffer[12] != 0x10) // ACK
                                 {
-                                    SharedDataActive.DoIpRoutingState = DoIpRoutingState.Rejected;
                                     EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
                                         "*** DoIp routing rejected");
-                                    InterfaceDisconnect(true);
-                                    return nextReadLength;
+                                    lock (SharedDataActive.TcpDiagStreamRecLock)
+                                    {
+                                        SharedDataActive.DoIpRoutingState = DoIpRoutingState.Rejected;
+                                        SharedDataActive.TcpDiagStreamRecEvent.Set();
+                                    }
+                                    break;
                                 }
 
-                                SharedDataActive.DoIpRoutingState = DoIpRoutingState.Accepted;
+                                lock (SharedDataActive.TcpDiagStreamRecLock)
+                                {
+                                    SharedDataActive.DoIpRoutingState = DoIpRoutingState.Accepted;
+                                    SharedDataActive.TcpDiagStreamRecEvent.Set();
+                                }
                                 break;
 
                             case 0x8001:    // diagostic message
@@ -2810,6 +2824,59 @@ namespace EdiabasLib
             }
 
             return true;
+        }
+
+        protected bool WaitForDoIpRoutingResponse(int timeout, bool enableLogging)
+        {
+            long startTick = Stopwatch.GetTimestamp();
+            for (; ; )
+            {
+                if (SharedDataActive.TcpDiagStream == null)
+                {
+                    return false;
+                }
+
+                if (SharedDataActive.TransmitCancelEvent.WaitOne(0))
+                {
+                    return false;
+                }
+
+                DoIpRoutingState routingState;
+                lock (SharedDataActive.TcpDiagStreamRecLock)
+                {
+                    routingState = SharedDataActive.DoIpRoutingState;
+                }
+
+                switch (routingState)
+                {
+                    case DoIpRoutingState.Requested:
+                        break;
+
+                    case DoIpRoutingState.Rejected:
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "DoIp routing response: Rejected");
+                        return false;
+
+                    case DoIpRoutingState.Accepted:
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "DoIp routing response: Accepted");
+                        return true;
+
+                    default:
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "DoIp routing state invalid");
+                        return false;
+                }
+
+                if (WaitHandle.WaitAny(new WaitHandle[] { SharedDataActive.TcpDiagStreamRecEvent, SharedDataActive.TransmitCancelEvent }, timeout) != 0)
+                {
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp routing event response timeout");
+                    return false;
+                }
+
+                if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
+                {
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp routing response timeout");
+                    return false;
+                }
+            }
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
