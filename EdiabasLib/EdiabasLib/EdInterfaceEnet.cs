@@ -950,7 +950,7 @@ namespace EdiabasLib
 
                 if (!protocolHsfz && !protocolDoIp)
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No valid vehicle protocol not specified: {0}", VehicleProtocolProtected);
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No valid vehicle protocol specified: {0}", VehicleProtocolProtected);
                     return false;
                 }
 
