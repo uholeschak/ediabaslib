@@ -316,7 +316,8 @@ namespace EdiabasLib
         protected const string MutexName = "EdiabasLib_InterfaceEnet";
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
-        protected const int TcpAckTimeout = 5000;
+        protected const int TcpEnetAckTimeout = 5000;
+        protected const int TcpDoIpAckTimeout = 25000;
         protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
@@ -894,7 +895,7 @@ namespace EdiabasLib
                 }
 
                 int diagPort;
-                //SharedDataActive.DiagDoIp = SharedDataActive.EnetHostConn.ConnectionType != EnetConnection.InterfaceType.Icom;
+                SharedDataActive.DiagDoIp = SharedDataActive.EnetHostConn.ConnectionType != EnetConnection.InterfaceType.Icom;
                 if (SharedDataActive.DiagDoIp)
                 {
                     diagPort = DoIpPort;
@@ -985,7 +986,7 @@ namespace EdiabasLib
                         return false;
                     }
 
-                    if (!WaitForDoIpRoutingResponse(ConnectTimeout + TcpAckTimeout, true))
+                    if (!WaitForDoIpRoutingResponse(ConnectTimeout + TcpDoIpAckTimeout, true))
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Receiving DoIp routing response failed");
                         InterfaceDisconnect(reconnect);
@@ -2366,7 +2367,7 @@ namespace EdiabasLib
                 }
 
                 // wait for ack
-                int recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                int recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpEnetAckTimeout, enableLogging);
                 if (recLen < 0)
                 {
                     if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
@@ -2383,7 +2384,7 @@ namespace EdiabasLib
                     {
                         WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                     }
-                    recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                    recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpEnetAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
@@ -2398,7 +2399,7 @@ namespace EdiabasLib
                     {
                         WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                     }
-                    recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                    recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpEnetAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
@@ -2488,7 +2489,7 @@ namespace EdiabasLib
                 }
 
                 // wait for ack
-                int recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                int recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + TcpDoIpAckTimeout, enableLogging);
                 if (recLen < 0)
                 {
                     if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
@@ -2505,7 +2506,7 @@ namespace EdiabasLib
                     {
                         WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                     }
-                    recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + TcpAckTimeout, enableLogging);
+                    recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + TcpDoIpAckTimeout, enableLogging);
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
