@@ -413,6 +413,18 @@ namespace EdiabasLib
                     RemoteHostProtected = prop;
                 }
 
+                prop = EdiabasProtected?.GetConfigProperty("EnetVehicleProtocol");
+                if (prop != null)
+                {
+                    VehicleProtocolProtected = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("VehicleProtocol");
+                if (prop != null)
+                {
+                    VehicleProtocolProtected = prop;
+                }
+
                 prop = EdiabasProtected?.GetConfigProperty("HostIdentService");
                 if (prop != null)
                 {
@@ -857,6 +869,28 @@ namespace EdiabasLib
                     SharedDataActive.NetworkData = connectParameter.NetworkData;
                 }
 #endif
+                string[] protocolParts = VehicleProtocolProtected.Split(',');
+                if (protocolParts.Length < 1)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Vehicle protocol: {0}", VehicleProtocolProtected);
+                    return false;
+                }
+
+                bool protocolHsfz = false;
+                bool protocolDoIp = false;
+                foreach (string protocolPart in protocolParts)
+                {
+                    string protocolPartTrim = protocolPart.Trim();
+                    if (string.Compare(protocolPartTrim, ProtocolHsfz, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        protocolHsfz = true;
+                    }
+                    if (string.Compare(protocolPartTrim, ProtocolDoIp, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        protocolDoIp = true;
+                    }
+                }
+
                 SharedDataActive.EnetHostConn = null;
                 if (RemoteHostProtected.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
                 {
@@ -905,7 +939,22 @@ namespace EdiabasLib
                 }
 
                 int diagPort;
-                SharedDataActive.DiagDoIp = SharedDataActive.EnetHostConn.ConnectionType != EnetConnection.InterfaceType.Icom;
+                if (protocolDoIp)
+                {
+                    if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Disable DoIp for ICOM");
+                        protocolDoIp = false;
+                    }
+                }
+
+                if (!protocolHsfz && !protocolDoIp)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No valid vehicle protocol not specified: {0}", VehicleProtocolProtected);
+                    return false;
+                }
+
+                SharedDataActive.DiagDoIp = protocolDoIp && !protocolHsfz;
                 if (SharedDataActive.DiagDoIp)
                 {
                     diagPort = DoIpPort;
