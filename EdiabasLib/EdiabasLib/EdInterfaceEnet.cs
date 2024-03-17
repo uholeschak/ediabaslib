@@ -20,6 +20,14 @@ namespace EdiabasLib
 {
     public class EdInterfaceEnet : EdInterfaceBase
     {
+        public enum DoIpRoutingState
+        {
+            None,
+            Requested,
+            Accepted,
+            Rejected
+        }
+
 #if Android
         public class ConnectParameterType
         {
@@ -292,6 +300,7 @@ namespace EdiabasLib
             public Queue<byte[]> TcpDiagRecQueue;
             public bool ReconnectRequired;
             public bool IcomAllocateActive;
+            public DoIpRoutingState DoIpRoutingState;
         }
 
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
@@ -965,6 +974,7 @@ namespace EdiabasLib
                 StartReadTcpDiag(readLen);
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), diagPort);
                 SharedDataActive.ReconnectRequired = false;
+                SharedDataActive.DoIpRoutingState = DoIpRoutingState.None;
 
                 if (SharedDataActive.DiagDoIp)
                 {
@@ -2200,7 +2210,29 @@ namespace EdiabasLib
                                 InterfaceDisconnect(true);
                                 return nextReadLength;
 
-                            case 0x0006:    // routing activation response
+                            case 0x0006: // routing activation response
+                                if (telLen < 11)
+                                {
+                                    EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                        "*** DoIp routing response invalid");
+                                    InterfaceDisconnect(true);
+                                    return nextReadLength;
+                                }
+
+                                if (SharedDataActive.TcpDiagBuffer[8] != (DoIpTesterAddress >> 8) ||
+                                    SharedDataActive.TcpDiagBuffer[9] != (DoIpTesterAddress & 0xFF) ||
+                                    SharedDataActive.TcpDiagBuffer[12] != 0x10) // ACK
+                                {
+                                    SharedDataActive.DoIpRoutingState = DoIpRoutingState.Rejected;
+                                    EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                        "*** DoIp routing rejected");
+                                    InterfaceDisconnect(true);
+                                    return nextReadLength;
+                                }
+
+                                SharedDataActive.DoIpRoutingState = DoIpRoutingState.Accepted;
+                                break;
+
                             case 0x8001:    // diagostic message
                             case 0x8002:    // diagnostic message ack
                                 lock (SharedDataActive.TcpDiagStreamRecLock)
@@ -2750,6 +2782,8 @@ namespace EdiabasLib
         {
             try
             {
+                SharedDataActive.DoIpRoutingState = DoIpRoutingState.Requested;
+
                 int payloadLength = 11;
                 DataBuffer[0] = DoIpProtoVer;
                 DataBuffer[1] = ~DoIpProtoVer & 0xFF;
