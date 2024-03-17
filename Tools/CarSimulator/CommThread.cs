@@ -3011,7 +3011,7 @@ namespace CarSimulator
                             resData.Add((byte)(DoIpGwAddr >> 8));
                             resData.Add((byte)(DoIpGwAddr & 0xFF));
                             // response code
-                                resData.Add(0x10);
+                            resData.Add(0x10);
                             // reserved
                             resData.AddRange(new byte[4]);
                             break;
