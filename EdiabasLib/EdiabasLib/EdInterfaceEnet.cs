@@ -79,40 +79,53 @@ namespace EdiabasLib
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append(IpAddress);
-                int skipped = 0;
-                if (DiagPort >= 0)
+                if (ConnectionType == InterfaceType.DirectDoIp)
                 {
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DiagPort));
+                    int doIpPort = DoIpPort;
+                    if (doIpPort < 0)
+                    {
+                        doIpPort = 13400;
+                    }
+
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", doIpPort));
                 }
                 else
                 {
-                    skipped++;
-                }
-
-                if (ControlPort >= 0)
-                {
-                    while (skipped > 0)
+                    int skipped = 0;
+                    if (DiagPort >= 0)
                     {
-                        sb.Append(":");
-                        skipped--;
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DiagPort));
+                    }
+                    else
+                    {
+                        skipped++;
                     }
 
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", ControlPort));
-                }
-                else
-                {
-                    skipped++;
-                }
-
-                if (DoIpPort >= 0)
-                {
-                    while (skipped > 0)
+                    if (ControlPort >= 0)
                     {
-                        sb.Append(":");
-                        skipped--;
+                        while (skipped > 0)
+                        {
+                            sb.Append(":");
+                            skipped--;
+                        }
+
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", ControlPort));
+                    }
+                    else
+                    {
+                        skipped++;
                     }
 
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DoIpPort));
+                    if (DoIpPort >= 0)
+                    {
+                        while (skipped > 0)
+                        {
+                            sb.Append(":");
+                            skipped--;
+                        }
+
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DoIpPort));
+                    }
                 }
 
                 return sb.ToString();
