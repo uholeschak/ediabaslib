@@ -322,6 +322,8 @@ namespace EdiabasLib
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
         protected const string AutoIpAll = ":all";
+        protected const string ProtocolHsfz = "HSFZ";
+        protected const string ProtocolDoIp = "DoIP";
         protected const string IniFileSection = "XEthernet";
         protected const string IcomOwner = "DeepObd";
         protected static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
@@ -353,6 +355,7 @@ namespace EdiabasLib
         protected AutoResetEvent IcomEvent;
 
         protected string RemoteHostProtected = AutoIp;
+        protected string VehicleProtocolProtected = ProtocolHsfz + "," + ProtocolDoIp;
         protected int TesterAddress = 0xF4;
         protected int DoIpTesterAddress = 0x0EF3;
         protected string HostIdentServiceProtected = "255.255.255.255";
@@ -529,6 +532,13 @@ namespace EdiabasLib
                             {
                                 DoIpPort = (int)EdiabasNet.StringToValue(iniPortDoIP);
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using DoIp port from ini file: {0}", DoIpPort);
+                            }
+
+                            string iniVehicleProtocol = ediabasIni.GetValue(IniFileSection, "VehicleProtocol", string.Empty);
+                            if (!string.IsNullOrEmpty(iniVehicleProtocol))
+                            {
+                                VehicleProtocol = iniVehicleProtocol;
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using vehicle protocol from ini file: {0}", VehicleProtocol);
                             }
                         }
                     }
@@ -1212,6 +1222,18 @@ namespace EdiabasLib
             set
             {
                 RemoteHostProtected = value;
+            }
+        }
+
+        public string VehicleProtocol
+        {
+            get
+            {
+                return VehicleProtocolProtected;
+            }
+            set
+            {
+                VehicleProtocolProtected = value;
             }
         }
 
