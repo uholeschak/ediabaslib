@@ -134,6 +134,7 @@ namespace CarSimulator
             public long LastTcpRecTick;
             public long LastTcpSendTick;
             public int TcpNackIndex;
+            public int TcpDataIndex;
             public byte[] TcpLastResponse;
         }
 
@@ -2637,6 +2638,7 @@ namespace CarSimulator
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
                     bmwTcpClientData.TcpNackIndex = 0;
+                    bmwTcpClientData.TcpDataIndex = 0;
                     Debug.WriteLine("Diag connected [{0}], Port={1}, Local={2}, Remote={3}",
                         bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
@@ -2928,6 +2930,7 @@ namespace CarSimulator
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
                     bmwTcpClientData.TcpNackIndex = 0;
+                    bmwTcpClientData.TcpDataIndex = 0;
                     Debug.WriteLine("DoIp connected [{0}], Port={1}, Local={2}, Remote={3}",
                         bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
@@ -3100,6 +3103,19 @@ namespace CarSimulator
                             resData.Add(dataBuffer[9]);
                             resData.Add(0x00);          // ACK
                             resData.AddRange(dataBuffer.Skip(12).Take(previousDataLen));
+
+#if false
+                            if (bmwTcpClientData.TcpDataIndex == 0)
+                            {
+                                Debug.WriteLine("Ignoring diag message");
+                                dataLen = 0;
+                                bmwTcpClientData.TcpDataIndex++;
+                            }
+                            else
+                            {
+                                bmwTcpClientData.TcpDataIndex = 0;
+                            }
+#endif
                             break;
                         }
                     }
