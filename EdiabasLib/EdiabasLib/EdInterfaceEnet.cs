@@ -1783,20 +1783,25 @@ namespace EdiabasLib
                 }
                 else if (recPort == DoIpPort)
                 {
-                    if ((recLen >= (8 + 17 + 2 + 6 + 6 + 2)) &&
+                    int minPayloadLength = 17 + 2 + 6 + 6 + 2;
+                    if ((recLen >= (8 + minPayloadLength)) &&
                         (UdpBuffer[0] == DoIpProtoVer) &&
                         (UdpBuffer[1] == (~DoIpProtoVer & 0xFF)) &&
                         (UdpBuffer[2] == 0x00) &&
                         (UdpBuffer[3] == 0x04))
                     {
-                        addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectDoIp, recIp);
-                        try
+                        long payloadLen = (((long)UdpBuffer[4] << 24) | ((long)UdpBuffer[5] << 16) | ((long)UdpBuffer[6] << 8) | UdpBuffer[7]);
+                        if (payloadLen >= minPayloadLength)
                         {
-                            vehicleVin = Encoding.ASCII.GetString(UdpBuffer, 8, 17);
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
+                            addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectDoIp, recIp);
+                            try
+                            {
+                                vehicleVin = Encoding.ASCII.GetString(UdpBuffer, 8, 17);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
                     }
                 }
