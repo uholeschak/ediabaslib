@@ -319,6 +319,7 @@ namespace EdiabasLib
             public long LastTcpDiagRecTime;
             public Queue<byte[]> TcpDiagRecQueue;
             public bool ReconnectRequired;
+            public bool DoIpRoutingRequired;
             public bool IcomAllocateActive;
             public DoIpRoutingState DoIpRoutingState;
         }
@@ -1081,11 +1082,13 @@ namespace EdiabasLib
                         StartReadTcpDiag(readLen);
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), diagPort);
                         SharedDataActive.ReconnectRequired = false;
+                        SharedDataActive.DoIpRoutingRequired = false;
                         SharedDataActive.DoIpRoutingState = DoIpRoutingState.None;
 
                         if (SharedDataActive.DiagDoIp)
                         {
-                            if (!DoIpRoutingActivation())
+                            SharedDataActive.DoIpRoutingRequired = true;
+                            if (!DoIpRoutingActivation(true))
                             {
                                 InterfaceDisconnect(reconnect);
                                 continue;
@@ -1218,6 +1221,7 @@ namespace EdiabasLib
 
             SharedDataActive.EnetHostConn = null;
             SharedDataActive.ReconnectRequired = false;
+            SharedDataActive.DoIpRoutingRequired = false;
             return result;
         }
 
@@ -2655,6 +2659,14 @@ namespace EdiabasLib
                     SharedDataActive.TcpDiagRecQueue.Clear();
                 }
 
+                if (SharedDataActive.DoIpRoutingRequired)
+                {
+                    if (!DoIpRoutingActivation(enableLogging))
+                    {
+                        return false;
+                    }
+                }
+
                 uint targetAddr = sendData[1];
                 uint sourceAddr = sendData[2];
                 if (sourceAddr == 0xF1)
@@ -2720,6 +2732,7 @@ namespace EdiabasLib
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                        SharedDataActive.DoIpRoutingRequired = true;
                         return false;
                     }
                 }
@@ -2733,12 +2746,14 @@ namespace EdiabasLib
                 if (payloadType != 0x8002)
                 {   // No Ack
                     if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** No Ack received");
+                    SharedDataActive.DoIpRoutingRequired = true;
                     return false;
                 }
 
                 if ((recLen < 13) || (recLen - 1 > sendLength) || (recLen - 13 > MaxDoIpAckLength) || (AckBuffer[12] != 0x00))
                 {
                     if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
+                    SharedDataActive.DoIpRoutingRequired = true;
                     return false;
                 }
 
@@ -2747,6 +2762,7 @@ namespace EdiabasLib
                     if (AckBuffer[i] != DataBuffer[i - 1])
                     {
                         if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data not matching");
+                        SharedDataActive.DoIpRoutingRequired = true;
                         return false;
                     }
                 }
@@ -3003,22 +3019,23 @@ namespace EdiabasLib
             }
         }
 
-        protected bool DoIpRoutingActivation()
+        protected bool DoIpRoutingActivation(bool enableLogging)
         {
             for (int retry = 0; retry < TcpDoIpMaxRetries; retry++)
             {
                 if (!SendDoIpRoutingRequest())
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sending DoIp routing request failed");
+                    if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sending DoIp routing request failed");
                     return false;
                 }
 
-                if (WaitForDoIpRoutingResponse(ConnectTimeout + TcpDoIpAckTimeout, true))
+                if (WaitForDoIpRoutingResponse(ConnectTimeout + TcpDoIpAckTimeout, enableLogging))
                 {
+                    SharedDataActive.DoIpRoutingRequired = false;
                     return true;
                 }
 
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Receiving DoIp routing response failed");
+                if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Receiving DoIp routing response failed");
             }
 
             return false;
