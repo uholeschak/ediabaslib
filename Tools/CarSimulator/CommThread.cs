@@ -273,6 +273,14 @@ namespace CarSimulator
             SMG2,
         };
 
+        [Flags]
+        public enum EnetCommType
+        {
+            None = 0x00,
+            Hsfz = 0x01,
+            DoIp = 0x02,
+        };
+
         private static readonly long TickResolMs = Stopwatch.Frequency/1000;
         private const byte TcpTesterAddr = 0xF4;
         private const int DoIpTesterAddr = 0x0EF3;
@@ -307,6 +315,7 @@ namespace CarSimulator
         private bool _klineResponder;
         private ResponseType _responseType;
         private ConfigData _configData;
+        private EnetCommType _enetCommType;
         private bool _testMode;
         private bool _isoTpMode;
         private ushort _pcanHandle;
@@ -823,7 +832,7 @@ namespace CarSimulator
             };
         }
 
-        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool klineResponder, ResponseType responseType, ConfigData configData, bool testMode = false)
+        public bool StartThread(string comPort, ConceptType conceptType, bool adsAdapter, bool klineResponder, ResponseType responseType, ConfigData configData, EnetCommType enetCommType, bool testMode = false)
         {
             try
             {
@@ -836,6 +845,7 @@ namespace CarSimulator
                 _klineResponder = klineResponder;
                 _responseType = responseType;
                 _configData = configData;
+                _enetCommType = enetCommType;
                 _testMode = testMode;
                 foreach (ResponseEntry responseEntry in _configData.ResponseList)
                 {
@@ -963,16 +973,22 @@ namespace CarSimulator
 
                     foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
                     {
-                        bmwTcpChannel.TcpServerDiag = new TcpListener(IPAddress.Any, bmwTcpChannel.DiagPort);
-                        bmwTcpChannel.TcpServerDiag.Start();
+                        if ((_enetCommType & EnetCommType.Hsfz) == EnetCommType.Hsfz)
+                        {
+                            bmwTcpChannel.TcpServerDiag = new TcpListener(IPAddress.Any, bmwTcpChannel.DiagPort);
+                            bmwTcpChannel.TcpServerDiag.Start();
+                        }
 
                         bmwTcpChannel.TcpServerControl = new TcpListener(IPAddress.Any, bmwTcpChannel.ControlPort);
                         bmwTcpChannel.TcpServerControl.Start();
 
                         if (bmwTcpChannel.DoIpPort > 0)
                         {
-                            bmwTcpChannel.TcpServerDoIp = new TcpListener(IPAddress.Any, bmwTcpChannel.DoIpPort);
-                            bmwTcpChannel.TcpServerDoIp.Start();
+                            if ((_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp)
+                            {
+                                bmwTcpChannel.TcpServerDoIp = new TcpListener(IPAddress.Any, bmwTcpChannel.DoIpPort);
+                                bmwTcpChannel.TcpServerDoIp.Start();
+                            }
                         }
                     }
 
@@ -1202,6 +1218,10 @@ namespace CarSimulator
 
         private void UdpConnect()
         {
+            if ((_enetCommType & EnetCommType.Hsfz) != EnetCommType.Hsfz)
+            {
+                return;
+            }
             // a virtual network adapter with an auto ip address
             // is required tp receive the UPD broadcasts
             _udpError = false;
@@ -1244,6 +1264,11 @@ namespace CarSimulator
 
         private void UdpDoIpConnect()
         {
+            if ((_enetCommType & EnetCommType.DoIp) != EnetCommType.DoIp)
+            {
+                return;
+            }
+
             _udpDoIpError = false;
             _lastDoIpIdentAddr = null;
             _udpDoIpClient = new UdpClient(DoIpDiagPort);
@@ -2584,6 +2609,11 @@ namespace CarSimulator
         private bool ReceiveEnet(byte[] receiveData, BmwTcpClientData bmwTcpClientData)
         {
             if (bmwTcpClientData == null)
+            {
+                return false;
+            }
+
+            if (bmwTcpClientData.BmwTcpChannel?.TcpServerDiag == null)
             {
                 return false;
             }

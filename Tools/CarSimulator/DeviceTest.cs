@@ -792,7 +792,7 @@ namespace CarSimulator
             }
 
             if (!_form.commThread.StartThread("CAN", CommThread.ConceptType.ConceptBwmFast, false, true,
-                CommThread.ResponseType.E61, _form.threadConfigData, true))
+                CommThread.ResponseType.E61, _form.threadConfigData, CommThread.EnetCommType.Hsfz, true))
             {
                 sr.Append("\r\n");
                 sr.Append("Start CAN thread failed!");
@@ -842,7 +842,7 @@ namespace CarSimulator
                 }
 
                 if (!_form.commThread.StartThread(comPort, CommThread.ConceptType.ConceptBwmFast, false, true,
-                    CommThread.ResponseType.E61, _form.threadConfigData, true))
+                    CommThread.ResponseType.E61, _form.threadConfigData, CommThread.EnetCommType.Hsfz, true))
                 {
                     sr.Append("\r\n");
                     sr.Append("Start COM thread failed!");
@@ -888,7 +888,7 @@ namespace CarSimulator
                 }
 
                 if (!_form.commThread.StartThread(comPort, CommThread.ConceptType.ConceptKwp2000Bmw, false, true,
-                    CommThread.ResponseType.E61, _form.threadConfigData, true))
+                    CommThread.ResponseType.E61, _form.threadConfigData, CommThread.EnetCommType.Hsfz, true))
                 {
                     sr.Append("\r\n");
                     sr.Append("Start COM thread failed!");

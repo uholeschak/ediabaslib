@@ -574,6 +574,8 @@ namespace CarSimulator
                 if (radioButtonKwp2000.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000;
                 if (radioButtonTp20.Checked) conceptType = CommThread.ConceptType.ConceptTp20;
 
+                CommThread.EnetCommType enetCommType = CommThread.EnetCommType.Hsfz | CommThread.EnetCommType.DoIp;
+
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
                 if (responseFile == null)
                 {
@@ -610,7 +612,7 @@ namespace CarSimulator
                 }
 
                 UpdateCommThreadConfig();
-                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, checkBoxKLineResponder.Checked, responseType, _configData);
+                _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, checkBoxKLineResponder.Checked, responseType, _configData, enetCommType);
             }
 
             UpdateDisplay();
