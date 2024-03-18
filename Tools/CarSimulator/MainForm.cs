@@ -540,6 +540,8 @@ namespace CarSimulator
             checkBoxAdsAdapter.Enabled = !active;
             checkBoxKLineResponder.Enabled = !active;
             checkBoxBtNameStd.Enabled = !active;
+            checkBoxEnetHsfz.Enabled = !active;
+            checkBoxEnetDoIp.Enabled = !active;
             groupBoxConcepts.Enabled = !active;
         }
 
@@ -574,7 +576,9 @@ namespace CarSimulator
                 if (radioButtonKwp2000.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000;
                 if (radioButtonTp20.Checked) conceptType = CommThread.ConceptType.ConceptTp20;
 
-                CommThread.EnetCommType enetCommType = CommThread.EnetCommType.Hsfz | CommThread.EnetCommType.DoIp;
+                CommThread.EnetCommType enetCommType = CommThread.EnetCommType.None;
+                if (checkBoxEnetHsfz.Checked) enetCommType |= CommThread.EnetCommType.Hsfz;
+                if (checkBoxEnetDoIp.Checked) enetCommType |= CommThread.EnetCommType.DoIp;
 
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
                 if (responseFile == null)

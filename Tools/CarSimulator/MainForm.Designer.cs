@@ -60,6 +60,8 @@
             this.buttonAbortTest = new System.Windows.Forms.Button();
             this.buttonEcuFolder = new System.Windows.Forms.Button();
             this.textBoxEcuFolder = new System.Windows.Forms.TextBox();
+            this.checkBoxEnetHsfz = new System.Windows.Forms.CheckBox();
+            this.checkBoxEnetDoIp = new System.Windows.Forms.CheckBox();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -78,7 +80,7 @@
             this.listPorts.FormattingEnabled = true;
             this.listPorts.Location = new System.Drawing.Point(12, 12);
             this.listPorts.Name = "listPorts";
-            this.listPorts.Size = new System.Drawing.Size(78, 69);
+            this.listPorts.Size = new System.Drawing.Size(78, 95);
             this.listPorts.TabIndex = 5;
             // 
             // timerUpdate
@@ -89,7 +91,7 @@
             // checkBoxMoving
             // 
             this.checkBoxMoving.AutoSize = true;
-            this.checkBoxMoving.Location = new System.Drawing.Point(97, 42);
+            this.checkBoxMoving.Location = new System.Drawing.Point(97, 67);
             this.checkBoxMoving.Name = "checkBoxMoving";
             this.checkBoxMoving.Size = new System.Drawing.Size(59, 17);
             this.checkBoxMoving.TabIndex = 6;
@@ -100,7 +102,7 @@
             // checkBoxVariableValues
             // 
             this.checkBoxVariableValues.AutoSize = true;
-            this.checkBoxVariableValues.Location = new System.Drawing.Point(97, 65);
+            this.checkBoxVariableValues.Location = new System.Drawing.Point(97, 90);
             this.checkBoxVariableValues.Name = "checkBoxVariableValues";
             this.checkBoxVariableValues.Size = new System.Drawing.Size(98, 17);
             this.checkBoxVariableValues.TabIndex = 7;
@@ -131,7 +133,7 @@
             this.groupBoxConcepts.Controls.Add(this.radioButtonDs2);
             this.groupBoxConcepts.Controls.Add(this.radioButtonKwp2000S);
             this.groupBoxConcepts.Controls.Add(this.radioButtonBmwFast);
-            this.groupBoxConcepts.Location = new System.Drawing.Point(438, 217);
+            this.groupBoxConcepts.Location = new System.Drawing.Point(438, 242);
             this.groupBoxConcepts.Name = "groupBoxConcepts";
             this.groupBoxConcepts.Size = new System.Drawing.Size(207, 232);
             this.groupBoxConcepts.TabIndex = 17;
@@ -229,7 +231,7 @@
             // listBoxResponseFiles
             // 
             this.listBoxResponseFiles.FormattingEnabled = true;
-            this.listBoxResponseFiles.Location = new System.Drawing.Point(225, 146);
+            this.listBoxResponseFiles.Location = new System.Drawing.Point(225, 171);
             this.listBoxResponseFiles.Name = "listBoxResponseFiles";
             this.listBoxResponseFiles.Size = new System.Drawing.Size(207, 303);
             this.listBoxResponseFiles.Sorted = true;
@@ -238,7 +240,7 @@
             // checkBoxIgnitionOk
             // 
             this.checkBoxIgnitionOk.AutoSize = true;
-            this.checkBoxIgnitionOk.Location = new System.Drawing.Point(224, 53);
+            this.checkBoxIgnitionOk.Location = new System.Drawing.Point(97, 44);
             this.checkBoxIgnitionOk.Name = "checkBoxIgnitionOk";
             this.checkBoxIgnitionOk.Size = new System.Drawing.Size(78, 17);
             this.checkBoxIgnitionOk.TabIndex = 8;
@@ -278,7 +280,7 @@
             // 
             // treeViewDirectories
             // 
-            this.treeViewDirectories.Location = new System.Drawing.Point(13, 146);
+            this.treeViewDirectories.Location = new System.Drawing.Point(13, 171);
             this.treeViewDirectories.Name = "treeViewDirectories";
             this.treeViewDirectories.Size = new System.Drawing.Size(206, 303);
             this.treeViewDirectories.TabIndex = 14;
@@ -292,7 +294,7 @@
             // 
             // buttonRootFolder
             // 
-            this.buttonRootFolder.Location = new System.Drawing.Point(13, 87);
+            this.buttonRootFolder.Location = new System.Drawing.Point(12, 113);
             this.buttonRootFolder.Name = "buttonRootFolder";
             this.buttonRootFolder.Size = new System.Drawing.Size(206, 23);
             this.buttonRootFolder.TabIndex = 12;
@@ -317,7 +319,7 @@
             this.textBoxTestResults.Name = "textBoxTestResults";
             this.textBoxTestResults.ReadOnly = true;
             this.textBoxTestResults.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxTestResults.Size = new System.Drawing.Size(207, 197);
+            this.textBoxTestResults.Size = new System.Drawing.Size(207, 222);
             this.textBoxTestResults.TabIndex = 16;
             // 
             // buttonDeviceTestWifi
@@ -352,7 +354,7 @@
             // 
             // buttonEcuFolder
             // 
-            this.buttonEcuFolder.Location = new System.Drawing.Point(12, 116);
+            this.buttonEcuFolder.Location = new System.Drawing.Point(12, 142);
             this.buttonEcuFolder.Name = "buttonEcuFolder";
             this.buttonEcuFolder.Size = new System.Drawing.Size(206, 23);
             this.buttonEcuFolder.TabIndex = 13;
@@ -362,17 +364,43 @@
             // 
             // textBoxEcuFolder
             // 
-            this.textBoxEcuFolder.Location = new System.Drawing.Point(225, 118);
+            this.textBoxEcuFolder.Location = new System.Drawing.Point(225, 145);
             this.textBoxEcuFolder.Name = "textBoxEcuFolder";
             this.textBoxEcuFolder.ReadOnly = true;
             this.textBoxEcuFolder.Size = new System.Drawing.Size(207, 20);
             this.textBoxEcuFolder.TabIndex = 18;
             // 
+            // checkBoxEnetHsfz
+            // 
+            this.checkBoxEnetHsfz.AutoSize = true;
+            this.checkBoxEnetHsfz.Checked = true;
+            this.checkBoxEnetHsfz.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxEnetHsfz.Location = new System.Drawing.Point(225, 122);
+            this.checkBoxEnetHsfz.Name = "checkBoxEnetHsfz";
+            this.checkBoxEnetHsfz.Size = new System.Drawing.Size(54, 17);
+            this.checkBoxEnetHsfz.TabIndex = 19;
+            this.checkBoxEnetHsfz.Text = "HSFZ";
+            this.checkBoxEnetHsfz.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxEnetDoIp
+            // 
+            this.checkBoxEnetDoIp.AutoSize = true;
+            this.checkBoxEnetDoIp.Checked = true;
+            this.checkBoxEnetDoIp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxEnetDoIp.Location = new System.Drawing.Point(336, 122);
+            this.checkBoxEnetDoIp.Name = "checkBoxEnetDoIp";
+            this.checkBoxEnetDoIp.Size = new System.Drawing.Size(50, 17);
+            this.checkBoxEnetDoIp.TabIndex = 20;
+            this.checkBoxEnetDoIp.Text = "DoIP";
+            this.checkBoxEnetDoIp.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(657, 461);
+            this.ClientSize = new System.Drawing.Size(657, 482);
+            this.Controls.Add(this.checkBoxEnetDoIp);
+            this.Controls.Add(this.checkBoxEnetHsfz);
             this.Controls.Add(this.textBoxEcuFolder);
             this.Controls.Add(this.buttonEcuFolder);
             this.Controls.Add(this.buttonAbortTest);
@@ -439,6 +467,8 @@
         private System.Windows.Forms.Button buttonAbortTest;
         private System.Windows.Forms.Button buttonEcuFolder;
         private System.Windows.Forms.TextBox textBoxEcuFolder;
+        private System.Windows.Forms.CheckBox checkBoxEnetHsfz;
+        private System.Windows.Forms.CheckBox checkBoxEnetDoIp;
     }
 }
 

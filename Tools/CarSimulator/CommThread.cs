@@ -5304,23 +5304,29 @@ namespace CarSimulator
                 bool transmitted = false;
                 foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
                 {
-                    foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
+                    if (bmwTcpChannel.TcpServerDiag != null)
                     {
-                        if (bmwTcpClientData.TcpClientConnection != null ||
-                            bmwTcpChannel.TcpServerDiag.Pending())
+                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
                         {
-                            SerialTransmission(bmwTcpClientData);
-                            transmitted = true;
+                            if (bmwTcpClientData.TcpClientConnection != null ||
+                                bmwTcpChannel.TcpServerDiag.Pending())
+                            {
+                                SerialTransmission(bmwTcpClientData);
+                                transmitted = true;
+                            }
                         }
                     }
 
-                    foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDoIpList)
+                    if (bmwTcpChannel.TcpServerDoIp != null)
                     {
-                        if (bmwTcpClientData.TcpClientConnection != null ||
-                            (bmwTcpChannel.TcpServerDoIp != null && bmwTcpChannel.TcpServerDoIp.Pending()))
+                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDoIpList)
                         {
-                            SerialTransmission(bmwTcpClientData);
-                            transmitted = true;
+                            if (bmwTcpClientData.TcpClientConnection != null ||
+                                (bmwTcpChannel.TcpServerDoIp != null && bmwTcpChannel.TcpServerDoIp.Pending()))
+                            {
+                                SerialTransmission(bmwTcpClientData);
+                                transmitted = true;
+                            }
                         }
                     }
                 }
