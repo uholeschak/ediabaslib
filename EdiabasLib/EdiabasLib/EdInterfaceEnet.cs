@@ -20,7 +20,13 @@ namespace EdiabasLib
 {
     public class EdInterfaceEnet : EdInterfaceBase
     {
-        public enum DoIpRoutingState
+        public enum CommunicationMode
+        {
+            Hsfz,
+            DoIp,
+        }
+
+        protected enum DoIpRoutingState
         {
             None,
             Requested,
@@ -896,12 +902,17 @@ namespace EdiabasLib
                     return false;
                 }
 
-                bool protocolHsfz = false;
-                bool protocolDoIp = false;
+                List<CommunicationMode> communicationModes = new List<CommunicationMode>();
                 if (reconnect)
                 {
-                    protocolHsfz = !SharedDataActive.DiagDoIp;
-                    protocolDoIp = SharedDataActive.DiagDoIp;
+                    if (SharedDataActive.DiagDoIp)
+                    {
+                        communicationModes.Add(CommunicationMode.DoIp);
+                    }
+                    else
+                    {
+                        communicationModes.Add(CommunicationMode.Hsfz);
+                    }
                 }
                 else
                 {
@@ -910,11 +921,11 @@ namespace EdiabasLib
                         string protocolPartTrim = protocolPart.Trim();
                         if (string.Compare(protocolPartTrim, ProtocolHsfz, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            protocolHsfz = true;
+                            communicationModes.Add(CommunicationMode.Hsfz);
                         }
                         if (string.Compare(protocolPartTrim, ProtocolDoIp, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            protocolDoIp = true;
+                            communicationModes.Add(CommunicationMode.DoIp);
                         }
                     }
                 }
@@ -922,18 +933,7 @@ namespace EdiabasLib
                 SharedDataActive.EnetHostConn = null;
                 if (RemoteHostProtected.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
                 {
-                    List<EnetConnection.InterfaceType> interfaceTypes = new List<EnetConnection.InterfaceType>();
-                    if (protocolHsfz)
-                    {
-                        interfaceTypes.Add(EnetConnection.InterfaceType.DirectEnet);
-                    }
-
-                    if (protocolDoIp)
-                    {
-                        interfaceTypes.Add(EnetConnection.InterfaceType.DirectDoIp);
-                    }
-
-                    List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries, interfaceTypes);
+                    List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries, communicationModes);
                     if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
                     {
                         return false;
@@ -978,41 +978,27 @@ namespace EdiabasLib
                 }
 
                 int diagPort;
-                if (protocolDoIp)
+                if (communicationModes.Contains(CommunicationMode.DoIp))
                 {
                     if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Disable DoIp for ICOM");
-                        protocolDoIp = false;
+                        communicationModes.Remove(CommunicationMode.DoIp);
                     }
                 }
 
-                if (!protocolHsfz && !protocolDoIp)
+                if (communicationModes.Count == 0)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No valid vehicle protocol specified: {0}", VehicleProtocolProtected);
                     return false;
                 }
 
                 EnetConnection enetHostConn = SharedDataActive.EnetHostConn;
-                for (int protocolType = 0; protocolType < 2; protocolType++)
+                foreach (CommunicationMode communicationMode in communicationModes)
                 {
-                    if (protocolType == 0)
-                    {
-                        if (!protocolHsfz)
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        if (!protocolDoIp)
-                        {
-                            continue;
-                        }
-                    }
-
                     SharedDataActive.EnetHostConn = enetHostConn;
-                    SharedDataActive.DiagDoIp = protocolType == 1;
+                    SharedDataActive.DiagDoIp = communicationMode == CommunicationMode.DoIp;
+
                     if (SharedDataActive.DiagDoIp)
                     {
                         diagPort = DoIpPort;
@@ -1416,7 +1402,7 @@ namespace EdiabasLib
             return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries, null);
         }
 
-        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries, List<EnetConnection.InterfaceType> interfaceTypes)
+        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries, List<CommunicationMode> communicationModes)
         {
             if (!remoteHostConfig.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
             {
@@ -1425,10 +1411,10 @@ namespace EdiabasLib
 
             bool protocolHsfz = true;
             bool protocolDoIp = true;
-            if (interfaceTypes != null)
+            if (communicationModes != null)
             {
-                protocolHsfz = interfaceTypes.Contains(EnetConnection.InterfaceType.DirectEnet);
-                protocolDoIp = interfaceTypes.Contains(EnetConnection.InterfaceType.DirectDoIp);
+                protocolHsfz = communicationModes.Contains(CommunicationMode.Hsfz);
+                protocolDoIp = communicationModes.Contains(CommunicationMode.DoIp);
             }
 
             EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DetectedVehicles: HSFZ={0}, DoIp={1}",
