@@ -1084,16 +1084,8 @@ namespace EdiabasLib
 
                         if (SharedDataActive.DiagDoIp)
                         {
-                            if (!SendDoIpRoutingRequest())
+                            if (!DoIpRoutingActivation())
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sending DoIp routing request failed");
-                                InterfaceDisconnect(reconnect);
-                                continue;
-                            }
-
-                            if (!WaitForDoIpRoutingResponse(ConnectTimeout + TcpDoIpAckTimeout, true))
-                            {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Receiving DoIp routing response failed");
                                 InterfaceDisconnect(reconnect);
                                 continue;
                             }
@@ -3008,6 +3000,23 @@ namespace EdiabasLib
                     return -1;
                 }
             }
+        }
+
+        protected bool DoIpRoutingActivation()
+        {
+            if (!SendDoIpRoutingRequest())
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sending DoIp routing request failed");
+                return false;
+            }
+
+            if (!WaitForDoIpRoutingResponse(ConnectTimeout + TcpDoIpAckTimeout, true))
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Receiving DoIp routing response failed");
+                return false;
+            }
+
+            return true;
         }
 
         protected bool SendDoIpRoutingRequest()

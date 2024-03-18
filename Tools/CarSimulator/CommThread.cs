@@ -3032,7 +3032,7 @@ namespace CarSimulator
                                 break;
                             }
 
-                            // enbale full searching
+                            // enable vehicle full searching
                             _lastDoIpIdentAddr = null;
 
                             uint srcAddr = (((uint)dataBuffer[8] << 8) | dataBuffer[9]);
