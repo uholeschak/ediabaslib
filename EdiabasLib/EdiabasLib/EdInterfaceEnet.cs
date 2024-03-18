@@ -338,6 +338,7 @@ namespace EdiabasLib
         protected const int TcpConnectTimeoutMin = 1000;
         protected const int TcpEnetAckTimeout = 5000;
         protected const int TcpDoIpAckTimeout = 25000;
+        protected const int TcpDoIpMaxRetries = 2;
         protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
         protected const string AutoIp = "auto";
@@ -3004,19 +3005,23 @@ namespace EdiabasLib
 
         protected bool DoIpRoutingActivation()
         {
-            if (!SendDoIpRoutingRequest())
+            for (int retry = 0; retry < TcpDoIpMaxRetries; retry++)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sending DoIp routing request failed");
-                return false;
-            }
+                if (!SendDoIpRoutingRequest())
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Sending DoIp routing request failed");
+                    return false;
+                }
 
-            if (!WaitForDoIpRoutingResponse(ConnectTimeout + TcpDoIpAckTimeout, true))
-            {
+                if (WaitForDoIpRoutingResponse(ConnectTimeout + TcpDoIpAckTimeout, true))
+                {
+                    return true;
+                }
+
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Receiving DoIp routing response failed");
-                return false;
             }
 
-            return true;
+            return false;
         }
 
         protected bool SendDoIpRoutingRequest()
