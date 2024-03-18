@@ -993,6 +993,7 @@ namespace EdiabasLib
                     return false;
                 }
 
+                EnetConnection enetHostConn = SharedDataActive.EnetHostConn;
                 for (int protocolType = 0; protocolType < 2; protocolType++)
                 {
                     if (protocolType == 0)
@@ -1010,6 +1011,7 @@ namespace EdiabasLib
                         }
                     }
 
+                    SharedDataActive.EnetHostConn = enetHostConn;
                     SharedDataActive.DiagDoIp = protocolType == 1;
                     if (SharedDataActive.DiagDoIp)
                     {
