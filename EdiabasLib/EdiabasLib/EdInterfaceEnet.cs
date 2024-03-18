@@ -319,6 +319,7 @@ namespace EdiabasLib
             public long LastTcpDiagRecTime;
             public Queue<byte[]> TcpDiagRecQueue;
             public bool ReconnectRequired;
+            public bool DoIpRoutingRequired;
             public bool IcomAllocateActive;
             public DoIpRoutingState DoIpRoutingState;
         }
@@ -1081,10 +1082,12 @@ namespace EdiabasLib
                         StartReadTcpDiag(readLen);
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), diagPort);
                         SharedDataActive.ReconnectRequired = false;
+                        SharedDataActive.DoIpRoutingRequired = false;
                         SharedDataActive.DoIpRoutingState = DoIpRoutingState.None;
 
                         if (SharedDataActive.DiagDoIp)
                         {
+                            SharedDataActive.DoIpRoutingRequired = true;
                             if (!DoIpRoutingActivation())
                             {
                                 InterfaceDisconnect(reconnect);
@@ -1218,6 +1221,7 @@ namespace EdiabasLib
 
             SharedDataActive.EnetHostConn = null;
             SharedDataActive.ReconnectRequired = false;
+            SharedDataActive.DoIpRoutingRequired = false;
             return result;
         }
 
@@ -3015,6 +3019,7 @@ namespace EdiabasLib
 
                 if (WaitForDoIpRoutingResponse(ConnectTimeout + TcpDoIpAckTimeout, true))
                 {
+                    SharedDataActive.DoIpRoutingRequired = false;
                     return true;
                 }
 
