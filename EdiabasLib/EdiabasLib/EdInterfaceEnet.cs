@@ -986,6 +986,12 @@ namespace EdiabasLib
 
                     if (connectionType == EnetConnection.InterfaceType.DirectEnet)
                     {
+                        if (communicationModes.Contains(CommunicationMode.Hsfz))
+                        {
+                            communicationModes.Remove(CommunicationMode.Hsfz);
+                            communicationModes.Insert(0, CommunicationMode.Hsfz);
+                        }
+
                         if (hostParts.Length >= 2)
                         {
                             Int64 portValue = EdiabasNet.StringToValue(hostParts[1], out bool valid);
@@ -1008,6 +1014,13 @@ namespace EdiabasLib
                     }
                     else
                     {
+                        // try DoIP first
+                        if (communicationModes.Contains(CommunicationMode.DoIp))
+                        {
+                            communicationModes.Remove(CommunicationMode.DoIp);
+                            communicationModes.Insert(0, CommunicationMode.DoIp);
+                        }
+
                         if (hostParts.Length >= 3)
                         {
                             Int64 portValue = EdiabasNet.StringToValue(hostParts[2], out bool valid);
