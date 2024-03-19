@@ -1422,7 +1422,7 @@ namespace EdiabasLib
 
             try
             {
-// ReSharper disable once UseObjectOrCollectionInitializer
+                // ReSharper disable once UseObjectOrCollectionInitializer
                 UdpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 UdpSocket.EnableBroadcast = true;
                 IPEndPoint ipUdp = new IPEndPoint(IPAddress.Any, 0);
@@ -1773,7 +1773,8 @@ namespace EdiabasLib
                         (UdpBuffer[3] == 0x04))
                     {
                         long payloadLen = (((long)UdpBuffer[4] << 24) | ((long)UdpBuffer[5] << 16) | ((long)UdpBuffer[6] << 8) | UdpBuffer[7]);
-                        if (payloadLen >= minPayloadLength)
+                        uint gwAddr = (uint)((UdpBuffer[8 + 17 + 0] << 8) | UdpBuffer[8 + 17 + 1]);
+                        if (payloadLen >= minPayloadLength && gwAddr == DoIpGwAddr)
                         {
                             addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectDoIp, recIp);
                             try
