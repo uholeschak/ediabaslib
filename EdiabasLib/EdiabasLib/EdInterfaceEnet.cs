@@ -400,6 +400,7 @@ namespace EdiabasLib
         protected byte[] RecBuffer = new byte[TransBufferSize];
         protected byte[] DataBuffer = new byte[TransBufferSize];
         protected byte[] AckBuffer = new byte[TransBufferSize];
+        protected byte[] RoutingBuffer = new byte[8 + 11];
         protected Dictionary<byte, int> Nr78Dict = new Dictionary<byte, int>();
 
         protected TransmitDelegate ParTransmitFunc;
@@ -3034,23 +3035,23 @@ namespace EdiabasLib
                 SharedDataActive.DoIpRoutingState = DoIpRoutingState.Requested;
 
                 int payloadLength = 11;
-                DataBuffer[0] = DoIpProtoVer;
-                DataBuffer[1] = ~DoIpProtoVer & 0xFF;
-                DataBuffer[2] = 0x00;   // routing activation request
-                DataBuffer[3] = 0x05;
-                DataBuffer[4] = (byte)((payloadLength >> 24) & 0xFF);
-                DataBuffer[5] = (byte)((payloadLength >> 16) & 0xFF);
-                DataBuffer[6] = (byte)((payloadLength >> 8) & 0xFF);
-                DataBuffer[7] = (byte)(payloadLength & 0xFF);
-                DataBuffer[8] = (byte)(DoIpTesterAddress >> 8);
-                DataBuffer[9] = (byte)(DoIpTesterAddress & 0xFF);
-                DataBuffer[10] = 0x00;  // activation type default
-                Array.Clear(DataBuffer, 11, 8); // ISO and OEM reserved
+                RoutingBuffer[0] = DoIpProtoVer;
+                RoutingBuffer[1] = ~DoIpProtoVer & 0xFF;
+                RoutingBuffer[2] = 0x00;   // routing activation request
+                RoutingBuffer[3] = 0x05;
+                RoutingBuffer[4] = (byte)((payloadLength >> 24) & 0xFF);
+                RoutingBuffer[5] = (byte)((payloadLength >> 16) & 0xFF);
+                RoutingBuffer[6] = (byte)((payloadLength >> 8) & 0xFF);
+                RoutingBuffer[7] = (byte)(payloadLength & 0xFF);
+                RoutingBuffer[8] = (byte)(DoIpTesterAddress >> 8);
+                RoutingBuffer[9] = (byte)(DoIpTesterAddress & 0xFF);
+                RoutingBuffer[10] = 0x00;  // activation type default
+                Array.Clear(RoutingBuffer, 11, 8); // ISO and OEM reserved
 
                 int sendLength = payloadLength + 8;
                 lock (SharedDataActive.TcpDiagStreamSendLock)
                 {
-                    WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                    WriteNetworkStream(SharedDataActive.TcpDiagStream, RoutingBuffer, 0, sendLength);
                 }
             }
             catch (Exception)
