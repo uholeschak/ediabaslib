@@ -87,13 +87,13 @@ namespace EdiabasLib
                 sb.Append(IpAddress);
                 if (ConnectionType == InterfaceType.DirectDoIp)
                 {
-                    int doIpPort = DoIpPort;
-                    if (doIpPort < 0)
-                    {
-                        doIpPort = 13400;
-                    }
+                    sb.Append(":");
+                    sb.Append(ProtocolDoIp);
 
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", doIpPort));
+                    if (DoIpPort >= 0)
+                    {
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DoIpPort));
+                    }
                 }
                 else
                 {
@@ -971,30 +971,54 @@ namespace EdiabasLib
                     }
 
                     string hostIp = hostParts[0];
-                    EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.DirectEnet;
                     int hostDiagPort = -1;
                     int hostControlPort = -1;
+                    int hostDoIpPort = -1;
+                    EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.DirectEnet;
+
                     if (hostParts.Length >= 2)
                     {
-                        Int64 portValue = EdiabasNet.StringToValue(hostParts[1], out bool valid);
-                        if (valid)
+                        if (string.Compare(hostParts[1], ProtocolDoIp, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            hostDiagPort = (int)portValue;
-                            connectionType = EnetConnection.InterfaceType.Icom;
+                            connectionType = EnetConnection.InterfaceType.DirectDoIp;
                         }
                     }
 
-                    if (hostParts.Length >= 3)
+                    if (connectionType == EnetConnection.InterfaceType.DirectEnet)
                     {
-                        Int64 portValue = EdiabasNet.StringToValue(hostParts[2], out bool valid);
-                        if (valid)
+                        if (hostParts.Length >= 2)
                         {
-                            hostControlPort = (int)portValue;
-                            connectionType = EnetConnection.InterfaceType.Icom;
+                            Int64 portValue = EdiabasNet.StringToValue(hostParts[1], out bool valid);
+                            if (valid)
+                            {
+                                hostDiagPort = (int)portValue;
+                                connectionType = EnetConnection.InterfaceType.Icom;
+                            }
+                        }
+
+                        if (hostParts.Length >= 3)
+                        {
+                            Int64 portValue = EdiabasNet.StringToValue(hostParts[2], out bool valid);
+                            if (valid)
+                            {
+                                hostControlPort = (int)portValue;
+                                connectionType = EnetConnection.InterfaceType.Icom;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (hostParts.Length >= 3)
+                        {
+                            Int64 portValue = EdiabasNet.StringToValue(hostParts[2], out bool valid);
+                            if (valid)
+                            {
+                                hostDoIpPort = (int)portValue;
+                            }
                         }
                     }
 
-                    SharedDataActive.EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort);
+                    SharedDataActive.EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort, hostDoIpPort);
                 }
 
                 int diagPort;
