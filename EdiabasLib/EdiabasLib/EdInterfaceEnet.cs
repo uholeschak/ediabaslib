@@ -1706,7 +1706,7 @@ namespace EdiabasLib
                         return null;
                     }
 
-                    // DoIP has 500ms timeout (TimeoutConnect)
+                    // DoIP has 500ms timeout (TimeoutIdentService)
                     int waitResult = WaitHandle.WaitAny(new WaitHandle[] { UdpEvent, SharedDataActive.TransmitCancelEvent }, 1000);
                     if (waitResult == 1)
                     {
