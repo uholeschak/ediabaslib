@@ -337,7 +337,6 @@ namespace EdiabasLib
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
         protected const int TcpEnetAckTimeout = 5000;
-        protected const int TcpDoIpAckTimeout = 25000;
         protected const int TcpDoIpMaxRetries = 2;
         protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
@@ -392,6 +391,7 @@ namespace EdiabasLib
         protected int DiagnosticPort = 6801;
         protected int DoIpPort = 13400;
         protected int ConnectTimeout = 5000;
+        protected int DoIpTimeoutAcknowledge = 25000;
         protected int AddRecTimeoutProtected = 1000;
         protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
@@ -465,6 +465,12 @@ namespace EdiabasLib
                     TesterAddress = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = EdiabasProtected?.GetConfigProperty("EnetDoIPTesterAddress");
+                if (prop != null)
+                {
+                    DoIpTesterAddress = (int)EdiabasNet.StringToValue(prop);
+                }
+
                 prop = EdiabasProtected?.GetConfigProperty("EnetControlPort");
                 if (prop != null)
                 {
@@ -511,6 +517,18 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutAcknowledge");
+                if (prop != null)
+                {
+                    DoIpTimeoutAcknowledge = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("TimeoutAcknowledge");
+                if (prop != null)
+                {
+                    DoIpTimeoutAcknowledge = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetAddRecTimeout");
@@ -1651,6 +1669,7 @@ namespace EdiabasLib
                         return null;
                     }
 
+                    // DoIP has 500ms timeout (TimeoutConnect)
                     int waitResult = WaitHandle.WaitAny(new WaitHandle[] { UdpEvent, SharedDataActive.TransmitCancelEvent }, 1000);
                     if (waitResult == 1)
                     {
@@ -2701,7 +2720,7 @@ namespace EdiabasLib
                 }
 
                 // wait for ack
-                int recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + TcpDoIpAckTimeout, enableLogging);
+                int recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging);
                 if (recLen < 0)
                 {
                     if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
@@ -2721,7 +2740,7 @@ namespace EdiabasLib
                     {
                         WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                     }
-                    recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + TcpDoIpAckTimeout, enableLogging);
+                    recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging);
                     if (recLen < 0)
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
@@ -3018,7 +3037,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                if (WaitForDoIpRoutingResponse(ConnectTimeout + TcpDoIpAckTimeout, enableLogging))
+                if (WaitForDoIpRoutingResponse(ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging))
                 {
                     return true;
                 }
