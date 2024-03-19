@@ -3087,6 +3087,15 @@ namespace CarSimulator
                             }
                             bmwTcpClientData.TcpNackIndex++;
 #endif
+#if false
+                            if (bmwTcpClientData.TcpNackIndex >= 2)
+                            {
+                                Debug.WriteLine("Send No Ack");
+                                bmwTcpClientData.TcpNackIndex = 0;
+                                break;
+                            }
+                            bmwTcpClientData.TcpNackIndex++;
+#endif
                             dataLen = payloadLength - 4;
 
                             int previousDataLen = dataLen;
