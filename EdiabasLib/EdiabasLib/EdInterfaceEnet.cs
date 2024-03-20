@@ -50,7 +50,7 @@ namespace EdiabasLib
         {
             public enum InterfaceType
             {
-                DirectEnet,
+                DirectHsfz,
                 DirectDoIp,
                 Enet,
                 Icom
@@ -333,6 +333,10 @@ namespace EdiabasLib
         public const int MaxDoIpAckLength = 5;
         public const int DoIpProtoVer = 0x03;
         public const int DoIpGwAddr = 0x0010;
+        public const string AutoIp = "auto";
+        public const string AutoIpAll = ":all";
+        public const string ProtocolHsfz = "HSFZ";
+        public const string ProtocolDoIp = "DoIP";
         protected const string MutexName = "EdiabasLib_InterfaceEnet";
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
@@ -341,10 +345,6 @@ namespace EdiabasLib
         protected const int TcpDoIpMaxRetries = 2;
         protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
-        protected const string AutoIp = "auto";
-        protected const string AutoIpAll = ":all";
-        protected const string ProtocolHsfz = "HSFZ";
-        protected const string ProtocolDoIp = "DoIP";
         protected const string IniFileSection = "XEthernet";
         protected const string IcomOwner = "DeepObd";
         protected static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
@@ -975,7 +975,7 @@ namespace EdiabasLib
                     int hostDiagPort = -1;
                     int hostControlPort = -1;
                     int hostDoIpPort = -1;
-                    EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.DirectEnet;
+                    EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.DirectHsfz;
 
                     if (hostParts.Length >= 2)
                     {
@@ -985,7 +985,7 @@ namespace EdiabasLib
                         }
                     }
 
-                    if (connectionType == EnetConnection.InterfaceType.DirectEnet)
+                    if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
                     {
                         if (communicationModes.Contains(CommunicationMode.Hsfz))
                         {
@@ -1447,9 +1447,9 @@ namespace EdiabasLib
             }
         }
 
-        public List<EnetConnection> DetectedVehicles(string remoteHostConfig)
+        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, List<CommunicationMode> communicationModes = null)
         {
-            return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries, null);
+            return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries, communicationModes);
         }
 
         public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries, List<CommunicationMode> communicationModes)
@@ -1797,7 +1797,7 @@ namespace EdiabasLib
                         (UdpBuffer[13] == '1') &&
                         (UdpBuffer[14] == '0'))
                     {
-                        addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectEnet, recIp);
+                        addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectHsfz, recIp);
                         try
                         {
                             vehicleMac = Encoding.ASCII.GetString(UdpBuffer, 15 + 6, 12);
