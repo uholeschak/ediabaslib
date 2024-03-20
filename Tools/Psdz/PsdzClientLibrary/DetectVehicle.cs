@@ -64,6 +64,7 @@ namespace PsdzClient
                 hostAddress = enetConnection.ToString();
             }
             edInterfaceEnet.RemoteHost = hostAddress;
+            edInterfaceEnet.VehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
             edInterfaceEnet.IcomAllocate = icomAllocate;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
 

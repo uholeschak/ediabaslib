@@ -593,7 +593,11 @@ namespace PsdzClient
             List<EdInterfaceEnet.EnetConnection> detectedVehicles;
             using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false))
             {
-                detectedVehicles = edInterface.DetectedVehicles("auto:all");
+                detectedVehicles = edInterface.DetectedVehicles("auto:all",
+                    new List<EdInterfaceEnet.CommunicationMode>()
+                    {
+                        EdInterfaceEnet.CommunicationMode.Hsfz
+                    });
             }
 
             return detectedVehicles;
