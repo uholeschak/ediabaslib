@@ -337,6 +337,7 @@ namespace EdiabasLib
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
         protected const int TcpEnetAckTimeout = 5000;
+        protected const int TcpDoIpRecTimeout = 1000;
         protected const int TcpDoIpMaxRetries = 2;
         protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
@@ -1706,7 +1707,7 @@ namespace EdiabasLib
                         return null;
                     }
 
-                    // DoIP has 500ms timeout (TimeoutIdentService)
+                    // DoIP has 500ms timeout (TimeoutConnect)
                     int waitResult = WaitHandle.WaitAny(new WaitHandle[] { UdpEvent, SharedDataActive.TransmitCancelEvent }, 1000);
                     if (waitResult == 1)
                     {
@@ -2888,7 +2889,7 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool ReceiveDoIpData(byte[] receiveData, int timeout)
+        protected bool ReceiveDoIpData(byte[] receiveData, int addRectTimeout)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -2896,7 +2897,8 @@ namespace EdiabasLib
             }
             try
             {
-                int recLen = ReceiveTelegram(DataBuffer, timeout);
+                int receiveTimeout = TcpDoIpRecTimeout + addRectTimeout;
+                int recLen = ReceiveTelegram(DataBuffer, receiveTimeout);
                 if (recLen < 8)
                 {
                     return false;
@@ -3280,18 +3282,22 @@ namespace EdiabasLib
             {
                 int timeout = (Nr78Dict.Count > 0) ? ParTimeoutNr78 : ParTimeoutStd;
                 //if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Timeout: {0}", timeout);
+
+                int addRectTimeout;
                 if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
                 {
-                    timeout += AddRecTimeoutIcom;
+                    addRectTimeout = AddRecTimeoutIcom;
                 }
                 else
                 {
-                    timeout += AddRecTimeout;
+                    addRectTimeout = AddRecTimeout;
                 }
+
+                timeout += addRectTimeout;
 
                 if (SharedDataActive.DiagDoIp)
                 {
-                    if (!ReceiveDoIpData(receiveData, timeout))
+                    if (!ReceiveDoIpData(receiveData, addRectTimeout))
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
