@@ -3075,7 +3075,7 @@ namespace CarSimulator
                                 resData.Add(dataBuffer[11]);
                                 resData.Add(dataBuffer[8]);     // target address
                                 resData.Add(dataBuffer[9]);
-                                resData.Add(0x00);         // out of memory
+                                resData.Add(0x00);         // retry
                                 resData.AddRange(dataBuffer.Skip(12).Take(previousDataLen));
                                 break;
                             }

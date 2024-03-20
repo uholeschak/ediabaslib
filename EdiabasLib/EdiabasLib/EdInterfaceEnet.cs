@@ -2823,6 +2823,12 @@ namespace EdiabasLib
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
                         return false;
                     }
+
+                    payloadType = 0x0000;
+                    if (recLen >= 8)
+                    {
+                        payloadType = (((uint)AckBuffer[2] << 8) | AckBuffer[3]);
+                    }
                 }
 
                 if (payloadType != 0x8002)
