@@ -2469,6 +2469,7 @@ namespace EdiabasLib
                             EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
                                 "*** Protocol version invalid");
                             InterfaceDisconnect(true);
+                            SharedDataActive.ReconnectRequired = true;
                             return nextReadLength;
                         }
 
@@ -2479,12 +2480,7 @@ namespace EdiabasLib
                                 EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
                                     "*** Error response");
                                 InterfaceDisconnect(true);
-                                return nextReadLength;
-
-                            case 0x8003:    // diagnostic message nack
-                                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
-                                    "*** NACK response");
-                                InterfaceDisconnect(true);
+                                SharedDataActive.ReconnectRequired = true;
                                 return nextReadLength;
 
                             case 0x0006: // routing activation response
@@ -2493,6 +2489,7 @@ namespace EdiabasLib
                                     EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
                                         "*** DoIp routing response invalid");
                                     InterfaceDisconnect(true);
+                                    SharedDataActive.ReconnectRequired = true;
                                     return nextReadLength;
                                 }
 
@@ -2519,6 +2516,7 @@ namespace EdiabasLib
 
                             case 0x8001:    // diagostic message
                             case 0x8002:    // diagnostic message ack
+                            case 0x8003:    // diagnostic message nack
                                 lock (SharedDataActive.TcpDiagStreamRecLock)
                                 {
                                     if (SharedDataActive.TcpDiagRecQueue.Count > 256)
@@ -2792,6 +2790,41 @@ namespace EdiabasLib
                     payloadType = (((uint)AckBuffer[2] << 8) | AckBuffer[3]);
                 }
 
+                if (payloadType == 0x8003)
+                {   // NACK
+                    if ((recLen < 13) || (AckBuffer[12] != 0x00))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: aborting");
+                        InterfaceDisconnect(true);
+                        SharedDataActive.ReconnectRequired = true;
+                        return false;
+                    }
+
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
+                    if (!DoIpRoutingActivation(enableLogging))
+                    {
+                        InterfaceDisconnect(true);
+                        if (!InterfaceConnect(true))
+                        {
+                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                            SharedDataActive.ReconnectRequired = true;
+                            return false;
+                        }
+                    }
+
+                    lock (SharedDataActive.TcpDiagStreamSendLock)
+                    {
+                        WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                    }
+
+                    recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging);
+                    if (recLen < 0)
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                        return false;
+                    }
+                }
+
                 if (payloadType != 0x8002)
                 {   // No Ack
                     if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** No Ack received");
@@ -3052,7 +3085,7 @@ namespace EdiabasLib
                 if (recLen >= 8)
                 {
                     uint payloadType = (((uint)receiveData[2] << 8) | receiveData[3]);
-                    if (payloadType == 0x8002)
+                    if (payloadType == 0x8002 || payloadType == 0x8003)
                     {   // ACK or NACK received
                         return recLen;
                     }
