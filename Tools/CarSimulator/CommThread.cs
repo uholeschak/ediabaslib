@@ -3057,6 +3057,15 @@ namespace CarSimulator
                                 Debug.WriteLine("DoIp diag msg length too short: {0}", (object)payloadLength);
                                 break;
                             }
+
+                            dataLen = payloadLength - 4;
+
+                            int previousDataLen = dataLen;
+                            if (previousDataLen > EdInterfaceEnet.MaxDoIpAckLength)
+                            {
+                                previousDataLen = EdInterfaceEnet.MaxDoIpAckLength;
+                                Debug.WriteLine("Ack length limited");
+                            }
 #if false
                             if (bmwTcpClientData.TcpNackIndex >= 5)
                             {
@@ -3068,6 +3077,7 @@ namespace CarSimulator
                                 resData.Add(dataBuffer[8]);     // target address
                                 resData.Add(dataBuffer[9]);
                                 resData.Add(0x05);         // out of memory
+                                resData.AddRange(dataBuffer.Skip(12).Take(previousDataLen));
                                 break;
                             }
                             bmwTcpClientData.TcpNackIndex++;
@@ -3096,15 +3106,6 @@ namespace CarSimulator
                             }
                             bmwTcpClientData.TcpNackIndex++;
 #endif
-                            dataLen = payloadLength - 4;
-
-                            int previousDataLen = dataLen;
-                            if (previousDataLen > EdInterfaceEnet.MaxDoIpAckLength)
-                            {
-                                previousDataLen = EdInterfaceEnet.MaxDoIpAckLength;
-                                Debug.WriteLine("Ack length limited");
-                            }
-
                             resPayloadType = 0x8002;        // diagnostic message ack
                             resData.Add(dataBuffer[10]);    // source address
                             resData.Add(dataBuffer[11]);
@@ -3112,7 +3113,6 @@ namespace CarSimulator
                             resData.Add(dataBuffer[9]);
                             resData.Add(0x00);          // ACK
                             resData.AddRange(dataBuffer.Skip(12).Take(previousDataLen));
-
 #if false
                             if (bmwTcpClientData.TcpDataIndex == 0)
                             {
