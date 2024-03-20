@@ -2843,6 +2843,15 @@ namespace EdiabasLib
                     return false;
                 }
 
+                if (AckBuffer[8] != DataBuffer[10] ||
+                    AckBuffer[9] != DataBuffer[11] ||
+                    AckBuffer[10] != DataBuffer[8] ||
+                    AckBuffer[11] != DataBuffer[9])
+                {
+                    if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack address not matching");
+                    return false;
+                }
+
                 for (int i = 13; i < recLen; i++)
                 {
                     if (AckBuffer[i] != DataBuffer[i - 1])
