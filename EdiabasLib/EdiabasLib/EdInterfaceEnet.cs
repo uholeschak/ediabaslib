@@ -2937,7 +2937,7 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool ReceiveDoIpData(byte[] receiveData, int addRectTimeout)
+        protected bool ReceiveDoIpData(byte[] receiveData, int timeout)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -2945,8 +2945,7 @@ namespace EdiabasLib
             }
             try
             {
-                int receiveTimeout = TcpDoIpRecTimeout + addRectTimeout;
-                int recLen = ReceiveTelegram(DataBuffer, receiveTimeout);
+                int recLen = ReceiveTelegram(DataBuffer, timeout);
                 if (recLen < 8)
                 {
                     return false;
@@ -3341,11 +3340,18 @@ namespace EdiabasLib
                     addRectTimeout = AddRecTimeout;
                 }
 
-                timeout += addRectTimeout;
-
                 if (SharedDataActive.DiagDoIp)
                 {
-                    if (!ReceiveDoIpData(receiveData, addRectTimeout))
+                    if (sendDataLength > 0)
+                    {
+                        if (timeout > TcpDoIpRecTimeout)
+                        {   // after ACK only short timeout is required
+                            timeout = TcpDoIpRecTimeout;
+                        }
+                    }
+
+                    timeout += addRectTimeout;
+                    if (!ReceiveDoIpData(receiveData, timeout))
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
@@ -3353,6 +3359,7 @@ namespace EdiabasLib
                 }
                 else
                 {
+                    timeout += addRectTimeout;
                     if (!ReceiveEnetData(receiveData, timeout))
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
