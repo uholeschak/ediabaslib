@@ -341,7 +341,6 @@ namespace EdiabasLib
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
         protected const int TcpEnetAckTimeout = 5000;
-        protected const int TcpDoIpRecTimeout = 1000;
         protected const int TcpDoIpMaxRetries = 2;
         protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
@@ -3340,17 +3339,9 @@ namespace EdiabasLib
                     addRectTimeout = AddRecTimeout;
                 }
 
+                timeout += addRectTimeout;
                 if (SharedDataActive.DiagDoIp)
                 {
-                    if (sendDataLength > 0)
-                    {
-                        if (timeout > TcpDoIpRecTimeout)
-                        {   // after ACK only short timeout is required
-                            timeout = TcpDoIpRecTimeout;
-                        }
-                    }
-
-                    timeout += addRectTimeout;
                     if (!ReceiveDoIpData(receiveData, timeout))
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
@@ -3359,7 +3350,6 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    timeout += addRectTimeout;
                     if (!ReceiveEnetData(receiveData, timeout))
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
