@@ -3174,6 +3174,10 @@ namespace EdiabasLib
                 {   // unknown interface
                     break;
                 }
+                if (sendDataLength <= 0)
+                {   // no data to send
+                    break;
+                }
             }
             if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_IFH_0011)
             {   // hide interface error

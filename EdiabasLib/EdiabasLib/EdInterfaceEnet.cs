@@ -3254,6 +3254,10 @@ namespace EdiabasLib
                 {   // interface error
                     break;
                 }
+                if (sendDataLength <= 0)
+                {   // no data to send
+                    break;
+                }
             }
             return errorCode;
         }
