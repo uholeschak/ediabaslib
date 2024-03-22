@@ -41,7 +41,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="InTheHand.Net.Bluetooth, Version=4.1.0.0, Culture=neutral, PublicKeyToken=ea38caa273134499, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\InTheHand.Net.Bluetooth.4.1.40\lib\net461\InTheHand.Net.Bluetooth.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\InTheHand.Net.Bluetooth.4.1.43\lib\net462\InTheHand.Net.Bluetooth.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
