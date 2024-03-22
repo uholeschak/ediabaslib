@@ -2711,6 +2711,21 @@ namespace EdiabasLib
                     SharedDataActive.TcpDiagRecQueue.Clear();
                 }
 
+                if (SharedDataActive.DoIpRoutingState == DoIpRoutingState.None)
+                {
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Routing activation required");
+                    if (!DoIpRoutingActivation(enableLogging))
+                    {
+                        InterfaceDisconnect(true);
+                        if (!InterfaceConnect(true))
+                        {
+                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                            SharedDataActive.ReconnectRequired = true;
+                            return false;
+                        }
+                    }
+                }
+
                 uint targetAddr = sendData[1];
                 uint sourceAddr = sendData[2];
                 if (sourceAddr == 0xF1)
@@ -2947,6 +2962,7 @@ namespace EdiabasLib
                 int recLen = ReceiveTelegram(DataBuffer, timeout);
                 if (recLen < 8)
                 {
+                    SharedDataActive.DoIpRoutingState = DoIpRoutingState.None;
                     return false;
                 }
 
