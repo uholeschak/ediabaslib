@@ -1002,7 +1002,7 @@ namespace EdiabasLib
                     {
                         if (receiveData[i] != sendData[i])
                         {
-                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Echo incorrect");
+                            Ediabas?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, length, "*** Echo incorrect");
                             if (_echoFailureReconnect)
                             {
                                 ReconnectRequired = true;

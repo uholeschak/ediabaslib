@@ -19,7 +19,7 @@ namespace CarSimulator
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
         private bool _autoSelect;
-        private List<string> _autoSelectNames;
+        private readonly List<string> _autoSelectNames;
 
         public BluetoothSearch(List<string> autoSelectNames = null)
         {
