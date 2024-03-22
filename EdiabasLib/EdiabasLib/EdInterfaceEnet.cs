@@ -2962,7 +2962,6 @@ namespace EdiabasLib
                 int recLen = ReceiveTelegram(DataBuffer, timeout);
                 if (recLen < 8)
                 {
-                    SharedDataActive.DoIpRoutingState = DoIpRoutingState.None;
                     return false;
                 }
 
@@ -3365,6 +3364,8 @@ namespace EdiabasLib
                     if (!ReceiveDoIpData(receiveData, timeout))
                     {
                         if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No data received");
+                        // request new routing activation
+                        SharedDataActive.DoIpRoutingState = DoIpRoutingState.None;
                         return EdiabasNet.ErrorCodes.EDIABAS_IFH_0009;
                     }
                 }
