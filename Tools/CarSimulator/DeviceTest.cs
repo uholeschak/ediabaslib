@@ -771,16 +771,25 @@ namespace CarSimulator
                 return false;
             }
 
+            int voltageValue = voltage[0];
             sr.Append("\r\n");
             sr.Append("Voltage: ");
-            sr.Append(string.Format("{0,4:0.0}V", (double)voltage[0] / 10));
+            sr.Append(string.Format("{0,4:0.0}V", (double)voltageValue / 10));
             _form.UpdateTestStatusText(sr.ToString());
-            if ((voltage[0] < 110) || (voltage[0] > 140))
+            if ((voltageValue < 110) || (voltageValue > 140))
             {
-                sr.Append("\r\n");
-                sr.Append("Voltage out of range!");
-                _form.UpdateTestStatusText(sr.ToString());
-                return false;
+                if (voltageValue > 140 && voltageValue <= 147)
+                {
+                    sr.Append("\r\n");
+                    sr.Append("Voltage very high!");
+                }
+                else
+                {
+                    sr.Append("\r\n");
+                    sr.Append("Voltage out of range!");
+                    _form.UpdateTestStatusText(sr.ToString());
+                    return false;
+                }
             }
 
             if (!_form.ReadResponseFile(Path.Combine(_form.responseDir, "e61.txt"), CommThread.ConceptType.ConceptBwmFast))
