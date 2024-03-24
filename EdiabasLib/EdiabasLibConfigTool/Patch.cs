@@ -236,7 +236,8 @@ namespace EdiabasLibConfigTool
                         ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
                         ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase))
                     {
-                        UpdateConfigNode(settingsNode, @"EnetRemoteHost", @"auto:all");
+                        UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
+                        UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
                         UpdateConfigNode(settingsNode, @"Interface", @"ENET");
                     }
                     else
