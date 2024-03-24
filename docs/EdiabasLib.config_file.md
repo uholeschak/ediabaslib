@@ -18,8 +18,9 @@ The following properties could be specified in this file:
 * `EnetHostIdentService`, `HostIdentService`: IPv4 netmask for vehicle searching. Default is `255.255.255.255`.
 * `EnetTesterAddress`: Tester address for HSFZ protocol, standard is 0xF4
 * `EnetDoIPTesterAddress`: Tester address for DoIP protocol, standard is 0x0EF3
-* `EnetControlPort`, `ControlPort`: Control port for ENET protocol, standard is 6811
-* `EnetDiagnosticPort`, `DiagnosticPort`: Diagnostic port for ENET protocol, standard is 6801
+* `EnetControlPort`, `ControlPort`: Control port for HSFZ protocol, standard is 6811
+* `EnetDiagnosticPort`, `DiagnosticPort`: Diagnostic port for HSFZ protocol, standard is 6801
+* `EnetDoIPPort`, `DoIPPort`: Port for DoIP protocol, standard is 13400
 * `EnetTimeoutConnect`, `TimeoutConnect`: Connect timeout for ENET protocol, default is 5000
 
 When using BMW ICOM, change the values of `EnetControlPort` and `EnetDiagnosticPort` to the output from the BMW ICOM web interface line:  
