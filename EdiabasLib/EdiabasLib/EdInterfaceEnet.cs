@@ -453,6 +453,12 @@ namespace EdiabasLib
                     VehicleProtocolProtected = prop;
                 }
 
+                prop = EdiabasProtected?.GetConfigProperty("EnetHostIdentService");
+                if (prop != null)
+                {
+                    HostIdentServiceProtected = prop;
+                }
+
                 prop = EdiabasProtected?.GetConfigProperty("HostIdentService");
                 if (prop != null)
                 {
