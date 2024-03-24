@@ -771,14 +771,18 @@ namespace CarSimulator
                 return false;
             }
 
+            int maxWarningVoltage = 140;
+            int maxErrorVoltage = maxWarningVoltage; //147;
+
             int voltageValue = voltage[0];
             sr.Append("\r\n");
             sr.Append("Voltage: ");
             sr.Append(string.Format("{0,4:0.0}V", (double)voltageValue / 10));
             _form.UpdateTestStatusText(sr.ToString());
-            if ((voltageValue < 110) || (voltageValue > 140))
+            if ((voltageValue < 110) || (voltageValue > maxWarningVoltage))
             {
-                if (voltageValue > 140 && voltageValue <= 147)
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                if (voltageValue > maxWarningVoltage && voltageValue <= maxErrorVoltage)
                 {
                     sr.Append("\r\n");
                     sr.Append("Voltage very high!");
