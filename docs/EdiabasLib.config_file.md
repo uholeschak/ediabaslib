@@ -14,7 +14,10 @@ The following properties could be specified in this file:
 	* `auto`: Broadcast to 169.254.255.255, Identical to EDIABAS `RemoteHost = Autodetect`.
 	* `auto:all`: Broadcast to all network interfaces.
 	* `auto:<interface name>`: Broadcast to all interfaces that start with `<interface name>` (case ignored).
-* `EnetTesterAddress`: Tester address for ENET protocol, standard is 0xF4
+* `EnetVehicleProtocol`, `VehicleProtocol`: Order of vehicle protocols used, separated by comma. Possible vales are `HSFZ` and `DoIP`.
+* `EnetHostIdentService`, `HostIdentService`: IPv4 netmask for vehicle searching. Default is `255.255.255.255`.
+* `EnetTesterAddress`: Tester address for HSFZ protocol, standard is 0xF4
+* `EnetDoIPTesterAddress`: Tester address for DoIP protocol, standard is 0x0EF3
 * `EnetControlPort`, `ControlPort`: Control port for ENET protocol, standard is 6811
 * `EnetDiagnosticPort`, `DiagnosticPort`: Diagnostic port for ENET protocol, standard is 6801
 * `EnetTimeoutConnect`, `TimeoutConnect`: Connect timeout for ENET protocol, default is 5000
