@@ -120,6 +120,19 @@
                     "F_VORHANDEN_TEXT",
                     "F_WARNUNG_TEXT",
                 }));
+          testJobList.Add(new EdiabasTestJob("e60.prg", "IDENT_FUNKTIONAL", string.Empty, string.Empty,
+              new [] {
+                  "ECU_ADDR",
+                  "ECU_GROBNAME",
+                  "ECU_NAME",
+                  "ECU_SGDB",
+              }));
+          testJobList.Add(new EdiabasTestJob("e60.prg", "FS_LESEN_FUNKTIONAL", string.Empty, string.Empty,
+              new [] {
+                  "ECU_ADDR",
+                  "ECU_GROBNAME",
+                  "F_ANZ",
+              }));
         }
 
         public void ExecuteJob(EdiabasNet ediabas, ref MultiMap<string, EdiabasNet.ResultData> resultDict, bool firstCall)
