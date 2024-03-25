@@ -1,5 +1,5 @@
 # Properties of the EdiabasLib.config file
-The `EdiabasLib.config` file is a replacement for the standard `EDIABAS.INI` file. It must be located in the same directory as the `EdiabasLib.dll` or `Api32.dll` file.
+The `EdiabasLib.config` file is a replacement for the standard `EDIABAS.INI` file. It must be located in the same directory as the `EdiabasLib.dll`, `Api32.dll` or `Api64.dll` file.
 The following properties could be specified in this file:
 
 ## Standard properties
