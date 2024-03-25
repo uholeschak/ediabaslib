@@ -120,8 +120,19 @@
                     "F_VORHANDEN_TEXT",
                     "F_WARNUNG_TEXT",
                 }));
-          testJobList.Add(new EdiabasTestJob("e60.prg", "IDENT_FUNKTIONAL", string.Empty, string.Empty, new [] {}));
-          testJobList.Add(new EdiabasTestJob("e60.prg", "FS_LESEN_FUNKTIONAL", string.Empty, string.Empty, new [] {}));
+          testJobList.Add(new EdiabasTestJob("e60.prg", "IDENT_FUNKTIONAL", string.Empty, string.Empty,
+              new [] {
+                  "ECU_ADR",
+                  "ECU_GROBNAME",
+                  "ECU_NAME",
+                  "ECU_SGBD",
+              }));
+          testJobList.Add(new EdiabasTestJob("e60.prg", "FS_LESEN_FUNKTIONAL", string.Empty, string.Empty,
+              new [] {
+                  "ECU_ADR",
+                  "ECU_GROBNAME",
+                  "F_ANZ",
+              }));
         }
 
         public void ExecuteJob(EdiabasNet ediabas, ref MultiMap<string, EdiabasNet.ResultData> resultDict, bool firstCall)
@@ -206,7 +217,12 @@
                                             valueText += string.Format("{0:X02} ", value);
                                         }
                                     }
-                                    newLineText += dataName + ": " + valueText + " ";
+
+                                    if (newLineText.Length > 0)
+                                    {
+                                        newLineText += "; ";
+                                    }
+                                    newLineText += dataName + ": " + valueText;
                                 }
                             }
                             if (newLineText.Length > 0)
