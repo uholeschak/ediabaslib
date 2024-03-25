@@ -1,5 +1,6 @@
 # Properties of the EdiabasLib.config file
-The `EdiabasLib.config` file is a replacement for the standard `EDIABAS.INI` file. It must be located in the same directory as the `EdiabasLib.dll` or `Api32.dll` file.
+Current EDIABAS emulation version is 7.6.0.  
+The `EdiabasLib.config` file is a replacement for the standard `EDIABAS.INI` file. It must be located in the same directory as the `EdiabasLib.dll`, `Api32.dll` or `Api64.dll` file.  
 The following properties could be specified in this file:
 
 ## Standard properties
@@ -11,17 +12,17 @@ The following properties could be specified in this file:
 * `RetryComm`: 1=Retry communication
 * `EnetRemoteHost`: Remote host for ENET protocol. Possible values are:
 	* `ip address`: No broadcast, directly connect to specified host.
-	* `auto`: Broadcast to subnet `HostIdentService`, Identical to EDIABAS `RemoteHost = Autodetect`.
+	* `auto`: Broadcast to subnet `HostIdentService`, Identical to EDIABAS `RemoteHost = Autodetect`. When multiple network adapters are present, this may work unreliable. Use `auto:all` instead.
 	* `auto:all`: Broadcast to all network interfaces.
 	* `auto:<interface name>`: Broadcast to all interfaces that start with `<interface name>` (case ignored).
 * `EnetVehicleProtocol`, `VehicleProtocol`: Order of vehicle protocols used, separated by comma. Possible vales are `HSFZ` and `DoIP`.
-* `EnetHostIdentService`, `HostIdentService`: IPv4 netmask for vehicle searching. Default is `255.255.255.255`.
-* `EnetTesterAddress`: Tester address for HSFZ protocol, standard is 0xF4
-* `EnetDoIPTesterAddress`: Tester address for DoIP protocol, standard is 0x0EF3
-* `EnetControlPort`, `ControlPort`: Control port for HSFZ protocol, standard is 6811
-* `EnetDiagnosticPort`, `DiagnosticPort`: Diagnostic port for HSFZ protocol, standard is 6801
-* `EnetDoIPPort`, `DoIPPort`: Port for DoIP protocol, standard is 13400
-* `EnetTimeoutConnect`, `TimeoutConnect`: Connect timeout for ENET protocol, default is 5000
+* `EnetHostIdentService`, `HostIdentService`: IPv4 netmask for vehicle searching. Default is `255.255.255.255`. This has changed with Ediabas 7.6.0.
+* `EnetTesterAddress`: Tester address for HSFZ protocol, standard is the hex value `0xF4`.
+* `EnetDoIPTesterAddress`: Tester address for DoIP protocol, standard is the hex value `0x0EF3`.
+* `EnetControlPort`, `ControlPort`: Control port for HSFZ protocol, standard port is `6811`.
+* `EnetDiagnosticPort`, `DiagnosticPort`: Diagnostic port for HSFZ protocol, standard port is `6801`.
+* `EnetDoIPPort`, `DoIPPort`: Port for DoIP protocol, standard port is `13400`
+* `EnetTimeoutConnect`, `TimeoutConnect`: Connect timeout for ENET protocol, default is `5000`
 
 When using BMW ICOM, change the values of `EnetControlPort` and `EnetDiagnosticPort` to the output from the BMW ICOM web interface line:  
 Example: `Diag Addr: 0x10 Diagnostic Port: 50160 Control Port: 50161`  

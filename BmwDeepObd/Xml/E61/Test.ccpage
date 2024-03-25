@@ -120,6 +120,8 @@
                     "F_VORHANDEN_TEXT",
                     "F_WARNUNG_TEXT",
                 }));
+          testJobList.Add(new EdiabasTestJob("e60.prg", "IDENT_FUNKTIONAL", string.Empty, string.Empty, new [] {}));
+          testJobList.Add(new EdiabasTestJob("e60.prg", "FS_LESEN_FUNKTIONAL", string.Empty, string.Empty, new [] {}));
         }
 
         public void ExecuteJob(EdiabasNet ediabas, ref MultiMap<string, EdiabasNet.ResultData> resultDict, bool firstCall)
