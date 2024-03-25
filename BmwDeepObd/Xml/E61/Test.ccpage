@@ -122,14 +122,14 @@
                 }));
           testJobList.Add(new EdiabasTestJob("e60.prg", "IDENT_FUNKTIONAL", string.Empty, string.Empty,
               new [] {
-                  "ECU_ADDR",
+                  "ECU_ADR",
                   "ECU_GROBNAME",
                   "ECU_NAME",
-                  "ECU_SGDB",
+                  "ECU_SGBD",
               }));
           testJobList.Add(new EdiabasTestJob("e60.prg", "FS_LESEN_FUNKTIONAL", string.Empty, string.Empty,
               new [] {
-                  "ECU_ADDR",
+                  "ECU_ADR",
                   "ECU_GROBNAME",
                   "F_ANZ",
               }));
@@ -217,7 +217,12 @@
                                             valueText += string.Format("{0:X02} ", value);
                                         }
                                     }
-                                    newLineText += dataName + ": " + valueText + " ";
+
+                                    if (newLineText.Length > 0)
+                                    {
+                                        newLineText += "; ";
+                                    }
+                                    newLineText += dataName + ": " + valueText;
                                 }
                             }
                             if (newLineText.Length > 0)
