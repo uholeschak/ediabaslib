@@ -99,28 +99,15 @@ namespace EdiabasLib
                     {
                         InTheHand.Net.BluetoothAddress btAddress = InTheHand.Net.BluetoothAddress.Parse(stringList[0]);
                         string pin = stringList[1];
-                        System.Reflection.Assembly inTheHandAssembly = typeof(InTheHand.Net.BluetoothAddress).Assembly;
-                        Type btDeviceInfoType = inTheHandAssembly.GetType("InTheHand.Net.Sockets.Win32BluetoothDeviceInfo");
                         InTheHand.Net.Sockets.BluetoothDeviceInfo device = null;
-                        if (btDeviceInfoType != null)
+
+                        try
                         {
-                            System.Reflection.ConstructorInfo[] btDeviceInfoConstructors = btDeviceInfoType.GetConstructors(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-                            if (btDeviceInfoConstructors.Length == 1)
-                            {
-                                System.Reflection.ParameterInfo[] btDeviceInfoConstructorParameters = btDeviceInfoConstructors[0].GetParameters();
-                                if (btDeviceInfoConstructorParameters.Length == 1)
-                                {
-                                    object[] args = new object[] { btAddress };
-                                    try
-                                    {
-                                        device = btDeviceInfoConstructors[0].Invoke(args) as InTheHand.Net.Sockets.BluetoothDeviceInfo;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** BluetoothDeviceInfo constructor exception: {0}", EdiabasNet.GetExceptionText(ex));
-                                    }
-                                }
-                            }
+                            device = new InTheHand.Net.Sockets.BluetoothDeviceInfo(btAddress);
+                        }
+                        catch (Exception ex)
+                        {
+                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** BluetoothDeviceInfo constructor exception: {0}", EdiabasNet.GetExceptionText(ex));
                         }
 
                         if (device != null)
