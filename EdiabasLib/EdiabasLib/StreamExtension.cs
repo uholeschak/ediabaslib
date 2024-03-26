@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,11 +72,14 @@ namespace EdiabasLib
                 return escapeStream.Read(buffer, offset, count);
             }
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (inStream is NetworkStream)
             {
-                // Cancel event not is not supported on Windows
-                inStream.ReadTimeout = timeout;
-                return inStream.Read(buffer, offset, count);
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    // Cancel event is not supported on Windows
+                    inStream.ReadTimeout = timeout;
+                    return inStream.Read(buffer, offset, count);
+                }
             }
 
             long startTime = Stopwatch.GetTimestamp();
