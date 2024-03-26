@@ -744,7 +744,7 @@
       <Version>2.3.2</Version>
     </PackageReference>
     <PackageReference Include="log4net">
-      <Version>2.0.15</Version>
+      <Version>2.0.17</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite.Core">
       <Version>8.0.2</Version>
