@@ -74,12 +74,11 @@ namespace EdiabasLib
 
             if (inStream is NetworkStream)
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    // Cancel event is not supported on Windows
-                    inStream.ReadTimeout = timeout;
-                    return inStream.Read(buffer, offset, count);
-                }
+#if !Android
+                // Cancel event is not supported on Windows
+                inStream.ReadTimeout = timeout;
+                return inStream.Read(buffer, offset, count);
+#endif
             }
 
             long startTime = Stopwatch.GetTimestamp();
