@@ -17,7 +17,7 @@ namespace EdiabasLib
         protected const int ReadTimeoutOffsetShort = 100;
         protected const int EchoTimeout = 500;
         private static readonly EdCustomAdapterCommon CustomAdapter =
-            new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, ReadTimeoutOffsetLong, ReadTimeoutOffsetShort, EchoTimeout, true);
+            new EdCustomAdapterCommon(SendData, ReceiveData, DiscardInBuffer, ReadInBuffer, ReadTimeoutOffsetLong, ReadTimeoutOffsetShort, EchoTimeout, false);
         protected static System.IO.Ports.SerialPort SerialPort;
 #if BLUETOOTH
         protected static InTheHand.Net.Sockets.BluetoothClient BtClient;
