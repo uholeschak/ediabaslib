@@ -72,14 +72,14 @@ namespace EdiabasLib
                 return escapeStream.Read(buffer, offset, count);
             }
 
+#if !Android
             if (inStream is NetworkStream)
             {
-#if !Android
                 // Cancel event is not supported on Windows
                 inStream.ReadTimeout = timeout;
                 return inStream.Read(buffer, offset, count);
-#endif
             }
+#endif
 
             long startTime = Stopwatch.GetTimestamp();
             int recLen = 0;
