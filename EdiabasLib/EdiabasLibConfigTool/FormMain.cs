@@ -614,7 +614,7 @@ namespace EdiabasLibConfigTool
             // select last selected item
             if (_selectedItem != null && _selectedItem.Tag != null && _selectedItem.SubItems.Count >= 2)
             {
-                bool found = false;
+                ListViewItem listViewItemSelect = null;
                 foreach (ListViewItem listViewItem in listViewDevices.Items)
                 {
                     if (listViewItem.Tag == null)
@@ -634,13 +634,12 @@ namespace EdiabasLibConfigTool
 
                     if (string.Compare(listViewItem.SubItems[0].Text, _selectedItem.SubItems[0].Text, StringComparison.Ordinal) == 0)
                     {
-                        listViewItem.Selected = true;
-                        found = true;
+                        listViewItemSelect = listViewItem;
                         break;
                     }
                 }
 
-                if (!found)
+                if (listViewItemSelect == null)
                 {
                     if (_selectedItem.Tag.GetType() == typeof(AccessPoint))
                     {
@@ -663,14 +662,19 @@ namespace EdiabasLibConfigTool
 
                             if (string.Compare(listViewItem.SubItems[1].Text, _selectedItem.SubItems[1].Text, StringComparison.Ordinal) == 0)
                             {
-                                listViewItem.Selected = true;
-                                found = true;
+                                listViewItemSelect = listViewItem;
                                 break;
                             }
                         }
                     }
                 }
+
+                if (listViewItemSelect != null)
+                {
+                    listViewItemSelect.Selected = true;
+                }
             }
+
             listViewDevices.EndUpdate();
             _ignoreSelection = false;
             UpdateButtonStatus();
