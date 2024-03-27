@@ -331,6 +331,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Warning: Unknown API version. ähnelt.
+        /// </summary>
+        internal static string PatchApiVersionUnknown {
+            get {
+                return ResourceManager.GetString("PatchApiVersionUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Backup file {0} is already existing. ähnelt.
         /// </summary>
         internal static string PatchBackupFileExisting {

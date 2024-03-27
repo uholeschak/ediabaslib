@@ -612,21 +612,69 @@ namespace EdiabasLibConfigTool
                 }
             }
             // select last selected item
-            if (_selectedItem != null)
+            if (_selectedItem != null && _selectedItem.Tag != null && _selectedItem.SubItems.Count >= 2)
             {
+                ListViewItem listViewItemSelect = null;
                 foreach (ListViewItem listViewItem in listViewDevices.Items)
                 {
+                    if (listViewItem.Tag == null)
+                    {
+                        continue;
+                    }
+
+                    if (listViewItem.SubItems.Count < 2)
+                    {
+                        continue;
+                    }
+
                     if (listViewItem.Tag.GetType() != _selectedItem.Tag.GetType())
                     {
                         continue;
                     }
+
                     if (string.Compare(listViewItem.SubItems[0].Text, _selectedItem.SubItems[0].Text, StringComparison.Ordinal) == 0)
                     {
-                        listViewItem.Selected = true;
+                        listViewItemSelect = listViewItem;
                         break;
                     }
                 }
+
+                if (listViewItemSelect == null)
+                {
+                    if (_selectedItem.Tag.GetType() == typeof(AccessPoint))
+                    {
+                        foreach (ListViewItem listViewItem in listViewDevices.Items)
+                        {
+                            if (listViewItem.Tag == null)
+                            {
+                                continue;
+                            }
+
+                            if (listViewItem.SubItems.Count < 2)
+                            {
+                                continue;
+                            }
+
+                            if (listViewItem.Tag.GetType() != typeof(WlanInterface))
+                            {
+                                continue;
+                            }
+
+                            if (string.Compare(listViewItem.SubItems[1].Text, _selectedItem.SubItems[1].Text, StringComparison.Ordinal) == 0)
+                            {
+                                listViewItemSelect = listViewItem;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (listViewItemSelect != null)
+                {
+                    listViewItemSelect.Selected = true;
+                }
             }
+
             listViewDevices.EndUpdate();
             _ignoreSelection = false;
             UpdateButtonStatus();
@@ -771,6 +819,7 @@ namespace EdiabasLibConfigTool
         private void ClearInitMessage()
         {
             _initMessage = string.Empty;
+            UpdateStatusText(string.Empty);
         }
 
         public void ShowSearchEndMessage()

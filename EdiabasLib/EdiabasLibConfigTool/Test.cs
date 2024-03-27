@@ -87,6 +87,7 @@ namespace EdiabasLibConfigTool
             {
                 return false;
             }
+
             CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
             TestOk = false;
             ConfigPossible = false;

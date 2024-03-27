@@ -114,6 +114,45 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
+        public static long ConvertApiVersion(string apiVersion)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(apiVersion))
+                {
+                    return 0;
+                }
+
+                long apiVerNum = 0;
+                string[] versionParts = apiVersion.Split('.');
+                if (versionParts.Length == 3)
+                {
+                    if (!long.TryParse(versionParts[0], out long verH))
+                    {
+                        return 0;
+                    }
+
+                    if (!long.TryParse(versionParts[1], out long verM))
+                    {
+                        return 0;
+                    }
+
+                    if (!long.TryParse(versionParts[2], out long verL))
+                    {
+                        return 0;
+                    }
+
+                    apiVerNum = ((verH & 0x0F) << 8) + ((verM & 0x0F) << 4) + (verL & 0x0F);
+                }
+
+                return apiVerNum;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
         public static List<string> GetRuntimeFiles(string dirName)
         {
             List<string> fileList = new List<string>();
@@ -314,6 +353,13 @@ namespace EdiabasLibConfigTool
                 }
                 sr.Append("\r\n");
                 sr.Append(string.Format(Resources.Strings.PatchApiVersion, version32));
+
+                long apiVerNum32 = ConvertApiVersion(version32);
+                if (apiVerNum32 <= 0 || apiVerNum32 > EdiabasNet.EdiabasVersion)
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.PatchApiVersionUnknown);
+                }
 
                 // 64 bit
                 string sourceDll64 = Path.Combine(sourceDir, Api64DllName);
