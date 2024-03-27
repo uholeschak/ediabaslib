@@ -612,11 +612,21 @@ namespace EdiabasLibConfigTool
                 }
             }
             // select last selected item
-            if (_selectedItem != null)
+            if (_selectedItem != null && _selectedItem.Tag != null && _selectedItem.SubItems.Count >= 2)
             {
                 bool found = false;
                 foreach (ListViewItem listViewItem in listViewDevices.Items)
                 {
+                    if (listViewItem.Tag == null)
+                    {
+                        continue;
+                    }
+
+                    if (listViewItem.SubItems.Count < 2)
+                    {
+                        continue;
+                    }
+
                     if (listViewItem.Tag.GetType() != _selectedItem.Tag.GetType())
                     {
                         continue;
@@ -636,6 +646,16 @@ namespace EdiabasLibConfigTool
                     {
                         foreach (ListViewItem listViewItem in listViewDevices.Items)
                         {
+                            if (listViewItem.Tag == null)
+                            {
+                                continue;
+                            }
+
+                            if (listViewItem.SubItems.Count < 2)
+                            {
+                                continue;
+                            }
+
                             if (listViewItem.Tag.GetType() != typeof(WlanInterface))
                             {
                                 continue;
