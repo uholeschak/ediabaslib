@@ -282,4 +282,7 @@ mit EdiabasLib unterstützt.</value>
   <data name="PatchOriginalApiDllMissing" xml:space="preserve">
     <value>EdiabasLib {0} Datei fehlt.</value>
   </data>
+  <data name="PatchApiVersionUnknown" xml:space="preserve">
+    <value>Unbekannte API Version.</value>
+  </data>
 </root>
