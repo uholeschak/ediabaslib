@@ -614,16 +614,40 @@ namespace EdiabasLibConfigTool
             // select last selected item
             if (_selectedItem != null)
             {
+                bool found = false;
                 foreach (ListViewItem listViewItem in listViewDevices.Items)
                 {
                     if (listViewItem.Tag.GetType() != _selectedItem.Tag.GetType())
                     {
                         continue;
                     }
+
                     if (string.Compare(listViewItem.SubItems[0].Text, _selectedItem.SubItems[0].Text, StringComparison.Ordinal) == 0)
                     {
                         listViewItem.Selected = true;
+                        found = true;
                         break;
+                    }
+                }
+
+                if (!found)
+                {
+                    if (_selectedItem.Tag.GetType() == typeof(AccessPoint))
+                    {
+                        foreach (ListViewItem listViewItem in listViewDevices.Items)
+                        {
+                            if (listViewItem.Tag.GetType() != typeof(WlanInterface))
+                            {
+                                continue;
+                            }
+
+                            if (string.Compare(listViewItem.SubItems[1].Text, _selectedItem.SubItems[1].Text, StringComparison.Ordinal) == 0)
+                            {
+                                listViewItem.Selected = true;
+                                found = true;
+                                break;
+                            }
+                        }
                     }
                 }
             }
