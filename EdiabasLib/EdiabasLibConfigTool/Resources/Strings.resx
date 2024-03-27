@@ -292,6 +292,6 @@ are supported with EdiabasLib.</value>
     <value>Ediabas {0} file is missing.</value>
   </data>
   <data name="PatchApiVersionUnknown" xml:space="preserve">
-    <value>Unknown API version.</value>
+    <value>Warning: Unknown API version.</value>
   </data>
 </root>

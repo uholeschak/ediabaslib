@@ -331,7 +331,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Unknown API version. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Warning: Unknown API version. ähnelt.
         /// </summary>
         internal static string PatchApiVersionUnknown {
             get {

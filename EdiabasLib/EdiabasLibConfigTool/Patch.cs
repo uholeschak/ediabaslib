@@ -127,8 +127,24 @@ namespace EdiabasLibConfigTool
                 string[] versionParts = apiVersion.Split('.');
                 if (versionParts.Length == 3)
                 {
-                    apiVerNum = ((long.Parse(versionParts[0]) & 0x0F) << 8) + ((long.Parse(versionParts[1]) & 0x0F) << 4) + (long.Parse(versionParts[2]) & 0x0F);
+                    if (!long.TryParse(versionParts[0], out long verH))
+                    {
+                        return 0;
+                    }
+
+                    if (!long.TryParse(versionParts[1], out long verM))
+                    {
+                        return 0;
+                    }
+
+                    if (!long.TryParse(versionParts[2], out long verL))
+                    {
+                        return 0;
+                    }
+
+                    apiVerNum = ((verH & 0x0F) << 8) + ((verM & 0x0F) << 4) + (verL & 0x0F);
                 }
+
                 return apiVerNum;
             }
             catch (Exception)
@@ -339,7 +355,7 @@ namespace EdiabasLibConfigTool
                 sr.Append(string.Format(Resources.Strings.PatchApiVersion, version32));
 
                 long apiVerNum32 = ConvertApiVersion(version32);
-                if (apiVerNum32 > EdiabasNet.EdiabasVersion)
+                if (apiVerNum32 <= 0 || apiVerNum32 > EdiabasNet.EdiabasVersion)
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchApiVersionUnknown);

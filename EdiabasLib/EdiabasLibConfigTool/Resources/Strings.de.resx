@@ -283,6 +283,6 @@ mit EdiabasLib unterstützt.</value>
     <value>EdiabasLib {0} Datei fehlt.</value>
   </data>
   <data name="PatchApiVersionUnknown" xml:space="preserve">
-    <value>Unbekannte API Version.</value>
+    <value>Warnung: Unbekannte API Version.</value>
   </data>
 </root>
