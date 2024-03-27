@@ -819,6 +819,7 @@ namespace EdiabasLibConfigTool
         private void ClearInitMessage()
         {
             _initMessage = string.Empty;
+            UpdateStatusText(string.Empty);
         }
 
         public void ShowSearchEndMessage()
