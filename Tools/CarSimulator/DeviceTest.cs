@@ -71,6 +71,8 @@ namespace CarSimulator
 
         public DeviceTest(MainForm form)
         {
+            MaxErrorVoltage = 140;
+
             _wifi = new Wifi();
             _wlanClient = new WlanClient();
 
@@ -81,6 +83,9 @@ namespace CarSimulator
         public bool TestActive => _workerThread != null && _workerThread.IsAlive;
 
         public bool AbortTest { get; set; }
+
+        // maximum tolarted value: 147;
+        public int MaxErrorVoltage { get; set; }
 
         public void Dispose()
         {
@@ -772,7 +777,7 @@ namespace CarSimulator
             }
 
             int maxWarningVoltage = 140;
-            int maxErrorVoltage = maxWarningVoltage; //147;
+            int maxErrorVoltage = MaxErrorVoltage > maxWarningVoltage ? MaxErrorVoltage : maxWarningVoltage;
 
             int voltageValue = voltage[0];
             sr.Append("\r\n");
