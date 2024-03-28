@@ -539,6 +539,7 @@ namespace CarSimulator
             checkBoxIgnitionOk.Enabled = !testing;
             checkBoxAdsAdapter.Enabled = !active;
             checkBoxKLineResponder.Enabled = !active;
+            checkBoxHighTestVoltage.Enabled = !active;
             checkBoxBtNameStd.Enabled = !active;
             checkBoxEnetHsfz.Enabled = !active;
             checkBoxEnetDoIp.Enabled = !active;
@@ -735,6 +736,7 @@ namespace CarSimulator
         {
             string selectedPort = listPorts.SelectedItem.ToString();
             string btDeviceName = checkBoxBtNameStd.Checked ? DeviceTest.DefaultBtNameStd : DeviceTest.DefaultBtName;
+            _deviceTest.MaxErrorVoltage = checkBoxHighTestVoltage.Checked ? 147 : 0;
             _deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort, btDeviceName);
         }
 

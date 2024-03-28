@@ -62,6 +62,7 @@
             this.textBoxEcuFolder = new System.Windows.Forms.TextBox();
             this.checkBoxEnetHsfz = new System.Windows.Forms.CheckBox();
             this.checkBoxEnetDoIp = new System.Windows.Forms.CheckBox();
+            this.checkBoxHighTestVoltage = new System.Windows.Forms.CheckBox();
             this.groupBoxConcepts.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -251,7 +252,7 @@
             // checkBoxAdsAdapter
             // 
             this.checkBoxAdsAdapter.AutoSize = true;
-            this.checkBoxAdsAdapter.Location = new System.Drawing.Point(224, 76);
+            this.checkBoxAdsAdapter.Location = new System.Drawing.Point(225, 53);
             this.checkBoxAdsAdapter.Name = "checkBoxAdsAdapter";
             this.checkBoxAdsAdapter.Size = new System.Drawing.Size(87, 17);
             this.checkBoxAdsAdapter.TabIndex = 9;
@@ -261,7 +262,7 @@
             // checkBoxKLineResponder
             // 
             this.checkBoxKLineResponder.AutoSize = true;
-            this.checkBoxKLineResponder.Location = new System.Drawing.Point(225, 99);
+            this.checkBoxKLineResponder.Location = new System.Drawing.Point(225, 76);
             this.checkBoxKLineResponder.Name = "checkBoxKLineResponder";
             this.checkBoxKLineResponder.Size = new System.Drawing.Size(87, 17);
             this.checkBoxKLineResponder.TabIndex = 10;
@@ -394,11 +395,22 @@
             this.checkBoxEnetDoIp.Text = "DoIP";
             this.checkBoxEnetDoIp.UseVisualStyleBackColor = true;
             // 
+            // checkBoxHighTestVoltage
+            // 
+            this.checkBoxHighTestVoltage.AutoSize = true;
+            this.checkBoxHighTestVoltage.Location = new System.Drawing.Point(225, 99);
+            this.checkBoxHighTestVoltage.Name = "checkBoxHighTestVoltage";
+            this.checkBoxHighTestVoltage.Size = new System.Drawing.Size(106, 17);
+            this.checkBoxHighTestVoltage.TabIndex = 21;
+            this.checkBoxHighTestVoltage.Text = "High test voltage";
+            this.checkBoxHighTestVoltage.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(657, 482);
+            this.Controls.Add(this.checkBoxHighTestVoltage);
             this.Controls.Add(this.checkBoxEnetDoIp);
             this.Controls.Add(this.checkBoxEnetHsfz);
             this.Controls.Add(this.textBoxEcuFolder);
@@ -469,6 +481,7 @@
         private System.Windows.Forms.TextBox textBoxEcuFolder;
         private System.Windows.Forms.CheckBox checkBoxEnetHsfz;
         private System.Windows.Forms.CheckBox checkBoxEnetDoIp;
+        private System.Windows.Forms.CheckBox checkBoxHighTestVoltage;
     }
 }
 

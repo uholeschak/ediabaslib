@@ -71,7 +71,7 @@ namespace CarSimulator
 
         public DeviceTest(MainForm form)
         {
-            MaxErrorVoltage = 140;
+            MaxErrorVoltage = 0;
 
             _wifi = new Wifi();
             _wlanClient = new WlanClient();
