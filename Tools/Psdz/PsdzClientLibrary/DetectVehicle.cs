@@ -57,7 +57,7 @@ namespace PsdzClient
             _ediabas.SetConfigProperty("EcuPath", ecuPath);
 
             bool icomAllocate = false;
-            string hostAddress = "auto:all";
+            string hostAddress = EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll;
             if (enetConnection != null)
             {
                 icomAllocate = allowAllocate && enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
