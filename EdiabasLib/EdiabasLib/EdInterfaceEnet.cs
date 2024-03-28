@@ -1114,6 +1114,8 @@ namespace EdiabasLib
                                     }
                                     cts.Cancel();
                                     IcomEvent.WaitOne(1000);
+                                    // reset allocate active after timeout
+                                    SharedDataActive.IcomAllocateActive = false;
                                 }
                             }
                             EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
@@ -1272,6 +1274,8 @@ namespace EdiabasLib
 
                         cts.Cancel();
                         IcomEvent.WaitOne(1000);
+                        // reset allocate active after timeout
+                        SharedDataActive.IcomAllocateActive = false;
                     }
                 }
 
