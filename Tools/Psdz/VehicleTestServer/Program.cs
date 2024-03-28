@@ -52,6 +52,7 @@ namespace VehicleTestServer
                 EdInterfaceClass = edInterfaceEnet,
             };
             edInterfaceEnet.RemoteHost = "127.0.0.1";
+            edInterfaceEnet.VehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
             edInterfaceEnet.IcomAllocate = false;
 
             return ediabas;
