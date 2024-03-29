@@ -919,6 +919,7 @@ namespace EdiabasLib
                 List<CommunicationMode> communicationModes = new List<CommunicationMode>();
                 if (reconnect)
                 {
+                    // reuse last host connection
                     if (SharedDataActive.DiagDoIp)
                     {
                         communicationModes.Add(CommunicationMode.DoIp);
@@ -930,6 +931,7 @@ namespace EdiabasLib
                 }
                 else
                 {
+                    SharedDataActive.EnetHostConn = null;
                     foreach (string protocolPart in protocolParts)
                     {
                         string protocolPartTrim = protocolPart.Trim();
@@ -944,103 +946,105 @@ namespace EdiabasLib
                     }
                 }
 
-                SharedDataActive.EnetHostConn = null;
-                if (RemoteHostProtected.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
+                if (SharedDataActive.EnetHostConn == null)
                 {
-                    List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries, communicationModes);
-                    if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
+                    if (RemoteHostProtected.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
                     {
-                        return false;
-                    }
-                    SharedDataActive.EnetHostConn = detectedVehicles[0];
-                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}, Type={2}",
-                        SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.EnetHostConn.DiagPort, SharedDataActive.EnetHostConn.ConnectionType));
-                }
-                else
-                {
-                    string[] hostParts = RemoteHostProtected.Split(':');
-                    if (hostParts.Length < 1)
-                    {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Host name invalid: {0}", RemoteHostProtected);
-                        return false;
-                    }
-
-                    string hostIp = hostParts[0];
-                    int hostPos = 1;
-                    int hostDiagPort = -1;
-                    int hostControlPort = -1;
-                    int hostDoIpPort = -1;
-                    EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.DirectHsfz;
-                    bool protocolSpecified = false;
-
-                    if (hostParts.Length >= hostPos + 1)
-                    {
-                        protocolSpecified = true;
-                        if (string.Compare(hostParts[hostPos], ProtocolHsfz, StringComparison.OrdinalIgnoreCase) == 0)
+                        List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries, communicationModes);
+                        if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
                         {
-                            hostPos++;
-                            connectionType = EnetConnection.InterfaceType.DirectHsfz;
+                            return false;
                         }
-                        else if (string.Compare(hostParts[hostPos], ProtocolDoIp, StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            hostPos++;
-                            connectionType = EnetConnection.InterfaceType.DirectDoIp;
-                        }
-                    }
-
-                    if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
-                    {
-                        if (protocolSpecified && !reconnect)
-                        {   // protocol explicit specified
-                            communicationModes.Clear();
-                            communicationModes.Add(CommunicationMode.Hsfz);
-                        }
-
-                        if (hostParts.Length >= hostPos + 1)
-                        {
-                            Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
-                            hostPos++;
-
-                            if (valid)
-                            {
-                                hostDiagPort = (int)portValue;
-                                connectionType = EnetConnection.InterfaceType.Icom;
-                            }
-                        }
-
-                        if (hostParts.Length >= hostPos + 1)
-                        {
-                            Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
-                            hostPos++;
-
-                            if (valid)
-                            {
-                                hostControlPort = (int)portValue;
-                                connectionType = EnetConnection.InterfaceType.Icom;
-                            }
-                        }
+                        SharedDataActive.EnetHostConn = detectedVehicles[0];
+                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}, Type={2}",
+                            SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.EnetHostConn.DiagPort, SharedDataActive.EnetHostConn.ConnectionType));
                     }
                     else
                     {
-                        if (protocolSpecified && !reconnect)
-                        {   // protocol explicit specified
-                            communicationModes.Clear();
-                            communicationModes.Add(CommunicationMode.DoIp);
+                        string[] hostParts = RemoteHostProtected.Split(':');
+                        if (hostParts.Length < 1)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Host name invalid: {0}", RemoteHostProtected);
+                            return false;
                         }
+
+                        string hostIp = hostParts[0];
+                        int hostPos = 1;
+                        int hostDiagPort = -1;
+                        int hostControlPort = -1;
+                        int hostDoIpPort = -1;
+                        EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.DirectHsfz;
+                        bool protocolSpecified = false;
 
                         if (hostParts.Length >= hostPos + 1)
                         {
-                            Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
-                            hostPos++;
-
-                            if (valid)
+                            protocolSpecified = true;
+                            if (string.Compare(hostParts[hostPos], ProtocolHsfz, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                hostDoIpPort = (int)portValue;
+                                hostPos++;
+                                connectionType = EnetConnection.InterfaceType.DirectHsfz;
+                            }
+                            else if (string.Compare(hostParts[hostPos], ProtocolDoIp, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                hostPos++;
+                                connectionType = EnetConnection.InterfaceType.DirectDoIp;
                             }
                         }
-                    }
 
-                    SharedDataActive.EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort, hostDoIpPort);
+                        if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
+                        {
+                            if (protocolSpecified && !reconnect)
+                            {   // protocol explicit specified
+                                communicationModes.Clear();
+                                communicationModes.Add(CommunicationMode.Hsfz);
+                            }
+
+                            if (hostParts.Length >= hostPos + 1)
+                            {
+                                Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
+                                hostPos++;
+
+                                if (valid)
+                                {
+                                    hostDiagPort = (int)portValue;
+                                    connectionType = EnetConnection.InterfaceType.Icom;
+                                }
+                            }
+
+                            if (hostParts.Length >= hostPos + 1)
+                            {
+                                Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
+                                hostPos++;
+
+                                if (valid)
+                                {
+                                    hostControlPort = (int)portValue;
+                                    connectionType = EnetConnection.InterfaceType.Icom;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (protocolSpecified && !reconnect)
+                            {   // protocol explicit specified
+                                communicationModes.Clear();
+                                communicationModes.Add(CommunicationMode.DoIp);
+                            }
+
+                            if (hostParts.Length >= hostPos + 1)
+                            {
+                                Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
+                                hostPos++;
+
+                                if (valid)
+                                {
+                                    hostDoIpPort = (int)portValue;
+                                }
+                            }
+                        }
+
+                        SharedDataActive.EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort, hostDoIpPort);
+                    }
                 }
 
                 int diagPort;
@@ -1289,7 +1293,11 @@ namespace EdiabasLib
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM finished");
             }
 
-            SharedDataActive.EnetHostConn = null;
+            if (!reconnect)
+            {
+                SharedDataActive.EnetHostConn = null;
+            }
+
             SharedDataActive.ReconnectRequired = false;
             return result;
         }
