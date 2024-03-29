@@ -93,8 +93,8 @@ PSECT RESETVEC, abs
 RESETVEC:
 
 		ORG 0 
-          clrf   TMR0H,a
-          bsf    TRISE,6,a
+          clrf   OSCCON,a
+          bsf    LATC,6,a
           goto   p__16C2
           db   29,190,236,239,8,240,112,14,16,239,11,240,255,255,255,255		;......p.........
           db   250,215,79,66,68,73,73,32,116,111,32,82,83,50,51,50				;..OBDII to RS232
