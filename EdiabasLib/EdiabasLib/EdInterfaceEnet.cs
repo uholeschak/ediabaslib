@@ -990,7 +990,7 @@ namespace EdiabasLib
 
                     if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
                     {
-                        if (protocolSpecified)
+                        if (protocolSpecified && !reconnect)
                         {   // protocol explicit specified
                             communicationModes.Clear();
                             communicationModes.Add(CommunicationMode.Hsfz);
@@ -1022,7 +1022,7 @@ namespace EdiabasLib
                     }
                     else
                     {
-                        if (protocolSpecified)
+                        if (protocolSpecified && !reconnect)
                         {   // protocol explicit specified
                             communicationModes.Clear();
                             communicationModes.Add(CommunicationMode.DoIp);
