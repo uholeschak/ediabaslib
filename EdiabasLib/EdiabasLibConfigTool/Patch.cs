@@ -315,6 +315,7 @@ namespace EdiabasLibConfigTool
                         EdInterfaceEnet.ProtocolDoIp : EdInterfaceEnet.ProtocolHsfz;
                     UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
                     UpdateConfigNode(settingsNode, @"Interface", @"ENET");
+                    UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else
                 {
