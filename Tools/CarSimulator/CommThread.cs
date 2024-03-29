@@ -2221,7 +2221,8 @@ namespace CarSimulator
                     if (_timeIcomIdentBroadcast.ElapsedMilliseconds > 500)
                     {
                         IPAddress ipIcomBroadcast = GetLocalIpAddress(IPAddress.Parse(IcomVehicleAddress), true, out _, out _);
-                        if (!SendIdentMessage(new IPEndPoint(ipIcomBroadcast, 7811), EnetControlPort))
+                        if (ipIcomBroadcast == null ||
+                            !SendIdentMessage(new IPEndPoint(ipIcomBroadcast, 7811), EnetControlPort))
                         {
                             _icomIdentBroadcastCount = 0;
                         }
