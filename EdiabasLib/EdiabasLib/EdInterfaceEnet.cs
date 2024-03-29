@@ -992,10 +992,9 @@ namespace EdiabasLib
 
                     if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
                     {
-                        if (communicationModes.Contains(CommunicationMode.Hsfz))
-                        {
-                            communicationModes.Remove(CommunicationMode.Hsfz);
-                            communicationModes.Insert(0, CommunicationMode.Hsfz);
+                        if (hostParts.Length > 1)
+                        {   // protocol explicit specified
+                            communicationModes.Remove(CommunicationMode.DoIp);
                         }
 
                         if (hostParts.Length >= 2)
@@ -1020,11 +1019,9 @@ namespace EdiabasLib
                     }
                     else
                     {
-                        // try DoIP first
-                        if (communicationModes.Contains(CommunicationMode.DoIp))
-                        {
-                            communicationModes.Remove(CommunicationMode.DoIp);
-                            communicationModes.Insert(0, CommunicationMode.DoIp);
+                        if (hostParts.Length > 1)
+                        {   // protocol explicit specified
+                            communicationModes.Remove(CommunicationMode.Hsfz);
                         }
 
                         if (hostParts.Length >= 3)
