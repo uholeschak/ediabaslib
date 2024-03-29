@@ -168,17 +168,17 @@ p___302:  goto   p___E32				; entry from: 0x106
           db   126,107,10,14,126,43,59,94,253,226,59,38,126,5,58,110			;~k..~+;^..;&~.:n
           db   0,12																;..
 p___418:  rcall  p___84A				; entry from: 0x176A
-          btfsc  NVMCON2,7,a
+          btfsc  PORTB,7,a
           return 
           movlw  0x68
-          movwf  SSP1MSK,a
+          movwf  TRISB,a
           movlw  0xFC
-          movwf  TRISD,a
+          movwf  LATB,a
           call   p__2782
-          btfsc  NVMCON2,7,a
+          btfsc  PORTB,7,a
           return 
           movlw  0xE8
-          movwf  SSP1MSK,a
+          movwf  TRISB,a
           setf   0xD1,b
           movlw  0x30
           movwf  0x52,a
@@ -205,16 +205,16 @@ p___45A:  movlw  0x81					; entry from: 0x6AA
           reset
 p___460:  btfsc  0x7F,1,a				; entry from: 0x458
           bra    p___452
-          incf   0x74,a
-          incf   0x74,a
+          incf   EEADR,a
+          incf   EEADR,a
           decfsz 0x52,a
           bra    p___442
-          bcf    0x7F,2,a
-          bsf    0x7F,7,a
+          bcf    EECON1,2,a
+          bsf    EECON1,7,a
           movlw  0x3C
           movwf  0x52,a
           movlw  0xE8
-          movwf  SSP1MSK,a
+          movwf  TRISB,a
           dcfsnz 0x52,a
           bra    p___4A8
           db   236,14,138,110,229,217,252,14,138,110,224,217,104,14,147,110		;...n.....n..h..n
@@ -323,7 +323,7 @@ p___550:  movwf  POSTINC1,a				; entry from: 0x195A,0xC1E,0x592,0x53E,0x540,0x54
 
 p___562:  clrf   STKPTR,a				; entry from: 0x38EA,0x2BFC
           movlw  0xFC
-          andwf  TRISD,a
+          andwf  LATB,a
           btfss  0x4D,0,a
           bra    p___578
           movf   0x6E,W,a
@@ -423,25 +423,25 @@ p___620:  iorlw  1						; entry from: 0x5B0,0x16BE,0x730,0x75A,0x764,0x7B4,0x7C0
           return 
 p___62A:  decf   0x74,W,a				; entry from: 0x624
           bra    p___CE2
-p___62E:  bsf    T5CON,0,a				; entry from: 0x1892
+p___62E:  bsf    ADCON0,0,a				; entry from: 0x1892
           rcall  p___85A
-          bsf    T5CON,1,a
+          bsf    ADCON0,1,a
           clrf   0x52,a
 p___636:  rcall  p___936				; entry from: 0x63E
-          btfss  T5CON,1,a
+          btfss  ADCON0,1,a
           bra    p___648
           decfsz 0x52,a
           bra    p___636
-          clrf   T5CON,a
+          clrf   ADCON0,a
           movlw  0x76
           goto   p__1620
-p___648:  clrf   T5CON,a				; entry from: 0x63A
-          rrcf   TMR5GATE,a
-          rrcf   T5GCON,a
-          rrcf   TMR5GATE,a
-          rrcf   T5GCON,a
+p___648:  clrf   ADCON0,a				; entry from: 0x63A
+          rrcf   ADRESH,a
+          rrcf   ADRES,a
+          rrcf   ADRESH,a
+          rrcf   ADRES,a
           movlw  3
-          andwf  TMR5GATE,a
+          andwf  ADRESH,a
           retlw  0
 p___658:  movff  0x4C,0x55				; entry from: 0x1906
           btfsc  0x4D,7,a
