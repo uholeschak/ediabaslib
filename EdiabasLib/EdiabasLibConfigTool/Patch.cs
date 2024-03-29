@@ -310,7 +310,10 @@ namespace EdiabasLibConfigTool
                 else if (enetConnection != null)
                 {
                     UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
-                    UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
+
+                    string vehicleProtocol = enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.DirectDoIp ?
+                        EdInterfaceEnet.ProtocolDoIp : EdInterfaceEnet.ProtocolHsfz;
+                    UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
                     UpdateConfigNode(settingsNode, @"Interface", @"ENET");
                 }
                 else
