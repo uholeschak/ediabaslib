@@ -82,7 +82,7 @@
     <PackageReference Include="Xamarin.AndroidX.ViewPager2" Version="1.0.0.25" />
     <PackageReference Include="Xamarin.AndroidX.WebKit" Version="1.10.0.1" />
     <PackageReference Include="Xamarin.Google.Android.Material" Version="1.10.0.3" />
-    <PackageReference Include="Xamarin.Google.Android.Play.Core" Version="1.10.3.9" />
+    <PackageReference Include="Xamarin.Google.Android.Play.Core" Version="1.10.3.10" />
     <PackageReference Include="Xamarin.Google.Android.Vending.Expansion.Downloader" Version="2.1.0" />
     <PackageReference Include="Xamarin.Kotlin.StdLib.Jdk7" Version="1.9.23" />
   </ItemGroup>
