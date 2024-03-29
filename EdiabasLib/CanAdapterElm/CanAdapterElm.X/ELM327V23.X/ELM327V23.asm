@@ -59,6 +59,36 @@
 		; CONFIG7H
 		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
+#define END_LABEL reset_vector
+PSECT ramtop,class=RAM,delta=1
+PSECT smallconst,class=CONST,delta=1
+PSECT mediumconst,class=CONST,delta=1
+PSECT const,class=CONST,delta=1
+PSECT eeprom_data,class=EEDATA,delta=1
+PSECT rdata,class=COMRAM,delta=1
+PSECT nvrram,class=COMRAM,delta=1
+PSECT nvbit,class=COMRAM,delta=1
+PSECT rbss,class=COMRAM,delta=1
+PSECT rbit,class=COMRAM,delta=1
+PSECT farbss,class=FARRAM,delta=1
+PSECT fardata,class=FARRAM,delta=1
+PSECT nvFARRAM,class=FARRAM,delta=1
+PSECT intsave_regs,class=BIGRAM,delta=1
+PSECT bigbss,class=BIGRAM,delta=1
+PSECT bigdata,class=BIGRAM,delta=1
+PSECT bss,class=RAM,delta=1
+PSECT idata,class=CODE,delta=1
+PSECT irdata,class=CODE,delta=1
+PSECT ibigdata,class=CODE,delta=1
+PSECT ifardata,class=CODE,delta=1
+PSECT param0,class=BANK0,delta=1
+PSECT init,class=CODE,delta=1
+PSECT powerup,class=CODE,delta=1
+PSECT intcodelo,class=CODE,delta=1
+PSECT intcode,class=CODE,delta=1
+PSECT reset_vec,class=CODE,delta=1
+PSECT code_abs,abs,class=CODE,delta=1
+		
 PSECT RESETVEC, abs
 RESETVEC:
 
