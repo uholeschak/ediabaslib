@@ -2906,6 +2906,8 @@ namespace PsdzClient.Programming
             }
 
             CacheType cacheTypeOld = CacheResponseType;
+            bool icomAllocated = PsdzContext.DetectVehicle.IsIcomAllocated();
+
             try
             {
                 CacheResponseType = CacheType.NoResponse;
@@ -2992,7 +2994,11 @@ namespace PsdzClient.Programming
             }
             finally
             {
-                PsdzContext.DetectVehicle.Disconnect();
+                if (!icomAllocated)
+                {
+                    PsdzContext.DetectVehicle.Disconnect();
+                }
+
                 CacheResponseType = cacheTypeOld;
             }
 

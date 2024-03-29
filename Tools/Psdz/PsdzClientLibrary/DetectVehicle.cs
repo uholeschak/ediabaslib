@@ -1006,6 +1006,40 @@ namespace PsdzClient
             }
         }
 
+        public bool IsConnected()
+        {
+            try
+            {
+                return _ediabas.EdInterfaceClass.Connected;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool IsIcomAllocated()
+        {
+            try
+            {
+                if (!IsConnected())
+                {
+                    return false;
+                }
+
+                if (_ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
+                {
+                    return edInterfaceEnet.IcomAllocate;
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private bool AbortEdiabasJob()
         {
             if (_abortFunc != null)
