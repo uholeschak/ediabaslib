@@ -97,6 +97,9 @@ namespace EdiabasLib
                 }
                 else
                 {
+                    sb.Append(":");
+                    sb.Append(ProtocolHsfz);
+
                     int skipped = 0;
                     if (DiagPort >= 0)
                     {
@@ -116,21 +119,6 @@ namespace EdiabasLib
                         }
 
                         sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", ControlPort));
-                    }
-                    else
-                    {
-                        skipped++;
-                    }
-
-                    if (DoIpPort >= 0)
-                    {
-                        while (skipped > 0)
-                        {
-                            sb.Append(":");
-                            skipped--;
-                        }
-
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DoIpPort));
                     }
                 }
 
@@ -977,29 +965,41 @@ namespace EdiabasLib
                     }
 
                     string hostIp = hostParts[0];
+                    int hostPos = 1;
                     int hostDiagPort = -1;
                     int hostControlPort = -1;
                     int hostDoIpPort = -1;
                     EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.DirectHsfz;
+                    bool protocolSpecified = false;
 
-                    if (hostParts.Length >= 2)
+                    if (hostParts.Length >= hostPos + 1)
                     {
-                        if (string.Compare(hostParts[1], ProtocolDoIp, StringComparison.OrdinalIgnoreCase) == 0)
+                        protocolSpecified = true;
+                        if (string.Compare(hostParts[hostPos], ProtocolHsfz, StringComparison.OrdinalIgnoreCase) == 0)
                         {
+                            hostPos++;
+                            connectionType = EnetConnection.InterfaceType.DirectHsfz;
+                        }
+                        else if (string.Compare(hostParts[hostPos], ProtocolDoIp, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            hostPos++;
                             connectionType = EnetConnection.InterfaceType.DirectDoIp;
                         }
                     }
 
                     if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
                     {
-                        if (hostParts.Length > 1)
+                        if (protocolSpecified)
                         {   // protocol explicit specified
-                            communicationModes.Remove(CommunicationMode.DoIp);
+                            communicationModes.Clear();
+                            communicationModes.Add(CommunicationMode.Hsfz);
                         }
 
-                        if (hostParts.Length >= 2)
+                        if (hostParts.Length >= hostPos + 1)
                         {
-                            Int64 portValue = EdiabasNet.StringToValue(hostParts[1], out bool valid);
+                            Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
+                            hostPos++;
+
                             if (valid)
                             {
                                 hostDiagPort = (int)portValue;
@@ -1007,9 +1007,11 @@ namespace EdiabasLib
                             }
                         }
 
-                        if (hostParts.Length >= 3)
+                        if (hostParts.Length >= hostPos + 1)
                         {
-                            Int64 portValue = EdiabasNet.StringToValue(hostParts[2], out bool valid);
+                            Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
+                            hostPos++;
+
                             if (valid)
                             {
                                 hostControlPort = (int)portValue;
@@ -1019,14 +1021,17 @@ namespace EdiabasLib
                     }
                     else
                     {
-                        if (hostParts.Length > 1)
+                        if (protocolSpecified)
                         {   // protocol explicit specified
-                            communicationModes.Remove(CommunicationMode.Hsfz);
+                            communicationModes.Clear();
+                            communicationModes.Add(CommunicationMode.DoIp);
                         }
 
-                        if (hostParts.Length >= 3)
+                        if (hostParts.Length >= hostPos + 1)
                         {
-                            Int64 portValue = EdiabasNet.StringToValue(hostParts[2], out bool valid);
+                            Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
+                            hostPos++;
+
                             if (valid)
                             {
                                 hostDoIpPort = (int)portValue;
