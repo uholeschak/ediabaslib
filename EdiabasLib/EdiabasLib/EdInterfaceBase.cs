@@ -208,7 +208,7 @@ namespace EdiabasLib
 
         public virtual string InterfaceVerName
         {
-            get { return "IFH-STD Version 7.3.0"; }
+            get { return "IFH-STD Version 7.6.0"; }
         }
 
         public abstract byte[] KeyBytes { get; }
