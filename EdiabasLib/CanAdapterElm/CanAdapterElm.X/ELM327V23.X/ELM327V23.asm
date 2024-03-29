@@ -762,11 +762,11 @@ p___8F2:  incfsz 0x91,W,b				; entry from: 0x8C6
           bsf    0x92,4,b
           bra    p___8D8
 p___8FE:  bsf    0x1A,0,a				; entry from: 0x866
-          movff  NVMCON2,0x8F
+          movff  PORTB,0x8F
           clrf   0x52,a
           clrf   0x53,a
 p___908:  rcall  p___936				; entry from: 0x918
-p___90A:  movf   NVMCON2,W,a			; entry from: 0x914
+p___90A:  movf   PORTB,W,a			; entry from: 0x914
           xorwf  0x8F,W,b
           andlw  8
           bnz    p___91C
@@ -783,22 +783,22 @@ p___932:  bra    p___936				; entry from: 0x2BF4
 p___934:  rcall  p___936				; entry from: 0x85A,0x864,0x2644,0x2664,0x2568
 
 p___936:  tstfsz 0x1B,a					; entry from: 0x18FE,0x85C,0x85E,0x860,0x862,0x934,0x840,0xF34,0x3002,0x3E34,0x3E54,0x300E,0x23A6,0x2400,0x245A,0x2474,0x2468,0x1A76,0x1F4C,0x3F5A,0x932,0x25A8,0x25D6,0x25E2,0x25EE,0x25FA,0x514,0x2588,0x876,0x8BC,0x908,0x636,0x6A6
-          btfsc  PCON1,7,a
+          btfsc  TMR0,7,a
           bra    p___990
           btfsc  0x1B,7,a
           bra    p___960
           incf   0x25,a
           btfsc  0x25,3,a
-          bsf    TRISD,7,a
+          bsf    LATB,7,a
           incf   0x26,a
           btfsc  0x26,3,a
-          bsf    TRISD,6,a
+          bsf    LATB,6,a
           incf   0x27,a
           btfsc  0x27,3,a
-          bsf    TRISD,5,a
+          bsf    LATB,5,a
           incf   0x28,a
           btfsc  0x28,3,a
-          bsf    TRISD,4,a
+          bsf    LATB,4,a
           tstfsz 0x4A,a
           decf   0x4A,a
           clrf   0x1B,a
@@ -827,24 +827,24 @@ p___97E:  incfsz 0x21,a					; entry from: 0x96E
 p___98A:  btfss  0x21,7,a				; entry from: 0x980
           clrf   0x23,a
           return 
-p___990:  btfsc  PCON1,7,a				; entry from: 0x93A
+p___990:  btfsc  TMR0,7,a				; entry from: 0x93A
           tstfsz 0x1B,a
           bra    p___9B2
           setf   0x1B,a
-          btfsc  LATA,4,a
-          btfsc  BAUDCTL1,5,a
+          btfsc  PORTC,4,a
+          btfsc  PIR1,5,a
           bsf    0x1A,7,a
-p___99E:  btfss  LATA,0,a				; entry from: 0x9B4
-          btfss  LATA,1,a
+p___99E:  btfss  PORTC,0,a				; entry from: 0x9B4
+          btfss  PORTC,1,a
           clrf   0x21,a
-          btfss  NVMCON2,3,a
-          btfss  NVMCON2,2,a
+          btfss  PORTB,3,a
+          btfss  PORTB,2,a
           bra    p___9AC
-          btfsc  NVMCON2,3,a
-p___9AC:  btfss  LATA,2,a				; entry from: 0x9A8
+          btfsc  PORTB,3,a
+p___9AC:  btfss  PORTC,2,a				; entry from: 0x9A8
           clrf   0x21,a
           return 
-p___9B2:  btfss  BAUDCTL1,4,a			; entry from: 0x994
+p___9B2:  btfss  PIR1,4,a			; entry from: 0x994
           bra    p___99E
           movf   FSR1L,W,a
           cpfseq FSR2L,a
@@ -857,15 +857,15 @@ p___9B2:  btfss  BAUDCTL1,4,a			; entry from: 0x994
           bcf    FSR2H,3,a
           movwf  CCPTMRS,a
           return 
-p___9CC:  bcf    TRISD,5,a				; entry from: 0x9BA
+p___9CC:  bcf    LATB,5,a				; entry from: 0x9BA
           clrf   0x27,a
           movf   POSTINC2,W,a
           btfsc  FSR2H,0,a
           bcf    FSR2H,3,a
           movwf  CCPTMRS,a
           return 
-p___9DA:  btfsc  LATA,4,a				; entry from: 0x9C0
-          btfsc  BAUDCTL1,5,a
+p___9DA:  btfsc  PORTC,4,a				; entry from: 0x9C0
+          btfsc  PIR1,5,a
           bsf    0x1A,7,a
           return 
           db   49,14,101,99,3,208,25,150,25,136,72,208,50,14,101,99				;1.ec......H.2.ec
@@ -1114,19 +1114,19 @@ p___FC0:  movlw  0x44					; entry from: 0xF82
           db   57,214															;9.
 
 p__110C:  setf   0x21,a					; entry from: 0x11AE,0x11B6,0x11BC,0x11CC,0x11A0
-          btfsc  NVMCON2,3,a
-          btfss  LATA,2,a
+          btfsc  PORTB,3,a
+          btfss  PORTC,2,a
           clrf   0x21,a
-          btfss  LATA,0,a
-          btfss  LATA,1,a
+          btfss  PORTC,0,a
+          btfss  PORTC,1,a
           clrf   0x21,a
           movlw  0x7C
           btfsc  0x1E,0,a
-          tstfsz PCON1,a
+          tstfsz TMR0,a
           iorlw  0x80
-          movwf  TRISD,a
-          btfsc  NVMCON2,3,a
-          btfss  LATA,2,a
+          movwf  LATB,a
+          btfsc  PORTB,3,a
+          btfss  PORTC,2,a
           clrf   0x21,a
           tstfsz 0x21,a
           bsf    0x1A,1,a
