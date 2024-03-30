@@ -1655,8 +1655,8 @@ p__1802:  movlw  0xF1					; entry from: 0x17D0
           cpfslt 0x9C,b
           movwf  0x9C,b
           movlw  0xC5
-          movwf  T0CON1,a
-          clrf   PCON1,a
+          movwf  T0CON,a
+          clrf   TMR0,a
           clrf   0x34,a
           call   p__20AE
           clrf   0x1B,a
@@ -1670,12 +1670,12 @@ p__1802:  movlw  0xF1					; entry from: 0x17D0
           setf   0x21,a
           clrf   0x23,a
           movlw  0x7C
-          movwf  T5CON,a
-          clrf   TMR5H,a
+          movwf  ADCON0,a
+          clrf   ADCON1,a
           movlw  0xBE
-          movwf  TMR5L,a
+          movwf  ADCON2,a
           call   p___62E
-          movf   TMR5GATE,W,a
+          movf   ADRESH,W,a
           bcf    0x8D,4,b
           btfsc  STATUS,2,a
           bsf    0x8D,4,b
@@ -1728,7 +1728,7 @@ p__18F4:  bcf    0x1A,4,a				; entry from: 0x1FF0
           bra    p__18EC
 p__18FC:  rcall  p__1B18				; entry from: 0x18F2
           call   p___936
-          clrf   TMR3GATE,a
+          clrf   T2CON,a
           btfsc  0x4D,2,a
           call   p___658
           bcf    0x4D,2,a
@@ -1736,21 +1736,21 @@ p__18FC:  rcall  p__1B18				; entry from: 0x18F2
           bcf    0x35,7,a
           bcf    0x10,3,a
           bcf    0xF,7,a
-          btfss  BAUDCTL1,5,a
+          btfss  PIR1,5,a
           bra    p__191C
           clrf   0x28,a
-          bcf    TRISD,4,a
+          bcf    LATB,4,a
 p__191C:  bcf    0x3E,3,a				; entry from: 0x1916
           clrf   0xB0,b
           btfsc  0x4D,0,a
-          btfsc  0x6E,7,a
+          btfsc  CANSTAT,7,a
           bra    p__193C
-          movf   0x6E,W,a
+          movf   CANSTAT,W,a
           andlw  0xE0
           bnz    p__1934
-          btfsc  0x71,5,a
+          btfsc  COMSTAT,5,a
           bra    p__1934
-          btfss  0x71,0,a
+          btfss  COMSTAT,0,a
           bra    p__193C
 
 p__1934:  call   p__3E10				; entry from: 0x192A,0x192E
@@ -1774,7 +1774,7 @@ p__193C:  movlw  0x70					; entry from: 0x1924,0x1932
           call   p___F34
           rcall  p__1670
           btfss  0x1D,7,a
-          bcf    TRISE,5,a
+          bcf    LATC,5,a
           lfsr   1,0x100
           lfsr   2,0x100
           btfss  0x1F,0,a
@@ -1806,7 +1806,7 @@ p__19A2:  call   p__2F9C				; entry from: 0x198A,0x1992,0x199C
           btfss  0x34,6,a
           bra    p__19B0
           call   p__1FF2
-p__19B0:  btfsc  TRISD,4,a				; entry from: 0x19AA
+p__19B0:  btfsc  LATB,4,a				; entry from: 0x19AA
           bra    p__19BC
           bcf    0x73,2,b
           bcf    0x1D,0,a
@@ -1838,7 +1838,7 @@ p__19D8:  movlw  0x39					; entry from: 0x19D2
           movlw  4
           btfsc  0x1D,4,a
           movlw  0x13
-          btfsc  TRISD,4,a
+          btfsc  LATB,4,a
           cpfseq 0x89,b
           bra    p__19FE
           bsf    0x1D,0,a
@@ -1880,11 +1880,11 @@ p__1A3E:  bcf    INDF0,7,a				; entry from: 0x1A48
           incf   FSR0L,a
           decfsz 0x52,a
           bra    p__1A3E
-p__1A4A:  incf   T6PR,W,a				; entry from: 0x1A38
+p__1A4A:  incf   SPBRG1,W,a				; entry from: 0x1A38
           movwf  0x52,a
-          dcfsnz 0x7D,W,a
+          dcfsnz SPBRGH1,W,a
           clrf   0x52,a
-p__1A52:  btfss  BAUDCTL1,5,a			; entry from: 0x1A64
+p__1A52:  btfss  PIR1,5,a			; entry from: 0x1A64
           bra    p__1A5E
           rcall  p__1672
           xorwf  0x8A,W,b
@@ -1898,7 +1898,7 @@ p__1A66:  btfsc  0x18,2,a				; entry from: 0x1A5A
           bra    p__1A72
           movf   0x8A,W,b
           call   p___550
-p__1A72:  incf   T6PR,W,a				; entry from: 0x1A6A
+p__1A72:  incf   SPBRG1,W,a				; entry from: 0x1A6A
           movwf  0x52,a
 p__1A76:  call   p___936				; entry from: 0x1A7C
           decfsz 0x52,a
@@ -1907,7 +1907,7 @@ p__1A76:  call   p___936				; entry from: 0x1A7C
           rcall  p__1670
           bsf    0x74,7,b
           movlw  0x60
-          movwf  FSR0L,a
+          movwf  FSR0,a
           movf   0x60,W,b
           btfss  STATUS,2,a
           btfsc  0x73,6,b
@@ -2426,8 +2426,8 @@ p__2304:  movlw  0x61					; entry from: 0x219C
           db   243,223,26,188,72,210,1,14,4,110,5,106,2,14,0,110				;....H....n.j...n
           db   163,222,169,217,171,222,167,217,25,14,127,97,127,81,15,172		;...........a.Q..
           db   25,14,190,236,16,240,115,151,158,217,25,14,122,214				;......s.....z.
-p__234A:  bcf    TRISC,2,a				; entry from: 0x2210
-          bcf    TRISE,3,a
+p__234A:  bcf    LATA,2,a				; entry from: 0x2210
+          bcf    LATC,3,a
           bra    p__2762
           db   255,14,79,110,97,14,77,168,18,80,238,110,181,217,106,14			;..Ona.M..P.n..j.
           db   77,168,19,80,238,110,176,217,148,81,77,168,20,80,238,110			;M..P.n...QM..P.n
@@ -2466,23 +2466,23 @@ p__23BE:  btfss  LATA,2,a				; entry from: 0x23C4
           dcfsnz 0x52,a
           bra    p__23D6
           db   130,180,252,215													;....
-p__23D6:  bsf    TRISC,2,a				; entry from: 0x23D0
-          bsf    TRISE,3,a
-          bcf    TRISD,7,a
+p__23D6:  bsf    LATA,2,a				; entry from: 0x23D0
+          bsf    LATC,3,a
+          bcf    LATB,7,a
           clrf   0x25,a
           movlw  8
           rcall  p__267A
-          btfss  LATA,2,a
+          btfss  PORTC,2,a
           bra    p__23EC
-          bcf    TRISC,2,a
-          bcf    TRISE,3,a
+          bcf    LATA,2,a
+          bcf    LATC,3,a
           retlw  3
 p__23EC:  rcall  p__2B5E				; entry from: 0x23E4
           nop
           movlw  0x12
           rcall  p__267A
-          bcf    TRISC,2,a
-          bcf    TRISE,3,a
+          bcf    LATA,2,a
+          bcf    LATC,3,a
           nop
           rcall  p__2784
           movf   0,W,a
@@ -2525,8 +2525,8 @@ p__2440:  call   p___85C				; entry from: 0x244A
           bra    p__2396
 p__244E:  bra    p__2430				; entry from: 0x2428
 
-p__2450:  bsf    TRISC,2,a				; entry from: 0x240A,0x266E
-          bsf    TRISE,3,a
+p__2450:  bsf    LATA,2,a				; entry from: 0x240A,0x266E
+          bsf    LATC,3,a
           movwf  0x54,a
           movlw  8
           movwf  0x55,a
@@ -2534,18 +2534,18 @@ p__2450:  bsf    TRISC,2,a				; entry from: 0x240A,0x266E
           rlcf   0x54,a
           btfss  STATUS,0,a
           bra    p__2474
-          bcf    TRISC,2,a
-          bcf    TRISE,3,a
+          bcf    LATA,2,a
+          bcf    LATC,3,a
           call   p___936
-          btfss  LATA,2,a
+          btfss  PORTC,2,a
           retlw  8
           rcall  p__278A
           bra    p__2482
 p__2474:  call   p___936				; entry from: 0x2462
           rcall  p__2788
           nop
-          bcf    TRISC,2,a
-          bcf    TRISE,3,a
+          bcf    LATA,2,a
+          bcf    LATC,3,a
           rcall  p__278C
 p__2482:  dcfsnz 0x55,a					; entry from: 0x2472
           retlw  0
@@ -2556,25 +2556,25 @@ p__2492:  movlw  0x80					; entry from: 0x2294,0x264A,0x26C4,0x259E
           movlw  0xFF
           movwf  0x4F,a
           movlw  1
-          movwf  FSR0L,a
+          movwf  FSR0,a
           bcf    0xF,2,a
 
-p__24A0:  btfss  LATA,2,a				; entry from: 0x2556,0x256E,0x2584,0x2534,0x2546,0x252C
+p__24A0:  btfss  PORTC,2,a				; entry from: 0x2556,0x256E,0x2584,0x2534,0x2546,0x252C
           bra    p__254C
-          btfsc  LATA,4,a
-          btfsc  BAUDCTL1,5,a
+          btfsc  PORTC,4,a
+          btfsc  PIR1,5,a
           bra    p__2548
           btfsc  0xF,1,a
           bra    p__2596
-          btfss  LATA,2,a
+          btfss  PORTC,2,a
           bra    p__254C
-          btfsc  PCON1,7,a
+          btfsc  TMR0,7,a
           setf   0x1B,a
           tstfsz 0x1B,a
-          btfsc  PCON1,7,a
+          btfsc  TMR0,7,a
           bra    p__250E
           movf   0x80,W,b
-          btfss  LATA,2,a
+          btfss  PORTC,2,a
           bra    p__254C
           incf   0x29,a
           cpfslt 0x29,a
@@ -2583,10 +2583,10 @@ p__24A0:  btfss  LATA,2,a				; entry from: 0x2556,0x256E,0x2584,0x2534,0x2546,0x
           bra    p__24D6
           movlw  5
           movwf  0x33,a
-          btfss  LATA,2,a
+          btfss  PORTC,2,a
           bra    p__254C
           bra    p__24EA
-p__24D6:  btfss  LATA,2,a				; entry from: 0x24CA
+p__24D6:  btfss  PORTC,2,a				; entry from: 0x24CA
           bra    p__254C
           incfsz 0x21,a
           bra    p__24E6
@@ -2597,72 +2597,72 @@ p__24D6:  btfss  LATA,2,a				; entry from: 0x24CA
 p__24E6:  btfss  0x21,7,a				; entry from: 0x24DC
           clrf   0x23,a
 
-p__24EA:  btfss  LATA,2,a				; entry from: 0x24E4,0x24D4
+p__24EA:  btfss  PORTC,2,a				; entry from: 0x24E4,0x24D4
           bra    p__254C
           bcf    0x1B,7,a
           incf   0x25,a
           btfsc  0x25,3,a
-          bsf    TRISD,7,a
+          bsf    LATB,7,a
           incf   0x26,a
           btfsc  0x26,3,a
-          bsf    TRISD,6,a
-          btfss  LATA,2,a
+          bsf    LATB,6,a
+          btfss  PORTC,2,a
           bra    p__254C
           incf   0x27,a
           btfsc  0x27,3,a
-          bsf    TRISD,5,a
+          bsf    LATB,5,a
           incf   0x28,a
           btfsc  0x28,3,a
-          bsf    TRISD,4,a
+          bsf    LATB,4,a
           clrf   0x1B,a
-p__250E:  btfss  LATA,2,a				; entry from: 0x24BA
+p__250E:  btfss  PORTC,2,a				; entry from: 0x24BA
           bra    p__254C
-          btfsc  NVMCON2,3,a
-          btfss  LATA,2,a
+          btfsc  PORTB,3,a
+          btfss  PORTC,2,a
           clrf   0x21,a
-          btfss  LATA,0,a
-          btfss  LATA,1,a
+          btfss  PORTC,0,a
+          btfss  PORTC,1,a
           clrf   0x21,a
-          btfss  LATA,2,a
+          btfss  PORTC,2,a
           bra    p__254C
-          movf   FSR1L,W,a
-          cpfseq FSR2L,a
+          movf   FSR1,W,a
+          cpfseq FSR2,a
           bra    p__252E
           movf   FSR1H,W,a
           xorwf  FSR2H,W,a
           bz     p__24A0
-p__252E:  btfss  LATA,2,a				; entry from: 0x2526
+p__252E:  btfss  PORTC,2,a				; entry from: 0x2526
           bra    p__254C
-          btfss  BAUDCTL1,4,a
+          btfss  PIR1,4,a
           bra    p__24A0
-          bcf    TRISD,5,a
+          bcf    LATB,5,a
           clrf   0x27,a
-          btfss  LATA,2,a
+          btfss  PORTC,2,a
           bra    p__254C
           movf   POSTINC2,W,a
           btfsc  FSR2H,0,a
           bcf    FSR2H,3,a
-          movwf  CCPTMRS,a
+          movwf  TXREG1,a
           bra    p__24A0
 p__2548:  bsf    0x1A,7,a				; entry from: 0x24A8
           retlw  1
 
 p__254C:  clrf   0x26,a					; entry from: 0x24A2,0x24B0,0x2510,0x2520,0x2530,0x253C,0x24C0,0x24D8,0x24EC,0x24FE,0x24D2
-          bcf    TRISD,6,a
+          bcf    LATB,6,a
           movlw  0x12
           movwf  0x52,a
-p__2554:  btfsc  LATA,2,a				; entry from: 0x255A
+p__2554:  btfsc  PORTC,2,a				; entry from: 0x255A
           bra    p__24A0
           decfsz 0x52,a
           bra    p__2554
           movlw  0xB
           movwf  0x52,a
-p__2560:  btfsc  LATA,2,a				; entry from: 0x2566
+p__2560:  btfsc  PORTC,2,a				; entry from: 0x2566
           bra    p__25A0
           decfsz 0x52,a
           bra    p__2560
           call   p___934
-          btfsc  LATA,2,a
+          btfsc  PORTC,2,a
           bra    p__24A0
           btfss  0x19,6,a
           bra    p__2582
@@ -2672,7 +2672,7 @@ p__2560:  btfsc  LATA,2,a				; entry from: 0x2566
           call   p__1206
           call   p___53A
 
-p__2582:  btfsc  LATA,2,a				; entry from: 0x2572,0x2594
+p__2582:  btfsc  PORTC,2,a				; entry from: 0x2572,0x2594
           bra    p__24A0
           clrf   0x26,a
           call   p___936
@@ -2782,8 +2782,8 @@ p__2664:  call   p___934				; entry from: 0x265A
           movf   0x14,W,a
           call   p__2450
           retlw  0
-p__2674:  bcf    TRISC,2,a				; entry from: 0x22B8
-          bcf    TRISE,3,a
+p__2674:  bcf    LATA,2,a				; entry from: 0x22B8
+          bcf    LATC,3,a
           bra    p__2762
 
 p__267A:  addlw  0xFF					; entry from: 0x23E0,0x23F2,0x267E
@@ -2940,9 +2940,9 @@ p__2B5E:  movff  0x21,0x22				; entry from: 0x23EC
           db   31,176,161,162,6,208,31,144,34,192,33,240,36,192,35,240			;........".!.$.#.
           db   18,0,0,216,18,0													;......
 p__2B7E:  movlw  5						; entry from: 0x243C
-p__2B80:  setf   T6RST,a				; entry from: 0x241A
-          clrf   T6CLKCON,a
-          bcf    PWM4CON,1,a
+p__2B80:  setf   TMR3H,a				; entry from: 0x241A
+          clrf   TMR3,a
+          bcf    PIR2,1,a
           bsf    0x1F,0,a
           return 
 p__2B8A:  bcf    0x1F,0,a				; entry from: 0x25A4
@@ -3052,7 +3052,7 @@ p__2BFC:  goto   p___562				; entry from: 0x2BBE
           db   1,15,0,24,8,224,15,128,2,208,0,24,4,224,78,80					;..............NP
           db   255,10,208,225,15,128,28,190,161,215,0,12						;............
 p__2EEC:  movlw  0xFC					; entry from: 0x22BE
-          andwf  TRISD,a
+          andwf  LATB,a
           retlw  0
           db   77,166,15,162,18,0,188,83,4,224,188,7,41,106,15,146				;M......S....)j..
           db   18,0,6,0,7,12,194,81,85,110,130,162,14,208,84,106				;.......QUn....Tj
@@ -3068,17 +3068,17 @@ p__2EEC:  movlw  0xFC					; entry from: 0x22BE
 
 p__2F9C:  btfsc  0x73,1,b				; entry from: 0x1A22,0x19A2,0x19FE,0x1402,0x19CA,0x2014,0x2022,0x20A2,0x20AA
           bra    p__2FEE
-          btfsc  BAUDCTL1,5,a
+          btfsc  PIR1,5,a
           btfsc  0x73,0,b
           bra    p__2FF4
-          movf   CCP1CON,W,a
+          movf   RCSTA1,W,a
           andlw  6
           bnz    p__3006
-          bcf    TRISD,4,a
+          bcf    LATB,4,a
           clrf   0x28,a
-          movff  FSR0L,0x52
-          movff  0x75,FSR0L
-          movf   TMR6,W,a
+          movff  FSR0,0x52
+          movff  0x75,FSR0
+          movf   RCREG1,W,a
           movwf  INDF0,a
           btfsc  0x18,2,a
           movwf  POSTINC1,a
@@ -3103,21 +3103,21 @@ p__2FE4:  bsf    0x73,6,b				; entry from: 0x2FD4
           bra    p__2FDE
 p__2FE8:  pop							; entry from: 0x2FC2
           goto   p___C1C
-p__2FEE:  btfss  LATA,0,a				; entry from: 0x2F9E
-          btfss  LATA,1,a
+p__2FEE:  btfss  PORTC,0,a				; entry from: 0x2F9E
+          btfss  PORTC,1,a
           clrf   0x21,a
-p__2FF4:  btfss  NVMCON2,3,a			; entry from: 0x2FA4
-          btfss  NVMCON2,2,a
+p__2FF4:  btfss  PORTB,3,a			; entry from: 0x2FA4
+          btfss  PORTB,2,a
           bra    p__2FFC
-          btfsc  NVMCON2,3,a
-p__2FFC:  btfss  LATA,2,a				; entry from: 0x2FF8
+          btfsc  PORTB,3,a
+p__2FFC:  btfss  PORTC,2,a				; entry from: 0x2FF8
           clrf   0x21,a
           nop
           goto   p___936
-p__3006:  btfsc  CCP1CON,1,a			; entry from: 0x2FAA
-          bcf    CCP1CON,4,a
-          movf   TMR6,W,a
-          bsf    CCP1CON,4,a
+p__3006:  btfsc  RCSTA1,1,a			; entry from: 0x2FAA
+          bcf    RCSTA1,4,a
+          movf   RCREG1,W,a
+          bsf    RCSTA1,4,a
           goto   p___936
 
 p__3012:  movf   INDF0,W,a				; entry from: 0x3028,0x2FCE
@@ -3125,7 +3125,7 @@ p__3012:  movf   INDF0,W,a				; entry from: 0x3028,0x2FCE
           bnz    p__3024
           bsf    0x73,0,b
           btfss  0x1D,7,a
-          bsf    TRISE,5,a
+          bsf    LATC,5,a
 p__301E:  movff  0x52,FSR0L				; entry from: 0x3024
           retlw  0
 p__3024:  bra    p__301E				; entry from: 0x3016
@@ -3305,17 +3305,17 @@ p__390C:  rcall  p__390A				; entry from: 0x38F4
 p__3910:  rcall  p__390A				; entry from: 0x38FE
           return 
 
-p__3914:  btfss  BAUDCTL1,4,a			; entry from: 0x1F54,0x211C,0x212A,0x215A,0x214A
+p__3914:  btfss  PIR1,4,a			; entry from: 0x1F54,0x211C,0x212A,0x215A,0x214A
           return 
-          movf   FSR1L,W,a
-          xorwf  FSR2L,W,a
+          movf   FSR1,W,a
+          xorwf  FSR2,W,a
           bz     p__392C
-          bcf    TRISD,5,a
+          bcf    LATB,5,a
           clrf   0x27,a
           movf   POSTINC2,W,a
           btfsc  FSR2H,0,a
           bcf    FSR2H,3,a
-          movwf  CCPTMRS,a
+          movwf  TXREG1,a
 p__392A:  return 						; entry from: 0x3930
 p__392C:  movf   FSR1H,W,a				; entry from: 0x391C
           xorwf  FSR2H,W,a
@@ -3323,7 +3323,7 @@ p__392C:  movf   FSR1H,W,a				; entry from: 0x391C
           movf   POSTINC2,W,a
           btfsc  FSR2H,0,a
           bcf    FSR2H,3,a
-          movwf  CCPTMRS,a
+          movwf  TXREG1,a
           return 
           db   86,80,87,224,240,11,83,110,2,225,86,182,74,208,63,8				;VPW...Sn..V.J.?.
           db   72,227,16,14,83,98,5,208,2,14,25,178,3,14,64,100					;H...Sb........@d
@@ -3393,22 +3393,22 @@ p__3C64:  movlw  0x25					; entry from: 0x3C5A
           btfss  STATUS,2,a
           movlw  0x3D
           return 
-p__3C6C:  bsf    0x6F,4,a				; entry from: 0x22C6
+p__3C6C:  bsf    CANCON,4,a				; entry from: 0x22C6
           rcall  p__3C94
-          btfsc  0x6F,4,a
+          btfsc  CANCON,4,a
           rcall  p__3C94
-          btfsc  0x6F,4,a
+          btfsc  CANCON,4,a
           rcall  p__3C94
           movlw  0x80
-          movwf  0x6F,a
+          movwf  CANCON,a
           rcall  p__3C94
-          btfss  0x6E,7,a
+          btfss  CANSTAT,7,a
           rcall  p__3C94
-          btfss  0x6E,7,a
+          btfss  CANSTAT,7,a
           rcall  p__3C94
           rcall  p__3CA0
           bcf    0x4D,0,a
-          bsf    TRISD,2,a
+          bsf    LATB,2,a
           bcf    0x3E,3,a
           clrf   0x47,a
           clrf   0x48,a
@@ -3421,10 +3421,10 @@ p__3C96:  call   p___85A				; entry from: 0x3C9C
           return 
 
 p__3CA0:  rcall  p__3E06				; entry from: 0x3C86,0x1F3A,0x1938
-          bcf    0x60,7,a
+          bcf    RXB0CON,7,a
           rcall  p__3E00
           movlw  4
-          movwf  0x60,a
+          movwf  RXB0CON,a
           clrf   0x71,a
           clrf   0x77,a
           retlw  0
@@ -3474,33 +3474,33 @@ p__3E12:  movwf  0x54,a					; entry from: 0x3DFE
           btfsc  STATUS,2,a
           retlw  0
           movlb  0xE
-          movff  CLC3GLS1,0x47
-          movff  CLC3GLS0,0x48
+          movff  TXERRCNT,0x47
+          movff  RXERRCNT,0x48
           movlb  0
           movf   0x54,W,a
-          movwf  0x6F,a
+          movwf  CANCON,a
           rlncf  0x41,W,a
           addlw  0x15
           movwf  0x53,a
           clrf   0x52,a
 p__3E34:  call   p___936				; entry from: 0x3E46
-          movf   0x6E,W,a
-          xorwf  0x6F,W,a
+          movf   CANSTAT,W,a
+          xorwf  CANCON,W,a
           andlw  0xE0
           btfsc  STATUS,2,a
           retlw  0
           dcfsnz 0x52,a
           decfsz 0x53,a
           bra    p__3E34
-          bsf    TRISD,2,a
+          bsf    LATB,2,a
           movlw  0x90
-          movwf  0x6F,a
+          movwf  CANCON,a
           rlncf  0x41,W,a
           addlw  0x60
           movwf  0x53,a
 p__3E54:  call   p___936				; entry from: 0x3E64
           movlw  0x80
-          xorwf  0x6E,W,a
+          xorwf  CANSTAT,W,a
           andlw  0xE0
           bz     p__3E6E
           dcfsnz 0x52,a
