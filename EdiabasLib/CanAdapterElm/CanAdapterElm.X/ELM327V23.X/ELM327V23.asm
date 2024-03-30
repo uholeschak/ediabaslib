@@ -1151,37 +1151,37 @@ p__1146:  rcall  p__11FA				; entry from: 0x1A1E
           call   p___83C
           call   p___83C
           call   p__2184
-          bcf    TRISC,1,a
+          bcf    LATA,1,a
           movlw  0xF4
-          movwf  NVMCON2,a
-          bcf    T6HLT,0,a
+          movwf  PORTB,a
+          bcf    T3CON,0,a
           bcf    0x1A,1,a
           btfsc  0x21,7,a
           bsf    0x1A,1,a
           call   p__1670
           movlw  0x82
-          btfsc  BAUDCTL1,5,a
+          btfsc  PIR1,5,a
           goto   p__1620
-          bsf    CCP2CON,1,a
-          bsf    TXSTA1,5,a
+          bsf    BAUDCON1,1,a
+          bsf    PIE1,5,a
           bsf    INTCON,7,a
           movlw  2
-          movwf  TMR0H,a
-          bsf    TRISE,5,a
+          movwf  OSCCON,a
+          bsf    LATC,5,a
           btfsc  0x1D,6,a
-          bcf    TRISE,5,a
+          bcf    LATC,5,a
           movlw  0xC6
-          movwf  T0CON1,a
-          clrf   PCON1,a
-          btfss  LATA,4,a
+          movwf  T0CON,a
+          clrf   TMR0,a
+          btfss  PORTC,4,a
           bra    p__11A6
           btfsc  0x1A,3,a
           bra    p__11BC
 p__11A0:  rcall  p__110C				; entry from: 0x11A4
-          btfsc  LATA,4,a
+          btfsc  PORTC,4,a
           bra    p__11A0
 p__11A6:  clrf   0x52,a					; entry from: 0x119A
-p__11A8:  btfsc  LATA,4,a				; entry from: 0x11B4
+p__11A8:  btfsc  PORTC,4,a				; entry from: 0x11B4
           clrf   0x52,a
           incf   0x52,a
           rcall  p__110C
@@ -1189,7 +1189,7 @@ p__11A8:  btfsc  LATA,4,a				; entry from: 0x11B4
           cpfsgt 0x52,a
           bra    p__11A8
 p__11B6:  rcall  p__110C				; entry from: 0x11BA
-          btfss  LATA,4,a
+          btfss  PORTC,4,a
           bra    p__11B6
 
 p__11BC:  rcall  p__110C				; entry from: 0x11CA,0x119E
@@ -1205,16 +1205,16 @@ p__11C8:  btfss  LATA,4,a				; entry from: 0x11D4
           bra    p__11D4
           decfsz 0x53,a
 p__11D4:  bra    p__11C8				; entry from: 0x11D0
-p__11D6:  bsf    TRISD,7,a				; entry from: 0x1138
+p__11D6:  bsf    LATB,7,a				; entry from: 0x1138
           bcf    INTCON,7,a
-          bcf    TXSTA1,5,a
-          bcf    CCP2CON,1,a
-          clrf   TMR0H,a
-p__11E0:  btfss  TMR0H,3,a				; entry from: 0x11E2
+          bcf    PIE1,5,a
+          bcf    BAUDCON1,1,a
+          clrf   OSCCON,a
+p__11E0:  btfss  OSCCON,3,a				; entry from: 0x11E2
           bra    p__11E0
-          bcf    TRISE,5,a
+          bcf    LATC,5,a
           btfsc  0x1D,6,a
-          bsf    TRISE,5,a
+          bsf    LATC,5,a
           movlw  0x14
           movwf  0x52,a
 p__11EE:  call   p___84C				; entry from: 0x11F4
@@ -1389,7 +1389,7 @@ p__1620:  movwf  0x4E,a					; entry from: 0x18BA,0x117E,0x1690,0x644
           clrf   STKPTR,a
           lfsr   1,0x100
           lfsr   2,0x100
-          bcf    TRISD,5,a
+          bcf    LATB,5,a
           rcall  p__1664
           movf   0x8B,W,b
           rcall  p__1662
@@ -1412,10 +1412,10 @@ p__1620:  movwf  0x4E,a					; entry from: 0x18BA,0x117E,0x1690,0x644
           movf   0x4E,W,a
           call   p___52A
           rcall  p__1662
-          bsf    TRISD,5,a
+          bsf    LATB,5,a
           bra    p__18EE
 
-p__1662:  movwf  CCPTMRS,a				; entry from: 0x1632,0x1638,0x163C,0x1640,0x1644,0x1654,0x165C
+p__1662:  movwf  TXREG1,a				; entry from: 0x1632,0x1638,0x163C,0x1640,0x1644,0x1654,0x165C
 p__1664:  clrf   0x52,a					; entry from: 0x162E
 p__1666:  call   p__277C				; entry from: 0x166C
           decfsz 0x52,a
@@ -1424,17 +1424,17 @@ p__1666:  call   p__277C				; entry from: 0x166C
 
 p__1670:  rcall  p__1672				; entry from: 0x17CC,0x1962,0x1176,0x1A80,0x18E4
 
-p__1672:  btfss  CCP1CON,1,a			; entry from: 0x1670,0x1A56
+p__1672:  btfss  RCSTA1,1,a			; entry from: 0x1670,0x1A56
           bra    p__167E
-          bcf    CCP1CON,4,a
-          movf   TMR6,W,a
-          bsf    CCP1CON,4,a
+          bcf    RCSTA1,4,a
+          movf   RCREG1,W,a
+          bsf    RCSTA1,4,a
           retlw  0
-p__167E:  btfss  CCP1CON,2,a			; entry from: 0x1674
+p__167E:  btfss  RCSTA1,2,a			; entry from: 0x1674
           bra    p__1686
-          movf   TMR6,W,a
+          movf   RCREG1,W,a
           retlw  0
-p__1686:  movf   TMR6,W,a				; entry from: 0x1680
+p__1686:  movf   RCREG1,W,a				; entry from: 0x1680
           return 
 
 p__168A:  movlw  0x74					; entry from: 0x1F60,0x1BEE
@@ -1450,9 +1450,9 @@ p__1692:  clrf   STKPTR,a				; entry from: 0x168E
 
 p__16BE:  goto   p___620				; entry from: 0x16F0,0x172A,0x177E,0x1808,0x1812,0x181C,0x1826,0x183A,0x1844,0x1854,0x185E,0x18D2,0x17D8,0x17E2,0x17EA,0x17F2,0x17FE,0x17AE
 p__16C2:  movlw  0x97					; entry from: 4
-          movwf  SSP1STAT,a
-          comf   TMR1GATE,W,a
-          setf   TMR1GATE,a
+          movwf  TRISC,a
+          comf   RCON,W,a
+          setf   RCON,a
           clrwdt
           andlw  0x1B
           btfsc  STKPTR,7,a
@@ -1485,19 +1485,19 @@ p__16F8:  movlb  0xF					; entry from: 0x16F4
           movlb  0
           movlw  0xF9
           xorwf  0x8E,W,b
-          movwf  NVMCON1,a
+          movwf  PORTA,a
           movlw  0xF9
-          movwf  SSP1ADD,a
+          movwf  TRISA,a
           movlw  0xF4
-          movwf  NVMCON2,a
+          movwf  PORTB,a
           btfss  0xD3,1,b
           bra    p__1720
           movlw  0x7F
-          movwf  0xF1,a
+          movwf  INTCON2,a
           movlw  0xE8
           bra    p__1722
 p__1720:  movlw  8						; entry from: 0x1716
-p__1722:  movwf  SSP1MSK,a				; entry from: 0x171E
+p__1722:  movwf  TRISB,a				; entry from: 0x171E
           movlw  0x9A
           movwf  0xD1,b
           movlw  0x2C
@@ -1508,14 +1508,14 @@ p__1722:  movwf  SSP1MSK,a				; entry from: 0x171E
           bra    p__1738
           btfss  0x1D,6,a
           andlw  0xDF
-p__1738:  movwf  LATA,a					; entry from: 0x1732
+p__1738:  movwf  PORTC,a					; entry from: 0x1732
           movlw  0x97
-          movwf  SSP1STAT,a
+          movwf  TRISC,a
           movlw  0x80
-          movwf  0x7F,a
+          movwf  EECON1,a
           btfsc  0xD3,5,b
           bra    p__174E
-          rlncf  NVMCON1,W,a
+          rlncf  PORTA,W,a
           andlw  0x50
           movwf  0x8C,b
           rlncf  0x8C,f,b
@@ -1523,18 +1523,18 @@ p__174E:  lfsr   1,0x100				; entry from: 0x1744
           lfsr   2,0x100
           lfsr   0,0
           clrf   TBLPTRH,a
-          bsf    0x6F,7,a
+          bsf    CANCON,7,a
           clrf   0x42,a
           movlw  0xF
-          movwf  T6HLT,a
+          movwf  T3CON,a
           btfss  0xD3,1,b
           bra    p__1776
           clrf   0xD5,b
           call   p___418
           movlw  0xFF
-          movwf  0xF1,a
+          movwf  INTCON2,a
           movlw  8
-          movwf  SSP1MSK,a
+          movwf  TRISB,a
 p__1776:  clrf   0x4A,a					; entry from: 0x1766
           movlw  0xD
           movwf  0xD1,b
@@ -1546,15 +1546,15 @@ p__1776:  clrf   0x4A,a					; entry from: 0x1766
           movwf  0x4A,a
           bra    p__179E
 p__178A:  movlw  0x7C					; entry from: 0x1784
-p__178C:  movwf  TRISD,a				; entry from: 0x179A
+p__178C:  movwf  LATB,a				; entry from: 0x179A
           call   p___848
           bsf    STATUS,0,a
           rrcf   WREG,W,a
           andlw  0xFC
           btfsc  WREG,3,a
           bra    p__178C
-          movwf  TRISD,a
-p__179E:  btfss  CCP1CAP,1,a			; entry from: 0x1788
+          movwf  LATB,a
+p__179E:  btfss  TXSTA1,1,a			; entry from: 0x1788
           call   p___84C
           btfsc  0xD3,5,b
           bra    p__17CC
@@ -1569,13 +1569,13 @@ p__179E:  btfss  CCP1CAP,1,a			; entry from: 0x1788
 p__17B8:  movlw  1						; entry from: 0x17B0
           movwf  0x7D,a
           movlw  0xA0
-p__17BE:  movwf  T6PR,a					; entry from: 0x17B6
+p__17BE:  movwf  SPBRG1,a					; entry from: 0x17B6
           movlw  8
-          movwf  CCP2CON,a
+          movwf  BAUDCON1,a
           movlw  0x25
-          movwf  CCP1CAP,a
+          movwf  TXSTA1,a
           movlw  0x90
-          movwf  CCP1CON,a
+          movwf  RCSTA1,a
 p__17CC:  rcall  p__1670				; entry from: 0x17A6
           btfsc  0xD3,2,b
           bra    p__1802
