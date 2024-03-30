@@ -695,7 +695,7 @@ p___866:  rcall  p___8FE				; entry from: 0x1F96
           clrf   0x53,a
 p___876:  rcall  p___936				; entry from: 0x898
           setf   0x91,b
-p___87A:  btfss  LATA,0,a				; entry from: 0x894
+p___87A:  btfss  PORTC,0,a				; entry from: 0x894
           bra    p___8A2
           btfsc  0x92,0,b
           bra    p___8A6
@@ -730,7 +730,7 @@ p___8B2:  clrf   0x90,b					; entry from: 0x89E
           clrf   0x53,a
 p___8BC:  rcall  p___936				; entry from: 0x8DE
           setf   0x91,b
-p___8C0:  btfsc  LATA,2,a				; entry from: 0x8DA
+p___8C0:  btfsc  PORTC,2,a				; entry from: 0x8DA
           bra    p___8EE
           btfss  0x92,2,b
           bra    p___8F2
@@ -855,14 +855,14 @@ p___9B2:  btfss  PIR1,4,a			; entry from: 0x994
           movf   POSTINC2,W,a
           btfsc  FSR2H,0,a
           bcf    FSR2H,3,a
-          movwf  CCPTMRS,a
+          movwf  TXREG1,a
           return 
 p___9CC:  bcf    LATB,5,a				; entry from: 0x9BA
           clrf   0x27,a
           movf   POSTINC2,W,a
           btfsc  FSR2H,0,a
           bcf    FSR2H,3,a
-          movwf  CCPTMRS,a
+          movwf  TXREG1,a
           return 
 p___9DA:  btfsc  PORTC,4,a				; entry from: 0x9C0
           btfsc  PIR1,5,a
@@ -1198,7 +1198,7 @@ p__11BC:  rcall  p__110C				; entry from: 0x11CA,0x119E
           btfss  0x1D,1,a
           movlw  1
           movwf  0x53,a
-p__11C8:  btfss  LATA,4,a				; entry from: 0x11D4
+p__11C8:  btfss  PORTC,4,a				; entry from: 0x11D4
           bra    p__11BC
           rcall  p__110C
           decfsz 0x52,a
@@ -1766,7 +1766,7 @@ p__193C:  movlw  0x70					; entry from: 0x1924,0x1932
           clrf   0x88,b
           clrf   0x89,b
           incf   0xD7,f,b
-          btfsc  LATA,4,a
+          btfsc  PORTC,4,a
           clrf   0xD7,b
           bcf    0x1A,5,a
           movlw  0x3E
@@ -1789,7 +1789,7 @@ p__197E:  btfsc  0x1F,6,a				; entry from: 0x1972
 p__1986:  btfsc  0x1D,7,a				; entry from: 0x1A28
           btfss  0x1D,2,a
           bra    p__19A2
-          btfsc  LATA,4,a
+          btfsc  PORTC,4,a
           clrf   0xD7,b
           btfss  0x1A,5,a
           bra    p__19A2
@@ -2441,7 +2441,7 @@ p__2396:  btfsc  0xF,1,a				; entry from: 0x244C
           retlw  4
           movlw  1
           movwf  FSR0L,a
-          btfsc  LATA,2,a
+          btfsc  PORTC,2,a
           bra    p__23BA
 p__23A2:  movlw  9						; entry from: 0x23C0
           movwf  0x52,a
@@ -2455,7 +2455,7 @@ p__23A2:  movlw  9						; entry from: 0x23C0
           db   130,164,246,215													;....
 p__23BA:  movlw  0x3A					; entry from: 0x23A0
           movwf  0x52,a
-p__23BE:  btfss  LATA,2,a				; entry from: 0x23C4
+p__23BE:  btfss  PORTC,2,a				; entry from: 0x23C4
           bra    p__23A2
           decfsz 0x52,a
           bra    p__23BE
@@ -2502,7 +2502,7 @@ p__2406:  rcall  p__2786				; entry from: 0x2416
 p__241C:  clrf   0x8F,b					; entry from: 0x2412
           clrf   0x90,b
           clrf   0x55,a
-p__2422:  movf   LATA,W,a				; entry from: 0x2432
+p__2422:  movf   PORTC,W,a				; entry from: 0x2432
           andlw  4
           xorwf  0x8F,W,b
           bz     p__244E
@@ -2798,7 +2798,7 @@ p__2682:  movwf  0x4E,a					; entry from: 0x20A8,0x2128
 
 p__268A:  bsf    0x72,7,b				; entry from: 0x25B6,0x25C0,0x25C8,0x25D0,0x25DC,0x25E8,0x25F4,0x262A
           rlncf  0x72,f,b
-          btfss  LATA,2,a
+          btfss  PORTC,2,a
           bcf    0x72,0,b
           movlw  0x1D
           bcf    STATUS,0,a
@@ -2814,7 +2814,7 @@ p__26A2:  btfss  0x72,0,b				; entry from: 0x2698
 
 p__26A8:  movlw  5						; entry from: 0x25AE,0x25BC,0x25C4,0x25CC,0x25D4,0x25E0,0x25EC,0x25F8
           movwf  0x52,a
-          btfss  LATA,2,a
+          btfss  PORTC,2,a
           retlw  0
           dcfsnz 0x52,a
           bra    p__26BA
@@ -2842,13 +2842,13 @@ p__2758:  movlw  2						; entry from: 0x78C
 p__2762:  movlw  0						; entry from: 0x2678,0x234E,0x275C
 p__2764:  xorwf  0x8E,W,b				; entry from: 0x2760
           bnz    p__2770
-          btfss  TRISC,1,a
+          btfss  LATA,1,a
           retlw  0
-          bcf    TRISC,1,a
+          bcf    LATA,1,a
           bra    p__2776
-p__2770:  btfsc  TRISC,1,a				; entry from: 0x2766
+p__2770:  btfsc  LATA,1,a				; entry from: 0x2766
           retlw  0
-          bsf    TRISC,1,a
+          bsf    LATA,1,a
 p__2776:  movf   0x49,W,a				; entry from: 0x276E
           movwf  0x4A,a
           retlw  0
