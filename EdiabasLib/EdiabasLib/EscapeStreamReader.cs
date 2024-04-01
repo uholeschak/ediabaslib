@@ -150,6 +150,19 @@ namespace EdiabasLib
             {
                 ReleaseReadMutex();
             }
+
+            try
+            {
+                if (_readMutex != null)
+                {
+                    _readMutex.Close();
+                    _readMutex = null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         public bool IsDataAvailable()

@@ -144,6 +144,19 @@ namespace EdiabasLib
             {
                 ReleaseWriteMutex();
             }
+
+            try
+            {
+                if (_writeMutex != null)
+                {
+                    _writeMutex.Close();
+                    _writeMutex = null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         public override int ReadByte()
