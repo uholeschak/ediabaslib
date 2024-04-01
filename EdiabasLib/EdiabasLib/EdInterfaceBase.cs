@@ -117,8 +117,16 @@ namespace EdiabasLib
                     }
                     catch (Exception)
                     {
-                        InterfaceMutex.Close();
-                        InterfaceMutex.Dispose();
+                        try
+                        {
+                            InterfaceMutex.Close();
+                            InterfaceMutex.Dispose();
+                            InterfaceMutex = null;
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
 #if Android
                         InterfaceMutex = new Mutex(false);
 #else
