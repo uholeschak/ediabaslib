@@ -1430,7 +1430,12 @@ p__1620:  movwf  0x4E,a					; entry from: 0x18BA,0x117E,0x1690,0x644
           rcall  p__1662
           movlw  0x52
           rcall  p__1662
+#if DATA_OFFSET == 0
           clrf   TBLPTRH,a
+#else
+          movlw  high(DATA_OFFSET) + 0
+          movwf  TBLPTRH
+#endif
           clrf   TBLPTRU,a
           movlw  0x80
           movwf  0x7F,a
@@ -1550,7 +1555,12 @@ p__1738:  movwf  PORTC,a					; entry from: 0x1732
 p__174E:  lfsr   1,0x100				; entry from: 0x1744
           lfsr   2,0x100
           lfsr   0,0
+#if DATA_OFFSET == 0
           clrf   TBLPTRH,a
+#else
+          movlw  high(DATA_OFFSET) + 0
+          movwf  TBLPTRH
+#endif
           bsf    CANCON,7,a
           clrf   0x42,a
           movlw  0xF
@@ -2021,7 +2031,7 @@ p__1B58:  movlw  0x4D					; entry from: 0x1B4C
           xorlw  0x50
           btfsc  STATUS,2,a
           goto   p__1224
-p__1B68:  movlw  1						; H ADDR  H ADDR  entry from: 0x1B5C
+p__1B68:  movlw  high(TABLE_OFFSET) + 1			; H ADDR  H ADDR  entry from: 0x1B5C
           movwf  TBLPTRH,a				; tblptrh  tblptrh 
           movlw  4
           cpfseq 0x60,b
