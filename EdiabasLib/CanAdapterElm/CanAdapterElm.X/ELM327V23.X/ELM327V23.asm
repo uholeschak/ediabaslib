@@ -124,7 +124,7 @@ RESETVEC:
           clrf   OSCCON,a
           bsf    LATC,6,a
           goto   p__16C2
-          db   29,190,236,239,8,240,112,14,16,239,11,240,0xFF,0xFF,0xFF,0xFF, 0xFA,0xD7
+          db   0x1D,0xBE,0xEC,0xEF,0x08,0xF0,0x70,0x0E,0x10,0xEF,0x0B,0xF0,0xFF,0xFF,0xFF,0xFF,0xFA,0xD7
           db   'O','B','D','I','I',' ','t','o',' ','R','S','2','3','2', ' ','I','n','t','e','r','p','r','e','t','e','r',0,0
           db   'B','U', 'F','F','E','R',' ','F','U','L','L',0
           db   'B','U','S',' ','B','U', 'S','Y', 0,0
@@ -143,7 +143,7 @@ RESETVEC:
           db   '<','R','X',' ','E','R','R','O','R',0
           db   'S','E','A','R','C','H','I','N','G','.','.','.',0,0
           db   'S','T','O','P','P','E','D',0
-          db   77,172,78,14,52,218,119,239,12,240,0xFF,0xFF,0xFF,0xFF			;M.N.4.w.......
+          db   0x4D,0xAC,0x4E,0x0E,0x34,0xDA,0x77,0xEF,0x0C,0xF0,0xFF,0xFF,0xFF,0xFF
           db   '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
 p___100:  addwf  PCL,a					; entry from: 0x1BD8
           dcfsnz 0x41,W,a
