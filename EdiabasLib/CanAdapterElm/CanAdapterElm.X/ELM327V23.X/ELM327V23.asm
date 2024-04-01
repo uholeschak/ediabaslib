@@ -1527,6 +1527,10 @@ p__16C2:  movlw  0x97					; entry from: 4
 p__16D6:  movlb  0						; entry from: 0x11F8
           movwf  0xD3,b
           clrf   STKPTR,a
+#if EEPROM_PAGE != 0
+          movlw  EEPROM_PAGE
+          movwf  EEADRH
+#endif
           btfsc  0xD3,1,b
           bcf    0xD3,0,b
           btfss  0xD3,4,b
