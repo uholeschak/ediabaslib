@@ -4,7 +4,7 @@
 
 #include <xc.inc>
 
-#define ORIGINAL    0
+#define ORIGINAL    1
 
 #if ORIGINAL
     #define SW_VERSION 0x00
@@ -26,10 +26,10 @@
 
     #if ADAPTER_TYPE == 0x02
 					;38400
-	#define DEFAULT_BAUD 0x68
+        #define DEFAULT_BAUD 0x68
     #else
 					;115200
-	#define DEFAULT_BAUD 0x23
+        #define DEFAULT_BAUD 0x23
     #endif
 #endif
 
@@ -88,7 +88,6 @@ CONFIG EBTR3 = OFF      ; Table Read Protect 06000-07FFF (Disabled)
 ; CONFIG7H
 CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
 
-#define END_LABEL reset_vector
 PSECT ramtop,class=RAM,delta=1
 PSECT smallconst,class=CONST,delta=1
 PSECT mediumconst,class=CONST,delta=1
@@ -118,17 +117,18 @@ PSECT intcode,class=CODE,delta=1
 PSECT reset_vec,class=CODE,delta=1
 PSECT code_abs,abs,class=CODE,delta=1
 		
-PSECT RESETVEC, abs
+
+ ORG CODE_OFFSET + 0
 RESETVEC:
 
-		ORG 0 
           clrf   OSCCON,a
           bsf    LATC,6,a
           goto   p__16C2
-          db   29,190,236,239,8,240,112,14,16,239,11,240,255,255,255,255		;......p.........
-          db   250,215,79,66,68,73,73,32,116,111,32,82,83,50,51,50				;..OBDII to RS232
-          db   32,73,110,116,101,114,112,114,101,116,101,114,0,0,66,85			; Interpreter..BU
-          db   70,70,69,82,32,70,85,76,76,0,66,85,83,32,66,85					;FFER FULL.BUS BU
+          db   29,190,236,239,8,240,112,14,16,239,11,240,0xFF,0xFF,0xFF,0xFF		;......p.........
+          db   0xFA,0xD7
+          db   'O','B','D','I','I',' ','t','o',' ','R','S','2','3','2', ' ','I','n','t','e','r','p','r','e','t','e','r',0,0
+          db   'B','U', 'F','F','E','R',' ','F','U','L','L',0
+          db   66,85,83,32,66,85					;BUS BU
           db   83,89,0,0,66,85,83,32,69,82,82,79,82,0,66,85						;SY..BUS ERROR.BU
           db   83,32,73,78,73,84,58,32,0,0,67,65,78,32,69,82					;S INIT: ..CAN ER
           db   82,79,82,0,60,68,65,84,65,32,69,82,82,79,82,0					;ROR.<DATA ERROR.
@@ -214,8 +214,8 @@ p___418:  rcall  p___84A				; entry from: 0x176A
           movlw  0x10
           iorlw  1
           movwf  0x74,a
-          bsf    0x7F,2,a
-          bcf    0x7F,7,a
+          bsf    EECON1,2,a
+          bcf    EECON1,7,a
 p___442:  clrf   0x53,a					; entry from: 0x46A
           clrf   0x54,a
           setf   0x73,a
@@ -223,7 +223,7 @@ p___442:  clrf   0x53,a					; entry from: 0x46A
           movwf  0x7E,a
           movlw  0xAA
           movwf  0x7E,a
-          bsf    0x7F,1,a
+          bsf    EECON1,1,a
 
 p___452:  decfsz 0x54,a					; entry from: 0x454,0x462
           bra    p___452
@@ -232,7 +232,7 @@ p___452:  decfsz 0x54,a					; entry from: 0x454,0x462
 p___45A:  movlw  0x81					; entry from: 0x6AA
           movwf  0xD4,b
           reset
-p___460:  btfsc  0x7F,1,a				; entry from: 0x458
+p___460:  btfsc  EECON1,1,a				; entry from: 0x458
           bra    p___452
           incf   EEADR,a
           incf   EEADR,a
@@ -407,11 +407,11 @@ p___5CC:  btfsc  0xD5,6,b				; entry from: 0x5C2
 
 p___5D4:  clrf   0x4C,a					; entry from: 0x660,0x78A,0x77E
           clrf   0x74,a
-          bcf    0x7F,7,a
+          bcf    EECON1,7,a
           movlw  8
           movwf  0x52,a
 p___5DE:  rrncf  0x4C,a					; entry from: 0x5EA
-          bsf    0x7F,0,a
+          bsf    EECON1,0,a
           tstfsz 0x73,a
           bsf    0x4C,7,a
           incf   0x74,a
@@ -441,7 +441,7 @@ p___5DE:  rrncf  0x4C,a					; entry from: 0x5EA
 
 p___616:  incf   0x74,a					; entry from: 0x5FE,0x602,0x606
           nop
-p___61A:  bsf    0x7F,0,a				; entry from: 0x5FA
+p___61A:  bsf    EECON1,0,a				; entry from: 0x5FA
           movf   0x73,W,a
           return 
 
@@ -481,7 +481,7 @@ p___658:  movff  0x4C,0x55				; entry from: 0x1906
           movf   0x4C,W,a
           xorwf  0x55,W,a
           bz     p___690
-          bsf    0x7F,2,a
+          bsf    EECON1,2,a
           clrf   0x74,a
           movlw  8
           movwf  0x52,a
@@ -492,7 +492,7 @@ p___678:  btfss  0x55,0,a				; entry from: 0x682
           rrncf  0x55,a
           decfsz 0x52,a
           bra    p___678
-          bcf    0x7F,2,a
+          bcf    EECON1,2,a
           bcf    0x4D,7,a
           btfsc  0x55,7,a
           bsf    0x4D,7,a
@@ -500,21 +500,21 @@ p___678:  btfss  0x55,0,a				; entry from: 0x682
 p___690:  bcf    0x4C,7,a				; entry from: 0x66C
           return 
 p___694:  movwf  0x73,a					; entry from: 0x67C
-          bcf    0x7F,7,a
+          bcf    EECON1,7,a
           movlw  0x55
           movwf  0x7E,a
           movlw  0xAA
           movwf  0x7E,a
-          bsf    0x7F,1,a
+          bsf    EECON1,1,a
           movlw  0xC
           rcall  p___834
 p___6A6:  rcall  p___936				; entry from: 0x6AE
           btfsc  0xF,1,a
           bra    p___45A
-          btfsc  0x7F,1,a
+          btfsc  EECON1,1,a
           bra    p___6A6
           incf   0x74,a
-          bsf    0x7F,7,a
+          bsf    EECON1,7,a
           retlw  0xFF
 p___6B6:  btfsc  0xD3,2,b				; entry from: 0x189E
           bra    p___72A
@@ -642,7 +642,7 @@ p___794:  clrf   0xF,a					; entry from: 0x784
           movlw  0x16
           rcall  p___620
           movwf  0x81,b
-          movwf  0x7F,b
+          movwf  EECON1,b
           movlw  0x50
           movwf  0xD1,b
           movlw  0x38
@@ -967,11 +967,11 @@ p___C42:  subwf  0x53,W,a				; entry from: 0xC32
           db   154,223,15,14,160,19,125,21,164,19,138,215						;......}.....
 
 p___CE2:  movwf  0x74,a					; entry from: 0x622,0x62C
-          bcf    0x7F,7,a
-          bcf    0x7F,6,a
-          bsf    0x7F,0,a
+          bcf    EECON1,7,a
+          bcf    EECON1,6,a
+          bsf    EECON1,0,a
           movf   0x73,W,a
-          bsf    0x7F,7,a
+          bsf    EECON1,7,a
           return 
           db   65,14,101,99,147,215,82,14,100,25,216,180,189,214,69,14			;A.ec..R.d.....E.
           db   100,99,140,215,25,146,16,156,148,81,23,110,146,208,214,111		;dc.......Q.n...o
@@ -1431,10 +1431,15 @@ p__1620:  movwf  0x4E,a					; entry from: 0x18BA,0x117E,0x1690,0x644
           rcall  p__1662
           movlw  0x52
           rcall  p__1662
+#if DATA_OFFSET == 0
           clrf   TBLPTRH,a
+#else
+          movlw  high(DATA_OFFSET) + 0
+          movwf  TBLPTRH
+#endif
           clrf   TBLPTRU,a
           movlw  0x80
-          movwf  0x7F,a
+          movwf  EECON1,a
           swapf  0x4E,W,a
           call   p___52A
           rcall  p__1662
@@ -1551,7 +1556,12 @@ p__1738:  movwf  PORTC,a					; entry from: 0x1732
 p__174E:  lfsr   1,0x100				; entry from: 0x1744
           lfsr   2,0x100
           lfsr   0,0
+#if DATA_OFFSET == 0
           clrf   TBLPTRH,a
+#else
+          movlw  high(DATA_OFFSET) + 0
+          movwf  TBLPTRH
+#endif
           bsf    CANCON,7,a
           clrf   0x42,a
           movlw  0xF
@@ -2022,7 +2032,7 @@ p__1B58:  movlw  0x4D					; entry from: 0x1B4C
           xorlw  0x50
           btfsc  STATUS,2,a
           goto   p__1224
-p__1B68:  movlw  1						; H ADDR  H ADDR  entry from: 0x1B5C
+p__1B68:  movlw  high(TABLE_OFFSET) + 1			; H ADDR  H ADDR  entry from: 0x1B5C
           movwf  TBLPTRH,a				; tblptrh  tblptrh 
           movlw  4
           cpfseq 0x60,b
@@ -2075,7 +2085,12 @@ p__1BBA:  tblrd*+						; entry from: 0x1BE2
           cpfseq 0x64,b
           bra    p__1BDE
 p__1BCE:  movff  TBLPTRH,PCLATH			; entry from: 0x1BC8
+#if DATA_OFFSET == 0
           clrf   TBLPTRH,a
+#else
+          movlw  high(DATA_OFFSET) + 0
+          movwf  TBLPTRH
+#endif
           movlw  2
           subwf  TBLPTRL,W,a
           goto   p___100
@@ -2083,7 +2098,13 @@ p__1BDC:  incf   TBLPTRL,a				; entry from: 0x1BC2
 p__1BDE:  movlw  4						; entry from: 0x1BCC
           addwf  TBLPTRL,a
           bra    p__1BBA
-p__1BE4:  clrf   TBLPTRH,a				; entry from: 0x1BBE
+p__1BE4:
+#if DATA_OFFSET == 0
+          clrf   TBLPTRH,a				; entry from: 0x1BBE
+#else
+          movlw  high(DATA_OFFSET) + 0			; entry from: 0x1BBE
+          movwf  TBLPTRH
+#endif
 
 p__1BE6:  goto   p___C1C				; entry from: 0x19D6,0x1A8E,0x1B24,0x1B2A,0x1B30
 p__1BEA:  movwf  0x4E,a					; entry from: 0x1F86
@@ -2326,9 +2347,9 @@ p__20EE:  movf   0x84,W,b				; entry from: 0x20E2
           cpfsgt 0x84,b
           incf   0x80,f,b
           movf   0x80,W,b
-          cpfsgt 0x7F,b
+          cpfsgt EECON1,b
 
-p__20FE:  movf   0x7F,W,b				; entry from: 0x20BC,0x20C2,0x20C6,0x20CC,0x20F2,0x20E4
+p__20FE:  movf   EECON1,W,b				; entry from: 0x20BC,0x20C2,0x20C6,0x20CC,0x20F2,0x20E4
 p__2100:  clrf   0xBC,b					; entry from: 0x1FB0
           bcf    0x74,0,b
           btfss  0x42,2,a
@@ -3408,7 +3429,7 @@ p__3C46:  clrf   0xBC,b					; entry from: 0x2116
           bra    p__3C54
           btfsc  0x19,2,a
           bsf    0xBC,2,b
-          movf   0x7F,W,b
+          movf   EECON1,W,b
           return 
 p__3C54:  bsf    0xBC,2,b				; entry from: 0x3C4A
           iorlw  0
