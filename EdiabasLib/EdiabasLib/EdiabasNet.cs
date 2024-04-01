@@ -2285,6 +2285,7 @@ namespace EdiabasLib
 #if COMPRESS_TRACE
         private ICSharpCode.SharpZipLib.Zip.ZipOutputStream _zipStream;
 #endif
+        private readonly object _logMutexLock = new object();
         private Mutex _logMutex = new Mutex(false);
         private int _logLevelCached = -1;
         private readonly bool _lockTrace;
@@ -3079,10 +3080,13 @@ namespace EdiabasLib
 
                     CloseLog(); // must be closed after interface class
 
-                    if (_logMutex != null)
+                    lock (_logMutexLock)
                     {
-                        _logMutex.Dispose();
-                        _logMutex = null;
+                        if (_logMutex != null)
+                        {
+                            _logMutex.Dispose();
+                            _logMutex = null;
+                        }
                     }
 
                     lock (SharedDataLock)
@@ -5774,14 +5778,18 @@ namespace EdiabasLib
         {
             try
             {
-                if (_disposed || _logMutex == null)
+                lock (_logMutexLock)
                 {
+                    if (_disposed || _logMutex == null)
+                    {
 #if Android && DEBUG
-                    Android.Util.Log.Debug(Tag, "AcquireLogMutex: Mutex deleted");
+                        Android.Util.Log.Debug(Tag, "AcquireLogMutex: Mutex deleted");
 #endif
-                    return false;
+                        return false;
+                    }
                 }
 
+                // no lock while waiting for mutex
                 if (!_logMutex.WaitOne(timeout))
                 {
                     return false;
@@ -5799,15 +5807,18 @@ namespace EdiabasLib
         {
             try
             {
-                if (_disposed || _logMutex == null)
+                lock (_logMutexLock)
                 {
+                    if (_disposed || _logMutex == null)
+                    {
 #if Android && DEBUG
-                    Android.Util.Log.Debug(Tag, "ReleaseLogMutex: Mutex deleted");
+                        Android.Util.Log.Debug(Tag, "ReleaseLogMutex: Mutex deleted");
 #endif
-                    return;
-                }
+                        return;
+                    }
 
-                _logMutex.ReleaseMutex();
+                    _logMutex.ReleaseMutex();
+                }
             }
             catch (Exception)
             {
