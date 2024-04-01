@@ -4,62 +4,90 @@
 
 #include <xc.inc>
 
-		; CONFIG1L
-		CONFIG RETEN = ON       ; VREG Sleep Enable bit (Ultra low-power regulator is Enabled (Controlled by SRETEN bit))
-		CONFIG INTOSCSEL = HIGH ; LF-INTOSC Low-power Enable bit (LF-INTOSC in High-power mode during Sleep)
-		CONFIG SOSCSEL = DIG    ; SOSC Power Selection and mode Configuration bits (Digital (SCLKI) mode)
-		CONFIG XINST = OFF      ; Extended Instruction Set (Disabled)
+#define ORIGINAL    1
 
-		; CONFIG1H
-		CONFIG FOSC = HS1       ; Oscillator (HS oscillator (Medium power, 4 MHz - 16 MHz))
-		CONFIG PLLCFG = ON      ; PLL x4 Enable bit (Enabled)
-		CONFIG FCMEN = OFF      ; Fail-Safe Clock Monitor (Disabled)
-		CONFIG IESO = OFF       ; Internal External Oscillator Switch Over Mode (Disabled)
+#if ORIGINAL
+    #define SW_VERSION 0x00
+    #define CODE_OFFSET 0x0000
+    #define BASE_ADDR 0x0000
+    #define DATA_OFFSET BASE_ADDR
+    #define TABLE_OFFSET BASE_ADDR
+    #define EEPROM_PAGE 0x0
+    #define WDT_RESET   0x0
+    #define DEFAULT_BAUD 0x68		;38400
+#else
+    #define SW_VERSION 0x02
+    #define CODE_OFFSET 0x0800
+    #define BASE_ADDR 0x1000
+    #define DATA_OFFSET BASE_ADDR
+    #define TABLE_OFFSET BASE_ADDR
+    #define EEPROM_PAGE 0x3
+    #define WDT_RESET   0x1
 
-		; CONFIG2L
-		CONFIG PWRTEN = ON      ; Power Up Timer (Enabled)
-		CONFIG BOREN = SBORDIS  ; Brown Out Detect (Enabled in hardware, SBOREN disabled)
-		CONFIG BORV = 0         ; Brown-out Reset Voltage bits (3.0V)
-		CONFIG BORPWR = HIGH    ; BORMV Power level (BORMV set to high power level)
+    #if ADAPTER_TYPE == 0x02
+					;38400
+	#define DEFAULT_BAUD 0x68
+    #else
+					;115200
+	#define DEFAULT_BAUD 0x23
+    #endif
+#endif
 
-		CONFIG CONFIG2H = 0x1E
-		CONFIG CONFIG3H = 0x89
+; CONFIG1L
+CONFIG RETEN = ON       ; VREG Sleep Enable bit (Ultra low-power regulator is Enabled (Controlled by SRETEN bit))
+CONFIG INTOSCSEL = HIGH ; LF-INTOSC Low-power Enable bit (LF-INTOSC in High-power mode during Sleep)
+CONFIG SOSCSEL = DIG    ; SOSC Power Selection and mode Configuration bits (Digital (SCLKI) mode)
+CONFIG XINST = OFF      ; Extended Instruction Set (Disabled)
 
-		; CONFIG4L
-		CONFIG STVREN = ON      ; Stack Overflow Reset (Enabled)
-		CONFIG BBSIZ = BB1K     ; Boot Block Size (1K word Boot Block size)
+; CONFIG1H
+CONFIG FOSC = HS1       ; Oscillator (HS oscillator (Medium power, 4 MHz - 16 MHz))
+CONFIG PLLCFG = ON      ; PLL x4 Enable bit (Enabled)
+CONFIG FCMEN = OFF      ; Fail-Safe Clock Monitor (Disabled)
+CONFIG IESO = OFF       ; Internal External Oscillator Switch Over Mode (Disabled)
 
-		; CONFIG5L
-		CONFIG CP0 = OFF        ; Code Protect 00800-01FFF (Disabled)
-		CONFIG CP1 = OFF        ; Code Protect 02000-03FFF (Disabled)
-		CONFIG CP2 = OFF        ; Code Protect 04000-05FFF (Disabled)
-		CONFIG CP3 = OFF        ; Code Protect 06000-07FFF (Disabled)
+; CONFIG2L
+CONFIG PWRTEN = ON      ; Power Up Timer (Enabled)
+CONFIG BOREN = SBORDIS  ; Brown Out Detect (Enabled in hardware, SBOREN disabled)
+CONFIG BORV = 0         ; Brown-out Reset Voltage bits (3.0V)
+CONFIG BORPWR = HIGH    ; BORMV Power level (BORMV set to high power level)
 
-		; CONFIG5H
-		CONFIG CPB = OFF        ; Code Protect Boot (Disabled)
-		CONFIG CPD = OFF        ; Data EE Read Protect (Disabled)
+CONFIG CONFIG2H = 0x1E
+CONFIG CONFIG3H = 0x89
 
-		; CONFIG6L
-		CONFIG WRT0 = OFF       ; Table Write Protect 00800-01FFF (Disabled)
-		CONFIG WRT1 = OFF       ; Table Write Protect 02000-03FFF (Disabled)
-		CONFIG WRT2 = OFF       ; Table Write Protect 04000-05FFF (Disabled)
-		CONFIG WRT3 = OFF       ; Table Write Protect 06000-07FFF (Disabled)
+; CONFIG4L
+CONFIG STVREN = ON      ; Stack Overflow Reset (Enabled)
+CONFIG BBSIZ = BB1K     ; Boot Block Size (1K word Boot Block size)
 
-		; CONFIG6H
-		CONFIG WRTC = ON        ; Config. Write Protect (Enabled)
-		CONFIG WRTB = ON        ; Table Write Protect Boot (Enabled)
-		CONFIG WRTD = OFF       ; Data EE Write Protect (Disabled)
+; CONFIG5L
+CONFIG CP0 = OFF        ; Code Protect 00800-01FFF (Disabled)
+CONFIG CP1 = OFF        ; Code Protect 02000-03FFF (Disabled)
+CONFIG CP2 = OFF        ; Code Protect 04000-05FFF (Disabled)
+CONFIG CP3 = OFF        ; Code Protect 06000-07FFF (Disabled)
 
-		; CONFIG7L
-		CONFIG EBTR0 = OFF      ; Table Read Protect 00800-01FFF (Disabled)
-		CONFIG EBTR1 = OFF      ; Table Read Protect 02000-03FFF (Disabled)
-		CONFIG EBTR2 = OFF      ; Table Read Protect 04000-05FFF (Disabled)
-		CONFIG EBTR3 = OFF      ; Table Read Protect 06000-07FFF (Disabled)
+; CONFIG5H
+CONFIG CPB = OFF        ; Code Protect Boot (Disabled)
+CONFIG CPD = OFF        ; Data EE Read Protect (Disabled)
 
-		; CONFIG7H
-		CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
+; CONFIG6L
+CONFIG WRT0 = OFF       ; Table Write Protect 00800-01FFF (Disabled)
+CONFIG WRT1 = OFF       ; Table Write Protect 02000-03FFF (Disabled)
+CONFIG WRT2 = OFF       ; Table Write Protect 04000-05FFF (Disabled)
+CONFIG WRT3 = OFF       ; Table Write Protect 06000-07FFF (Disabled)
 
-#define END_LABEL reset_vector
+; CONFIG6H
+CONFIG WRTC = ON        ; Config. Write Protect (Enabled)
+CONFIG WRTB = ON        ; Table Write Protect Boot (Enabled)
+CONFIG WRTD = OFF       ; Data EE Write Protect (Disabled)
+
+; CONFIG7L
+CONFIG EBTR0 = OFF      ; Table Read Protect 00800-01FFF (Disabled)
+CONFIG EBTR1 = OFF      ; Table Read Protect 02000-03FFF (Disabled)
+CONFIG EBTR2 = OFF      ; Table Read Protect 04000-05FFF (Disabled)
+CONFIG EBTR3 = OFF      ; Table Read Protect 06000-07FFF (Disabled)
+
+; CONFIG7H
+CONFIG EBTRB = OFF      ; Table Read Protect Boot (Disabled)
+
 PSECT ramtop,class=RAM,delta=1
 PSECT smallconst,class=CONST,delta=1
 PSECT mediumconst,class=CONST,delta=1
@@ -89,10 +117,10 @@ PSECT intcode,class=CODE,delta=1
 PSECT reset_vec,class=CODE,delta=1
 PSECT code_abs,abs,class=CODE,delta=1
 		
-PSECT RESETVEC, abs
+
+ ORG CODE_OFFSET + 0
 RESETVEC:
 
-		ORG 0 
           clrf   OSCCON,a
           bsf    LATC,6,a
           goto   p__16C2
@@ -1558,7 +1586,7 @@ p__179E:  btfss  TXSTA1,1,a			; entry from: 0x1788
           call   p___84C
           btfsc  0xD3,5,b
           bra    p__17CC
-          movlw  0x68
+          movlw  DEFAULT_BAUD
           movwf  0xD1,b
           movlw  0x28
           rcall  p__16BE
