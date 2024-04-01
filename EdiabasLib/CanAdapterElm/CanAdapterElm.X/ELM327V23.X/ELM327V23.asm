@@ -2084,7 +2084,12 @@ p__1BBA:  tblrd*+						; entry from: 0x1BE2
           cpfseq 0x64,b
           bra    p__1BDE
 p__1BCE:  movff  TBLPTRH,PCLATH			; entry from: 0x1BC8
+#if DATA_OFFSET == 0
           clrf   TBLPTRH,a
+#else
+          movlw  high(DATA_OFFSET) + 0
+          movwf  TBLPTRH
+#endif
           movlw  2
           subwf  TBLPTRL,W,a
           goto   p___100
@@ -2092,7 +2097,13 @@ p__1BDC:  incf   TBLPTRL,a				; entry from: 0x1BC2
 p__1BDE:  movlw  4						; entry from: 0x1BCC
           addwf  TBLPTRL,a
           bra    p__1BBA
-p__1BE4:  clrf   TBLPTRH,a				; entry from: 0x1BBE
+p__1BE4:
+#if DATA_OFFSET == 0
+          clrf   TBLPTRH,a				; entry from: 0x1BBE
+#else
+          movlw  high(DATA_OFFSET) + 0			; entry from: 0x1BBE
+          movwf  TBLPTRH
+#endif
 
 p__1BE6:  goto   p___C1C				; entry from: 0x19D6,0x1A8E,0x1B24,0x1B2A,0x1B30
 p__1BEA:  movwf  0x4E,a					; entry from: 0x1F86
