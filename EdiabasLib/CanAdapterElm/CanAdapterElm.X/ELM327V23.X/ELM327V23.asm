@@ -225,40 +225,40 @@ p___302:  goto   p___E32				; entry from: 0x106
           db   'U','S','E','R','2',0
           db   ' ','(','C','A','N',' ',0,0
           db   'E','R','R','7','1',0
-p__3D0:	btfss	0x18,7,a					; entry from: 210h
-		bra		p__3D8
-		rcall	p___6B6
-		bra		p___302
-p__3D8:	rcall	p___6B6					; entry from: 3D2h
-		rcall	p___53A
-		bra		p___302
+p___3D0:  btfss  0x18,7,a				; entry from: 0x210
+          bra    p___3D8
+          rcall  p___6B6
+          bra    p___302
+p___3D8:  rcall  p___6B6				; entry from: 0x3D2
+          rcall  p___53A
+          bra    p___302
 
-p__3DE:	clrf	0x38, a						; entry from: 0EFEh,14AEh
-		clrf	0x39, a
-		movlw	3
-		movwf	0x7B,b
-		movlw	0xE8
-		movwf	0x7C,b
-		rcall	p___804
-		movff	0x7E,0x55
-		iorlw	0
-		bz	p__3F6
-		retlw	0FFh
-p__3F6:	movwf	7Bh,b				; entry from: 3F2h
-		movlw	0x64
-		movwf	0x7C,b
-		rcall	p___804
-		movff	0x7E,0x39
-		movff	0x55,0x38
-		clrf	0x7E,b
-		movlw	0x0A
-p__40A:	incf	0x7E,f,b			; entry from: 40Eh
-		subwf	0x3B
-		bc		p__40A
-		addwf	0x3B
-		decf	0x7E,W,b
-		movwf	0x3A
-		retlw	0
+p___3DE:  clrf   0x38,a					; entry from: 0xEFE,0x14AE
+          clrf   0x39,a
+          movlw  3
+          movwf  0x7B,b
+          movlw  0xE8
+          movwf  0x7C,b
+          rcall  p___804
+          movff  0x7E,0x55
+          iorlw  0
+          bz     p___3F6
+          retlw  0xFF
+p___3F6:  movwf  0x7B,b					; entry from: 0x3F2
+          movlw  0x64
+          movwf  0x7C,b
+          rcall  p___804
+          movff  0x7E,0x39
+          movff  0x55,0x38
+          clrf   0x7E,b
+          movlw  0xA
+p___40A:  incf   0x7E,f,b				; entry from: 0x40E
+          subwf  0x3B,a
+          bc     p___40A
+          addwf  0x3B,a
+          decf   0x7E,W,b
+          movwf  0x3A,a
+          retlw  0
 p___418:  rcall  p___84A				; entry from: 0x176A
           btfsc  PORTB,7,a
           return 
@@ -743,10 +743,31 @@ p___794:  clrf   0xF,a					; entry from: 0x784
           rcall  p___620
           movwf  0x87,b
           return 
-p___804:
-          db   125,107,126,107,124,81,59,94,123,81,58,90,0,14,57,90				;}k~k|Q;^{Q:Z..9Z
-          db   56,90,6,227,126,43,216,176,125,43,216,176,255,12,242,215			;8Z..~+..}+......
-          db   124,81,59,38,123,81,58,34,0,14,57,34,56,34,0,12					;|Q;&{Q:"..9"8"..
+
+p___804:  clrf   0x7D,b					; entry from: 0x3EA,0x3FC,0xEF4,0x1494
+          clrf   0x7E,b
+p___808:  movf   0x7C,W,b				; entry from: 0x822
+          subwf  0x3B,a
+          movf   0x7B,W,b
+          subwfb 0x3A,a
+          movlw  0
+          subwfb 0x39,a
+          subwfb 0x38,a
+          bnc    p___824
+          incf   0x7E,f,b
+          btfsc  STATUS,0,a
+          incf   0x7D,f,b
+          btfsc  STATUS,0,a
+          retlw  0xFF
+          bra    p___808
+p___824:  movf   0x7C,W,b				; entry from: 0x816
+          addwf  0x3B,a
+          movf   0x7B,W,b
+          addwfc 0x3A,a
+          movlw  0
+          addwfc 0x39,a
+          addwfc 0x38,a
+          retlw  0
 
 p___834:  movwf  0x80,b					; entry from: 0x83E,0x238E,0x6A4
           clrf   0x29,a
