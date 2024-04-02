@@ -223,13 +223,40 @@ p___302:  goto   p___E32				; entry from: 0x106
           db   'U','S','E','R','2',0
           db   ' ','(','C','A','N',' ',0,0
           db   'E','R','R','7','1',0
-          db   24,174,2,208,112,217
-          db   149,215,110,217,175,216,146,215,56,106,57,106,3,14,123,111		;..n.....8j9j..{o
-          db   232,14,124,111,12,218,126,192,85,240,0,9,1,224,255,12			;..|o..~.U.......
-          db   123,111,100,14,124,111,3,218,126,192,57,240,85,192,56,240		;{od.|o..~.9.U.8.
-          db   126,107,10,14,126,43,59,94,253,226,59,38,126,5			;~k..~+;^..;&~.:n
-          MOVWF 0x3A, a
-          RETLW 0x0
+p__3D0:	btfss	0x18,7,a					; entry from: 210h
+		bra		p__3D8
+		rcall	p___6B6
+		bra		p___302
+p__3D8:	rcall	p___6B6					; entry from: 3D2h
+		rcall	p___53A
+		bra		p___302
+
+p__3DE:	clrf	0x38, a						; entry from: 0EFEh,14AEh
+		clrf	0x39, a
+		movlw	3
+		movwf	0x7B,b
+		movlw	0xE8
+		movwf	0x7C,b
+		rcall	p___804
+		movff	0x7E,0x55
+		iorlw	0
+		bz	p__3F6
+		retlw	0FFh
+p__3F6:	movwf	7Bh,b				; entry from: 3F2h
+		movlw	0x64
+		movwf	0x7C,b
+		rcall	p___804
+		movff	0x7E,0x39
+		movff	0x55,0x38
+		clrf	0x7E,b
+		movlw	0x0A
+p__40A:	incf	0x7E,f,b			; entry from: 40Eh
+		subwf	0x3B
+		bc		p__40A
+		addwf	0x3B
+		decf	0x7E,W,b
+		movwf	0x3A
+		retlw	0
 p___418:  rcall  p___84A				; entry from: 0x176A
           btfsc  PORTB,7,a
           return 
@@ -714,6 +741,7 @@ p___794:  clrf   0xF,a					; entry from: 0x784
           rcall  p___620
           movwf  0x87,b
           return 
+p___804:
           db   125,107,126,107,124,81,59,94,123,81,58,90,0,14,57,90				;}k~k|Q;^{Q:Z..9Z
           db   56,90,6,227,126,43,216,176,125,43,216,176,255,12,242,215			;8Z..~+..}+......
           db   124,81,59,38,123,81,58,34,0,14,57,34,56,34,0,12					;|Q;&{Q:"..9"8"..
