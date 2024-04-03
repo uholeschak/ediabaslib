@@ -12273,8 +12273,12 @@ namespace BmwDeepObd
 
             public override void OnReceive(Context context, Intent intent)
             {
-                string action = intent.Action;
+                if (intent == null)
+                {
+                    return;
+                }
 
+                string action = intent.Action;
                 _activityCommon._bcReceiverReceivedHandler?.Invoke(context, intent);
                 switch (action)
                 {
