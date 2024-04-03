@@ -2548,7 +2548,8 @@ p__1610:  addwf  POSTINC0,W,a			; entry from: 0x1614
           movwf  INDF0,a
           incf   0x2A,a
           bra    p__1394
-          db   32,14,91,208														; .[.
+p__161C:  movlw  0x20					; entry from: 0x1EE
+          bra    p__16D6
 
 p__1620:  movwf  0x4E,a					; entry from: 0x18BA,0x117E,0x1690,0x644
           clrf   STKPTR,a
@@ -2614,9 +2615,24 @@ p__168A:  movlw  0x74					; entry from: 0x1F60,0x1BEE
 p__1692:  clrf   STKPTR,a				; entry from: 0x168E
           dcfsnz 0x4E,a
           bra    p__18F0
-          db   26,152,198,14,78,78,160,14,78,78,132,14,78,78,66,14				;....NN..NN..NNB.
-          db   78,78,76,14,78,78,98,14,78,46,118,239,12,240,17,190				;NNL.NNb.N.v.....
-          db   27,209,178,14,250,215											;......
+          bcf    0x1A,4,a
+          movlw  0xC6
+          dcfsnz 0x4E,a
+          movlw  0xA0
+          dcfsnz 0x4E,a
+          movlw  0x84
+          dcfsnz 0x4E,a
+          movlw  0x42
+          dcfsnz 0x4E,a
+          movlw  0x4C
+          dcfsnz 0x4E,a
+          movlw  0x62
+          decfsz 0x4E,a
+p__16B2:  goto   p__18EC				; entry from: 0x16BC
+          btfsc  0x11,7,a
+          bra    p__18F0
+          movlw  0xB2
+          bra    p__16B2
 
 p__16BE:  goto   p___620				; entry from: 0x16F0,0x172A,0x177E,0x1808,0x1812,0x181C,0x1826,0x183A,0x1844,0x1854,0x185E,0x18D2,0x17D8,0x17E2,0x17EA,0x17F2,0x17FE,0x17AE
 p__16C2:  movlw  0x97					; entry from: 4
