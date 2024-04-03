@@ -6664,55 +6664,369 @@ p__392C:  movf   FSR1H,W,a				; entry from: 0x391C
           bcf    FSR2H,3,a
           movwf  TXREG1,a
           return 
-          db   86,80,87,224,240,11,83,110,2,225,86,182,74,208,63,8				;VPW...Sn..V.J.?.
-          db   72,227,16,14,83,98,5,208,2,14,25,178,3,14,64,100					;H...Sb........@d
-          db   64,208,63,170,61,174,3,208,8,14,64,98,58,208,115,183				;@.?.=.....@b:.s.
-          db   0,12,24,162,9,208,117,216,207,223,86,40,83,82,46,224				;......u...V(SR..
-          db   48,14,83,98,143,215,41,208,83,102,3,208,238,80,86,40				;0.Sb..).Sf...PV(
-          db   37,208,194,223,32,14,83,98,7,208,238,80,149,236,2,240			;%... .Sb...P....
-          db   154,236,2,240,123,223,126,215,16,14,83,98,11,208,238,80			;....{.~...Sb...P
-          db   86,216,178,223,238,80,163,236,2,240,157,236,2,240,172,223		;V....P..........
-          db   48,14,238,215,70,14,168,236,2,240,67,14,154,236,2,240			;0...F.....C.....
-          db   163,223,100,223,238,80,67,216,97,223,3,14,25,178,1,15			;..d..PC.a.......
-          db   98,215,77,182,9,208,77,172,77,168,24,214,15,128,115,135			;b.M...M.M.....s.
-          db   0,12,77,166,248,215,61,188,15,128,24,178,50,216,140,223			;..M...=.....2...
-          db   81,215,115,183,0,12,24,162,31,208,110,223,84,182,2,208			;Q.s.......n.T...
-          db   73,216,72,215,63,182,2,208,39,216,68,215,1,48,83,110				;I.H.?...'.D..0Sn
-          db   83,50,83,150,83,80,167,236,2,240,118,223,55,223,3,14				;S2S.SP....v.7...
-          db   1,20,167,236,2,240,2,56,167,236,2,240,109,223,2,80				;.......8....m..P
-          db   167,236,2,240,24,216,46,215,176,167,44,215,5,56,7,216			;..........,..8..
-          db   99,223,238,80,4,216,155,236,2,240,32,223,35,215,167,239			;c..P...... .#...
-          db   2,240,66,223,84,166,30,208,1,56,224,236,21,240,84,223			;..B.T....8....T.
-          db   2,56,224,236,21,240,3,56,224,236,21,240,77,223,4,56				;.8.....8....M..8
-          db   224,236,21,240,25,170,5,208,71,223,64,80,167,236,2,240			;........G.@P....
-          db   5,223,66,164,25,162,18,0,63,223,148,57,16,188,23,56				;..B.....?..9...8
-          db   224,239,21,240,3,80,167,236,2,240,232,215,53,223,2,56			;.....P......5..8
-          db   48,11,177,111,2,68,193,11,177,19,1,68,14,11,177,19				;0..o.D.....D....
-          db   177,59,112,14,17,20,216,164,204,214,63,176,202,214,69,80			;.;p.......?...EP
-          db   177,25,216,180,198,214,8,14,64,98,160,213,29,223,232,14			;........@b......
-          db   177,99,10,208,70,80,10,98,153,213,69,80,11,98,150,213			;.c..FP.b..EP.b..
-          db   68,80,12,98,147,213,181,214,236,14,177,99,93,208,70,80			;DP.b.......c].FP
-          db   10,98,140,213,69,80,11,98,137,213,68,80,12,98,134,213			;.b..EP.b..DP.b..
-          db   9,80,184,111,16,14,5,24,25,190,5,224,32,14,5,98					;.P.o........ ..b
-          db   125,213,176,137,184,105,176,135,176,159,4,192,178,240,6,192		;}....i..........
-          db   179,240,7,192,180,240,8,80,181,111,183,111,182,107,182,43		;.......P.o.o.k.+
-          db   185,107,186,107,16,14,184,97,184,111,8,80,184,97,184,111			;.k.k...a.o.P.a.o
-          db   227,222,96,217,14,1,254,105,255,105,75,14,233,111,237,111		;..`....i.iK..o.o
-          db   241,111,245,111,3,80,234,111,238,111,242,111,246,111,4,80		;.o.o.P.o.o.o.o.P
-          db   235,111,239,111,243,111,247,111,0,1,176,129,61,217,24,176		;.o.o.o.o....=...
-          db   2,208,112,222,7,208,180,81,106,223,198,222,179,81,163,236		;..p....Qj....Q..
-          db   2,240,194,222,157,236,2,240,0,14,176,185,8,208,17,180			;................
-          db   5,208,6,236,30,240,64,236,25,240,182,222,255,14,77,216			;......@.......M.
-          db   128,111,41,106,15,146,50,213,235,14,177,99,47,213,176,169		;.o)j..2....c/...
-          db   17,180,176,133,185,43,186,43,167,222,176,165,4,208,181,81		;.....+.+.......Q
-          db   185,97,176,131,71,214,186,81,184,99,68,214,182,39,183,95			;.a..G..Q.cD..'._
-          db   183,103,14,208,176,131,57,222,96,182,180,217,19,14,102,110		;.g....9.`.....fn
-          db   179,81,103,110,180,81,104,110,181,81,105,110,19,216,50,214		;.Qgn.Qhn.Qin..2.
-          db   186,107,183,81,184,97,184,111,3,216,64,236,25,240,42,214			;.k.Q.a.o..@...*.
-          db   36,222,96,182,159,217,17,14,102,110,184,192,103,255,182,192		;$.`.....fn..g...
-          db   104,255,105,104,106,104,70,192,107,255,69,192,108,255,68,192		;h.ihjhF.k.E.l.D.
-          db   109,255,231,14,97,110,104,14,98,110,178,192,99,255,20,192		;m...anh.bn..c...
-          db   100,255,8,14,101,110,104,222,177,212								;d...enh...
+
+p__393C:  movf   0x56,W,a				; entry from: 0x3880
+          bz     p__39EE
+          andlw  0xF0
+          movwf  0x53,a
+          bnz    p__394A
+          btfsc  0x56,3,a
+          bra    p__39DE
+p__394A:  sublw  0x3F					; entry from: 0x3944
+          bnc    p__39DE
+          movlw  0x10
+          cpfseq 0x53,a
+          bra    p__395E
+          movlw  2
+          btfsc  0x19,1,a
+          movlw  3
+          cpfsgt 0x40,a
+          bra    p__39DE
+p__395E:  btfss  0x3F,5,a				; entry from: 0x3952
+          btfss  0x3D,7,a
+          bra    p__396A
+          movlw  8
+          cpfseq 0x40,a
+          bra    p__39DE
+p__396A:  btfsc  0x73,3,b				; entry from: 0x3962
+          retlw  0
+          btfss  0x18,1,a
+          bra    p__3984
+          rcall  p__3A5E
+          rcall  p__3914
+          incf   0x56,W,a
+          movf   0x53,a
+          bz     p__39D8
+          movlw  0x30
+          cpfseq 0x53,a
+          bra    p__38A0
+          bra    p__39D6
+p__3984:  tstfsz 0x53,a					; entry from: 0x3970
+          bra    p__398E
+          movf   POSTINC0,W,a
+          incf   0x56,W,a
+          bra    p__39D8
+p__398E:  rcall  p__3914				; entry from: 0x3986
+          movlw  0x20
+          cpfseq 0x53,a
+          bra    p__39A4
+          movf   POSTINC0,W,a
+          call   p___52A
+p__399C:  call   p___534				; entry from: 0x39BE
+          rcall  p__3898
+          bra    p__38A0
+p__39A4:  movlw  0x10					; entry from: 0x3994
+          cpfseq 0x53,a
+          bra    p__39C0
+          movf   POSTINC0,W,a
+          rcall  p__3A5A
+          rcall  p__3914
+          movf   POSTINC0,W,a
+          call   p___546
+          call   p___53A
+          rcall  p__3914
+          movlw  0x30
+          bra    p__399C
+p__39C0:  movlw  0x46					; entry from: 0x39A8
+          call   p___550
+          movlw  0x43
+          call   p___534
+          rcall  p__3914
+          rcall  p__3898
+          movf   POSTINC0,W,a
+          rcall  p__3A5A
+          rcall  p__3898
+p__39D6:  movlw  3						; entry from: 0x3982
+
+p__39D8:  btfsc  0x19,1,a				; entry from: 0x397A,0x398C
+          addlw  1
+          bra    p__38A2
+
+p__39DE:  btfsc  0x4D,3,a				; entry from: 0x3948,0x394C,0x395C,0x3968
+          bra    p__39F4
+p__39E2:  btfss  0x4D,6,a				; entry from: 0x39F0
+          btfss  0x4D,4,a
+          bra    p__3618
+          bsf    0xF,0,a
+          bsf    0x73,3,b
+          retlw  0
+p__39EE:  btfss  0x4D,3,a				; entry from: 0x393E
+          bra    p__39E2
+          btfsc  0x3D,6,a
+p__39F4:  bsf    0xF,0,a				; entry from: 0x39E0
+          btfsc  0x18,1,a
+          rcall  p__3A5E
+          rcall  p__3914
+          bra    p__38A0
+p__39FE:  btfsc  0x73,3,b				; entry from: 0x3884
+          retlw  0
+          btfss  0x18,1,a
+          bra    p__3A44
+          rcall  p__38E4
+          btfsc  0x54,3,a
+          bra    p__3A10
+          rcall  p__3AA0
+          bra    p__38A0
+p__3A10:  btfsc  0x3F,3,a				; entry from: 0x3A0A
+          bra    p__3A18
+          rcall  p__3A64
+          bra    p__38A0
+p__3A18:  rrcf   1,W,a					; entry from: 0x3A12
+          movwf  0x53,a
+          rrcf   0x53,a
+          bcf    0x53,3,a
+          movf   0x53,W,a
+          call   p___54E
+          rcall  p__3914
+          rcall  p__3898
+          movlw  3
+          andwf  1,W,a
+          call   p___54E
+          swapf  2,W,a
+          call   p___54E
+          rcall  p__3914
+          movf   2,W,a
+          call   p___54E
+          rcall  p__3A72
+          bra    p__38A0
+p__3A44:  btfss  0xB0,3,b				; entry from: 0x3A04
+          bra    p__38A0
+          swapf  5,W,a
+          rcall  p__3A5A
+          rcall  p__3914
+          movf   POSTINC0,W,a
+          rcall  p__3A5A
+          call   p___536
+          rcall  p__3898
+          bra    p__38A0
+
+p__3A5A:  goto   p___54E				; entry from: 0x39AC,0x39D2,0x3A4A,0x3A50,0x3B84
+
+p__3A5E:  rcall  p__38E4				; entry from: 0x388C,0x3972,0x39F8
+          btfss  0x54,3,a
+          bra    p__3AA0
+p__3A64:  swapf  1,W,a					; entry from: 0x3A14
+          call   p__2BC0
+          rcall  p__3914
+          swapf  2,W,a
+          call   p__2BC0
+p__3A72:  swapf  3,W,a					; entry from: 0x3A40
+          call   p__2BC0
+p__3A78:  rcall  p__3914				; entry from: 0x3AA6
+          swapf  4,W,a
+          call   p__2BC0
+          btfss  0x19,5,a
+          bra    p__3A8E
+          rcall  p__3914
+          movf   0x40,W,a
+          call   p___54E
+          rcall  p__3898
+p__3A8E:  btfss  0x42,2,a				; entry from: 0x3A82
+          btfss  0x19,1,a
+          return 
+          rcall  p__3914
+          swapf  0x94,W,b
+          btfsc  0x10,6,a
+          swapf  0x17,W,a
+          goto   p__2BC0
+
+p__3AA0:  movf   3,W,a					; entry from: 0x3A0C,0x3A62
+          call   p___54E
+          bra    p__3A78
+p__3AA8:  rcall  p__3914				; entry from: 0x3756
+          swapf  2,W,a
+          andlw  0x30
+          movwf  0xB1,b
+          rlncf  2,W,a
+          andlw  0xC1
+          iorwf  0xB1,f,b
+          rlncf  1,W,a
+          andlw  0xE
+          iorwf  0xB1,f,b
+          swapf  0xB1,f,b
+          movlw  0x70
+          andwf  0x11,W,a
+          btfss  STATUS,2,a
+          bra    p__385E
+          btfsc  0x3F,0,a
+          bra    p__385E
+          movf   0x45,W,a
+          xorwf  0xB1,W,b
+          btfsc  STATUS,2,a
+          bra    p__385E
+          movlw  8
+          cpfseq 0x40,a
+          bra    p__3618
+          rcall  p__3914
+          movlw  0xE8
+          cpfseq 0xB1,b
+          bra    p__3AF4
+          movf   0x46,W,a
+          cpfseq 0xA,a
+          bra    p__3618
+          movf   0x45,W,a
+          cpfseq 0xB,a
+          bra    p__3618
+          movf   0x44,W,a
+          cpfseq 0xC,a
+          bra    p__3618
+          bra    p__385E
+p__3AF4:  movlw  0xEC					; entry from: 0x3ADE
+          cpfseq 0xB1,b
+          bra    p__3BB4
+          movf   0x46,W,a
+          cpfseq 0xA,a
+          bra    p__3618
+          movf   0x45,W,a
+          cpfseq 0xB,a
+          bra    p__3618
+          movf   0x44,W,a
+          cpfseq 0xC,a
+          bra    p__3618
+          movf   9,W,a
+          movwf  0xB8,b
+          movlw  0x10
+          xorwf  5,W,a
+          btfsc  0x19,7,a
+          bz     p__3B22
+          movlw  0x20
+          cpfseq 5,a
+          bra    p__3618
+          bsf    0xB0,4,b
+          setf   0xB8,b
+p__3B22:  bsf    0xB0,3,b				; entry from: 0x3B16
+          bcf    0xB0,7,b
+          movff  4,0xB2
+          movff  6,0xB3
+          movff  7,0xB4
+          movf   8,W,a
+          movwf  0xB5,b
+          movwf  0xB7,b
+          clrf   0xB6,b
+          incf   0xB6,f,b
+          clrf   0xB9,b
+          clrf   0xBA,b
+          movlw  0x10
+          cpfslt 0xB8,b
+          movwf  0xB8,b
+          movf   8,W,a
+          cpfslt 0xB8,b
+          movwf  0xB8,b
+          rcall  p__3914
+          rcall  p__3E10
+          movlb  0xE
+          setf   0xFE,b					; RD4PPS
+          setf   0xFF,b					; RD5PPS
+          movlw  0x4B
+          movwf  0xE9,b					; RA7PPS
+          movwf  0xED,b					; RB3PPS
+          movwf  0xF1,b					; RB7PPS
+          movwf  0xF5,b					; RC3PPS
+          movf   3,W,a
+          movwf  0xEA,b					; RB0PPS
+          movwf  0xEE,b					; RB4PPS
+          movwf  0xF2,b					; RC0PPS
+          movwf  0xF6,b					; RC4PPS
+          movf   4,W,a
+          movwf  0xEB,b					; RB1PPS
+          movwf  0xEF,b					; RB5PPS
+          movwf  0xF3,b					; RC1PPS
+          movwf  0xF7,b					; RC5PPS
+          movlb  0
+          bsf    0xB0,0,b
+          rcall  p__3DF4
+          btfsc  0x18,0,a
+          bra    p__3B82
+          rcall  p__3860
+          bra    p__3B90
+p__3B82:  movf   0xB4,W,b				; entry from: 0x3B7C
+          rcall  p__3A5A
+          rcall  p__3914
+          movf   0xB3,W,b
+          call   p___546
+          rcall  p__3914
+p__3B90:  call   p___53A				; entry from: 0x3B80
+          movlw  0
+          btfsc  0xB0,4,b
+          bra    p__3BAA
+          btfsc  0x11,2,a
+          bra    p__3BA8
+          call   p__3C0C
+          call   p__3280
+          rcall  p__3914
+p__3BA8:  movlw  0xFF					; entry from: 0x3B9C
+p__3BAA:  rcall  p__3C46				; entry from: 0x3B98
+          movwf  0x80,b
+          clrf   0x29,a
+          bcf    0xF,1,a
+          bra    p__3618
+p__3BB4:  movlw  0xEB					; entry from: 0x3AF8
+          cpfseq 0xB1,b
+          bra    p__3618
+          btfss  0xB0,4,b
+          btfsc  0x11,2,a
+          bsf    0xB0,2,b
+          incf   0xB9,f,b
+          incf   0xBA,f,b
+          rcall  p__3914
+          btfss  0xB0,2,b
+          bra    p__3BD2
+          movf   0xB5,W,b
+          cpfslt 0xB9,b
+          bsf    0xB0,1,b
+          bra    p__3860
+p__3BD2:  movf   0xBA,W,b				; entry from: 0x3BC8
+          cpfseq 0xB8,b
+          bra    p__3860
+          addwf  0xB6,f,b
+          subwf  0xB7,f,b
+          tstfsz 0xB7,b
+          bra    p__3BFC
+          bsf    0xB0,1,b
+          rcall  p__3856
+          btfsc  0x60,3,a
+          rcall  p__3F50
+          movlw  0x13
+          movwf  0x66,a
+          movf   0xB3,W,b
+          movwf  0x67,a
+          movf   0xB4,W,b
+          movwf  0x68,a
+          movf   0xB5,W,b
+          movwf  0x69,a
+          rcall  p__3C20
+          bra    p__3860
+p__3BFC:  clrf   0xBA,b					; entry from: 0x3BDE
+          movf   0xB7,W,b
+          cpfslt 0xB8,b
+          movwf  0xB8,b
+          rcall  p__3C0C
+          call   p__3280
+          bra    p__3860
+
+p__3C0C:  rcall  p__3856				; entry from: 0x3B9E,0x3C04
+          btfsc  RXB0CON,3,a
+          rcall  p__3F50
+          movlw  0x11
+          movwf  RXB0D0,a
+          movff  0xB8,RXB0D1
+          movff  0xB6,RXB0D2
+          setf   RXB0D3,a
+p__3C20:  setf   RXB0D4,a					; entry from: 0x3BF8
+          movff  0x46,RXB0D5
+          movff  0x45,RXB0D6
+          movff  0x44,RXB0D7
+          movlw  0xE7
+          movwf  RXB0SIDH,a
+          movlw  0x68
+          movwf  RXB0SIDL,a
+          movff  0xB2,RXB0EIDH
+          movff  0x14,RXB0EIDL
+          movlw  8
+          movwf  RXB0DLC,a
+          rcall  p__3914
+          bra    p__35A8
+
 p__3C46:  clrf   0xBC,b					; entry from: 0x2116
           btfss  0xF,6,a
           bra    p__3C54
