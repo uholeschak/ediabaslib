@@ -5013,7 +5013,8 @@ p__2BB6:  btfss  0x73,3,b				; entry from: 0x2BA6,0x2BAE
           bra    p__2BF2
           btfss  0x74,6,b
           bra    p__2BFC
-          movwf  0xD6,b
+
+p__2BC0:  movwf  0xD6,b					; entry from: 0x3A66,0x3A6E,0x3A74,0x3A7C,0x3A9C
           iorlw  0xF0
           movwf  TBLPTRL,a				; tblptrl  tblptrl 
           tblrd*
