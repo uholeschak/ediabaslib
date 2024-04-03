@@ -5417,17 +5417,91 @@ p__2EE6:  btfsc  0x1C,7,a				; entry from: 0x2E8A,0x2EC2,0x2ED4,0x2EDC
 p__2EEC:  movlw  0xFC					; entry from: 0x22BE
           andwf  LATB,a
           retlw  0
-          db   77,166,15,162,18,0,188,83,4,224,188,7,41,106,15,146				;M......S....)j..
-          db   18,0,6,0,7,12,194,81,85,110,130,162,14,208,84,106				;.......QUn....Tj
-          db   130,162,10,208,155,236,4,240,130,162,6,208,84,46,1,208			;............T...
-          db   85,46,246,215,53,134,7,12,30,222,138,156,38,106,86,236			;U...5.......&jV.
-          db   2,240,119,236,28,240,3,14,24,162,76,100,42,208,4,14				;..w.......Ld*...
-          db   0,98,41,208,63,14,1,20,1,225,28,142,0,0,54,80					;.b).?.........6P
-          db   82,110,155,236,4,240,0,0,19,220,82,46,250,215,9,14				;Rn........R.....
-          db   82,110,11,208,114,51,21,222,10,220,54,80,83,110,155,236			;Rn..r3....6PSn..
-          db   4,240,0,0,10,220,83,46,250,215,216,128,130,162,216,144			;......S.........
-          db   82,46,240,215,4,227,31,144,33,106,35,106,0,12,53,150				;R.......!j#j..5.
-          db   255,12,0,0,0,208,0,0,217,215										;..........
+
+p__2EF2:  btfss  0x4D,3,a				; entry from: 0x2E3E,0x2E6C
+          btfss  0xF,1,a
+          return 
+          movf   0xBC,f,b
+          bz     p__2F04
+          decf   0xBC,f,b
+          clrf   0x29,a
+          bcf    0xF,1,a
+          return 
+p__2F04:  pop							; entry from: 0x2EFA
+          retlw  7
+p__2F08:  movf   0xC2,W,b				; entry from: 0x2E84
+
+p__2F0A:  movwf  0x55,a					; entry from: 0x2CFA,0x2D14,0x2D26,0x30AA
+          btfss  LATA,1,a
+          bra    p__2F2C
+          clrf   0x54,a
+p__2F12:  btfss  LATA,1,a				; entry from: 0x2F24
+          bra    p__2F2A
+          call   p___936
+          btfss  LATA,1,a
+          bra    p__2F2A
+          decfsz 0x54,a
+          bra    p__2F24
+          decfsz 0x55,a
+p__2F24:  bra    p__2F12				; entry from: 0x2F20
+          bsf    0x35,3,a
+          retlw  7
+
+p__2F2A:  rcall  p__2B68				; entry from: 0x2F14,0x2F1C
+p__2F2C:  bcf    LATB,6,a				; entry from: 0x2F0E
+          clrf   0x26,a
+          call   p___4AC
+          call   p__38EE
+          movlw  3
+          btfss  0x18,1,a
+          cpfsgt 0x4C,a
+          bra    p__2F94
+          movlw  4
+          cpfseq 0,a
+          bra    p__2F98
+          movlw  0x3F
+          andwf  1,W,a
+          bnz    p__2F4E
+          bsf    0x1C,7,a
+
+p__2F4E:  nop							; entry from: 0x2F4A,0x2F9A
+          movf   0x36,W,a
+          movwf  0x52,a
+p__2F54:  call   p___936				; entry from: 0x2F5E
+          nop
+          rcall  p__2782
+          decfsz 0x52,a
+          bra    p__2F54
+          movlw  9
+          movwf  0x52,a
+          bra    p__2F7C
+p__2F66:  rrcf   0x72,f,b				; entry from: 0x2F84
+          rcall  p__2B94
+          rcall  p__2780
+          movf   0x36,W,a
+          movwf  0x53,a
+p__2F70:  call   p___936				; entry from: 0x2F7A
+          nop
+          rcall  p__278C
+          decfsz 0x53,a
+          bra    p__2F70
+p__2F7C:  bsf    STATUS,0,a				; entry from: 0x2F64
+          btfss  LATA,1,a
+          bcf    STATUS,0,a
+          decfsz 0x52,a
+          bra    p__2F66
+          bnc    p__2F90
+          bcf    0x1F,0,a
+          clrf   0x21,a
+          clrf   0x23,a
+          retlw  0
+p__2F90:  bcf    0x35,3,a				; entry from: 0x2F86
+          retlw  0xFF
+p__2F94:  nop							; entry from: 0x2F3E
+          bra    p__2F98
+
+p__2F98:  nop							; entry from: 0x2F44,0x2F96
+          bra    p__2F4E
 
 p__2F9C:  btfsc  0x73,1,b				; entry from: 0x1A22,0x19A2,0x19FE,0x1402,0x19CA,0x2014,0x2022,0x20A2,0x20AA
           bra    p__2FEE
@@ -6435,43 +6509,43 @@ p__37EC:  rcall  p__3914				; entry from: 0x37C2,0x37DA,0x37E2
           btfss  0x3F,5,a
           btfsc  0x43,6,a
           movlw  3
-          movwf  0x65,a
-          movff  0x38,ADRPT
-          movff  0x39,ADCNT
-          movff  0x3A,ADSTPTL
-          movff  0x3B,ADSTPTH
+          movwf  RXB0DLC,a
+          movff  0x38,RXB0SIDH
+          movff  0x39,RXB0SIDL
+          movff  0x3A,RXB0EIDH
+          movff  0x3B,RXB0EIDL
           movlw  0x30
-          movwf  0x66,a
-          clrf   0x67,a
-          clrf   0x68,a
+          movwf  RXB0D0,a
+          clrf   RXB0D1,a
+          clrf   RXB0D2,a
           movf   0x95,W,b
-          movwf  0x69,a
-          movwf  0x6A,a
-          movwf  0x6B,a
-          movwf  0x6C,a
-          movwf  0x6D,a
+          movwf  RXB0D3,a
+          movwf  RXB0D4,a
+          movwf  RXB0D5,a
+          movwf  RXB0D6,a
+          movwf  RXB0D7,a
           movf   0xA5,W,b
           andlw  3
           bz     p__384C
           movf   0xAF,W,b
           btfss  0x3F,5,a
           btfsc  0x43,6,a
-          movwf  0x65,a
-          movff  0xAA,ADLTHH
-          movff  0xAB,ADUTHL
-          movff  0xAC,ADUTHH
-          movff  0xAD,ADERRL
-          movff  0xAE,ADERRH
+          movwf  RXB0DLC,a
+          movff  0xAA,RXB0D0
+          movff  0xAB,RXB0D1
+          movff  0xAC,RXB0D2
+          movff  0xAD,RXB0D3
+          movff  0xAE,RXB0D4
           rcall  p__3914
 p__384C:  movlw  8						; entry from: 0x382C
-          movwf  0x60,a
+          movwf  RXB0CON,a
           bsf    0x10,7,a
           rcall  p__3E00
           bra    p__3860
 
 p__3856:  movlw  0xE1					; entry from: 0x2168
-          andwf  0x6F,a
-          bsf    0x6F,3,a
+          andwf  CANCON,a
+          bsf    CANCON,3,a
           retlw  0
           db   176,131,85,219,88,216,4,14,64,36,0,110,6,14,66,164				;..U.X...@$.n..B.
           db   25,162,5,14,233,110,66,160,24,160,6,208,62,176,205,214			;.....nB.....>...
