@@ -139,11 +139,19 @@ ORG 0x7FFA
 
 ORG CODE_OFFSET + 0
 RESETVEC:
-
           clrf   OSCCON,a
           bsf    LATC,6,a
           goto   p__16C2
-          db   0x1D,0xBE,0xEC,0xEF,0x08,0xF0,0x70,0x0E,0x10,0xEF,0x0B,0xF0,0xFF,0xFF,0xFF,0xFF,0xFA,0xD7
+
+ORG CODE_OFFSET + 0x08
+          btfsc  0x1D,7,a
+          goto   p__11D8
+p_____E:  movlw  0x70					; entry from: 0x18
+          goto   p__1620
+
+ORG CODE_OFFSET + 0x18
+          bra    p_____E
+
 ORG DATA_OFFSET + 0x001A
           db   'O','B','D','I','I',' ','t','o',' ','R','S','2','3','2', ' ','I','n','t','e','r','p','r','e','t','e','r',0,0
           db   'B','U', 'F','F','E','R',' ','F','U','L','L',0
@@ -2050,7 +2058,7 @@ p__11C8:  btfss  PORTC,4,a				; entry from: 0x11D4
           decfsz 0x53,a
 p__11D4:  bra    p__11C8				; entry from: 0x11D0
 p__11D6:  bsf    LATB,7,a				; entry from: 0x1138
-          bcf    INTCON,7,a
+p__11D8:  bcf    INTCON,7,a				; entry from: 0xA
           bcf    PIE1,5,a
           bcf    BAUDCON1,1,a
           clrf   OSCCON,a
