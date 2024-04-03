@@ -139,11 +139,19 @@ ORG 0x7FFA
 
 ORG CODE_OFFSET + 0
 RESETVEC:
-
           clrf   OSCCON,a
           bsf    LATC,6,a
           goto   p__16C2
-          db   0x1D,0xBE,0xEC,0xEF,0x08,0xF0,0x70,0x0E,0x10,0xEF,0x0B,0xF0,0xFF,0xFF,0xFF,0xFF,0xFA,0xD7
+
+ORG CODE_OFFSET + 0x08
+          btfsc  0x1D,7,a
+          goto   p__11D8
+p_____E:  movlw  0x70					; entry from: 0x18
+          goto   p__1620
+
+ORG CODE_OFFSET + 0x18
+          bra    p_____E
+
 ORG DATA_OFFSET + 0x001A
           db   'O','B','D','I','I',' ','t','o',' ','R','S','2','3','2', ' ','I','n','t','e','r','p','r','e','t','e','r',0,0
           db   'B','U', 'F','F','E','R',' ','F','U','L','L',0
@@ -163,24 +171,79 @@ ORG DATA_OFFSET + 0x001A
           db   '<','R','X',' ','E','R','R','O','R',0
           db   'S','E','A','R','C','H','I','N','G','.','.','.',0,0
           db   'S','T','O','P','P','E','D',0
-          db   0x4D,0xAC,0x4E,0x0E,0x34,0xDA,0x77,0xEF,0x0C,0xF0
+
+p____E2:  btfss  0x4D,6,a				; entry from: 0x16C
+          movlw  0x4E
+          rcall  p___550
+          goto   p__18EE
+
 ORG TABLE_OFFSET + 0x00F0
           db   '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
+
 p___100:  addwf  PCL,a					; entry from: 0x1BD8
           db     'A','L'
           bsf    0x18,4,a
           bra    p___302
           db     'A','R'
-          goto   0xA76;p___A76
-          db   66,68,65,239,5,240,66,73,75,239				;BDA...BIK.
-          db   5,240,67,48,16,128,241,208,67,49,16,144,238,208,67,83			;..C0....C1....CS
-          db   142,239,6,240,68,48,25,154,232,208,68,49,25,138,229,208			;....D0....D1....
-          db   68,80,42,239,7,240,69,48,24,148,223,208,69,49,24,132				;DP*...E0....E1..
-          db   220,208,70,69,213,107,217,208,70,73,5,239,8,240,70,84			;..FE.k..FI....FT
-          db   16,146,211,208,72,48,24,146,208,208,72,49,24,130,205,208			;....H0....H1....
-          db   73,65,89,14,186,215,74,69,63,148,199,208,74,83,63,132			;IAY...JE?...JS?.
-          db   196,208,75,87,114,239,8,240,76,48,24,158,190,208,76,49			;..KWr...L0....L1
-          db   24,142,187,208,76,80,157,239,8,240,77,48,24,154,181,208			;....LP....M0....
+          goto   p___A76
+          db     'B','D'
+          goto   p___A82
+          db     'B','I'
+          goto   p___A96
+          db     'C','0'
+          bsf    0x10,0,a
+          bra    p___302
+          db     'C','1'
+          bcf    0x10,0,a
+          bra    p___302
+          db     'C','S'
+          goto   p___D1C
+          db     'D','0'
+          bcf    0x19,5,a
+          bra    p___302
+          db     'D','1'
+          bsf    0x19,5,a
+          bra    p___302
+          db     'D','P'
+          goto   p___E54
+          db     'E','0'
+          bcf    0x18,2,a
+          bra    p___302
+          db     'E','1'
+          bsf    0x18,2,a
+          bra    p___302
+          db     'F','E'
+          clrf   0xD5,b
+          bra    p___302
+          db     'F','I'
+          goto   p__100A
+          db     'F','T'
+          bcf    0x10,1,a
+          bra    p___302
+          db     'H','0'
+          bcf    0x18,1,a
+          bra    p___302
+          db     'H','1'
+          bsf    0x18,1,a
+          bra    p___302
+          db     'I','A'
+          movlw  0x59
+          bra    p____E2
+          db     'J','E'
+          bcf    0x3F,2,a
+          bra    p___302
+          db     'J','S'
+          bsf    0x3F,2,a
+          bra    p___302
+          db     'K','W'
+          goto   p__10E4
+          db     'L','0'
+          bcf    0x18,7,a
+          bra    p___302
+          db     'L','1'
+          bsf    0x18,7,a
+          bra    p___302
+          db   76,80,157,239,8,240,77,48,24,154,181,208			;....LP....M0....
           db   77,49,24,138,178,208,77,65,14,239,9,240,78,76,24,152				;M1....MA....NL..
           db   172,208,80,67,71,239,9,240,82,48,24,150,166,208,82,49			;..PCG...R0....R1
           db   24,134,163,208,82,68,24,239,10,240,82,86,37,239,10,240			;....RD....RV%...
@@ -2016,7 +2079,7 @@ p__11C8:  btfss  PORTC,4,a				; entry from: 0x11D4
           decfsz 0x53,a
 p__11D4:  bra    p__11C8				; entry from: 0x11D0
 p__11D6:  bsf    LATB,7,a				; entry from: 0x1138
-          bcf    INTCON,7,a
+p__11D8:  bcf    INTCON,7,a				; entry from: 0xA
           bcf    PIE1,5,a
           bcf    BAUDCON1,1,a
           clrf   OSCCON,a
