@@ -40,7 +40,8 @@
 		    #define TABLE_OFFSET BASE_ADDR
 		    #define EEPROM_PAGE 0x0
 		    #define WDT_RESET   0x0
-		    #define DEFAULT_BAUD 0x68		;38400
+							;38400
+		    #define DEFAULT_BAUD 0x68
 		#else
 		    #define SW_VERSION 0x02
 		    #define CODE_OFFSET 0x0800
