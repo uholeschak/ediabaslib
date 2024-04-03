@@ -4545,7 +4545,7 @@ p__27B6:  movlw  1						; entry from: 0x27B0
           movlw  0x19
           goto   p__203E
 
-p__27E0:  bcf    TRISC,2,a				; entry from: 0x2214,0x279C
+p__27E0:  bcf    LATA,2,a				; entry from: 0x2214,0x279C
           bra    p__275E
 p__27E4:  movlw  0xFF					; entry from: 0x2256
           movwf  0x4F,a
@@ -4564,28 +4564,28 @@ p__2800:  btfsc  0xF,1,a				; entry from: 0x28D4
           retlw  4
           movlw  1
           movwf  FSR0L,a
-          btfss  LATA,0,a
+          btfss  PORTC,0,a
           bra    p__2832
 p__280C:  clrf   0x52,a					; entry from: 0x2838
 p__280E:  call   p___936				; entry from: 0x2830
           btfsc  0xF,1,a
           retlw  4
-          btfss  LATA,0,a
+          btfss  PORTC,0,a
           bra    p__2832
           call   p___936
           btfss  0x19,6,a
           clrf   0x52,a
           dcfsnz 0x52,a
           retlw  5
-          btfss  LATA,0,a
+          btfss  PORTC,0,a
           bra    p__2832
           call   p___936
-          btfsc  LATA,0,a
+          btfsc  PORTC,0,a
           bra    p__280E
 
 p__2832:  movlw  0xDF					; entry from: 0x280A,0x2818,0x2828
           movwf  0x52,a
-p__2836:  btfsc  LATA,0,a				; entry from: 0x283C
+p__2836:  btfsc  PORTC,0,a				; entry from: 0x283C
           bra    p__280C
           decfsz 0x52,a
           bra    p__2836
@@ -4595,7 +4595,7 @@ p__2836:  btfsc  LATA,0,a				; entry from: 0x283C
           movwf  0x52,a
 p__2846:  dcfsnz 0x52,a					; entry from: 0x284C
           bra    p__284E
-          btfss  LATA,0,a
+          btfss  PORTC,0,a
           bra    p__2846
 p__284E:  bsf    LATA,2,a				; entry from: 0x2848
           bcf    LATB,7,a
@@ -4632,14 +4632,14 @@ p__2888:  call   p___936				; entry from: 0x2890
           decfsz 0x53,a
           bra    p__287A
           rcall  p__278C
-          bcf    TRISC,2,a
+          bcf    LATA,2,a
           movlw  0
           bra    p__2B80
 p__28A0:  setf   0x8F,b					; entry from: 0x2882
           clrf   0x91,b
           clrf   0x55,a
 p__28A6:  call   p___936				; entry from: 0x28BA
-          movf   LATA,W,a
+          movf   PORTC,W,a
           andlw  1
           xorwf  0x8F,W,b
           bz     p__28D6
@@ -4662,26 +4662,26 @@ p__28C8:  call   p___85C				; entry from: 0x28D2
           bra    p__2800
 p__28D6:  bra    p__28B8				; entry from: 0x28B0
 
-p__28D8:  bcf    TRISC,2,a				; entry from: 0x287C,0x2B04
+p__28D8:  bcf    LATA,2,a				; entry from: 0x287C,0x2B04
           movwf  0x54,a
           movlw  4
           movwf  0x55,a
 p__28E0:  nop							; entry from: 0x292E
           call   p___85E
-          btfsc  LATA,0,a
+          btfsc  PORTC,0,a
           retlw  8
           call   p___85E
           rlcf   0x54,a
           btfss  STATUS,0,a
           bra    p__2904
           call   p___85E
-          btfsc  LATA,0,a
+          btfsc  PORTC,0,a
           retlw  8
           call   p___85E
           rcall  p__2784
           nop
 p__2904:  nop							; entry from: 0x28F2
-          bsf    TRISC,2,a
+          bsf    LATA,2,a
           rlcf   0x54,a
           btfsc  STATUS,0,a
           bra    p__291A
@@ -4695,7 +4695,7 @@ p__291A:  dcfsnz 0x55,a					; entry from: 0x290C
           call   p___85E
           rcall  p__278C
           nop
-          bcf    TRISC,2,a
+          bcf    LATA,2,a
           nop
           bra    p__28E0
 
@@ -4707,14 +4707,14 @@ p__2930:  movlw  0x80					; entry from: 0x2298,0x29B8,0x2AC6
           movwf  FSR0L,a
 
 p__293C:  call   p___936				; entry from: 0x2950,0x295C,0x2970,0x2978,0x2980,0x299E
-          btfsc  LATA,0,a
+          btfsc  PORTC,0,a
           bra    p__2952
           btfsc  0xF,1,a
           bra    p__29B0
           btfsc  0x1A,7,a
           retlw  1
           rcall  p__2B68
-          btfss  LATA,0,a
+          btfss  PORTC,0,a
           bra    p__293C
 p__2952:  movlw  0x82					; entry from: 0x2942
           movwf  0x52,a
@@ -4748,7 +4748,7 @@ p__296E:  btfss  PORTC,0,a				; entry from: 0x2988
           call   p__1206
           call   p___53A
 
-p__299C:  btfss  LATA,0,a				; entry from: 0x298C,0x29AE
+p__299C:  btfss  PORTC,0,a				; entry from: 0x298C,0x29AE
           bra    p__293C
           clrf   0x26,a
           call   p___936
