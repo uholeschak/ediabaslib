@@ -905,8 +905,16 @@ p___90A:  movf   PORTB,W,a			; entry from: 0x914
           bra    p___908
           bcf    0x1A,0,a
 p___91C:  return 						; entry from: 0x910
-          db   74,218,16,130,80,110,81,110,81,66,81,66,81,66,168,208			;J...PnQnQBQBQB..
-          db   197,236,19,240													;....
+p___91E:  rcall  p___DB4				; entry from: 0x27A
+          bsf    0x10,1,a
+          movwf  0x50,a
+          movwf  0x51,a
+          rrncf  0x51,a
+          rrncf  0x51,a
+          rrncf  0x51,a
+          bra    p___A7E
+
+p___92E:  call   p__278A				; entry from: 0x2C9C,0x2CB8,0x323C
 p___932:  bra    p___936				; entry from: 0x2BF4
 
 p___934:  rcall  p___936				; entry from: 0x85A,0x864,0x2644,0x2664,0x2568
