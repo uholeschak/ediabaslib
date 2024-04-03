@@ -1747,11 +1747,11 @@ p__10B8:  movlw  0x4E					; entry from: 0x236
           movlw  0x4F
           rcall  p__142C
           movlw  0x4E
-          btfss  LATA,4,a
+          btfss  PORTC,4,a
           movlw  0x46
           rcall  p__142C
           movlw  0x46
-          btfss  LATA,4,a
+          btfss  PORTC,4,a
           rcall  p__142C
           bra    p___D7E
 p__10D2:  movlw  0x31					; entry from: 0x23C
@@ -7529,6 +7529,4 @@ p__403C:  movff  0x9C,0x41				; entry from: 0x22FE,0x4034,0x4038
           movf   0x9B,W,b
           bra    p__3E7C
 
-ORG 0x200000 
-          db   3,2,7,0,2,3,0,1													;........
 END RESETVEC
