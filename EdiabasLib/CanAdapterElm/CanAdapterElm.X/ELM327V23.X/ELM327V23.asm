@@ -4199,14 +4199,15 @@ p__2396:  btfsc  0xF,1,a				; entry from: 0x244C
           bra    p__23BA
 p__23A2:  movlw  9						; entry from: 0x23C0
           movwf  0x52,a
-          call   p___936
+p__23A6:  call   p___936				; entry from: 0x23B8
           btfsc  0xF,1,a
           retlw  4
           btfss  0x19,6,a
           clrf   0x52,a
           dcfsnz 0x52,a
           retlw  5
-          db   130,164,246,215													;....
+          btfss  PORTC,2,a
+          bra    p__23A6
 p__23BA:  movlw  0x3A					; entry from: 0x23A0
           movwf  0x52,a
 p__23BE:  btfss  PORTC,2,a				; entry from: 0x23C4
@@ -4217,9 +4218,10 @@ p__23BE:  btfss  PORTC,2,a				; entry from: 0x23C4
           retlw  1
           movlw  0x10
           movwf  0x52,a
-          dcfsnz 0x52,a
+p__23CE:  dcfsnz 0x52,a					; entry from: 0x23D4
           bra    p__23D6
-          db   130,180,252,215													;....
+          btfsc  PORTC,2,a
+          bra    p__23CE
 p__23D6:  bsf    LATA,2,a				; entry from: 0x23D0
           bsf    LATC,3,a
           bcf    LATB,7,a
