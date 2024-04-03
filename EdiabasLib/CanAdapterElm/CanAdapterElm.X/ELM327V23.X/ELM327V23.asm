@@ -6940,19 +6940,94 @@ p__3E86:  rlncf  0x42,a					; entry from: 0x3E8A
           addlw  0xFF
           bnz    p__3E86
           return 
-          db   192,223,64,236,25,240,62,172,62,186,25,208,66,164,7,208			;..@...>.>...B...
-          db   112,14,17,20,4,225,104,216,64,236,25,240,18,0,56,106				;p.....h.@.....8j
-          db   57,106,58,106,59,106,255,14,17,188,58,110,17,186,59,110			;9j:j;j....:n..;n
-          db   39,223,111,223,56,106,57,106,58,106,59,106,23,208,157,192		;'.o.8j9j:j;j....
-          db   56,240,158,192,57,240,159,192,58,240,160,192,59,240,255,14		;8...9...:...;...
-          db   17,188,58,110,17,186,59,110,19,223,91,223,161,192,56,240			;..:n..;n..[...8.
-          db   162,192,57,240,163,192,58,240,164,192,59,240,21,80,17,188		;..9...:...;..P..
-          db   58,110,17,186,59,110,4,223,39,223,62,132,18,0,84,104				;:n..;n..'.>...Th
-          db   11,14,2,20,82,110,1,50,2,50,1,58,2,58,15,14						;....Rn.2.2.:.:..
-          db   2,22,240,14,1,20,2,18,7,14,1,22,82,166,9,208						;............R...
-          db   216,144,2,54,1,54,2,54,1,54,82,80,3,11,2,18						;...6.6.6.6RP....
-          db   0,12,1,192,3,240,2,192,4,240,1,106,2,106,84,106					;...........j.jTj
-          db   0,12																;..
+
+p__3E8E:  rcall  p__3E10				; entry from: 0x3604
+          call   p__3280
+          btfss  0x3E,6,a
+          btfsc  0x3E,5,a
+          bra    p__3ECC
+          btfss  0x42,2,a
+          bra    p__3EAC
+          movlw  0x70
+          andwf  0x11,W,a
+          bnz    p__3EAC
+          rcall  p__3F76
+          call   p__3280
+          return 
+
+p__3EAC:  clrf   0x38,a					; entry from: 0x3E9C,0x3EA2
+          clrf   0x39,a
+          clrf   0x3A,a
+          clrf   0x3B,a
+          movlw  0xFF
+          btfsc  0x11,6,a
+          movwf  0x3A,a
+          btfsc  0x11,5,a
+          movwf  0x3B,a
+          rcall  p__3D0E
+          rcall  p__3DA0
+          clrf   0x38,a
+          clrf   0x39,a
+          clrf   0x3A,a
+          clrf   0x3B,a
+          bra    p__3EFA
+p__3ECC:  movff  0x9D,0x38				; entry from: 0x3E98
+          movff  0x9E,0x39
+          movff  0x9F,0x3A
+          movff  0xA0,0x3B
+          movlw  0xFF
+          btfsc  0x11,6,a
+          movwf  0x3A,a
+          btfsc  0x11,5,a
+          movwf  0x3B,a
+          rcall  p__3D0E
+          rcall  p__3DA0
+          movff  0xA1,0x38
+          movff  0xA2,0x39
+          movff  0xA3,0x3A
+          movff  0xA4,0x3B
+p__3EFA:  movf   0x15,W,a				; entry from: 0x3ECA
+          btfsc  0x11,6,a
+          movwf  0x3A,a
+          btfsc  0x11,5,a
+          movwf  0x3B,a
+          rcall  p__3D0E
+          rcall  p__3D56
+          bsf    0x3E,2,a
+          return 
+p__3F0C:  setf   0x54,a					; entry from: 0x3860
+          movlw  0xB
+          andwf  2,W,a
+          movwf  0x52,a
+          rrcf   1,a
+          rrcf   2,a
+          swapf  1,a
+          swapf  2,a
+          movlw  0xF
+          andwf  2,a
+          movlw  0xF0
+          andwf  1,W,a
+          iorwf  2,a
+          movlw  7
+          andwf  1,a
+          btfss  0x52,3,a
+          bra    p__3F40
+          bcf    STATUS,0,a
+          rlcf   2,a
+          rlcf   1,a
+          rlcf   2,a
+          rlcf   1,a
+          movf   0x52,W,a
+          andlw  3
+          iorwf  2,a
+          retlw  0
+p__3F40:  movff  1,3					; entry from: 0x3F2C
+          movff  2,4
+          clrf   1,a
+          clrf   2,a
+          clrf   0x54,a
+          retlw  0
+
 p__3F50:  rlncf  0x41,W,a				; entry from: 0x216E
           addwf  0x41,W,a
           addlw  0x14
@@ -6971,10 +7046,33 @@ p__3F6C:  bcf    0x60,3,a				; entry from: 0x3F64
           rcall  p__3E00
           pop
           retlw  6
-          db   76,223,176,107,62,132,68,192,56,240,69,192,57,240,154,236		;L..k>.D.8.E.9...
-          db   30,240,14,1,56,80,224,111,228,111,57,80,8,9,225,111				;....8P.o.o9P...o
-          db   229,111,240,14,69,96,5,208,255,14,226,111,20,80,230,111			;.o..E`.....o.P.o
-          db   3,208,70,80,226,111,230,111										;..FP.o.o
+
+p__3F76:  rcall  p__3E10				; entry from: 0x3482,0x3516,0x3EA4
+          clrf   0xB0,b
+          bsf    0x3E,2,a
+          movff  0x44,0x38
+          movff  0x45,0x39
+          call   p__3D34
+          movlb  0xE
+          movf   0x38,W,a
+          movwf  0xE0,b					; PMD4
+          movwf  0xE4,b					; RA2PPS
+          movf   0x39,W,a
+          iorlw  8
+          movwf  0xE1,b					; PMD5
+          movwf  0xE5,b					; RA3PPS
+          movlw  0xF0
+          cpfslt 0x45,a
+          bra    p__3FA8
+          movlw  0xFF
+          movwf  0xE2,b					; RA0PPS
+          movf   0x14,W,a
+          movwf  0xE6,b					; RA4PPS
+          bra    p__3FAE
+p__3FA8:  movf   0x46,W,a				; entry from: 0x3F9C
+          movwf  0xE2,b					; RA0PPS
+          movwf  0xE6,b					; RA4PPS
+
 p__3FAE:  movlw  0xF					; entry from: 0x3DF0
           movwf  0xF8,b					; RC6PPS
           movwf  0xFC,b					; RD2PPS
