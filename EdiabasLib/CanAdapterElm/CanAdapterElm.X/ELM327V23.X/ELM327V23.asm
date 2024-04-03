@@ -4286,7 +4286,7 @@ p__2450:  bsf    LATA,2,a				; entry from: 0x240A,0x266E
           movwf  0x54,a
           movlw  8
           movwf  0x55,a
-          call   p___936
+p__245A:  call   p___936				; entry from: 0x2490
           rlcf   0x54,a
           btfss  STATUS,0,a
           bra    p__2474
@@ -4305,7 +4305,11 @@ p__2474:  call   p___936				; entry from: 0x2462
           rcall  p__278C
 p__2482:  dcfsnz 0x55,a					; entry from: 0x2472
           retlw  0
-          db   155,236,4,240,137,132,139,134,0,0,228,215						;............
+          call   p___936
+          bsf    LATA,2,a
+          bsf    LATC,3,a
+          nop
+          bra    p__245A
 
 p__2492:  movlw  0x80					; entry from: 0x2294,0x264A,0x26C4,0x259E
           movwf  0x1C,a
