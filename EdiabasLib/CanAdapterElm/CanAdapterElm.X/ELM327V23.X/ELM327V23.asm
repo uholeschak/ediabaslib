@@ -305,13 +305,26 @@ p___460:  btfsc  EECON1,1,a				; entry from: 0x458
           bsf    EECON1,7,a
           movlw  0x3C
           movwf  0x52,a
-          movlw  0xE8
+p___474:  movlw  0xE8					; entry from: 0x496
           movwf  TRISB,a
           dcfsnz 0x52,a
           bra    p___4A8
-          db   236,14,138,110,229,217,252,14,138,110,224,217,104,14,147,110		;...n.....n..h..n
-          db   252,14,138,110,193,236,19,240,129,174,238,215,232,14,147,110		;...n...........n
-          db   8,14																;..
+          movlw  0xEC
+          movwf  LATB,a
+          rcall  p___84C
+          movlw  0xFC
+          movwf  LATB,a
+          rcall  p___848
+          movlw  0x68
+          movwf  TRISB,a
+          movlw  0xFC
+          movwf  LATB,a
+          call   p__2782
+          btfss  PORTB,7,a
+          bra    p___474
+          movlw  0xE8
+          movwf  TRISB,a
+          movlw  8
 p___49E:  movwf  0x52,a					; entry from: 0x4AA
 p___4A0:  rcall  p___84C				; entry from: 0x4A4
           decfsz 0x52,a
