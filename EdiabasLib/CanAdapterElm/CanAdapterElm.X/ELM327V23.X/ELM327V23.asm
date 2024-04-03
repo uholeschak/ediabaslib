@@ -171,7 +171,12 @@ ORG DATA_OFFSET + 0x001A
           db   '<','R','X',' ','E','R','R','O','R',0
           db   'S','E','A','R','C','H','I','N','G','.','.','.',0,0
           db   'S','T','O','P','P','E','D',0
-          db   0x4D,0xAC,0x4E,0x0E,0x34,0xDA,0x77,0xEF,0x0C,0xF0
+
+p____E2:  btfss  0x4D,6,a				; entry from: 0x16C
+          movlw  0x4E
+          rcall  p___550
+          goto   p__18EE
+
 ORG TABLE_OFFSET + 0x00F0
           db   '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
 p___100:  addwf  PCL,a					; entry from: 0x1BD8
