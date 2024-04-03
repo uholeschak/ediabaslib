@@ -803,12 +803,17 @@ p___850:  decfsz 0x53,a					; entry from: 0x852,0x856
           bra    p___850
           return 
 
-p___85A:  rcall  p___934				; entry from: 0x3C96,0x630
-p___85C:  rcall  p___936				; entry from: 0x2440
-          rcall  p___936
-          rcall  p___936
-          rcall  p___936
-          bra    p___934
+p___85A:  rcall  p___934				; entry from: 0x630,0x3C96
+
+p___85C:  rcall  p___936				; entry from: 0x2440,0x28C8
+
+p___85E:  rcall  p___936				; entry from: 0x28E2,0x28EA,0x28F4,0x28FC,0x290E,0x2912,0x291E,0x2922,0x2B06,0x2B0A,0x31DC
+
+p___860:  rcall  p___936				; entry from: 0x2A32,0x2A4A,0x2A62,0x2A7A,0x31C6
+
+p___862:  rcall  p___936				; entry from: 0x29C4,0x2A1C
+
+p___864:  bra    p___934				; entry from: 0x2862,0x29E8
 p___866:  rcall  p___8FE				; entry from: 0x1F96
           btfsc  0x1A,0,a
           retlw  6
@@ -3963,10 +3968,35 @@ p__230E:  btfsc  0x1A,7,a				; entry from: 0x2318
 p__234A:  bcf    LATA,2,a				; entry from: 0x2210
           bcf    LATC,3,a
           bra    p__2762
-          db   255,14,79,110,97,14,77,168,18,80,238,110,181,217,106,14			;..Ona.M..P.n..j.
-          db   77,168,19,80,238,110,176,217,148,81,77,168,20,80,238,110			;M..P.n...QM..P.n
-          db   171,217,238,80,169,217,155,236,4,240,83,46,250,215,79,28			;...P......S...O.
-          db   239,110,4,14,0,38,26,190,1,12,0,12								;.n...&......
+p__2350:  movlw  0xFF					; entry from: 0x2252
+          movwf  0x4F,a
+          movlw  0x61
+          btfss  0x4D,4,a
+          movf   0x12,W,a
+          movwf  POSTINC0,a
+          rcall  p__26C8
+          movlw  0x6A
+p__2360:  btfss  0x4D,4,a				; entry from: 0x27F4
+          movf   0x13,W,a
+          movwf  POSTINC0,a
+          rcall  p__26C8
+          movf   0x94,W,b
+          btfss  0x4D,4,a
+          movf   0x14,W,a
+          movwf  POSTINC0,a
+          rcall  p__26C8
+p__2372:  movf   POSTINC0,W,a			; entry from: 0x237C
+          rcall  p__26C8
+          call   p___936
+          decfsz 0x53,a
+          bra    p__2372
+          comf   0x4F,W,a
+          movwf  INDF0,a
+          movlw  4
+          addwf  0,a
+          btfsc  0x1A,7,a
+          retlw  1
+          retlw  0
 p__238C:  movlw  0x7A					; entry from: 0x2276
           call   p___834
           movlw  4
@@ -4358,19 +4388,84 @@ p__26BA:  pop							; entry from: 0x26B2
 p__26BE:  tstfsz 0,a					; entry from: 0x26BC
           goto   p__2648
           goto   p__2492
-          db   85,110,29,14,216,144,79,54,3,226,85,190,79,26,3,208				;Un....O6..U.O...
-          db   85,174,79,26,216,144,79,54,3,226,85,188,79,26,3,208				;U.O...O6..U.O...
-          db   85,172,79,26,216,144,79,54,3,226,85,186,79,26,3,208				;U.O...O6..U.O...
-          db   85,170,79,26,216,144,79,54,3,226,85,184,79,26,3,208				;U.O...O6..U.O...
-          db   85,168,79,26,216,144,79,54,3,226,85,182,79,26,3,208				;U.O...O6..U.O...
-          db   85,166,79,26,216,144,79,54,3,226,85,180,79,26,3,208				;U.O...O6..U.O...
-          db   85,164,79,26,216,144,79,54,3,226,85,178,79,26,3,208				;U.O...O6..U.O...
-          db   85,162,79,26,216,144,79,54,3,226,85,176,79,26,3,208				;U.O...O6..U.O...
-          db   85,160,79,26,0,0,15,144,196,14,79,98,15,128,18,0					;U.O.......Ob....
+
+p__26C8:  movwf  0x55,a					; entry from: 0x235C,0x2366,0x2370,0x2374,0x27F0,0x2B5A
+          movlw  0x1D
+          bcf    STATUS,0,a
+          rlcf   0x4F,a
+          bc     p__26D8
+          btfsc  0x55,7,a
+          xorwf  0x4F,a
+          bra    p__26DE
+p__26D8:  btfss  0x55,7,a				; entry from: 0x26D0
+          xorwf  0x4F,a
+          bcf    STATUS,0,a
+p__26DE:  rlcf   0x4F,a					; entry from: 0x26D6
+          bc     p__26E8
+          btfsc  0x55,6,a
+          xorwf  0x4F,a
+          bra    p__26EE
+p__26E8:  btfss  0x55,6,a				; entry from: 0x26E0
+          xorwf  0x4F,a
+          bcf    STATUS,0,a
+p__26EE:  rlcf   0x4F,a					; entry from: 0x26E6
+          bc     p__26F8
+          btfsc  0x55,5,a
+          xorwf  0x4F,a
+          bra    p__26FE
+p__26F8:  btfss  0x55,5,a				; entry from: 0x26F0
+          xorwf  0x4F,a
+          bcf    STATUS,0,a
+p__26FE:  rlcf   0x4F,a					; entry from: 0x26F6
+          bc     p__2708
+          btfsc  0x55,4,a
+          xorwf  0x4F,a
+          bra    p__270E
+p__2708:  btfss  0x55,4,a				; entry from: 0x2700
+          xorwf  0x4F,a
+          bcf    STATUS,0,a
+p__270E:  rlcf   0x4F,a					; entry from: 0x2706
+          bc     p__2718
+          btfsc  0x55,3,a
+          xorwf  0x4F,a
+          bra    p__271E
+p__2718:  btfss  0x55,3,a				; entry from: 0x2710
+          xorwf  0x4F,a
+          bcf    STATUS,0,a
+p__271E:  rlcf   0x4F,a					; entry from: 0x2716
+          bc     p__2728
+          btfsc  0x55,2,a
+          xorwf  0x4F,a
+          bra    p__272E
+p__2728:  btfss  0x55,2,a				; entry from: 0x2720
+          xorwf  0x4F,a
+          bcf    STATUS,0,a
+p__272E:  rlcf   0x4F,a					; entry from: 0x2726
+          bc     p__2738
+          btfsc  0x55,1,a
+          xorwf  0x4F,a
+          bra    p__273E
+p__2738:  btfss  0x55,1,a				; entry from: 0x2730
+          xorwf  0x4F,a
+          bcf    STATUS,0,a
+p__273E:  rlcf   0x4F,a					; entry from: 0x2736
+          bc     p__2748
+          btfsc  0x55,0,a
+          xorwf  0x4F,a
+          bra    p__274E
+p__2748:  btfss  0x55,0,a				; entry from: 0x2740
+          xorwf  0x4F,a
+          nop
+p__274E:  bcf    0xF,0,a				; entry from: 0x2746
+          movlw  0xC4
+          cpfseq 0x4F,a
+          bsf    0xF,0,a
+          return 
+
 p__2758:  movlw  2						; entry from: 0x78C
           cpfseq 0x4C,a
           bra    p__2762
-          movlw  2
+p__275E:  movlw  2						; entry from: 0x27E2
           bra    p__2764
 
 p__2762:  movlw  0						; entry from: 0x2678,0x234E,0x275C
@@ -6034,24 +6129,24 @@ p__355A:  rcall  p__3856				; entry from: 0x354E
           btfss  0x3F,5,a
           btfsc  0x43,6,a
 p__356C:  movf   0x40,W,a				; entry from: 0x3564
-          movwf  0x65,a
+          movwf  RXB0DLC,a
           addlw  4
           movwf  0,a
           bcf    0,6,a
-          movff  0x38,ADRPT
-          movff  0x39,ADCNT
-          movff  0x3A,ADSTPTL
-          movff  0x3B,ADSTPTH
-          movff  5,ADLTHH
-          movff  6,ADUTHL
-          movff  7,ADUTHH
-          movff  8,ADERRL
-          movff  9,ADERRH
-          movff  0xA,ADACCL
-          movff  0xB,ADACCH
-          movff  0xC,ADFLTRL
+          movff  0x38,RXB0SIDH
+          movff  0x39,RXB0SIDL
+          movff  0x3A,RXB0EIDH
+          movff  0x3B,RXB0EIDL
+          movff  5,RXB0D0
+          movff  6,RXB0D1
+          movff  7,RXB0D2
+          movff  8,RXB0D3
+          movff  9,RXB0D4
+          movff  0xA,RXB0D5
+          movff  0xB,RXB0D6
+          movff  0xC,RXB0D7
           rcall  p__3CA0
-p__35A8:  bcf    TRISD,7,a				; entry from: 0x3C44
+p__35A8:  bcf    LATB,7,a				; entry from: 0x3C44
           clrf   0x25,a
           rcall  p__3856
           movlw  8
@@ -6156,23 +6251,23 @@ p__366E:  clrf   0x29,a					; entry from: 0x3676
 p__3674:  decf   0xBC,f,b				; entry from: 0x3666
           bra    p__366E
 
-p__3678:  movff  ADRPT,1				; entry from: 0x3636,0x3640
-          movff  ADCNT,2
-          movff  ADSTPTL,3
-          movff  ADSTPTH,4
-          movff  ADLTHH,5
-          movff  ADUTHL,6
-          movff  ADUTHH,7
-          movff  ADERRL,8
-          movff  ADERRH,9
-          movff  ADACCL,0xA
-          movff  ADACCH,0xB
-          movff  ADFLTRL,0xC
-          movff  ADLTHL,0x40
-          movff  CRCCON0,0x55
-          bcf    0x60,7,a
-          clrf   0x77,a
-          bcf    TRISD,6,a
+p__3678:  movff  RXB0SIDH,1				; entry from: 0x3636,0x3640
+          movff  RXB0SIDL,2
+          movff  RXB0EIDH,3
+          movff  RXB0EIDL,4
+          movff  RXB0D0,5
+          movff  RXB0D1,6
+          movff  RXB0D2,7
+          movff  RXB0D3,8
+          movff  RXB0D4,9
+          movff  RXB0D5,0xA
+          movff  RXB0D6,0xB
+          movff  RXB0D7,0xC
+          movff  RXB0DLC,0x40
+          movff  PIR5,0x55
+          bcf    RXB0CON,7,a
+          clrf   PIR5,a
+          bcf    LATB,6,a
           clrf   0x26,a
           rcall  p__3914
           rcall  p__3E00
@@ -6183,15 +6278,15 @@ p__3678:  movff  ADRPT,1				; entry from: 0x3636,0x3640
           movwf  0x40,a
           bcf    0xF,0,a
           bcf    0x11,1,a
-          bcf    0x71,7,a
-          movf   0x71,W,a
+          bcf    COMSTAT,7,a
+          movf   COMSTAT,W,a
           bnz    p__36D8
           btfsc  0x55,7,a
           bra    p__36D8
           clrf   0x97,b
           bra    p__371A
 
-p__36D8:  clrf   0x71,a					; entry from: 0x36CE,0x36D2
+p__36D8:  clrf   COMSTAT,a					; entry from: 0x36CE,0x36D2
           bsf    0xF,0,a
           bsf    0x11,1,a
           incfsz 0x97,W,b
