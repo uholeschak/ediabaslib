@@ -5434,14 +5434,15 @@ namespace BmwDeepObd
 
                     if (!_usbPermissionRequestDisabled)
                     {
-                        Android.App.PendingIntentFlags intentFlags = 0;
-                        if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
-                        {
-                            intentFlags |= Android.App.PendingIntentFlags.Mutable;
-                        }
-                        Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(UsbPermissionAction), intentFlags);
                         try
                         {
+                            Android.App.PendingIntentFlags intentFlags = 0;
+                            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+                            {
+                                intentFlags |= Android.App.PendingIntentFlags.Mutable;
+                            }
+                            Android.App.PendingIntent intent = Android.App.PendingIntent.GetBroadcast(_context, 0, new Intent(UsbPermissionAction), intentFlags);
+
                             _usbManager.RequestPermission(usbDevice, intent);
                             _usbPermissionRequested = true;
                         }
