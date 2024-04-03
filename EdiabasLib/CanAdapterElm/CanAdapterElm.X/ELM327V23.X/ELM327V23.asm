@@ -4574,11 +4574,13 @@ p__26A2:  btfss  0x72,0,b				; entry from: 0x2698
 
 p__26A8:  movlw  5						; entry from: 0x25AE,0x25BC,0x25C4,0x25CC,0x25D4,0x25E0,0x25EC,0x25F8
           movwf  0x52,a
-          btfss  PORTC,2,a
+p__26AC:  btfss  PORTC,2,a				; entry from: 0x26B8
           retlw  0
           dcfsnz 0x52,a
           bra    p__26BA
-          db   130,164,0,12,249,215												;......
+          btfss  PORTC,2,a
+          retlw  0
+          bra    p__26AC
 p__26BA:  pop							; entry from: 0x26B2
           bra    p__26BE
 p__26BE:  tstfsz 0,a					; entry from: 0x26BC
