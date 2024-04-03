@@ -1940,7 +1940,13 @@ p__110C:  setf   0x21,a					; entry from: 0x11AE,0x11B6,0x11BC,0x11CC,0x11A0
           btfss  0x1A,1,a
           return 
           bra    p__11D6
-          db   29,174,91,209,186,14,98,216,246,222,13,208						;..[...b.....
+p__113A:  btfss  0x1D,7,a				; entry from: 0x18E
+          bra    p__13F4
+          movlw  0xBA
+          rcall  p__1206
+          rcall  p___F30
+          bra    p__1160
+
 p__1146:  rcall  p__11FA				; entry from: 0x1A1E
           movlw  0x21
           btfsc  0x1E,1,a
@@ -1953,7 +1959,7 @@ p__1146:  rcall  p__11FA				; entry from: 0x1A1E
           rcall  p__11FA
           rcall  p___F34
           call   p___83C
-          call   p___83C
+p__1160:  call   p___83C				; entry from: 0x1144
           call   p__2184
           bcf    LATA,1,a
           movlw  0xF4
