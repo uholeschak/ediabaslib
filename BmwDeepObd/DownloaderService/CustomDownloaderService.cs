@@ -1425,13 +1425,20 @@ namespace BmwDeepObd
             intent.PutExtra(DownloaderServiceExtras.PendingIntent, this.pPendingIntent);
             intent.SetClassName(this.PackageName, this.AlarmReceiverClassName);
 
-            Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.OneShot;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            try
             {
-                intentFlags |= Android.App.PendingIntentFlags.Immutable;
+                Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.OneShot;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                {
+                    intentFlags |= Android.App.PendingIntentFlags.Immutable;
+                }
+                this.alarmIntent = Android.App.PendingIntent.GetBroadcast(this, 0, intent, intentFlags);
+                alarms.Set(Android.App.AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + wakeUp, this.alarmIntent);
             }
-            this.alarmIntent = Android.App.PendingIntent.GetBroadcast(this, 0, intent, intentFlags);
-            alarms.Set(Android.App.AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + wakeUp, this.alarmIntent);
+            catch (Exception ex)
+            {
+                Log.Debug(Tag, "DownloaderService ScheduleAlarm alarm exception: {0}", ex.Message);
+            }
         }
 
         /// <summary>
