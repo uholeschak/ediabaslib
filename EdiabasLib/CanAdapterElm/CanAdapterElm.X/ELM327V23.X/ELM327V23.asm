@@ -4067,13 +4067,27 @@ p__224C:  movff  0x4C,0x52				; entry from: 0x2084
 p__2270:  movff  0x4C,0x52				; entry from: 0x20A6
           dcfsnz 0x52,a
           bra    p__238C
-          db   82,78,189,210,5,14,76,100,253,239,22,240,12,14,76,100			;RN....Ld......Ld
-          db   120,239,26,240,116,12											;x...t.
+          dcfsnz 0x52,a
+          bra    p__27F6
+          movlw  5
+          cpfsgt 0x4C,a
+          goto   p__2DFA
+          movlw  0xC
+          cpfsgt 0x4C,a
+          goto   p__34F0
+          retlw  0x74
 p__228E:  movff  0x4C,0x52				; entry from: 0x2126
           dcfsnz 0x52,a
           bra    p__2492
-          db   82,78,152,239,20,240,5,14,76,100,18,239,23,240,12,14				;RN......Ld......
-          db   76,100,221,239,26,240,116,12										;Ld....t.
+          dcfsnz 0x52,a
+          goto   p__2930
+          movlw  5
+          cpfsgt 0x4C,a
+          goto   p__2E24
+          movlw  0xC
+          cpfsgt 0x4C,a
+          goto   p__35BA
+          retlw  0x74
 p__22AE:  movff  0x4C,0x52				; entry from: 0x2186
           movlw  3
           subwf  0x52,a
@@ -4095,8 +4109,18 @@ p__22CC:  movff  0x4C,0x52				; entry from: 0xE48
           goto   p__3288
           dcfsnz 0x52,a
           goto   p__3FEC
-          db   82,78,254,239,31,240,82,78,6,239,32,240,82,78,14,239				;RN....RN.. .RN..
-          db   32,240,82,78,22,239,32,240,82,78,30,239,32,240,116,12			; .RN.. .RN.. .t.
+          dcfsnz 0x52,a
+          goto   p__3FFC
+          dcfsnz 0x52,a
+          goto   p__400C
+          dcfsnz 0x52,a
+          goto   p__401C
+          dcfsnz 0x52,a
+          goto   p__402C
+          dcfsnz 0x52,a
+          goto   p__403C
+          retlw  0x74
+
 p__2304:  movlw  0x61					; entry from: 0x219C
           movwf  0x12,a
           movlw  0x6A
