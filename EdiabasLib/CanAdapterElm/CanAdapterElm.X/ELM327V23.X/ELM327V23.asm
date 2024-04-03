@@ -1505,18 +1505,73 @@ p___DB4:  movf   0x79,W,b				; entry from: 0x13F0
           return 
           pop
           bra    p___C1C
-          db   250,223,17,225,122,103,15,208,141,185,4,208,8,14,204,111			;....zg.........o
-          db   130,14,3,208,6,14,204,111,174,14,205,111,2,14,206,111			;.......o...o...o
-          db   102,14,207,111,25,208,36,220,196,207,206,240,195,207,207,240		;f..o..$.........
-          db   122,57,15,11,10,13,15,14,122,21,243,36,205,111,121,57			;z9......z..$.oy9
-          db   15,11,10,13,15,14,121,21,243,36,100,13,243,80,205,39				;......y..$d..P.'
-          db   244,80,216,176,1,15,204,111,127,132,8,14,141,169,12,14			;.P.....o........
-          db   116,110,204,81,56,220,205,81,54,220,206,81,52,220,207,81			;tn.Q8..Q6..Q4..Q
-          db   50,220,127,148													;2...
+p___DBE:  rcall  p___DB4				; entry from: 0x30E
+          bnz    p___DE4
+          tstfsz 0x7A,b
+          bra    p___DE4
+          btfsc  0x8D,4,b
+          bra    p___DD2
+          movlw  8
+          movwf  0xCC,b
+          movlw  0x82
+          bra    p___DD8
+p___DD2:  movlw  6						; entry from: 0xDC8
+          movwf  0xCC,b
+          movlw  0xAE
+p___DD8:  movwf  0xCD,b					; entry from: 0xDD0
+          movlw  2
+          movwf  0xCE,b
+          movlw  0x66
+          movwf  0xCF,b
+          bra    p___E16
+
+p___DE4:  rcall  p___62E				; entry from: 0xDC0,0xDC4
+          movff  ADRESH,0xCE
+          movff  ADRES,0xCF
+          swapf  0x7A,W,b
+          andlw  0xF
+          mullw  0xA
+          movlw  0xF
+          andwf  0x7A,W,b
+          addwf  PRODL,W,a
+          movwf  0xCD,b
+          swapf  0x79,W,b
+          andlw  0xF
+          mullw  0xA
+          movlw  0xF
+          andwf  0x79,W,b
+          addwf  PRODL,W,a
+          mullw  0x64
+          movf   PRODL,W,a
+          addwf  0xCD,f,b
+          movf   PRODH,W,a
+          btfsc  STATUS,0,a
+          addlw  1
+          movwf  0xCC,b
+p___E16:  bsf    0x7F,2,a				; entry from: 0xDE2
+          movlw  8
+          btfss  0x8D,4,b
+          movlw  0xC
+          movwf  0x74,a
+          movf   0xCC,W,b
+          rcall  p___694
+          movf   0xCD,W,b
+          rcall  p___694
+          movf   0xCE,W,b
+          rcall  p___694
+          movf   0xCF,W,b
+          rcall  p___694
+          bcf    0x7F,2,a
 
 p___E32:  movlw  0xBA					; entry from: 0x302,0x1394,0xFBE,0xFA4,0xF7C
           goto   p__18EC
-          db   49,14,101,99,239,214,254,14,69,110,202,14,70,110					;1.ec....En..Fn
+p___E38:  movlw  0x31					; entry from: 0x22A
+          cpfseq 0x65,b
+          bra    p___C1C
+          movlw  0xFE
+          movwf  0x45,a
+          movlw  0xCA
+          movwf  0x46,a
 p___E46:  clrf   0x44,a					; entry from: 0x1248
 p___E48:  call   p__22CC				; entry from: 0x1266
           btfss  0x42,2,a
