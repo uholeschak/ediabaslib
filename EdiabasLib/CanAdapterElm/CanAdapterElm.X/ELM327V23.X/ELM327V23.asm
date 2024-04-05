@@ -133,10 +133,6 @@ eep_start:
 eep_end:
 
 #if SW_VERSION != 0
-p_restart:	btfss	RI
-		goto	p_reset		; perform wd reset after software reset
-		return
-
 eep_copy:	movlw	0x24
 		movwf	EEADR
 		call	p___CE2
@@ -201,7 +197,11 @@ ORG CODE_OFFSET + 0
 RESETVEC:
           clrf   OSCCON,a
           bsf    LATC,6,a
+#if SW_VERSION != 0
+          goto   p_init
+#else
           goto   p__16C2
+#endif
 
 ORG CODE_OFFSET + 0x08
           btfsc  0x1D,7,a
@@ -8006,11 +8006,22 @@ p__403C:  movff  0x9C,0x41				; entry from: 0x22FE,0x4034,0x4038
           movf   0x9B,W,b
           bra    p__3E7C
 
-#if WDT_RESET
-p_reset:	bsf     POR
-	    	bsf     RI
-	    	bsf     SWDTEN
-reset_loop:	bra	reset_loop
+#if SW_VERSION != 0
+p_init:
+          call   p_restart
+          goto   p__16C2
+
+p_restart:
+          btfss	RI
+          goto	p_reset		; perform wd reset after software reset
+          return
+
+p_reset:
+          bsf     POR
+          bsf     RI
+          bsf     SWDTEN
+reset_loop:
+          bra	reset_loop
 #endif
 
 END RESETVEC
