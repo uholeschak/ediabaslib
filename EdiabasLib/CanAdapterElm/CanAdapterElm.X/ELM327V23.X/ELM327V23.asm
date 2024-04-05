@@ -7982,7 +7982,7 @@ reset_loop:
           bra	reset_loop
 
 eep_copy:
-          movlw	0x24
+          movlw	0x28
           movwf	EEADR
           call	p_read_eeprom
           xorlw	DEFAULT_BAUD
