@@ -132,61 +132,6 @@ eep_start:
           DB 0x00, 0x00, 0x00, 0x00, 0x5B, 0x69, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x66, 0x69, 0x65, 0x72, 0x5D
 eep_end:
 
-#if SW_VERSION != 0
-eep_copy:	movlw	0x24
-		movwf	EEADR
-		call	p___CE2
-		xorlw	DEFAULT_BAUD
-		bnz	eep_init
-
-		movlw	0x78
-		movwf	EEADR
-		call	p___CE2
-		xorlw	0x30 + (SW_VERSION / 16)
-		bnz	eep_init
-
-		movlw	0x79
-		movwf	EEADR
-		call	p___CE2
-		xorlw	0x30 + (SW_VERSION MOD 16)
-		bnz	eep_init
-
-		movlw	0x7A
-		movwf	EEADR
-		call	p___CE2
-		xorlw	0x30 + (ADAPTER_TYPE / 16)
-		bnz	eep_init
-
-		movlw	0x7B
-		movwf	EEADR
-		call	p___CE2
-		xorlw	0x30 + (ADAPTER_TYPE MOD 16)
-		bnz	eep_init
-		return
-
-eep_init:	movlw   low(eep_start)
-		movwf   TBLPTRL
-		movlw   high(eep_start)
-		movwf   TBLPTRH
-		movlw   upper(eep_start)
-		movwf   TBLPTRU
-		bsf	EECON1,2
-		movlw	0x00
-		movwf	EEADR
-eep_loop:	tblrd   *+
-	        movf    TABLAT, W
-		call	p___694
-		movf    EEADR, W
-		xorlw	low(eep_end - eep_start)
-		bnz	eep_loop
-		bcf	EECON1,2
-
-		movlw	high(DATA_OFFSET) + 0
-		movwf	TBLPTRH
-		clrf	TBLPTRU
-		return
-#endif
-
 #if ORIGINAL == 0
 ORG 0x7FFA
           DW 0x0015		; adapter version
@@ -860,6 +805,7 @@ p___690:  bcf    0x4C,7,a				; entry from: 0x66C
           return
 
 ; write eeprom
+p_write_eeprom:
 p___694:  movwf  EEDATA,a					; entry from: 0x67C
           bcf    EECON1,7,a
           movlw  0x55
@@ -1672,6 +1618,7 @@ p___CCE:  movlw  0x58					; entry from: 0xCC0
 p___CE0:  bra    p___BF6				; entry from: 0xCD2
 
 ; read eeprom
+p_read_eeprom:
 p___CE2:  movwf  EEADR,a					; entry from: 0x622,0x62C
           bcf    EECON1,7,a
           bcf    EECON1,6,a
@@ -2937,9 +2884,12 @@ p__16C2:  movlw  0x97					; entry from: 4
 p__16D6:  movlb  0						; entry from: 0x11F8
           movwf  0xD3,b
           clrf   STKPTR,a
+#if SW_VERSION != 0
 #if EEPROM_PAGE != 0
           movlw  EEPROM_PAGE
           movwf  EEADRH
+#endif
+          call  eep_copy
 #endif
           btfsc  0xD3,1,b
           bcf    0xD3,0,b
@@ -8030,6 +7980,62 @@ p_reset:
           bsf     SWDTEN
 reset_loop:
           bra	reset_loop
+
+eep_copy:
+          movlw	0x24
+          movwf	EEADR
+          call	p_read_eeprom
+          xorlw	DEFAULT_BAUD
+          bnz	eep_init
+
+          movlw	0x78
+          movwf	EEADR
+          call	p_read_eeprom
+          xorlw	0x30 + (SW_VERSION / 16)
+          bnz	eep_init
+
+          movlw	0x79
+          movwf	EEADR
+          call	p_read_eeprom
+          xorlw	0x30 + (SW_VERSION MOD 16)
+          bnz	eep_init
+
+          movlw	0x7A
+          movwf	EEADR
+          call	p_read_eeprom
+          xorlw	0x30 + (ADAPTER_TYPE / 16)
+          bnz	eep_init
+
+          movlw	0x7B
+          movwf	EEADR
+          call	p_read_eeprom
+          xorlw	0x30 + (ADAPTER_TYPE MOD 16)
+          bnz	eep_init
+          return
+
+eep_init:
+          movlw   low(eep_start)
+          movwf   TBLPTRL
+          movlw   high(eep_start)
+          movwf   TBLPTRH
+          movlw   upper(eep_start)
+          movwf   TBLPTRU
+          bsf     EECON1,2
+          movlw   0x00
+          movwf   EEADR
+eep_loop:
+          tblrd   *+
+          movf    TABLAT, W
+          call    p_write_eeprom
+          movf    EEADR, W
+          xorlw   low(eep_end - eep_start)
+          bnz     eep_loop
+          bcf     EECON1,2
+
+          movlw   high(DATA_OFFSET) + 0
+          movwf   TBLPTRH
+          clrf    TBLPTRU
+          return
 #endif
 
 END RESETVEC
