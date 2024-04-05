@@ -8011,8 +8011,9 @@ eep_copy:
           call	p_read_eeprom
           xorlw	0x30 + (ADAPTER_TYPE MOD 16)
           bnz	eep_init
-          return
 #endif
+          return
+
 eep_init:
           movlw   low(eep_start)
           movwf   TBLPTRL
