@@ -49,6 +49,36 @@
         <archiverTool>
         </archiverTool>
         <loading>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="default"
+                        AC="true"
+                        BL="true"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=default"
+                        DBC="${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/default&quot; &quot;dist/default&quot;"
+                        OP="dist/default/production/bootloader.production.hex"
+                        DOP="dist/default/debug/bootloader.debug.hex"
+                        FL="dist/default/production/bootloader.production.hex"
+                        PD="dist/default/production/bootloader.production.elf"
+                        DD="dist/default/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="spp_uart"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=spp_uart"
+                        DBC="${MAKE}  -f Makefile CONF=spp_uart TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/spp_uart&quot; &quot;dist/spp_uart&quot;"
+                        OP="dist/spp_uart/production/bootloader.production.hex"
+                        DOP="dist/spp_uart/debug/bootloader.debug.hex"
+                        FL="dist/spp_uart/production/bootloader.production.hex"
+                        PD="dist/spp_uart/production/bootloader.production.elf"
+                        DD="dist/spp_uart/debug/bootloader.debug.elf">
+          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -60,8 +90,8 @@
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
-        <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep></makeCustomizationPostStep>
+        <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>

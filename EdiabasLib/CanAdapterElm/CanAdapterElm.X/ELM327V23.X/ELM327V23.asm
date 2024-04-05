@@ -5,7 +5,7 @@
 #include <xc.inc>
 #define upper(_x) (low((_x) >> 16))
 
-#define ORIGINAL    1
+#define ORIGINAL    0
 
 #if ORIGINAL
     #define SW_VERSION 0x00
