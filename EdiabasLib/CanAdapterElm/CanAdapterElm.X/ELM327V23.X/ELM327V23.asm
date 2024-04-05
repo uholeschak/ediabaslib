@@ -1293,7 +1293,30 @@ p___A3A:  movf   0x53,W,a				; entry from: 0xA48
           cpfseq 0x53,a
           bra    p___A3A
           return 
-p___A4C:  rcall  p___A32				; entry from: 0x354
+p___A4C:
+#if SW_VERSION != 0
+          movlw	0
+          movwf	FSR0H
+          movlw	0x65
+          movwf	FSR0L
+          movf	POSTINC0,W
+          xorlw	"E"
+          bz		eep_chk
+          xorlw	"E"
+          xorlw	"B"
+          bnz		cmd_err
+          movf	POSTINC0,W
+          xorlw	"L"
+          bnz		cmd_err
+          reset
+eep_chk:  movf	POSTINC0,W
+          xorlw	"E"
+          bnz		cmd_err
+          call		eep_init
+          bra		p___E32	    ; print OK
+cmd_err:  bra		p___C1C	    ; print ?
+#else
+          rcall  p___A32				; entry from: 0x354
           btfss  STATUS,2,a
           bra    p___C1C
           movlw  0x65
@@ -1314,6 +1337,7 @@ p___A5C:  movf   POSTINC0,W,a			; entry from: 0xA62
           rcall  p___694
           bcf    EECON1,2,a
           bra    p___A7E
+#endif
 p___A76:  bcf    0x10,4,a				; entry from: 0x10A
 p___A78:  bcf    0x3E,6,a				; entry from: 0xCFC
           bcf    0x3E,5,a
@@ -1516,7 +1540,9 @@ p___C0C:  rcall  p___C22				; entry from: 0xBC8,0xBDA,0xBEC,0xC58,0xC6A,0xC7C,0x
           bcf    0x3E,5,a
           bsf    0x3E,4,a
 
-p___C1C:  movlw  0x3F					; entry from: 0x9FA,0xA04,0xA10,0xA22,0xA50,0xA9A,0xAC2,0xB32,0xB78,0xBBA,0xC4A,0xCF4,0xD02,0xD9E,0xDAE,0xDBC,0xE3C,0xE4E,0x13F4,0x1BE6,0x2FEA
+; print ?
+; load "?"
+p___C1C:  movlw  '?'					; entry from: 0x9FA,0xA04,0xA10,0xA22,0xA50,0xA9A,0xAC2,0xB32,0xB78,0xBBA,0xC4A,0xCF4,0xD02,0xD9E,0xDAE,0xDBC,0xE3C,0xE4E,0x13F4,0x1BE6,0x2FEA
           rcall  p___550
           bra    p___D7E
 
@@ -1786,6 +1812,8 @@ p___E16:  bsf    0x7F,2,a				; entry from: 0xDE2
           rcall  p___694
           bcf    0x7F,2,a
 
+; print OK
+; load offset of table entry "OK"
 p___E32:  movlw  0xBA					; entry from: 0x302,0x1394,0xFBE,0xFA4,0xF7C
           goto   p__18EC
 p___E38:  movlw  0x31					; entry from: 0x22A
