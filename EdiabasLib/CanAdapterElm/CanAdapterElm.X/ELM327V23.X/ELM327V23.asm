@@ -131,6 +131,66 @@ eep_start:
           DB 0x00, 0x00, 0x00, 0x00, 0x5B, 0x69, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x66, 0x69, 0x65, 0x72, 0x5D
 eep_end:
 
+#if SW_VERSION != 0
+eep_end:
+p_restart:	btfss	_RI_
+		goto	p_reset		; perform wd reset after software reset
+		return
+
+eep_copy:	movlw	0x24
+		movwf	EEADR
+		call	p__838
+		xorlw	DEFAULT_BAUD
+		bnz	eep_init
+
+		movlw	0x78
+		movwf	EEADR
+		call	p__838
+		xorlw	0x30 + (SW_VERSION / 16)
+		bnz	eep_init
+
+		movlw	0x79
+		movwf	EEADR
+		call	p__838
+		xorlw	0x30 + (SW_VERSION MOD 16)
+		bnz	eep_init
+
+		movlw	0x7A
+		movwf	EEADR
+		call	p__838
+		xorlw	0x30 + (ADAPTER_TYPE / 16)
+		bnz	eep_init
+
+		movlw	0x7B
+		movwf	EEADR
+		call	p__838
+		xorlw	0x30 + (ADAPTER_TYPE MOD 16)
+		bnz	eep_init
+		return
+
+eep_init:	movlw   low(eep_start)
+		movwf   TBLPTRL
+		movlw   high(eep_start)
+		movwf   TBLPTRH
+		movlw   upper(eep_start)
+		movwf   TBLPTRU
+		bsf	EECON1,2
+		movlw	0x00
+		movwf	EEADR
+eep_loop:	tblrd   *+
+	        movf    TABLAT, W
+		call	p__A00
+		movf    EEADR, W
+		xorlw	low(eep_end - eep_start)
+		bnz	eep_loop
+		bcf	EECON1,2
+
+		movlw	high(DATA_OFFSET) + 0
+		movwf	TBLPTRH
+		clrf	TBLPTRU
+		return
+#endif
+
 #if ORIGINAL == 0
 ORG 0x7FFA
           DW 0x0015		; adapter version
@@ -489,12 +549,12 @@ p___418:  rcall  p___84A				; entry from: 0x176A
           movwf  0x52,a
           movlw  0x10
           iorlw  1
-          movwf  0x74,a
+          movwf  EEADR,a
           bsf    EECON1,2,a
           bcf    EECON1,7,a
 p___442:  clrf   0x53,a					; entry from: 0x46A
           clrf   0x54,a
-          setf   0x73,a
+          setf   EEDATA,a
           movlw  0x55
           movwf  0x7E,a
           movlw  0xAA
@@ -705,15 +765,15 @@ p___5CC:  btfsc  0xD5,6,b				; entry from: 0x5C2
           bra    p___5C4
 
 p___5D4:  clrf   0x4C,a					; entry from: 0x660,0x78A,0x77E
-          clrf   0x74,a
+          clrf   EEADR,a
           bcf    EECON1,7,a
           movlw  8
           movwf  0x52,a
 p___5DE:  rrncf  0x4C,a					; entry from: 0x5EA
           bsf    EECON1,0,a
-          tstfsz 0x73,a
+          tstfsz EEDATA,a
           bsf    0x4C,7,a
-          incf   0x74,a
+          incf   EEADR,a
           decfsz 0x52,a
           bra    p___5DE
           bcf    0x4D,7,a
@@ -722,7 +782,7 @@ p___5DE:  rrncf  0x4C,a					; entry from: 0x5EA
           bcf    0x4C,7,a
           movlw  4
           btfss  0x8D,4,b
-          addwf  0x74,a
+          addwf  EEADR,a
           rcall  p___61A
           movwf  0xCC,b
           rcall  p___616
@@ -738,10 +798,10 @@ p___5DE:  rrncf  0x4C,a					; entry from: 0x5EA
           bsf    0x4D,7,a
           return 
 
-p___616:  incf   0x74,a					; entry from: 0x5FE,0x602,0x606
+p___616:  incf   EEADR,a					; entry from: 0x5FE,0x602,0x606
           nop
 p___61A:  bsf    EECON1,0,a				; entry from: 0x5FA
-          movf   0x73,W,a
+          movf   EEDATA,W,a
           return 
 
 p___620:  iorlw  1						; entry from: 0x5B0,0x16BE,0x730,0x75A,0x764,0x7B4,0x7C0,0x7CA,0x7D4,0x7DE,0x7E8,0x7F4,0x7FE,0x6C2,0x6D0,0x6DA,0x6E4,0x6EC,0x6F6,0x702,0x70C
@@ -749,7 +809,7 @@ p___620:  iorlw  1						; entry from: 0x5B0,0x16BE,0x730,0x75A,0x764,0x7B4,0x7C0
           bz     p___62A
           movf   0xD1,W,b
           return 
-p___62A:  decf   0x74,W,a				; entry from: 0x624
+p___62A:  decf   EEADR,W,a				; entry from: 0x624
           bra    p___CE2
 p___62E:  bsf    ADCON0,0,a				; entry from: 0x1892
           rcall  p___85A
@@ -781,7 +841,7 @@ p___658:  movff  0x4C,0x55				; entry from: 0x1906
           xorwf  0x55,W,a
           bz     p___690
           bsf    EECON1,2,a
-          clrf   0x74,a
+          clrf   EEADR,a
           movlw  8
           movwf  0x52,a
           movlw  0xFF
@@ -798,7 +858,7 @@ p___678:  btfss  0x55,0,a				; entry from: 0x682
           movff  0x55,0x4C
 p___690:  bcf    0x4C,7,a				; entry from: 0x66C
           return 
-p___694:  movwf  0x73,a					; entry from: 0x67C
+p___694:  movwf  EEDATA,a					; entry from: 0x67C
           bcf    EECON1,7,a
           movlw  0x55
           movwf  0x7E,a
@@ -812,7 +872,7 @@ p___6A6:  rcall  p___936				; entry from: 0x6AE
           bra    p___45A
           btfsc  EECON1,1,a
           bra    p___6A6
-          incf   0x74,a
+          incf   EEADR,a
           bsf    EECON1,7,a
           retlw  0xFF
 p___6B6:  btfsc  0xD3,2,b				; entry from: 0x189E
@@ -1291,8 +1351,8 @@ p___A4C:  rcall  p___A32				; entry from: 0x354
           movlw  0x65
           movwf  FSR0L,a
           movlw  0x74
-          movwf  0x74,a
-          bsf    0x7F,2,a
+          movwf  EEADR,a
+          bsf    EECON1,2,a
 p___A5C:  movf   POSTINC0,W,a			; entry from: 0xA62
           rcall  p___694
           decfsz 0x52,a
@@ -1304,7 +1364,7 @@ p___A5C:  movf   POSTINC0,W,a			; entry from: 0xA62
           rcall  p___694
           rcall  p___694
           rcall  p___694
-          bcf    0x7F,2,a
+          bcf    EECON1,2,a
           bra    p___A7E
 p___A76:  bcf    0x10,4,a				; entry from: 0x10A
 p___A78:  bcf    0x3E,6,a				; entry from: 0xCFC
@@ -1609,11 +1669,12 @@ p___CCE:  movlw  0x58					; entry from: 0xCC0
           iorwf  0xA4,f,b
 p___CE0:  bra    p___BF6				; entry from: 0xCD2
 
-p___CE2:  movwf  0x74,a					; entry from: 0x622,0x62C
+; read eeprom
+p___CE2:  movwf  EEADR,a					; entry from: 0x622,0x62C
           bcf    EECON1,7,a
           bcf    EECON1,6,a
           bsf    EECON1,0,a
-          movf   0x73,W,a
+          movf   EEDATA,W,a
           bsf    EECON1,7,a
           return 
 
@@ -1765,7 +1826,7 @@ p___E16:  bsf    0x7F,2,a				; entry from: 0xDE2
           movlw  8
           btfss  0x8D,4,b
           movlw  0xC
-          movwf  0x74,a
+          movwf  EEADR,a
           movf   0xCC,W,b
           rcall  p___694
           movf   0xCD,W,b
@@ -2407,29 +2468,29 @@ p__1324:  movwf  0xD0,b					; entry from: 0x14E4
           xorwf  0xD1,W,b
           btfsc  STATUS,2,a
           bra    p__1394
-          bsf    0x7F,2,a
+          bsf    EECON1,2,a
           movf   0xD1,W,b
           call   p___694
-          bcf    0x7F,2,a
+          bcf    EECON1,2,a
           bra    p__1394
 p__133A:  movlw  0x30					; entry from: 0x131E
           movwf  0x52,a
           movlw  0x10
           iorlw  1
-          movwf  0x74,a
-          bsf    0x7F,2,a
+          movwf  EEADR,a
+          bsf    EECON1,2,a
 p__1346:  rcall  p___CE2				; entry from: 0x135C
           xorwf  0xD1,W,b
           bz     p__1354
           movf   0xD1,W,b
           call   p___694
           bra    p__1356
-p__1354:  incf   0x74,a					; entry from: 0x134A
-p__1356:  incf   0x74,W,a				; entry from: 0x1352
-          movwf  0x74,a
+p__1354:  incf   EEADR,a					; entry from: 0x134A
+p__1356:  incf   EEADR,W,a				; entry from: 0x1352
+          movwf  EEADR,a
           decfsz 0x52,a
           bra    p__1346
-          bcf    0x7F,2,a
+          bcf    EECON1,2,a
           bra    p__1394
 
 p__1362:  movf   0x65,W,b				; entry from: 0x12AC,0x12B2
