@@ -437,6 +437,7 @@ p___302:  goto   p___E32				; entry from: 0x106
           db   'U','S','E','R','2',0
           db   ' ','(','C','A','N',' ',0,0
           db   'E','R','R','7','1',0
+
 p___3D0:  btfss  0x18,7,a				; entry from: 0x210
           bra    p___3D8
           rcall  p___6B6
@@ -1793,7 +1794,7 @@ p___E48:  call   p__22CC				; entry from: 0x1266
 
 p___E54:  movf   0x4C,W,a				; entry from: 0x13A
           movwf  0x52,a
-          movlw  3						; H ADDR 
+          movlw  high(TABLE_OFFSET) + 3			; H ADDR 
           movwf  TBLPTRH,a				; tblptrh 
           movlw  0x5A
           bz     p___EB0
@@ -1839,13 +1840,24 @@ p___E98:  movlw  9						; entry from: 0xE70
           bra    p___EB8
 
 p___EB0:  rcall  p__1206				; entry from: 0xE5E,0xE82,0xE92,0xE96
-p___EB2:  clrf   TBLPTRH,a				; entry from: 0xF1C
+p___EB2:
+#if DATA_OFFSET == 0
+          clrf   TBLPTRH,a
+#else
+          movlw  high(DATA_OFFSET) + 0
+          movwf  TBLPTRH
+#endif
           bra    p___D7E
 p___EB6:  movlw  0xA0					; entry from: 0xE9C
 p___EB8:  rcall  p__1206				; entry from: 0xEAE
           movlw  0xC2
           rcall  p__1206
+#if DATA_OFFSET == 0
           clrf   TBLPTRH,a
+#else
+          movlw  high(DATA_OFFSET) + 0
+          movwf  TBLPTRH
+#endif
           call   p__22CC
           btfss  0x43,7,a
           bra    p___ED0
