@@ -7987,7 +7987,7 @@ eep_copy:
           call	p_read_eeprom
           xorlw	DEFAULT_BAUD
           bnz	eep_init
-
+#if 0
           movlw	0x78
           movwf	EEADR
           call	p_read_eeprom
@@ -8012,7 +8012,7 @@ eep_copy:
           xorlw	0x30 + (ADAPTER_TYPE MOD 16)
           bnz	eep_init
           return
-
+#endif
 eep_init:
           movlw   low(eep_start)
           movwf   TBLPTRL
