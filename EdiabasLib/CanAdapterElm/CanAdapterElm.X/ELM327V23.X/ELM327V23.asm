@@ -3,6 +3,7 @@
 ;PROCESSOR 18F25K80; modify this
 
 #include <xc.inc>
+#define upper(_x) (low((_x) >> 16))
 
 #define ORIGINAL    1
 
@@ -132,38 +133,37 @@ eep_start:
 eep_end:
 
 #if SW_VERSION != 0
-eep_end:
-p_restart:	btfss	_RI_
+p_restart:	btfss	RI
 		goto	p_reset		; perform wd reset after software reset
 		return
 
 eep_copy:	movlw	0x24
 		movwf	EEADR
-		call	p__838
+		call	p___CE2
 		xorlw	DEFAULT_BAUD
 		bnz	eep_init
 
 		movlw	0x78
 		movwf	EEADR
-		call	p__838
+		call	p___CE2
 		xorlw	0x30 + (SW_VERSION / 16)
 		bnz	eep_init
 
 		movlw	0x79
 		movwf	EEADR
-		call	p__838
+		call	p___CE2
 		xorlw	0x30 + (SW_VERSION MOD 16)
 		bnz	eep_init
 
 		movlw	0x7A
 		movwf	EEADR
-		call	p__838
+		call	p___CE2
 		xorlw	0x30 + (ADAPTER_TYPE / 16)
 		bnz	eep_init
 
 		movlw	0x7B
 		movwf	EEADR
-		call	p__838
+		call	p___CE2
 		xorlw	0x30 + (ADAPTER_TYPE MOD 16)
 		bnz	eep_init
 		return
@@ -179,7 +179,7 @@ eep_init:	movlw   low(eep_start)
 		movwf	EEADR
 eep_loop:	tblrd   *+
 	        movf    TABLAT, W
-		call	p__A00
+		call	p___694
 		movf    EEADR, W
 		xorlw	low(eep_end - eep_start)
 		bnz	eep_loop
@@ -556,9 +556,9 @@ p___442:  clrf   0x53,a					; entry from: 0x46A
           clrf   0x54,a
           setf   EEDATA,a
           movlw  0x55
-          movwf  0x7E,a
+          movwf  EECON2,a
           movlw  0xAA
-          movwf  0x7E,a
+          movwf  EECON2,a
           bsf    EECON1,1,a
 
 p___452:  decfsz 0x54,a					; entry from: 0x454,0x462
@@ -857,13 +857,15 @@ p___678:  btfss  0x55,0,a				; entry from: 0x682
           bsf    0x4D,7,a
           movff  0x55,0x4C
 p___690:  bcf    0x4C,7,a				; entry from: 0x66C
-          return 
+          return
+
+; write eeprom
 p___694:  movwf  EEDATA,a					; entry from: 0x67C
           bcf    EECON1,7,a
           movlw  0x55
-          movwf  0x7E,a
+          movwf  EECON2,a
           movlw  0xAA
-          movwf  0x7E,a
+          movwf  EECON2,a
           bsf    EECON1,1,a
           movlw  0xC
           rcall  p___834
@@ -8003,5 +8005,12 @@ p__4038:  rcall  p__403C				; entry from: 0x2246
 p__403C:  movff  0x9C,0x41				; entry from: 0x22FE,0x4034,0x4038
           movf   0x9B,W,b
           bra    p__3E7C
+
+#if WDT_RESET
+p_reset:	bsf     POR
+	    	bsf     RI
+	    	bsf     SWDTEN
+reset_loop:	bra	reset_loop
+#endif
 
 END RESETVEC
