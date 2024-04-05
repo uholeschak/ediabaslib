@@ -2924,8 +2924,10 @@ p__16B2:  goto   p__18EC				; entry from: 0x16BC
 p__16BE:  goto   p___620				; entry from: 0x16F0,0x172A,0x177E,0x1808,0x1812,0x181C,0x1826,0x183A,0x1844,0x1854,0x185E,0x18D2,0x17D8,0x17E2,0x17EA,0x17F2,0x17FE,0x17AE
 p__16C2:  movlw  0x97					; entry from: 4
           movwf  TRISC,a
+#if SW_VERSION == 0
           comf   RCON,W,a
           setf   RCON,a
+#endif
           clrwdt
           andlw  0x1B
           btfsc  STKPTR,7,a
@@ -8009,6 +8011,12 @@ p__403C:  movff  0x9C,0x41				; entry from: 0x22FE,0x4034,0x4038
 #if SW_VERSION != 0
 p_init:
           call   p_restart
+          comf   RCON,W
+          movwf  FSR0L
+          movlw  0xFD	; keep POR bit
+          iorwf  RCON
+          movf   FSR0L,W
+          setf   RCON
           goto   p__16C2
 
 p_restart:
