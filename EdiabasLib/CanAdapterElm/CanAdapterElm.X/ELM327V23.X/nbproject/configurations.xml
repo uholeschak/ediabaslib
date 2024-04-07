@@ -53,7 +53,7 @@
                         CT="1"
                         CN="default"
                         AC="true"
-                        BL="false"
+                        BL="true"
                         WD="../bootloader"
                         BC="${MAKE}  -f Makefile CONF=default"
                         DBC="${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN"
@@ -90,7 +90,7 @@
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
-        <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
