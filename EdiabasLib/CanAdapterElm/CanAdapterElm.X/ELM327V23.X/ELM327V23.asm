@@ -157,11 +157,7 @@ ORG CODE_OFFSET + 0
 RESETVEC:
           clrf   OSCCON,a
           bsf    LATC,6,a
-#if SW_VERSION != 0
-          goto   p_init
-#else
           goto   p__16C2
-#endif
 
 ORG CODE_OFFSET + 0x08
           btfsc  0x1D,7,a
@@ -2923,8 +2919,16 @@ p__16B2:  goto   p__18EC				; entry from: 0x16BC
 p__16BE:  goto   p___620				; entry from: 0x16F0,0x172A,0x177E,0x1808,0x1812,0x181C,0x1826,0x183A,0x1844,0x1854,0x185E,0x18D2,0x17D8,0x17E2,0x17EA,0x17F2,0x17FE,0x17AE
 p__16C2:  movlw  0x97					; entry from: 4
           movwf  TRISC,a
-#if SW_VERSION == 0
+#if SW_VERSION != 0
+          call   p_restart
+#endif
           comf   RCON,W,a
+#if WDT_RESET
+          movwf  FSR0L,a
+          movlw  0xFD	; keep POR bit
+          iorwf  RCON,a
+          movf   FSR0L,W,a
+#else
           setf   RCON,a
 #endif
           clrwdt
@@ -2939,7 +2943,7 @@ p__16D6:  movlb  0						; entry from: 0x11F8
 #if SW_VERSION != 0
 #if EEPROM_PAGE != 0
           movlw  EEPROM_PAGE
-          movwf  EEADRH
+          movwf  EEADRH,a
 #endif
 #if EEPROM_COPY != 0
           call   eep_copy
@@ -8025,16 +8029,6 @@ p__403C:  movff  0x9C,0x41				; entry from: 0x22FE,0x4034,0x4038
           bra    p__3E7C
 
 #if SW_VERSION != 0
-p_init:
-          call   p_restart
-          comf   RCON,W,a
-          movwf  FSR0L,a
-          movlw  0xFD	; keep POR bit
-          iorwf  RCON,a
-          movf   FSR0L,W,a
-          setf   RCON,a
-          goto   p__16C2
-
 p_restart:
           btfss	RI
           goto	p_reset		; perform wd reset after software reset
