@@ -33,7 +33,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>pic-as</languageToolchain>
-        <languageToolchainVersion>2.31</languageToolchainVersion>
+        <languageToolchainVersion>2.46</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <packs>
@@ -53,7 +53,7 @@
                         CT="1"
                         CN="default"
                         AC="true"
-                        BL="true"
+                        BL="false"
                         WD="../bootloader"
                         BC="${MAKE}  -f Makefile CONF=default"
                         DBC="${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN"
@@ -90,7 +90,7 @@
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
-        <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
         <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
@@ -195,7 +195,6 @@
         <property key="verbose" value="false"/>
         <property key="warning-level" value="0"/>
         <property key="xassembler-with-cpp" value="true"/>
-        <appendMe value="--msgdisable=1522"/>
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
