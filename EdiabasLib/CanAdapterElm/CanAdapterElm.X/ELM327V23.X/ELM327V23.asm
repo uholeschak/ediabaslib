@@ -13,6 +13,7 @@
     #define BASE_ADDR 0x0000
     #define DATA_OFFSET BASE_ADDR
     #define TABLE_OFFSET BASE_ADDR
+    #define EEPROM_COPY 0x00
     #define EEPROM_PAGE 0x0
     #define WDT_RESET   0x0
 					;38400
@@ -24,6 +25,7 @@
     #define DATA_OFFSET BASE_ADDR
     #define TABLE_OFFSET BASE_ADDR
     #define EEPROM_PAGE 0x3
+    #define EEPROM_COPY 0x01
     #define WDT_RESET   0x1
 
     #if ADAPTER_TYPE == 0x02
@@ -120,7 +122,7 @@ PSECT reset_vec,class=CODE,delta=1
 PSECT code_abs,abs,class=CODE,delta=1
 
 ; EEPROM
-#if SW_VERSION == 0
+#if EEPROM_COPY == 0
     ORG 0xF00000 + (EEPROM_PAGE * 0x100)
 #else
     ORG CODE_OFFSET + 0x000100
@@ -1309,20 +1311,20 @@ p___A3A:  movf   0x53,W,a				; entry from: 0xA48
 p___A4C:
 #if SW_VERSION != 0
           movlw	0
-          movwf	FSR0H
+          movwf	FSR0H,a
           movlw	0x65
-          movwf	FSR0L
-          movf	POSTINC0,W
+          movwf	FSR0L, a
+          movf	POSTINC0,W,a
           xorlw	"E"
           bz		eep_chk
           xorlw	"E"
           xorlw	"B"
           bnz		cmd_err
-          movf	POSTINC0,W
+          movf	POSTINC0,W,a
           xorlw	"L"
           bnz		cmd_err
           reset
-eep_chk:  movf	POSTINC0,W
+eep_chk:  movf	POSTINC0,W,a
           xorlw	"E"
           bnz		cmd_err
           call		eep_init
@@ -1896,7 +1898,7 @@ p___EB2:
           clrf   TBLPTRH,a
 #else
           movlw  high(DATA_OFFSET) + 0
-          movwf  TBLPTRH
+          movwf  TBLPTRH,a
 #endif
           bra    p___D7E
 p___EB6:  movlw  0xA0					; entry from: 0xE9C
@@ -1907,7 +1909,7 @@ p___EB8:  rcall  p__1206				; entry from: 0xEAE
           clrf   TBLPTRH,a
 #else
           movlw  high(DATA_OFFSET) + 0
-          movwf  TBLPTRH
+          movwf  TBLPTRH,a
 #endif
           call   p__22CC
           btfss  0x43,7,a
@@ -2847,7 +2849,7 @@ p__1620:  movwf  0x4E,a					; entry from: 0x18BA,0x117E,0x1690,0x644
           clrf   TBLPTRH,a
 #else
           movlw  high(DATA_OFFSET) + 0
-          movwf  TBLPTRH
+          movwf  TBLPTRH,a
 #endif
           clrf   TBLPTRU,a
           movlw  0x80
@@ -2930,7 +2932,13 @@ p__16D6:  movlb  0						; entry from: 0x11F8
           movlw  EEPROM_PAGE
           movwf  EEADRH
 #endif
-          call  eep_copy
+#if EEPROM_COPY != 0
+          call   eep_copy
+#endif
+          clrf   TBLPTRL,a
+          movlw  high(DATA_OFFSET) + 0
+          movwf  TBLPTRH,a
+          clrf   TBLPTRU,a
 #endif
           btfsc  0xD3,1,b
           bcf    0xD3,0,b
@@ -2996,7 +3004,7 @@ p__174E:  lfsr   1,0x100				; entry from: 0x1744
           clrf   TBLPTRH,a
 #else
           movlw  high(DATA_OFFSET) + 0
-          movwf  TBLPTRH
+          movwf  TBLPTRH,a
 #endif
           bsf    CANCON,7,a
           clrf   0x42,a
@@ -3544,7 +3552,7 @@ p__1BCE:  movff  TBLPTRH,PCLATH			; entry from: 0x1BC8
           clrf   TBLPTRH,a
 #else
           movlw  high(DATA_OFFSET) + 0
-          movwf  TBLPTRH
+          movwf  TBLPTRH,a
 #endif
           movlw  2
           subwf  TBLPTRL,W,a
@@ -3558,7 +3566,7 @@ p__1BE4:
           clrf   TBLPTRH,a				; entry from: 0x1BBE
 #else
           movlw  high(DATA_OFFSET) + 0			; entry from: 0x1BBE
-          movwf  TBLPTRH
+          movwf  TBLPTRH,a
 #endif
 
 p__1BE6:  goto   p___C1C				; entry from: 0x19D6,0x1A8E,0x1B24,0x1B2A,0x1B30
@@ -8002,12 +8010,12 @@ p__403C:  movff  0x9C,0x41				; entry from: 0x22FE,0x4034,0x4038
 #if SW_VERSION != 0
 p_init:
           call   p_restart
-          comf   RCON,W
-          movwf  FSR0L
+          comf   RCON,W,a
+          movwf  FSR0L,a
           movlw  0xFD	; keep POR bit
-          iorwf  RCON
-          movf   FSR0L,W
-          setf   RCON
+          iorwf  RCON,a
+          movf   FSR0L,W,a
+          setf   RCON,a
           goto   p__16C2
 
 p_restart:
@@ -8024,31 +8032,31 @@ reset_loop:
 
 eep_copy:
           movlw	low(eep_baud)
-          movwf	EEADR
+          movwf	EEADR,a
           call	p_read_eeprom
           xorlw	DEFAULT_BAUD
           bnz	eep_init
 
           movlw	low(eep_version)
-          movwf	EEADR
+          movwf	EEADR,a
           call	p_read_eeprom
           xorlw	0x30 + (SW_VERSION / 16)
           bnz	eep_init
 
           movlw	low(eep_version + 1)
-          movwf	EEADR
+          movwf	EEADR,a
           call	p_read_eeprom
           xorlw	0x30 + (SW_VERSION MOD 16)
           bnz	eep_init
 
           movlw	low(eep_version + 2)
-          movwf	EEADR
+          movwf	EEADR,a
           call	p_read_eeprom
           xorlw	0x30 + (ADAPTER_TYPE / 16)
           bnz	eep_init
 
           movlw	low(eep_version + 3)
-          movwf	EEADR
+          movwf	EEADR,a
           call	p_read_eeprom
           xorlw	0x30 + (ADAPTER_TYPE MOD 16)
           bnz	eep_init
@@ -8057,26 +8065,23 @@ eep_copy:
 
 eep_init:
           movlw   low(eep_start)
-          movwf   TBLPTRL
+          movwf   TBLPTRL,a
           movlw   high(eep_start)
-          movwf   TBLPTRH
+          movwf   TBLPTRH,a
           movlw   upper(eep_start)
-          movwf   TBLPTRU
-          bsf     EECON1,2
+          movwf   TBLPTRU,a
+          bsf     EECON1,2,a
           movlw   0x00
-          movwf   EEADR
+          movwf   EEADR,a
 eep_loop:
           tblrd   *+
-          movf    TABLAT, W
+          movf    TABLAT, W,a
           call    p_write_eeprom
-          movf    EEADR, W
+          movf    EEADR, W,a
           xorlw   low(eep_end - eep_start)
           bnz     eep_loop
-          bcf     EECON1,2
+          bcf     EECON1,2,a
 
-          movlw   high(DATA_OFFSET) + 0
-          movwf   TBLPTRH
-          clrf    TBLPTRU
           return
 #endif
 
