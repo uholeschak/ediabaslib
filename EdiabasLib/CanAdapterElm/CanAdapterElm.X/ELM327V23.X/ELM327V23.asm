@@ -136,7 +136,9 @@ eep_start:
 #if SW_VERSION == 0
           DB 0x00, 0x00, 0x00, 0x00, 0x5B, 0x69, 0x64, 0x65, 0x6E, 0x74, 0x69, 0x66, 0x69, 0x65, 0x72, 0x5D
 #else
-          DB 0x00, 0x00, 0x00, 0x00, "D", "E", "E", "P", "O", "B", "D", " ", 0x30 + (SW_VERSION / 16), 0x30 + (SW_VERSION MOD 16), 0x30 + (ADAPTER_TYPE / 16), 0x30 + (ADAPTER_TYPE MOD 16)
+          DB 0x00, 0x00, 0x00, 0x00, "D", "E", "E", "P", "O", "B", "D", " "
+eep_version:
+          DB 0x30 + (SW_VERSION / 16), 0x30 + (SW_VERSION MOD 16), 0x30 + (ADAPTER_TYPE / 16), 0x30 + (ADAPTER_TYPE MOD 16)
 #endif
 eep_end:
 
@@ -8023,31 +8025,31 @@ eep_copy:
           call	p_read_eeprom
           xorlw	DEFAULT_BAUD
           bnz	eep_init
-#if 0
-          movlw	0x78
+
+          movlw	low(eep_version)
           movwf	EEADR
           call	p_read_eeprom
           xorlw	0x30 + (SW_VERSION / 16)
           bnz	eep_init
 
-          movlw	0x79
+          movlw	low(eep_version + 1)
           movwf	EEADR
           call	p_read_eeprom
           xorlw	0x30 + (SW_VERSION MOD 16)
           bnz	eep_init
 
-          movlw	0x7A
+          movlw	low(eep_version + 2)
           movwf	EEADR
           call	p_read_eeprom
           xorlw	0x30 + (ADAPTER_TYPE / 16)
           bnz	eep_init
 
-          movlw	0x7B
+          movlw	low(eep_version + 3)
           movwf	EEADR
           call	p_read_eeprom
           xorlw	0x30 + (ADAPTER_TYPE MOD 16)
           bnz	eep_init
-#endif
+
           return
 
 eep_init:
