@@ -3038,7 +3038,7 @@ p_1754:	movwf	SPBRG1					; entry from: 174Eh
 p_1802:	bcf		0xD2,6,BANKED			; entry from: 17FAh
 		call	p__8C0
 		bnz		boot_reason
-; print ELM version, load lessage offset
+; print ELM version, load message offset
 		movlw	0x82
 		call	p__730
 		call	p__724
@@ -3054,7 +3054,7 @@ boot_reason:
 		btfss   _POR_				; check for power on reset
 		bra     p_1830
 #endif
-; print ELM version, load lessage offset
+; print ELM version, load message offset
 p_182A:	movlw	0x82						; entry from: 10Ah,1808h
 
 p_182C:	call	p__730					; entry from: 6C2h,82Ah,0C3Eh,0EA0h,0EAEh,1800h,1840h,1D38h
