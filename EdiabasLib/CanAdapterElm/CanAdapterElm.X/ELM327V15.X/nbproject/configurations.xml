@@ -64,6 +64,21 @@
                         PD="dist/default/production/bootloader.production.cof"
                         DD="dist/default/debug/bootloader.debug.cof">
           </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="bc04"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=bc04"
+                        DBC="${MAKE}  -f Makefile CONF=bc04 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/bc04&quot; &quot;dist/bc04&quot;"
+                        OP="dist/bc04/production/bootloader.production.hex"
+                        DOP="dist/bc04/debug/bootloader.debug.hex"
+                        FL="dist/bc04/production/bootloader.production.hex"
+                        PD="dist/bc04/production/bootloader.production.elf"
+                        DD="dist/bc04/debug/bootloader.debug.elf">
+          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -250,6 +265,21 @@
                         FL="dist/spp_uart/production/bootloader.production.hex"
                         PD="dist/spp_uart/production/bootloader.production.cof"
                         DD="dist/spp_uart/debug/bootloader.debug.cof">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="bc04"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=bc04"
+                        DBC="${MAKE}  -f Makefile CONF=bc04 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/bc04&quot; &quot;dist/bc04&quot;"
+                        OP="dist/bc04/production/bootloader.production.hex"
+                        DOP="dist/bc04/debug/bootloader.debug.hex"
+                        FL="dist/bc04/production/bootloader.production.hex"
+                        PD="dist/bc04/production/bootloader.production.elf"
+                        DD="dist/bc04/debug/bootloader.debug.elf">
           </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
@@ -439,6 +469,21 @@
                         PD="dist/spp_uart2/production/bootloader.production.cof"
                         DD="dist/spp_uart2/debug/bootloader.debug.cof">
           </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="bc04"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=bc04"
+                        DBC="${MAKE}  -f Makefile CONF=bc04 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/bc04&quot; &quot;dist/bc04&quot;"
+                        OP="dist/bc04/production/bootloader.production.hex"
+                        DOP="dist/bc04/debug/bootloader.debug.hex"
+                        FL="dist/bc04/production/bootloader.production.hex"
+                        PD="dist/bc04/production/bootloader.production.elf"
+                        DD="dist/bc04/debug/bootloader.debug.elf">
+          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -626,6 +671,21 @@
                         PD="dist/yc1021/production/bootloader.production.cof"
                         DD="dist/yc1021/debug/bootloader.debug.cof">
           </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="bc04"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=bc04"
+                        DBC="${MAKE}  -f Makefile CONF=bc04 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/bc04&quot; &quot;dist/bc04&quot;"
+                        OP="dist/bc04/production/bootloader.production.hex"
+                        DOP="dist/bc04/debug/bootloader.debug.hex"
+                        FL="dist/bc04/production/bootloader.production.hex"
+                        PD="dist/bc04/production/bootloader.production.elf"
+                        DD="dist/bc04/debug/bootloader.debug.elf">
+          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -802,7 +862,7 @@
                         CT="1"
                         CN="spp_uart2"
                         AC="false"
-                        BL="true"
+                        BL="false"
                         WD="../bootloader"
                         BC="${MAKE}  -f Makefile CONF=spp_uart2"
                         DBC="${MAKE}  -f Makefile CONF=spp_uart2 TYPE_IMAGE=DEBUG_RUN"
@@ -812,6 +872,21 @@
                         FL="dist/spp_uart2/production/bootloader.production.hex"
                         PD="dist/spp_uart2/production/bootloader.production.cof"
                         DD="dist/spp_uart2/debug/bootloader.debug.cof">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="bc04"
+                        AC="false"
+                        BL="true"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=bc04"
+                        DBC="${MAKE}  -f Makefile CONF=bc04 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/bc04&quot; &quot;dist/bc04&quot;"
+                        OP="dist/bc04/production/bootloader.production.hex"
+                        DOP="dist/bc04/debug/bootloader.debug.hex"
+                        FL="dist/bc04/production/bootloader.production.hex"
+                        PD="dist/bc04/production/bootloader.production.elf"
+                        DD="dist/bc04/debug/bootloader.debug.elf">
           </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
@@ -1000,6 +1075,21 @@
                         PD="dist/def115200/production/bootloader.production.elf"
                         DD="dist/def115200/debug/bootloader.debug.elf">
           </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="bc04"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=bc04"
+                        DBC="${MAKE}  -f Makefile CONF=bc04 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/bc04&quot; &quot;dist/bc04&quot;"
+                        OP="dist/bc04/production/bootloader.production.hex"
+                        DOP="dist/bc04/debug/bootloader.debug.hex"
+                        FL="dist/bc04/production/bootloader.production.hex"
+                        PD="dist/bc04/production/bootloader.production.elf"
+                        DD="dist/bc04/debug/bootloader.debug.elf">
+          </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
@@ -1186,6 +1276,21 @@
                         FL="dist/hc04/production/bootloader.production.hex"
                         PD="dist/hc04/production/bootloader.production.elf"
                         DD="dist/hc04/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="bc04"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=bc04"
+                        DBC="${MAKE}  -f Makefile CONF=bc04 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/bc04&quot; &quot;dist/bc04&quot;"
+                        OP="dist/bc04/production/bootloader.production.hex"
+                        DOP="dist/bc04/debug/bootloader.debug.hex"
+                        FL="dist/bc04/production/bootloader.production.hex"
+                        PD="dist/bc04/production/bootloader.production.elf"
+                        DD="dist/bc04/debug/bootloader.debug.elf">
           </makeArtifact>
           <useAlternateLoadableFile>false</useAlternateLoadableFile>
           <parseOnProdLoad>false</parseOnProdLoad>
