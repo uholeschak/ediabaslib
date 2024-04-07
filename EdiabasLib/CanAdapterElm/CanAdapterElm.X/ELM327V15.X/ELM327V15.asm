@@ -189,56 +189,56 @@ p_restart:	btfss	_RI_
 		return
 
 eep_copy:	movlw	0x24
-		movwf	EEADR
+		movwf	EEADR, ACCESS
 		call	p__838
 		xorlw	DEFAULT_BAUD
 		bnz	eep_init
 
 		movlw	0x78
-		movwf	EEADR
+		movwf	EEADR, ACCESS
 		call	p__838
 		xorlw	0x30 + (SW_VERSION / 16)
 		bnz	eep_init
 
 		movlw	0x79
-		movwf	EEADR
+		movwf	EEADR, ACCESS
 		call	p__838
 		xorlw	0x30 + (SW_VERSION MOD 16)
 		bnz	eep_init
 
 		movlw	0x7A
-		movwf	EEADR
+		movwf	EEADR, ACCESS
 		call	p__838
 		xorlw	0x30 + (ADAPTER_TYPE / 16)
 		bnz	eep_init
 
 		movlw	0x7B
-		movwf	EEADR
+		movwf	EEADR, ACCESS
 		call	p__838
 		xorlw	0x30 + (ADAPTER_TYPE MOD 16)
 		bnz	eep_init
 		return
 
 eep_init:	movlw   low(eep_start)
-		movwf   TBLPTRL
+		movwf   TBLPTRL, ACCESS
 		movlw   high(eep_start)
-		movwf   TBLPTRH
+		movwf   TBLPTRH, ACCESS
 		movlw   upper(eep_start)
-		movwf   TBLPTRU
-		bsf	EECON1,2
+		movwf   TBLPTRU, ACCESS
+		bsf	EECON1,2, ACCESS
 		movlw	0x00
-		movwf	EEADR
+		movwf	EEADR, ACCESS
 eep_loop:	tblrd   *+
-	        movf    TABLAT, W
+	        movf    TABLAT, W, ACCESS
 		call	p__A00
-		movf    EEADR, W
+		movf    EEADR, W, ACCESS
 		xorlw	low(eep_end - eep_start)
 		bnz	eep_loop
-		bcf	EECON1,2
+		bcf	EECON1,2, ACCESS
 
 		movlw	high(DATA_OFFSET) + 0
-		movwf	TBLPTRH
-		clrf	TBLPTRU
+		movwf	TBLPTRH, ACCESS
+		clrf	TBLPTRU, ACCESS
 		return
 #endif
 
@@ -254,7 +254,7 @@ reset_vector:
 		goto	p_1654
 
 		ORG CODE_OFFSET + 0x08
-		btfsc	0x1C,7
+		btfsc	0x1C,7, ACCESS
 		goto	p_1280
 p____E:	movlw	0x70						; entry from: 18h
 		goto	p__6CC
@@ -286,7 +286,7 @@ p____E:	movlw	0x70						; entry from: 18h
 
 		ORG TABLE_OFFSET + 0x00F0
 		DB '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-p__100:	addwf	PCL						; entry from: 1AECh
+p__100:	addwf	PCL, ACCESS						; entry from: 1AECh
 		DB "Z", 0x00
 #if WDT_RESET
 		goto	p_reset
@@ -300,7 +300,7 @@ p__100:	addwf	PCL						; entry from: 1AECh
 		goto	p__3B2
 		DB 0x00, 0x00
 		DB "A", "L"
-		bsf		0x17,4
+		bsf		0x17,4, ACCESS
 		bra		p__302
 		DB "A", "R"
 		goto	p__CA0
@@ -311,18 +311,18 @@ p__100:	addwf	PCL						; entry from: 1AECh
 		DB "C", "S"
 		goto	p__E60
 		DB "D", "0"
-		bcf		0x18,5
+		bcf		0x18,5, ACCESS
 		bra		p__302
 		DB "D", "1"
-		bsf		0x18,5
+		bsf		0x18,5, ACCESS
 		bra		p__302
 		DB "D", "P"
 		goto	p__F40
 		DB "E", "0"
-		bcf		0x17,2
+		bcf		0x17,2, ACCESS
 		bra		p__302
 		DB "E", "1"
-		bsf		0x17,2
+		bsf		0x17,2, ACCESS
 		bra		p__302
 		DB "F", "E"
 		clrf	0xD2,BANKED
@@ -330,66 +330,66 @@ p__100:	addwf	PCL						; entry from: 1AECh
 		DB "F", "I"
 		goto	p_1104
 		DB "H", "0"
-		bcf		0x17,1
+		bcf		0x17,1, ACCESS
 		bra		p__302
 		DB "H", "1"
-		bsf		0x17,1
+		bsf		0x17,1, ACCESS
 		bra		p__302
 		DB "J", "E"
-		bcf		0x35,2
+		bcf		0x35,2, ACCESS
 		bra		p__302
 		DB "J", "S"
-		bsf		0x35,2
+		bsf		0x35,2, ACCESS
 		bra		p__302
 		DB "K", "W"
 		goto	p_11BC
 		DB "L", "0"
-		bcf		0x17,7
+		bcf		0x17,7, ACCESS
 		bra		p__302
 		DB "L", "1"
-		bsf		0x17,7
+		bsf		0x17,7, ACCESS
 		bra		p__302
 		DB "L", "P"
 		goto	p_11F8
 		DB "M", "0"
-		bcf		0x17,5
+		bcf		0x17,5, ACCESS
 		bra		p__302
 		DB "M", "1"
-		bsf		0x17,5
+		bsf		0x17,5, ACCESS
 		bra		p__302
 		DB "M", "A"
 		goto	p_129A
 		DB "N", "L"
-		bcf		0x17,4
+		bcf		0x17,4, ACCESS
 		bra		p__302
 		DB "P", "C"
 		goto	p_12E0
 		DB "R", "0"
-		bcf		0x17,3
+		bcf		0x17,3, ACCESS
 		bra		p__302
 		DB "R", "1"
-		bsf		0x17,3
+		bsf		0x17,3, ACCESS
 		bra		p__302
 		DB "R", "D"
 		goto	p_146E
 		DB "R", "V"
 		goto	p_148A
 		DB "S", "0"
-		bsf		0x18,0
+		bsf		0x18,0, ACCESS
 		bra		p__302
 		DB "S", "1"
-		bcf		0x18,0
+		bcf		0x18,0, ACCESS
 		bra		p__302
 		DB "S", "I"
 		goto	p_156E
 		DB "S", "S"
-		bsf		0x10,5
+		bsf		0x10,5, ACCESS
 		bra		p__302
 		DB "V", "0"
-		bcf		0x35,5
+		bcf		0x35,5, ACCESS
 		bra		p__302
 		DB "V", "1"
-		bsf		0x35,5
+		bsf		0x35,5, ACCESS
 		bra		p__302
 		DB "W", "S"
 		goto	p_1650
