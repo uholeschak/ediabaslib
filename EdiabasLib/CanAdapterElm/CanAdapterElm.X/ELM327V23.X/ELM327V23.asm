@@ -525,10 +525,11 @@ p___452:  decfsz 0x54,a					; entry from: 0x454,0x462
           bra    p___452
           decfsz 0x53,a
           bra    p___460
-p___45A:  movlw  0x81					; entry from: 0x6AA
+p___45A:						; entry from: 0x6AA
 #if WDT_RESET
           goto   p_reset
 #else
+          movlw  0x81
           movwf  0xD4,b
           reset
 #endif
