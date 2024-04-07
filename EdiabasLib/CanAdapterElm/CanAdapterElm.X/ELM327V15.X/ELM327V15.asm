@@ -651,10 +651,10 @@ p__4CC:	decfsz	0x43						; entry from: 4CEh,4DCh
 		decfsz	0x42
 		bra		p__4DA
 p__4D4:	movlw	0x81						; entry from: 0A14h
-		movwf	0xD1,BANKED
 #if WDT_RESET
 		goto	p_reset
 #else
+		movwf	0xD1,BANKED
 		reset
 #endif
 p__4DA:	btfsc	EECON1,1					; entry from: 4D2h
