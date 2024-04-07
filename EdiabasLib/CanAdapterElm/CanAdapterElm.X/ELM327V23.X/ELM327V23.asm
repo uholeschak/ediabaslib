@@ -315,8 +315,12 @@ p___100:  addwf  PCL,a					; entry from: 0x1BD8
 
           addwf  PCL,a
           db     'Z',0x00
+#if WDT_RESET
+          goto   p_reset
+#else
           clrf   0xD4,b
           reset
+#endif
           db     'I',0x00
           goto   p__18EA
           db     'D',0x00
@@ -526,8 +530,12 @@ p___452:  decfsz 0x54,a					; entry from: 0x454,0x462
           decfsz 0x53,a
           bra    p___460
 p___45A:  movlw  0x81					; entry from: 0x6AA
+#if WDT_RESET
+          goto   p_reset
+#else
           movwf  0xD4,b
           reset
+#endif
 p___460:  btfsc  EECON1,1,a				; entry from: 0x458
           bra    p___452
           incf   EEADR,a
@@ -2317,6 +2325,7 @@ p__11FA:  movf   0x8B,W,b				; entry from: 0x1146,0x1158
           movwf  POSTINC1,a
           return 
 
+; print message, table offset has to be loaded
 p__1206:  movwf  TBLPTRL,a				; tblptrl  entry from: 0x18EC,0x2156,0x257A,0x1EEA,0x18D8,0x18E0
           call   p__38E4
 p__120C:  tblrd*+						; entry from: 0x121A
@@ -3187,7 +3196,8 @@ p__18CC:  bcf    0xD5,6,b				; entry from: 0x18C4
           setf   0xD1,b
           movlw  0x10
           rcall  p__16BE
-          bnz    p__18EA
+          bnz    boot_reason
+; print ELM version, load message offset
           movlw  0x78
           rcall  p__1206
           rcall  p__1B18
@@ -3197,6 +3207,13 @@ p__18CC:  bcf    0xD5,6,b				; entry from: 0x18C4
           rcall  p__1B18
           rcall  p__1670
           goto   p__121C
+
+boot_reason:
+#if WDT_RESET
+          btfss   POR				; check for power on reset
+          bra     p__18EE
+#endif
+; print ELM version, load message offset
 p__18EA:  movlw  0x78					; entry from: 0x18D4
 
 p__18EC:  rcall  p__1206				; entry from: 0x5A6,0xE34,0x18FA,0x18CA
