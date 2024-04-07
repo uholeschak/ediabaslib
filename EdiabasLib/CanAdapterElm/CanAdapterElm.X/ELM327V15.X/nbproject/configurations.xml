@@ -178,9 +178,8 @@
         <property key="list-include-directories" value=""/>
         <property key="suppress-warnings" value="false"/>
         <property key="verbose" value="false"/>
-        <property key="warning-level" value="0"/>
+        <property key="warning-level" value="1"/>
         <property key="xassembler-with-cpp" value="true"/>
-        <appendMe value="--msgdisable=1522"/>
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
@@ -367,9 +366,8 @@
         <property key="list-include-directories" value=""/>
         <property key="suppress-warnings" value="false"/>
         <property key="verbose" value="false"/>
-        <property key="warning-level" value="0"/>
+        <property key="warning-level" value="1"/>
         <property key="xassembler-with-cpp" value="true"/>
-        <appendMe value="--msgdisable=1522"/>
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
@@ -555,9 +553,8 @@
         <property key="list-include-directories" value=""/>
         <property key="suppress-warnings" value="false"/>
         <property key="verbose" value="false"/>
-        <property key="warning-level" value="0"/>
+        <property key="warning-level" value="1"/>
         <property key="xassembler-with-cpp" value="true"/>
-        <appendMe value="--msgdisable=1522"/>
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
@@ -743,9 +740,8 @@
         <property key="list-include-directories" value=""/>
         <property key="suppress-warnings" value="false"/>
         <property key="verbose" value="false"/>
-        <property key="warning-level" value="0"/>
+        <property key="warning-level" value="1"/>
         <property key="xassembler-with-cpp" value="true"/>
-        <appendMe value="--msgdisable=1522"/>
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
@@ -931,9 +927,8 @@
         <property key="list-include-directories" value=""/>
         <property key="suppress-warnings" value="false"/>
         <property key="verbose" value="false"/>
-        <property key="warning-level" value="0"/>
+        <property key="warning-level" value="1"/>
         <property key="xassembler-with-cpp" value="true"/>
-        <appendMe value="--msgdisable=1522"/>
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
@@ -1119,9 +1114,8 @@
         <property key="list-include-directories" value=""/>
         <property key="suppress-warnings" value="false"/>
         <property key="verbose" value="false"/>
-        <property key="warning-level" value="0"/>
+        <property key="warning-level" value="1"/>
         <property key="xassembler-with-cpp" value="true"/>
-        <appendMe value="--msgdisable=1522"/>
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
@@ -1307,9 +1301,8 @@
         <property key="list-include-directories" value=""/>
         <property key="suppress-warnings" value="false"/>
         <property key="verbose" value="false"/>
-        <property key="warning-level" value="0"/>
+        <property key="warning-level" value="1"/>
         <property key="xassembler-with-cpp" value="true"/>
-        <appendMe value="--msgdisable=1522"/>
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
