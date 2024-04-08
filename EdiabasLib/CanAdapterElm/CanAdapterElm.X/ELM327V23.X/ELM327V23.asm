@@ -19,7 +19,7 @@
 					;38400
     #define DEFAULT_BAUD 0x68
 #else
-    #define SW_VERSION 0x02
+    #define SW_VERSION 0x03
     #define CODE_OFFSET 0x0800
     #define BASE_ADDR 0x1000
     #define DATA_OFFSET BASE_ADDR
@@ -149,7 +149,7 @@ eep_end:
 
 #if ORIGINAL == 0
 ORG 0x7FFA
-          DW 0x0015		; adapter version
+          DW 0x0023			; ELM version
           DW ADAPTER_TYPE		; adapter type
 #endif
 
