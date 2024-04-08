@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Text;
@@ -1296,7 +1297,15 @@ namespace BmwDeepObd
             string message = GetString(Resource.String.can_adapter_fw_update_info);
             if (elmFirmware)
             {
-                message = GetString(Resource.String.can_adapter_fw_elm_info) + "\r\n" + message;
+                int fwVersionElm = PicBootloader.GetFirmwareVersion((uint)_adapterType, true);
+                string verInfo = string.Empty;
+
+                if (fwVersionElm > 0)
+                {
+                    verInfo = string.Format(CultureInfo.InvariantCulture, " V{0}.{1}", (fwVersionElm >> 4) & 0xF, fwVersionElm & 0xF);
+                }
+
+                message = string.Format(GetString(Resource.String.can_adapter_fw_elm_info), verInfo) + "\r\n" + message;
             }
 
             switch (_interfaceType)
