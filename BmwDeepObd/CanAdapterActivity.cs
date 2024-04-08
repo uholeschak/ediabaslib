@@ -1296,7 +1296,7 @@ namespace BmwDeepObd
             string message = GetString(Resource.String.can_adapter_fw_update_info);
             if (elmFirmware)
             {
-                message = GetString(Resource.String.can_adapter_fw_elm_info) + "\r\n" + message;
+                message = string.Format(GetString(Resource.String.can_adapter_fw_elm_info), "2.3") + "\r\n" + message;
             }
 
             switch (_interfaceType)
