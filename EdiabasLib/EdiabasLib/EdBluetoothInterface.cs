@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 // ReSharper disable UseNullPropagation
@@ -28,6 +29,9 @@ namespace EdiabasLib
         protected static long LastDisconnectTime = DateTime.MinValue.Ticks;
         protected static Stopwatch StopWatch = new Stopwatch();
         private static string _connectPort;
+
+        public static Stream BluetoothInStream => BtStream;
+        public static Stream BluetoothOutStream => BtStream;
 
         public static EdiabasNet Ediabas
         {

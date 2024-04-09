@@ -62,6 +62,9 @@ namespace EdiabasLib
         private static readonly AutoResetEvent ConnectedEvent = new AutoResetEvent(false);
         private static string _connectDeviceAddress = string.Empty;
 
+        public static Stream BluetoothInStream => _bluetoothInStream;
+        public static Stream BluetoothOutStream => _bluetoothOutStream;
+
         public static EdiabasNet Ediabas
         {
             get => CustomAdapter.Ediabas;
@@ -71,9 +74,6 @@ namespace EdiabasLib
         static EdBluetoothInterface()
         {
         }
-
-        public static Stream BluetoothInStream => _bluetoothInStream;
-        public static Stream BluetoothOutStream => _bluetoothOutStream;
 
         public static bool InterfaceConnect(string port, object parameter)
         {
