@@ -1375,14 +1375,28 @@ namespace BmwDeepObd
                         {
                             case ActivityCommon.InterfaceType.Bluetooth:
                             {
-                                BluetoothSocket bluetoothSocket = EdBluetoothInterface.BluetoothSocket;
-                                if (bluetoothSocket == null)
+                                Stream bluetoothInStream = EdBluetoothInterface.BluetoothInStream;
+                                Stream bluetoothOutStream = EdBluetoothInterface.BluetoothOutStream;
+                                if (bluetoothInStream == null || bluetoothOutStream == null)
                                 {
                                     connectOk = false;
                                     break;
                                 }
-                                inStream = bluetoothSocket.InputStream;
-                                outStream = bluetoothSocket.OutputStream;
+
+                                if (bluetoothInStream is EscapeStreamReader escapeReader && escapeReader.EscapeMode)
+                                {
+                                    connectOk = false;
+                                    break;
+                                }
+
+                                if (bluetoothOutStream is EscapeStreamWriter escapeWriter && escapeWriter.EscapeMode)
+                                {
+                                    connectOk = false;
+                                    break;
+                                }
+
+                                inStream = bluetoothInStream;
+                                outStream = bluetoothOutStream;
                                 break;
                             }
 

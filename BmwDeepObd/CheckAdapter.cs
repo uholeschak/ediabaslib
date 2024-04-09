@@ -98,15 +98,16 @@ public class CheckAdapter : IDisposable
                     {
                         case ActivityCommon.InterfaceType.Bluetooth:
                         {
-                            BluetoothSocket bluetoothSocket = EdBluetoothInterface.BluetoothSocket;
-                            if (bluetoothSocket == null)
+                            Stream bluetoothInStream = EdBluetoothInterface.BluetoothInStream;
+                            Stream bluetoothOutStream = EdBluetoothInterface.BluetoothOutStream;
+                            if (bluetoothInStream == null || bluetoothOutStream == null)
                             {
                                 connectOk = false;
                                 break;
                             }
 
-                            inStream = bluetoothSocket.InputStream;
-                            outStream = bluetoothSocket.OutputStream;
+                            inStream = bluetoothInStream;
+                            outStream = bluetoothOutStream;
                             break;
                         }
 
