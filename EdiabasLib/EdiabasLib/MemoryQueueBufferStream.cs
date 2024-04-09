@@ -46,7 +46,19 @@ namespace EdiabasLib
 
         public bool IsDataAvailable()
         {
-            return Length > 0;
+            if (!AcquireReadMutex())
+            {
+                return false;
+            }
+
+            try
+            {
+                return Length > 0;
+            }
+            finally
+            {
+                ReleaseReadMutex();
+            }
         }
 
         /// <summary>
