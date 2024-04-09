@@ -673,7 +673,7 @@ namespace EdiabasLib
 
                         case 1:
                             // CAN mode (zero request)
-                            respLen = 9;
+                            respLen = 6;
                             testTel = new byte[] { 0x82, 0xF1, 0xF1, 0x82, 0x00, 0x00 };
                             break;
                     }
