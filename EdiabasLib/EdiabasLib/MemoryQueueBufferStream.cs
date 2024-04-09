@@ -48,19 +48,19 @@ namespace EdiabasLib
 
         public bool IsDataAvailable(int timeout = 0, ManualResetEvent cancelEvent = null)
         {
-            if (timeout == 0)
-            {
-                return Length > 0;
-            }
-
             _writeEvent.Reset();
             if (Length > 0)
             {
                 return true;
             }
 
-            _writeEvent.WaitOne(timeout);
-            return Length > 0;
+            if (timeout > 0)
+            {
+                _writeEvent.WaitOne(timeout);
+                return Length > 0;
+            }
+
+            return false;
         }
 
         /// <summary>
