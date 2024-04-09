@@ -1911,7 +1911,7 @@ namespace BmwDeepObd
                     bootCmdElm = enc.GetBytes("AT@3BL2345678901\r");
                     _outStream.Write(bootCmdElm, 0, bootCmdElm.Length);
 
-                    while (_inStream.IsDataAvailable())
+                    while (_inStream.HasData())
                     {
                         if (_inStream.ReadByteAsync() < 0)
                         {
@@ -1936,7 +1936,7 @@ namespace BmwDeepObd
                     long startTime = Stopwatch.GetTimestamp();
                     for (; ; )
                     {
-                        if (!_inStream.IsDataAvailable())
+                        if (!_inStream.HasData())
                         {
                             if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                             {
@@ -1964,7 +1964,7 @@ namespace BmwDeepObd
                     startTime = Stopwatch.GetTimestamp();
                     for (; ; )
                     {
-                        if (!_inStream.IsDataAvailable())
+                        if (!_inStream.HasData())
                         {
                             if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                             {
@@ -1977,7 +1977,7 @@ namespace BmwDeepObd
                         int value = _inStream.ReadByteAsync();
                         if (value == DLE)
                         {
-                            while (!_inStream.IsDataAvailable())
+                            while (!_inStream.HasData())
                             {
                                 if (Stopwatch.GetTimestamp() - startTime > timeout * TickResolMs)
                                 {
@@ -2048,7 +2048,7 @@ namespace BmwDeepObd
                 long startTime = Stopwatch.GetTimestamp();
                 for (;;)
                 {
-                    if (!_inStream.IsDataAvailable())
+                    if (!_inStream.HasData())
                     {
                         if (Stopwatch.GetTimestamp() - startTime > timeout*TickResolMs)
                         {
@@ -2076,7 +2076,7 @@ namespace BmwDeepObd
                 startTime = Stopwatch.GetTimestamp();
                 for (;;)
                 {
-                    if (!_inStream.IsDataAvailable())
+                    if (!_inStream.HasData())
                     {
                         if (Stopwatch.GetTimestamp() - startTime > timeout*TickResolMs)
                         {
@@ -2091,7 +2091,7 @@ namespace BmwDeepObd
 
                     if (value == DLE)
                     {
-                        while (!_inStream.IsDataAvailable())
+                        while (!_inStream.HasData())
                         {
                             if (Stopwatch.GetTimestamp() - startTime > timeout*TickResolMs)
                             {
@@ -2133,7 +2133,7 @@ namespace BmwDeepObd
 
                     // wait for the responding STX echoed back
                     long startTime = Stopwatch.GetTimestamp();
-                    while (!_inStream.IsDataAvailable())
+                    while (!_inStream.HasData())
                     {
                         if (Stopwatch.GetTimestamp() - startTime > SyncWaitTime * 100 * TickResolMs)
                         {
@@ -2166,7 +2166,7 @@ namespace BmwDeepObd
 
                     // wait for the responding STX echoed back
                     long startTime = Stopwatch.GetTimestamp();
-                    while (!_inStream.IsDataAvailable())
+                    while (!_inStream.HasData())
                     {
                         if (Stopwatch.GetTimestamp() - startTime > SyncWaitTime * 100 * TickResolMs)
                         {
@@ -2208,7 +2208,7 @@ namespace BmwDeepObd
 
                 try
                 {
-                    while (_inStream.IsDataAvailable())
+                    while (_inStream.HasData())
                     {
                         if (_inStream.ReadByteAsync() < 0)
                         {
@@ -2223,7 +2223,7 @@ namespace BmwDeepObd
                     long startTime = Stopwatch.GetTimestamp();
                     for (; ; )
                     {
-                        while (!_inStream.IsDataAvailable())
+                        while (!_inStream.HasData())
                         {
                             if (timeout <= 0)
                             {
@@ -2297,7 +2297,7 @@ namespace BmwDeepObd
                         return result;
                     }
 
-                    if (!_inStream.IsDataAvailable())
+                    if (!_inStream.HasData())
                     {
                         return ErrorCode.NoAcknowledgement;
                     }
