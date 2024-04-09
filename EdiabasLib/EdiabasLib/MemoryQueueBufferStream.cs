@@ -34,6 +34,7 @@ namespace EdiabasLib
         //Each item in the queue represents each write to the stream.  Every call to write translates to an item in the queue
         private readonly Queue<Chunk> _lstBuffers;
         private Mutex _readMutex;
+        private AutoResetEvent _writeEvent;
 
         public bool ChunkMode { get; set; }
 
@@ -41,24 +42,36 @@ namespace EdiabasLib
         {
             _lstBuffers = new Queue<Chunk>();
             _readMutex = new Mutex(false);
+            _writeEvent = new AutoResetEvent(false);
             ChunkMode = chunkMode;
         }
 
-        public bool IsDataAvailable()
+        public bool IsDataAvailable(int timeout = 0, ManualResetEvent cancelEvent = null)
         {
-            if (!AcquireReadMutex())
+            _writeEvent.Reset();
+            if (Length > 0)
             {
-                return false;
+                return true;
             }
 
-            try
+            if (timeout > 0)
             {
+                if (cancelEvent != null)
+                {
+                    WaitHandle[] waitHandles = { _writeEvent, cancelEvent };
+                    if (WaitHandle.WaitAny(waitHandles, timeout) == 1)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    _writeEvent.WaitOne(timeout);
+                }
                 return Length > 0;
             }
-            finally
-            {
-                ReleaseReadMutex();
-            }
+
+            return false;
         }
 
         /// <summary>
@@ -172,6 +185,10 @@ namespace EdiabasLib
 
                 //Add the data to the queue
                 _lstBuffers.Enqueue(new Chunk() { ChunkReadStartIndex = 0, Data = bufSave });
+                if (_lstBuffers.Count > 0)
+                {
+                    _writeEvent.Set();
+                }
             }
             finally
             {
@@ -256,6 +273,19 @@ namespace EdiabasLib
 
         public override void Close()
         {
+            try
+            {
+                if (_writeEvent != null)
+                {
+                    _writeEvent.Close();
+                    _writeEvent = null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             try
             {
                 if (_readMutex != null)
