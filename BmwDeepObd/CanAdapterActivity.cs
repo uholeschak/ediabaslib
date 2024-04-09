@@ -738,7 +738,7 @@ namespace BmwDeepObd
 
                     fwUpdateEnabled = fwUpdateVersion >= 0 && ((_fwVersion != fwUpdateVersion) || ActivityCommon.CollectDebugInfo);
 
-                    if (!elmMode)
+                    if (!elmMode && _interfaceType == ActivityCommon.InterfaceType.Bluetooth)
                     {
                         int fwUpdateVersionElm = PicBootloader.GetFirmwareVersion((uint)_adapterType, true);
                         if (fwUpdateVersionElm > 0)
