@@ -56,7 +56,18 @@ namespace EdiabasLib
 
             if (timeout > 0)
             {
-                _writeEvent.WaitOne(timeout);
+                if (cancelEvent != null)
+                {
+                    WaitHandle[] waitHandles = { _writeEvent, cancelEvent };
+                    if (WaitHandle.WaitAny(waitHandles, timeout) == 1)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    _writeEvent.WaitOne(timeout);
+                }
                 return Length > 0;
             }
 
