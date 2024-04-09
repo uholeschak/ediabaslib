@@ -1359,6 +1359,7 @@ namespace BmwDeepObd
             {
                 bool updateOk = false;
                 bool connectOk = false;
+                bool closeInterface = false;
                 bool aborted = false;
                 bool elmMode = IsCustomElmAdapter(_interfaceType, _deviceAddress);
                 bool elmFirmware = false;
@@ -1368,9 +1369,41 @@ namespace BmwDeepObd
                 }
                 try
                 {
-                    connectOk = InterfacePrepare();
+                    try
+                    {
+                        connectOk = InterfacePrepare();
+                    }
+                    catch (Exception)
+                    {
+                        connectOk = false;
+                    }
+
                     Stream inStream = null;
                     Stream outStream = null;
+                    if (!connectOk)
+                    {
+                        if (_interfaceType == ActivityCommon.InterfaceType.DeepObdWifi)
+                        {
+                            if (_ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
+                            {
+                                closeInterface = true;
+                                edInterfaceObd.ComPort = EdCustomWiFiInterface.PortId + ":" + EdCustomWiFiInterface.RawTag;
+                                if (InterfacePrepare())
+                                {
+                                    Stream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
+                                    Stream networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
+                                    if (networkReadStream != null && networkWriteStream != null)
+                                    {
+                                        if (PicBootloader.IsInBooloaderMode(networkReadStream, networkWriteStream))
+                                        {
+                                            connectOk = true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     if (connectOk)
                     {
                         switch (_interfaceType)
@@ -1505,7 +1538,7 @@ namespace BmwDeepObd
 
                     UpdateDisplay();
 
-                    if (updateOk && changeFirmware)
+                    if (closeInterface || (updateOk && changeFirmware))
                     {
                         EdiabasClose();
                     }
