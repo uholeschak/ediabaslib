@@ -74,6 +74,11 @@ namespace EdiabasLib
 
             if (inStream is EscapeStreamReader escapeStream)
             {
+                if (!escapeStream.IsDataAvailable(timeout, cancelEvent))
+                {
+                    return 0;
+                }
+
                 return escapeStream.Read(buffer, offset, count);
             }
 

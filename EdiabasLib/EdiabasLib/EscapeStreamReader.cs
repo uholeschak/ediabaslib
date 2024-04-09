@@ -11,6 +11,7 @@ namespace EdiabasLib
     {
         private Stream _inStream;
         private Mutex _readMutex;
+        private AutoResetEvent _writeEvent;
         private bool _escapeMode;
         private byte _escapeCode;
         private byte _escapeMask;
@@ -21,6 +22,7 @@ namespace EdiabasLib
         {
             _inStream = inStream;
             _readMutex = new Mutex(false);
+            _writeEvent = new AutoResetEvent(false);
             SetEscapeMode(escapeMode, escapeCode, escapeMask);
             _readDataList = new List<byte>();
         }
@@ -72,7 +74,20 @@ namespace EdiabasLib
         {
             get
             {
-                return _readDataList.Count;
+                if (!AcquireReadMutex())
+                {
+                    return 0;
+                }
+
+                try
+                {
+                    ReadInStream();
+                    return _readDataList.Count;
+                }
+                finally
+                {
+                    ReleaseReadMutex();
+                }
             }
         }
 
@@ -153,6 +168,19 @@ namespace EdiabasLib
 
             try
             {
+                if (_writeEvent != null)
+                {
+                    _writeEvent.Close();
+                    _writeEvent = null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            try
+            {
                 if (_readMutex != null)
                 {
                     _readMutex.Close();
@@ -165,22 +193,32 @@ namespace EdiabasLib
             }
         }
 
-        public bool IsDataAvailable()
+        public bool IsDataAvailable(int timeout = 0, ManualResetEvent cancelEvent = null)
         {
-            if (!AcquireReadMutex())
+            _writeEvent.Reset();
+            if (Length > 0)
             {
-                return false;
+                return true;
             }
 
-            try
+            if (timeout > 0)
             {
-                ReadInStream();
-                return _readDataList.Count > 0;
+                if (cancelEvent != null)
+                {
+                    WaitHandle[] waitHandles = { _writeEvent, cancelEvent };
+                    if (WaitHandle.WaitAny(waitHandles, timeout) == 1)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    _writeEvent.WaitOne(timeout);
+                }
+                return Length > 0;
             }
-            finally
-            {
-                ReleaseReadMutex();
-            }
+
+            return false;
         }
 
         public override int ReadByte()
@@ -297,11 +335,7 @@ namespace EdiabasLib
                 return;
             }
 
-#if Android
-            while (_inStream.IsDataAvailable())
-#else
-            while (_inStream.Length > 0)
-#endif
+            while (_inStream.HasData())
             {
                 int data = _inStream.ReadByteAsync();
                 //Android.Util.Log.Debug("InStream", "Main Data: {0}", data);
@@ -330,6 +364,11 @@ namespace EdiabasLib
                     if (!_readEscape)
                     {
                         _readDataList.Add((byte)data);
+                    }
+
+                    if (_readDataList.Count > 0)
+                    {
+                        _writeEvent.Set();
                     }
                 }
                 else

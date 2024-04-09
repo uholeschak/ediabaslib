@@ -275,6 +275,19 @@ namespace EdiabasLib
         {
             try
             {
+                if (_writeEvent != null)
+                {
+                    _writeEvent.Close();
+                    _writeEvent = null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            try
+            {
                 if (_readMutex != null)
                 {
                     _readMutex.Close();
