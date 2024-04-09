@@ -72,7 +72,8 @@ namespace EdiabasLib
         {
         }
 
-        public static BluetoothSocket BluetoothSocket => _bluetoothSocket;
+        public static Stream BluetoothInStream => _bluetoothInStream;
+        public static Stream BluetoothOutStream => _bluetoothOutStream;
 
         public static bool InterfaceConnect(string port, object parameter)
         {
