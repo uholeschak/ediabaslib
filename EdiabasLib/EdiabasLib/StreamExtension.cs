@@ -64,6 +64,11 @@ namespace EdiabasLib
 
             if (inStream is MemoryQueueBufferStream memoryStream)
             {
+                if (!memoryStream.IsDataAvailable(timeout, cancelEvent))
+                {
+                    return 0;
+                }
+
                 return memoryStream.Read(buffer, offset, count);
             }
 

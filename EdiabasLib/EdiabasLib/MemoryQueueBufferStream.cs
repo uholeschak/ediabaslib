@@ -34,6 +34,7 @@ namespace EdiabasLib
         //Each item in the queue represents each write to the stream.  Every call to write translates to an item in the queue
         private readonly Queue<Chunk> _lstBuffers;
         private Mutex _readMutex;
+        private AutoResetEvent _writeEvent;
 
         public bool ChunkMode { get; set; }
 
@@ -41,24 +42,25 @@ namespace EdiabasLib
         {
             _lstBuffers = new Queue<Chunk>();
             _readMutex = new Mutex(false);
+            _writeEvent = new AutoResetEvent(false);
             ChunkMode = chunkMode;
         }
 
-        public bool IsDataAvailable()
+        public bool IsDataAvailable(int timeout = 0, ManualResetEvent cancelEvent = null)
         {
-            if (!AcquireReadMutex())
-            {
-                return false;
-            }
-
-            try
+            if (timeout == 0)
             {
                 return Length > 0;
             }
-            finally
+
+            _writeEvent.Reset();
+            if (Length > 0)
             {
-                ReleaseReadMutex();
+                return true;
             }
+
+            _writeEvent.WaitOne(timeout);
+            return Length > 0;
         }
 
         /// <summary>
@@ -172,6 +174,10 @@ namespace EdiabasLib
 
                 //Add the data to the queue
                 _lstBuffers.Enqueue(new Chunk() { ChunkReadStartIndex = 0, Data = bufSave });
+                if (_lstBuffers.Count > 0)
+                {
+                    _writeEvent.Set();
+                }
             }
             finally
             {
