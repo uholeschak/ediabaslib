@@ -737,12 +737,8 @@ namespace BmwDeepObd
                     }
 
                     fwUpdateEnabled = fwUpdateVersion >= 0 && ((_fwVersion != fwUpdateVersion) || ActivityCommon.CollectDebugInfo);
-                    if (_rejectFwUpdate)
-                    {
-                        fwUpdateEnabled = false;
-                    }
 
-                    if (!elmMode && _interfaceType == ActivityCommon.InterfaceType.Bluetooth)
+                    if (!elmMode)
                     {
                         int fwUpdateVersionElm = PicBootloader.GetFirmwareVersion((uint)_adapterType, true);
                         if (fwUpdateVersionElm > 0)
@@ -750,6 +746,12 @@ namespace BmwDeepObd
                             fwChangeEnabled = true;
                         }
                     }
+                }
+
+                if (_rejectFwUpdate)
+                {
+                    fwUpdateEnabled = false;
+                    fwChangeEnabled = false;
                 }
 
                 if (!fwUpdateEnabled)
