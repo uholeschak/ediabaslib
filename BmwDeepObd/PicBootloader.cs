@@ -3058,5 +3058,24 @@ namespace BmwDeepObd
             }
             return true;
         }
+
+        public static bool IsInBooloaderMode(Stream inStream, Stream outStream)
+        {
+            try
+            {
+                Comm comm = new Comm(inStream, outStream);
+                Comm.BootInfo bootInfo = comm.ReadBootloaderInfo(20);
+                if (bootInfo.MajorVersion == 0 && bootInfo.MinorVersion == 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }
