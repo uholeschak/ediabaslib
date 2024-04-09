@@ -32,6 +32,7 @@ namespace EdiabasLib
         private static readonly string Tag = typeof(EdCustomWiFiInterface).FullName;
 #endif
         public const string PortId = "DEEPOBDWIFI";
+        public const string RawTag = "RAW";
         public static string AdapterIp = "192.168.0.10";
         public static string AdapterIpEspLink = "192.168.4.1";
         public static int AdapterPort = 35000;
@@ -133,21 +134,28 @@ namespace EdiabasLib
                         return false;
                     }
 
-                    ipSpecified = true;
-                    adapterIp = stringList[0].Trim();
-                    if (string.Compare(adapterIp, AdapterIpEspLink, StringComparison.Ordinal) == 0)
+                    if (string.Compare(stringList[0], RawTag, StringComparison.Ordinal) == 0)
                     {
-                        Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Using ESP-Link port");
-                        adapterPort = AdapterPortEspLink;
+                        CustomAdapter.RawMode = true;
                     }
-
-                    if (stringList.Length > 1)
+                    else
                     {
-                        if (!int.TryParse(stringList[1].Trim(), out adapterPort))
+                        ipSpecified = true;
+                        adapterIp = stringList[0].Trim();
+                        if (string.Compare(adapterIp, AdapterIpEspLink, StringComparison.Ordinal) == 0)
                         {
-                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port parameters: {0}", port);
-                            InterfaceDisconnect();
-                            return false;
+                            Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Using ESP-Link port");
+                            adapterPort = AdapterPortEspLink;
+                        }
+
+                        if (stringList.Length > 1)
+                        {
+                            if (!int.TryParse(stringList[1].Trim(), out adapterPort))
+                            {
+                                Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Invalid port parameters: {0}", port);
+                                InterfaceDisconnect();
+                                return false;
+                            }
                         }
                     }
                 }
@@ -247,28 +255,31 @@ namespace EdiabasLib
                 TcpStream = TcpClient.GetStream();
                 WriteStream = new EscapeStreamWriter(TcpStream);
 
-                if (!reconnect)
+                if (!CustomAdapter.RawMode)
                 {
-                    if (!UpdateWriteEscapeRequired())
+                    if (!reconnect)
                     {
-                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Update write escape failed");
+                        if (!UpdateWriteEscapeRequired())
+                        {
+                            Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Update write escape failed");
+                            InterfaceDisconnect(true);
+                            return false;
+                        }
+                    }
+
+                    CustomAdapter.EscapeModeWrite = WriteEscapeRequired;
+                    if (!CustomAdapter.UpdateAdapterInfo(true))
+                    {
+                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Update adapter info failed");
                         InterfaceDisconnect(true);
                         return false;
                     }
-                }
-
-                CustomAdapter.EscapeModeWrite = WriteEscapeRequired;
-                if (!CustomAdapter.UpdateAdapterInfo(true))
-                {
-                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Update adapter info failed");
-                    InterfaceDisconnect(true);
-                    return false;
-                }
 
 #if DEBUG_ANDROID
-                Android.Util.Log.Info(Tag, string.Format("InterfaceConnect WriteEscape={0}", CustomAdapter.EscapeModeWrite));
+                    Android.Util.Log.Info(Tag, string.Format("InterfaceConnect WriteEscape={0}", CustomAdapter.EscapeModeWrite));
 #endif
-                WriteStream.SetEscapeMode(CustomAdapter.EscapeModeWrite);
+                    WriteStream.SetEscapeMode(CustomAdapter.EscapeModeWrite);
+                }
             }
             catch (Exception ex)
             {
