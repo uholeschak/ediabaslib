@@ -1385,8 +1385,13 @@ namespace BmwDeepObd
                         {
                             if (_ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
                             {
+                                string rawTag = ":" + EdCustomWiFiInterface.RawTag;
+                                if (!edInterfaceObd.ComPort.EndsWith(rawTag))
+                                {
+                                    edInterfaceObd.ComPort += rawTag;
+                                }
+
                                 closeInterface = true;
-                                edInterfaceObd.ComPort = EdCustomWiFiInterface.PortId + ":" + EdCustomWiFiInterface.RawTag;
                                 if (InterfacePrepare())
                                 {
                                     Stream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
