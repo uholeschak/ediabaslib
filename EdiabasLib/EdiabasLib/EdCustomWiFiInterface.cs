@@ -127,18 +127,22 @@ namespace EdiabasLib
                     // special ip
                     string addr = portData.Remove(0, 1);
                     string[] stringList = addr.Split(':');
-                    if (stringList.Length == 0)
+                    int listLength = stringList.Length;
+                    if (listLength == 0)
                     {
                         Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Missing port parameters: {0}", port);
                         InterfaceDisconnect();
                         return false;
                     }
 
-                    if (string.Compare(stringList[0], RawTag, StringComparison.Ordinal) == 0)
+                    if (string.Compare(stringList[listLength - 1], RawTag, StringComparison.Ordinal) == 0)
                     {
+                        Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting: Raw mode enabled");
                         CustomAdapter.RawMode = true;
+                        listLength--;
                     }
-                    else
+
+                    if (listLength > 0)
                     {
                         ipSpecified = true;
                         adapterIp = stringList[0].Trim();
