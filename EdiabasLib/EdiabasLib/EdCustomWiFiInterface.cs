@@ -152,7 +152,7 @@ namespace EdiabasLib
                             adapterPort = AdapterPortEspLink;
                         }
 
-                        if (stringList.Length > 1)
+                        if (listLength > 1)
                         {
                             if (!int.TryParse(stringList[1].Trim(), out adapterPort))
                             {
