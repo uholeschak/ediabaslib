@@ -1381,29 +1381,34 @@ namespace BmwDeepObd
                     Stream outStream = null;
                     if (!connectOk)
                     {
-                        if (_interfaceType == ActivityCommon.InterfaceType.DeepObdWifi)
+                        switch (_interfaceType)
                         {
-                            if (_ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
+                            case ActivityCommon.InterfaceType.DeepObdWifi:
                             {
-                                string rawTag = ":" + EdCustomWiFiInterface.RawTag;
-                                if (!edInterfaceObd.ComPort.EndsWith(rawTag))
+                                if (_ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
                                 {
-                                    edInterfaceObd.ComPort += rawTag;
-                                }
-
-                                closeInterface = true;
-                                if (InterfacePrepare())
-                                {
-                                    Stream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
-                                    Stream networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
-                                    if (networkReadStream != null && networkWriteStream != null)
+                                    string appendTag = ":" + EdCustomWiFiInterface.RawTag;
+                                    if (!edInterfaceObd.ComPort.EndsWith(appendTag))
                                     {
-                                        if (PicBootloader.IsInBooloaderMode(networkReadStream, networkWriteStream))
+                                        edInterfaceObd.ComPort += appendTag;
+                                    }
+
+                                    // close interface to correct ComPort later
+                                    closeInterface = true;
+                                    if (InterfacePrepare())
+                                    {
+                                        Stream networkReadStream = EdCustomWiFiInterface.NetworkReadStream;
+                                        Stream networkWriteStream = EdCustomWiFiInterface.NetworkWriteStream;
+                                        if (networkReadStream != null && networkWriteStream != null)
                                         {
-                                            connectOk = true;
+                                            if (PicBootloader.IsInBooloaderMode(networkReadStream, networkWriteStream))
+                                            {
+                                                connectOk = true;
+                                            }
                                         }
                                     }
                                 }
+                                break;
                             }
                         }
                     }
