@@ -32,6 +32,7 @@ namespace EdiabasLib
 
         //Maintains the streams data.  The Queue object provides an easy and efficient way to add and remove data
         //Each item in the queue represents each write to the stream.  Every call to write translates to an item in the queue
+        private bool _disposed;
         private readonly Queue<Chunk> _lstBuffers;
         private Mutex _readMutex;
         private AutoResetEvent _writeEvent;
@@ -271,33 +272,49 @@ namespace EdiabasLib
         {
         }
 
-        public override void Close()
+        // Stream Close() calls Dispose(true)
+        protected override void Dispose(bool disposing)
         {
-            try
+            // Check to see if Dispose has already been called.
+            if (!_disposed)
             {
-                if (_writeEvent != null)
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
+                if (disposing)
                 {
-                    _writeEvent.Close();
-                    _writeEvent = null;
+                    // Dispose managed resources.
+                    try
+                    {
+                        if (_writeEvent != null)
+                        {
+                            _writeEvent.Close();
+                            _writeEvent = null;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    try
+                    {
+                        if (_readMutex != null)
+                        {
+                            _readMutex.Close();
+                            _readMutex = null;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    // Note disposing has been done.
+                    _disposed = true;
                 }
-            }
-            catch (Exception)
-            {
-                // ignored
             }
 
-            try
-            {
-                if (_readMutex != null)
-                {
-                    _readMutex.Close();
-                    _readMutex = null;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            base.Dispose(disposing);
         }
 
         private bool AcquireReadMutex(int timeout = 10000)
