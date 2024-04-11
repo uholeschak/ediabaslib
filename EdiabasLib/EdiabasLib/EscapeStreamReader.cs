@@ -9,6 +9,7 @@ namespace EdiabasLib
 {
     public class EscapeStreamReader : Stream
     {
+        private bool _disposed;
         private Stream _inStream;
         private Mutex _readMutex;
         private AutoResetEvent _writeEvent;
@@ -144,53 +145,69 @@ namespace EdiabasLib
             }
         }
 
-        public override void Close()
+        // Stream Close() calls Dispose(true)
+        protected override void Dispose(bool disposing)
         {
-            if (!AcquireReadMutex(-1))
+            // Check to see if Dispose has already been called.
+            if (!_disposed)
             {
-                return;
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
+                if (disposing)
+                {
+                    // Dispose managed resources.
+                    if (!AcquireReadMutex(-1))
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        if (_inStream != null)
+                        {
+                            _inStream.Close();
+                            _inStream = null;
+                        }
+                        _readDataList.Clear();
+                        _readEscape = false;
+                    }
+                    finally
+                    {
+                        ReleaseReadMutex();
+                    }
+
+                    try
+                    {
+                        if (_writeEvent != null)
+                        {
+                            _writeEvent.Close();
+                            _writeEvent = null;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    try
+                    {
+                        if (_readMutex != null)
+                        {
+                            _readMutex.Close();
+                            _readMutex = null;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    // Note disposing has been done.
+                    _disposed = true;
+                }
             }
 
-            try
-            {
-                if (_inStream != null)
-                {
-                    _inStream.Close();
-                    _inStream = null;
-                }
-                _readDataList.Clear();
-                _readEscape = false;
-            }
-            finally
-            {
-                ReleaseReadMutex();
-            }
-
-            try
-            {
-                if (_writeEvent != null)
-                {
-                    _writeEvent.Close();
-                    _writeEvent = null;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            try
-            {
-                if (_readMutex != null)
-                {
-                    _readMutex.Close();
-                    _readMutex = null;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            base.Dispose(disposing);
         }
 
         public bool IsDataAvailable(int timeout = 0, ManualResetEvent cancelEvent = null)
