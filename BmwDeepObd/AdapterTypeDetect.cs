@@ -143,8 +143,8 @@ public class AdapterTypeDetect
                     }
 
                     bool escapeMode = _activityCommon.MtcBtEscapeMode;
-                    EscapeStreamReader inStream = new EscapeStreamReader(adapterInStream);
-                    EscapeStreamWriter outStream = new EscapeStreamWriter(adapterOutStream);
+                    using EscapeStreamReader inStream = new EscapeStreamReader(adapterInStream);
+                    using EscapeStreamWriter outStream = new EscapeStreamWriter(adapterOutStream);
                     if (!SetCustomEscapeMode(inStream, outStream, cancelEvent, ref escapeMode, out bool noEscapeSupport))
                     {
                         LogString("*** Set escape mode failed");
