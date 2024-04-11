@@ -342,7 +342,7 @@ namespace EdiabasLib
             {
                 if (TcpClient != null)
                 {
-                    TcpClient.Close();
+                    TcpClient.Dispose();
                     TcpClient = null;
                 }
             }

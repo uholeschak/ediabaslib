@@ -1203,7 +1203,7 @@ namespace EdiabasLib
             {
                 if (SharedDataActive.TcpDiagStream != null)
                 {
-                    SharedDataActive.TcpDiagStream.Close();
+                    SharedDataActive.TcpDiagStream.Dispose();
                     SharedDataActive.TcpDiagStream = null;
                 }
             }
@@ -1216,7 +1216,7 @@ namespace EdiabasLib
             {
                 if (SharedDataActive.TcpDiagClient != null)
                 {
-                    SharedDataActive.TcpDiagClient.Close();
+                    SharedDataActive.TcpDiagClient.Dispose();
                     SharedDataActive.TcpDiagClient = null;
                 }
             }
@@ -2317,7 +2317,7 @@ namespace EdiabasLib
             {
                 if (sharedData.TcpControlStream != null)
                 {
-                    sharedData.TcpControlStream.Close();
+                    sharedData.TcpControlStream.Dispose();
                     sharedData.TcpControlStream = null;
                 }
             }
@@ -2330,7 +2330,7 @@ namespace EdiabasLib
             {
                 if (sharedData.TcpControlClient != null)
                 {
-                    sharedData.TcpControlClient.Close();
+                    sharedData.TcpControlClient.Dispose();
                     sharedData.TcpControlClient = null;
                 }
             }
