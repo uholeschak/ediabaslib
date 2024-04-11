@@ -165,7 +165,7 @@ namespace EdiabasLib
                     {
                         if (_inStream != null)
                         {
-                            _inStream.Close();
+                            _inStream.Dispose();
                             _inStream = null;
                         }
                         _readDataList.Clear();
@@ -180,7 +180,7 @@ namespace EdiabasLib
                     {
                         if (_writeEvent != null)
                         {
-                            _writeEvent.Close();
+                            _writeEvent.Dispose();
                             _writeEvent = null;
                         }
                     }
@@ -193,7 +193,7 @@ namespace EdiabasLib
                     {
                         if (_readMutex != null)
                         {
-                            _readMutex.Close();
+                            _readMutex.Dispose();
                             _readMutex = null;
                         }
                     }

@@ -145,7 +145,7 @@ namespace EdiabasLib
                     {
                         if (_outStream != null)
                         {
-                            _outStream.Close();
+                            _outStream.Dispose();
                             _outStream = null;
                         }
                         _writeDataList.Clear();
@@ -159,7 +159,7 @@ namespace EdiabasLib
                     {
                         if (_writeMutex != null)
                         {
-                            _writeMutex.Close();
+                            _writeMutex.Dispose();
                             _writeMutex = null;
                         }
                     }
