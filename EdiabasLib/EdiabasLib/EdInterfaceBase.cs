@@ -119,7 +119,6 @@ namespace EdiabasLib
                     {
                         try
                         {
-                            InterfaceMutex.Close();
                             InterfaceMutex.Dispose();
                             InterfaceMutex = null;
                         }

@@ -132,7 +132,7 @@ namespace EdiabasLib
             {
                 if (TcpElmStream != null)
                 {
-                    TcpElmStream.Close();
+                    TcpElmStream.Dispose();
                     TcpElmStream = null;
                 }
             }
@@ -145,7 +145,7 @@ namespace EdiabasLib
             {
                 if (TcpElmClient != null)
                 {
-                    TcpElmClient.Close();
+                    TcpElmClient.Dispose();
                     TcpElmClient = null;
                 }
             }
