@@ -35,6 +35,16 @@ namespace EdiabasLib
         const int MapShared = 0x1;
         // ReSharper restore UnusedMember.Local
 
+        private bool _disposed;
+        private long _filePos;
+        private readonly long _fileLength;
+        private int _fd;
+        private IntPtr _mapAddr;
+        private static readonly object DirDictLock = new object();
+        private static string _dirDictName = string.Empty;
+        private static Dictionary<string, string> _dirDict;
+        private static DirectoryObserver _directoryObserver;
+
         public MemoryStreamReader(string path)
         {
             _filePos = 0;
@@ -186,9 +196,25 @@ namespace EdiabasLib
         {
         }
 
-        public override void Close()
+        // Stream Close() calls Dispose(true)
+        protected override void Dispose(bool disposing)
         {
-            CloseHandles();
+            // Check to see if Dispose has already been called.
+            if (!_disposed)
+            {
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
+                if (disposing)
+                {
+                    // Dispose managed resources.
+                    CloseHandles();
+                }
+
+                // Note disposing has been done.
+                _disposed = true;
+            }
+
+            base.Dispose(disposing);
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -379,14 +405,5 @@ namespace EdiabasLib
                 }
             }
         }
-
-        private long _filePos;
-        private readonly long _fileLength;
-        private int _fd;
-        private IntPtr _mapAddr;
-        private static readonly object DirDictLock = new object();
-        private static string _dirDictName = string.Empty;
-        private static Dictionary<string, string> _dirDict;
-        private static DirectoryObserver _directoryObserver;
     }
 }
