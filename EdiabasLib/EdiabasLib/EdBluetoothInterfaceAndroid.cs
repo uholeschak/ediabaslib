@@ -420,7 +420,7 @@ namespace EdiabasLib
             {
                 if (_bluetoothInStream != null)
                 {
-                    _bluetoothInStream.Close();
+                    _bluetoothInStream.Dispose();
                     _bluetoothInStream = null;
                 }
             }
@@ -432,7 +432,7 @@ namespace EdiabasLib
             {
                 if (_bluetoothOutStream != null)
                 {
-                    _bluetoothOutStream.Close();
+                    _bluetoothOutStream.Dispose();
                     _bluetoothOutStream = null;
                 }
             }
