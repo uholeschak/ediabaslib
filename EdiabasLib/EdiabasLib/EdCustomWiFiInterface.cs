@@ -323,13 +323,13 @@ namespace EdiabasLib
             {
                 if (WriteStream != null)
                 {
-                    WriteStream.Close();
+                    WriteStream.Dispose();
                     WriteStream = null;
                 }
 
                 if (TcpStream != null)
                 {
-                    TcpStream.Close();
+                    TcpStream.Dispose();
                     TcpStream = null;
                 }
             }
