@@ -9,6 +9,7 @@ namespace EdiabasLib
 {
     public class EscapeStreamWriter : Stream
     {
+        private bool _disposed;
         private Stream _outStream;
         private Mutex _writeMutex;
         private bool _escapeMode;
@@ -124,39 +125,55 @@ namespace EdiabasLib
             }
         }
 
-        public override void Close()
+        // Stream Close() calls Dispose(true)
+        protected override void Dispose(bool disposing)
         {
-            if (!AcquireWriteMutex(-1))
+            // Check to see if Dispose has already been called.
+            if (!_disposed)
             {
-                return;
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
+                if (disposing)
+                {
+                    // Dispose managed resources.
+                    if (!AcquireWriteMutex(-1))
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        if (_outStream != null)
+                        {
+                            _outStream.Close();
+                            _outStream = null;
+                        }
+                        _writeDataList.Clear();
+                    }
+                    finally
+                    {
+                        ReleaseWriteMutex();
+                    }
+
+                    try
+                    {
+                        if (_writeMutex != null)
+                        {
+                            _writeMutex.Close();
+                            _writeMutex = null;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                // Note disposing has been done.
+                _disposed = true;
             }
 
-            try
-            {
-                if (_outStream != null)
-                {
-                    _outStream.Close();
-                    _outStream = null;
-                }
-                _writeDataList.Clear();
-            }
-            finally
-            {
-                ReleaseWriteMutex();
-            }
-
-            try
-            {
-                if (_writeMutex != null)
-                {
-                    _writeMutex.Close();
-                    _writeMutex = null;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            base.Dispose(disposing);
         }
 
         public override int ReadByte()
