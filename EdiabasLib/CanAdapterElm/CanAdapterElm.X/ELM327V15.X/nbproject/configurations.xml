@@ -5,6 +5,11 @@
                    displayName="Header Files"
                    projectFiles="true">
     </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="true">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
@@ -13,11 +18,6 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>ELM327V15.asm</itemPath>
-    </logicalFolder>
-    <logicalFolder name="ExternalFiles"
-                   displayName="Important Files"
-                   projectFiles="false">
-      <itemPath>Makefile</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
@@ -37,7 +37,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.4.87"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.13.292"/>
       </packs>
       <ScriptingSettings>
       </ScriptingSettings>
@@ -91,7 +91,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
+        <makeCustomizationPostStep>hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
@@ -106,7 +106,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -150,7 +154,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -198,6 +206,7 @@
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
+        <property key="dfp-override" value="1"/>
         <property key="instruction-set" value="std"/>
         <property key="summary-class" value="false"/>
         <property key="summary-file" value="false"/>
@@ -239,7 +248,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.4.87"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.13.292"/>
       </packs>
       <ScriptingSettings>
       </ScriptingSettings>
@@ -293,7 +302,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
+        <makeCustomizationPostStep>hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
@@ -308,7 +317,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -352,8 +365,12 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -401,6 +418,7 @@
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
+        <property key="dfp-override" value="1"/>
         <property key="instruction-set" value="std"/>
         <property key="summary-class" value="false"/>
         <property key="summary-file" value="false"/>
@@ -442,7 +460,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.4.87"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.13.292"/>
       </packs>
       <ScriptingSettings>
       </ScriptingSettings>
@@ -496,7 +514,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
+        <makeCustomizationPostStep>hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
@@ -511,7 +529,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -555,7 +577,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -603,6 +629,7 @@
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
+        <property key="dfp-override" value="1"/>
         <property key="instruction-set" value="std"/>
         <property key="summary-class" value="false"/>
         <property key="summary-file" value="false"/>
@@ -644,7 +671,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.4.87"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.13.292"/>
       </packs>
       <ScriptingSettings>
       </ScriptingSettings>
@@ -698,7 +725,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
+        <makeCustomizationPostStep>hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
@@ -713,7 +740,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -757,7 +788,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -805,6 +840,7 @@
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
+        <property key="dfp-override" value="1"/>
         <property key="instruction-set" value="std"/>
         <property key="summary-class" value="false"/>
         <property key="summary-file" value="false"/>
@@ -846,7 +882,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.4.87"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.13.292"/>
       </packs>
       <ScriptingSettings>
       </ScriptingSettings>
@@ -900,7 +936,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
+        <makeCustomizationPostStep>hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
@@ -915,7 +951,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -959,7 +999,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -1007,6 +1051,7 @@
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
+        <property key="dfp-override" value="1"/>
         <property key="instruction-set" value="std"/>
         <property key="summary-class" value="false"/>
         <property key="summary-file" value="false"/>
@@ -1048,7 +1093,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.4.87"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.13.292"/>
       </packs>
       <ScriptingSettings>
       </ScriptingSettings>
@@ -1102,7 +1147,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
+        <makeCustomizationPostStep>hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
@@ -1117,7 +1162,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -1161,7 +1210,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -1209,6 +1262,7 @@
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
+        <property key="dfp-override" value="1"/>
         <property key="instruction-set" value="std"/>
         <property key="summary-class" value="false"/>
         <property key="summary-file" value="false"/>
@@ -1250,7 +1304,7 @@
         <platform>3</platform>
       </toolsSet>
       <packs>
-        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.4.87"/>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.13.292"/>
       </packs>
       <ScriptingSettings>
       </ScriptingSettings>
@@ -1304,7 +1358,7 @@
         <makeUseCleanTarget>false</makeUseCleanTarget>
         <makeCustomizationPreStep></makeCustomizationPreStep>
         <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
-        <makeCustomizationPostStep>hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate +-FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
+        <makeCustomizationPostStep>hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V15.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
         <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
         <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
         <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
@@ -1319,7 +1373,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -1363,7 +1421,11 @@
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
         <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
@@ -1411,6 +1473,7 @@
       </pic-as-assembler>
       <pic-as-global>
         <property key="custom-dfp" value=""/>
+        <property key="dfp-override" value="1"/>
         <property key="instruction-set" value="std"/>
         <property key="summary-class" value="false"/>
         <property key="summary-file" value="false"/>
