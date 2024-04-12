@@ -13,8 +13,10 @@ namespace BmwDeepObd;
 )]
 [Android.App.IntentFilter(new[]
     {
-        Intent.ActionPackageReplaced,
-        Intent.ActionUserPresent
+        Intent.ActionBootCompleted,
+        Intent.ActionMyPackageReplaced,
+        Intent.ActionMyPackageSuspended,
+        Intent.ActionMyPackageUnsuspended,
     }, 
     Categories = new[]
     {
