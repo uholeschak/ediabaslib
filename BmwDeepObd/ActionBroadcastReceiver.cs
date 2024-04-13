@@ -58,7 +58,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
                     Intent actionIntent = new Intent(context, typeof(ActionBroadcastReceiver));
                     actionIntent.SetAction(ActionTimeElapsed);
 
-                    long interval = 1000;   // 1 seconds
+                    long interval = 1000 * 5;   // 5 seconds
                     Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
                     {
