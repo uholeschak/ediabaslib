@@ -15,13 +15,13 @@ namespace BmwDeepObd;
         Intent.ActionBootCompleted,
         Intent.ActionReboot,
         Intent.ActionMyPackageReplaced,
-        Intent.ActionMyPackageSuspended,
         Intent.ActionMyPackageUnsuspended,
     }, 
     Categories = new[]
     {
         Intent.CategoryDefault
-    })
+    }
+    ,Priority = 100)
 ]
 
 public class ActionBroadcastReceiver : BroadcastReceiver
@@ -45,6 +45,8 @@ public class ActionBroadcastReceiver : BroadcastReceiver
         {
             case Intent.ActionBootCompleted:
             case Intent.ActionReboot:
+            case Intent.ActionMyPackageReplaced:
+            case Intent.ActionMyPackageUnsuspended:
             case ActionStartTimer:
                 Android.App.AlarmManager alarms = context?.GetSystemService(Context.AlarmService) as Android.App.AlarmManager;
                 if (alarms == null)
