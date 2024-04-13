@@ -1,8 +1,7 @@
 ﻿using Android.Content;
-using Android.Nfc;
-using Android.Webkit;
-using EdiabasLib;
-using System.Collections.Generic;
+using Android.OS;
+using Android.Util;
+using System;
 
 namespace BmwDeepObd;
 
@@ -29,6 +28,8 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #if DEBUG
     private static readonly string Tag = typeof(ActionBroadcastReceiver).FullName;
 #endif
+    private const string ActionTimeElapsed = "ActionTimeElapsed";
+    public const string ActionStartTimer = "ActionStartTimer";
 
     public override void OnReceive(Context context, Intent intent)
     {
@@ -37,7 +38,54 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             return;
         }
 #if DEBUG
-        Android.Util.Log.Info(Tag, string.Format("Action received: {0}", intent.Action));
+        Log.Info(Tag, string.Format("Action received: {0}", intent.Action));
 #endif
+        switch (intent.Action)
+        {
+            case Intent.ActionBootCompleted:
+            case ActionStartTimer:
+                Android.App.AlarmManager alarms = context?.GetSystemService(Context.AlarmService) as Android.App.AlarmManager;
+                if (alarms == null)
+                {
+#if DEBUG
+                    Log.Info(Tag, "No alarm manager");
+#endif
+                    return;
+                }
+
+                try
+                {
+                    Intent actionIntent = new Intent(context, typeof(ActionBroadcastReceiver));
+                    actionIntent.SetAction(ActionTimeElapsed);
+
+                    long interval = 1000;   // 1 seconds
+                    Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                    {
+                        intentFlags |= Android.App.PendingIntentFlags.Immutable;
+                    }
+
+                    Android.App.PendingIntent alarmIntent = Android.App.PendingIntent.GetBroadcast(context, 0, actionIntent, intentFlags);
+                    if (alarmIntent == null)
+                    {
+#if DEBUG
+                        Log.Info(Tag, "Boot: No alarm intent");
+#endif
+                        break;
+                    }
+                    alarms.SetInexactRepeating(Android.App.AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + interval, interval, alarmIntent);
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug(Tag, "Boot: ScheduleAlarm alarm exception: {0}", ex.Message);
+                }
+                break;
+
+            case ActionTimeElapsed:
+#if DEBUG
+                Log.Info(Tag, "Alarm time elapsed");
+#endif
+                break;
+        }
     }
 }
