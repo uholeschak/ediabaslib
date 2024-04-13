@@ -680,6 +680,11 @@ namespace BmwDeepObd
                     ActivityCommon.BtInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
                 }
             }
+#if false
+            Intent broadcastIntent = new Intent(this, typeof(ActionBroadcastReceiver));
+            broadcastIntent.SetAction(ActionBroadcastReceiver.ActionStartTimer);
+            SendBroadcast(broadcastIntent);
+#endif
         }
 
         private void PostSelectTabPage(int pageIndex)
