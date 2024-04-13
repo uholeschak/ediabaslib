@@ -6,21 +6,22 @@ using System;
 namespace BmwDeepObd;
 
 [BroadcastReceiver(
-    Exported = true,
+    Exported = false,
     Enabled = true,
     Name = ActivityCommon.AppNameSpace + "." + nameof(ActionBroadcastReceiver)
 )]
 [Android.App.IntentFilter(new[]
     {
         Intent.ActionBootCompleted,
+        Intent.ActionReboot,
         Intent.ActionMyPackageReplaced,
-        Intent.ActionMyPackageSuspended,
         Intent.ActionMyPackageUnsuspended,
     }, 
     Categories = new[]
     {
         Intent.CategoryDefault
-    })
+    }
+    ,Priority = 100)
 ]
 
 public class ActionBroadcastReceiver : BroadcastReceiver
@@ -43,6 +44,9 @@ public class ActionBroadcastReceiver : BroadcastReceiver
         switch (intent.Action)
         {
             case Intent.ActionBootCompleted:
+            case Intent.ActionReboot:
+            case Intent.ActionMyPackageReplaced:
+            case Intent.ActionMyPackageUnsuspended:
             case ActionStartTimer:
                 Android.App.AlarmManager alarms = context?.GetSystemService(Context.AlarmService) as Android.App.AlarmManager;
                 if (alarms == null)
