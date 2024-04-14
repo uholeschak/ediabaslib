@@ -32,8 +32,6 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #endif
     public const string ActionStartTimer = ActivityCommon.AppNameSpace + ".ActionStartTimer";
 
-    private Android.App.PendingIntent _alarmIntent;
-
     public override void OnReceive(Context context, Intent intent)
     {
         if (intent?.Action == null)
@@ -55,86 +53,8 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionMyPackageSuspended:
             case Intent.ActionMyPackageUnsuspended:
             case ActionStartTimer:
-                ScheduleAlarm(context);
+                BackgroundAlarmReceiver.ScheduleAlarm(context);
                 break;
-        }
-    }
-
-    public bool ScheduleAlarm(Context context)
-    {
-        try
-        {
-            if (_alarmIntent != null)
-            {
-                CancelAlarm(context);
-            }
-
-            Android.App.AlarmManager alarms = context?.GetSystemService(Context.AlarmService) as Android.App.AlarmManager;
-            if (alarms == null)
-            {
-#if DEBUG
-                Log.Info(Tag, "ScheduleAlarm: No alarm manager");
-#endif
-                return false;
-            }
-
-            Intent actionIntent = new Intent(context, typeof(BackgroundAlarmReceiver));
-            actionIntent.SetAction(BackgroundAlarmReceiver.ActionTimeElapsed);
-
-            long interval = 1000 * 5;   // 5 seconds
-            Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-            {
-                intentFlags |= Android.App.PendingIntentFlags.Immutable;
-            }
-
-            _alarmIntent = Android.App.PendingIntent.GetBroadcast(context, 0, actionIntent, intentFlags);
-            if (_alarmIntent == null)
-            {
-#if DEBUG
-                Log.Info(Tag, "ScheduleAlarm: No alarm intent");
-#endif
-                return false;
-            }
-            alarms.SetInexactRepeating(Android.App.AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + interval, interval, _alarmIntent);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Log.Debug(Tag, "ScheduleAlarm: alarm exception: {0}", ex.Message);
-            return false;
-        }
-    }
-
-    public bool CancelAlarm(Context context)
-    {
-        try
-        {
-            if (_alarmIntent == null)
-            {
-#if DEBUG
-                Log.Info(Tag, "CancelAlarm: No alarm intent");
-#endif
-                return false;
-            }
-
-            Android.App.AlarmManager alarms = context?.GetSystemService(Context.AlarmService) as Android.App.AlarmManager;
-            if (alarms == null)
-            {
-#if DEBUG
-                Log.Info(Tag, "CancelAlarm: No alarm manager");
-#endif
-                return false;
-            }
-
-            alarms.Cancel(_alarmIntent);
-            _alarmIntent = null;
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Log.Debug(Tag, "CancelAlarm: CancelAlarm alarm exception: {0}", ex.Message);
-            return false;
         }
     }
 }
