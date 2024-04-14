@@ -16,7 +16,7 @@ namespace BmwDeepObd;
         Intent.ActionReboot,
         Intent.ActionMyPackageReplaced,
         Intent.ActionMyPackageUnsuspended,
-    }, 
+    },
     Categories = new[]
     {
         Intent.CategoryDefault
@@ -31,6 +31,8 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #endif
     private const string ActionTimeElapsed = "ActionTimeElapsed";
     public const string ActionStartTimer = "ActionStartTimer";
+
+    private Android.App.PendingIntent _alarmIntent;
 
     public override void OnReceive(Context context, Intent intent)
     {
@@ -48,41 +50,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionMyPackageReplaced:
             case Intent.ActionMyPackageUnsuspended:
             case ActionStartTimer:
-                Android.App.AlarmManager alarms = context?.GetSystemService(Context.AlarmService) as Android.App.AlarmManager;
-                if (alarms == null)
-                {
-#if DEBUG
-                    Log.Info(Tag, "No alarm manager");
-#endif
-                    return;
-                }
-
-                try
-                {
-                    Intent actionIntent = new Intent(context, typeof(ActionBroadcastReceiver));
-                    actionIntent.SetAction(ActionTimeElapsed);
-
-                    long interval = 1000 * 5;   // 5 seconds
-                    Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                    {
-                        intentFlags |= Android.App.PendingIntentFlags.Immutable;
-                    }
-
-                    Android.App.PendingIntent alarmIntent = Android.App.PendingIntent.GetBroadcast(context, 0, actionIntent, intentFlags);
-                    if (alarmIntent == null)
-                    {
-#if DEBUG
-                        Log.Info(Tag, "Boot: No alarm intent");
-#endif
-                        break;
-                    }
-                    alarms.SetInexactRepeating(Android.App.AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + interval, interval, alarmIntent);
-                }
-                catch (Exception ex)
-                {
-                    Log.Debug(Tag, "Boot: ScheduleAlarm alarm exception: {0}", ex.Message);
-                }
+                ScheduleAlarm(context);
                 break;
 
             case ActionTimeElapsed:
@@ -90,6 +58,84 @@ public class ActionBroadcastReceiver : BroadcastReceiver
                 Log.Info(Tag, "Alarm time elapsed");
 #endif
                 break;
+        }
+    }
+
+    public bool ScheduleAlarm(Context context)
+    {
+        try
+        {
+            if (_alarmIntent != null)
+            {
+                CancelAlarm(context);
+            }
+
+            Android.App.AlarmManager alarms = context?.GetSystemService(Context.AlarmService) as Android.App.AlarmManager;
+            if (alarms == null)
+            {
+#if DEBUG
+                Log.Info(Tag, "ScheduleAlarm: No alarm manager");
+#endif
+                return false;
+            }
+
+            Intent actionIntent = new Intent(context, typeof(ActionBroadcastReceiver));
+            actionIntent.SetAction(ActionTimeElapsed);
+
+            long interval = 1000 * 5;   // 5 seconds
+            Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                intentFlags |= Android.App.PendingIntentFlags.Immutable;
+            }
+
+            _alarmIntent = Android.App.PendingIntent.GetBroadcast(context, 0, actionIntent, intentFlags);
+            if (_alarmIntent == null)
+            {
+#if DEBUG
+                Log.Info(Tag, "ScheduleAlarm: No alarm intent");
+#endif
+                return false;
+            }
+            alarms.SetInexactRepeating(Android.App.AlarmType.RtcWakeup, Java.Lang.JavaSystem.CurrentTimeMillis() + interval, interval, _alarmIntent);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.Debug(Tag, "ScheduleAlarm: alarm exception: {0}", ex.Message);
+            return false;
+        }
+    }
+
+    public bool CancelAlarm(Context context)
+    {
+        try
+        {
+            if (_alarmIntent == null)
+            {
+#if DEBUG
+                Log.Info(Tag, "CancelAlarm: No alarm intent");
+#endif
+                return false;
+            }
+
+            Android.App.AlarmManager alarms = context?.GetSystemService(Context.AlarmService) as Android.App.AlarmManager;
+            if (alarms == null)
+            {
+#if DEBUG
+                Log.Info(Tag, "CancelAlarm: No alarm manager");
+#endif
+                return false;
+            }
+
+            alarms.Cancel(_alarmIntent);
+            _alarmIntent = null;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.Debug(Tag, "CancelAlarm: CancelAlarm alarm exception: {0}", ex.Message);
+            return false;
         }
     }
 }
