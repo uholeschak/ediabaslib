@@ -681,9 +681,18 @@ namespace BmwDeepObd
                 }
             }
 #if true
-            Intent broadcastIntent = new Intent(BackgroundAlarmReceiver.ActionTimeElapsed);
-            broadcastIntent.SetClass(this, typeof(BackgroundAlarmReceiver));
-            SendBroadcast(broadcastIntent);
+            try
+            {
+                ComponentName componentBroadcastReceiver = new ComponentName(this, ActivityCommon.AppNameSpace + "." + nameof(ActionBroadcastReceiver));
+                _activityCommon.PackageManager.SetComponentEnabledSetting(componentBroadcastReceiver, ComponentEnabledState.Enabled, ComponentEnableOption.DontKillApp);
+                Intent broadcastIntent = new Intent(ActionBroadcastReceiver.ActionStartTimer);
+                broadcastIntent.SetClass(this, typeof(ActionBroadcastReceiver));
+                SendBroadcast(broadcastIntent);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 #endif
         }
 

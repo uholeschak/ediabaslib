@@ -2,12 +2,13 @@
 using Android.OS;
 using Android.Util;
 using System;
+using System.Globalization;
 
 namespace BmwDeepObd;
 
 [BroadcastReceiver(
     Exported = false,
-    Enabled = true,
+    Enabled = false,
     Name = ActivityCommon.AppNameSpace + "." + nameof(ActionBroadcastReceiver)
 )]
 [Android.App.IntentFilter(new[]
@@ -16,7 +17,6 @@ namespace BmwDeepObd;
         Intent.ActionReboot,
         Intent.ActionMyPackageReplaced,
         Intent.ActionMyPackageSuspended,
-        Intent.ActionMyPackageUnsuspended,
     },
     Categories = new[]
     {
@@ -43,7 +43,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
         }
 
 #if DEBUG
-        Log.Info(Tag, string.Format("Action received: {0}", intent.Action));
+        Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "Action received: {0}", intent.Action));
 #endif
         switch (intent.Action)
         {
@@ -51,7 +51,6 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionReboot:
             case Intent.ActionMyPackageReplaced:
             case Intent.ActionMyPackageSuspended:
-            case Intent.ActionMyPackageUnsuspended:
             case ActionStartTimer:
                 BackgroundAlarmReceiver.ScheduleAlarm(context);
                 break;
