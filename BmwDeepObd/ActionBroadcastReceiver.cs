@@ -29,7 +29,6 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #if DEBUG
     private static readonly string Tag = typeof(ActionBroadcastReceiver).FullName;
 #endif
-    private const string ActionTimeElapsed = "ActionTimeElapsed";
     public const string ActionStartTimer = ActivityCommon.AppNameSpace + ".ActionStartTimer";
 
     private Android.App.PendingIntent _alarmIntent;
@@ -56,12 +55,6 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case ActionStartTimer:
                 ScheduleAlarm(context);
                 break;
-
-            case ActionTimeElapsed:
-#if DEBUG
-                Log.Info(Tag, "Alarm time elapsed");
-#endif
-                break;
         }
     }
 
@@ -83,8 +76,8 @@ public class ActionBroadcastReceiver : BroadcastReceiver
                 return false;
             }
 
-            Intent actionIntent = new Intent(context, typeof(ActionBroadcastReceiver));
-            actionIntent.SetAction(ActionTimeElapsed);
+            Intent actionIntent = new Intent(context, typeof(BackgroundAlarmReceiver));
+            actionIntent.SetAction(BackgroundAlarmReceiver.ActionTimeElapsed);
 
             long interval = 1000 * 5;   // 5 seconds
             Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
