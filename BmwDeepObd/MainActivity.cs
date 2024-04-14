@@ -2663,7 +2663,7 @@ namespace BmwDeepObd
                         _instanceData.VagPath, _instanceData.BmwPath, _instanceData.TraceDir, _instanceData.TraceAppend, _instanceData.DataLogDir, _instanceData.DataLogAppend);
                     if (UseCommService())
                     {
-                        _activityCommon.StartForegroundService();
+                        ActivityCommon.StartForegroundService(this);
                     }
                 }
             }
@@ -2691,7 +2691,7 @@ namespace BmwDeepObd
                     }
                     if (wait)
                     {
-                        _activityCommon?.StopForegroundService();
+                        ActivityCommon.StopForegroundService(this);
                         DisconnectEdiabasEvents();
                         lock (ActivityCommon.GlobalLockObject)
                         {

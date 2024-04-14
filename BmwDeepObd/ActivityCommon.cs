@@ -1899,13 +1899,13 @@ namespace BmwDeepObd
             }
         }
 
-        public bool StartForegroundService()
+        public static bool StartForegroundService(Context context)
         {
             try
             {
-                Intent startServiceIntent = new Intent(_context, typeof(ForegroundService));
+                Intent startServiceIntent = new Intent(context, typeof(ForegroundService));
                 startServiceIntent.SetAction(ForegroundService.ActionStartService);
-                _context.StartService(startServiceIntent);
+                context.StartService(startServiceIntent);
             }
             catch (Exception)
             {
@@ -1914,13 +1914,13 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool StopForegroundService()
+        public static bool StopForegroundService(Context context)
         {
             try
             {
-                Intent stopServiceIntent = new Intent(_context, typeof(ForegroundService));
+                Intent stopServiceIntent = new Intent(context, typeof(ForegroundService));
                 stopServiceIntent.SetAction(ForegroundService.ActionStopService);
-                _context.StopService(stopServiceIntent);
+                context.StopService(stopServiceIntent);
             }
             catch (Exception)
             {
