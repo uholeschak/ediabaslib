@@ -256,6 +256,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/settings_start_connect_close" />
+            <RadioButton
+              android:id="@+id/radioButtonStartBoot"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/settings_start_boot" />
         </RadioGroup>
         <TextView
             android:text="@string/settings_caption_app_exit"

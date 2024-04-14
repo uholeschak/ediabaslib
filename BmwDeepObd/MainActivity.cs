@@ -679,7 +679,7 @@ namespace BmwDeepObd
                 {
                     ActivityCommon.BtInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
 #if true
-                    if (UseCommService())
+                    if (ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.StartBoot)
                     {
                         try
                         {

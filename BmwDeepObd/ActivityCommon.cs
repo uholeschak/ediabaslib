@@ -440,6 +440,7 @@ namespace BmwDeepObd
             [XmlEnum(Name = "Offline")] Offline,                // no auto connect
             [XmlEnum(Name = "Connect")] Connect,                // auto connect
             [XmlEnum(Name = "ConnectClose")] ConnectClose,      // auto connect and close app
+            [XmlEnum(Name = "StartBoot")] StartBoot,            // auto start at boot
         }
 
         public enum TranslatorType

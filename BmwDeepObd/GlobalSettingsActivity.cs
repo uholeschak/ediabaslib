@@ -90,6 +90,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonStartOffline;
         private RadioButton _radioButtonStartConnect;
         private RadioButton _radioButtonStartConnectClose;
+        private RadioButton _radioButtonStartBoot;
         private CheckBox _checkBoxDoubleClickForAppExit;
         private CheckBox _checkBoxSendDataBroadcast;
         private RadioButton _radioButtonUpdateOff;
@@ -215,6 +216,7 @@ namespace BmwDeepObd
             _radioButtonStartOffline = FindViewById<RadioButton>(Resource.Id.radioButtonStartOffline);
             _radioButtonStartConnect = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnect);
             _radioButtonStartConnectClose = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnectClose);
+            _radioButtonStartBoot = FindViewById<RadioButton>(Resource.Id.radioButtonStartBoot);
 
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
             _checkBoxSendDataBroadcast = FindViewById<CheckBox>(Resource.Id.checkBoxSendDataBroadcast);
@@ -637,6 +639,10 @@ namespace BmwDeepObd
                 case ActivityCommon.AutoConnectType.ConnectClose:
                     _radioButtonStartConnectClose.Checked = true;
                     break;
+
+                case ActivityCommon.AutoConnectType.StartBoot:
+                    _radioButtonStartBoot.Checked = true;
+                    break;
             }
 
             _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
@@ -811,6 +817,10 @@ namespace BmwDeepObd
             else if (_radioButtonStartConnectClose.Checked)
             {
                 autoConnectType = ActivityCommon.AutoConnectType.ConnectClose;
+            }
+            else if (_radioButtonStartBoot.Checked)
+            {
+                autoConnectType = ActivityCommon.AutoConnectType.StartBoot;
             }
             ActivityCommon.AutoConnectHandling = autoConnectType;
 
