@@ -2,6 +2,7 @@
 using Android.OS;
 using Android.Util;
 using System;
+using System.Globalization;
 
 namespace BmwDeepObd;
 
@@ -16,7 +17,8 @@ public class BackgroundAlarmReceiver : BroadcastReceiver
     private static readonly string Tag = typeof(BackgroundAlarmReceiver).FullName;
 #endif
     private static Android.App.PendingIntent _alarmIntent;
-    public const string ActionTimeElapsed = "ActionTimeElapsed";
+    public const string ActionTimeElapsed = ActivityCommon.AppNameSpace + ".ActionTimeElapsed";
+    public const string ActionStartTimer = ActivityCommon.AppNameSpace + ".ActionStartTimer";
 
     public override void OnReceive(Context context, Intent intent)
     {
@@ -35,14 +37,21 @@ public class BackgroundAlarmReceiver : BroadcastReceiver
         {
             case ActionTimeElapsed:
 #if DEBUG
-                Log.Info(Tag, "Alarm time elapsed");
+                Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "Alarm time elapsed: {0}", DateTime.Now.ToString("HH:mm:ss")));
+#endif
+                ScheduleAlarm(context);
+                break;
+
+            case ActionStartTimer:
+#if DEBUG
+                Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "Start alarm timer: {0}", DateTime.Now.ToString("HH:mm:ss")));
 #endif
                 ScheduleAlarm(context);
                 break;
         }
     }
 
-    public static bool ScheduleAlarm(Context context, int interval = 1000 * 5)
+    public static bool ScheduleAlarm(Context context, int interval = 1000 * 60)
     {
         try
         {

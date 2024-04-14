@@ -16,7 +16,6 @@ namespace BmwDeepObd;
         Intent.ActionReboot,
         Intent.ActionMyPackageReplaced,
         Intent.ActionMyPackageSuspended,
-        Intent.ActionMyPackageUnsuspended,
     },
     Categories = new[]
     {
@@ -30,7 +29,6 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #if DEBUG
     private static readonly string Tag = typeof(ActionBroadcastReceiver).FullName;
 #endif
-    public const string ActionStartTimer = ActivityCommon.AppNameSpace + ".ActionStartTimer";
 
     public override void OnReceive(Context context, Intent intent)
     {
@@ -51,8 +49,6 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionReboot:
             case Intent.ActionMyPackageReplaced:
             case Intent.ActionMyPackageSuspended:
-            case Intent.ActionMyPackageUnsuspended:
-            case ActionStartTimer:
                 BackgroundAlarmReceiver.ScheduleAlarm(context);
                 break;
         }
