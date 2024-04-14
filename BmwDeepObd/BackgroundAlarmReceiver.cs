@@ -26,6 +26,9 @@ public class BackgroundAlarmReceiver : BroadcastReceiver
             return;
         }
 
+#if DEBUG
+        Log.Info(Tag, string.Format("Action received: {0}", intent.Action));
+#endif
         switch (intent.Action)
         {
             case ActionTimeElapsed:
