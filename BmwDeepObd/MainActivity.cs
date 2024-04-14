@@ -678,22 +678,23 @@ namespace BmwDeepObd
                 if (!_activityRecreated)
                 {
                     ActivityCommon.BtInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
+#if true
+                    if (UseCommService())
+                    {
+                        try
+                        {
+                            Intent broadcastIntent = new Intent(ActionBroadcastReceiver.ActionStartService);
+                            broadcastIntent.SetClass(this, typeof(ActionBroadcastReceiver));
+                            SendBroadcast(broadcastIntent);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+#endif
                 }
             }
-#if true
-            try
-            {
-                ComponentName componentBroadcastReceiver = new ComponentName(this, ActivityCommon.AppNameSpace + "." + nameof(ActionBroadcastReceiver));
-                _activityCommon.PackageManager.SetComponentEnabledSetting(componentBroadcastReceiver, ComponentEnabledState.Enabled, ComponentEnableOption.DontKillApp);
-                Intent broadcastIntent = new Intent(ActionBroadcastReceiver.ActionStartTimer);
-                broadcastIntent.SetClass(this, typeof(ActionBroadcastReceiver));
-                SendBroadcast(broadcastIntent);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-#endif
         }
 
         private void PostSelectTabPage(int pageIndex)

@@ -8,7 +8,7 @@ namespace BmwDeepObd;
 
 [BroadcastReceiver(
     Exported = false,
-    Enabled = false,
+    Enabled = true,
     Name = ActivityCommon.AppNameSpace + "." + nameof(ActionBroadcastReceiver)
 )]
 [Android.App.IntentFilter(new[]
@@ -30,7 +30,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #if DEBUG
     private static readonly string Tag = typeof(ActionBroadcastReceiver).FullName;
 #endif
-    public const string ActionStartTimer = ActivityCommon.AppNameSpace + ".ActionStartTimer";
+    public const string ActionStartService = ActivityCommon.AppNameSpace + ".ActionStartService";
 
     public override void OnReceive(Context context, Intent intent)
     {
@@ -51,8 +51,8 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionReboot:
             case Intent.ActionMyPackageReplaced:
             case Intent.ActionMyPackageSuspended:
-            case ActionStartTimer:
-                BackgroundAlarmReceiver.ScheduleAlarm(context);
+            case ActionStartService:
+                ActivityCommon.StartForegroundService(context);
                 break;
         }
     }
