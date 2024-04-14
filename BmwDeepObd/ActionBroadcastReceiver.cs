@@ -16,7 +16,7 @@ namespace BmwDeepObd;
         Intent.ActionBootCompleted,
         Intent.ActionReboot,
         Intent.ActionMyPackageReplaced,
-        Intent.ActionMyPackageSuspended,
+        Intent.ActionMyPackageUnsuspended,
         ActionQuickBoot,
     },
     Categories = new[]
@@ -51,7 +51,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionBootCompleted:
             case Intent.ActionReboot:
             case Intent.ActionMyPackageReplaced:
-            case Intent.ActionMyPackageSuspended:
+            case Intent.ActionMyPackageUnsuspended:
             case ActionQuickBoot:
             case ActionStartService:
                 ActivityCommon.StartForegroundService(context);
