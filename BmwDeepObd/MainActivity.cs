@@ -2811,6 +2811,18 @@ namespace BmwDeepObd
             }
         }
 
+        public static ActivityCommon.AutoConnectType GetAutoConnectSetting()
+        {
+            string settingsFile = ActivityCommon.GetSettingsFileName();
+            if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+            {
+                StorageData storageData = GetStorageData(settingsFile);
+                return storageData.AutoConnectHandling;
+            }
+
+            return ActivityCommon.AutoConnectType.Offline;
+        }
+
         private void GetThemeSettings(InstanceData instanceData = null)
         {
             if (instanceData == null)

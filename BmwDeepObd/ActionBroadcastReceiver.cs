@@ -54,8 +54,17 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionMyPackageUnsuspended:
             case ActionQuickBoot:
             case ActionStartService:
-                ActivityCommon.StartForegroundService(context);
+            {
+                ActivityCommon.AutoConnectType autoConnectType = ActivityMain.GetAutoConnectSetting();
+#if DEBUG
+                Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "Auto start type: {0}", autoConnectType.ToString()));
+#endif
+                if (autoConnectType == ActivityCommon.AutoConnectType.StartBoot)
+                {
+                    ActivityCommon.StartForegroundService(context);
+                }
                 break;
+            }
         }
     }
 }
