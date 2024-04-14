@@ -18,7 +18,6 @@ public class BackgroundAlarmReceiver : BroadcastReceiver
 #endif
     private static Android.App.PendingIntent _alarmIntent;
     public const string ActionTimeElapsed = ActivityCommon.AppNameSpace + ".ActionTimeElapsed";
-    public const string ActionStartTimer = ActivityCommon.AppNameSpace + ".ActionStartTimer";
 
     public override void OnReceive(Context context, Intent intent)
     {
@@ -31,20 +30,13 @@ public class BackgroundAlarmReceiver : BroadcastReceiver
         }
 
 #if DEBUG
-        Log.Info(Tag, string.Format("Action received: {0}", intent.Action));
+        Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "Action received: {0}", intent.Action));
 #endif
         switch (intent.Action)
         {
             case ActionTimeElapsed:
 #if DEBUG
                 Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "Alarm time elapsed: {0}", DateTime.Now.ToString("HH:mm:ss")));
-#endif
-                ScheduleAlarm(context);
-                break;
-
-            case ActionStartTimer:
-#if DEBUG
-                Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "Start alarm timer: {0}", DateTime.Now.ToString("HH:mm:ss")));
 #endif
                 ScheduleAlarm(context);
                 break;
@@ -88,6 +80,9 @@ public class BackgroundAlarmReceiver : BroadcastReceiver
             }
 
             alarms.Set(Android.App.AlarmType.Rtc, Java.Lang.JavaSystem.CurrentTimeMillis() + interval, _alarmIntent);
+#if DEBUG
+            Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "ScheduleAlarm: Alarm set, Interval={0}", interval));
+#endif
             return true;
         }
         catch (Exception ex)
