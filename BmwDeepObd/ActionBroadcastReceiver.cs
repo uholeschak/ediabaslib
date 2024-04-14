@@ -15,6 +15,7 @@ namespace BmwDeepObd;
         Intent.ActionBootCompleted,
         Intent.ActionReboot,
         Intent.ActionMyPackageReplaced,
+        Intent.ActionMyPackageSuspended,
         Intent.ActionMyPackageUnsuspended,
     },
     Categories = new[]
@@ -51,6 +52,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionBootCompleted:
             case Intent.ActionReboot:
             case Intent.ActionMyPackageReplaced:
+            case Intent.ActionMyPackageSuspended:
             case Intent.ActionMyPackageUnsuspended:
             case ActionStartTimer:
                 ScheduleAlarm(context);
