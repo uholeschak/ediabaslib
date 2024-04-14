@@ -17,12 +17,12 @@ namespace BmwDeepObd;
         Intent.ActionReboot,
         Intent.ActionMyPackageReplaced,
         Intent.ActionMyPackageSuspended,
+        ActionQuickBoot,
     },
     Categories = new[]
     {
         Intent.CategoryDefault
-    }
-    ,Priority = 100)
+    })
 ]
 
 public class ActionBroadcastReceiver : BroadcastReceiver
@@ -30,6 +30,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #if DEBUG
     private static readonly string Tag = typeof(ActionBroadcastReceiver).FullName;
 #endif
+    public const string ActionQuickBoot = "android.intent.action.QUICKBOOT_POWERON";
     public const string ActionStartService = ActivityCommon.AppNameSpace + ".ActionStartService";
 
     public override void OnReceive(Context context, Intent intent)
@@ -51,6 +52,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionReboot:
             case Intent.ActionMyPackageReplaced:
             case Intent.ActionMyPackageSuspended:
+            case ActionQuickBoot:
             case ActionStartService:
                 ActivityCommon.StartForegroundService(context);
                 break;
