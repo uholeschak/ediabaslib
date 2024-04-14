@@ -30,7 +30,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
     private static readonly string Tag = typeof(ActionBroadcastReceiver).FullName;
 #endif
     private const string ActionTimeElapsed = "ActionTimeElapsed";
-    public const string ActionStartTimer = "ActionStartTimer";
+    public const string ActionStartTimer = ActivityCommon.AppNameSpace + ".ActionStartTimer";
 
     private Android.App.PendingIntent _alarmIntent;
 
@@ -38,8 +38,12 @@ public class ActionBroadcastReceiver : BroadcastReceiver
     {
         if (intent?.Action == null)
         {
+#if DEBUG
+            Log.Info(Tag, "Action missing");
+#endif
             return;
         }
+
 #if DEBUG
         Log.Info(Tag, string.Format("Action received: {0}", intent.Action));
 #endif
