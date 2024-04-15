@@ -32,7 +32,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #endif
     public const string ActionQuickBoot = "android.intent.action.QUICKBOOT_POWERON";
     public const string ActionStartService = ActivityCommon.AppNameSpace + ".ActionStartService";
-    // testing broadcast
+    // testing broadcast, but Exported must be set to true in the manifest before it can be used
     // adb shell am broadcast -a android.intent.action.QUICKBOOT_POWERON -p de.holeschak.bmw_deep_obd
 
     public override void OnReceive(Context context, Intent intent)
