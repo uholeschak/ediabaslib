@@ -92,15 +92,6 @@ namespace BmwDeepObd
             Public,
         }
 
-        public enum LastAppState
-        {
-            [XmlEnum(Name = "Init")] Init,
-            [XmlEnum(Name = "Compile")] Compile,
-            [XmlEnum(Name = "Compiled")] Compiled,
-            [XmlEnum(Name = "TabsCreated")] TabsCreated,
-            [XmlEnum(Name = "Stopped")] Stopped,
-        }
-
         private class DownloadInfo
         {
             public DownloadInfo(string downloadDir, string targetDir, XElement infoXml = null)
@@ -154,74 +145,12 @@ namespace BmwDeepObd
             public string Message { get; }
         }
 
-        public class InstanceData
+        public class InstanceData : ActivityCommon.InstanceDataCommon
         {
             public InstanceData()
             {
-                LastLocale = string.Empty;
-                LastAppState = LastAppState.Init;
-                LastSettingsHash = string.Empty;
-                AppDataPath = string.Empty;
-                EcuPath = string.Empty;
-                VagPath = string.Empty;
-                TraceActive = true;
-                DeviceName = string.Empty;
-                DeviceAddress = string.Empty;
-                ConfigFileName = string.Empty;
-                CheckCpuUsage = true;
-                VerifyEcuFiles = true;
-                SelectedEnetIp = string.Empty;
-                SelectedElmWifiIp = string.Empty;
-                SelectedDeepObdWifiIp = string.Empty;
             }
 
-            public string LastLocale { get; set; }
-            public ActivityCommon.ThemeType? LastThemeType { get; set; }
-            public LastAppState LastAppState { get; set; }
-            public string LastSettingsHash { get; set; }
-            public bool GetSettingsCalled { get; set; }
-            public string AppDataPath { get; set; }
-            public string EcuPath { get; set; }
-            public string VagPath { get; set; }
-            public string BmwPath { get; set; }
-            public bool UserEcuFiles { get; set; }
-            public bool TraceActive { get; set; }
-            public bool TraceAppend { get; set; }
-            public bool DataLogActive { get; set; }
-            public bool DataLogAppend { get; set; }
-            public string DeviceName { get; set; }
-            public string DeviceAddress { get; set; }
-            public string ConfigFileName { get; set; }
-            public long LastVersionCode { get; set; }
-            public bool VersionInfoShown { get; set; }
-            public bool StorageRequirementsAccepted { get; set; }
-            public bool LocationProviderShown { get; set; }
-            public bool BatteryWarningShown { get; set; }
-            public bool ConfigMatchVehicleShown { get; set; }
-            public bool DataLogTemporaryShown { get; set; }
-            public bool CheckCpuUsage { get; set; }
-            public bool VerifyEcuFiles { get; set; }
-            public bool VerifyEcuMd5 { get; set; }
-            public int CommErrorsCount { get; set; }
-            public bool AutoStart { get; set; }
-            public bool AdapterCheckOk { get; set; }
-            public bool VagInfoShown { get; set; }
-            public string DataLogDir { get; set; }
-            public string TraceDir { get; set; }
-            public string TraceBackupDir { get; set; }
-            public string PackageAssembliesDir { get; set; }
-            public bool UpdateAvailable { get; set; }
-            public int UpdateVersionCode { get; set; }
-            public string UpdateMessage { get; set; }
-            public long UpdateCheckTime { get; set; }
-            public int UpdateSkipVersion { get; set; }
-            public string XmlEditorPackageName { get; set; }
-            public string XmlEditorClassName { get; set; }
-
-            public ActivityCommon.InterfaceType SelectedInterface { get; set; }
-            public string SelectedEnetIp { get; set; }
-            public string SelectedElmWifiIp { get; set; }
-            public string SelectedDeepObdWifiIp { get; set; }
             public bool MtcBtDisconnectWarnShown { get; set; }
         }
 
@@ -247,7 +176,7 @@ namespace BmwDeepObd
 
             public void InitCommonData()
             {
-                LastAppState = LastAppState.Init;
+                LastAppState = ActivityCommon.LastAppState.Init;
                 SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
                 SelectedTheme = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
                 DeviceName = string.Empty;
@@ -367,7 +296,7 @@ namespace BmwDeepObd
                 }
             }
 
-            [XmlElement("LastAppState")] public LastAppState LastAppState { get; set; }
+            [XmlElement("LastAppState")] public ActivityCommon.LastAppState LastAppState { get; set; }
             [XmlElement("Locale")] public string SelectedLocale { get; set; }
             [XmlElement("Theme")] public ActivityCommon.ThemeType SelectedTheme { get; set; }
             [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
@@ -620,10 +549,10 @@ namespace BmwDeepObd
             _lastCompileCrash = false;
             if (!_activityRecreated && _instanceData != null)
             {
-                if (_instanceData.LastAppState == LastAppState.Compile)
+                if (_instanceData.LastAppState == ActivityCommon.LastAppState.Compile)
                 {
                     _lastCompileCrash = true;
-                    _instanceData.LastAppState = LastAppState.Init;
+                    _instanceData.LastAppState = ActivityCommon.LastAppState.Init;
                     _instanceData.ConfigFileName = string.Empty;
                     StoreSettings();
                 }
@@ -650,7 +579,7 @@ namespace BmwDeepObd
             _checkAdapter = new CheckAdapter(_activityCommon);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
 
-            StoreLastAppState(LastAppState.Init);
+            StoreLastAppState(ActivityCommon.LastAppState.Init);
 
             if (_httpClient == null)
             {
@@ -795,7 +724,7 @@ namespace BmwDeepObd
             _ignoreTabsChange = false;
             _tabsCreated = true;
             UpdateDisplay();
-            StoreLastAppState(LastAppState.TabsCreated);
+            StoreLastAppState(ActivityCommon.LastAppState.TabsCreated);
 
             switch (_connectTypeRequest)
             {
@@ -859,7 +788,7 @@ namespace BmwDeepObd
             base.OnStop();
 
             _activityCommon?.StopMtcService();
-            StoreLastAppState(LastAppState.Stopped);
+            StoreLastAppState(ActivityCommon.LastAppState.Stopped);
 #if false
             try
             {
@@ -2920,9 +2849,9 @@ namespace BmwDeepObd
                 if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
                 {
                     string stateString = prefs.GetString("LastAppState", string.Empty);
-                    _instanceData.LastAppState = System.Enum.TryParse(stateString, true, out LastAppState lastAppState)
+                    _instanceData.LastAppState = System.Enum.TryParse(stateString, true, out ActivityCommon.LastAppState lastAppState)
                         ? lastAppState
-                        : LastAppState.Init;
+                        : ActivityCommon.LastAppState.Init;
                     _activityCommon.SelectedEnetIp = prefs.GetString("EnetIp", string.Empty);
                     _instanceData.DeviceName = prefs.GetString("DeviceName", string.Empty);
                     _instanceData.DeviceAddress = prefs.GetString("DeviceAddress", string.Empty);
@@ -3120,7 +3049,7 @@ namespace BmwDeepObd
         }
 #endif
 
-        private void StoreLastAppState(LastAppState lastAppState)
+        private void StoreLastAppState(ActivityCommon.LastAppState lastAppState)
         {
             _instanceData.LastAppState = lastAppState;
             StoreSettings();
@@ -5683,7 +5612,7 @@ namespace BmwDeepObd
             bool failed = false;
             string lastFileName = ActivityCommon.JobReader.XmlFileName ?? string.Empty;
             ActivityCommon.JobReader.Clear();
-            if (_instanceData.LastAppState != LastAppState.Compile && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+            if (_instanceData.LastAppState != ActivityCommon.LastAppState.Compile && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
             {
                 if (!ActivityCommon.JobReader.ReadXml(_instanceData.ConfigFileName, out string errorMessage))
                 {
@@ -5986,7 +5915,7 @@ namespace BmwDeepObd
                             _compileProgress.Progress = 0;
                         }
 
-                        StoreLastAppState(LastAppState.Compile);
+                        StoreLastAppState(ActivityCommon.LastAppState.Compile);
                     });
 
                     if (ActivityCommon.JobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
@@ -6225,7 +6154,7 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        StoreLastAppState(LastAppState.Compiled);
+                        StoreLastAppState(ActivityCommon.LastAppState.Compiled);
                         PostCreateActionBarTabs();
 
                         _compileProgress.Dismiss();
