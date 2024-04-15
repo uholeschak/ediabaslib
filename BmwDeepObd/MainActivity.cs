@@ -273,7 +273,7 @@ namespace BmwDeepObd
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AddActivityToStack(this);
-            GetThemeSettings();
+            ActivityCommon.GetThemeSettings();
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
 
@@ -389,7 +389,7 @@ namespace BmwDeepObd
                 if (!_activityRecreated)
                 {
                     ActivityCommon.BtInitiallyEnabled = _activityCommon.IsBluetoothEnabled();
-#if true
+#if false
                     if (ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.StartBoot)
                     {
                         try
@@ -2484,45 +2484,6 @@ namespace BmwDeepObd
             }
         }
 
-        public static string GetLocaleSetting(InstanceData instanceData = null)
-        {
-            if (instanceData == null)
-            {
-                if (ActivityCommon.SelectedLocale == null)
-                {
-                    string settingsFile = ActivityCommon.GetSettingsFileName();
-                    if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
-                    {
-                        GetLocaleThemeSettings(settingsFile, true, false);
-                    }
-                }
-
-                if (ActivityCommon.SelectedLocale != null)
-                {
-                    return ActivityCommon.SelectedLocale;
-                }
-            }
-
-            try
-            {
-                if (ActivityCommon.SelectedLocale == null)
-                {
-                    ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
-                    ActivityCommon.SelectedLocale = prefs.GetString("Locale", string.Empty);
-                }
-
-                if (instanceData != null)
-                {
-                    instanceData.LastLocale = ActivityCommon.SelectedLocale;
-                }
-                return ActivityCommon.SelectedLocale;
-            }
-            catch (Exception)
-            {
-                return string.Empty;
-            }
-        }
-
         public static ActivityCommon.AutoConnectType GetAutoConnectSetting()
         {
             string settingsFile = ActivityCommon.GetSettingsFileName();
@@ -2533,41 +2494,6 @@ namespace BmwDeepObd
             }
 
             return ActivityCommon.AutoConnectType.Offline;
-        }
-
-        private void GetThemeSettings(InstanceData instanceData = null)
-        {
-            if (instanceData == null)
-            {
-                string settingsFile = ActivityCommon.GetSettingsFileName();
-                if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
-                {
-                    if (ActivityCommon.SelectedTheme == null)
-                    {
-                        GetLocaleThemeSettings(settingsFile, false, true);
-                    }
-
-                    return;
-                }
-            }
-
-            try
-            {
-                if (ActivityCommon.SelectedTheme == null)
-                {
-                    ISharedPreferences prefs = Android.App.Application.Context.GetSharedPreferences(SharedAppName, FileCreationMode.Private);
-                    ActivityCommon.SelectedTheme = (ActivityCommon.ThemeType)prefs.GetInt("Theme", (int)ActivityCommon.ThemeDefault);
-                }
-
-                if (instanceData != null)
-                {
-                    instanceData.LastThemeType = ActivityCommon.SelectedTheme;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
         }
 
         private void GetSettings()
@@ -2641,23 +2567,6 @@ namespace BmwDeepObd
         {
             _instanceData.LastAppState = lastAppState;
             StoreSettings();
-        }
-
-        public static bool GetLocaleThemeSettings(string fileName, bool updateLocale, bool updateTheme)
-        {
-            ActivityCommon.StorageData storageData = ActivityCommon.GetStorageData(fileName);
-
-            if (updateLocale)
-            {
-                ActivityCommon.SelectedLocale = storageData.SelectedLocale;
-            }
-
-            if (updateTheme)
-            {
-                ActivityCommon.SelectedTheme = storageData.SelectedTheme;
-            }
-
-            return true;
         }
 
         public bool GetSettings(string fileName, ActivityCommon.SettingsMode settingsMode)

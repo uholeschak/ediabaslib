@@ -11657,7 +11657,7 @@ namespace BmwDeepObd
             return Path.Combine(filesDir.AbsolutePath, SettingsFile);
         }
 
-        public static StorageData GetStorageData(string fileName, ActivityCommon.SettingsMode settingsMode = ActivityCommon.SettingsMode.All)
+        public static StorageData GetStorageData(string fileName, SettingsMode settingsMode = SettingsMode.All)
         {
             StorageData storageData = null;
             try
@@ -11666,7 +11666,7 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        lock (ActivityCommon.GlobalSettingLockObject)
+                        lock (GlobalSettingLockObject)
                         {
                             XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
                             XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
@@ -11692,9 +11692,9 @@ namespace BmwDeepObd
             return storageData;
         }
 
-        public static XmlAttributeOverrides GetStoreXmlAttributeOverrides(ActivityCommon.SettingsMode settingsMode)
+        public static XmlAttributeOverrides GetStoreXmlAttributeOverrides(SettingsMode settingsMode)
         {
-            if (settingsMode == ActivityCommon.SettingsMode.All)
+            if (settingsMode == SettingsMode.All)
             {
                 return null;
             }
@@ -11718,7 +11718,7 @@ namespace BmwDeepObd
             storageClassAttributes.Add(storageType, nameof(storageData.AdapterBlacklist), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.LastAdapterSerial), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.AppId), ignoreXmlAttributes);
-            if (settingsMode == ActivityCommon.SettingsMode.Public)
+            if (settingsMode == SettingsMode.Public)
             {
                 storageClassAttributes.Add(storageType, nameof(storageData.SelectedEnetIp), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.SelectedElmWifiIp), ignoreXmlAttributes);
@@ -11740,6 +11740,85 @@ namespace BmwDeepObd
             }
 
             return storageClassAttributes;
+        }
+
+        public static string GetLocaleSetting(InstanceDataCommon instanceData = null)
+        {
+            try
+            {
+                if (instanceData == null)
+                {
+                    if (SelectedLocale == null)
+                    {
+                        string settingsFile = GetSettingsFileName();
+                        if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                        {
+                            GetLocaleThemeSettings(settingsFile, true, false);
+                        }
+                    }
+
+                    if (SelectedLocale != null)
+                    {
+                        return SelectedLocale;
+                    }
+                }
+
+                if (instanceData != null)
+                {
+                    instanceData.LastLocale = SelectedLocale;
+                }
+                return SelectedLocale;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static bool GetLocaleThemeSettings(string fileName, bool updateLocale, bool updateTheme)
+        {
+            StorageData storageData = GetStorageData(fileName);
+
+            if (updateLocale)
+            {
+                SelectedLocale = storageData.SelectedLocale;
+            }
+
+            if (updateTheme)
+            {
+                SelectedTheme = storageData.SelectedTheme;
+            }
+
+            return true;
+        }
+
+        public static void GetThemeSettings(InstanceDataCommon instanceData = null)
+        {
+            try
+            {
+                if (instanceData == null)
+                {
+                    string settingsFile = GetSettingsFileName();
+                    if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                    {
+                        if (SelectedTheme == null)
+                        {
+                            GetLocaleThemeSettings(settingsFile, false, true);
+                        }
+
+                        return;
+                    }
+                }
+
+                if (instanceData != null)
+                {
+                    instanceData.LastThemeType = SelectedTheme;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         public List<string> GetAllStorageMedia()
