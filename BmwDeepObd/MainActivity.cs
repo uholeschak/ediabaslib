@@ -85,13 +85,6 @@ namespace BmwDeepObd
             RequestEditXml,
         }
 
-        public enum SettingsMode
-        {
-            All,
-            Private,
-            Public,
-        }
-
         private class DownloadInfo
         {
             public DownloadInfo(string downloadDir, string targetDir, XElement infoXml = null)
@@ -1218,7 +1211,8 @@ namespace BmwDeepObd
                         {
                             string exportFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraExportFile);
                             string importFileName = data.Extras.GetString(GlobalSettingsActivity.ExtraImportFile);
-                            SettingsMode settingsMode = (SettingsMode)data.Extras.GetInt(GlobalSettingsActivity.ExtraSettingsMode, (int)SettingsMode.Private);
+                            ActivityCommon.SettingsMode settingsMode = (ActivityCommon.SettingsMode)data.Extras.GetInt(GlobalSettingsActivity.ExtraSettingsMode,
+                                (int)ActivityCommon.SettingsMode.Private);
                             if (!string.IsNullOrEmpty(exportFileName))
                             {
                                 if (!StoreSettings(exportFileName, settingsMode, out string errorMessage))
@@ -1239,7 +1233,7 @@ namespace BmwDeepObd
                             }
                             else if (!string.IsNullOrEmpty(importFileName))
                             {
-                                GetSettings(importFileName, SettingsMode.Private);
+                                GetSettings(importFileName, ActivityCommon.SettingsMode.Private);
                             }
                         }
 
@@ -2823,7 +2817,7 @@ namespace BmwDeepObd
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                if (GetSettings(settingsFile, SettingsMode.All))
+                if (GetSettings(settingsFile, ActivityCommon.SettingsMode.All))
                 {
                     return;
                 }
@@ -2844,7 +2838,7 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
-            if (!StoreSettings(ActivityCommon.GetSettingsFileName(), SettingsMode.All, out string errorMessage))
+            if (!StoreSettings(ActivityCommon.GetSettingsFileName(), ActivityCommon.SettingsMode.All, out string errorMessage))
             {
                 string message = GetString(Resource.String.store_settings_failed);
                 if (errorMessage != null)
@@ -2862,9 +2856,9 @@ namespace BmwDeepObd
             StoreSettings();
         }
 
-        public static XmlAttributeOverrides GetStoreXmlAttributeOverrides(SettingsMode settingsMode)
+        public static XmlAttributeOverrides GetStoreXmlAttributeOverrides(ActivityCommon.SettingsMode settingsMode)
         {
-            if (settingsMode == SettingsMode.All)
+            if (settingsMode == ActivityCommon.SettingsMode.All)
             {
                 return null;
             }
@@ -2888,7 +2882,7 @@ namespace BmwDeepObd
             storageClassAttributes.Add(storageType, nameof(storageData.AdapterBlacklist), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.LastAdapterSerial), ignoreXmlAttributes);
             storageClassAttributes.Add(storageType, nameof(storageData.AppId), ignoreXmlAttributes);
-            if (settingsMode == SettingsMode.Public)
+            if (settingsMode == ActivityCommon.SettingsMode.Public)
             {
                 storageClassAttributes.Add(storageType, nameof(storageData.SelectedEnetIp), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.SelectedElmWifiIp), ignoreXmlAttributes);
@@ -2912,7 +2906,7 @@ namespace BmwDeepObd
             return storageClassAttributes;
         }
 
-        public static StorageData GetStorageData(string fileName, SettingsMode settingsMode = SettingsMode.All)
+        public static StorageData GetStorageData(string fileName, ActivityCommon.SettingsMode settingsMode = ActivityCommon.SettingsMode.All)
         {
             StorageData storageData = null;
             try
@@ -2964,7 +2958,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool GetSettings(string fileName, SettingsMode settingsMode)
+        public bool GetSettings(string fileName, ActivityCommon.SettingsMode settingsMode)
         {
             if (_instanceData == null || _activityCommon == null)
             {
@@ -2976,7 +2970,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            bool import = settingsMode != SettingsMode.All;
+            bool import = settingsMode != ActivityCommon.SettingsMode.All;
             string hash = string.Empty;
             try
             {
@@ -3092,7 +3086,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool StoreSettings(string fileName, SettingsMode settingsMode, out string errorMessage)
+        public bool StoreSettings(string fileName, ActivityCommon.SettingsMode settingsMode, out string errorMessage)
         {
             errorMessage = null;
             if (_instanceData == null || _activityCommon == null)
@@ -3105,7 +3099,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            bool export = settingsMode != SettingsMode.All;
+            bool export = settingsMode != ActivityCommon.SettingsMode.All;
             try
             {
                 if (!ActivityCommon.StaticDataInitialized || !_instanceData.GetSettingsCalled)

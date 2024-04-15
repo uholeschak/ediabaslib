@@ -309,11 +309,11 @@ namespace BmwDeepObd
                 new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
                     {
-                        ExportSettings(ActivityMain.SettingsMode.Private);
+                        ExportSettings(ActivityCommon.SettingsMode.Private);
                     })
                     .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
                     {
-                        ExportSettings(ActivityMain.SettingsMode.Public);
+                        ExportSettings(ActivityCommon.SettingsMode.Public);
                     })
                     .SetNeutralButton(Resource.String.button_abort, (o, eventArgs) => { })
                     .SetCancelable(true)
@@ -1071,7 +1071,7 @@ namespace BmwDeepObd
             ReadSettings();
         }
 
-        private void ExportSettings(ActivityMain.SettingsMode settingsMode)
+        private void ExportSettings(ActivityCommon.SettingsMode settingsMode)
         {
             Intent intent = new Intent();
             intent.PutExtra(ExtraExportFile, _exportFileName);
