@@ -182,7 +182,6 @@ namespace BmwDeepObd
         private ActivityCommon.AutoConnectType _connectTypeRequest;
         private bool _backPressed;
         private long _lastBackPressedTime;
-        private long _currentVersionCode;
         private bool _activityActive;
         private bool _onResumeExecuted;
         private bool _storageAccessGranted;
@@ -2573,7 +2572,6 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
-            _currentVersionCode = _activityCommon.GetVersionCode();
             string assetFileName = ExpansionDownloaderActivity.GetAssetFilename();
             if (!string.IsNullOrEmpty(assetFileName))
             {
@@ -2615,7 +2613,7 @@ namespace BmwDeepObd
 
         private void CheckSettingsVersionChange()
         {
-            if (_instanceData.LastVersionCode != _currentVersionCode)
+            if (_instanceData.LastVersionCode != _activityCommon.VersionCode)
             {
                 _instanceData.StorageRequirementsAccepted = false;
                 _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
@@ -3093,7 +3091,7 @@ namespace BmwDeepObd
             UpdateDirectories();
             _activityCommon.RequestUsbPermission(null);
             ReadConfigFile();
-            if (_startAlertDialog == null && !_instanceData.VersionInfoShown && _currentVersionCode != _instanceData.LastVersionCode)
+            if (_startAlertDialog == null && !_instanceData.VersionInfoShown && _activityCommon.VersionCode != _instanceData.LastVersionCode)
             {
                 _instanceData.VersionInfoShown = true;
                 string message = (GetString(Resource.String.version_change_info_message) +
@@ -5840,7 +5838,7 @@ namespace BmwDeepObd
                         MultipartFormDataContent formDownload = new MultipartFormDataContent
                         {
                             { new StringContent(ActivityCommon.AppId), "appid" },
-                            { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", _currentVersionCode)), "appver" },
+                            { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", _activityCommon.VersionCode)), "appver" },
                             { new StringContent(_activityCommon.GetCurrentLanguage()), "lang" },
                             { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
                             { new StringContent(Build.Fingerprint), "fingerprint" },
