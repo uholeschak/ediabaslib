@@ -147,218 +147,6 @@ namespace BmwDeepObd
             public bool MtcBtDisconnectWarnShown { get; set; }
         }
 
-        [XmlInclude(typeof(ActivityCommon.SerialInfoEntry))]
-        [XmlType("Settings")]
-        public class StorageData
-        {
-            public StorageData()
-            {
-                InitCommonData();
-                ActivityMain activityMain = GetActivityFromStack(typeof(ActivityMain)) as ActivityMain;
-                if (activityMain != null)
-                {
-                    InitData(activityMain);
-                }
-            }
-
-            public StorageData(ActivityMain activityMain, bool storage = false)
-            {
-                InitCommonData();
-                InitData(activityMain, storage);
-            }
-
-            public void InitCommonData()
-            {
-                LastAppState = ActivityCommon.LastAppState.Init;
-                SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
-                SelectedTheme = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
-                DeviceName = string.Empty;
-                DeviceAddress = string.Empty;
-                ConfigFileName = string.Empty;
-                UpdateCheckTime = DateTime.MinValue.Ticks;
-                UpdateSkipVersion = -1;
-                LastVersionCode = -1;
-                StorageRequirementsAccepted = false;
-                XmlEditorPackageName = string.Empty;
-                XmlEditorClassName = string.Empty;
-
-                RecentConfigFiles = new List<string>();
-                CustomStorageMedia = ActivityCommon.CustomStorageMedia;
-                CopyToAppSrc = ActivityCommon.CopyToAppSrc;
-                CopyToAppDst = ActivityCommon.CopyToAppDst;
-                CopyFromAppSrc = ActivityCommon.CopyFromAppSrc;
-                CopyFromAppDst = ActivityCommon.CopyFromAppDst;
-                UsbFirmwareFileName = ActivityCommon.UsbFirmwareFileName;
-                EnableTranslation = ActivityCommon.EnableTranslation;
-                YandexApiKey = ActivityCommon.YandexApiKey;
-                IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
-                IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
-                DeeplApiKey = ActivityCommon.DeeplApiKey;
-                YandexCloudApiKey = ActivityCommon.YandexCloudApiKey;
-                YandexCloudFolderId = ActivityCommon.YandexCloudFolderId;
-                Translator = ActivityCommon.SelectedTranslator;
-                ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
-                BatteryWarnings = ActivityCommon.BatteryWarnings;
-                BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
-                SerialInfo = new List<ActivityCommon.SerialInfoEntry>();
-                AdapterBlacklist = ActivityCommon.AdapterBlacklist;
-                LastAdapterSerial = ActivityCommon.LastAdapterSerial;
-                EmailAddress = ActivityCommon.EmailAddress;
-                TraceInfo = ActivityCommon.TraceInfo;
-                AppId = ActivityCommon.AppId;
-                AutoHideTitleBar = ActivityCommon.AutoHideTitleBar;
-                SuppressTitleBar = ActivityCommon.SuppressTitleBar;
-                FullScreenMode = ActivityCommon.FullScreenMode;
-                SwapMultiWindowOrientation = ActivityCommon.SwapMultiWindowOrientation;
-                SelectedInternetConnection = ActivityCommon.SelectedInternetConnection;
-                SelectedManufacturer = ActivityCommon.SelectedManufacturer;
-                BtEnbaleHandling = ActivityCommon.BtEnbaleHandling;
-                BtDisableHandling = ActivityCommon.BtDisableHandling;
-                LockTypeCommunication = ActivityCommon.LockTypeCommunication;
-                LockTypeLogging = ActivityCommon.LockTypeLogging;
-                StoreDataLogSettings = ActivityCommon.StoreDataLogSettings;
-                AutoConnectHandling = ActivityCommon.AutoConnectHandling;
-                UpdateCheckDelay = ActivityCommon.UpdateCheckDelay;
-                DoubleClickForAppExit = ActivityCommon.DoubleClickForAppExit;
-                SendDataBroadcast = ActivityCommon.SendDataBroadcast;
-                CheckCpuUsage = ActivityCommon.CheckCpuUsage;
-                CheckEcuFiles = ActivityCommon.CheckEcuFiles;
-                OldVagMode = ActivityCommon.OldVagMode;
-                UseBmwDatabase = ActivityCommon.UseBmwDatabase;
-                ShowOnlyRelevantErrors = ActivityCommon.ShowOnlyRelevantErrors;
-                ScanAllEcus = ActivityCommon.ScanAllEcus;
-                CollectDebugInfo = ActivityCommon.CollectDebugInfo;
-                CompressTrace = ActivityCommon.CompressTrace;
-                DisableNetworkCheck = ActivityCommon.DisableNetworkCheck;
-            }
-
-            public void InitData(ActivityMain activityMain, bool storage = false)
-            {
-                if (activityMain == null)
-                {
-                    return;
-                }
-
-                InstanceData instanceData = activityMain._instanceData;
-                ActivityCommon activityCommon = activityMain.ActivityCommonMain;
-
-                if (instanceData == null || activityCommon == null)
-                {
-                    return;
-                }
-
-                LastAppState = instanceData.LastAppState;
-                SelectedEnetIp = activityCommon.SelectedEnetIp;
-                SelectedElmWifiIp = activityCommon.SelectedElmWifiIp;
-                SelectedDeepObdWifiIp = activityCommon.SelectedDeepObdWifiIp;
-                MtcBtDisconnectWarnShown = activityCommon.MtcBtDisconnectWarnShown;
-                DeviceName = instanceData.DeviceName;
-                DeviceAddress = instanceData.DeviceAddress;
-                ConfigFileName = instanceData.ConfigFileName;
-                UpdateCheckTime = instanceData.UpdateCheckTime;
-                UpdateSkipVersion = instanceData.UpdateSkipVersion;
-                LastVersionCode = activityMain._currentVersionCode;
-                StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
-                XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
-                XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
-                DataLogActive = instanceData.DataLogActive;
-                DataLogAppend = instanceData.DataLogAppend;
-                if (storage)
-                {
-                    RecentConfigFiles = ActivityCommon.GetRecentConfigList();
-                    SerialInfo = ActivityCommon.GetSerialInfoList();
-                }
-            }
-
-            public string CalcualeHash()
-            {
-                StringBuilder sb = new StringBuilder();
-                PropertyInfo[] properties = GetType().GetProperties();
-                foreach (PropertyInfo property in properties)
-                {
-                    object value = property.GetValue(this);
-                    if (value != null)
-                    {
-                        sb.Append(value);
-                    }
-                }
-
-                using (SHA256 sha256 = SHA256.Create())
-                {
-                    return BitConverter.ToString(sha256.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()))).Replace("-", "");
-                }
-            }
-
-            [XmlElement("LastAppState")] public ActivityCommon.LastAppState LastAppState { get; set; }
-            [XmlElement("Locale")] public string SelectedLocale { get; set; }
-            [XmlElement("Theme")] public ActivityCommon.ThemeType SelectedTheme { get; set; }
-            [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
-            [XmlElement("ElmWifiIp")] public string SelectedElmWifiIp { get; set; }
-            [XmlElement("DeepObdWifiIp")] public string SelectedDeepObdWifiIp { get; set; }
-            [XmlElement("MtcBtDisconnectWarnShown")] public bool MtcBtDisconnectWarnShown { get; set; }
-            [XmlElement("DeviceName")] public string DeviceName { get; set; }
-            [XmlElement("DeviceAddress")] public string DeviceAddress { get; set; }
-            [XmlElement("ConfigFile")] public string ConfigFileName { get; set; }
-            [XmlElement("UpdateCheckTime")] public long UpdateCheckTime { get; set; }
-            [XmlElement("UpdateSkipVersion")] public int UpdateSkipVersion { get; set; }
-            [XmlElement("VersionCode")] public long LastVersionCode { get; set; }
-            [XmlElement("StorageAccepted")] public bool StorageRequirementsAccepted { get; set; }
-            [XmlElement("XmlEditorPackageName")] public string XmlEditorPackageName { get; set; }
-            [XmlElement("XmlEditorClassName")] public string XmlEditorClassName { get; set; }
-            [XmlElement("DataLogActive")] public bool DataLogActive { get; set; }
-            [XmlElement("DataLogAppend")] public bool DataLogAppend { get; set; }
-
-            [XmlElement("RecentConfigFiles")] public List<string> RecentConfigFiles { get; set; }
-            [XmlElement("StorageMedia")] public string CustomStorageMedia { get; set; }
-            [XmlElement("CopyToAppSrc")] public string CopyToAppSrc { get; set; }
-            [XmlElement("CopyToAppDst")] public string CopyToAppDst { get; set; }
-            [XmlElement("CopyFromAppSrc")] public string CopyFromAppSrc { get; set; }
-            [XmlElement("CopyFromAppDst")] public string CopyFromAppDst { get; set; }
-            [XmlElement("UsbFirmwareFile")] public string UsbFirmwareFileName { get; set; }
-            [XmlElement("EnableTranslation")] public bool EnableTranslation { get; set; }
-            [XmlElement("YandexApiKey")] public string YandexApiKey { get; set; }
-            [XmlElement("IbmTranslatorApiKey")] public string IbmTranslatorApiKey { get; set; }
-            [XmlElement("IbmTranslatorUrl")] public string IbmTranslatorUrl { get; set; }
-            [XmlElement("DeeplApiKey")] public string DeeplApiKey { get; set; }
-            [XmlElement("YandexCloudApiKey")] public string YandexCloudApiKey { get; set; }
-            [XmlElement("YandexCloudFolderId")] public string YandexCloudFolderId { get; set; }
-            [XmlElement("Translator")] public ActivityCommon.TranslatorType Translator { get; set; }
-            [XmlElement("ShowBatteryVoltageWarning")] public bool ShowBatteryVoltageWarning { get; set; }
-            [XmlElement("BatteryWarnings")] public long BatteryWarnings { get; set; }
-            [XmlElement("BatteryWarningVoltage")] public double BatteryWarningVoltage { get; set; }
-            [XmlElement("SerialInfo")] public List<ActivityCommon.SerialInfoEntry> SerialInfo { get; set; }
-            [XmlElement("AdapterBlacklist")] public string AdapterBlacklist { get; set; }
-            [XmlElement("LastAdapterSerial")] public string LastAdapterSerial { get; set; }
-            [XmlElement("EmailAddress")] public string EmailAddress { get; set; }
-            [XmlElement("TraceInfo")] public string TraceInfo { get; set; }
-            [XmlElement("AppId")] public string AppId { get; set; }
-            [XmlElement("AutoHideTitleBar")] public bool AutoHideTitleBar { get; set; }
-            [XmlElement("SuppressTitleBar")] public bool SuppressTitleBar { get; set; }
-            [XmlElement("FullScreenMode")] public bool FullScreenMode { get; set; }
-            [XmlElement("SwapMultiWindowOrientation")] public bool SwapMultiWindowOrientation { get; set; }
-            [XmlElement("InternetConnection")] public ActivityCommon.InternetConnectionType SelectedInternetConnection { get; set; }
-            [XmlElement("Manufacturer")] public ActivityCommon.ManufacturerType SelectedManufacturer { get; set; }
-            [XmlElement("BtEnbale")] public ActivityCommon.BtEnableType BtEnbaleHandling { get; set; }
-            [XmlElement("BtDisable")] public ActivityCommon.BtDisableType BtDisableHandling { get; set; }
-            [XmlElement("LockComm")] public ActivityCommon.LockType LockTypeCommunication { get; set; }
-            [XmlElement("LockLog")] public ActivityCommon.LockType LockTypeLogging { get; set; }
-            [XmlElement("StoreDataLogSettings")] public bool StoreDataLogSettings { get; set; }
-            [XmlElement("AutoConnect")] public ActivityCommon.AutoConnectType AutoConnectHandling { get; set; }
-            [XmlElement("UpdateCheckDelay")] public long UpdateCheckDelay { get; set; }
-            [XmlElement("DoubleClickForAppExit")] public bool DoubleClickForAppExit { get; set; }
-            [XmlElement("SendDataBroadcast")] public bool SendDataBroadcast { get; set; }
-            [XmlElement("CheckCpuUsage")] public bool CheckCpuUsage { get; set; }
-            [XmlElement("CheckEcuFiles")] public bool CheckEcuFiles { get; set; }
-            [XmlElement("OldVagMode")] public bool OldVagMode { get; set; }
-            [XmlElement("UseBmwDatabase")] public bool UseBmwDatabase { get; set; }
-            [XmlElement("ShowOnlyRelevantErrors")] public bool ShowOnlyRelevantErrors { get; set; }
-            [XmlElement("ScanAllEcus")] public bool ScanAllEcus { get; set; }
-            [XmlElement("CollectDebugInfo")] public bool CollectDebugInfo { get; set; }
-            [XmlElement("CompressTrace")] public bool CompressTrace { get; set; }
-            // hidden settings
-            [XmlElement("DisableNetworkCheck")] public bool DisableNetworkCheck { get; set; }
-        }
-
 #if DEBUG
         private static readonly string Tag = typeof(ActivityMain).FullName;
 #endif
@@ -447,6 +235,8 @@ namespace BmwDeepObd
         private List<string> _translatedList;
 
         public ActivityCommon ActivityCommonMain => _activityCommon;
+
+        public InstanceData InstanceDataMain => _instanceData;
 
         private string ManufacturerEcuDirName
         {
@@ -2739,7 +2529,7 @@ namespace BmwDeepObd
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                StorageData storageData = GetStorageData(settingsFile);
+                ActivityCommon.StorageData storageData = ActivityCommon.GetStorageData(settingsFile);
                 return storageData.AutoConnectHandling;
             }
 
@@ -2783,8 +2573,7 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
-            PackageInfo packageInfo = _activityCommon.GetPackageInfo();
-            _currentVersionCode = packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
+            _currentVersionCode = _activityCommon.GetVersionCode();
             string assetFileName = ExpansionDownloaderActivity.GetAssetFilename();
             if (!string.IsNullOrEmpty(assetFileName))
             {
@@ -2856,94 +2645,9 @@ namespace BmwDeepObd
             StoreSettings();
         }
 
-        public static XmlAttributeOverrides GetStoreXmlAttributeOverrides(ActivityCommon.SettingsMode settingsMode)
-        {
-            if (settingsMode == ActivityCommon.SettingsMode.All)
-            {
-                return null;
-            }
-
-            StorageData storageData = new StorageData();
-            Type storageType = storageData.GetType();
-            XmlAttributes ignoreXmlAttributes = new XmlAttributes
-            {
-                XmlIgnore = true
-            };
-
-            XmlAttributeOverrides storageClassAttributes = new XmlAttributeOverrides();
-            storageClassAttributes.Add(storageType, nameof(storageData.LastAppState), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.UpdateCheckTime), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.UpdateSkipVersion), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.LastVersionCode), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.StorageRequirementsAccepted), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarnings), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarningVoltage), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.SerialInfo), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.AdapterBlacklist), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.LastAdapterSerial), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.AppId), ignoreXmlAttributes);
-            if (settingsMode == ActivityCommon.SettingsMode.Public)
-            {
-                storageClassAttributes.Add(storageType, nameof(storageData.SelectedEnetIp), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.SelectedElmWifiIp), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.SelectedDeepObdWifiIp), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.MtcBtDisconnectWarnShown), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.DeviceName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.DeviceAddress), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.ConfigFileName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorPackageName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorClassName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.RecentConfigFiles), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.CustomStorageMedia), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.UsbFirmwareFileName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.YandexApiKey), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorApiKey), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorUrl), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.EmailAddress), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.TraceInfo), ignoreXmlAttributes);
-            }
-
-            return storageClassAttributes;
-        }
-
-        public static StorageData GetStorageData(string fileName, ActivityCommon.SettingsMode settingsMode = ActivityCommon.SettingsMode.All)
-        {
-            StorageData storageData = null;
-            try
-            {
-                if (File.Exists(fileName))
-                {
-                    try
-                    {
-                        lock (ActivityCommon.GlobalSettingLockObject)
-                        {
-                            XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
-                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
-                            using (StreamReader sr = new StreamReader(fileName))
-                            {
-                                storageData = xmlSerializer.Deserialize(sr) as StorageData;
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        storageData = null;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            storageData ??= new StorageData();
-
-            return storageData;
-        }
-
         public static bool GetLocaleThemeSettings(string fileName, bool updateLocale, bool updateTheme)
         {
-            StorageData storageData = GetStorageData(fileName);
+            ActivityCommon.StorageData storageData = ActivityCommon.GetStorageData(fileName);
 
             if (updateLocale)
             {
@@ -2981,7 +2685,7 @@ namespace BmwDeepObd
                     _activityCommon.SetDefaultSettings();
                 }
 
-                StorageData storageData = GetStorageData(fileName, settingsMode);
+                ActivityCommon.StorageData storageData = ActivityCommon.GetStorageData(fileName, settingsMode);
                 hash = storageData.CalcualeHash();
 
                 if (init || import)
@@ -3127,7 +2831,7 @@ namespace BmwDeepObd
 
                 lock (ActivityCommon.GlobalSettingLockObject)
                 {
-                    StorageData storageData = new StorageData(this, true);
+                    ActivityCommon.StorageData storageData = new ActivityCommon.StorageData(_instanceData, _activityCommon, true);
                     string hash = storageData.CalcualeHash();
 
                     if (!export && string.Compare(hash, _instanceData.LastSettingsHash, StringComparison.Ordinal) == 0)
@@ -3135,8 +2839,8 @@ namespace BmwDeepObd
                         return true;
                     }
 
-                    XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
+                    XmlAttributeOverrides storageClassAttributes = ActivityCommon.GetStoreXmlAttributeOverrides(settingsMode);
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(ActivityCommon.StorageData), storageClassAttributes);
                     Java.IO.File tempFile = Java.IO.File.CreateTempFile("Settings", ".xml", Android.App.Application.Context.CacheDir);
                     if (tempFile == null)
                     {
