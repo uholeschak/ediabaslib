@@ -382,6 +382,76 @@ namespace BmwDeepObd
             }
         }
 
+        public class InstanceDataCommon
+        {
+            public InstanceDataCommon()
+            {
+                LastLocale = string.Empty;
+                LastAppState = LastAppState.Init;
+                LastSettingsHash = string.Empty;
+                AppDataPath = string.Empty;
+                EcuPath = string.Empty;
+                VagPath = string.Empty;
+                TraceActive = true;
+                DeviceName = string.Empty;
+                DeviceAddress = string.Empty;
+                ConfigFileName = string.Empty;
+                CheckCpuUsage = true;
+                VerifyEcuFiles = true;
+                SelectedEnetIp = string.Empty;
+                SelectedElmWifiIp = string.Empty;
+                SelectedDeepObdWifiIp = string.Empty;
+            }
+
+            public string LastLocale { get; set; }
+            public ThemeType? LastThemeType { get; set; }
+            public LastAppState LastAppState { get; set; }
+            public string LastSettingsHash { get; set; }
+            public bool GetSettingsCalled { get; set; }
+            public string AppDataPath { get; set; }
+            public string EcuPath { get; set; }
+            public string VagPath { get; set; }
+            public string BmwPath { get; set; }
+            public bool UserEcuFiles { get; set; }
+            public bool TraceActive { get; set; }
+            public bool TraceAppend { get; set; }
+            public bool DataLogActive { get; set; }
+            public bool DataLogAppend { get; set; }
+            public string DeviceName { get; set; }
+            public string DeviceAddress { get; set; }
+            public string ConfigFileName { get; set; }
+            public long LastVersionCode { get; set; }
+            public bool VersionInfoShown { get; set; }
+            public bool StorageRequirementsAccepted { get; set; }
+            public bool LocationProviderShown { get; set; }
+            public bool BatteryWarningShown { get; set; }
+            public bool ConfigMatchVehicleShown { get; set; }
+            public bool DataLogTemporaryShown { get; set; }
+            public bool CheckCpuUsage { get; set; }
+            public bool VerifyEcuFiles { get; set; }
+            public bool VerifyEcuMd5 { get; set; }
+            public int CommErrorsCount { get; set; }
+            public bool AutoStart { get; set; }
+            public bool AdapterCheckOk { get; set; }
+            public bool VagInfoShown { get; set; }
+            public string DataLogDir { get; set; }
+            public string TraceDir { get; set; }
+            public string TraceBackupDir { get; set; }
+            public string PackageAssembliesDir { get; set; }
+            public bool UpdateAvailable { get; set; }
+            public int UpdateVersionCode { get; set; }
+            public string UpdateMessage { get; set; }
+            public long UpdateCheckTime { get; set; }
+            public int UpdateSkipVersion { get; set; }
+            public string XmlEditorPackageName { get; set; }
+            public string XmlEditorClassName { get; set; }
+
+            public InterfaceType SelectedInterface { get; set; }
+            public string SelectedEnetIp { get; set; }
+            public string SelectedElmWifiIp { get; set; }
+            public string SelectedDeepObdWifiIp { get; set; }
+        }
+
         public enum ThemeType
         {
             [XmlEnum(Name = "Dark")] Dark,
@@ -449,6 +519,15 @@ namespace BmwDeepObd
             [XmlEnum(Name = "IbmWatson")] IbmWatson,                // IBM Watson Translator
             [XmlEnum(Name = "DeepL")] Deepl,                        // DeepL
             [XmlEnum(Name = "YandexCloud")] YandexCloud,            // Yandex cloud
+        }
+
+        public enum LastAppState
+        {
+            [XmlEnum(Name = "Init")] Init,
+            [XmlEnum(Name = "Compile")] Compile,
+            [XmlEnum(Name = "Compiled")] Compiled,
+            [XmlEnum(Name = "TabsCreated")] TabsCreated,
+            [XmlEnum(Name = "Stopped")] Stopped,
         }
 
         public enum SsidWarnAction
