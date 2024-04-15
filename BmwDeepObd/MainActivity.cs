@@ -2739,7 +2739,7 @@ namespace BmwDeepObd
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                StorageData storageData = GetStorageData(settingsFile);
+                StorageData storageData = ActivityCommon.GetStorageData(settingsFile);
                 return storageData.AutoConnectHandling;
             }
 
@@ -2856,94 +2856,9 @@ namespace BmwDeepObd
             StoreSettings();
         }
 
-        public static XmlAttributeOverrides GetStoreXmlAttributeOverrides(ActivityCommon.SettingsMode settingsMode)
-        {
-            if (settingsMode == ActivityCommon.SettingsMode.All)
-            {
-                return null;
-            }
-
-            StorageData storageData = new StorageData();
-            Type storageType = storageData.GetType();
-            XmlAttributes ignoreXmlAttributes = new XmlAttributes
-            {
-                XmlIgnore = true
-            };
-
-            XmlAttributeOverrides storageClassAttributes = new XmlAttributeOverrides();
-            storageClassAttributes.Add(storageType, nameof(storageData.LastAppState), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.UpdateCheckTime), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.UpdateSkipVersion), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.LastVersionCode), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.StorageRequirementsAccepted), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarnings), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.BatteryWarningVoltage), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.SerialInfo), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.AdapterBlacklist), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.LastAdapterSerial), ignoreXmlAttributes);
-            storageClassAttributes.Add(storageType, nameof(storageData.AppId), ignoreXmlAttributes);
-            if (settingsMode == ActivityCommon.SettingsMode.Public)
-            {
-                storageClassAttributes.Add(storageType, nameof(storageData.SelectedEnetIp), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.SelectedElmWifiIp), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.SelectedDeepObdWifiIp), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.MtcBtDisconnectWarnShown), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.DeviceName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.DeviceAddress), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.ConfigFileName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorPackageName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorClassName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.RecentConfigFiles), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.CustomStorageMedia), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.UsbFirmwareFileName), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.YandexApiKey), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorApiKey), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorUrl), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.EmailAddress), ignoreXmlAttributes);
-                storageClassAttributes.Add(storageType, nameof(storageData.TraceInfo), ignoreXmlAttributes);
-            }
-
-            return storageClassAttributes;
-        }
-
-        public static StorageData GetStorageData(string fileName, ActivityCommon.SettingsMode settingsMode = ActivityCommon.SettingsMode.All)
-        {
-            StorageData storageData = null;
-            try
-            {
-                if (File.Exists(fileName))
-                {
-                    try
-                    {
-                        lock (ActivityCommon.GlobalSettingLockObject)
-                        {
-                            XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
-                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
-                            using (StreamReader sr = new StreamReader(fileName))
-                            {
-                                storageData = xmlSerializer.Deserialize(sr) as StorageData;
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        storageData = null;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            storageData ??= new StorageData();
-
-            return storageData;
-        }
-
         public static bool GetLocaleThemeSettings(string fileName, bool updateLocale, bool updateTheme)
         {
-            StorageData storageData = GetStorageData(fileName);
+            StorageData storageData = ActivityCommon.GetStorageData(fileName);
 
             if (updateLocale)
             {
@@ -2981,7 +2896,7 @@ namespace BmwDeepObd
                     _activityCommon.SetDefaultSettings();
                 }
 
-                StorageData storageData = GetStorageData(fileName, settingsMode);
+                StorageData storageData = ActivityCommon.GetStorageData(fileName, settingsMode);
                 hash = storageData.CalcualeHash();
 
                 if (init || import)
@@ -3135,7 +3050,7 @@ namespace BmwDeepObd
                         return true;
                     }
 
-                    XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
+                    XmlAttributeOverrides storageClassAttributes = ActivityCommon.GetStoreXmlAttributeOverrides(settingsMode);
                     XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
                     Java.IO.File tempFile = Java.IO.File.CreateTempFile("Settings", ".xml", Android.App.Application.Context.CacheDir);
                     if (tempFile == null)
