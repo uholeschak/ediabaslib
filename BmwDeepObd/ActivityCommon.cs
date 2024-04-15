@@ -530,6 +530,13 @@ namespace BmwDeepObd
             [XmlEnum(Name = "Stopped")] Stopped,
         }
 
+        public enum SettingsMode
+        {
+            All,
+            Private,
+            Public,
+        }
+
         public enum SsidWarnAction
         {
             None,
