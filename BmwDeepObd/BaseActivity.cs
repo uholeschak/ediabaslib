@@ -423,14 +423,14 @@ namespace BmwDeepObd
 
         protected override void AttachBaseContext(Context @base)
         {
-            base.AttachBaseContext(SetLocale(@base, ActivityMain.GetLocaleSetting()));
+            base.AttachBaseContext(SetLocale(@base, ActivityCommon.GetLocaleSetting()));
         }
 
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);
             _currentConfiguration = newConfig;
-            SetLocale(this, ActivityMain.GetLocaleSetting());
+            SetLocale(this, ActivityCommon.GetLocaleSetting());
         }
 
         public override void Finish()
