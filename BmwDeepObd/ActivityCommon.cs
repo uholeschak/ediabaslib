@@ -385,7 +385,7 @@ namespace BmwDeepObd
                 ConfigFileName = instanceData.ConfigFileName;
                 UpdateCheckTime = instanceData.UpdateCheckTime;
                 UpdateSkipVersion = instanceData.UpdateSkipVersion;
-                LastVersionCode = activityCommon.GetVersionCode();
+                LastVersionCode = activityCommon.VersionCode;
                 StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
                 XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
                 XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
@@ -1017,6 +1017,7 @@ namespace BmwDeepObd
         private static Context _packageContext;
         private readonly BcReceiverUpdateDisplayDelegate _bcReceiverUpdateDisplayHandler;
         private readonly BcReceiverReceivedDelegate _bcReceiverReceivedHandler;
+        private long? _versionCode;
         private bool? _usbSupport;
         private bool? _mtcBtService;
         private bool? _mtcBtManager;
@@ -1101,6 +1102,19 @@ namespace BmwDeepObd
         public static bool IfhTraceBuffering => !CompressTrace;
 
         public bool Emulator { get; }
+
+        public long VersionCode
+        {
+            get
+            {
+                if (_versionCode == null)
+                {
+                    _versionCode = GetVersionCode();
+                }
+
+                return _versionCode.Value;
+            }
+        }
 
         public bool UsbSupport
         {
@@ -6966,7 +6980,7 @@ namespace BmwDeepObd
                     if (string.Compare(Path.GetExtension(MailInfoDownloadUrl), ".php", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         formDownload.Add(new StringContent(AppId), "appid");
-                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", GetVersionCode())), "appver");
+                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", VersionCode)), "appver");
                         formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt )), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
@@ -7079,7 +7093,7 @@ namespace BmwDeepObd
 
                     sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo?.VersionName ?? string.Empty));
-                    sb.Append(string.Format("\nApp version code: {0}", GetVersionCode()));
+                    sb.Append(string.Format("\nApp version code: {0}", VersionCode));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
                     sb.Append(string.Format("\nOBB: {0}", obbName));
                     sb.Append(string.Format("\nInstaller: {0}", installer ?? string.Empty));
@@ -7834,7 +7848,7 @@ namespace BmwDeepObd
                 MultipartFormDataContent formUpdate = new MultipartFormDataContent
                 {
                     { new StringContent(_activity?.PackageName), "package_name" },
-                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", GetVersionCode())), "app_ver" },
+                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", VersionCode)), "app_ver" },
                     { new StringContent(AppId), "app_id" },
                     { new StringContent(GetCurrentLanguage()), "lang" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
