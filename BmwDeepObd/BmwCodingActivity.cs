@@ -226,13 +226,7 @@ namespace BmwDeepObd
                     string userAgent = webSettings.UserAgentString;
                     if (!string.IsNullOrEmpty(userAgent))
                     {
-                        PackageInfo packageInfo = _activityCommon.GetPackageInfo();
-                        long packageVersion = -1;
-                        if (packageInfo != null)
-                        {
-                            packageVersion = PackageInfoCompat.GetLongVersionCode(packageInfo);
-                        }
-
+                        long packageVersion = _activityCommon.GetVersionCode();
                         string language = _activityCommon.GetCurrentLanguage();
                         string userAgentAppend = string.Format(CultureInfo.InvariantCulture, " DeepObd/{0}/{1}", packageVersion, language);
                         userAgent += userAgentAppend;
@@ -828,8 +822,7 @@ namespace BmwDeepObd
                 {
                     MultipartFormDataContent formInfo = new MultipartFormDataContent
                     {
-                        { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
-                            packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
+                        { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", _activityCommon.GetVersionCode())), "app_ver" },
                         { new StringContent(ActivityCommon.AppId), "app_id" },
                         { new StringContent(_activityCommon.GetCurrentLanguage()), "lang" },
                         { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },

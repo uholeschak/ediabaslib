@@ -284,6 +284,209 @@ namespace BmwDeepObd
             }
         }
 
+        [XmlInclude(typeof(ActivityCommon.SerialInfoEntry))]
+        [XmlType("Settings")]
+        public class StorageData
+        {
+            public StorageData()
+            {
+                InitCommonData();
+                if (BaseActivity.GetActivityFromStack(typeof(ActivityMain)) is ActivityMain activityMain)
+                {
+                    InitData(activityMain.InstanceDataMain, activityMain.ActivityCommonMain);
+                }
+            }
+
+            public StorageData(InstanceDataCommon instanceData, ActivityCommon activityCommon, bool storage = false)
+            {
+                InitCommonData();
+                InitData(instanceData, activityCommon, storage);
+            }
+
+            public void InitCommonData()
+            {
+                LastAppState = LastAppState.Init;
+                SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
+                SelectedTheme = ActivityCommon.SelectedTheme ?? ThemeDefault;
+                DeviceName = string.Empty;
+                DeviceAddress = string.Empty;
+                ConfigFileName = string.Empty;
+                UpdateCheckTime = DateTime.MinValue.Ticks;
+                UpdateSkipVersion = -1;
+                LastVersionCode = -1;
+                StorageRequirementsAccepted = false;
+                XmlEditorPackageName = string.Empty;
+                XmlEditorClassName = string.Empty;
+
+                RecentConfigFiles = new List<string>();
+                CustomStorageMedia = ActivityCommon.CustomStorageMedia;
+                CopyToAppSrc = ActivityCommon.CopyToAppSrc;
+                CopyToAppDst = ActivityCommon.CopyToAppDst;
+                CopyFromAppSrc = ActivityCommon.CopyFromAppSrc;
+                CopyFromAppDst = ActivityCommon.CopyFromAppDst;
+                UsbFirmwareFileName = ActivityCommon.UsbFirmwareFileName;
+                EnableTranslation = ActivityCommon.EnableTranslation;
+                YandexApiKey = ActivityCommon.YandexApiKey;
+                IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
+                IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
+                DeeplApiKey = ActivityCommon.DeeplApiKey;
+                YandexCloudApiKey = ActivityCommon.YandexCloudApiKey;
+                YandexCloudFolderId = ActivityCommon.YandexCloudFolderId;
+                Translator = SelectedTranslator;
+                ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
+                BatteryWarnings = ActivityCommon.BatteryWarnings;
+                BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
+                SerialInfo = new List<SerialInfoEntry>();
+                AdapterBlacklist = ActivityCommon.AdapterBlacklist;
+                LastAdapterSerial = ActivityCommon.LastAdapterSerial;
+                EmailAddress = ActivityCommon.EmailAddress;
+                TraceInfo = ActivityCommon.TraceInfo;
+                AppId = ActivityCommon.AppId;
+                AutoHideTitleBar = ActivityCommon.AutoHideTitleBar;
+                SuppressTitleBar = ActivityCommon.SuppressTitleBar;
+                FullScreenMode = ActivityCommon.FullScreenMode;
+                SwapMultiWindowOrientation = ActivityCommon.SwapMultiWindowOrientation;
+                SelectedInternetConnection = ActivityCommon.SelectedInternetConnection;
+                SelectedManufacturer = ActivityCommon.SelectedManufacturer;
+                BtEnbaleHandling = ActivityCommon.BtEnbaleHandling;
+                BtDisableHandling = ActivityCommon.BtDisableHandling;
+                LockTypeCommunication = ActivityCommon.LockTypeCommunication;
+                LockTypeLogging = ActivityCommon.LockTypeLogging;
+                StoreDataLogSettings = ActivityCommon.StoreDataLogSettings;
+                AutoConnectHandling = ActivityCommon.AutoConnectHandling;
+                UpdateCheckDelay = ActivityCommon.UpdateCheckDelay;
+                DoubleClickForAppExit = ActivityCommon.DoubleClickForAppExit;
+                SendDataBroadcast = ActivityCommon.SendDataBroadcast;
+                CheckCpuUsage = ActivityCommon.CheckCpuUsage;
+                CheckEcuFiles = ActivityCommon.CheckEcuFiles;
+                OldVagMode = ActivityCommon.OldVagMode;
+                UseBmwDatabase = ActivityCommon.UseBmwDatabase;
+                ShowOnlyRelevantErrors = ActivityCommon.ShowOnlyRelevantErrors;
+                ScanAllEcus = ActivityCommon.ScanAllEcus;
+                CollectDebugInfo = ActivityCommon.CollectDebugInfo;
+                CompressTrace = ActivityCommon.CompressTrace;
+                DisableNetworkCheck = ActivityCommon.DisableNetworkCheck;
+            }
+
+            public void InitData(InstanceDataCommon instanceData, ActivityCommon activityCommon, bool storage = false)
+            {
+                if (instanceData == null || activityCommon == null)
+                {
+                    return;
+                }
+
+                LastAppState = instanceData.LastAppState;
+                SelectedEnetIp = activityCommon.SelectedEnetIp;
+                SelectedElmWifiIp = activityCommon.SelectedElmWifiIp;
+                SelectedDeepObdWifiIp = activityCommon.SelectedDeepObdWifiIp;
+                MtcBtDisconnectWarnShown = activityCommon.MtcBtDisconnectWarnShown;
+                DeviceName = instanceData.DeviceName;
+                DeviceAddress = instanceData.DeviceAddress;
+                ConfigFileName = instanceData.ConfigFileName;
+                UpdateCheckTime = instanceData.UpdateCheckTime;
+                UpdateSkipVersion = instanceData.UpdateSkipVersion;
+                LastVersionCode = activityCommon.GetVersionCode();
+                StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
+                XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
+                XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
+                DataLogActive = instanceData.DataLogActive;
+                DataLogAppend = instanceData.DataLogAppend;
+                if (storage)
+                {
+                    RecentConfigFiles = GetRecentConfigList();
+                    SerialInfo = GetSerialInfoList();
+                }
+            }
+
+            public string CalcualeHash()
+            {
+                StringBuilder sb = new StringBuilder();
+                PropertyInfo[] properties = GetType().GetProperties();
+                foreach (PropertyInfo property in properties)
+                {
+                    object value = property.GetValue(this);
+                    if (value != null)
+                    {
+                        sb.Append(value);
+                    }
+                }
+
+                using (SHA256 sha256 = SHA256.Create())
+                {
+                    return BitConverter.ToString(sha256.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()))).Replace("-", "");
+                }
+            }
+
+            [XmlElement("LastAppState")] public LastAppState LastAppState { get; set; }
+            [XmlElement("Locale")] public string SelectedLocale { get; set; }
+            [XmlElement("Theme")] public ThemeType SelectedTheme { get; set; }
+            [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
+            [XmlElement("ElmWifiIp")] public string SelectedElmWifiIp { get; set; }
+            [XmlElement("DeepObdWifiIp")] public string SelectedDeepObdWifiIp { get; set; }
+            [XmlElement("MtcBtDisconnectWarnShown")] public bool MtcBtDisconnectWarnShown { get; set; }
+            [XmlElement("DeviceName")] public string DeviceName { get; set; }
+            [XmlElement("DeviceAddress")] public string DeviceAddress { get; set; }
+            [XmlElement("ConfigFile")] public string ConfigFileName { get; set; }
+            [XmlElement("UpdateCheckTime")] public long UpdateCheckTime { get; set; }
+            [XmlElement("UpdateSkipVersion")] public int UpdateSkipVersion { get; set; }
+            [XmlElement("VersionCode")] public long LastVersionCode { get; set; }
+            [XmlElement("StorageAccepted")] public bool StorageRequirementsAccepted { get; set; }
+            [XmlElement("XmlEditorPackageName")] public string XmlEditorPackageName { get; set; }
+            [XmlElement("XmlEditorClassName")] public string XmlEditorClassName { get; set; }
+            [XmlElement("DataLogActive")] public bool DataLogActive { get; set; }
+            [XmlElement("DataLogAppend")] public bool DataLogAppend { get; set; }
+
+            [XmlElement("RecentConfigFiles")] public List<string> RecentConfigFiles { get; set; }
+            [XmlElement("StorageMedia")] public string CustomStorageMedia { get; set; }
+            [XmlElement("CopyToAppSrc")] public string CopyToAppSrc { get; set; }
+            [XmlElement("CopyToAppDst")] public string CopyToAppDst { get; set; }
+            [XmlElement("CopyFromAppSrc")] public string CopyFromAppSrc { get; set; }
+            [XmlElement("CopyFromAppDst")] public string CopyFromAppDst { get; set; }
+            [XmlElement("UsbFirmwareFile")] public string UsbFirmwareFileName { get; set; }
+            [XmlElement("EnableTranslation")] public bool EnableTranslation { get; set; }
+            [XmlElement("YandexApiKey")] public string YandexApiKey { get; set; }
+            [XmlElement("IbmTranslatorApiKey")] public string IbmTranslatorApiKey { get; set; }
+            [XmlElement("IbmTranslatorUrl")] public string IbmTranslatorUrl { get; set; }
+            [XmlElement("DeeplApiKey")] public string DeeplApiKey { get; set; }
+            [XmlElement("YandexCloudApiKey")] public string YandexCloudApiKey { get; set; }
+            [XmlElement("YandexCloudFolderId")] public string YandexCloudFolderId { get; set; }
+            [XmlElement("Translator")] public TranslatorType Translator { get; set; }
+            [XmlElement("ShowBatteryVoltageWarning")] public bool ShowBatteryVoltageWarning { get; set; }
+            [XmlElement("BatteryWarnings")] public long BatteryWarnings { get; set; }
+            [XmlElement("BatteryWarningVoltage")] public double BatteryWarningVoltage { get; set; }
+            [XmlElement("SerialInfo")] public List<SerialInfoEntry> SerialInfo { get; set; }
+            [XmlElement("AdapterBlacklist")] public string AdapterBlacklist { get; set; }
+            [XmlElement("LastAdapterSerial")] public string LastAdapterSerial { get; set; }
+            [XmlElement("EmailAddress")] public string EmailAddress { get; set; }
+            [XmlElement("TraceInfo")] public string TraceInfo { get; set; }
+            [XmlElement("AppId")] public string AppId { get; set; }
+            [XmlElement("AutoHideTitleBar")] public bool AutoHideTitleBar { get; set; }
+            [XmlElement("SuppressTitleBar")] public bool SuppressTitleBar { get; set; }
+            [XmlElement("FullScreenMode")] public bool FullScreenMode { get; set; }
+            [XmlElement("SwapMultiWindowOrientation")] public bool SwapMultiWindowOrientation { get; set; }
+            [XmlElement("InternetConnection")] public InternetConnectionType SelectedInternetConnection { get; set; }
+            [XmlElement("Manufacturer")] public ManufacturerType SelectedManufacturer { get; set; }
+            [XmlElement("BtEnbale")] public BtEnableType BtEnbaleHandling { get; set; }
+            [XmlElement("BtDisable")] public BtDisableType BtDisableHandling { get; set; }
+            [XmlElement("LockComm")] public LockType LockTypeCommunication { get; set; }
+            [XmlElement("LockLog")] public LockType LockTypeLogging { get; set; }
+            [XmlElement("StoreDataLogSettings")] public bool StoreDataLogSettings { get; set; }
+            [XmlElement("AutoConnect")] public AutoConnectType AutoConnectHandling { get; set; }
+            [XmlElement("UpdateCheckDelay")] public long UpdateCheckDelay { get; set; }
+            [XmlElement("DoubleClickForAppExit")] public bool DoubleClickForAppExit { get; set; }
+            [XmlElement("SendDataBroadcast")] public bool SendDataBroadcast { get; set; }
+            [XmlElement("CheckCpuUsage")] public bool CheckCpuUsage { get; set; }
+            [XmlElement("CheckEcuFiles")] public bool CheckEcuFiles { get; set; }
+            [XmlElement("OldVagMode")] public bool OldVagMode { get; set; }
+            [XmlElement("UseBmwDatabase")] public bool UseBmwDatabase { get; set; }
+            [XmlElement("ShowOnlyRelevantErrors")] public bool ShowOnlyRelevantErrors { get; set; }
+            [XmlElement("ScanAllEcus")] public bool ScanAllEcus { get; set; }
+            [XmlElement("CollectDebugInfo")] public bool CollectDebugInfo { get; set; }
+            [XmlElement("CompressTrace")] public bool CompressTrace { get; set; }
+            // hidden settings
+            [XmlElement("DisableNetworkCheck")] public bool DisableNetworkCheck { get; set; }
+        }
+
         public class VagEcuEntry
         {
             public VagEcuEntry(string sysName, int address)
@@ -6188,6 +6391,12 @@ namespace BmwDeepObd
             return GetPackageInfo(_packageManager, _context?.PackageName, infoFlags);
         }
 
+        public long GetVersionCode()
+        {
+            PackageInfo packageInfo = GetPackageInfo();
+            return packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
+        }
+
         public static string GetInstallerPackageName(PackageManager packageManager, string packageName)
         {
             try
@@ -6757,8 +6966,7 @@ namespace BmwDeepObd
                     if (string.Compare(Path.GetExtension(MailInfoDownloadUrl), ".php", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         formDownload.Add(new StringContent(AppId), "appid");
-                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
-                            packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "appver");
+                        formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", GetVersionCode())), "appver");
                         formDownload.Add(new StringContent(GetCurrentLanguage()), "lang");
                         formDownload.Add(new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt )), "android_ver");
                         formDownload.Add(new StringContent(Build.Fingerprint), "fingerprint");
@@ -6871,8 +7079,7 @@ namespace BmwDeepObd
 
                     sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo?.VersionName ?? string.Empty));
-                    sb.Append(string.Format("\nApp version code: {0}",
-                        packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0));
+                    sb.Append(string.Format("\nApp version code: {0}", GetVersionCode()));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
                     sb.Append(string.Format("\nOBB: {0}", obbName));
                     sb.Append(string.Format("\nInstaller: {0}", installer ?? string.Empty));
@@ -7627,8 +7834,7 @@ namespace BmwDeepObd
                 MultipartFormDataContent formUpdate = new MultipartFormDataContent
                 {
                     { new StringContent(_activity?.PackageName), "package_name" },
-                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}",
-                        packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0)), "app_ver" },
+                    { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", GetVersionCode())), "app_ver" },
                     { new StringContent(AppId), "app_id" },
                     { new StringContent(GetCurrentLanguage()), "lang" },
                     { new StringContent(string.Format(CultureInfo.InvariantCulture, "{0}", (long) Build.VERSION.SdkInt)), "android_ver" },
@@ -11437,9 +11643,9 @@ namespace BmwDeepObd
             return Path.Combine(filesDir.AbsolutePath, SettingsFile);
         }
 
-        public static ActivityMain.StorageData GetStorageData(string fileName, ActivityCommon.SettingsMode settingsMode = ActivityCommon.SettingsMode.All)
+        public static StorageData GetStorageData(string fileName, ActivityCommon.SettingsMode settingsMode = ActivityCommon.SettingsMode.All)
         {
-            ActivityMain.StorageData storageData = null;
+            StorageData storageData = null;
             try
             {
                 if (File.Exists(fileName))
@@ -11449,10 +11655,10 @@ namespace BmwDeepObd
                         lock (ActivityCommon.GlobalSettingLockObject)
                         {
                             XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
-                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(ActivityMain.StorageData), storageClassAttributes);
+                            XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
                             using (StreamReader sr = new StreamReader(fileName))
                             {
-                                storageData = xmlSerializer.Deserialize(sr) as ActivityMain.StorageData;
+                                storageData = xmlSerializer.Deserialize(sr) as StorageData;
                             }
                         }
                     }
@@ -11467,7 +11673,7 @@ namespace BmwDeepObd
                 return null;
             }
 
-            storageData ??= new ActivityMain.StorageData();
+            storageData ??= new StorageData();
 
             return storageData;
         }
@@ -11479,7 +11685,7 @@ namespace BmwDeepObd
                 return null;
             }
 
-            ActivityMain.StorageData storageData = new ActivityMain.StorageData();
+            StorageData storageData = new StorageData();
             Type storageType = storageData.GetType();
             XmlAttributes ignoreXmlAttributes = new XmlAttributes
             {
