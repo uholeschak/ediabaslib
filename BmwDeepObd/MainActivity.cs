@@ -2484,18 +2484,6 @@ namespace BmwDeepObd
             }
         }
 
-        public static ActivityCommon.AutoConnectType GetAutoConnectSetting()
-        {
-            string settingsFile = ActivityCommon.GetSettingsFileName();
-            if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
-            {
-                ActivityCommon.StorageData storageData = ActivityCommon.GetStorageData(settingsFile);
-                return storageData.AutoConnectHandling;
-            }
-
-            return ActivityCommon.AutoConnectType.Offline;
-        }
-
         private void GetSettings()
         {
             string assetFileName = ExpansionDownloaderActivity.GetAssetFilename();

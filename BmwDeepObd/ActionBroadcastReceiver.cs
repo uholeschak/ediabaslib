@@ -57,7 +57,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case ActionQuickBoot:
             case ActionStartService:
             {
-                ActivityCommon.AutoConnectType autoConnectType = ActivityMain.GetAutoConnectSetting();
+                ActivityCommon.AutoConnectType autoConnectType = ActivityCommon.GetAutoConnectSetting();
 #if DEBUG
                 Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "Auto start type: {0}", autoConnectType.ToString()));
 #endif
