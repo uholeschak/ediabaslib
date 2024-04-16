@@ -11821,6 +11821,18 @@ namespace BmwDeepObd
             }
         }
 
+        public void CheckSettingsVersionChange(InstanceDataCommon instanceData)
+        {
+            if (instanceData.LastVersionCode != VersionCode)
+            {
+                instanceData.StorageRequirementsAccepted = false;
+                instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
+                instanceData.UpdateSkipVersion = -1;
+                BatteryWarnings = 0;
+                BatteryWarningVoltage = 0;
+            }
+        }
+
         public static AutoConnectType GetAutoConnectSetting()
         {
             string settingsFile = GetSettingsFileName();
