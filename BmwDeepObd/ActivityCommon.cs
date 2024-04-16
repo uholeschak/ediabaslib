@@ -11833,6 +11833,134 @@ namespace BmwDeepObd
             }
         }
 
+        public bool GetSettings(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, bool forceInit)
+        {
+            if (instanceData == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
+            bool import = settingsMode != ActivityCommon.SettingsMode.All;
+            string hash = string.Empty;
+            try
+            {
+                bool init = false;
+                if (!StaticDataInitialized || forceInit)
+                {
+                    init = true;
+                    SetDefaultSettings();
+                }
+
+                StorageData storageData = GetStorageData(fileName, settingsMode);
+                hash = storageData.CalcualeHash();
+
+                if (init || import)
+                {
+                    instanceData.LastAppState = storageData.LastAppState;
+                    SelectedEnetIp = storageData.SelectedEnetIp;
+                    SelectedElmWifiIp = storageData.SelectedElmWifiIp;
+                    SelectedDeepObdWifiIp = storageData.SelectedDeepObdWifiIp;
+                    MtcBtDisconnectWarnShown = storageData.MtcBtDisconnectWarnShown;
+                    instanceData.DeviceName = storageData.DeviceName;
+                    instanceData.DeviceAddress = storageData.DeviceAddress;
+                    instanceData.ConfigFileName = storageData.ConfigFileName;
+                    instanceData.UpdateCheckTime = storageData.UpdateCheckTime;
+                    instanceData.UpdateSkipVersion = storageData.UpdateSkipVersion;
+                    instanceData.LastVersionCode = storageData.LastVersionCode;
+                    instanceData.StorageRequirementsAccepted = storageData.StorageRequirementsAccepted;
+                    instanceData.XmlEditorPackageName = storageData.XmlEditorPackageName;
+                    instanceData.XmlEditorClassName = storageData.XmlEditorClassName;
+
+                    SelectedLocale = storageData.SelectedLocale;
+                    SelectedTheme = storageData.SelectedTheme;
+
+                    SetRecentConfigList(storageData.RecentConfigFiles);
+                    CustomStorageMedia = storageData.CustomStorageMedia;
+                    CopyToAppSrc = storageData.CopyToAppSrc;
+                    CopyToAppDst = storageData.CopyToAppDst;
+                    CopyFromAppSrc = storageData.CopyFromAppSrc;
+                    CopyFromAppDst = storageData.CopyFromAppDst;
+                    UsbFirmwareFileName = storageData.UsbFirmwareFileName;
+                    EnableTranslation = storageData.EnableTranslation;
+                    YandexApiKey = storageData.YandexApiKey;
+                    IbmTranslatorApiKey = storageData.IbmTranslatorApiKey;
+                    IbmTranslatorUrl = storageData.IbmTranslatorUrl;
+                    DeeplApiKey = storageData.DeeplApiKey;
+                    YandexCloudApiKey = storageData.YandexCloudApiKey;
+                    YandexCloudFolderId = storageData.YandexCloudFolderId;
+                    Translator = storageData.Translator;
+                    ShowBatteryVoltageWarning = storageData.ShowBatteryVoltageWarning;
+                    BatteryWarnings = storageData.BatteryWarnings;
+                    BatteryWarningVoltage = storageData.BatteryWarningVoltage;
+                    SetSerialInfoList(storageData.SerialInfo);
+                    AdapterBlacklist = storageData.AdapterBlacklist;
+                    LastAdapterSerial = storageData.LastAdapterSerial;
+                    EmailAddress = storageData.EmailAddress;
+                    TraceInfo = storageData.TraceInfo;
+                    AppId = storageData.AppId;
+                    AutoHideTitleBar = storageData.AutoHideTitleBar;
+                    SuppressTitleBar = storageData.SuppressTitleBar;
+                    FullScreenMode = storageData.FullScreenMode;
+                    SwapMultiWindowOrientation = storageData.SwapMultiWindowOrientation;
+                    SelectedInternetConnection = storageData.SelectedInternetConnection;
+                    SelectedManufacturer = storageData.SelectedManufacturer;
+                    BtEnbaleHandling = storageData.BtEnbaleHandling;
+                    BtDisableHandling = storageData.BtDisableHandling;
+                    LockTypeCommunication = storageData.LockTypeCommunication;
+                    LockTypeLogging = storageData.LockTypeLogging;
+                    StoreDataLogSettings = storageData.StoreDataLogSettings;
+                    if (StoreDataLogSettings)
+                    {
+                        instanceData.DataLogActive = storageData.DataLogActive;
+                        instanceData.DataLogAppend = storageData.DataLogAppend;
+                    }
+                    AutoConnectHandling = storageData.AutoConnectHandling;
+                    UpdateCheckDelay = storageData.UpdateCheckDelay;
+                    DoubleClickForAppExit = storageData.DoubleClickForAppExit;
+                    SendDataBroadcast = storageData.SendDataBroadcast;
+                    CheckCpuUsage = storageData.CheckCpuUsage;
+                    CheckEcuFiles = storageData.CheckEcuFiles;
+                    OldVagMode = storageData.OldVagMode;
+                    UseBmwDatabase = storageData.UseBmwDatabase;
+                    ShowOnlyRelevantErrors = storageData.ShowOnlyRelevantErrors;
+                    ScanAllEcus = storageData.ScanAllEcus;
+                    CollectDebugInfo = storageData.CollectDebugInfo;
+                    CompressTrace = storageData.CompressTrace;
+                    DisableNetworkCheck = storageData.DisableNetworkCheck;
+
+                    CheckSettingsVersionChange(instanceData);
+                }
+
+                if (!import)
+                {
+                    instanceData.LastLocale = SelectedLocale;
+                    instanceData.LastThemeType = SelectedTheme;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            finally
+            {
+                StaticDataInitialized = true;
+                if (!import)
+                {
+                    instanceData.LastSettingsHash = hash;
+                }
+
+                instanceData.GetSettingsCalled = true;
+            }
+            return false;
+        }
+
         public static AutoConnectType GetAutoConnectSetting()
         {
             string settingsFile = GetSettingsFileName();

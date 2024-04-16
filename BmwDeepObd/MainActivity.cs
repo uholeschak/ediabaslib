@@ -1022,7 +1022,7 @@ namespace BmwDeepObd
                             }
                             else if (!string.IsNullOrEmpty(importFileName))
                             {
-                                GetSettings(importFileName, ActivityCommon.SettingsMode.Private);
+                                _activityCommon.GetSettings(_instanceData, importFileName, ActivityCommon.SettingsMode.Private, !_activityRecreated);
                             }
                         }
 
@@ -2518,7 +2518,7 @@ namespace BmwDeepObd
             string settingsFile = ActivityCommon.GetSettingsFileName();
             if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
             {
-                if (GetSettings(settingsFile, ActivityCommon.SettingsMode.All))
+                if (_activityCommon.GetSettings(_instanceData, settingsFile, ActivityCommon.SettingsMode.All, !_activityRecreated))
                 {
                     return;
                 }
@@ -2543,134 +2543,6 @@ namespace BmwDeepObd
         {
             _instanceData.LastAppState = lastAppState;
             StoreSettings();
-        }
-
-        public bool GetSettings(string fileName, ActivityCommon.SettingsMode settingsMode)
-        {
-            if (_instanceData == null || _activityCommon == null)
-            {
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(fileName))
-            {
-                return false;
-            }
-
-            bool import = settingsMode != ActivityCommon.SettingsMode.All;
-            string hash = string.Empty;
-            try
-            {
-                bool init = false;
-                if (!ActivityCommon.StaticDataInitialized || !_activityRecreated)
-                {
-                    init = true;
-                    _activityCommon.SetDefaultSettings();
-                }
-
-                ActivityCommon.StorageData storageData = ActivityCommon.GetStorageData(fileName, settingsMode);
-                hash = storageData.CalcualeHash();
-
-                if (init || import)
-                {
-                    _instanceData.LastAppState = storageData.LastAppState;
-                    _activityCommon.SelectedEnetIp = storageData.SelectedEnetIp;
-                    _activityCommon.SelectedElmWifiIp = storageData.SelectedElmWifiIp;
-                    _activityCommon.SelectedDeepObdWifiIp = storageData.SelectedDeepObdWifiIp;
-                    _activityCommon.MtcBtDisconnectWarnShown = storageData.MtcBtDisconnectWarnShown;
-                    _instanceData.DeviceName = storageData.DeviceName;
-                    _instanceData.DeviceAddress = storageData.DeviceAddress;
-                    _instanceData.ConfigFileName = storageData.ConfigFileName;
-                    _instanceData.UpdateCheckTime = storageData.UpdateCheckTime;
-                    _instanceData.UpdateSkipVersion = storageData.UpdateSkipVersion;
-                    _instanceData.LastVersionCode = storageData.LastVersionCode;
-                    _instanceData.StorageRequirementsAccepted = storageData.StorageRequirementsAccepted;
-                    _instanceData.XmlEditorPackageName = storageData.XmlEditorPackageName;
-                    _instanceData.XmlEditorClassName = storageData.XmlEditorClassName;
-
-                    ActivityCommon.SelectedLocale = storageData.SelectedLocale;
-                    ActivityCommon.SelectedTheme = storageData.SelectedTheme;
-
-                    ActivityCommon.SetRecentConfigList(storageData.RecentConfigFiles);
-                    ActivityCommon.CustomStorageMedia = storageData.CustomStorageMedia;
-                    ActivityCommon.CopyToAppSrc = storageData.CopyToAppSrc;
-                    ActivityCommon.CopyToAppDst = storageData.CopyToAppDst;
-                    ActivityCommon.CopyFromAppSrc = storageData.CopyFromAppSrc;
-                    ActivityCommon.CopyFromAppDst = storageData.CopyFromAppDst;
-                    ActivityCommon.UsbFirmwareFileName = storageData.UsbFirmwareFileName;
-                    ActivityCommon.EnableTranslation = storageData.EnableTranslation;
-                    ActivityCommon.YandexApiKey = storageData.YandexApiKey;
-                    ActivityCommon.IbmTranslatorApiKey = storageData.IbmTranslatorApiKey;
-                    ActivityCommon.IbmTranslatorUrl = storageData.IbmTranslatorUrl;
-                    ActivityCommon.DeeplApiKey = storageData.DeeplApiKey;
-                    ActivityCommon.YandexCloudApiKey = storageData.YandexCloudApiKey;
-                    ActivityCommon.YandexCloudFolderId = storageData.YandexCloudFolderId;
-                    _activityCommon.Translator = storageData.Translator;
-                    ActivityCommon.ShowBatteryVoltageWarning = storageData.ShowBatteryVoltageWarning;
-                    ActivityCommon.BatteryWarnings = storageData.BatteryWarnings;
-                    ActivityCommon.BatteryWarningVoltage = storageData.BatteryWarningVoltage;
-                    ActivityCommon.SetSerialInfoList(storageData.SerialInfo);
-                    ActivityCommon.AdapterBlacklist = storageData.AdapterBlacklist;
-                    ActivityCommon.LastAdapterSerial = storageData.LastAdapterSerial;
-                    ActivityCommon.EmailAddress = storageData.EmailAddress;
-                    ActivityCommon.TraceInfo = storageData.TraceInfo;
-                    ActivityCommon.AppId = storageData.AppId;
-                    ActivityCommon.AutoHideTitleBar = storageData.AutoHideTitleBar;
-                    ActivityCommon.SuppressTitleBar = storageData.SuppressTitleBar;
-                    ActivityCommon.FullScreenMode = storageData.FullScreenMode;
-                    ActivityCommon.SwapMultiWindowOrientation = storageData.SwapMultiWindowOrientation;
-                    ActivityCommon.SelectedInternetConnection = storageData.SelectedInternetConnection;
-                    ActivityCommon.SelectedManufacturer = storageData.SelectedManufacturer;
-                    ActivityCommon.BtEnbaleHandling = storageData.BtEnbaleHandling;
-                    ActivityCommon.BtDisableHandling = storageData.BtDisableHandling;
-                    ActivityCommon.LockTypeCommunication = storageData.LockTypeCommunication;
-                    ActivityCommon.LockTypeLogging = storageData.LockTypeLogging;
-                    ActivityCommon.StoreDataLogSettings = storageData.StoreDataLogSettings;
-                    if (ActivityCommon.StoreDataLogSettings)
-                    {
-                        _instanceData.DataLogActive = storageData.DataLogActive;
-                        _instanceData.DataLogAppend = storageData.DataLogAppend;
-                    }
-                    ActivityCommon.AutoConnectHandling = storageData.AutoConnectHandling;
-                    ActivityCommon.UpdateCheckDelay = storageData.UpdateCheckDelay;
-                    ActivityCommon.DoubleClickForAppExit = storageData.DoubleClickForAppExit;
-                    ActivityCommon.SendDataBroadcast = storageData.SendDataBroadcast;
-                    ActivityCommon.CheckCpuUsage = storageData.CheckCpuUsage;
-                    ActivityCommon.CheckEcuFiles = storageData.CheckEcuFiles;
-                    ActivityCommon.OldVagMode = storageData.OldVagMode;
-                    ActivityCommon.UseBmwDatabase = storageData.UseBmwDatabase;
-                    ActivityCommon.ShowOnlyRelevantErrors = storageData.ShowOnlyRelevantErrors;
-                    ActivityCommon.ScanAllEcus = storageData.ScanAllEcus;
-                    ActivityCommon.CollectDebugInfo = storageData.CollectDebugInfo;
-                    ActivityCommon.CompressTrace = storageData.CompressTrace;
-                    ActivityCommon.DisableNetworkCheck = storageData.DisableNetworkCheck;
-
-                    _activityCommon.CheckSettingsVersionChange(_instanceData);
-                }
-
-                if (!import)
-                {
-                    _instanceData.LastLocale = ActivityCommon.SelectedLocale;
-                    _instanceData.LastThemeType = ActivityCommon.SelectedTheme;
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-            finally
-            {
-                ActivityCommon.StaticDataInitialized = true;
-                if (!import)
-                {
-                    _instanceData.LastSettingsHash = hash;
-                }
-
-                _instanceData.GetSettingsCalled = true;
-            }
-            return false;
         }
 
         public bool StoreSettings(string fileName, ActivityCommon.SettingsMode settingsMode, out string errorMessage)
