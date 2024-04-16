@@ -2525,18 +2525,6 @@ namespace BmwDeepObd
             }
         }
 
-        private void CheckSettingsVersionChange()
-        {
-            if (_instanceData.LastVersionCode != _activityCommon.VersionCode)
-            {
-                _instanceData.StorageRequirementsAccepted = false;
-                _instanceData.UpdateCheckTime = DateTime.MinValue.Ticks;
-                _instanceData.UpdateSkipVersion = -1;
-                ActivityCommon.BatteryWarnings = 0;
-                ActivityCommon.BatteryWarningVoltage = 0;
-            }
-        }
-
         private void StoreSettings()
         {
             if (!StoreSettings(ActivityCommon.GetSettingsFileName(), ActivityCommon.SettingsMode.All, out string errorMessage))
@@ -2657,7 +2645,7 @@ namespace BmwDeepObd
                     ActivityCommon.CompressTrace = storageData.CompressTrace;
                     ActivityCommon.DisableNetworkCheck = storageData.DisableNetworkCheck;
 
-                    CheckSettingsVersionChange();
+                    _activityCommon.CheckSettingsVersionChange(_instanceData);
                 }
 
                 if (!import)
