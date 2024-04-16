@@ -11821,6 +11821,18 @@ namespace BmwDeepObd
             }
         }
 
+        public static AutoConnectType GetAutoConnectSetting()
+        {
+            string settingsFile = GetSettingsFileName();
+            if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+            {
+                StorageData storageData = GetStorageData(settingsFile);
+                return storageData.AutoConnectHandling;
+            }
+
+            return AutoConnectType.Offline;
+        }
+
         public List<string> GetAllStorageMedia()
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
