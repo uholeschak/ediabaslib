@@ -47,6 +47,7 @@ using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.Dialogs;
 using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
+using Android.App.Backup;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -1053,6 +1054,7 @@ namespace BmwDeepObd
         private readonly NotificationManagerCompat _notificationManagerCompat;
         private readonly PowerManager _powerManager;
         private readonly PackageManager _packageManager;
+        private readonly BackupManager _backupManager;
         private readonly Android.App.ActivityManager _activityManager;
         private readonly MtcServiceConnection _mtcServiceConnection;
         private PowerManager.WakeLock _wakeLockScreenBright;
@@ -1589,6 +1591,8 @@ namespace BmwDeepObd
 
         public PackageManager PackageManager => _packageManager;
 
+        public BackupManager BackupManager => _backupManager;
+
         // ReSharper disable once ConvertToAutoProperty
         public Android.App.ActivityManager ActivityManager => _activityManager;
 
@@ -1676,6 +1680,7 @@ namespace BmwDeepObd
                     };
             }
             _packageManager = context?.PackageManager;
+            _backupManager = context != null ? new BackupManager(context) : null;
             _activityManager = context?.GetSystemService(Context.ActivityService) as Android.App.ActivityManager;
             _selectedInterface = InterfaceType.None;
             _transDict = new Dictionary<string, Dictionary<string, string>>();
@@ -11845,7 +11850,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            bool import = settingsMode != ActivityCommon.SettingsMode.All;
+            bool import = settingsMode != SettingsMode.All;
             string hash = string.Empty;
             try
             {
@@ -11957,6 +11962,97 @@ namespace BmwDeepObd
                 }
 
                 instanceData.GetSettingsCalled = true;
+            }
+            return false;
+        }
+
+        public bool StoreSettings(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, out string errorMessage)
+        {
+            errorMessage = null;
+            if (instanceData == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
+            bool export = settingsMode != SettingsMode.All;
+            try
+            {
+                if (!StaticDataInitialized || !instanceData.GetSettingsCalled)
+                {
+                    return false;
+                }
+
+                string settingsDir = Path.GetDirectoryName(fileName);
+                if (string.IsNullOrEmpty(settingsDir))
+                {
+                    return false;
+                }
+
+                if (!Directory.Exists(settingsDir))
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(settingsDir);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                lock (GlobalSettingLockObject)
+                {
+                    StorageData storageData = new StorageData(instanceData, this, true);
+                    string hash = storageData.CalcualeHash();
+
+                    if (!export && string.Compare(hash, instanceData.LastSettingsHash, StringComparison.Ordinal) == 0)
+                    {
+                        return true;
+                    }
+
+                    XmlAttributeOverrides storageClassAttributes = GetStoreXmlAttributeOverrides(settingsMode);
+                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(StorageData), storageClassAttributes);
+                    Java.IO.File tempFile = Java.IO.File.CreateTempFile("Settings", ".xml", Android.App.Application.Context.CacheDir);
+                    if (tempFile == null)
+                    {
+                        return false;
+                    }
+
+                    tempFile.DeleteOnExit();
+                    string tempFileName = tempFile.AbsolutePath;
+                    using (StreamWriter sw = new StreamWriter(tempFileName))
+                    {
+                        XmlWriterSettings settings = new XmlWriterSettings
+                        {
+                            Indent = true,
+                            IndentChars = "\t"
+                        };
+                        using (XmlWriter writer = XmlWriter.Create(sw, settings))
+                        {
+                            xmlSerializer.Serialize(writer, storageData);
+                        }
+                    }
+
+                    File.Copy(tempFileName, fileName, true);
+                    tempFile.Delete();
+
+                    if (!export)
+                    {
+                        instanceData.LastSettingsHash = hash;
+                    }
+                }
+
+                _backupManager?.DataChanged();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
             }
             return false;
         }
