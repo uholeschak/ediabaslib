@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Threading;
 using Android.Content;
 using Android.OS;
 using AndroidX.Core.App;
@@ -29,6 +30,7 @@ namespace BmwDeepObd
         private bool _isStarted;
         private ActivityCommon _activityCommon;
         private Handler _stopHandler;
+        private Timer _statusTimer;
         private Java.Lang.Runnable _stopRunnable;
 
         public ActivityCommon ActivityCommon => _activityCommon;
@@ -43,6 +45,7 @@ namespace BmwDeepObd
             _stopRunnable = new Java.Lang.Runnable(StopEdiabasThread);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
+            StartStatusTimer();
 
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -162,6 +165,7 @@ namespace BmwDeepObd
             _activityCommon = null;
             _isStarted = false;
 
+            StopStatusTimer();
             if (_stopHandler != null)
             {
                 try
@@ -323,6 +327,30 @@ namespace BmwDeepObd
                     }
                 }
             }
+        }
+
+        private void StartStatusTimer()
+        {
+            if (_statusTimer == null)
+            {
+                _statusTimer = new Timer(StatusTimerCallback, null, 0, 1000);
+            }
+        }
+
+        private void StopStatusTimer()
+        {
+            if (_statusTimer != null)
+            {
+                _statusTimer.Dispose();
+                _statusTimer = null;
+            }
+        }
+
+        private void StatusTimerCallback(object state)
+        {
+#if DEBUG
+            Android.Util.Log.Info(Tag, "StatusTimerCallback");
+#endif
         }
 
         /// <summary>
