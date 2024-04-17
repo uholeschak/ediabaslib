@@ -150,8 +150,6 @@ namespace BmwDeepObd
 #if NET
         private static readonly object CompileLock = new object();
 #endif
-        private const string SharedAppName = ActivityCommon.AppNameSpace;
-        private const string AppFolderName = ActivityCommon.AppNameSpace;
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
         private const long EcuExtractSize = 2600000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
@@ -232,19 +230,6 @@ namespace BmwDeepObd
         public ActivityCommon ActivityCommonMain => _activityCommon;
 
         public InstanceData InstanceDataMain => _instanceData;
-
-        private string ManufacturerEcuDirName
-        {
-            get
-            {
-                switch (ActivityCommon.SelectedManufacturer)
-                {
-                    case ActivityCommon.ManufacturerType.Bmw:
-                        return Path.Combine(ActivityCommon.EcuBaseDir, ActivityCommon.EcuDirNameBmw);
-                }
-                return Path.Combine(ActivityCommon.EcuBaseDir, ActivityCommon.EcuDirNameVag);
-            }
-        }
 
         public void OnTabReselected(TabLayout.Tab tab)
         {
@@ -2910,40 +2895,16 @@ namespace BmwDeepObd
 
         private void UpdateDirectories()
         {
-            _instanceData.AppDataPath = string.Empty;
-            _instanceData.EcuPath = string.Empty;
-            _instanceData.VagPath = string.Empty;
-            _instanceData.BmwPath = string.Empty;
-            _instanceData.UserEcuFiles = false;
-            if (string.IsNullOrEmpty(ActivityCommon.CustomStorageMedia))
+            if (_activityCommon == null)
             {
-                if (string.IsNullOrEmpty(ActivityCommon.ExternalWritePath))
-                {
-                    if (string.IsNullOrEmpty(ActivityCommon.ExternalPath))
-                    {
-                        Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long)?.Show();
-                        Finish();
-                    }
-                    else
-                    {
-                        _instanceData.AppDataPath = Path.Combine(ActivityCommon.ExternalPath, AppFolderName);
-                    }
-                }
-                else
-                {
-                    _instanceData.AppDataPath = ActivityCommon.ExternalWritePath;
-                }
-            }
-            else
-            {
-                _instanceData.AppDataPath = Path.Combine(ActivityCommon.CustomStorageMedia, AppFolderName);
+                return;
             }
 
-            _instanceData.EcuPath = Path.Combine(_instanceData.AppDataPath, ManufacturerEcuDirName);
-            _instanceData.VagPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.VagBaseDir);
-            _instanceData.BmwPath = Path.Combine(_instanceData.AppDataPath, ActivityCommon.EcuBaseDir, ActivityCommon.BmwBaseDir);
-            _instanceData.TraceBackupDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.TraceBackupDir);
-            _instanceData.PackageAssembliesDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.PackageAssembliesDir);
+            if (!_activityCommon.UpdateDirectories(_instanceData))
+            {
+                Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long)?.Show();
+                Finish();
+            }
 
             string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");
             if (File.Exists(backgroundImageFile))

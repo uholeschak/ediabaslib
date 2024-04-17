@@ -805,6 +805,7 @@ namespace BmwDeepObd
         public const string VagEndDate = "2017-08";
         public const string MimeTypeAppAny = @"application/*";
         public const string WifiApStateChangedAction = "android.net.wifi.WIFI_AP_STATE_CHANGED";
+        public const string AppFolderName = AppNameSpace;
         public const string UsbPermissionAction = AppNameSpace + ".USB_PERMISSION";
         public const string PackageNameAction = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
@@ -1115,6 +1116,19 @@ namespace BmwDeepObd
                 }
 
                 return _versionCode.Value;
+            }
+        }
+
+        public string ManufacturerEcuDirName
+        {
+            get
+            {
+                switch (SelectedManufacturer)
+                {
+                    case ManufacturerType.Bmw:
+                        return Path.Combine(EcuBaseDir, EcuDirNameBmw);
+                }
+                return Path.Combine(EcuBaseDir, EcuDirNameVag);
             }
         }
 
@@ -12067,6 +12081,42 @@ namespace BmwDeepObd
             }
 
             return AutoConnectType.Offline;
+        }
+
+        public bool UpdateDirectories(InstanceDataCommon instanceData)
+        {
+            instanceData.AppDataPath = string.Empty;
+            instanceData.EcuPath = string.Empty;
+            instanceData.VagPath = string.Empty;
+            instanceData.BmwPath = string.Empty;
+            instanceData.UserEcuFiles = false;
+            if (string.IsNullOrEmpty(CustomStorageMedia))
+            {
+                if (string.IsNullOrEmpty(ExternalWritePath))
+                {
+                    if (string.IsNullOrEmpty(ExternalPath))
+                    {
+                        return false;
+                    }
+                    instanceData.AppDataPath = Path.Combine(ActivityCommon.ExternalPath, AppFolderName);
+                }
+                else
+                {
+                    instanceData.AppDataPath = ActivityCommon.ExternalWritePath;
+                }
+            }
+            else
+            {
+                instanceData.AppDataPath = Path.Combine(ActivityCommon.CustomStorageMedia, AppFolderName);
+            }
+
+            instanceData.EcuPath = Path.Combine(instanceData.AppDataPath, ManufacturerEcuDirName);
+            instanceData.VagPath = Path.Combine(instanceData.AppDataPath, EcuBaseDir, VagBaseDir);
+            instanceData.BmwPath = Path.Combine(instanceData.AppDataPath, EcuBaseDir, BmwBaseDir);
+            instanceData.TraceBackupDir = Path.Combine(instanceData.AppDataPath, TraceBackupDir);
+            instanceData.PackageAssembliesDir = Path.Combine(instanceData.AppDataPath, PackageAssembliesDir);
+
+            return true;
         }
 
         public List<string> GetAllStorageMedia()
