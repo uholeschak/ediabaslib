@@ -12,8 +12,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Serialization;
-using Android.App.Backup;
 using Android.Content;
 using Android.Content.PM;
 using Android.Content.Res;
@@ -26,7 +24,6 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
-using AndroidX.Core.Content.PM;
 using AndroidX.Core.View;
 using AndroidX.Fragment.App;
 using AndroidX.Lifecycle;
@@ -209,7 +206,6 @@ namespace BmwDeepObd
         private Java.Lang.Runnable _updateDisplayRunnable;
         private Java.Lang.Runnable _updateDisplayForceRunnable;
         private SelectTabPageRunnable _selectTabPageRunnable;
-        private BackupManager _backupManager;
         private CheckAdapter _checkAdapter;
         private TabLayout _tabLayout;
         private ViewPager2 _viewPager;
@@ -357,7 +353,6 @@ namespace BmwDeepObd
 
             _selectTabPageRunnable = new SelectTabPageRunnable(this);
 
-            _backupManager = new BackupManager(this);
             _checkAdapter = new CheckAdapter(_activityCommon);
             _imageBackground = FindViewById<ImageView>(Resource.Id.imageBackground);
 
@@ -1004,7 +999,7 @@ namespace BmwDeepObd
                                 (int)ActivityCommon.SettingsMode.Private);
                             if (!string.IsNullOrEmpty(exportFileName))
                             {
-                                if (!StoreSettings(exportFileName, settingsMode, out string errorMessage))
+                                if (!_activityCommon.StoreSettings(_instanceData, exportFileName, settingsMode, out string errorMessage))
                                 {
                                     string message = GetString(Resource.String.store_settings_failed);
                                     if (errorMessage != null)
@@ -2527,7 +2522,7 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
-            if (!StoreSettings(ActivityCommon.GetSettingsFileName(), ActivityCommon.SettingsMode.All, out string errorMessage))
+            if (!_activityCommon.StoreSettings(_instanceData, ActivityCommon.GetSettingsFileName(), ActivityCommon.SettingsMode.All, out string errorMessage))
             {
                 string message = GetString(Resource.String.store_settings_failed);
                 if (errorMessage != null)
@@ -2543,97 +2538,6 @@ namespace BmwDeepObd
         {
             _instanceData.LastAppState = lastAppState;
             StoreSettings();
-        }
-
-        public bool StoreSettings(string fileName, ActivityCommon.SettingsMode settingsMode, out string errorMessage)
-        {
-            errorMessage = null;
-            if (_instanceData == null || _activityCommon == null)
-            {
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(fileName))
-            {
-                return false;
-            }
-
-            bool export = settingsMode != ActivityCommon.SettingsMode.All;
-            try
-            {
-                if (!ActivityCommon.StaticDataInitialized || !_instanceData.GetSettingsCalled)
-                {
-                    return false;
-                }
-
-                string settingsDir = Path.GetDirectoryName(fileName);
-                if (string.IsNullOrEmpty(settingsDir))
-                {
-                    return false;
-                }
-
-                if (!Directory.Exists(settingsDir))
-                {
-                    try
-                    {
-                        Directory.CreateDirectory(settingsDir);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
-
-                lock (ActivityCommon.GlobalSettingLockObject)
-                {
-                    ActivityCommon.StorageData storageData = new ActivityCommon.StorageData(_instanceData, _activityCommon, true);
-                    string hash = storageData.CalcualeHash();
-
-                    if (!export && string.Compare(hash, _instanceData.LastSettingsHash, StringComparison.Ordinal) == 0)
-                    {
-                        return true;
-                    }
-
-                    XmlAttributeOverrides storageClassAttributes = ActivityCommon.GetStoreXmlAttributeOverrides(settingsMode);
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(ActivityCommon.StorageData), storageClassAttributes);
-                    Java.IO.File tempFile = Java.IO.File.CreateTempFile("Settings", ".xml", Android.App.Application.Context.CacheDir);
-                    if (tempFile == null)
-                    {
-                        return false;
-                    }
-
-                    tempFile.DeleteOnExit();
-                    string tempFileName = tempFile.AbsolutePath;
-                    using (StreamWriter sw = new StreamWriter(tempFileName))
-                    {
-                        XmlWriterSettings settings = new XmlWriterSettings
-                        {
-                            Indent = true,
-                            IndentChars = "\t"
-                        };
-                        using (XmlWriter writer = XmlWriter.Create(sw, settings))
-                        {
-                            xmlSerializer.Serialize(writer, storageData);
-                        }
-                    }
-
-                    File.Copy(tempFileName, fileName, true);
-                    tempFile.Delete();
-
-                    if (!export)
-                    {
-                        _instanceData.LastSettingsHash = hash;
-                    }
-                }
-
-                _backupManager?.DataChanged();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                errorMessage = EdiabasNet.GetExceptionText(ex, false, false);
-            }
-            return false;
         }
 
         private bool RequestOverlayPermissions(EventHandler<EventArgs> handler)
