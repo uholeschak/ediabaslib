@@ -2222,12 +2222,13 @@ namespace BmwDeepObd
             }
         }
 
-        public static bool StartForegroundService(Context context)
+        public static bool StartForegroundService(Context context, bool startComm = false)
         {
             try
             {
                 Intent startServiceIntent = new Intent(context, typeof(ForegroundService));
                 startServiceIntent.SetAction(ForegroundService.ActionStartService);
+                startServiceIntent.PutExtra(ForegroundService.StartComm, startComm);
                 context.StartService(startServiceIntent);
             }
             catch (Exception)
