@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Threading;
 using Android.Content;
@@ -30,6 +31,7 @@ namespace BmwDeepObd
 
         private bool _isStarted;
         private ActivityCommon _activityCommon;
+        private ActivityCommon.InstanceDataCommon _instanceData;
         private Handler _stopHandler;
         private Timer _commTimer;
         private Java.Lang.Runnable _stopRunnable;
@@ -46,6 +48,7 @@ namespace BmwDeepObd
             _stopRunnable = new Java.Lang.Runnable(StopEdiabasThread);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
+            _instanceData = new ActivityCommon.InstanceDataCommon();
 
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -352,6 +355,7 @@ namespace BmwDeepObd
                 _commTimer.Dispose();
                 _commTimer = null;
             }
+            _instanceData = null;
         }
 
         private void CommTimerCallback(object state)
@@ -359,6 +363,33 @@ namespace BmwDeepObd
 #if DEBUG
             Android.Util.Log.Info(Tag, "CommTimerCallback");
 #endif
+            if (_instanceData == null)
+            {
+                if (!_activityCommon.IsExStorageAvailable())
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommTimerCallback: No external storage");
+#endif
+                }
+
+                string settingsFile = ActivityCommon.GetSettingsFileName();
+                if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                {
+                    ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
+                    if (!_activityCommon.GetSettings(instanceData, settingsFile, ActivityCommon.SettingsMode.All, true))
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings failed");
+#endif
+                        return;
+                    }
+
+                    _instanceData = instanceData;
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
+#endif
+                }
+            }
         }
 
         /// <summary>

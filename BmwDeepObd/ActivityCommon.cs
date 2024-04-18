@@ -12698,6 +12698,17 @@ namespace BmwDeepObd
             return false;
         }
 
+        public bool IsExStorageAvailable()
+        {
+            Java.IO.File[] storages = ContextCompat.GetExternalFilesDirs(_context, null);
+            if (storages.Length > 1 && storages[0] != null && storages[1] != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public static void SetStoragePath()
         {
             _externalPath = string.Empty;
