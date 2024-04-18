@@ -63,7 +63,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #endif
                 if (autoConnectType == ActivityCommon.AutoConnectType.StartBoot)
                 {
-                    ActivityCommon.StartForegroundService(context);
+                    ActivityCommon.StartForegroundService(context, true);
                 }
                 break;
             }

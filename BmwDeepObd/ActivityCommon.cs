@@ -12086,6 +12086,11 @@ namespace BmwDeepObd
 
         public bool UpdateDirectories(InstanceDataCommon instanceData)
         {
+            if (instanceData == null)
+            {
+                return false;
+            }
+
             instanceData.AppDataPath = string.Empty;
             instanceData.EcuPath = string.Empty;
             instanceData.VagPath = string.Empty;
@@ -12693,6 +12698,17 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return false;
+            }
+
+            return false;
+        }
+
+        public bool IsExStorageAvailable()
+        {
+            Java.IO.File[] storages = ContextCompat.GetExternalFilesDirs(_context, null);
+            if (storages.Length > 1 && storages[0] != null && storages[1] != null)
+            {
+                return true;
             }
 
             return false;
