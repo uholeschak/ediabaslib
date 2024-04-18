@@ -401,6 +401,12 @@ namespace BmwDeepObd
                 Android.Util.Log.Info(Tag, "CommTimerCallback: Valid instance");
 #endif
             }
+            else
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "CommTimerCallback: No instance");
+#endif
+            }
         }
 
         /// <summary>
