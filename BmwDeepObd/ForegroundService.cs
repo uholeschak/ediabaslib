@@ -360,9 +360,6 @@ namespace BmwDeepObd
 
         private void CommTimerCallback(object state)
         {
-#if DEBUG
-            Android.Util.Log.Info(Tag, "CommTimerCallback");
-#endif
             if (_instanceData == null)
             {
                 if (!_activityCommon.IsExStorageAvailable())
@@ -384,11 +381,25 @@ namespace BmwDeepObd
                         return;
                     }
 
+                    if (!_activityCommon.UpdateDirectories(instanceData))
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: UpdateDirectories failed");
+#endif
+                        return;
+                    }
                     _instanceData = instanceData;
 #if DEBUG
                     Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
 #endif
                 }
+            }
+
+            if (_instanceData != null)
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "CommTimerCallback: Valid instance");
+#endif
             }
         }
 

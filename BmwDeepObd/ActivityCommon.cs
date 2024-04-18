@@ -12086,6 +12086,11 @@ namespace BmwDeepObd
 
         public bool UpdateDirectories(InstanceDataCommon instanceData)
         {
+            if (instanceData == null)
+            {
+                return false;
+            }
+
             instanceData.AppDataPath = string.Empty;
             instanceData.EcuPath = string.Empty;
             instanceData.VagPath = string.Empty;
