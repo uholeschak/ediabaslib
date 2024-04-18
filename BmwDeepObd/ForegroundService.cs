@@ -26,11 +26,12 @@ namespace BmwDeepObd
         public const string ActionStartService = "ForegroundService.action.START_SERVICE";
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
         public const string ActionShowMainActivity = "ForegroundService.action.SHOW_MAIN_ACTIVITY";
+        public const string StartComm = "StartComm";
 
         private bool _isStarted;
         private ActivityCommon _activityCommon;
         private Handler _stopHandler;
-        private Timer _statusTimer;
+        private Timer _commTimer;
         private Java.Lang.Runnable _stopRunnable;
 
         public ActivityCommon ActivityCommon => _activityCommon;
@@ -45,7 +46,6 @@ namespace BmwDeepObd
             _stopRunnable = new Java.Lang.Runnable(StopEdiabasThread);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
-            StartStatusTimer();
 
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -63,9 +63,12 @@ namespace BmwDeepObd
             {
                 return Android.App.StartCommandResult.Sticky;
             }
+
             switch (intent.Action)
             {
                 case ActionStartService:
+                {
+                    bool startComm = intent.GetBooleanExtra(StartComm, false);
                     if (_isStarted)
                     {
 #if DEBUG
@@ -78,9 +81,14 @@ namespace BmwDeepObd
                         Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
                         RegisterForegroundService();
+                        if (startComm)
+                        {
+                            StartCommTimer();
+                        }
                         _isStarted = true;
                     }
                     break;
+                }
 
                 case ActionStopService:
                 {
@@ -165,7 +173,7 @@ namespace BmwDeepObd
             _activityCommon = null;
             _isStarted = false;
 
-            StopStatusTimer();
+            StopCommTimer();
             if (_stopHandler != null)
             {
                 try
@@ -329,27 +337,27 @@ namespace BmwDeepObd
             }
         }
 
-        private void StartStatusTimer()
+        private void StartCommTimer()
         {
-            if (_statusTimer == null)
+            if (_commTimer == null)
             {
-                _statusTimer = new Timer(StatusTimerCallback, null, 0, 1000);
+                _commTimer = new Timer(CommTimerCallback, null, 0, 1000);
             }
         }
 
-        private void StopStatusTimer()
+        private void StopCommTimer()
         {
-            if (_statusTimer != null)
+            if (_commTimer != null)
             {
-                _statusTimer.Dispose();
-                _statusTimer = null;
+                _commTimer.Dispose();
+                _commTimer = null;
             }
         }
 
-        private void StatusTimerCallback(object state)
+        private void CommTimerCallback(object state)
         {
 #if DEBUG
-            Android.Util.Log.Info(Tag, "StatusTimerCallback");
+            Android.Util.Log.Info(Tag, "CommTimerCallback");
 #endif
         }
 
