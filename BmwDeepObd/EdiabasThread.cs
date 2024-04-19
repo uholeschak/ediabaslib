@@ -397,12 +397,18 @@ namespace BmwDeepObd
             }
         }
 
-        public bool StartThread(string comPort, object connectParameter, JobReader.PageInfo pageInfo, bool commActive, string vagPath, string bmwPath, string traceDir, bool traceAppend, string logDir, bool appendLog)
+        public bool StartThread(string comPort, object connectParameter, JobReader.PageInfo pageInfo, bool commActive, ActivityCommon.InstanceDataCommon instanceData)
         {
             if (_workerThread != null)
             {
                 return false;
             }
+
+            if (instanceData == null)
+            {
+                return false;
+            }
+
             try
             {
                 _stopThread = false;
@@ -419,17 +425,17 @@ namespace BmwDeepObd
                     }
                 }
                 Ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
-                ActivityCommon.SetEdiabasConfigProperties(Ediabas, traceDir, traceAppend);
+                ActivityCommon.SetEdiabasConfigProperties(Ediabas, instanceData.TraceDir, instanceData.TraceAppend);
                 CloseDataLog();
 
                 CommActive = commActive;
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
-                _vagPath = vagPath;
-                _bmwPath = bmwPath;
-                _logDir = logDir;
-                _appendLog = appendLog;
+                _vagPath = instanceData.VagPath;
+                _bmwPath = instanceData.BmwPath;
+                _logDir = instanceData.DataLogDir;
+                _appendLog = instanceData.DataLogAppend;
                 _detectVehicleBmw = null;
                 InitProperties(null);
                 _ruleEvalBmw.SetEvalProperties(null, null);
