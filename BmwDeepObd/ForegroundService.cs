@@ -86,7 +86,10 @@ namespace BmwDeepObd
                         RegisterForegroundService();
                         if (startComm)
                         {
-                            StartCommTimer();
+                            if (!ActivityCommon.CommActive)
+                            {
+                                StartCommTimer();
+                            }
                         }
                         _isStarted = true;
                     }
@@ -360,6 +363,15 @@ namespace BmwDeepObd
 
         private void CommTimerCallback(object state)
         {
+            if (ActivityCommon.CommActive)
+            {
+                StopCommTimer();
+#if DEBUG
+                Android.Util.Log.Info(Tag, "CommTimerCallback: Communication active, stopping timer");
+#endif
+                return;
+            }
+
             if (_instanceData == null)
             {
                 if (!_activityCommon.IsExStorageAvailable())
