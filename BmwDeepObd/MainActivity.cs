@@ -2352,8 +2352,7 @@ namespace BmwDeepObd
                             break;
                     }
 
-                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true,
-                        _instanceData.VagPath, _instanceData.BmwPath, _instanceData.TraceDir, _instanceData.TraceAppend, _instanceData.DataLogDir, _instanceData.DataLogAppend);
+                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, _instanceData);
                     if (UseCommService())
                     {
                         ActivityCommon.StartForegroundService(this);
