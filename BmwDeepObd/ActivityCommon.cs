@@ -5999,6 +5999,69 @@ namespace BmwDeepObd
             return new EdInterfaceObd();
         }
 
+        public bool StartEdiabasThread(InstanceDataCommon instanceData, JobReader.PageInfo pageInfo)
+        {
+            if (pageInfo == null)
+            {
+                return false;
+            }
+
+            if (EdiabasThread == null)
+            {
+                return false;
+            }
+
+            string portName = string.Empty;
+            object connectParameter = null;
+            switch (SelectedInterface)
+            {
+                case InterfaceType.Bluetooth:
+                    portName = EdBluetoothInterface.PortId + ":" + instanceData.DeviceAddress;
+                    connectParameter = new EdBluetoothInterface.ConnectParameterType(NetworkData, MtcBtService, MtcBtEscapeMode,
+                        () => EdiabasThread.ActiveContext);
+                    ConnectMtcBtDevice(instanceData.DeviceAddress);
+                    break;
+
+                case InterfaceType.Enet:
+                    connectParameter = new EdInterfaceEnet.ConnectParameterType(NetworkData);
+                    if (Emulator && !string.IsNullOrEmpty(EmulatorEnetIp))
+                    {
+                        // broadcast is not working with emulator
+                        portName = EmulatorEnetIp;
+                        break;
+                    }
+                    portName = string.IsNullOrEmpty(SelectedEnetIp) ? "auto:all" : SelectedEnetIp;
+                    break;
+
+                case InterfaceType.ElmWifi:
+                    portName = EdElmWifiInterface.PortId;
+                    if (!string.IsNullOrEmpty(SelectedElmWifiIp))
+                    {
+                        portName += ":" + SelectedElmWifiIp;
+                    }
+                    connectParameter = new EdElmWifiInterface.ConnectParameterType(NetworkData);
+                    break;
+
+                case InterfaceType.DeepObdWifi:
+                    portName = EdCustomWiFiInterface.PortId;
+                    if (!string.IsNullOrEmpty(SelectedDeepObdWifiIp))
+                    {
+                        portName += ":" + SelectedDeepObdWifiIp;
+                    }
+                    connectParameter = new EdCustomWiFiInterface.ConnectParameterType(NetworkData, MaWifi);
+                    break;
+
+                case InterfaceType.Ftdi:
+                    portName = EdFtdiInterface.PortId + "0";
+                    connectParameter = new EdFtdiInterface.ConnectParameterType(UsbManager);
+                    break;
+            }
+
+            EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, instanceData);
+
+            return true;
+        }
+
         public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)
         {
             PackageInfo packageInfo = GetPackageInfo();

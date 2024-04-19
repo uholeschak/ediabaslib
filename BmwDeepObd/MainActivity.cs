@@ -2304,59 +2304,20 @@ namespace BmwDeepObd
                 _maxDispUpdateTime = 0;
 
                 JobReader.PageInfo pageInfo = GetSelectedPage();
-                object connectParameter = null;
-                if (pageInfo != null)
+                if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo))
                 {
-                    string portName = string.Empty;
-                    switch (_activityCommon.SelectedInterface)
+                    DisconnectEdiabasEvents();
+                    if (ActivityCommon.EdiabasThread != null)
                     {
-                        case ActivityCommon.InterfaceType.Bluetooth:
-                            portName = EdBluetoothInterface.PortId + ":" + _instanceData.DeviceAddress;
-                            connectParameter = new EdBluetoothInterface.ConnectParameterType(_activityCommon.NetworkData, _activityCommon.MtcBtService, _activityCommon.MtcBtEscapeMode,
-                                () => ActivityCommon.EdiabasThread.ActiveContext);
-                            _activityCommon.ConnectMtcBtDevice(_instanceData.DeviceAddress);
-                            break;
-
-                        case ActivityCommon.InterfaceType.Enet:
-                            connectParameter = new EdInterfaceEnet.ConnectParameterType(_activityCommon.NetworkData);
-                            if (_activityCommon.Emulator && !string.IsNullOrEmpty(ActivityCommon.EmulatorEnetIp))
-                            {
-                                // broadcast is not working with emulator
-                                portName = ActivityCommon.EmulatorEnetIp;
-                                break;
-                            }
-                            portName = string.IsNullOrEmpty(_activityCommon.SelectedEnetIp) ? "auto:all" : _activityCommon.SelectedEnetIp;
-                            break;
-
-                        case ActivityCommon.InterfaceType.ElmWifi:
-                            portName = EdElmWifiInterface.PortId;
-                            if (!string.IsNullOrEmpty(_activityCommon.SelectedElmWifiIp))
-                            {
-                                portName += ":" + _activityCommon.SelectedElmWifiIp;
-                            }
-                            connectParameter = new EdElmWifiInterface.ConnectParameterType(_activityCommon.NetworkData);
-                            break;
-
-                        case ActivityCommon.InterfaceType.DeepObdWifi:
-                            portName = EdCustomWiFiInterface.PortId;
-                            if (!string.IsNullOrEmpty(_activityCommon.SelectedDeepObdWifiIp))
-                            {
-                                portName += ":" + _activityCommon.SelectedDeepObdWifiIp;
-                            }
-                            connectParameter = new EdCustomWiFiInterface.ConnectParameterType(_activityCommon.NetworkData, _activityCommon.MaWifi);
-                            break;
-
-                        case ActivityCommon.InterfaceType.Ftdi:
-                            portName = EdFtdiInterface.PortId + "0";
-                            connectParameter = new EdFtdiInterface.ConnectParameterType(_activityCommon.UsbManager);
-                            break;
+                        ActivityCommon.EdiabasThread.Dispose();
+                        ActivityCommon.EdiabasThread = null;
                     }
+                    return false;
+                }
 
-                    ActivityCommon.EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, _instanceData);
-                    if (UseCommService())
-                    {
-                        ActivityCommon.StartForegroundService(this);
-                    }
+                if (UseCommService())
+                {
+                    ActivityCommon.StartForegroundService(this);
                 }
             }
             catch (Exception)
