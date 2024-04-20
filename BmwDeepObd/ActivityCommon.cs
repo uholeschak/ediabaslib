@@ -795,6 +795,7 @@ namespace BmwDeepObd
         public const string DefaultPwdModBmw = "admin";
         public const string SettingsFile = "Settings.xml";
         public const string DownloadDir = "Download";
+        public const string LogDir = "Log";
         public const string EcuBaseDir = "Ecu";
         public const string VagBaseDir = "Vag";
         public const string BmwBaseDir = "Bmw";
@@ -6001,6 +6002,11 @@ namespace BmwDeepObd
 
         public bool StartEdiabasThread(InstanceDataCommon instanceData, JobReader.PageInfo pageInfo)
         {
+            if (instanceData == null)
+            {
+                return false;
+            }
+
             if (pageInfo == null)
             {
                 return false;
@@ -6009,6 +6015,27 @@ namespace BmwDeepObd
             if (EdiabasThread == null)
             {
                 return false;
+            }
+
+            string logDir = string.Empty;
+            if (instanceData.DataLogActive && !string.IsNullOrEmpty(JobReader.LogPath))
+            {
+                logDir = Path.IsPathRooted(JobReader.LogPath) ? JobReader.LogPath : Path.Combine(instanceData.AppDataPath, JobReader.LogPath);
+                try
+                {
+                    Directory.CreateDirectory(logDir);
+                }
+                catch (Exception)
+                {
+                    logDir = string.Empty;
+                }
+            }
+            instanceData.DataLogDir = logDir;
+
+            instanceData.TraceDir = null;
+            if (instanceData.TraceActive && !string.IsNullOrEmpty(instanceData.ConfigFileName))
+            {
+                instanceData.TraceDir = Path.Combine(instanceData.AppDataPath, LogDir);
             }
 
             string portName = string.Empty;
