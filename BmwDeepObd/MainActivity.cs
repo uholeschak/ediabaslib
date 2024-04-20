@@ -2275,28 +2275,9 @@ namespace BmwDeepObd
             {
                 if (ActivityCommon.EdiabasThread == null)
                 {
-                    ActivityCommon.EdiabasThread = new EdiabasThread(string.IsNullOrEmpty(ActivityCommon.JobReader.EcuPath) ? _instanceData.EcuPath : ActivityCommon.JobReader.EcuPath, _activityCommon, this);
+                    ActivityCommon.EdiabasThread = new EdiabasThread(string.IsNullOrEmpty(ActivityCommon.JobReader.EcuPath) ?
+                        _instanceData.EcuPath : ActivityCommon.JobReader.EcuPath, _activityCommon, this);
                     ConnectEdiabasEvents();
-                }
-                string logDir = string.Empty;
-                if (_instanceData.DataLogActive && !string.IsNullOrEmpty(ActivityCommon.JobReader.LogPath))
-                {
-                    logDir = Path.IsPathRooted(ActivityCommon.JobReader.LogPath) ? ActivityCommon.JobReader.LogPath : Path.Combine(_instanceData.AppDataPath, ActivityCommon.JobReader.LogPath);
-                    try
-                    {
-                        Directory.CreateDirectory(logDir);
-                    }
-                    catch (Exception)
-                    {
-                        logDir = string.Empty;
-                    }
-                }
-                _instanceData.DataLogDir = logDir;
-
-                _instanceData.TraceDir = null;
-                if (_instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
-                {
-                    _instanceData.TraceDir = Path.Combine(_instanceData.AppDataPath, "Log");
                 }
 
                 _translationList = null;
