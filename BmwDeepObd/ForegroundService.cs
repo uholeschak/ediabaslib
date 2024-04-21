@@ -56,6 +56,7 @@ namespace BmwDeepObd
                 if (ediabasThread != null)
                 {
                     ediabasThread.ActiveContext = this;
+                    ConnectEdiabasEvents();
                 }
             }
         }
@@ -264,6 +265,19 @@ namespace BmwDeepObd
             }
         }
 
+        private void EdiabasEventHandler(bool connect)
+        {
+            // the GloblalLockObject is already locked
+            if (connect)
+            {
+                ConnectEdiabasEvents();
+            }
+            else
+            {
+                DisconnectEdiabasEvents();
+            }
+        }
+
         private void ThreadTerminated(object sender, EventArgs e)
         {
             PostStopEdiabasThread();
@@ -299,7 +313,6 @@ namespace BmwDeepObd
                 {
                     if (!ActivityCommon.EdiabasThread.ThreadStopping())
                     {
-                        ConnectEdiabasEvents();
                         ActivityCommon.EdiabasThread.StopThread(wait);
                     }
                 }
@@ -333,7 +346,6 @@ namespace BmwDeepObd
                 }
                 lock (ActivityCommon.GlobalLockObject)
                 {
-                    DisconnectEdiabasEvents();
                     if (ActivityCommon.EdiabasThread != null)
                     {
                         ActivityCommon.EdiabasThread.Dispose();
@@ -403,6 +415,17 @@ namespace BmwDeepObd
                     _instanceData = instanceData;
 #if DEBUG
                     Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
+#endif
+                    if (!_activityCommon.StartEdiabasThread(_instanceData, null, EdiabasEventHandler))
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread failed");
+#endif
+                        StopCommTimer();
+                        return;
+                    }
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread Ok");
 #endif
                 }
             }
