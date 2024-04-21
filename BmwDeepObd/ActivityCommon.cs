@@ -6110,6 +6110,42 @@ namespace BmwDeepObd
             return true;
         }
 
+        public bool StopEdiabasThread(bool wait, EdiabasEventDelegate ediabasEvent)
+        {
+            if (EdiabasThread != null)
+            {
+                try
+                {
+                    lock (GlobalLockObject)
+                    {
+                        if (EdiabasThread != null)
+                        {
+                            EdiabasThread.StopThread(wait);
+                        }
+                    }
+                    if (wait)
+                    {
+                        StopForegroundService(_context);
+                        lock (GlobalLockObject)
+                        {
+                            ediabasEvent?.Invoke(false);
+                            if (EdiabasThread != null)
+                            {
+                                EdiabasThread.Dispose();
+                                EdiabasThread = null;
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)
         {
             PackageInfo packageInfo = GetPackageInfo();

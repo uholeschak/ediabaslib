@@ -2286,18 +2286,7 @@ namespace BmwDeepObd
 
                 JobReader.PageInfo pageInfo = GetSelectedPage();
 
-                if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo, connect =>
-                    {
-                        // Global lock object is locked by StartEdiabasThread
-                        if (connect)
-                        {
-                            ConnectEdiabasEvents();
-                        }
-                        else
-                        {
-                            DisconnectEdiabasEvents();
-                        }
-                    }))
+                if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo, EdiabasEventHandler))
                 {
                     return false;
                 }
@@ -2319,36 +2308,8 @@ namespace BmwDeepObd
 
         private void StopEdiabasThread(bool wait)
         {
-            if (ActivityCommon.EdiabasThread != null)
-            {
-                try
-                {
-                    lock (ActivityCommon.GlobalLockObject)
-                    {
-                        if (ActivityCommon.EdiabasThread != null)
-                        {
-                            ActivityCommon.EdiabasThread.StopThread(wait);
-                        }
-                    }
-                    if (wait)
-                    {
-                        ActivityCommon.StopForegroundService(this);
-                        lock (ActivityCommon.GlobalLockObject)
-                        {
-                            DisconnectEdiabasEvents();
-                            if (ActivityCommon.EdiabasThread != null)
-                            {
-                                ActivityCommon.EdiabasThread.Dispose();
-                                ActivityCommon.EdiabasThread = null;
-                            }
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    return;
-                }
-            }
+            _activityCommon.StopEdiabasThread(wait, EdiabasEventHandler);
+
             UpdateLockState();
             UpdateOptionsMenu();
 
@@ -2373,6 +2334,19 @@ namespace BmwDeepObd
                 ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
                 ActivityCommon.EdiabasThread.PageChanged -= PageChanged;
                 ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
+            }
+        }
+
+        private void EdiabasEventHandler(bool connect)
+        {
+            // the GloblalLockObject is already locked
+            if (connect)
+            {
+                ConnectEdiabasEvents();
+            }
+            else
+            {
+                DisconnectEdiabasEvents();
             }
         }
 
