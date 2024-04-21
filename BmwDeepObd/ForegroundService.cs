@@ -29,9 +29,18 @@ namespace BmwDeepObd
         public const string ActionShowMainActivity = "ForegroundService.action.SHOW_MAIN_ACTIVITY";
         public const string StartComm = "StartComm";
 
+        private enum StartState
+        {
+            None,
+            LoadSettings,
+            StartComm,
+            Started,
+        }
+
         private bool _isStarted;
         private ActivityCommon _activityCommon;
         private ActivityCommon.InstanceDataCommon _instanceData;
+        private StartState _startState;
         private Handler _stopHandler;
         private Timer _commTimer;
         private Java.Lang.Runnable _stopRunnable;
@@ -48,7 +57,8 @@ namespace BmwDeepObd
             _stopRunnable = new Java.Lang.Runnable(StopEdiabasThread);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
-            _instanceData = new ActivityCommon.InstanceDataCommon();
+            _instanceData = null;
+            _startState = StartState.None;
 
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -359,6 +369,7 @@ namespace BmwDeepObd
         {
             if (_commTimer == null)
             {
+                _startState = StartState.LoadSettings;
                 _commTimer = new Timer(CommTimerCallback, null, 0, 1000);
             }
         }
@@ -370,7 +381,9 @@ namespace BmwDeepObd
                 _commTimer.Dispose();
                 _commTimer = null;
             }
+
             _instanceData = null;
+            _startState = StartState.None;
         }
 
         private void CommTimerCallback(object state)
@@ -384,63 +397,82 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_instanceData == null)
+            switch (_startState)
             {
-                if (!_activityCommon.IsExStorageAvailable())
+                case StartState.LoadSettings:
                 {
+                    if (_instanceData == null)
+                    {
+                        if (!_activityCommon.IsExStorageAvailable())
+                        {
 #if DEBUG
-                    Android.Util.Log.Info(Tag, "CommTimerCallback: No external storage");
+                            Android.Util.Log.Info(Tag, "CommTimerCallback: No external storage");
 #endif
+                        }
+
+                        string settingsFile = ActivityCommon.GetSettingsFileName();
+                        if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                        {
+                            ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
+                            if (!_activityCommon.GetSettings(instanceData, settingsFile, ActivityCommon.SettingsMode.All, true))
+                            {
+#if DEBUG
+                                Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings failed");
+#endif
+                                return;
+                            }
+
+                            if (!_activityCommon.UpdateDirectories(instanceData))
+                            {
+#if DEBUG
+                                Android.Util.Log.Info(Tag, "CommTimerCallback: UpdateDirectories failed");
+#endif
+                                return;
+                            }
+                            _instanceData = instanceData;
+#if DEBUG
+                            Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
+#endif
+                        }
+                    }
+
+                    if (_instanceData != null)
+                    {
+                        _startState = StartState.StartComm;
+                    }
+                    break;
                 }
 
-                string settingsFile = ActivityCommon.GetSettingsFileName();
-                if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                case StartState.StartComm:
                 {
-                    ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
-                    if (!_activityCommon.GetSettings(instanceData, settingsFile, ActivityCommon.SettingsMode.All, true))
+                    if (_instanceData == null)
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings failed");
-#endif
-                        return;
-                    }
-
-                    if (!_activityCommon.UpdateDirectories(instanceData))
-                    {
-#if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: UpdateDirectories failed");
-#endif
-                        return;
-                    }
-                    _instanceData = instanceData;
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
-#endif
-                    if (!_activityCommon.StartEdiabasThread(_instanceData, null, EdiabasEventHandler))
-                    {
-#if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread failed");
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: StartComm no instance");
 #endif
                         StopCommTimer();
                         return;
                     }
 #if DEBUG
-                    Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread Ok");
+                    Android.Util.Log.Info(Tag, "CommTimerCallback: Valid instance");
 #endif
+                    if (!ActivityCommon.CommActive)
+                    {
+                        if (!_activityCommon.StartEdiabasThread(_instanceData, null, EdiabasEventHandler))
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread failed");
+#endif
+                            StopCommTimer();
+                            return;
+                        }
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread Ok");
+#endif
+                        _startState = StartState.Started;
+                    }
+                    break;
                 }
-            }
-
-            if (_instanceData != null)
-            {
-#if DEBUG
-                Android.Util.Log.Info(Tag, "CommTimerCallback: Valid instance");
-#endif
-            }
-            else
-            {
-#if DEBUG
-                Android.Util.Log.Info(Tag, "CommTimerCallback: No instance");
-#endif
             }
         }
 
