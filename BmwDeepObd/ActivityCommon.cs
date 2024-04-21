@@ -6013,14 +6013,9 @@ namespace BmwDeepObd
                 return true;
             }
 
-            lock (GlobalLockObject)
+            if (EdiabasThread != null)
             {
-                if (EdiabasThread != null)
-                {
-                    ediabasEvent?.Invoke(false);
-                    EdiabasThread.Dispose();
-                    EdiabasThread = null;
-                }
+                StopEdiabasThread(true, ediabasEvent);
             }
 
             lock (GlobalLockObject)
