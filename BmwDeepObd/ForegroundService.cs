@@ -48,7 +48,6 @@ namespace BmwDeepObd
             _stopRunnable = new Java.Lang.Runnable(StopEdiabasThread);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
-            _instanceData = new ActivityCommon.InstanceDataCommon();
 
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -416,6 +415,16 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
 #endif
+                }
+            }
+
+            if (_instanceData != null)
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "CommTimerCallback: Valid instance");
+#endif
+                if (!ActivityCommon.CommActive)
+                {
                     if (!_activityCommon.StartEdiabasThread(_instanceData, null, EdiabasEventHandler))
                     {
 #if DEBUG
@@ -428,13 +437,6 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread Ok");
 #endif
                 }
-            }
-
-            if (_instanceData != null)
-            {
-#if DEBUG
-                Android.Util.Log.Info(Tag, "CommTimerCallback: Valid instance");
-#endif
             }
             else
             {
