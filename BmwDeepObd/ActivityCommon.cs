@@ -761,7 +761,7 @@ namespace BmwDeepObd
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
-        public delegate void EdiabasHanderDelegate(bool connect);
+        public delegate void EdiabasEventDelegate(bool connect);
 
 #if !NET
         public const Bind BindAllowActivityStarts = (Bind) 0x00000200;
@@ -6001,7 +6001,7 @@ namespace BmwDeepObd
             return new EdInterfaceObd();
         }
 
-        public bool StartEdiabasThread(InstanceDataCommon instanceData, JobReader.PageInfo pageInfo, EdiabasHanderDelegate ediabasHander)
+        public bool StartEdiabasThread(InstanceDataCommon instanceData, JobReader.PageInfo pageInfo, EdiabasEventDelegate ediabasEvent)
         {
             if (instanceData == null)
             {
@@ -6018,18 +6018,24 @@ namespace BmwDeepObd
                 return true;
             }
 
-            if (EdiabasThread != null)
+            lock (GlobalLockObject)
             {
-                ediabasHander?.Invoke(false);
-                EdiabasThread.Dispose();
-                EdiabasThread = null;
+                if (EdiabasThread != null)
+                {
+                    ediabasEvent?.Invoke(false);
+                    EdiabasThread.Dispose();
+                    EdiabasThread = null;
+                }
             }
 
-            if (EdiabasThread == null)
+            lock (GlobalLockObject)
             {
-                string ecuPath = string.IsNullOrEmpty(JobReader.EcuPath) ? instanceData.EcuPath : JobReader.EcuPath;
-                EdiabasThread = new EdiabasThread(ecuPath, this, _context);
-                ediabasHander?.Invoke(true);
+                if (EdiabasThread == null)
+                {
+                    string ecuPath = string.IsNullOrEmpty(JobReader.EcuPath) ? instanceData.EcuPath : JobReader.EcuPath;
+                    EdiabasThread = new EdiabasThread(ecuPath, this, _context);
+                    ediabasEvent?.Invoke(true);
+                }
             }
 
             string logDir = string.Empty;

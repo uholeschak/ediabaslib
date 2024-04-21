@@ -362,7 +362,10 @@ namespace BmwDeepObd
             _connectTypeRequest = ActivityCommon.AutoConnectHandling;
             if (ActivityCommon.CommActive)
             {
-                ConnectEdiabasEvents();
+                lock (ActivityCommon.GlobalLockObject)
+                {
+                    ConnectEdiabasEvents();
+                }
             }
             else
             {
@@ -698,7 +701,11 @@ namespace BmwDeepObd
             {
                 StopEdiabasThread(true);
             }
-            DisconnectEdiabasEvents();
+
+            lock (ActivityCommon.GlobalLockObject)
+            {
+                DisconnectEdiabasEvents();
+            }
 
             if (IsErrorEvalJobRunning())
             {
@@ -2269,10 +2276,10 @@ namespace BmwDeepObd
 
         private bool StartEdiabasThread()
         {
-            _instanceData.AutoStart = false;
-            _instanceData.CommErrorsCount = 0;
             try
             {
+                _instanceData.AutoStart = false;
+                _instanceData.CommErrorsCount = 0;
                 _translationList = null;
                 _translatedList = null;
                 _maxDispUpdateTime = 0;
@@ -2281,6 +2288,7 @@ namespace BmwDeepObd
 
                 if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo, connect =>
                     {
+                        // Global lock object is locked by StartEdiabasThread
                         if (connect)
                         {
                             ConnectEdiabasEvents();
@@ -2325,9 +2333,9 @@ namespace BmwDeepObd
                     if (wait)
                     {
                         ActivityCommon.StopForegroundService(this);
-                        DisconnectEdiabasEvents();
                         lock (ActivityCommon.GlobalLockObject)
                         {
+                            DisconnectEdiabasEvents();
                             if (ActivityCommon.EdiabasThread != null)
                             {
                                 ActivityCommon.EdiabasThread.Dispose();
