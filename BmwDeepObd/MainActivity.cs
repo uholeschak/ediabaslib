@@ -2278,13 +2278,17 @@ namespace BmwDeepObd
         {
             try
             {
+                JobReader.PageInfo pageInfo = GetSelectedPage();
+                if (pageInfo == null)
+                {
+                    return false;
+                }
+
                 _instanceData.AutoStart = false;
                 _instanceData.CommErrorsCount = 0;
                 _translationList = null;
                 _translatedList = null;
                 _maxDispUpdateTime = 0;
-
-                JobReader.PageInfo pageInfo = GetSelectedPage();
 
                 if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo, EdiabasEventHandler))
                 {
