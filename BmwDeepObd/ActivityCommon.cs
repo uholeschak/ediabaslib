@@ -6003,11 +6003,6 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (pageInfo == null)
-            {
-                return false;
-            }
-
             if (CommActive)
             {
                 return true;
@@ -6016,6 +6011,22 @@ namespace BmwDeepObd
             if (EdiabasThread != null)
             {
                 StopEdiabasThread(true, ediabasEvent);
+            }
+
+            JobReader.PageInfo pageInfoUse = pageInfo;
+            if (pageInfoUse == null)
+            {
+                if (!JobReader.ReadXml(instanceData.ConfigFileName, out string _))
+                {
+                    return false;
+                }
+
+                if (JobReader.PageList.Count < 1)
+                {
+                    return false;
+                }
+
+                pageInfoUse = JobReader.PageList[0];
             }
 
             lock (GlobalLockObject)
@@ -6095,7 +6106,7 @@ namespace BmwDeepObd
                     break;
             }
 
-            EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, instanceData);
+            EdiabasThread.StartThread(portName, connectParameter, pageInfoUse, true, instanceData);
 
             return true;
         }
