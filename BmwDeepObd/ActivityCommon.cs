@@ -1926,12 +1926,7 @@ namespace BmwDeepObd
                         _instanceCount--;
                         if (_instanceCount == 0)
                         {
-                            if (EdiabasThread != null)
-                            {
-                                EdiabasThread.StopThread(true);
-                                EdiabasThread.Dispose();
-                                EdiabasThread = null;
-                            }
+                            StopEdiabasThread(true);
                             BluetoothDisableAtExit();
                             MemoryStreamReader.CleanUp();
                         }
@@ -6110,7 +6105,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool StopEdiabasThread(bool wait, EdiabasEventDelegate ediabasEvent)
+        public bool StopEdiabasThread(bool wait, EdiabasEventDelegate ediabasEvent = null)
         {
             if (EdiabasThread != null)
             {
