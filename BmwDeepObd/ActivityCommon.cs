@@ -761,6 +761,7 @@ namespace BmwDeepObd
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
+        public delegate void EdiabasHanderDelegate(bool connect);
 
 #if !NET
         public const Bind BindAllowActivityStarts = (Bind) 0x00000200;
@@ -6000,7 +6001,7 @@ namespace BmwDeepObd
             return new EdInterfaceObd();
         }
 
-        public bool StartEdiabasThread(InstanceDataCommon instanceData, JobReader.PageInfo pageInfo)
+        public bool StartEdiabasThread(InstanceDataCommon instanceData, JobReader.PageInfo pageInfo, EdiabasHanderDelegate ediabasHander)
         {
             if (instanceData == null)
             {
@@ -6012,9 +6013,23 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (CommActive)
+            {
+                return true;
+            }
+
+            if (EdiabasThread != null)
+            {
+                ediabasHander?.Invoke(false);
+                EdiabasThread.Dispose();
+                EdiabasThread = null;
+            }
+
             if (EdiabasThread == null)
             {
-                return false;
+                string ecuPath = string.IsNullOrEmpty(JobReader.EcuPath) ? instanceData.EcuPath : JobReader.EcuPath;
+                EdiabasThread = new EdiabasThread(ecuPath, this, _context);
+                ediabasHander?.Invoke(true);
             }
 
             string logDir = string.Empty;

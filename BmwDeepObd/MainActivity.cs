@@ -2273,26 +2273,24 @@ namespace BmwDeepObd
             _instanceData.CommErrorsCount = 0;
             try
             {
-                if (ActivityCommon.EdiabasThread == null)
-                {
-                    ActivityCommon.EdiabasThread = new EdiabasThread(string.IsNullOrEmpty(ActivityCommon.JobReader.EcuPath) ?
-                        _instanceData.EcuPath : ActivityCommon.JobReader.EcuPath, _activityCommon, this);
-                    ConnectEdiabasEvents();
-                }
-
                 _translationList = null;
                 _translatedList = null;
                 _maxDispUpdateTime = 0;
 
                 JobReader.PageInfo pageInfo = GetSelectedPage();
-                if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo))
-                {
-                    DisconnectEdiabasEvents();
-                    if (ActivityCommon.EdiabasThread != null)
+
+                if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo, connect =>
                     {
-                        ActivityCommon.EdiabasThread.Dispose();
-                        ActivityCommon.EdiabasThread = null;
-                    }
+                        if (connect)
+                        {
+                            ConnectEdiabasEvents();
+                        }
+                        else
+                        {
+                            DisconnectEdiabasEvents();
+                        }
+                    }))
+                {
                     return false;
                 }
 
@@ -2305,6 +2303,7 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
             UpdateLockState();
             UpdateOptionsMenu();
             return true;
