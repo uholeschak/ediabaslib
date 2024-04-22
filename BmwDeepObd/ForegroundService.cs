@@ -34,6 +34,7 @@ namespace BmwDeepObd
         {
             None,
             LoadSettings,
+            InitReader,
             StartComm,
             Started,
         }
@@ -395,6 +396,36 @@ namespace BmwDeepObd
             }
         }
 
+        private bool InitReader()
+        {
+            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
+            {
+                if (!_activityCommon.IsInitEcuFunctionsRequired())
+                {
+                    return true;
+                }
+
+                if (!ActivityCommon.InitEcuFunctionReader(_instanceData.BmwPath, out string _))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            if (!_activityCommon.IsInitUdsReaderRequired())
+            {
+                return true;
+            }
+
+            if (!ActivityCommon.InitUdsReader(_instanceData.VagPath, out string _))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private void CommTimerCallback(object state)
         {
             if (ActivityCommon.CommActive)
@@ -440,9 +471,38 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
 #endif
-                        _startState = StartState.StartComm;
+                        _startState = StartState.InitReader;
                     }
 
+                    break;
+                }
+
+                case StartState.InitReader:
+                {
+                    if (_instanceData == null)
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: InitReader no instance");
+#endif
+                        _startState = StartState.None;
+                        return;
+                    }
+
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommTimerCallback: InitReader start");
+#endif
+                    if (!InitReader())
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: InitReader failed");
+#endif
+                        _startState = StartState.None;
+                        return;
+                    }
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommTimerCallback: InitReader Ok");
+#endif
+                    _startState = StartState.StartComm;
                     break;
                 }
 
@@ -456,11 +516,12 @@ namespace BmwDeepObd
                         _startState = StartState.None;
                         return;
                     }
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "CommTimerCallback: Valid instance");
-#endif
+
                     if (!ActivityCommon.CommActive)
                     {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread start");
+#endif
                         if (!_activityCommon.StartEdiabasThread(_instanceData, null, EdiabasEventHandler))
                         {
 #if DEBUG
