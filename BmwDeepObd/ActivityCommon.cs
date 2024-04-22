@@ -11414,9 +11414,19 @@ namespace BmwDeepObd
             return InitUdsReaderThread(vagPath, handler);
         }
 
-        public bool InitUdsReaderThread(string vagPath, InitThreadFinishDelegate handler)
+        public bool IsInitUdsReaderRequired()
         {
             if (OldVagMode || VagUdsChecked || SelectedManufacturer == ManufacturerType.Bmw)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool InitUdsReaderThread(string vagPath, InitThreadFinishDelegate handler)
+        {
+            if (!IsInitUdsReaderRequired())
             {
                 return false;
             }
@@ -11608,7 +11618,7 @@ namespace BmwDeepObd
             return null;
         }
 
-        public bool InitEcuFunctionReaderThread(string bmwPath, InitThreadFinishDelegate handler)
+        public bool IsInitEcuFunctionsRequired()
         {
             if (!UseBmwDatabase || SelectedManufacturer != ManufacturerType.Bmw)
             {
@@ -11624,6 +11634,16 @@ namespace BmwDeepObd
             }
 
             if (EcuFunctionsChecked)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool InitEcuFunctionReaderThread(string bmwPath, InitThreadFinishDelegate handler)
+        {
+            if (!IsInitEcuFunctionsRequired())
             {
                 return false;
             }
