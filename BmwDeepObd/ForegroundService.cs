@@ -28,6 +28,7 @@ namespace BmwDeepObd
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
         public const string ActionShowMainActivity = "ForegroundService.action.SHOW_MAIN_ACTIVITY";
         public const string StartComm = "StartComm";
+        private const int UpdateInterval = 1000;
 
         private enum StartState
         {
@@ -372,8 +373,9 @@ namespace BmwDeepObd
             {
                 if (_commTimer == null)
                 {
+                    _instanceData = null;
                     _startState = StartState.LoadSettings;
-                    _commTimer = new Timer(CommTimerCallback, null, 1000, Timeout.Infinite);
+                    _commTimer = new Timer(CommTimerCallback, null, UpdateInterval, Timeout.Infinite);
                 }
             }
         }
@@ -387,10 +389,10 @@ namespace BmwDeepObd
                     _commTimer.Dispose();
                     _commTimer = null;
                 }
-            }
 
-            _instanceData = null;
-            _startState = StartState.None;
+                _instanceData = null;
+                _startState = StartState.None;
+            }
         }
 
         private void CommTimerCallback(object state)
@@ -408,45 +410,39 @@ namespace BmwDeepObd
             {
                 case StartState.LoadSettings:
                 {
-                    if (_instanceData == null)
+                    if (!_activityCommon.IsExStorageAvailable())
                     {
-                        if (!_activityCommon.IsExStorageAvailable())
-                        {
 #if DEBUG
-                            Android.Util.Log.Info(Tag, "CommTimerCallback: No external storage");
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: No external storage");
 #endif
-                        }
-
-                        string settingsFile = ActivityCommon.GetSettingsFileName();
-                        if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
-                        {
-                            ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
-                            if (!_activityCommon.GetSettings(instanceData, settingsFile, ActivityCommon.SettingsMode.All, true))
-                            {
-#if DEBUG
-                                Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings failed");
-#endif
-                                return;
-                            }
-
-                            if (!_activityCommon.UpdateDirectories(instanceData))
-                            {
-#if DEBUG
-                                Android.Util.Log.Info(Tag, "CommTimerCallback: UpdateDirectories failed");
-#endif
-                                return;
-                            }
-                            _instanceData = instanceData;
-#if DEBUG
-                            Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
-#endif
-                        }
                     }
 
-                    if (_instanceData != null)
+                    string settingsFile = ActivityCommon.GetSettingsFileName();
+                    if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
                     {
+                        ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
+                        if (!_activityCommon.GetSettings(instanceData, settingsFile, ActivityCommon.SettingsMode.All, true))
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings failed");
+#endif
+                            return;
+                        }
+
+                        if (!_activityCommon.UpdateDirectories(instanceData))
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, "CommTimerCallback: UpdateDirectories failed");
+#endif
+                            return;
+                        }
+                        _instanceData = instanceData;
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
+#endif
                         _startState = StartState.StartComm;
                     }
+
                     break;
                 }
 
@@ -484,7 +480,7 @@ namespace BmwDeepObd
 
             lock (_timerLockObject)
             {
-                _commTimer?.Change(1000, Timeout.Infinite);
+                _commTimer?.Change(UpdateInterval, Timeout.Infinite);
             }
         }
 
