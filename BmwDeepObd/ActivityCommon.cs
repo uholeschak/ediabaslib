@@ -6026,6 +6026,9 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                SelectedManufacturer = JobReader.Manufacturer;
+                SelectedInterface = JobReader.Interface;
+
                 pageInfoUse = JobReader.PageList[0];
             }
 
