@@ -370,7 +370,7 @@ namespace BmwDeepObd
             if (_commTimer == null)
             {
                 _startState = StartState.LoadSettings;
-                _commTimer = new Timer(CommTimerCallback, null, 0, 1000);
+                _commTimer = new Timer(CommTimerCallback, null, 1000, Timeout.Infinite);
             }
         }
 
@@ -474,6 +474,8 @@ namespace BmwDeepObd
                     break;
                 }
             }
+
+            _commTimer?.Change(1000, Timeout.Infinite);
         }
 
         /// <summary>
