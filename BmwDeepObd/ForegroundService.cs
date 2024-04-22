@@ -43,6 +43,7 @@ namespace BmwDeepObd
         private StartState _startState;
         private Handler _stopHandler;
         private Timer _commTimer;
+        private Object _timerLockObject = new Object();
         private Java.Lang.Runnable _stopRunnable;
 
         public ActivityCommon ActivityCommon => _activityCommon;
@@ -367,19 +368,25 @@ namespace BmwDeepObd
 
         private void StartCommTimer()
         {
-            if (_commTimer == null)
+            lock (_timerLockObject)
             {
-                _startState = StartState.LoadSettings;
-                _commTimer = new Timer(CommTimerCallback, null, 1000, Timeout.Infinite);
+                if (_commTimer == null)
+                {
+                    _startState = StartState.LoadSettings;
+                    _commTimer = new Timer(CommTimerCallback, null, 1000, Timeout.Infinite);
+                }
             }
         }
 
         private void StopCommTimer()
         {
-            if (_commTimer != null)
+            lock (_timerLockObject)
             {
-                _commTimer.Dispose();
-                _commTimer = null;
+                if (_commTimer != null)
+                {
+                    _commTimer.Dispose();
+                    _commTimer = null;
+                }
             }
 
             _instanceData = null;
@@ -390,7 +397,7 @@ namespace BmwDeepObd
         {
             if (ActivityCommon.CommActive)
             {
-                StopCommTimer();
+                _startState = StartState.None;
 #if DEBUG
                 Android.Util.Log.Info(Tag, "CommTimerCallback: Communication active, stopping timer");
 #endif
@@ -450,7 +457,7 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommTimerCallback: StartComm no instance");
 #endif
-                        StopCommTimer();
+                        _startState = StartState.None;
                         return;
                     }
 #if DEBUG
@@ -463,7 +470,7 @@ namespace BmwDeepObd
 #if DEBUG
                             Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread failed");
 #endif
-                            StopCommTimer();
+                            _startState = StartState.None;
                             return;
                         }
 #if DEBUG
@@ -475,7 +482,10 @@ namespace BmwDeepObd
                 }
             }
 
-            _commTimer?.Change(1000, Timeout.Infinite);
+            lock (_timerLockObject)
+            {
+                _commTimer?.Change(1000, Timeout.Infinite);
+            }
         }
 
         /// <summary>
