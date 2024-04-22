@@ -457,6 +457,7 @@ namespace BmwDeepObd
 #if DEBUG
                             Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings failed");
 #endif
+                            _startState = StartState.None;
                             return;
                         }
 
@@ -465,8 +466,10 @@ namespace BmwDeepObd
 #if DEBUG
                             Android.Util.Log.Info(Tag, "CommTimerCallback: UpdateDirectories failed");
 #endif
+                            _startState = StartState.None;
                             return;
                         }
+
                         _instanceData = instanceData;
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
