@@ -214,7 +214,7 @@ namespace BmwDeepObd
 
         private Android.App.Notification GetNotification(StartState state)
         {
-            string message = Resources.GetString(Resource.String.service_notification);
+            string message = Resources.GetString(Resource.String.service_notification_comm_active);
 
             switch (state)
             {

@@ -154,7 +154,7 @@
   <string name="notification_custom_max">Пользовательский максимум</string>
 
   <!-- Service -->
-  <string name="service_notification">Соединение активно</string>
+  <string name="service_notification_comm_active">Соединение активно</string>
   <!--Translate-->
   <string name="service_notification_idle">Неактивный</string>
   <!--Translate-->

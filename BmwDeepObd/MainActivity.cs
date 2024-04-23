@@ -4979,12 +4979,12 @@ namespace BmwDeepObd
 #endif
                         }
 
-                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = GetLoadedMetadataReferences(out bool hasErrors);
+                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = _activityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out bool hasErrors);
                         if (hasErrors)
                         {
                             if (_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir, true))
                             {
-                                referencesList = GetLoadedMetadataReferences(out hasErrors);
+                                referencesList = _activityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out hasErrors);
                             }
                             else
                             {
@@ -5239,58 +5239,6 @@ namespace BmwDeepObd
             });
             compileThreadWrapper.Start();
         }
-
-#if NET
-        private List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(out bool hasErrors)
-        {
-            string assembliesDir = _instanceData.PackageAssembliesDir;
-            Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-            List<Microsoft.CodeAnalysis.MetadataReference> referencesList = new List<Microsoft.CodeAnalysis.MetadataReference>();
-            hasErrors = false;
-
-            foreach (Assembly assembly in loadedAssemblies)
-            {
-                string location = assembly.Location;
-                if (string.IsNullOrEmpty(location))
-                {
-                    continue;
-                }
-
-                if (!File.Exists(location))
-                {
-                    string fileName = Path.GetFileName(location);
-                    location = Path.Combine(assembliesDir, fileName);
-                    if (!File.Exists(location))
-                    {
-                        if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-                        {
-                            string abi = Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty;
-                            if (!string.IsNullOrEmpty(abi))
-                            {
-                                string abiPath = abi.Replace('-', '_').Trim();
-                                location = Path.Combine(assembliesDir, abiPath, fileName);
-                                if (!File.Exists(location))
-                                {
-                                    location = null;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (location != null)
-                {
-                    referencesList.Add(Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(location));
-                }
-                else
-                {
-                    hasErrors = true;
-                }
-            }
-
-            return referencesList;
-        }
-#endif
 
         private void SelectMedia()
         {
