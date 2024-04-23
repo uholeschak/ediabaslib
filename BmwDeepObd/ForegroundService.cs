@@ -212,21 +212,65 @@ namespace BmwDeepObd
             base.OnDestroy();
         }
 
+        private Android.App.Notification GetNotification(StartState state)
+        {
+            string message = Resources.GetString(Resource.String.service_notification);
+
+            switch (state)
+            {
+                case StartState.None:
+                    if (!ActivityCommon.CommActive)
+                    {
+                        message = Resources.GetString(Resource.String.service_notification_idle);
+                    }
+                    break;
+
+                case StartState.LoadSettings:
+                    message = Resources.GetString(Resource.String.service_notification_load_settings);
+                    break;
+
+                case StartState.InitReader:
+                    message = Resources.GetString(Resource.String.service_notification_init_reader);
+                    break;
+
+                case StartState.StartComm:
+                    break;
+            }
+
+            Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
+                .SetContentTitle(Resources.GetString(Resource.String.app_name))
+                .SetContentText(message)
+                .SetSmallIcon(Resource.Drawable.ic_stat_obd)
+                .SetContentIntent(BuildIntentToShowMainActivity())
+                .SetOnlyAlertOnce(true)
+                .SetOngoing(true)
+                .AddAction(BuildStopServiceAction())
+                .SetPriority(NotificationCompat.PriorityLow)
+                .SetCategory(NotificationCompat.CategoryService)
+                .Build();
+
+            return notification;
+        }
+
+        private void UpdateNotification()
+        {
+            try
+            {
+                Android.App.Notification notification = GetNotification(_startState);
+                NotificationManagerCompat notificationManager = _activityCommon.NotificationManagerCompat;
+                notificationManager?.Notify(ServiceRunningNotificationId, notification);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
         private void RegisterForegroundService()
         {
             try
             {
-                Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
-                    .SetContentTitle(Resources.GetString(Resource.String.app_name))
-                    .SetContentText(Resources.GetString(Resource.String.service_notification))
-                    .SetSmallIcon(Resource.Drawable.ic_stat_obd)
-                    .SetContentIntent(BuildIntentToShowMainActivity())
-                    .SetOngoing(true)
-                    .AddAction(BuildStopServiceAction())
-                    .SetPriority(NotificationCompat.PriorityLow)
-                    .SetCategory(NotificationCompat.CategoryService)
-                    .Build();
-
+                Android.App.Notification notification = GetNotification(_startState);
                 // Enlist this instance of the service as a foreground service
                 ServiceCompat.StartForeground(this, ServiceRunningNotificationId, notification, (int) Android.Content.PM.ForegroundService.TypeConnectedDevice);
             }
@@ -385,6 +429,7 @@ namespace BmwDeepObd
 
             _instanceData = null;
             _startState = StartState.LoadSettings;
+            UpdateNotification();
 
 #if DEBUG
             Android.Util.Log.Info(Tag, "StartCommThread: Starting thread");
@@ -397,6 +442,7 @@ namespace BmwDeepObd
                     CommStateMachine();
                     if (_startState == StartState.None)
                     {
+                        UpdateNotification();
                         return;
                     }
 
@@ -501,6 +547,7 @@ namespace BmwDeepObd
                         Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
 #endif
                         _startState = StartState.InitReader;
+                        UpdateNotification();
                     }
 
                     break;
@@ -532,6 +579,7 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "CommTimerCallback: InitReader Ok");
 #endif
                     _startState = StartState.StartComm;
+                    UpdateNotification();
                     break;
                 }
 
