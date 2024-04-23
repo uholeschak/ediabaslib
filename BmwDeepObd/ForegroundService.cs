@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -34,6 +35,7 @@ namespace BmwDeepObd
         {
             None,
             LoadSettings,
+            CompileCode,
             InitReader,
             StartComm,
         }
@@ -498,13 +500,51 @@ namespace BmwDeepObd
             return true;
         }
 
+        private bool CompileCode()
+        {
+            try
+            {
+                List<Microsoft.CodeAnalysis.MetadataReference> referencesList = _activityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out bool hasErrors);
+                if (hasErrors)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CompileCode: GetLoadedMetadataReferences failed");
+#endif
+                    return false;
+                }
+
+                foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                {
+                    if (pageInfo.ClassCode == null)
+                    {
+                        continue;
+                    }
+
+                    string result = _activityCommon.CompileCode(pageInfo, referencesList);
+                    if (string.IsNullOrEmpty(result))
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CompileCode: CompileCode failed");
+#endif
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private void CommStateMachine()
         {
             if (ActivityCommon.CommActive)
             {
                 _startState = StartState.None;
 #if DEBUG
-                Android.Util.Log.Info(Tag, "CommTimerCallback: Communication active, stopping timer");
+                Android.Util.Log.Info(Tag, "CommStateMachine: Communication active, stopping timer");
 #endif
                 return;
             }
@@ -516,7 +556,7 @@ namespace BmwDeepObd
                     if (!_activityCommon.IsExStorageAvailable())
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: No external storage");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: No external storage");
 #endif
                     }
 
@@ -527,7 +567,7 @@ namespace BmwDeepObd
                         if (!_activityCommon.GetSettings(instanceData, settingsFile, ActivityCommon.SettingsMode.All, true))
                         {
 #if DEBUG
-                            Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings failed");
+                            Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings failed");
 #endif
                             _startState = StartState.None;
                             return;
@@ -536,7 +576,7 @@ namespace BmwDeepObd
                         if (!_activityCommon.UpdateDirectories(instanceData))
                         {
 #if DEBUG
-                            Android.Util.Log.Info(Tag, "CommTimerCallback: UpdateDirectories failed");
+                            Android.Util.Log.Info(Tag, "CommStateMachine: UpdateDirectories failed");
 #endif
                             _startState = StartState.None;
                             return;
@@ -544,12 +584,42 @@ namespace BmwDeepObd
 
                         _instanceData = instanceData;
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: GetSettings Ok");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings Ok");
 #endif
-                        _startState = StartState.InitReader;
+                        _startState = StartState.CompileCode;
                         UpdateNotification();
                     }
 
+                    break;
+                }
+
+                case StartState.CompileCode:
+                {
+                    if (_instanceData == null)
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommStateMachine: CompileCode no instance");
+#endif
+                        _startState = StartState.None;
+                        return;
+                    }
+
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommStateMachine: CompileCode start");
+#endif
+                    if (!CompileCode())
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommStateMachine: CompileCode failed");
+#endif
+                        _startState = StartState.None;
+                        return;
+                    }
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommStateMachine: CompileCode Ok");
+#endif
+                    _startState = StartState.StartComm;
+                    UpdateNotification();
                     break;
                 }
 
@@ -558,25 +628,25 @@ namespace BmwDeepObd
                     if (_instanceData == null)
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: InitReader no instance");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: InitReader no instance");
 #endif
                         _startState = StartState.None;
                         return;
                     }
 
 #if DEBUG
-                    Android.Util.Log.Info(Tag, "CommTimerCallback: InitReader start");
+                    Android.Util.Log.Info(Tag, "CommStateMachine: InitReader start");
 #endif
                     if (!InitReader())
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: InitReader failed");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: InitReader failed");
 #endif
                         _startState = StartState.None;
                         return;
                     }
 #if DEBUG
-                    Android.Util.Log.Info(Tag, "CommTimerCallback: InitReader Ok");
+                    Android.Util.Log.Info(Tag, "CommStateMachine: InitReader Ok");
 #endif
                     _startState = StartState.StartComm;
                     UpdateNotification();
@@ -588,7 +658,7 @@ namespace BmwDeepObd
                     if (_instanceData == null)
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: StartComm no instance");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: StartComm no instance");
 #endif
                         _startState = StartState.None;
                         return;
@@ -597,25 +667,25 @@ namespace BmwDeepObd
                     if (!ActivityCommon.CommActive)
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread start");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: StartEdiabasThread start");
 #endif
                         if (!_activityCommon.StartEdiabasThread(_instanceData, null, EdiabasEventHandler))
                         {
 #if DEBUG
-                            Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread failed");
+                            Android.Util.Log.Info(Tag, "CommStateMachine: StartEdiabasThread failed");
 #endif
                             _startState = StartState.None;
                             return;
                         }
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread Ok");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: StartEdiabasThread Ok");
 #endif
                     }
 
                     if (ActivityCommon.CommActive)
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommTimerCallback: Communication active, stopping timer");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: Communication active, stopping timer");
 #endif
                         _startState = StartState.None;
                     }
