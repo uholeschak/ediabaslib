@@ -533,7 +533,7 @@ namespace BmwDeepObd
                     }
 
                     string result = _activityCommon.CompileCode(pageInfo, referencesList);
-                    if (string.IsNullOrEmpty(result))
+                    if (!string.IsNullOrEmpty(result))
                     {
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CompileCode: CompileCode failed");
