@@ -630,7 +630,7 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "CommStateMachine: CompileCode Ok");
 #endif
-                    _startState = StartState.StartComm;
+                    _startState = StartState.InitReader;
                     UpdateNotification();
                     break;
                 }
