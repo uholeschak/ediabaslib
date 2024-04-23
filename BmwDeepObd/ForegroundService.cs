@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Android.Content;
@@ -46,7 +47,6 @@ namespace BmwDeepObd
         private StartState _startState;
         private Handler _stopHandler;
         private Thread _commThread;
-        private Object _timerLockObject = new Object();
         private Java.Lang.Runnable _stopRunnable;
 
         public ActivityCommon ActivityCommon => _activityCommon;
@@ -229,6 +229,10 @@ namespace BmwDeepObd
 
                 case StartState.LoadSettings:
                     message = Resources.GetString(Resource.String.service_notification_load_settings);
+                    break;
+
+                case StartState.CompileCode:
+                    message = Resources.GetString(Resource.String.service_notification_compile_code);
                     break;
 
                 case StartState.InitReader:
@@ -504,6 +508,14 @@ namespace BmwDeepObd
         {
             try
             {
+                if (ActivityCommon.JobReader.PageList.All(pageInfo => pageInfo.ClassCode == null))
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CompileCode: No compilation required");
+#endif
+                    return true;
+                }
+
                 List<Microsoft.CodeAnalysis.MetadataReference> referencesList = _activityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out bool hasErrors);
                 if (hasErrors)
                 {
