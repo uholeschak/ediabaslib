@@ -1031,6 +1031,9 @@ namespace BmwDeepObd
         private static readonly object RecentConfigLockObject = new object();
         private static readonly object LastSerialLockObject = new object();
         private static readonly object SerialInfoLockObject = new object();
+#if NET
+        private static readonly object CompileLock = new object();
+#endif
         private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
@@ -11340,6 +11343,132 @@ namespace BmwDeepObd
             return referencesList;
         }
 #endif
+
+#if NET
+        public string CompileCode(JobReader.PageInfo pageInfo, List<Microsoft.CodeAnalysis.MetadataReference> referencesList)
+#else
+        public string CompileCode(JobReader.PageInfo pageInfo)
+#endif
+        {
+            string classCode = @"
+using Android.Views;
+using Android.Widget;
+using Android.Content;
+using EdiabasLib;
+using BmwDeepObd;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;"
+        + pageInfo.ClassCode;
+
+            string result = string.Empty;
+#if NET
+            try
+            {
+                // ToDo: Mono init bug, limit to one thread: https://github.com/dotnet/runtime/issues/96804
+                lock (CompileLock)
+                {
+                    Microsoft.CodeAnalysis.SyntaxTree syntaxTree = Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(classCode);
+                    Microsoft.CodeAnalysis.CSharp.CSharpCompilation compilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation.Create(
+                        "UserCode",
+                        new[] { syntaxTree },
+                        referencesList,
+                        new Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions(Microsoft.CodeAnalysis.OutputKind.DynamicallyLinkedLibrary));
+
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        Microsoft.CodeAnalysis.Emit.EmitResult emitResult = compilation.Emit(ms);
+                        if (!emitResult.Success)
+                        {
+                            StringBuilder sb = new StringBuilder();
+                            foreach (Microsoft.CodeAnalysis.Diagnostic diagnostic in emitResult.Diagnostics)
+                            {
+                                sb.AppendLine(diagnostic.ToString());
+                            }
+
+                            result = sb.ToString();
+                        }
+                        else
+                        {
+                            ms.Seek(0, SeekOrigin.Begin);
+                            Assembly assembly = Assembly.Load(ms.ToArray());
+                            Type pageClassType = assembly.GetType("PageClass");
+                            if (pageClassType == null)
+                            {
+                                throw new Exception("Compiling PageClass failed");
+                            }
+
+                            if (((pageInfo.JobsInfo == null) || (pageInfo.JobsInfo.JobList.Count == 0)) &&
+                                ((pageInfo.ErrorsInfo == null) || (pageInfo.ErrorsInfo.EcuList.Count == 0)))
+                            {
+                                if (pageClassType.GetMethod("ExecuteJob") == null)
+                                {
+                                    throw new Exception("No ExecuteJob method");
+                                }
+                            }
+
+                            object pageClassInstance = Activator.CreateInstance(pageClassType);
+                            if (pageClassInstance == null)
+                            {
+                                throw new Exception("Compiling PageClass failed");
+                            }
+
+                            pageInfo.ClassObject = pageClassInstance;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                pageInfo.ClassObject = null;
+                if (string.IsNullOrEmpty(result))
+                {
+                    result = EdiabasNet.GetExceptionText(ex, false, false);
+                }
+            }
+#else
+            StringWriter reportWriter = new StringWriter();
+            try
+            {
+                Mono.CSharp.Evaluator evaluator = new Mono.CSharp.Evaluator(new Mono.CSharp.CompilerContext(new Mono.CSharp.CompilerSettings(), new Mono.CSharp.ConsoleReportPrinter(reportWriter)));
+                evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
+                evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
+                evaluator.ReferenceAssembly(typeof(View).Assembly);
+                evaluator.Compile(classCode);
+                object classObject = evaluator.Evaluate("new PageClass()");
+                if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
+                    ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
+                {
+                    if (classObject == null)
+                    {
+                        throw new Exception("Compiling PageClass failed");
+                    }
+                    Type pageType = classObject.GetType();
+                    if (pageType.GetMethod("ExecuteJob") == null)
+                    {
+                        throw new Exception("No ExecuteJob method");
+                    }
+                }
+                infoLocal.ClassObject = classObject;
+            }
+            catch (Exception ex)
+            {
+                infoLocal.ClassObject = null;
+                result = reportWriter.ToString();
+                if (string.IsNullOrEmpty(result))
+                {
+                    result = EdiabasNet.GetExceptionText(ex, false, false);
+                }
+                result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
+            }
+            if (infoLocal.CodeShowWarnings && string.IsNullOrEmpty(result))
+            {
+                result = reportWriter.ToString();
+            }
+#endif
+            return result;
+        }
 
         public static Dictionary<string, int> ExtractKeyWords(string archiveFilename, string wordRegEx, int maxWords, string lineRegEx, ProgressZipDelegate progressHandler)
         {
