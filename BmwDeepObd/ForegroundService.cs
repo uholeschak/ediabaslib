@@ -28,7 +28,7 @@ namespace BmwDeepObd
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
         public const string ActionShowMainActivity = "ForegroundService.action.SHOW_MAIN_ACTIVITY";
         public const string StartComm = "StartComm";
-        private const int UpdateInterval = 1000;
+        private const int UpdateInterval = 100;
 
         private enum StartState
         {
@@ -36,7 +36,6 @@ namespace BmwDeepObd
             LoadSettings,
             InitReader,
             StartComm,
-            Started,
         }
 
         private bool _isStarted;
@@ -44,7 +43,7 @@ namespace BmwDeepObd
         private ActivityCommon.InstanceDataCommon _instanceData;
         private StartState _startState;
         private Handler _stopHandler;
-        private Timer _commTimer;
+        private Thread _commThread;
         private Object _timerLockObject = new Object();
         private Java.Lang.Runnable _stopRunnable;
 
@@ -102,7 +101,7 @@ namespace BmwDeepObd
                         {
                             if (!ActivityCommon.CommActive)
                             {
-                                StartCommTimer();
+                                StartCommThread();
                             }
                         }
                         _isStarted = true;
@@ -189,11 +188,15 @@ namespace BmwDeepObd
                 }
             }
 
+            if (IsCommThreadRunning())
+            {
+                _commThread.Join();
+            }
+
             _activityCommon?.Dispose();
             _activityCommon = null;
             _isStarted = false;
 
-            StopCommTimer();
             if (_stopHandler != null)
             {
                 try
@@ -368,32 +371,55 @@ namespace BmwDeepObd
             }
         }
 
-        private void StartCommTimer()
+        private bool StartCommThread()
         {
-            lock (_timerLockObject)
+            if (IsCommThreadRunning())
             {
-                if (_commTimer == null)
-                {
-                    _instanceData = null;
-                    _startState = StartState.LoadSettings;
-                    _commTimer = new Timer(CommTimerCallback, null, UpdateInterval, Timeout.Infinite);
-                }
+                return false;
             }
+
+            if (ActivityCommon.CommActive)
+            {
+                return false;
+            }
+
+            _instanceData = null;
+            _startState = StartState.LoadSettings;
+
+#if DEBUG
+            Android.Util.Log.Info(Tag, "StartCommThread: Starting thread");
+#endif
+
+            _commThread = new Thread(() =>
+            {
+                for (;;)
+                {
+                    CommStateMachine();
+                    if (_startState == StartState.None)
+                    {
+                        return;
+                    }
+
+                    Thread.Sleep(UpdateInterval);
+                }
+            });
+            _commThread.Start();
+
+            return true;
         }
 
-        private void StopCommTimer()
+        private bool IsCommThreadRunning()
         {
-            lock (_timerLockObject)
+            if (_commThread == null)
             {
-                if (_commTimer != null)
-                {
-                    _commTimer.Dispose();
-                    _commTimer = null;
-                }
-
-                _instanceData = null;
-                _startState = StartState.None;
+                return false;
             }
+            if (_commThread.IsAlive)
+            {
+                return true;
+            }
+            _commThread = null;
+            return false;
         }
 
         private bool InitReader()
@@ -426,7 +452,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        private void CommTimerCallback(object state)
+        private void CommStateMachine()
         {
             if (ActivityCommon.CommActive)
             {
@@ -536,15 +562,17 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommTimerCallback: StartEdiabasThread Ok");
 #endif
-                        _startState = StartState.Started;
+                    }
+
+                    if (ActivityCommon.CommActive)
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommTimerCallback: Communication active, stopping timer");
+#endif
+                        _startState = StartState.None;
                     }
                     break;
                 }
-            }
-
-            lock (_timerLockObject)
-            {
-                _commTimer?.Change(UpdateInterval, Timeout.Infinite);
             }
         }
 
