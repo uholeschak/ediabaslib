@@ -130,7 +130,7 @@
   <string name="notification_custom_max">Custom maximum</string>
 
   <!-- Service -->
-  <string name="service_notification">The communication is active</string>
+  <string name="service_notification_comm_active">The communication is active</string>
   <string name="service_notification_idle">Inactive</string>
   <string name="service_notification_load_settings">Reading settings</string>
   <string name="service_notification_init_reader">Reading database</string>

@@ -155,7 +155,7 @@
   <string name="notification_custom_max">Benutzerdefiniert Maximum</string>
 
   <!-- Service -->
-  <string name="service_notification">Die Kommunikation ist aktiv</string>
+  <string name="service_notification_comm_active">Die Kommunikation ist aktiv</string>
   <string name="service_notification_idle">Inaktiv</string>
   <string name="service_notification_load_settings">Einstellungen lesen</string>
   <string name="service_notification_init_reader">Datenbank lesen</string>

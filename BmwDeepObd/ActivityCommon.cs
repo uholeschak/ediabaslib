@@ -11289,6 +11289,56 @@ namespace BmwDeepObd
                 return false;
             }
         }
+
+        public List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(string packageAssembiesDir, out bool hasErrors)
+        {
+            string assembliesDir = packageAssembiesDir;
+            Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            List<Microsoft.CodeAnalysis.MetadataReference> referencesList = new List<Microsoft.CodeAnalysis.MetadataReference>();
+            hasErrors = false;
+
+            foreach (Assembly assembly in loadedAssemblies)
+            {
+                string location = assembly.Location;
+                if (string.IsNullOrEmpty(location))
+                {
+                    continue;
+                }
+
+                if (!File.Exists(location))
+                {
+                    string fileName = Path.GetFileName(location);
+                    location = Path.Combine(assembliesDir, fileName);
+                    if (!File.Exists(location))
+                    {
+                        if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                        {
+                            string abi = Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty;
+                            if (!string.IsNullOrEmpty(abi))
+                            {
+                                string abiPath = abi.Replace('-', '_').Trim();
+                                location = Path.Combine(assembliesDir, abiPath, fileName);
+                                if (!File.Exists(location))
+                                {
+                                    location = null;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (location != null)
+                {
+                    referencesList.Add(Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(location));
+                }
+                else
+                {
+                    hasErrors = true;
+                }
+            }
+
+            return referencesList;
+        }
 #endif
 
         public static Dictionary<string, int> ExtractKeyWords(string archiveFilename, string wordRegEx, int maxWords, string lineRegEx, ProgressZipDelegate progressHandler)
