@@ -131,6 +131,9 @@
 
   <!-- Service -->
   <string name="service_notification">The communication is active</string>
+  <string name="service_notification_idle">Inactive</string>
+  <string name="service_notification_load_settings">Reading settings</string>
+  <string name="service_notification_init_reader">Reading database</string>
   <string name="service_stop_comm_app">Open App and stop communication</string>
   <string name="service_stop_comm">Stop communication</string>
 
