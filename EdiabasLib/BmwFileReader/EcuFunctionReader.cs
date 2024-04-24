@@ -15,6 +15,8 @@ namespace BmwFileReader
         public const string FaultDataBaseName = "faultdata_";
         public const string FaultDataTypeFault = "F";
         public const string FaultDataTypeInfo = "I";
+        public delegate void ProgressDelegate(long progress);
+
         private readonly string _rootDir;
         private readonly object _lockObject = new object();
         private readonly Dictionary<string, EcuFunctionStructs.EcuVariant> _ecuVariantDict;
@@ -33,10 +35,10 @@ namespace BmwFileReader
             _ecuEnvCondLabelDict = new Dictionary<string, EcuFunctionStructs.EcuEnvCondLabel>();
         }
 
-        public bool Init(string language, out string errorMessage)
+        public bool Init(string language, out string errorMessage, ProgressDelegate progressHandler)
         {
             errorMessage = null;
-            EcuFunctionStructs.EcuFaultData ecuFaultData = GetEcuFaultDataCached(language);
+            EcuFunctionStructs.EcuFaultData ecuFaultData = GetEcuFaultDataCached(language, progressHandler);
             if (ecuFaultData == null)
             {
                 return false;
@@ -335,14 +337,14 @@ namespace BmwFileReader
             }
         }
 
-        public EcuFunctionStructs.EcuFaultData GetEcuFaultDataCached(string language)
+        public EcuFunctionStructs.EcuFaultData GetEcuFaultDataCached(string language, ProgressDelegate progressHandler)
         {
             lock (_lockObject)
             {
                 if (IsInitRequired(language))
                 {
                     Reset();
-                    _ecuFaultData = GetEcuFaultData(language);
+                    _ecuFaultData = GetEcuFaultData(language, progressHandler);
                     if (_ecuFaultData != null)
                     {
                         _ecuFaultDataLanguage = language;
@@ -412,19 +414,19 @@ namespace BmwFileReader
             return ecuVariant;
         }
 
-        protected EcuFunctionStructs.EcuFaultData GetEcuFaultData(string language)
+        protected EcuFunctionStructs.EcuFaultData GetEcuFaultData(string language, ProgressDelegate progressHandler)
         {
             string fileName = FaultDataBaseName + language.ToLowerInvariant();
-            EcuFunctionStructs.EcuFaultData ecuFaultData = GetEcuDataObject(fileName, typeof(EcuFunctionStructs.EcuFaultData)) as EcuFunctionStructs.EcuFaultData;
+            EcuFunctionStructs.EcuFaultData ecuFaultData = GetEcuDataObject(fileName, typeof(EcuFunctionStructs.EcuFaultData), progressHandler) as EcuFunctionStructs.EcuFaultData;
             if (ecuFaultData == null)
             {
                 fileName = FaultDataBaseName + "en";
-                ecuFaultData = GetEcuDataObject(fileName, typeof(EcuFunctionStructs.EcuFaultData)) as EcuFunctionStructs.EcuFaultData;
+                ecuFaultData = GetEcuDataObject(fileName, typeof(EcuFunctionStructs.EcuFaultData), progressHandler) as EcuFunctionStructs.EcuFaultData;
             }
             return ecuFaultData;
         }
 
-        protected object GetEcuDataObject(string name, Type type)
+        protected object GetEcuDataObject(string name, Type type, ProgressDelegate progressHandler = null)
         {
             try
             {
