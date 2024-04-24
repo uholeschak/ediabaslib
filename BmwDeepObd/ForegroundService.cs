@@ -46,6 +46,7 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private ActivityCommon.InstanceDataCommon _instanceData;
         private StartState _startState;
+        private bool _abortThread;
         private Handler _stopHandler;
         private Thread _commThread;
         private Java.Lang.Runnable _stopRunnable;
@@ -64,6 +65,7 @@ namespace BmwDeepObd
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
             _instanceData = null;
             _startState = StartState.None;
+            _abortThread = false;
 
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -117,6 +119,12 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
+                    if (IsCommThreadRunning())
+                    {
+                        _abortThread = true;
+                        break;
+                    }
+
                     SendStopCommBroadcast();
                     StopEdiabasThread(false);
 
@@ -440,6 +448,7 @@ namespace BmwDeepObd
 
             _instanceData = null;
             _startState = StartState.LoadSettings;
+            _abortThread = false;
             UpdateNotification();
 
 #if DEBUG
@@ -451,6 +460,13 @@ namespace BmwDeepObd
                 for (;;)
                 {
                     CommStateMachine();
+                    if (_abortThread)
+                    {
+                        _startState = StartState.Error;
+                        UpdateNotification();
+                        return;
+                    }
+
                     switch (_startState)
                     {
                         case StartState.None:
@@ -473,11 +489,14 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
             if (_commThread.IsAlive)
             {
                 return true;
             }
+
             _commThread = null;
+            _abortThread = false;
             return false;
         }
 
