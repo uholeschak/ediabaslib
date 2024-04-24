@@ -139,6 +139,7 @@
   <string name="service_notification_abort">Aborting</string>
   <string name="service_stop_comm_app">Open App and stop communication</string>
   <string name="service_stop_comm">Stop communication</string>
+  <string name="service_abort_operation">Abort operation</string>
 
   <!-- Compile -->
   <string name="compile_cpu_usage">Checking CPU usage</string>
