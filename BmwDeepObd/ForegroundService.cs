@@ -49,6 +49,7 @@ namespace BmwDeepObd
         private bool _abortThread;
         private Handler _stopHandler;
         private Thread _commThread;
+        private object _threadLockObject = new object();
         private Java.Lang.Runnable _stopRunnable;
 
         public ActivityCommon ActivityCommon => _activityCommon;
@@ -201,7 +202,10 @@ namespace BmwDeepObd
 
             if (IsCommThreadRunning())
             {
-                _commThread.Join();
+                lock (_threadLockObject)
+                {
+                    _commThread?.Join();
+                }
             }
 
             _activityCommon?.Dispose();
@@ -463,51 +467,57 @@ namespace BmwDeepObd
             Android.Util.Log.Info(Tag, "StartCommThread: Starting thread");
 #endif
 
-            _commThread = new Thread(() =>
+            lock (_threadLockObject)
             {
-                for (;;)
+                _commThread = new Thread(() =>
                 {
-                    CommStateMachine();
-
-                    switch (_startState)
+                    for (; ; )
                     {
-                        case StartState.None:
-                        case StartState.Error:
-                            UpdateNotification();
-                            return;
+                        CommStateMachine();
 
-                        default:
-                            if (_abortThread)
-                            {
-                                _startState = StartState.Error;
+                        switch (_startState)
+                        {
+                            case StartState.None:
+                            case StartState.Error:
                                 UpdateNotification();
                                 return;
-                            }
-                            break;
-                    }
 
-                    Thread.Sleep(UpdateInterval);
-                }
-            });
-            _commThread.Start();
+                            default:
+                                if (_abortThread)
+                                {
+                                    _startState = StartState.Error;
+                                    UpdateNotification();
+                                    return;
+                                }
+                                break;
+                        }
+
+                        Thread.Sleep(UpdateInterval);
+                    }
+                });
+                _commThread.Start();
+            }
 
             return true;
         }
 
         private bool IsCommThreadRunning()
         {
-            if (_commThread == null)
+            lock (_threadLockObject)
             {
-                return false;
-            }
+                if (_commThread == null)
+                {
+                    return false;
+                }
 
-            if (_commThread.IsAlive)
-            {
-                return true;
-            }
+                if (_commThread.IsAlive)
+                {
+                    return true;
+                }
 
-            _commThread = null;
-            _abortThread = false;
+                _commThread = null;
+                _abortThread = false;
+            }
             return false;
         }
 
@@ -777,9 +787,8 @@ namespace BmwDeepObd
             }
             Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, intentFlags);
 
-            var builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel,
-                GetText(Resource.String.service_stop_comm),
-                stopServicePendingIntent);
+            string message = Resources.GetString(Resource.String.service_stop_comm);
+            NotificationCompat.Action.Builder builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel, message, stopServicePendingIntent);
             return builder.Build();
         }
 
