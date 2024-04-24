@@ -551,6 +551,31 @@ namespace BmwDeepObd
             return true;
         }
 
+        private bool LoadConfiguration()
+        {
+            try
+            {
+                if (!ActivityCommon.JobReader.ReadXml(_instanceData.ConfigFileName, out string _))
+                {
+                    return false;
+                }
+
+                if (ActivityCommon.JobReader.PageList.Count < 1)
+                {
+                    return false;
+                }
+
+                ActivityCommon.SelectedManufacturer = ActivityCommon.JobReader.Manufacturer;
+                ActivityCommon.SelectedInterface = ActivityCommon.JobReader.Interface;
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private bool CompileCode()
         {
             try
@@ -645,6 +670,17 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings Ok");
 #endif
+                        if (!LoadConfiguration())
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, "CommStateMachine: LoadConfiguration failed");
+#endif
+                            _startState = StartState.Error;
+                            return;
+                        }
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommStateMachine: LoadConfiguration Ok");
+#endif
                         _startState = StartState.CompileCode;
                         UpdateNotification();
                     }
@@ -728,7 +764,13 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: StartEdiabasThread start");
 #endif
-                        if (!_activityCommon.StartEdiabasThread(_instanceData, null, EdiabasEventHandler))
+                        JobReader.PageInfo pageInfo = null;
+                        if (ActivityCommon.JobReader.PageList.Count > 0)
+                        {
+                            pageInfo = ActivityCommon.JobReader.PageList[0];
+                        }
+
+                        if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo, EdiabasEventHandler))
                         {
 #if DEBUG
                             Android.Util.Log.Info(Tag, "CommStateMachine: StartEdiabasThread failed");
@@ -787,7 +829,16 @@ namespace BmwDeepObd
             }
             Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, intentFlags);
 
-            string message = Resources.GetString(Resource.String.service_stop_comm);
+            string message;
+            if (ActivityCommon.CommActive)
+            {
+                message = Resources.GetString(Resource.String.service_stop_comm);
+            }
+            else
+            {
+                message = Resources.GetString(Resource.String.service_abort_operation);
+            }
+
             NotificationCompat.Action.Builder builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel, message, stopServicePendingIntent);
             return builder.Build();
         }

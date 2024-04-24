@@ -164,6 +164,7 @@
   <string name="service_notification_abort">Wird abgebrochen</string>
   <string name="service_stop_comm_app">App öffnen und Kommunikation beenden</string>
   <string name="service_stop_comm">Kommunikation beenden</string>
+  <string name="service_abort_operation">Vorgang abbrechen</string>
 
   <!-- Compile -->
   <string name="compile_cpu_usage">CPU Auslastung überprüfen</string>

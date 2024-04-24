@@ -168,6 +168,8 @@
   <string name="service_notification_abort">Прерывание</string>
   <string name="service_stop_comm_app">Открыть приложение и прервать соединение</string>
   <string name="service_stop_comm">Прервать соединение</string>
+  <!--Translate-->
+  <string name="service_abort_operation">Прервать операцию</string>
 
   <!-- Compile -->
   <string name="compile_cpu_usage">Проверка загрузки процессора</string>
