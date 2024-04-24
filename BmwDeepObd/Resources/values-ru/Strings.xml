@@ -164,6 +164,8 @@
   <string name="service_notification_init_reader">Чтение базы данных</string>
   <!--Translate-->
   <string name="service_notification_error">Не удалось начать</string>
+  <!--Translate-->
+  <string name="service_notification_abort">Прерывание</string>
   <string name="service_stop_comm_app">Открыть приложение и прервать соединение</string>
   <string name="service_stop_comm">Прервать соединение</string>
 
