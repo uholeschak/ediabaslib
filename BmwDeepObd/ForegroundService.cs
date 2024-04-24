@@ -242,6 +242,10 @@ namespace BmwDeepObd
 
                 case StartState.StartComm:
                     break;
+
+                case StartState.Error:
+                    message = Resources.GetString(Resource.String.service_notification_error);
+                    break;
             }
 
             Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
