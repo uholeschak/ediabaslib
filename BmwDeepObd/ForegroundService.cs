@@ -39,6 +39,7 @@ namespace BmwDeepObd
             CompileCode,
             InitReader,
             StartComm,
+            Error,
         }
 
         private bool _isStarted;
@@ -446,10 +447,12 @@ namespace BmwDeepObd
                 for (;;)
                 {
                     CommStateMachine();
-                    if (_startState == StartState.None)
+                    switch (_startState)
                     {
-                        UpdateNotification();
-                        return;
+                        case StartState.None:
+                        case StartState.Error:
+                            UpdateNotification();
+                            return;
                     }
 
                     Thread.Sleep(UpdateInterval);
@@ -581,7 +584,7 @@ namespace BmwDeepObd
 #if DEBUG
                             Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings failed");
 #endif
-                            _startState = StartState.None;
+                            _startState = StartState.Error;
                             return;
                         }
 
@@ -590,7 +593,7 @@ namespace BmwDeepObd
 #if DEBUG
                             Android.Util.Log.Info(Tag, "CommStateMachine: UpdateDirectories failed");
 #endif
-                            _startState = StartState.None;
+                            _startState = StartState.Error;
                             return;
                         }
 
@@ -612,7 +615,7 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: CompileCode no instance");
 #endif
-                        _startState = StartState.None;
+                        _startState = StartState.Error;
                         return;
                     }
 
@@ -624,7 +627,7 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: CompileCode failed");
 #endif
-                        _startState = StartState.None;
+                        _startState = StartState.Error;
                         return;
                     }
 #if DEBUG
@@ -642,7 +645,7 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: InitReader no instance");
 #endif
-                        _startState = StartState.None;
+                        _startState = StartState.Error;
                         return;
                     }
 
@@ -654,7 +657,7 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: InitReader failed");
 #endif
-                        _startState = StartState.None;
+                        _startState = StartState.Error;
                         return;
                     }
 #if DEBUG
@@ -672,7 +675,7 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: StartComm no instance");
 #endif
-                        _startState = StartState.None;
+                        _startState = StartState.Error;
                         return;
                     }
 
@@ -686,7 +689,7 @@ namespace BmwDeepObd
 #if DEBUG
                             Android.Util.Log.Info(Tag, "CommStateMachine: StartEdiabasThread failed");
 #endif
-                            _startState = StartState.None;
+                            _startState = StartState.Error;
                             return;
                         }
 #if DEBUG
