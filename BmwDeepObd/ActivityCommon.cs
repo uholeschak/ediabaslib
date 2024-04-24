@@ -759,6 +759,7 @@ namespace BmwDeepObd
         public delegate void EnetSsidWarnDelegate(SsidWarnAction action);
         public delegate void WifiConnectedWarnDelegate();
         public delegate void InitThreadFinishDelegate(bool result);
+        public delegate void InitThreadProgressDelegate(long progress);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
@@ -11840,12 +11841,34 @@ using System.Threading;"
             CustomProgressDialog progress = new CustomProgressDialog(_activity);
             progress.SetMessage(_activity.GetString(Resource.String.bmw_ecu_func_init));
             progress.Indeterminate = true;
+            progress.Progress = 0;
+            progress.Max = 100;
             progress.ButtonAbort.Visibility = ViewStates.Gone;
             progress.Show();
             SetLock(LockTypeCommunication);
             Thread initThread = new Thread(() =>
             {
-                bool result = InitEcuFunctionReader(bmwPath, out string errorMessage);
+                long lastPercent = -1;
+                bool result = InitEcuFunctionReader(bmwPath, out string errorMessage, percent =>
+                {
+                    if (lastPercent == percent)
+                    {
+                        return;
+                    }
+
+                    lastPercent = percent;
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        progress.Indeterminate = false;
+                        progress.Progress = (int)percent;
+                    });
+                });
+
                 _activity?.RunOnUiThread(() =>
                 {
                     if (_disposed)
@@ -11897,7 +11920,7 @@ using System.Threading;"
             EcuFunctionsActive = false;
         }
 
-        public static bool InitEcuFunctionReader(string bmwPath, out string errorMessage)
+        public static bool InitEcuFunctionReader(string bmwPath, out string errorMessage, InitThreadProgressDelegate progressHandler = null)
         {
             errorMessage = null;
 
@@ -11919,7 +11942,10 @@ using System.Threading;"
                     _ecuFunctionReader = new EcuFunctionReader(bmwPath);
                 }
 
-                if (!_ecuFunctionReader.Init(GetCurrentLanguageStatic(), out errorMessage))
+                if (!_ecuFunctionReader.Init(GetCurrentLanguageStatic(), out errorMessage, progress =>
+                    {
+                        progressHandler?.Invoke(progress);
+                    }))
                 {
                     return false;
                 }
