@@ -223,13 +223,15 @@ namespace BmwDeepObd
             base.OnDestroy();
         }
 
-        private Android.App.Notification GetNotification(StartState state)
+        private Android.App.Notification GetNotification()
         {
             string message = Resources.GetString(Resource.String.service_notification_comm_active);
+            bool checkAbort = true;
 
-            switch (state)
+            switch (_startState)
             {
                 case StartState.None:
+                    checkAbort = false;
                     if (!ActivityCommon.CommActive)
                     {
                         message = Resources.GetString(Resource.String.service_notification_idle);
@@ -252,8 +254,14 @@ namespace BmwDeepObd
                     break;
 
                 case StartState.Error:
+                    checkAbort = false;
                     message = Resources.GetString(Resource.String.service_notification_error);
                     break;
+            }
+
+            if (checkAbort && _abortThread)
+            {
+                message = Resources.GetString(Resource.String.service_notification_abort);
             }
 
             Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
@@ -275,7 +283,7 @@ namespace BmwDeepObd
         {
             try
             {
-                Android.App.Notification notification = GetNotification(_startState);
+                Android.App.Notification notification = GetNotification();
                 NotificationManagerCompat notificationManager = _activityCommon.NotificationManagerCompat;
                 notificationManager?.Notify(ServiceRunningNotificationId, notification);
             }
@@ -289,7 +297,7 @@ namespace BmwDeepObd
         {
             try
             {
-                Android.App.Notification notification = GetNotification(_startState);
+                Android.App.Notification notification = GetNotification();
                 // Enlist this instance of the service as a foreground service
                 ServiceCompat.StartForeground(this, ServiceRunningNotificationId, notification, (int) Android.Content.PM.ForegroundService.TypeConnectedDevice);
             }
