@@ -11630,7 +11630,30 @@ using System.Threading;"
             SetLock(LockTypeCommunication);
             Thread initThread = new Thread(() =>
             {
-                bool result = InitUdsReader(vagPath, out string errorMessage);
+                long lastPercent = -1;
+                bool result = InitUdsReader(vagPath, out string errorMessage, percent =>
+                {
+                    if (lastPercent == percent)
+                    {
+                        return;
+                    }
+
+                    lastPercent = percent;
+                    _activity?.RunOnUiThread(() =>
+                    {
+                        if (_disposed)
+                        {
+                            return;
+                        }
+
+                        if (progress.Indeterminate)
+                        {
+                            progress.Indeterminate = false;
+                        }
+                        progress.Progress = (int)percent;
+                    });
+                });
+
                 _activity?.RunOnUiThread(() =>
                 {
                     if (_disposed)
@@ -11683,7 +11706,7 @@ using System.Threading;"
             _udsReaderDict = null;
         }
 
-        public static bool InitUdsReader(string vagDir, out string errorMessage)
+        public static bool InitUdsReader(string vagDir, out string errorMessage, InitThreadProgressDelegate progressHandler = null)
         {
             errorMessage = null;
             if (OldVagMode)
@@ -11702,6 +11725,8 @@ using System.Threading;"
                 {
                     _udsReaderDict = new Dictionary<string, UdsReader>();
                     string[] subdirs = Directory.GetDirectories(vagDir, "*", SearchOption.TopDirectoryOnly);
+                    long maxProgress = subdirs.Length * 5;
+                    long progressCount = 0;
                     foreach (string subdir in subdirs)
                     {
                         string langDir = Path.GetFileName(subdir) ?? string.Empty;
@@ -11717,7 +11742,11 @@ using System.Threading;"
                                         UdsReader.SegmentType.Adp,
                                         UdsReader.SegmentType.Mwb,
                                         UdsReader.SegmentType.Dtc
-                                    }, out errorMessage))
+                                    }, out errorMessage, increment =>
+                                    {
+                                        progressCount += increment;
+                                        progressHandler?.Invoke(progressCount * 100 / maxProgress);
+                                    }))
                                 {
                                     return false;
                                 }
@@ -11864,7 +11893,10 @@ using System.Threading;"
                             return;
                         }
 
-                        progress.Indeterminate = false;
+                        if (progress.Indeterminate)
+                        {
+                            progress.Indeterminate = false;
+                        }
                         progress.Progress = (int)percent;
                     });
                 });
