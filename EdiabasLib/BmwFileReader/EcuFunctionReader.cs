@@ -67,20 +67,6 @@ namespace BmwFileReader
                 _readHandler?.Invoke(line?.Length ?? 0);
                 return line;
             }
-
-            public override string ReadToEnd()
-            {
-                string text = base.ReadToEnd();
-                _readHandler?.Invoke(text.Length);
-                return text;
-            }
-
-            public override int Read(Span<char> buffer)
-            {
-                int readCount = base.Read(buffer);
-                _readHandler?.Invoke(readCount);
-                return readCount;
-            }
         }
 
         public EcuFunctionReader(string rootDir)
@@ -509,7 +495,7 @@ namespace BmwFileReader
                         {
                             using (Stream zipStream = zf.GetInputStream(zipEntry))
                             {
-                                long maxLength = zipStream.Length;
+                                long maxLength = zipEntry.Size;
                                 long readPos = 0;
                                 using (TextReader reader = new StreamEventReader(zipStream, read =>
                                        {
