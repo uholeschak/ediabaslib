@@ -46,6 +46,7 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private ActivityCommon.InstanceDataCommon _instanceData;
         private StartState _startState;
+        private long _progressValue;
         private bool _abortThread;
         private Handler _stopHandler;
         private Thread _commThread;
@@ -66,6 +67,7 @@ namespace BmwDeepObd
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
             _instanceData = null;
             _startState = StartState.None;
+            _progressValue = -1;
             _abortThread = false;
 
             lock (ActivityCommon.GlobalLockObject)
@@ -252,6 +254,10 @@ namespace BmwDeepObd
 
                 case StartState.InitReader:
                     message = Resources.GetString(Resource.String.service_notification_init_reader);
+                    if (_progressValue >= 0)
+                    {
+                        message += " " + _progressValue + "%";
+                    }
                     break;
 
                 case StartState.StartComm:
@@ -460,6 +466,7 @@ namespace BmwDeepObd
 
             _instanceData = null;
             _startState = StartState.LoadSettings;
+            _progressValue = -1;
             _abortThread = false;
             UpdateNotification();
 
@@ -530,7 +537,16 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                if (!ActivityCommon.InitEcuFunctionReader(_instanceData.BmwPath, out string _))
+                if (!ActivityCommon.InitEcuFunctionReader(_instanceData.BmwPath, out string _, progress =>
+                    {
+                        if (progress / 10 == _progressValue / 10)
+                        {
+                            return;
+                        }
+
+                        _progressValue = progress;
+                        UpdateNotification();
+                    }))
                 {
                     return false;
                 }
@@ -744,6 +760,7 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "CommStateMachine: InitReader Ok");
 #endif
                     _startState = StartState.StartComm;
+                    _progressValue = -1;
                     UpdateNotification();
                     break;
                 }
