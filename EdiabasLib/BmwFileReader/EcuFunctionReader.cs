@@ -26,6 +26,49 @@ namespace BmwFileReader
         private EcuFunctionStructs.EcuFaultData _ecuFaultData;
         private string _ecuFaultDataLanguage;
 
+        private class StreamEventReader : StreamReader
+        {
+            public delegate void ReadEventHandler(int bytesRead);
+
+            private ReadEventHandler _readHandler;
+
+            public StreamEventReader(Stream stream, ReadEventHandler readHandler) : base(stream)
+            {
+                _readHandler = readHandler;
+            }
+
+            public override int Read()
+            {
+                int readValue = base.Read();
+                if (readValue != -1)
+                {
+                    _readHandler?.Invoke(1);
+                }
+                return readValue;
+            }
+
+            public override int Read(char[] buffer, int index, int count)
+            {
+                int readCount = base.Read(buffer, index, count);
+                _readHandler?.Invoke(readCount);
+                return readCount;
+            }
+
+            public override int ReadBlock(char[] buffer, int index, int count)
+            {
+                int readCount = base.ReadBlock(buffer, index, count);
+                _readHandler?.Invoke(readCount);
+                return readCount;
+            }
+
+            public override string ReadLine()
+            {
+                string line = base.ReadLine();
+                _readHandler?.Invoke(line?.Length ?? 0);
+                return line;
+            }
+        }
+
         public EcuFunctionReader(string rootDir)
         {
             _rootDir = rootDir;
@@ -452,7 +495,18 @@ namespace BmwFileReader
                         {
                             using (Stream zipStream = zf.GetInputStream(zipEntry))
                             {
-                                using (TextReader reader = new StreamReader(zipStream))
+                                long maxLength = zipEntry.Size;
+                                long readPos = 0;
+                                using (TextReader reader = new StreamEventReader(zipStream, read =>
+                                       {
+                                           if (progressHandler == null)
+                                           {
+                                               return;
+                                           }
+
+                                           readPos += read;
+                                           progressHandler(readPos * 100 / maxLength);
+                                       }))
                                 {
                                     XmlSerializer serializer = new XmlSerializer(type);
                                     ecuObject = serializer.Deserialize(reader);
