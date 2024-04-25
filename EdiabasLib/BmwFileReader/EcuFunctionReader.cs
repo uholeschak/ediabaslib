@@ -26,6 +26,35 @@ namespace BmwFileReader
         private EcuFunctionStructs.EcuFaultData _ecuFaultData;
         private string _ecuFaultDataLanguage;
 
+        private class StreamEventReader : StreamReader
+        {
+            public delegate void ReadEventHandler(int bytesRead);
+
+            private ReadEventHandler _readHandler;
+
+            public StreamEventReader(Stream stream, ReadEventHandler readHandler) : base(stream)
+            {
+                _readHandler = readHandler;
+            }
+
+            public override int Read()
+            {
+                int readValue = base.Read();
+                if (readValue != -1)
+                {
+                    _readHandler(1);
+                }
+                return readValue;
+            }
+
+            public override int Read(char[] buffer, int index, int count)
+            {
+                int readCount = base.Read(buffer, index, count);
+                _readHandler(readCount);
+                return readCount;
+            }
+        }
+
         public EcuFunctionReader(string rootDir)
         {
             _rootDir = rootDir;
@@ -452,7 +481,12 @@ namespace BmwFileReader
                         {
                             using (Stream zipStream = zf.GetInputStream(zipEntry))
                             {
-                                using (TextReader reader = new StreamReader(zipStream))
+                                int readCount = 0;
+                                using (TextReader reader = new StreamEventReader(zipStream, read =>
+                                       {
+                                           readCount += read;
+                                           progressHandler?.Invoke(readCount);
+                                       }))
                                 {
                                     XmlSerializer serializer = new XmlSerializer(type);
                                     ecuObject = serializer.Deserialize(reader);
