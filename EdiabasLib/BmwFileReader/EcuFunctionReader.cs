@@ -481,11 +481,17 @@ namespace BmwFileReader
                         {
                             using (Stream zipStream = zf.GetInputStream(zipEntry))
                             {
-                                int readCount = 0;
+                                long maxLength = zipStream.Length;
+                                long readPos = 0;
                                 using (TextReader reader = new StreamEventReader(zipStream, read =>
                                        {
-                                           readCount += read;
-                                           progressHandler?.Invoke(readCount);
+                                           if (progressHandler == null)
+                                           {
+                                               return;
+                                           }
+
+                                           readPos += read;
+                                           progressHandler(readPos * 100 / maxLength);
                                        }))
                                 {
                                     XmlSerializer serializer = new XmlSerializer(type);
