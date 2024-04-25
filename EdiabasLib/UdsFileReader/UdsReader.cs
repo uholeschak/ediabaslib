@@ -15,6 +15,7 @@ namespace UdsFileReader
     {
         public const string FileExtension = ".uds";
         public const string UdsDir = "uds_ev";
+        public delegate void ProgressDelegate(long increment);
 
         public enum SegmentType
         {
@@ -3710,12 +3711,12 @@ namespace UdsFileReader
             new FixedEncodingEntry(new UInt32[]{135}, Type135Convert),
         };
 
-        public bool Init(string rootDir, HashSet<SegmentType> requiredSegments = null)
+        public bool Init(string rootDir, HashSet<SegmentType> requiredSegments = null, ProgressDelegate progressHandler = null)
         {
-            return Init(rootDir, requiredSegments, out _);
+            return Init(rootDir, requiredSegments, out _, progressHandler);
         }
 
-        public bool Init(string rootDir, HashSet<SegmentType> requiredSegments, out string errorMessage)
+        public bool Init(string rootDir, HashSet<SegmentType> requiredSegments, out string errorMessage, ProgressDelegate progressHandler)
         {
             errorMessage = null;
             try
@@ -3725,6 +3726,7 @@ namespace UdsFileReader
                 {
                     return false;
                 }
+                progressHandler?.Invoke(1);
 
                 string udsDir = Path.Combine(rootDir, UdsDir);
                 List<string[]> redirList = ExtractFileSegment(new List<string> {Path.Combine(udsDir, "redir" + FileExtension)}, "DIR", out errorMessage);
@@ -3732,6 +3734,7 @@ namespace UdsFileReader
                 {
                     return false;
                 }
+                progressHandler?.Invoke(1);
 
                 _redirMap = new Dictionary<string, string>();
                 foreach (string[] redirArray in redirList)
@@ -3769,6 +3772,7 @@ namespace UdsFileReader
                 {
                     return false;
                 }
+                progressHandler?.Invoke(1);
                 _ttdopLookup = ttdopList.ToLookup(item => UInt32.Parse(item[0]));
 
                 List<string[]> muxList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "mux" + FileExtension) }, "MUX", out errorMessage);
@@ -3776,6 +3780,7 @@ namespace UdsFileReader
                 {
                     return false;
                 }
+                progressHandler?.Invoke(1);
                 _muxLookup = muxList.ToLookup(item => UInt32.Parse(item[0]));
 
                 _chassisMap = CreateChassisDict(Path.Combine(udsDir, "chassis" + DataReader.FileExtension), out errorMessage);
@@ -3810,6 +3815,7 @@ namespace UdsFileReader
 
                     segmentInfo.LineList = lineList;
                 }
+                progressHandler?.Invoke(1);
                 return true;
             }
             catch (Exception ex)
