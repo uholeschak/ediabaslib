@@ -53,6 +53,34 @@ namespace BmwFileReader
                 _readHandler?.Invoke(readCount);
                 return readCount;
             }
+
+            public override int ReadBlock(char[] buffer, int index, int count)
+            {
+                int readCount = base.ReadBlock(buffer, index, count);
+                _readHandler?.Invoke(readCount);
+                return readCount;
+            }
+
+            public override string ReadLine()
+            {
+                string line = base.ReadLine();
+                _readHandler?.Invoke(line?.Length ?? 0);
+                return line;
+            }
+
+            public override string ReadToEnd()
+            {
+                string text = base.ReadToEnd();
+                _readHandler?.Invoke(text.Length);
+                return text;
+            }
+
+            public override int Read(Span<char> buffer)
+            {
+                int readCount = base.Read(buffer);
+                _readHandler?.Invoke(readCount);
+                return readCount;
+            }
         }
 
         public EcuFunctionReader(string rootDir)
