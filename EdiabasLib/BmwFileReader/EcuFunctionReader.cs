@@ -42,7 +42,7 @@ namespace BmwFileReader
                 int readValue = base.Read();
                 if (readValue != -1)
                 {
-                    _readHandler(1);
+                    _readHandler?.Invoke(1);
                 }
                 return readValue;
             }
@@ -50,7 +50,7 @@ namespace BmwFileReader
             public override int Read(char[] buffer, int index, int count)
             {
                 int readCount = base.Read(buffer, index, count);
-                _readHandler(readCount);
+                _readHandler?.Invoke(readCount);
                 return readCount;
             }
         }
