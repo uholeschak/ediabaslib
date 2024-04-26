@@ -366,6 +366,7 @@ namespace BmwDeepObd
             }
             else
             {
+                ActivityCommon.StopForegroundService(this);
                 if (!_activityRecreated)
                 {
                     ActivityCommon.BtInitiallyEnabled = _activityCommon.IsBluetoothEnabled();

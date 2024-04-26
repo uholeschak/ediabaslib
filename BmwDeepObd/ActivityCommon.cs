@@ -2239,12 +2239,13 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static bool StopForegroundService(Context context)
+        public static bool StopForegroundService(Context context, bool abortThread = false)
         {
             try
             {
                 Intent stopServiceIntent = new Intent(context, typeof(ForegroundService));
                 stopServiceIntent.SetAction(ForegroundService.ActionStopService);
+                stopServiceIntent.PutExtra(ForegroundService.AbortThread, abortThread);
                 context.StopService(stopServiceIntent);
             }
             catch (Exception)
