@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -30,7 +31,9 @@ namespace BmwDeepObd
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
         public const string ActionShowMainActivity = "ForegroundService.action.SHOW_MAIN_ACTIVITY";
         public const string StartComm = "StartComm";
+        public const string AbortThread = "AbortThread";
         private const int UpdateInterval = 100;
+        private const int NotificationUpdateDelay = 2000;
 
         private enum StartState
         {
@@ -47,6 +50,7 @@ namespace BmwDeepObd
         private ActivityCommon.InstanceDataCommon _instanceData;
         private StartState _startState;
         private long _progressValue;
+        private long _notificationUpdateTime;
         private bool _abortThread;
         private Handler _stopHandler;
         private Thread _commThread;
@@ -68,6 +72,7 @@ namespace BmwDeepObd
             _instanceData = null;
             _startState = StartState.None;
             _progressValue = -1;
+            _notificationUpdateTime = DateTime.MinValue.Ticks;
             _abortThread = false;
 
             lock (ActivityCommon.GlobalLockObject)
@@ -109,6 +114,9 @@ namespace BmwDeepObd
                         {
                             if (!ActivityCommon.CommActive)
                             {
+#if DEBUG
+                                Android.Util.Log.Info(Tag, "OnStartCommand: Starting CommThread");
+#endif
                                 StartCommThread();
                             }
                         }
@@ -122,9 +130,17 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
+                    bool abortThread = intent.GetBooleanExtra(AbortThread, false);
                     if (IsCommThreadRunning())
                     {
-                        _abortThread = true;
+                        if (abortThread)
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, "OnStartCommand: Aborting thread");
+#endif
+                            _abortThread = true;
+                        }
+
                         break;
                     }
 
@@ -233,6 +249,7 @@ namespace BmwDeepObd
         {
             string message = Resources.GetString(Resource.String.service_notification_comm_active);
             bool checkAbort = true;
+            bool showProgress = false;
 
             switch (_startState)
             {
@@ -250,14 +267,12 @@ namespace BmwDeepObd
 
                 case StartState.CompileCode:
                     message = Resources.GetString(Resource.String.service_notification_compile_code);
+                    showProgress = true;
                     break;
 
                 case StartState.InitReader:
                     message = Resources.GetString(Resource.String.service_notification_init_reader);
-                    if (_progressValue >= 0)
-                    {
-                        message += " " + _progressValue + "%";
-                    }
+                    showProgress = true;
                     break;
 
                 case StartState.StartComm:
@@ -272,6 +287,14 @@ namespace BmwDeepObd
             if (checkAbort && _abortThread)
             {
                 message = Resources.GetString(Resource.String.service_notification_abort);
+            }
+
+            if (showProgress)
+            {
+                if (_progressValue >= 0)
+                {
+                    message += " " + _progressValue + "%";
+                }
             }
 
             Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
@@ -289,13 +312,23 @@ namespace BmwDeepObd
             return notification;
         }
 
-        private void UpdateNotification()
+        private void UpdateNotification(bool delayUpdate = false)
         {
             try
             {
+                if (delayUpdate)
+                {
+                    if (Stopwatch.GetTimestamp() - _notificationUpdateTime < NotificationUpdateDelay * ActivityCommon.TickResolMs)
+                    {
+                        return;
+                    }
+                }
+
                 Android.App.Notification notification = GetNotification();
                 NotificationManagerCompat notificationManager = _activityCommon.NotificationManagerCompat;
                 notificationManager?.Notify(ServiceRunningNotificationId, notification);
+
+                _notificationUpdateTime = Stopwatch.GetTimestamp();
             }
             catch (Exception)
             {
@@ -539,13 +572,13 @@ namespace BmwDeepObd
 
                 if (!ActivityCommon.InitEcuFunctionReader(_instanceData.BmwPath, out string _, progress =>
                     {
-                        if (progress / 10 == _progressValue / 10)
+                        if (progress == _progressValue)
                         {
                             return;
                         }
 
                         _progressValue = progress;
-                        UpdateNotification();
+                        UpdateNotification(true);
                     }))
                 {
                     return false;
@@ -596,7 +629,8 @@ namespace BmwDeepObd
         {
             try
             {
-                if (ActivityCommon.JobReader.PageList.All(pageInfo => pageInfo.ClassCode == null))
+                int compileCount = ActivityCommon.JobReader.PageList.Count(pageInfo => pageInfo.ClassCode != null);
+                if (compileCount == 0)
                 {
 #if DEBUG
                     Android.Util.Log.Info(Tag, "CompileCode: No compilation required");
@@ -613,6 +647,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
+                int compileIndex = 0;
                 foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                 {
                     if (pageInfo.ClassCode == null)
@@ -628,6 +663,10 @@ namespace BmwDeepObd
 #endif
                         return false;
                     }
+
+                    compileIndex++;
+                    _progressValue = compileIndex * 100 / compileCount;
+                    UpdateNotification(true);
                 }
 
                 return true;
@@ -730,6 +769,7 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "CommStateMachine: CompileCode Ok");
 #endif
                     _startState = StartState.InitReader;
+                    _progressValue = -1;
                     UpdateNotification();
                     break;
                 }
@@ -839,6 +879,7 @@ namespace BmwDeepObd
         {
             Intent stopServiceIntent = new Intent(this, GetType());
             stopServiceIntent.SetAction(ActionStopService);
+            stopServiceIntent.PutExtra(AbortThread, true);
             Android.App.PendingIntentFlags intentFlags = 0;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
