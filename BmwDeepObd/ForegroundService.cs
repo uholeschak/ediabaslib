@@ -32,8 +32,8 @@ namespace BmwDeepObd
         public const string ActionStartService = "ForegroundService.action.START_SERVICE";
         public const string ActionStopService = "ForegroundService.action.STOP_SERVICE";
         public const string ActionShowMainActivity = "ForegroundService.action.SHOW_MAIN_ACTIVITY";
-        public const string StartComm = "StartComm";
-        public const string AbortThread = "AbortThread";
+        public const string ExtraStartComm = "StartComm";
+        public const string ExtraAbortThread = "AbortThread";
         private const int UpdateInterval = 100;
         private const int NotificationUpdateDelay = 2000;
         private readonly string[] _permissionsExternalStorage =
@@ -54,16 +54,42 @@ namespace BmwDeepObd
         private bool _isStarted;
         private ActivityCommon _activityCommon;
         private ActivityCommon.InstanceDataCommon _instanceData;
-        private StartState _startState;
+        private Handler _stopHandler;
+        private Java.Lang.Runnable _stopRunnable;
         private long _progressValue;
         private long _notificationUpdateTime;
-        private bool _abortThread;
-        private Handler _stopHandler;
-        private Thread _commThread;
-        private object _threadLockObject = new object();
-        private Java.Lang.Runnable _stopRunnable;
+        private static StartState _startState;
+        private static bool _abortThread;
+        private static Thread _commThread;
+        private static object _threadLockObject;
 
         public ActivityCommon ActivityCommon => _activityCommon;
+
+        public static bool AbortThread
+        {
+            get
+            {
+                lock (_threadLockObject)
+                {
+                    return _abortThread;
+                }
+            }
+            set
+            {
+                lock (_threadLockObject)
+                {
+                    _abortThread = value;
+                }
+            }
+        }
+
+        static ForegroundService()
+        {
+            _startState = StartState.None;
+            _abortThread = false;
+            _commThread = null;
+            _threadLockObject = new object();
+        }
 
         public override void OnCreate()
         {
@@ -76,10 +102,8 @@ namespace BmwDeepObd
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
             _instanceData = null;
-            _startState = StartState.None;
             _progressValue = -1;
             _notificationUpdateTime = DateTime.MinValue.Ticks;
-            _abortThread = false;
 
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -103,7 +127,7 @@ namespace BmwDeepObd
             {
                 case ActionStartService:
                 {
-                    bool startComm = intent.GetBooleanExtra(StartComm, false);
+                    bool startComm = intent.GetBooleanExtra(ExtraStartComm, false);
                     if (_isStarted)
                     {
 #if DEBUG
@@ -136,7 +160,7 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
-                    bool abortThread = intent.GetBooleanExtra(AbortThread, false);
+                    bool abortThread = intent.GetBooleanExtra(ExtraAbortThread, false);
                     if (IsCommThreadRunning())
                     {
                         if (abortThread)
@@ -144,7 +168,7 @@ namespace BmwDeepObd
 #if DEBUG
                             Android.Util.Log.Info(Tag, "OnStartCommand: Aborting thread");
 #endif
-                            _abortThread = true;
+                            AbortThread = true;
                         }
 
                         break;
@@ -506,7 +530,7 @@ namespace BmwDeepObd
             _instanceData = null;
             _startState = StartState.LoadSettings;
             _progressValue = -1;
-            _abortThread = false;
+            AbortThread = false;
             UpdateNotification();
 
 #if DEBUG
@@ -547,7 +571,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        private bool IsCommThreadRunning()
+        public static bool IsCommThreadRunning()
         {
             lock (_threadLockObject)
             {
@@ -907,7 +931,7 @@ namespace BmwDeepObd
         {
             Intent stopServiceIntent = new Intent(this, GetType());
             stopServiceIntent.SetAction(ActionStopService);
-            stopServiceIntent.PutExtra(AbortThread, true);
+            stopServiceIntent.PutExtra(ExtraAbortThread, true);
             Android.App.PendingIntentFlags intentFlags = 0;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
             {
