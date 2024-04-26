@@ -24,6 +24,8 @@
   <string name="button_reset">Сброс настроек</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
+  <!--Translate-->
+  <string name="service_is_starting">Служба запускается. Пожалуйста, повторите попытку позже.</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения.\nХотите открыть настройки приложения?</string>
   <string name="access_manage_files">Для доступа к внешнему хранилищу\nтребуется доступ к управлению файлами.\nОткрыть настройки управления?</string>
   <string name="overlay_permission_denied">Для коммуникации в фоновом режиме необходимо отображение через другие приложения (оверлейное отображение).\nХотите открыть настройки приложения?</string>
