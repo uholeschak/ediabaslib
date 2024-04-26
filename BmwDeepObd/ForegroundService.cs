@@ -6,8 +6,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using AndroidX.Core.App;
+using AndroidX.Core.Content;
 
 namespace BmwDeepObd
 {
@@ -34,6 +36,10 @@ namespace BmwDeepObd
         public const string AbortThread = "AbortThread";
         private const int UpdateInterval = 100;
         private const int NotificationUpdateDelay = 2000;
+        private readonly string[] _permissionsExternalStorage =
+        {
+            Android.Manifest.Permission.WriteExternalStorage
+        };
 
         private enum StartState
         {
@@ -625,6 +631,28 @@ namespace BmwDeepObd
             }
         }
 
+        private bool RequestStoragePermissions(ActivityCommon.InstanceDataCommon instanceData)
+        {
+            if (_permissionsExternalStorage.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
+            {
+                return StoragePermissionGranted(instanceData);
+            }
+
+            if (!ActivityCommon.IsExtrenalStorageAccessRequired())
+            {
+                return StoragePermissionGranted(instanceData);
+            }
+
+            return false;
+        }
+
+        private bool StoragePermissionGranted(ActivityCommon.InstanceDataCommon instanceData)
+        {
+            ActivityCommon.SetStoragePath();
+            ActivityCommon.RecentConfigListCleanup();
+            return _activityCommon.UpdateDirectories(instanceData);
+        }
+
         private bool CompileCode()
         {
             try
@@ -712,10 +740,10 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        if (!_activityCommon.UpdateDirectories(instanceData))
+                        if (!RequestStoragePermissions(instanceData))
                         {
 #if DEBUG
-                            Android.Util.Log.Info(Tag, "CommStateMachine: UpdateDirectories failed");
+                            Android.Util.Log.Info(Tag, "CommStateMachine: Request permissions failed");
 #endif
                             _startState = StartState.Error;
                             return;
