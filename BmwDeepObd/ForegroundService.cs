@@ -527,18 +527,17 @@ namespace BmwDeepObd
                 return false;
             }
 
-            _instanceData = null;
-            _startState = StartState.LoadSettings;
-            _progressValue = -1;
-            AbortThread = false;
-            UpdateNotification();
-
 #if DEBUG
             Android.Util.Log.Info(Tag, "StartCommThread: Starting thread");
 #endif
 
             lock (_threadLockObject)
             {
+                _instanceData = null;
+                _startState = StartState.LoadSettings;
+                _progressValue = -1;
+                _abortThread = false;
+
                 _commThread = new Thread(() =>
                 {
                     for (; ; )
@@ -568,6 +567,7 @@ namespace BmwDeepObd
                 _commThread.Start();
             }
 
+            UpdateNotification();
             return true;
         }
 

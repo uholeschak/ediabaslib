@@ -527,6 +527,16 @@ namespace BmwDeepObd
 #endif
             base.OnStart();
 
+            if (ForegroundService.IsCommThreadRunning())
+            {
+#if DEBUG
+                Log.Info(Tag, "OnStart: ForegroundService is active");
+#endif
+                Toast.MakeText(this, Resource.String.service_is_starting, ToastLength.Long)?.Show();
+                Finish();
+                return;
+            }
+
             ClearActivityStack();
             AddActivityToStack(this);
 
