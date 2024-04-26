@@ -555,6 +555,7 @@ namespace BmwDeepObd
                                 if (_abortThread)
                                 {
                                     _startState = StartState.Error;
+                                    _abortThread = false;
                                     UpdateNotification();
                                     return;
                                 }
