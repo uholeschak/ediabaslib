@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -31,6 +32,7 @@ namespace BmwDeepObd
         public const string ActionShowMainActivity = "ForegroundService.action.SHOW_MAIN_ACTIVITY";
         public const string StartComm = "StartComm";
         private const int UpdateInterval = 100;
+        private const int NotificationUpdateDelay = 2000;
 
         private enum StartState
         {
@@ -47,6 +49,7 @@ namespace BmwDeepObd
         private ActivityCommon.InstanceDataCommon _instanceData;
         private StartState _startState;
         private long _progressValue;
+        private long _notificationUpdateTime;
         private bool _abortThread;
         private Handler _stopHandler;
         private Thread _commThread;
@@ -68,6 +71,7 @@ namespace BmwDeepObd
             _instanceData = null;
             _startState = StartState.None;
             _progressValue = -1;
+            _notificationUpdateTime = DateTime.MinValue.Ticks;
             _abortThread = false;
 
             lock (ActivityCommon.GlobalLockObject)
@@ -289,13 +293,23 @@ namespace BmwDeepObd
             return notification;
         }
 
-        private void UpdateNotification()
+        private void UpdateNotification(bool delayUpdate = false)
         {
             try
             {
+                if (delayUpdate)
+                {
+                    if (Stopwatch.GetTimestamp() - _notificationUpdateTime < NotificationUpdateDelay * ActivityCommon.TickResolMs)
+                    {
+                        return;
+                    }
+                }
+
                 Android.App.Notification notification = GetNotification();
                 NotificationManagerCompat notificationManager = _activityCommon.NotificationManagerCompat;
                 notificationManager?.Notify(ServiceRunningNotificationId, notification);
+
+                _notificationUpdateTime = Stopwatch.GetTimestamp();
             }
             catch (Exception)
             {
@@ -539,13 +553,13 @@ namespace BmwDeepObd
 
                 if (!ActivityCommon.InitEcuFunctionReader(_instanceData.BmwPath, out string _, progress =>
                     {
-                        if (progress / 10 == _progressValue / 10)
+                        if (progress == _progressValue)
                         {
                             return;
                         }
 
                         _progressValue = progress;
-                        UpdateNotification();
+                        UpdateNotification(true);
                     }))
                 {
                     return false;

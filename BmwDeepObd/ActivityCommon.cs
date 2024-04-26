@@ -12498,16 +12498,16 @@ using System.Threading;"
                     {
                         return false;
                     }
-                    instanceData.AppDataPath = Path.Combine(ActivityCommon.ExternalPath, AppFolderName);
+                    instanceData.AppDataPath = Path.Combine(ExternalPath, AppFolderName);
                 }
                 else
                 {
-                    instanceData.AppDataPath = ActivityCommon.ExternalWritePath;
+                    instanceData.AppDataPath = ExternalWritePath;
                 }
             }
             else
             {
-                instanceData.AppDataPath = Path.Combine(ActivityCommon.CustomStorageMedia, AppFolderName);
+                instanceData.AppDataPath = Path.Combine(CustomStorageMedia, AppFolderName);
             }
 
             instanceData.EcuPath = Path.Combine(instanceData.AppDataPath, ManufacturerEcuDirName);
