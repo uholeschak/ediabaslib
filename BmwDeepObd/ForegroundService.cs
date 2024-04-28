@@ -605,11 +605,12 @@ namespace BmwDeepObd
                     {
                         if (progress == _progressValue)
                         {
-                            return;
+                            return _abortThread;
                         }
 
                         _progressValue = progress;
                         UpdateNotification(true);
+                        return _abortThread;
                     }))
                 {
                     return false;

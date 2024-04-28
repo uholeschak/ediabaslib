@@ -759,7 +759,7 @@ namespace BmwDeepObd
         public delegate void EnetSsidWarnDelegate(SsidWarnAction action);
         public delegate void WifiConnectedWarnDelegate();
         public delegate void InitThreadFinishDelegate(bool result);
-        public delegate void InitThreadProgressDelegate(long progress);
+        public delegate bool InitThreadProgressDelegate(long progress);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
@@ -11636,7 +11636,7 @@ using System.Threading;"
                 {
                     if (lastPercent == percent)
                     {
-                        return;
+                        return false;
                     }
 
                     lastPercent = percent;
@@ -11653,6 +11653,7 @@ using System.Threading;"
                         }
                         progress.Progress = (int)percent;
                     });
+                    return false;
                 });
 
                 _activity?.RunOnUiThread(() =>
@@ -11883,7 +11884,7 @@ using System.Threading;"
                 {
                     if (lastPercent == percent)
                     {
-                        return;
+                        return false;
                     }
 
                     lastPercent = percent;
@@ -11900,6 +11901,7 @@ using System.Threading;"
                         }
                         progress.Progress = (int)percent;
                     });
+                    return false;
                 });
 
                 _activity?.RunOnUiThread(() =>
@@ -11977,7 +11979,12 @@ using System.Threading;"
 
                 if (!_ecuFunctionReader.Init(GetCurrentLanguageStatic(), out errorMessage, progress =>
                     {
-                        progressHandler?.Invoke(progress);
+                        if (progressHandler != null)
+                        {
+                            return progressHandler.Invoke(progress);
+                        }
+
+                        return false;
                     }))
                 {
                     return false;
