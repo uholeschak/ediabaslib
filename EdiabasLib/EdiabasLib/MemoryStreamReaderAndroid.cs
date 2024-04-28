@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using Android.OS;
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -9,20 +10,6 @@ namespace EdiabasLib
 {
     public class MemoryStreamReader : Stream
     {
-        private const string LibcName = "libc.so";
-
-        [DllImport(LibcName, SetLastError = true)]
-        static extern int open(string path, int flags, int access);
-
-        [DllImport(LibcName)]
-        static extern int close(int fd);
-
-        [DllImport(LibcName)]
-        static extern IntPtr mmap(IntPtr addr, IntPtr len, int prot, int flags, int fd, int offset);
-
-        [DllImport(LibcName)]
-        static extern int munmap(IntPtr addr, IntPtr size);
-
         // ReSharper disable UnusedMember.Local
         const int Deffilemode = 0x666;
         const int ORdonly = 0x0;
@@ -40,34 +27,18 @@ namespace EdiabasLib
         private bool _disposed;
         private long _filePos;
         private readonly long _fileLength;
-        private int _fd;
-        private static IntPtr _libcHandle;
-        private IntPtr _mapAddr;
+        private Java.IO.FileDescriptor _fd;
+        private long _mapAddr;
         private static readonly object DirDictLock = new object();
         private static string _dirDictName = string.Empty;
         private static Dictionary<string, string> _dirDict;
         private static DirectoryObserver _directoryObserver;
 
-        static MemoryStreamReader()
-        {
-            string libDir = "lib";
-            if (System.Environment.Is64BitProcess)
-            {
-                libDir = "lib64";
-            }
-
-            string libPath = Path.Combine("/system", libDir, LibcName);
-            if (NativeLibrary.TryLoad(libPath, out IntPtr handle))
-            {
-                _libcHandle = handle;
-            }
-        }
-
         public MemoryStreamReader(string path)
         {
             _filePos = 0;
             _fileLength = 0;
-            _fd = -1;
+            _fd = null;
             _mapAddr = (IntPtr)(-1);
 
             if (!File.Exists(path))
@@ -121,11 +92,11 @@ namespace EdiabasLib
             _fileLength = fileInfo.Length;
 
             bool openSuccess = false;
-            _fd = open(path, ORdonly, Deffilemode);
-            if (_fd != -1)
+            _fd = Android.Systems.Os.Open(path, ORdonly, Deffilemode);
+            if (_fd != null)
             {
-                _mapAddr = mmap(IntPtr.Zero, (IntPtr)_fileLength, ProtRead, MapPrivate, _fd, 0);
-                if (_mapAddr != (IntPtr)(-1))
+                _mapAddr = Android.Systems.Os.Mmap(0, _fileLength, ProtRead, MapPrivate, _fd, 0);
+                if (_mapAddr != -1)
                 {
                     openSuccess = true;
                 }
@@ -320,39 +291,28 @@ namespace EdiabasLib
         public static void CleanUp()
         {
             RemoveDirectoryObserver();
-            try
-            {
-                if (_libcHandle != IntPtr.Zero)
-                {
-                    NativeLibrary.Free(_libcHandle);
-                    _libcHandle = IntPtr.Zero;
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
         }
 
         private IntPtr PosPtr
         {
             get
             {
-                return IntPtr.Add(_mapAddr, (int)_filePos);
+                return new IntPtr(_mapAddr + _filePos);
             }
         }
 
         private void CloseHandles()
         {
-            if (_mapAddr != (IntPtr)(-1))
+            if (_mapAddr != -1)
             {
-                munmap(_mapAddr, (IntPtr)_fileLength);
-                _mapAddr = (IntPtr)(-1);
+                Android.Systems.Os.Munmap(_mapAddr, _fileLength);
+                _mapAddr = -1;
             }
-            if (_fd != -1)
+
+            if (_fd != null)
             {
-                close(_fd);
-                _fd = -1;
+                Android.Systems.Os.Close(_fd);
+                _fd = null;
             }
         }
 
