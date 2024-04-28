@@ -5,7 +5,7 @@ using System.Globalization;
 namespace BmwDeepObd;
 
 [BroadcastReceiver(
-    Exported = false,
+    Exported = true,
     Enabled = true,
     Name = ActivityCommon.AppNameSpace + "." + nameof(ActionBroadcastReceiver)
 )]
