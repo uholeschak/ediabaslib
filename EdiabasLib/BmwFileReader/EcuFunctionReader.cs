@@ -15,7 +15,7 @@ namespace BmwFileReader
         public const string FaultDataBaseName = "faultdata_";
         public const string FaultDataTypeFault = "F";
         public const string FaultDataTypeInfo = "I";
-        public delegate void ProgressDelegate(long progress);
+        public delegate bool ProgressDelegate(long progress);
 
         private readonly string _rootDir;
         private readonly object _lockObject = new object();
@@ -28,9 +28,12 @@ namespace BmwFileReader
 
         private class StreamEventReader : StreamReader
         {
-            public delegate void ReadEventHandler(int bytesRead);
+            public delegate bool ReadEventHandler(int bytesRead);
 
             private ReadEventHandler _readHandler;
+            private bool _aborted = false;
+
+            public bool Aborted => _aborted;
 
             public StreamEventReader(Stream stream, ReadEventHandler readHandler) : base(stream)
             {
@@ -42,7 +45,7 @@ namespace BmwFileReader
                 int readValue = base.Read();
                 if (readValue != -1)
                 {
-                    _readHandler?.Invoke(1);
+                    CallHandler(1);
                 }
                 return readValue;
             }
@@ -50,22 +53,38 @@ namespace BmwFileReader
             public override int Read(char[] buffer, int index, int count)
             {
                 int readCount = base.Read(buffer, index, count);
-                _readHandler?.Invoke(readCount);
+                CallHandler(readCount);
                 return readCount;
             }
 
             public override int ReadBlock(char[] buffer, int index, int count)
             {
                 int readCount = base.ReadBlock(buffer, index, count);
-                _readHandler?.Invoke(readCount);
+                CallHandler(readCount);
                 return readCount;
             }
 
             public override string ReadLine()
             {
                 string line = base.ReadLine();
-                _readHandler?.Invoke(line?.Length ?? 0);
+                CallHandler(line?.Length ?? 0);
                 return line;
+            }
+
+            private void CallHandler(int bytesRead)
+            {
+                if (_readHandler != null)
+                {
+                    if (_readHandler(bytesRead))
+                    {
+                        _aborted = true;
+                    }
+                }
+
+                if (_aborted)
+                {
+                    throw new IOException("Read aborted");
+                }
             }
         }
 
@@ -497,19 +516,23 @@ namespace BmwFileReader
                             {
                                 long maxLength = zipEntry.Size;
                                 long readPos = 0;
-                                using (TextReader reader = new StreamEventReader(zipStream, read =>
+                                using (StreamEventReader reader = new StreamEventReader(zipStream, read =>
                                        {
                                            if (progressHandler == null)
                                            {
-                                               return;
+                                               return false;
                                            }
 
                                            readPos += read;
-                                           progressHandler(readPos * 100 / maxLength);
+                                           return progressHandler(readPos * 100 / maxLength);
                                        }))
                                 {
                                     XmlSerializer serializer = new XmlSerializer(type);
                                     ecuObject = serializer.Deserialize(reader);
+                                    if (reader.Aborted)
+                                    {
+                                        return null;
+                                    }
                                 }
                             }
                             break;

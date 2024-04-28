@@ -15,7 +15,7 @@ namespace UdsFileReader
     {
         public const string FileExtension = ".uds";
         public const string UdsDir = "uds_ev";
-        public delegate void ProgressDelegate(long increment);
+        public delegate bool ProgressDelegate(long increment);
 
         public enum SegmentType
         {
@@ -3726,7 +3726,14 @@ namespace UdsFileReader
                 {
                     return false;
                 }
-                progressHandler?.Invoke(1);
+
+                if (progressHandler != null)
+                {
+                    if (progressHandler(1))
+                    {
+                        return false;
+                    }
+                }
 
                 string udsDir = Path.Combine(rootDir, UdsDir);
                 List<string[]> redirList = ExtractFileSegment(new List<string> {Path.Combine(udsDir, "redir" + FileExtension)}, "DIR", out errorMessage);
@@ -3734,7 +3741,14 @@ namespace UdsFileReader
                 {
                     return false;
                 }
-                progressHandler?.Invoke(1);
+
+                if (progressHandler != null)
+                {
+                    if (progressHandler(1))
+                    {
+                        return false;
+                    }
+                }
 
                 _redirMap = new Dictionary<string, string>();
                 foreach (string[] redirArray in redirList)
@@ -3772,7 +3786,15 @@ namespace UdsFileReader
                 {
                     return false;
                 }
-                progressHandler?.Invoke(1);
+
+                if (progressHandler != null)
+                {
+                    if (progressHandler(1))
+                    {
+                        return false;
+                    }
+                }
+
                 _ttdopLookup = ttdopList.ToLookup(item => UInt32.Parse(item[0]));
 
                 List<string[]> muxList = ExtractFileSegment(new List<string> { Path.Combine(udsDir, "mux" + FileExtension) }, "MUX", out errorMessage);
@@ -3780,7 +3802,15 @@ namespace UdsFileReader
                 {
                     return false;
                 }
-                progressHandler?.Invoke(1);
+
+                if (progressHandler != null)
+                {
+                    if (progressHandler(1))
+                    {
+                        return false;
+                    }
+                }
+
                 _muxLookup = muxList.ToLookup(item => UInt32.Parse(item[0]));
 
                 _chassisMap = CreateChassisDict(Path.Combine(udsDir, "chassis" + DataReader.FileExtension), out errorMessage);
@@ -3815,7 +3845,15 @@ namespace UdsFileReader
 
                     segmentInfo.LineList = lineList;
                 }
-                progressHandler?.Invoke(1);
+
+                if (progressHandler != null)
+                {
+                    if (progressHandler(1))
+                    {
+                        return false;
+                    }
+                }
+
                 return true;
             }
             catch (Exception ex)
