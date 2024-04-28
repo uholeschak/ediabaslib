@@ -13112,13 +13112,70 @@ using System.Threading;"
 
         public bool IsExStorageAvailable()
         {
-            Java.IO.File[] storages = ContextCompat.GetExternalFilesDirs(_context, null);
-            if (storages.Length > 1 && storages[0] != null && storages[1] != null)
+            try
             {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+                {
+                    string extState = Android.OS.Environment.ExternalStorageState;
+                    if (string.IsNullOrEmpty(extState))
+                    {
+                        return false;
+                    }
+
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("IsExStorageAvailable: Media State={0}", extState));
+#endif
+                    if (!extState.Equals(Android.OS.Environment.MediaMounted))
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "IsExStorageAvailable: Media not mounted");
+#endif
+                        return false;
+                    }
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "IsExStorageAvailable: Media mounted");
+#endif
+                    return true;
+                }
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {   // writing to external disk is only allowed in special directories.
+                    Java.IO.File[] externalFilesDirs = Android.App.Application.Context.GetExternalFilesDirs(null);
+                    if (externalFilesDirs?.Length > 0)
+                    {
+                        foreach (Java.IO.File extDir in externalFilesDirs)
+                        {
+                            if (extDir != null)
+                            {
+                                string extState = Android.OS.Environment.GetExternalStorageState(extDir);
+                                if (string.IsNullOrEmpty(extState))
+                                {
+                                    return false;
+                                }
+
+#if DEBUG
+                                Android.Util.Log.Info(Tag, string.Format("IsExStorageAvailable: Media='{0}', State={1}", extDir.AbsolutePath, extState));
+#endif
+                                if (!extState.Equals(Android.OS.Environment.MediaMounted))
+                                {
+#if DEBUG
+                                    Android.Util.Log.Info(Tag, "IsExStorageAvailable: Media not mounted");
+#endif
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+#if DEBUG
+                Android.Util.Log.Info(Tag, "IsExStorageAvailable: All media mounted");
+#endif
                 return true;
             }
-
-            return false;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static void SetStoragePath()

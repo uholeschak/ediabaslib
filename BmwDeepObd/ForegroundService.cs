@@ -759,8 +759,9 @@ namespace BmwDeepObd
                     if (!_activityCommon.IsExStorageAvailable())
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, "CommStateMachine: No external storage");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: External storage not available");
 #endif
+                        break;
                     }
 
                     string settingsFile = ActivityCommon.GetSettingsFileName();
