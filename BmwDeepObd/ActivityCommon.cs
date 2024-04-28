@@ -11747,7 +11747,12 @@ using System.Threading;"
                                     }, out errorMessage, increment =>
                                     {
                                         progressCount += increment;
-                                        progressHandler?.Invoke(progressCount * 100 / maxProgress);
+                                        if (progressHandler != null)
+                                        {
+                                            return progressHandler.Invoke(progressCount * 100 / maxProgress);
+                                        }
+
+                                        return false;
                                     }))
                                 {
                                     return false;
