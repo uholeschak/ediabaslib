@@ -761,6 +761,7 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: External storage not available");
 #endif
+                        Thread.Sleep(100);
                         break;
                     }
 
