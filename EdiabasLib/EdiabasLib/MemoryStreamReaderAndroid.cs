@@ -9,7 +9,7 @@ namespace EdiabasLib
 {
     public class MemoryStreamReader : Stream
     {
-        private const string LibcName = "libc";
+        private const string LibcName = "libc.so";
 
         [DllImport(LibcName, SetLastError = true)]
         static extern int open(string path, int flags, int access);
@@ -50,7 +50,14 @@ namespace EdiabasLib
 
         static MemoryStreamReader()
         {
-            if (NativeLibrary.TryLoad(LibcName, out IntPtr handle))
+            string libDir = "lib";
+            if (System.Environment.Is64BitProcess)
+            {
+                libDir = "lib64";
+            }
+
+            string libPath = Path.Combine("/system", libDir, LibcName);
+            if (NativeLibrary.TryLoad(libPath, out IntPtr handle))
             {
                 _libcHandle = handle;
             }
