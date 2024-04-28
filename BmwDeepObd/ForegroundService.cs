@@ -100,7 +100,7 @@ namespace BmwDeepObd
             _stopHandler = new Handler(Looper.MainLooper);
             _stopRunnable = new Java.Lang.Runnable(StopEdiabasThread);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
-            _activityCommon.SetLock(ActivityCommon.LockType.Cpu);
+            _activityCommon?.SetLock(ActivityCommon.LockType.Cpu);
             _instanceData = null;
             _progressValue = -1;
             _notificationUpdateTime = DateTime.MinValue.Ticks;
@@ -114,6 +114,8 @@ namespace BmwDeepObd
                     ConnectEdiabasEvents();
                 }
             }
+
+            _activityCommon?.StartMtcService();
         }
 
         public override Android.App.StartCommandResult OnStartCommand(Intent intent, Android.App.StartCommandFlags flags, int startId)
@@ -256,6 +258,7 @@ namespace BmwDeepObd
                 }
             }
 
+            _activityCommon?.StopMtcService();
             _activityCommon?.Dispose();
             _activityCommon = null;
             _isStarted = false;
