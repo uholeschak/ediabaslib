@@ -605,11 +605,12 @@ namespace BmwDeepObd
                     {
                         if (progress == _progressValue)
                         {
-                            return;
+                            return _abortThread;
                         }
 
                         _progressValue = progress;
                         UpdateNotification(true);
+                        return _abortThread;
                     }))
                 {
                     return false;
@@ -623,7 +624,17 @@ namespace BmwDeepObd
                 return true;
             }
 
-            if (!ActivityCommon.InitUdsReader(_instanceData.VagPath, out string _))
+            if (!ActivityCommon.InitUdsReader(_instanceData.VagPath, out string _, progress =>
+                {
+                    if (progress == _progressValue)
+                    {
+                        return _abortThread;
+                    }
+
+                    _progressValue = progress;
+                    UpdateNotification(true);
+                    return _abortThread;
+                }))
             {
                 return false;
             }

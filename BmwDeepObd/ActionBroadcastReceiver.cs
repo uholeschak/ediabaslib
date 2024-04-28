@@ -17,7 +17,8 @@ namespace BmwDeepObd;
         Intent.ActionReboot,
         Intent.ActionMyPackageReplaced,
         Intent.ActionMyPackageUnsuspended,
-        ActionQuickBoot,
+        AndroidActionQuickBoot,
+        HtcActionQuickBoot,
     },
     Categories = new[]
     {
@@ -30,7 +31,8 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #if DEBUG
     private static readonly string Tag = typeof(ActionBroadcastReceiver).FullName;
 #endif
-    public const string ActionQuickBoot = "android.intent.action.QUICKBOOT_POWERON";
+    public const string AndroidActionQuickBoot = "android.intent.action.QUICKBOOT_POWERON";
+    public const string HtcActionQuickBoot = "com.htc.intent.action.QUICKBOOT_POWERON";
     public const string ActionStartService = ActivityCommon.AppNameSpace + ".ActionStartService";
     // testing broadcast, but Exported must be set to true in the manifest before it can be used
     // adb shell am broadcast -a android.intent.action.QUICKBOOT_POWERON -p de.holeschak.bmw_deep_obd
@@ -54,7 +56,8 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionReboot:
             case Intent.ActionMyPackageReplaced:
             case Intent.ActionMyPackageUnsuspended:
-            case ActionQuickBoot:
+            case AndroidActionQuickBoot:
+            case HtcActionQuickBoot:
             case ActionStartService:
             {
                 ActivityCommon.AutoConnectType autoConnectType = ActivityCommon.GetAutoConnectSetting();
