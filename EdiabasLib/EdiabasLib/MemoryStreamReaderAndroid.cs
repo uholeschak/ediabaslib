@@ -9,16 +9,18 @@ namespace EdiabasLib
 {
     public class MemoryStreamReader : Stream
     {
-        [DllImport("libc", SetLastError = true)]
+        private const string LibcName = "libc";
+
+        [DllImport(LibcName, SetLastError = true)]
         static extern int open(string path, int flags, int access);
 
-        [DllImport("libc")]
+        [DllImport(LibcName)]
         static extern int close(int fd);
 
-        [DllImport("libc")]
+        [DllImport(LibcName)]
         static extern IntPtr mmap(IntPtr addr, IntPtr len, int prot, int flags, int fd, int offset);
 
-        [DllImport("libc")]
+        [DllImport(LibcName)]
         static extern int munmap(IntPtr addr, IntPtr size);
 
         // ReSharper disable UnusedMember.Local
@@ -39,11 +41,20 @@ namespace EdiabasLib
         private long _filePos;
         private readonly long _fileLength;
         private int _fd;
+        private static IntPtr _libcHandle;
         private IntPtr _mapAddr;
         private static readonly object DirDictLock = new object();
         private static string _dirDictName = string.Empty;
         private static Dictionary<string, string> _dirDict;
         private static DirectoryObserver _directoryObserver;
+
+        static MemoryStreamReader()
+        {
+            if (NativeLibrary.TryLoad(LibcName, out IntPtr handle))
+            {
+                _libcHandle = handle;
+            }
+        }
 
         public MemoryStreamReader(string path)
         {
@@ -302,6 +313,18 @@ namespace EdiabasLib
         public static void CleanUp()
         {
             RemoveDirectoryObserver();
+            try
+            {
+                if (_libcHandle != IntPtr.Zero)
+                {
+                    NativeLibrary.Free(_libcHandle);
+                    _libcHandle = IntPtr.Zero;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private IntPtr PosPtr
