@@ -158,6 +158,7 @@
   <!-- Service -->
   <string name="service_notification_comm_active">Die Kommunikation ist aktiv</string>
   <string name="service_notification_idle">Inaktiv</string>
+  <string name="service_notification_wait_media">Auf Speichermedium warten</string>
   <string name="service_notification_load_settings">Einstellungen lesen</string>
   <string name="service_notification_compile_code">Anwendercode kompilieren</string>
   <string name="service_notification_init_reader">Datenbank lesen</string>
