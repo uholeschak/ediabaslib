@@ -60,7 +60,7 @@ namespace BmwDeepObd
         private long _notificationUpdateTime;
         private static volatile StartState _startState;
         private static volatile bool _abortThread;
-        private static Thread _commThread;
+        private static volatile Thread _commThread;
         private static readonly object _threadLockObject;
 
         public ActivityCommon ActivityCommon => _activityCommon;
@@ -239,7 +239,6 @@ namespace BmwDeepObd
             // Remove the notification from the status bar.
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Cancel(ServiceRunningNotificationId);
-            _activityCommon?.SetLock(ActivityCommon.LockType.None);
             DisconnectEdiabasEvents();
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -259,6 +258,7 @@ namespace BmwDeepObd
             }
 
             _activityCommon?.StopMtcService();
+            _activityCommon?.SetLock(ActivityCommon.LockType.None);
             _activityCommon?.Dispose();
             _activityCommon = null;
             _isStarted = false;
