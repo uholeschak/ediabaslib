@@ -11623,10 +11623,25 @@ using System.Threading;"
                 return true;
             }
 
+            bool abortInit = false;
             CustomProgressDialog progress = new CustomProgressDialog(_activity);
             progress.SetMessage(_activity.GetString(Resource.String.vag_uds_init));
             progress.Indeterminate = true;
-            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.ButtonAbort.Visibility = ViewStates.Visible;
+            progress.ButtonAbort.Enabled = true;
+            progress.AbortClick = sender =>
+            {
+                _activity.RunOnUiThread(() =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+
+                    abortInit = true;
+                    progress.ButtonAbort.Enabled = false;
+                });
+            };
             progress.Show();
             SetLock(LockTypeCommunication);
             Thread initThread = new Thread(() =>
@@ -11636,7 +11651,7 @@ using System.Threading;"
                 {
                     if (lastPercent == percent)
                     {
-                        return false;
+                        return abortInit;
                     }
 
                     lastPercent = percent;
@@ -11653,7 +11668,7 @@ using System.Threading;"
                         }
                         progress.Progress = (int)percent;
                     });
-                    return false;
+                    return abortInit;
                 });
 
                 _activity?.RunOnUiThread(() =>
@@ -11874,12 +11889,27 @@ using System.Threading;"
                 return true;
             }
 
+            bool abortInit = false;
             CustomProgressDialog progress = new CustomProgressDialog(_activity);
             progress.SetMessage(_activity.GetString(Resource.String.bmw_ecu_func_init));
             progress.Indeterminate = true;
             progress.Progress = 0;
             progress.Max = 100;
-            progress.ButtonAbort.Visibility = ViewStates.Gone;
+            progress.ButtonAbort.Visibility = ViewStates.Visible;
+            progress.ButtonAbort.Enabled = true;
+            progress.AbortClick = sender =>
+            {
+                _activity.RunOnUiThread(() =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+
+                    abortInit = true;
+                    progress.ButtonAbort.Enabled = false;
+                });
+            };
             progress.Show();
             SetLock(LockTypeCommunication);
             Thread initThread = new Thread(() =>
@@ -11889,7 +11919,7 @@ using System.Threading;"
                 {
                     if (lastPercent == percent)
                     {
-                        return false;
+                        return abortInit;
                     }
 
                     lastPercent = percent;
@@ -11906,7 +11936,7 @@ using System.Threading;"
                         }
                         progress.Progress = (int)percent;
                     });
-                    return false;
+                    return abortInit;
                 });
 
                 _activity?.RunOnUiThread(() =>
