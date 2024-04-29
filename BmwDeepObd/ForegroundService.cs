@@ -65,7 +65,7 @@ namespace BmwDeepObd
 
         public ActivityCommon ActivityCommon => _activityCommon;
 
-        public static bool AbortThread
+        private static bool AbortThread
         {
             get
             {
@@ -320,7 +320,7 @@ namespace BmwDeepObd
                     break;
             }
 
-            if (checkAbort && _abortThread)
+            if (checkAbort && AbortThread)
             {
                 message = Resources.GetString(Resource.String.service_notification_abort);
             }
@@ -542,7 +542,7 @@ namespace BmwDeepObd
                 _instanceData = null;
                 _startState = StartState.LoadSettings;
                 _progressValue = -1;
-                _abortThread = false;
+                _abortThread = false;   // already locked
 
                 _commThread = new Thread(() =>
                 {
@@ -558,10 +558,10 @@ namespace BmwDeepObd
                                 return;
 
                             default:
-                                if (_abortThread)
+                                if (AbortThread)
                                 {
                                     _startState = StartState.Error;
-                                    _abortThread = false;
+                                    AbortThread = false;
                                     UpdateNotification();
                                     return;
                                 }
@@ -593,7 +593,7 @@ namespace BmwDeepObd
                 }
 
                 _commThread = null;
-                _abortThread = false;
+                _abortThread = false;   // already locked
             }
             return false;
         }
@@ -611,12 +611,12 @@ namespace BmwDeepObd
                     {
                         if (progress == _progressValue)
                         {
-                            return _abortThread;
+                            return AbortThread;
                         }
 
                         _progressValue = progress;
                         UpdateNotification(true);
-                        return _abortThread;
+                        return AbortThread;
                     }))
                 {
                     return false;
@@ -634,12 +634,12 @@ namespace BmwDeepObd
                 {
                     if (progress == _progressValue)
                     {
-                        return _abortThread;
+                        return AbortThread;
                     }
 
                     _progressValue = progress;
                     UpdateNotification(true);
-                    return _abortThread;
+                    return AbortThread;
                 }))
             {
                 return false;
@@ -725,7 +725,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    if (_abortThread)
+                    if (AbortThread)
                     {
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CompileCode: Aborted");
