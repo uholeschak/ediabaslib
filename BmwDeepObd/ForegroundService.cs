@@ -257,10 +257,13 @@ namespace BmwDeepObd
                 }
             }
 
-            _activityCommon?.StopMtcService();
-            _activityCommon?.SetLock(ActivityCommon.LockType.None);
-            _activityCommon?.Dispose();
-            _activityCommon = null;
+            if (_activityCommon != null)
+            {
+                _activityCommon.StopMtcService();
+                _activityCommon.SetLock(ActivityCommon.LockType.None);
+                _activityCommon.Dispose();
+                _activityCommon = null;
+            }
             _isStarted = false;
 
             if (_stopHandler != null)
