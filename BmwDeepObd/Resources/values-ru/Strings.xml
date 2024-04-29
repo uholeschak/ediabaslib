@@ -160,6 +160,8 @@
   <!--Translate-->
   <string name="service_notification_idle">Неактивный</string>
   <!--Translate-->
+  <string name="service_notification_wait_media">Ожидание носителя</string>
+  <!--Translate-->
   <string name="service_notification_load_settings">Чтение настроек</string>
   <string name="service_notification_compile_code">Компилировать код пользователя</string>
   <!--Translate-->

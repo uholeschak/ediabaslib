@@ -44,6 +44,7 @@ namespace BmwDeepObd
         private enum StartState
         {
             None,
+            WaitMedia,
             LoadSettings,
             CompileCode,
             InitReader,
@@ -297,6 +298,10 @@ namespace BmwDeepObd
                     }
                     break;
 
+                case StartState.WaitMedia:
+                    message = Resources.GetString(Resource.String.service_notification_wait_media);
+                    break;
+
                 case StartState.LoadSettings:
                     message = Resources.GetString(Resource.String.service_notification_load_settings);
                     break;
@@ -540,7 +545,7 @@ namespace BmwDeepObd
             lock (_threadLockObject)
             {
                 _instanceData = null;
-                _startState = StartState.LoadSettings;
+                _startState = StartState.WaitMedia;
                 _progressValue = -1;
                 _abortThread = false;   // already locked
 
@@ -768,17 +773,27 @@ namespace BmwDeepObd
 
             switch (_startState)
             {
-                case StartState.LoadSettings:
+                case StartState.WaitMedia:
                 {
                     if (!_activityCommon.IsExStorageAvailable())
                     {
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: External storage not available");
 #endif
-                        Thread.Sleep(100);
+                        Thread.Sleep(500);
                         break;
                     }
 
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommStateMachine: External storage available");
+#endif
+                    _startState = StartState.LoadSettings;
+                    UpdateNotification();
+                    break;
+                }
+
+                case StartState.LoadSettings:
+                {
                     string settingsFile = ActivityCommon.GetSettingsFileName();
                     if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
                     {
