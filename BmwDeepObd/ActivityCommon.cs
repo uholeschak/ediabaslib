@@ -13152,23 +13152,7 @@ using System.Threading;"
                         return false;
                     }
 
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("IsExStorageAvailable: Media State={0}", extState));
-#endif
-                    if (!extState.Equals(Android.OS.Environment.MediaRemoved))
-                    {
-                        if (!extState.Equals(Android.OS.Environment.MediaMounted))
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, "IsExStorageAvailable: Media not mounted");
-#endif
-                            return false;
-                        }
-                    }
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "IsExStorageAvailable: Media mounted");
-#endif
-                    return true;
+                    return IsMediaMounted(extState);
                 }
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
@@ -13186,18 +13170,9 @@ using System.Threading;"
                                     return false;
                                 }
 
-#if DEBUG
-                                Android.Util.Log.Info(Tag, string.Format("IsExStorageAvailable: Media='{0}', State={1}", extDir.AbsolutePath, extState));
-#endif
-                                if (!extState.Equals(Android.OS.Environment.MediaRemoved))
+                                if (!IsMediaMounted(extState))
                                 {
-                                    if (!extState.Equals(Android.OS.Environment.MediaMounted))
-                                    {
-#if DEBUG
-                                        Android.Util.Log.Info(Tag, "IsExStorageAvailable: Media not mounted");
-#endif
-                                        return false;
-                                    }
+                                    return false;
                                 }
                             }
                         }
@@ -13212,6 +13187,28 @@ using System.Threading;"
             {
                 return false;
             }
+        }
+
+        public bool IsMediaMounted(string extState)
+        {
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("IsMediaMounted: Media State={0}", extState));
+#endif
+            if (!extState.Equals(Android.OS.Environment.MediaRemoved))
+            {
+                if (!extState.Equals(Android.OS.Environment.MediaMounted))
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "IsMediaMounted: Media not mounted");
+#endif
+                    return false;
+                }
+            }
+
+#if DEBUG
+            Android.Util.Log.Info(Tag, "IsMediaMounted: Media mounted");
+#endif
+            return true;
         }
 
         public static void SetStoragePath()
