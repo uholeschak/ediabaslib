@@ -158,6 +158,8 @@
   <!-- Service -->
   <string name="service_notification_comm_active">Соединение активно</string>
   <!--Translate-->
+  <string name="service_notification_comm_error">Нет связи с автомобилем</string>
+  <!--Translate-->
   <string name="service_notification_idle">Неактивный</string>
   <!--Translate-->
   <string name="service_notification_wait_media">Ожидание носителя</string>
@@ -166,6 +168,8 @@
   <string name="service_notification_compile_code">Компилировать код пользователя</string>
   <!--Translate-->
   <string name="service_notification_init_reader">Чтение базы данных</string>
+  <!--Translate-->
+  <string name="service_notification_connecting">Установка соединения</string>
   <!--Translate-->
   <string name="service_notification_error">Не удалось начать</string>
   <!--Translate-->
