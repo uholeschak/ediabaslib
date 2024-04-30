@@ -132,6 +132,7 @@
 
   <!-- Service -->
   <string name="service_notification_comm_active">The communication is active</string>
+  <string name="service_notification_comm_ok">Connection to the vehicle established</string>
   <string name="service_notification_comm_error">No connection to the vehicle</string>
   <string name="service_notification_idle">Inactive</string>
   <string name="service_notification_wait_media">Waiting for storage media</string>
