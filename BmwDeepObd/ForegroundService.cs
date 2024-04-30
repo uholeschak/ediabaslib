@@ -473,7 +473,7 @@ namespace BmwDeepObd
             if (_updateState != updateState)
             {
                 _updateState = updateState;
-                UpdateNotification(true);
+                UpdateNotification();
             }
         }
 
