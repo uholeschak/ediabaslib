@@ -58,6 +58,7 @@ namespace BmwDeepObd
         private Handler _stopHandler;
         private Java.Lang.Runnable _stopRunnable;
         private long _progressValue;
+        private volatile EdiabasThread.UpdateState _updateState;
         private long _notificationUpdateTime;
         private static volatile StartState _startState;
         private static volatile bool _abortThread;
@@ -104,6 +105,7 @@ namespace BmwDeepObd
             _activityCommon?.SetLock(ActivityCommon.LockType.Cpu);
             _instanceData = null;
             _progressValue = -1;
+            _updateState = EdiabasThread.UpdateState.Init;
             _notificationUpdateTime = DateTime.MinValue.Ticks;
 
             lock (ActivityCommon.GlobalLockObject)
@@ -424,6 +426,7 @@ namespace BmwDeepObd
         {
             if (ActivityCommon.EdiabasThread != null)
             {
+                ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
                 ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
             }
         }
@@ -432,6 +435,7 @@ namespace BmwDeepObd
         {
             if (ActivityCommon.EdiabasThread != null)
             {
+                ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
                 ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
             }
         }
@@ -446,6 +450,21 @@ namespace BmwDeepObd
             else
             {
                 DisconnectEdiabasEvents();
+            }
+        }
+
+        private void DataUpdated(object sender, EventArgs e)
+        {
+            EdiabasThread.UpdateState updateState;
+            lock (EdiabasThread.DataLock)
+            {
+                updateState = ActivityCommon.EdiabasThread.UpdateProgressState;
+            }
+
+            if (_updateState != updateState)
+            {
+                _updateState = updateState;
+                UpdateNotification(true);
             }
         }
 
@@ -547,6 +566,7 @@ namespace BmwDeepObd
                 _instanceData = null;
                 _startState = StartState.WaitMedia;
                 _progressValue = -1;
+                _updateState = EdiabasThread.UpdateState.Init;
                 _abortThread = false;   // already locked
 
                 _commThread = new Thread(() =>
