@@ -286,9 +286,9 @@ namespace BmwDeepObd
 
         private Android.App.Notification GetNotification()
         {
-            string message = Resources.GetString(Resource.String.service_notification_comm_active);
             bool checkAbort = true;
             bool showProgress = false;
+            string message = string.Empty;
 
             switch (_startState)
             {
@@ -297,7 +297,15 @@ namespace BmwDeepObd
                     if (!ActivityCommon.CommActive)
                     {
                         message = Resources.GetString(Resource.String.service_notification_idle);
+                        break;
                     }
+
+                    if (_updateState != EdiabasThread.UpdateState.Connected)
+                    {
+                        message = Resources.GetString(Resource.String.service_notification_comm_error);
+                        break;
+                    }
+                    message = Resources.GetString(Resource.String.service_notification_comm_active);
                     break;
 
                 case StartState.WaitMedia:
@@ -319,6 +327,7 @@ namespace BmwDeepObd
                     break;
 
                 case StartState.StartComm:
+                    message = Resources.GetString(Resource.String.service_notification_connecting);
                     break;
 
                 case StartState.Error:

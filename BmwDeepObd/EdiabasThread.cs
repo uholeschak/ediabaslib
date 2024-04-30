@@ -29,7 +29,8 @@ namespace BmwDeepObd
             Init,
             Error,
             DetectVehicle,
-            ReadErrors
+            ReadErrors,
+            Connected
         }
 
         public class EdiabasErrorReport
@@ -1330,7 +1331,7 @@ namespace BmwDeepObd
                 EdiabasErrorReportList = null;
                 EdiabasErrorMessage = string.Empty;
                 ResultPageInfo = pageInfo;
-                UpdateProgressState = UpdateState.Error;
+                UpdateProgressState = UpdateState.Connected;
                 UpdateProgress = 0;
             }
             return true;
