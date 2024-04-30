@@ -157,6 +157,7 @@
 
   <!-- Service -->
   <string name="service_notification_comm_active">Соединение активно</string>
+  <string name="service_notification_comm_ok">Соединение с автомобилем установлено</string>
   <!--Translate-->
   <string name="service_notification_comm_error">Нет связи с автомобилем</string>
   <!--Translate-->

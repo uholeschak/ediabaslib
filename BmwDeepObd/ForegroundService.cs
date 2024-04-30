@@ -288,7 +288,7 @@ namespace BmwDeepObd
         {
             bool checkAbort = true;
             bool showProgress = false;
-            string message = string.Empty;
+            string message = Resources.GetString(Resource.String.service_notification_comm_active);
 
             switch (_startState)
             {
@@ -305,7 +305,7 @@ namespace BmwDeepObd
                         message = Resources.GetString(Resource.String.service_notification_comm_error);
                         break;
                     }
-                    message = Resources.GetString(Resource.String.service_notification_comm_active);
+                    message = Resources.GetString(Resource.String.service_notification_comm_ok);
                     break;
 
                 case StartState.WaitMedia:
