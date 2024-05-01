@@ -315,12 +315,17 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    if (_updateState != EdiabasThread.UpdateState.Connected)
+                    switch (_updateState)
                     {
-                        message = Resources.GetString(Resource.String.service_notification_comm_error);
-                        break;
+                        case EdiabasThread.UpdateState.ReadErrors:
+                        case EdiabasThread.UpdateState.Connected:
+                            message = Resources.GetString(Resource.String.service_notification_comm_ok);
+                            break;
+
+                        default:
+                            message = Resources.GetString(Resource.String.service_notification_comm_error);
+                            break;
                     }
-                    message = Resources.GetString(Resource.String.service_notification_comm_ok);
                     break;
 
                 case StartState.WaitMedia:
