@@ -51,6 +51,7 @@ namespace BmwDeepObd
             InitReader,
             StartComm,
             Error,
+            Terminate,
         }
 
         private bool _isStarted;
@@ -176,7 +177,7 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
                     bool abortThread = intent.GetBooleanExtra(ExtraAbortThread, false);
-                    if (IsCommThreadRunning())
+                    if (IsCommThreadRunning() && _startState != StartState.Terminate)
                     {
                         if (abortThread)
                         {
@@ -382,6 +383,12 @@ namespace BmwDeepObd
         {
             try
             {
+                if (_startState == StartState.Terminate)
+                {
+                    ActivityCommon.StopForegroundService(this);
+                    return;
+                }
+
                 if (delayUpdate)
                 {
                     if (Stopwatch.GetTimestamp() - _notificationUpdateTime < NotificationUpdateDelay * ActivityCommon.TickResolMs)
@@ -608,6 +615,7 @@ namespace BmwDeepObd
                         {
                             case StartState.None:
                             case StartState.Error:
+                            case StartState.Terminate:
                                 UpdateNotification();
                                 return;
 
@@ -865,6 +873,15 @@ namespace BmwDeepObd
                             return;
                         }
 
+                        if (instanceData.LastSelectedJobIndex < 0)
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, "CommStateMachine: No page selected");
+#endif
+                            _startState = StartState.Terminate;
+                            return;
+                        }
+
                         _instanceData = instanceData;
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings Ok");
@@ -968,9 +985,15 @@ namespace BmwDeepObd
                         JobReader.PageInfo pageInfo = null;
                         if (ActivityCommon.JobReader.PageList.Count > 0)
                         {
-                            pageInfo = ActivityCommon.JobReader.PageList[0];
+                            int jobIndex = _instanceData.LastSelectedJobIndex;
+                            if (jobIndex >= 0 && jobIndex < ActivityCommon.JobReader.PageList.Count)
+                            {
+                                pageInfo = ActivityCommon.JobReader.PageList[jobIndex];
+                            }
                         }
-
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommStateMachine: StartEdiabasThread no page selected");
+#endif
                         if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo, EdiabasEventHandler))
                         {
 #if DEBUG

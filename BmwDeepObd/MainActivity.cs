@@ -2463,6 +2463,25 @@ namespace BmwDeepObd
             StoreSettings();
         }
 
+        private void StoreActiveJobIndex()
+        {
+            int selectedJobIndex = -1;
+            if (ActivityCommon.CommActive)
+            {
+                JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread.JobPageInfo;
+                if (pageInfo != null)
+                {
+                    selectedJobIndex = ActivityCommon.JobReader.PageList.IndexOf(pageInfo);
+                }
+            }
+
+            if (_instanceData.LastSelectedJobIndex != selectedJobIndex)
+            {
+                _instanceData.LastSelectedJobIndex = selectedJobIndex;
+                StoreSettings();
+            }
+        }
+
         private bool RequestOverlayPermissions(EventHandler<EventArgs> handler)
         {
             if (_overlayPermissionRequested || _overlayPermissionGranted)
@@ -2943,6 +2962,8 @@ namespace BmwDeepObd
                 }
                 try
                 {
+                    StoreActiveJobIndex();
+
                     JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread?.JobPageInfo;
                     if (pageInfo != null)
                     {
@@ -2985,6 +3006,7 @@ namespace BmwDeepObd
             _translatedList = null;
 
             StoreTranslation();
+            StoreActiveJobIndex();
             UpdateCheck();
             if (_instanceData.CommErrorsCount >= ActivityCommon.MinSendCommErrors && responseCount > 0 &&
                 _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))
@@ -3074,21 +3096,28 @@ namespace BmwDeepObd
 
         private void UpdateSelectedPage()
         {
-            if (!ActivityCommon.CommActive)
+            try
             {
-                return;
-            }
+                if (!ActivityCommon.CommActive)
+                {
+                    return;
+                }
 
-            JobReader.PageInfo newPageInfo = GetSelectedPage();
-            if (newPageInfo == null)
-            {
-                return;
+                JobReader.PageInfo newPageInfo = GetSelectedPage();
+                if (newPageInfo == null)
+                {
+                    return;
+                }
+                bool newCommActive = !newPageInfo.JobActivate;
+                if (ActivityCommon.EdiabasThread.JobPageInfo != newPageInfo)
+                {
+                    ActivityCommon.EdiabasThread.CommActive = newCommActive;
+                    ActivityCommon.EdiabasThread.JobPageInfo = newPageInfo;
+                }
             }
-            bool newCommActive = !newPageInfo.JobActivate;
-            if (ActivityCommon.EdiabasThread.JobPageInfo != newPageInfo)
+            finally
             {
-                ActivityCommon.EdiabasThread.CommActive = newCommActive;
-                ActivityCommon.EdiabasThread.JobPageInfo = newPageInfo;
+                StoreActiveJobIndex();
             }
         }
 
@@ -6331,6 +6360,7 @@ namespace BmwDeepObd
             StoreTranslation();
             ActivityCommon.JobReader.Clear();
             _instanceData.ConfigFileName = string.Empty;
+            StoreActiveJobIndex();
             StoreSettings();
 
             PostCreateActionBarTabs();
