@@ -8,6 +8,7 @@ using System.Threading;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Widget;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
 
@@ -125,7 +126,7 @@ namespace BmwDeepObd
         {
             if (intent?.Action == null)
             {
-                return Android.App.StartCommandResult.Sticky;
+                return Android.App.StartCommandResult.RedeliverIntent;
             }
 
             switch (intent.Action)
@@ -144,9 +145,16 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
-                        RegisterForegroundService();
                         if (startComm)
                         {
+                            if (!BaseActivity.IsActivityListEmpty())
+                            {
+#if DEBUG
+                                Android.Util.Log.Info(Tag, "OnStartCommand: Activities are active");
+#endif
+                                break;
+                            }
+
                             if (!ActivityCommon.CommActive)
                             {
 #if DEBUG
@@ -155,6 +163,8 @@ namespace BmwDeepObd
                                 StartCommThread();
                             }
                         }
+
+                        RegisterForegroundService();
                         _isStarted = true;
                     }
                     break;
@@ -219,13 +229,17 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: Show main activity");
 #endif
-                    ShowMainActivity();
+                    if (!ShowMainActivity())
+                    {
+                        Toast.MakeText(this, Resource.String.service_is_starting, ToastLength.Long)?.Show();
+                    }
+
                     break;
                 }
             }
 
             // This tells Android not to restart the service if it is killed to reclaim resources.
-            return Android.App.StartCommandResult.Sticky;
+            return Android.App.StartCommandResult.RedeliverIntent;
         }
 
         public override IBinder OnBind(Intent intent)
@@ -414,8 +428,13 @@ namespace BmwDeepObd
             InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
-        private void ShowMainActivity()
+        private bool ShowMainActivity()
         {
+            if (IsCommThreadRunning())
+            {
+                return false;
+            }
+
             try
             {
                 Intent intent = new Intent(this, typeof(ActivityMain));
@@ -424,10 +443,11 @@ namespace BmwDeepObd
                 intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
                 intent.PutExtra(ActivityMain.ExtraShowTitle, true);
                 StartActivity(intent);
+                return true;
             }
             catch (Exception)
             {
-                // ignored
+                return false;
             }
         }
 
