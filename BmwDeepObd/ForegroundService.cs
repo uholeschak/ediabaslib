@@ -60,8 +60,8 @@ namespace BmwDeepObd
         private Handler _stopHandler;
         private Java.Lang.Runnable _stopRunnable;
         private long _progressValue;
-        private volatile EdiabasThread.UpdateState _updateState;
         private long _notificationUpdateTime;
+        private volatile EdiabasThread.UpdateState _updateState;
         private static volatile StartState _startState;
         private static volatile bool _abortThread;
         private static volatile Thread _commThread;
@@ -107,8 +107,8 @@ namespace BmwDeepObd
             _activityCommon?.SetLock(ActivityCommon.LockType.Cpu);
             _instanceData = null;
             _progressValue = -1;
-            _updateState = EdiabasThread.UpdateState.Init;
             _notificationUpdateTime = DateTime.MinValue.Ticks;
+            _updateState = EdiabasThread.UpdateState.Init;
 
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -502,11 +502,9 @@ namespace BmwDeepObd
                 updateState = ActivityCommon.EdiabasThread.UpdateProgressState;
             }
 
-            if (_updateState != updateState)
-            {
-                _updateState = updateState;
-                UpdateNotification();
-            }
+            bool changed = _updateState != updateState;
+            _updateState = updateState;
+            UpdateNotification(!changed);
         }
 
         private void ThreadTerminated(object sender, EventArgs e)
