@@ -377,6 +377,7 @@ namespace BmwDeepObd
                 }
 
                 LastAppState = instanceData.LastAppState;
+                LastSelectedJobIndex = instanceData.LastSelectedJobIndex;
                 SelectedEnetIp = activityCommon.SelectedEnetIp;
                 SelectedElmWifiIp = activityCommon.SelectedElmWifiIp;
                 SelectedDeepObdWifiIp = activityCommon.SelectedDeepObdWifiIp;
@@ -419,6 +420,7 @@ namespace BmwDeepObd
             }
 
             [XmlElement("LastAppState")] public LastAppState LastAppState { get; set; }
+            [XmlElement("LastSelectedJobIndex")] public int LastSelectedJobIndex { get; set; }
             [XmlElement("Locale")] public string SelectedLocale { get; set; }
             [XmlElement("Theme")] public ThemeType SelectedTheme { get; set; }
             [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
@@ -592,6 +594,7 @@ namespace BmwDeepObd
             {
                 LastLocale = string.Empty;
                 LastAppState = LastAppState.Init;
+                LastSelectedJobIndex = -1;
                 LastSettingsHash = string.Empty;
                 AppDataPath = string.Empty;
                 EcuPath = string.Empty;
@@ -610,6 +613,7 @@ namespace BmwDeepObd
             public string LastLocale { get; set; }
             public ThemeType? LastThemeType { get; set; }
             public LastAppState LastAppState { get; set; }
+            public int LastSelectedJobIndex { get; set; }
             public string LastSettingsHash { get; set; }
             public bool GetSettingsCalled { get; set; }
             public string AppDataPath { get; set; }
@@ -12319,6 +12323,7 @@ using System.Threading;"
                 if (init || import)
                 {
                     instanceData.LastAppState = storageData.LastAppState;
+                    instanceData.LastSelectedJobIndex = storageData.LastSelectedJobIndex;
                     SelectedEnetIp = storageData.SelectedEnetIp;
                     SelectedElmWifiIp = storageData.SelectedElmWifiIp;
                     SelectedDeepObdWifiIp = storageData.SelectedDeepObdWifiIp;
