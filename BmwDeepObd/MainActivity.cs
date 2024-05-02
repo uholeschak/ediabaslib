@@ -75,6 +75,7 @@ namespace BmwDeepObd
             RequestEdiabasTool,
             RequestBmwCoding,
             RequestOpenExternalFile,
+            RequestServiceBusy,
             RequestYandexKey,
             RequestGlobalSettings,
             RequestGlobalSettingsCopy,
@@ -982,6 +983,11 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestOpenExternalFile:
+                    UpdateOptionsMenu();
+                    UpdateDisplay();
+                    break;
+
+                case ActivityRequest.RequestServiceBusy:
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
@@ -6478,6 +6484,21 @@ namespace BmwDeepObd
         private void OpenDonateLink()
         {
             _activityCommon.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
+        }
+
+        private bool ShowServiceBusy()
+        {
+            try
+            {
+                Intent serverIntent = new Intent(this, typeof(ServiceBusyActivity));
+                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestServiceBusy);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private bool EditYandexKey()
