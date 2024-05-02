@@ -472,7 +472,7 @@
   <string name="settings_start_offline">No connection establishment to vehicle</string>
   <string name="settings_start_connect">Auto connection establishment to vehicle</string>
   <string name="settings_start_connect_close">Auto connection establishment to vehicle and close App (only if broadcast is active)</string>
-  <string name="settings_start_boot">Auto start service at boot and connection establishment to vehicle</string>
+  <string name="settings_start_boot">Auto start the service at boot time to restore the last connection state</string>
   <string name="settings_caption_update">Update check</string>
   <string name="settings_update_off">Never</string>
   <string name="settings_update_1day">Every day</string>
