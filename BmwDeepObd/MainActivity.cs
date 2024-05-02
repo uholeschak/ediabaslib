@@ -2905,6 +2905,16 @@ namespace BmwDeepObd
                         if (request.Equals(ForegroundService.BroadcastStopComm))
                         {
                             StopEdiabasThread(false);
+                            break;
+                        }
+
+                        if (request.Equals(ForegroundService.BroadcastFinishActivity))
+                        {
+                            if (!ActivityCommon.CommActive && !_activityActive)
+                            {
+                                Finish();
+                                break;
+                            }
                         }
                     }
                     break;
