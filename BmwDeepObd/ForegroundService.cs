@@ -27,6 +27,7 @@ namespace BmwDeepObd
         public const int ServiceRunningNotificationId = 10000;
         public const string BroadcastMessageKey = "broadcast_message";
         public const string BroadcastStopComm = "stop_communication";
+        public const string BroadcastFinishActivity = "finish_activity";
         public const string NotificationBroadcastAction = ActivityCommon.AppNameSpace + ".Notification.Action";
         public const string ActionBroadcastCommand = ActivityCommon.AppNameSpace + ".Action.Command";
 
@@ -275,6 +276,8 @@ namespace BmwDeepObd
                 }
             }
 
+            SendFinishActivityBroadcast();
+
             if (_activityCommon != null)
             {
                 _activityCommon.StopMtcService();
@@ -437,6 +440,13 @@ namespace BmwDeepObd
         {
             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
             broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
+            InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+        }
+
+        private void SendFinishActivityBroadcast()
+        {
+            Intent broadcastIntent = new Intent(NotificationBroadcastAction);
+            broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastFinishActivity);
             InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
