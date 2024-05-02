@@ -503,7 +503,7 @@
   <string name="settings_caption_app_start">Запустить приложение</string>
   <string name="settings_start_offline">Нет связи с автомобилем</string>
   <string name="settings_start_connect">Автоматическое подключение к автомобилю</string>
-  <string name="settings_start_connect_close">Завершить автоматическое подключение к автомобилю и приложение (только при активном Broadcast)</string>
+  <string name="settings_start_connect_close">Завершить автоматическое подключение к автомобилю и приложение</string>
   <!--Translate-->
   <string name="settings_start_boot">Автоматический запуск службы во время загрузки для восстановления последнего состояния подключения.</string>
   <string name="settings_caption_update">Проверка обновления</string>
