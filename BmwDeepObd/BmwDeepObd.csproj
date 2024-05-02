@@ -38,6 +38,7 @@
     <TrimmerRootAssembly Include="Xamarin.AndroidX.Core" RootMode="visible" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Resources\layout\service_busy.xml" />
     <None Remove="Xml\BmwDeepObd.xsd" />
   </ItemGroup>
   <ItemGroup>
