@@ -24,6 +24,8 @@ public class ServiceBusyActivity : BaseActivity
         base.OnCreate(savedInstanceState);
         SetContentView(Resource.Layout.service_busy);
 
+        SetResult(Android.App.Result.Canceled);
+
         _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
         _statusText = FindViewById<TextView>(Resource.Id.statusText);
         _abortButton = FindViewById<Button>(Resource.Id.abortButton);
