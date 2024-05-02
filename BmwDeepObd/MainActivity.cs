@@ -2185,6 +2185,11 @@ namespace BmwDeepObd
         // ReSharper disable once UnusedMethodReturnValue.Local
         private bool UpdateCheck()
         {
+            if (!_activityActive)
+            {
+                return false;
+            }
+
             long updateCheckDelay = ActivityCommon.UpdateCheckDelay;
             bool serialCheck = ActivityCommon.IsSerialNumberCheckRequired();
             if (serialCheck)
