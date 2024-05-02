@@ -1093,7 +1093,6 @@ namespace BmwDeepObd
         private HttpClient _translateHttpClient;
         private HttpClient _sendHttpClient;
         private HttpClient _updateHttpClient;
-        private HttpClient _transLoginHttpClient;
         private bool _updateCheckActive;
         private bool _translateLockAquired;
         private string _yandexCloudIamToken;
@@ -1861,19 +1860,6 @@ namespace BmwDeepObd
                             // ignored
                         }
                         _updateHttpClient = null;
-                    }
-
-                    if (_transLoginHttpClient != null)
-                    {
-                        try
-                        {
-                            _transLoginHttpClient.Dispose();
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                        _transLoginHttpClient = null;
                     }
 
                     UnRegisterInternetCellularCallback();
