@@ -2912,7 +2912,11 @@ namespace BmwDeepObd
                         {
                             if (!ActivityCommon.CommActive && !_activityActive)
                             {
-                                Finish();
+                                bool isEmpty = IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
+                                if (isEmpty)
+                                {
+                                    Finish();
+                                }
                                 break;
                             }
                         }
@@ -3017,7 +3021,6 @@ namespace BmwDeepObd
             _translatedList = null;
 
             StoreTranslation();
-            StoreActiveJobIndex();
             UpdateCheck();
             if (_instanceData.CommErrorsCount >= ActivityCommon.MinSendCommErrors && responseCount > 0 &&
                 _instanceData.TraceActive && !string.IsNullOrEmpty(_instanceData.TraceDir))

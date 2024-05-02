@@ -285,7 +285,7 @@ namespace BmwDeepObd
             }
         }
 
-        [XmlInclude(typeof(ActivityCommon.SerialInfoEntry))]
+        [XmlInclude(typeof(SerialInfoEntry))]
         [XmlType("Settings")]
         public class StorageData
         {
