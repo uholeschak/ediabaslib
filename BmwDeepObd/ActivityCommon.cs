@@ -1827,6 +1827,7 @@ namespace BmwDeepObd
                     {
                         try
                         {
+                            _translateHttpClient.CancelPendingRequests();
                             _translateHttpClient.Dispose();
                         }
                         catch (Exception)
@@ -1840,6 +1841,7 @@ namespace BmwDeepObd
                     {
                         try
                         {
+                            _sendHttpClient.CancelPendingRequests();
                             _sendHttpClient.Dispose();
                         }
                         catch (Exception)
@@ -1853,6 +1855,7 @@ namespace BmwDeepObd
                     {
                         try
                         {
+                            _updateHttpClient.CancelPendingRequests();
                             _updateHttpClient.Dispose();
                         }
                         catch (Exception)
@@ -7993,7 +7996,6 @@ namespace BmwDeepObd
                     });
                 }
 
-                PackageInfo packageInfo = GetPackageInfo();
                 string certInfo = GetCertificateInfo();
                 string installer = GetInstallerPackageName();
 

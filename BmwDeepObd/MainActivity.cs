@@ -729,6 +729,7 @@ namespace BmwDeepObd
             {
                 try
                 {
+                    _httpClient.CancelPendingRequests();
                     _httpClient.Dispose();
                 }
                 catch (Exception)
