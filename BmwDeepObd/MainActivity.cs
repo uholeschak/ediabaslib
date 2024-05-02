@@ -491,6 +491,7 @@ namespace BmwDeepObd
             _ignoreTabsChange = false;
             _tabsCreated = true;
             UpdateDisplay();
+            StoreActiveJobIndex();
             StoreLastAppState(ActivityCommon.LastAppState.TabsCreated);
 
             switch (_connectTypeRequest)
