@@ -496,7 +496,7 @@
   <string name="settings_start_offline">Keine Verbindungsaufbau zum Fahrzeug</string>
   <string name="settings_start_connect">Automatischer Verbindungsaufbau zum Fahrzeug</string>
   <string name="settings_start_connect_close">Automatischer Verbindungsaufbau zum Fahrzeug und App beenden (nur wenn der Broadcast aktiv ist)</string>
-  <string name="settings_start_boot">Automatischer Servicestart beim Booten und Verbindungsaufbau zum Fahrzeug</string>
+  <string name="settings_start_boot">Automatischer Servicestart beim Booten um den letzten Verbindungszustand wieder herzustellen</string>
   <string name="settings_caption_update">Update-Prüfung</string>
   <string name="settings_update_off">Niemals</string>
   <string name="settings_update_1day">Jeden Tag</string>
