@@ -502,7 +502,7 @@ namespace BmwDeepObd
                         !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
                     {
                         ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
-                        if (UseCommService() && ActivityCommon.SendDataBroadcast && ActivityCommon.CommActive &&
+                        if (UseCommService() && ActivityCommon.CommActive &&
                             _connectTypeRequest == ActivityCommon.AutoConnectType.ConnectClose)
                         {
                             Finish();
