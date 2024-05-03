@@ -84,7 +84,15 @@ public class ServiceBusyActivity : BaseActivity
 
     private void UpdateDisplay()
     {
-        _statusText.Text = GetString(Resource.String.service_is_starting);
+        bool aborting = ForegroundService.AbortThread;
+
+        string statusText = GetString(Resource.String.service_is_starting);
+        if (aborting)
+        {
+            statusText = GetString(Resource.String.service_notification_abort);
+        }
+        _statusText.Text = statusText;
+
         _abortButton.Enabled = !ForegroundService.AbortThread;
     }
 
