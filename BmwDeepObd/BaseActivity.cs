@@ -9,6 +9,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
+using Android.Util;
 using Android.Views;
 using Android.Widget;
 using AndroidX.Activity;
@@ -496,6 +497,36 @@ namespace BmwDeepObd
 
         public virtual void CloseSearchView()
         {
+        }
+
+        public virtual bool ShowServiceBusy(int requestCode)
+        {
+            try
+            {
+                Intent serverIntent = new Intent(this, typeof(ServiceBusyActivity));
+                StartActivityForResult(serverIntent, requestCode);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public virtual bool CheckForegroundService(int requestCode)
+        {
+            if (ForegroundService.IsCommThreadRunning())
+            {
+#if DEBUG
+                Log.Info(Tag, "CheckForegroundService: ForegroundService is active");
+#endif
+                ShowServiceBusy(requestCode);
+                Finish();
+                return true;
+            }
+
+            return false;
         }
 
         public static void ClearActivityStack()

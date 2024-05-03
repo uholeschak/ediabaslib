@@ -533,13 +533,8 @@ namespace BmwDeepObd
 #endif
             base.OnStart();
 
-            if (ForegroundService.IsCommThreadRunning())
+            if (CheckForegroundService((int)ActivityRequest.RequestServiceBusy))
             {
-#if DEBUG
-                Log.Info(Tag, "OnStart: ForegroundService is active");
-#endif
-                Toast.MakeText(this, Resource.String.service_is_starting, ToastLength.Long)?.Show();
-                Finish();
                 return;
             }
 
@@ -991,6 +986,11 @@ namespace BmwDeepObd
                     if (resultCode == Android.App.Result.Canceled)
                     {
                         Finish();
+                        return;
+                    }
+
+                    if (CheckForegroundService((int)ActivityRequest.RequestServiceBusy))
+                    {
                         return;
                     }
 
@@ -6490,21 +6490,6 @@ namespace BmwDeepObd
         private void OpenDonateLink()
         {
             _activityCommon.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
-        }
-
-        private bool ShowServiceBusy()
-        {
-            try
-            {
-                Intent serverIntent = new Intent(this, typeof(ServiceBusyActivity));
-                StartActivityForResult(serverIntent, (int)ActivityRequest.RequestServiceBusy);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private bool EditYandexKey()
