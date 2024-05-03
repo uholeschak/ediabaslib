@@ -17,6 +17,7 @@ public class ServiceBusyActivity : BaseActivity
     private TextView _statusText;
     private ProgressBar _progressBar;
     private Button _abortButton;
+    private Button _closeButton;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
@@ -31,6 +32,13 @@ public class ServiceBusyActivity : BaseActivity
         _abortButton = FindViewById<Button>(Resource.Id.abortButton);
         _abortButton.Click += (sender, e) =>
         {
+            ForegroundService.AbortThread = true;
+        };
+
+        _closeButton = FindViewById<Button>(Resource.Id.closeButton);
+        _closeButton.Click += (sender, e) =>
+        {
+            SetResult(Android.App.Result.Canceled);
             Finish();
         };
     }

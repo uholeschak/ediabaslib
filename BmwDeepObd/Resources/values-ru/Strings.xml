@@ -10,6 +10,7 @@
   <string name="button_no">Нет</string>
   <string name="button_ok">Ok</string>
   <string name="button_abort">Отменить</string>
+  <string name="button_close">Закрыть</string>
   <string name="button_select">Выбрать</string>
   <string name="button_generate">Генерировать</string>
   <string name="button_manually">Вручную</string>
