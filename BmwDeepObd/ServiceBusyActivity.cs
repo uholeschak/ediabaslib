@@ -41,18 +41,29 @@ public class ServiceBusyActivity : BaseActivity
             SetResult(Android.App.Result.Canceled);
             Finish();
         };
+
+        UpdateDisplay();
     }
 
     protected override void OnResume()
     {
         base.OnResume();
+        UpdateDisplay();
+
         if (_statusCheckTimer == null)
         {
             _statusCheckTimer = new Timer(state =>
             {
                 RunOnUiThread(() =>
                 {
-                    _statusText.Text = GetString(Resource.String.service_is_starting);
+                    if (!ForegroundService.IsCommThreadRunning())
+                    {
+                        SetResult(Android.App.Result.Ok);
+                        Finish();
+                        return;
+                    }
+
+                    UpdateDisplay();
                 });
             }, null, 1000, 1000);
         }
@@ -69,6 +80,12 @@ public class ServiceBusyActivity : BaseActivity
         base.OnDestroy();
 
         DisposeTimer();
+    }
+
+    private void UpdateDisplay()
+    {
+        _statusText.Text = GetString(Resource.String.service_is_starting);
+        _abortButton.Enabled = !ForegroundService.AbortThread;
     }
 
     private void DisposeTimer()
