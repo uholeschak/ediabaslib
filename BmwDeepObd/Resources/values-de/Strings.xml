@@ -25,7 +25,6 @@
   <string name="button_reset">Zurücksetzen</string>
   <string name="back_button_twice_for_exit">Die Schaltfläche zwei mal drücken zum Beenden</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
-  <string name="service_is_starting">Der Dienst wird gestartet. Bitte versuchen Sie es später noch einmal.</string>
   <string name="access_denied_ext_storage">Zugriff auf den externen Speicher ist notwendig um die App auszuführen.\nWollen Sie die App Einstellungen öffnen?</string>
   <string name="access_manage_files">Der Zugriff auf das Dateimanagement ist notwendig,\num auf den externen Speicher zuzugreifen.\nWollen Sie die Management Einstellungen öffnen?</string>
   <string name="overlay_permission_denied">Für die Hintergrundkommunikation ist die Anzeige über anderen Apps notwendig.\nWollen Sie die App Einstellungen öffnen?</string>
