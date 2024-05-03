@@ -178,6 +178,10 @@
   <string name="service_stop_comm">Прервать соединение</string>
   <!--Translate-->
   <string name="service_abort_operation">Прервать операцию</string>
+  <!--Translate-->
+  <string name="service_status_caption">Пожалуйста, подождите, служба запуска активна.</string>
+  <!--Translate-->
+  <string name="service_status_info">Статус услуги:</string>
 
   <!-- Compile -->
   <string name="compile_cpu_usage">Проверка загрузки процессора</string>

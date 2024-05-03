@@ -14,6 +14,8 @@ namespace BmwDeepObd;
 public class ServiceBusyActivity : BaseActivity
 {
     private Timer _statusCheckTimer;
+    private TextView _statusCaptionText;
+    private TextView _statusInfoText;
     private TextView _statusText;
     private ProgressBar _progressBar;
     private Button _abortButton;
@@ -27,8 +29,10 @@ public class ServiceBusyActivity : BaseActivity
 
         SetResult(Android.App.Result.Canceled);
 
-        _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
+        _statusCaptionText = FindViewById<TextView>(Resource.Id.statusCaptionText);
+        _statusInfoText = FindViewById<TextView>(Resource.Id.statusInfoText);
         _statusText = FindViewById<TextView>(Resource.Id.statusText);
+        _progressBar = FindViewById<ProgressBar>(Resource.Id.progressBar);
         _abortButton = FindViewById<Button>(Resource.Id.abortButton);
         _abortButton.Click += (sender, e) =>
         {
