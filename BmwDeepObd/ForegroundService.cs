@@ -302,7 +302,7 @@ namespace BmwDeepObd
             base.OnDestroy();
         }
 
-        private Android.App.Notification GetNotification()
+        private string GetStatusText()
         {
             bool checkAbort = true;
             bool showProgress = false;
@@ -371,6 +371,13 @@ namespace BmwDeepObd
                     message += " " + _progressValue + "%";
                 }
             }
+
+            return message;
+        }
+
+        private Android.App.Notification GetNotification()
+        {
+            string message = GetStatusText();
 
             Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
