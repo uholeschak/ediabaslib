@@ -17,6 +17,7 @@ public class ServiceBusyActivity : BaseActivity
     private TextView _statusText;
     private ProgressBar _progressBar;
     private Button _abortButton;
+    private Button _closeButton;
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
@@ -31,20 +32,38 @@ public class ServiceBusyActivity : BaseActivity
         _abortButton = FindViewById<Button>(Resource.Id.abortButton);
         _abortButton.Click += (sender, e) =>
         {
+            ForegroundService.AbortThread = true;
+        };
+
+        _closeButton = FindViewById<Button>(Resource.Id.closeButton);
+        _closeButton.Click += (sender, e) =>
+        {
+            SetResult(Android.App.Result.Canceled);
             Finish();
         };
+
+        UpdateDisplay();
     }
 
     protected override void OnResume()
     {
         base.OnResume();
+        UpdateDisplay();
+
         if (_statusCheckTimer == null)
         {
             _statusCheckTimer = new Timer(state =>
             {
                 RunOnUiThread(() =>
                 {
-                    _statusText.Text = GetString(Resource.String.service_is_starting);
+                    if (!ForegroundService.IsCommThreadRunning())
+                    {
+                        SetResult(Android.App.Result.Ok);
+                        Finish();
+                        return;
+                    }
+
+                    UpdateDisplay();
                 });
             }, null, 1000, 1000);
         }
@@ -61,6 +80,12 @@ public class ServiceBusyActivity : BaseActivity
         base.OnDestroy();
 
         DisposeTimer();
+    }
+
+    private void UpdateDisplay()
+    {
+        _statusText.Text = GetString(Resource.String.service_is_starting);
+        _abortButton.Enabled = !ForegroundService.AbortThread;
     }
 
     private void DisposeTimer()

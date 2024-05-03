@@ -70,7 +70,7 @@ namespace BmwDeepObd
 
         public ActivityCommon ActivityCommon => _activityCommon;
 
-        private static bool AbortThread
+        public static bool AbortThread
         {
             get
             {

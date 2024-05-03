@@ -10,6 +10,7 @@
   <string name="button_no">Nein</string>
   <string name="button_ok">Ok</string>
   <string name="button_abort">Abbrechen</string>
+  <string name="button_close">Schließen</string>
   <string name="button_select">Auswählen</string>
   <string name="button_generate">Generieren</string>
   <string name="button_manually">Manuell</string>
