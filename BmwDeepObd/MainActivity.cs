@@ -533,11 +533,6 @@ namespace BmwDeepObd
 #endif
             base.OnStart();
 
-            if (CheckForegroundService((int)ActivityRequest.RequestServiceBusy))
-            {
-                return;
-            }
-
             ClearActivityStack();
             AddActivityToStack(this);
 
@@ -585,6 +580,11 @@ namespace BmwDeepObd
             Log.Info(Tag, string.Format("OnResume: {0}", this));
 #endif
             base.OnResume();
+
+            if (CheckForegroundService((int)ActivityRequest.RequestServiceBusy))
+            {
+                return;
+            }
 
             bool firstStart = !_onResumeExecuted;
             if (!_onResumeExecuted)
