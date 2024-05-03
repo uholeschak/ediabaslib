@@ -231,11 +231,7 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "OnStartCommand: Show main activity");
 #endif
-                    if (!ShowMainActivity())
-                    {
-                        Toast.MakeText(this, Resource.String.service_is_starting, ToastLength.Long)?.Show();
-                    }
-
+                    ShowMainActivity();
                     break;
                 }
             }
@@ -464,11 +460,6 @@ namespace BmwDeepObd
 
         private bool ShowMainActivity()
         {
-            if (IsCommThreadRunning())
-            {
-                return false;
-            }
-
             try
             {
                 Intent intent = new Intent(this, typeof(ActivityMain));
