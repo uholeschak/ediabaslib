@@ -522,7 +522,6 @@ namespace BmwDeepObd
                 Log.Info(Tag, "CheckForegroundService: ForegroundService is active");
 #endif
                 ShowServiceBusy(requestCode);
-                Finish();
                 return true;
             }
 
