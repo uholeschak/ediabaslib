@@ -24,7 +24,6 @@
   <string name="button_reset">Reset</string>
   <string name="back_button_twice_for_exit">Press button twice in order to exit</string>
   <string name="no_ext_storage">No external storage available</string>
-  <string name="service_is_starting">The service is starting. Please try again later.</string>
   <string name="access_denied_ext_storage">Access to the external storage is required to execute this app.\nDo you want to open the app settings?</string>
   <string name="access_manage_files">Access to file management access is required,\nto access external storage.\nDo you want to open the management settings?</string>
   <string name="overlay_permission_denied">For the background communication overlay drawing is required.\nDo you want to open the app settings?</string>
