@@ -147,6 +147,12 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "OnStartCommand: The service is starting.");
 #endif
+                        RegisterForegroundService();
+                        _isStarted = true;
+                    }
+
+                    if (_isStarted)
+                    {
                         if (startComm)
                         {
                             if (!BaseActivity.IsActivityListEmpty())
@@ -165,9 +171,6 @@ namespace BmwDeepObd
                                 StartCommThread();
                             }
                         }
-
-                        RegisterForegroundService();
-                        _isStarted = true;
                     }
                     break;
                 }
