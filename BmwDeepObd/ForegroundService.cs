@@ -60,9 +60,9 @@ namespace BmwDeepObd
         private ActivityCommon.InstanceDataCommon _instanceData;
         private Handler _stopHandler;
         private Java.Lang.Runnable _stopRunnable;
-        private long _progressValue;
         private long _notificationUpdateTime;
-        private volatile EdiabasThread.UpdateState _updateState;
+        private static long _progressValue;
+        private static volatile EdiabasThread.UpdateState _updateState;
         private static volatile StartState _startState;
         private static volatile bool _abortThread;
         private static volatile Thread _commThread;
@@ -107,8 +107,8 @@ namespace BmwDeepObd
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon?.SetLock(ActivityCommon.LockType.Cpu);
             _instanceData = null;
-            _progressValue = -1;
             _notificationUpdateTime = DateTime.MinValue.Ticks;
+            _progressValue = -1;
             _updateState = EdiabasThread.UpdateState.Init;
 
             lock (ActivityCommon.GlobalLockObject)
@@ -302,11 +302,16 @@ namespace BmwDeepObd
             base.OnDestroy();
         }
 
-        private string GetStatusText()
+        public static string GetStatusText(Context context)
         {
+            if (context == null)
+            {
+                return string.Empty;
+            }
+
             bool checkAbort = true;
             bool showProgress = false;
-            string message = Resources.GetString(Resource.String.service_notification_comm_active);
+            string message = context.Resources.GetString(Resource.String.service_notification_comm_active);
 
             switch (_startState)
             {
@@ -314,7 +319,7 @@ namespace BmwDeepObd
                     checkAbort = false;
                     if (!ActivityCommon.CommActive)
                     {
-                        message = Resources.GetString(Resource.String.service_notification_idle);
+                        message = context.Resources.GetString(Resource.String.service_notification_idle);
                         break;
                     }
 
@@ -322,46 +327,46 @@ namespace BmwDeepObd
                     {
                         case EdiabasThread.UpdateState.ReadErrors:
                         case EdiabasThread.UpdateState.Connected:
-                            message = Resources.GetString(Resource.String.service_notification_comm_ok);
+                            message = context.Resources.GetString(Resource.String.service_notification_comm_ok);
                             break;
 
                         default:
-                            message = Resources.GetString(Resource.String.service_notification_comm_error);
+                            message = context.Resources.GetString(Resource.String.service_notification_comm_error);
                             break;
                     }
                     break;
 
                 case StartState.WaitMedia:
-                    message = Resources.GetString(Resource.String.service_notification_wait_media);
+                    message = context.Resources.GetString(Resource.String.service_notification_wait_media);
                     break;
 
                 case StartState.LoadSettings:
-                    message = Resources.GetString(Resource.String.service_notification_load_settings);
+                    message = context.Resources.GetString(Resource.String.service_notification_load_settings);
                     break;
 
                 case StartState.CompileCode:
-                    message = Resources.GetString(Resource.String.service_notification_compile_code);
+                    message = context.Resources.GetString(Resource.String.service_notification_compile_code);
                     showProgress = true;
                     break;
 
                 case StartState.InitReader:
-                    message = Resources.GetString(Resource.String.service_notification_init_reader);
+                    message = context.Resources.GetString(Resource.String.service_notification_init_reader);
                     showProgress = true;
                     break;
 
                 case StartState.StartComm:
-                    message = Resources.GetString(Resource.String.service_notification_connecting);
+                    message = context.Resources.GetString(Resource.String.service_notification_connecting);
                     break;
 
                 case StartState.Error:
                     checkAbort = false;
-                    message = Resources.GetString(Resource.String.service_notification_error);
+                    message = context.Resources.GetString(Resource.String.service_notification_error);
                     break;
             }
 
             if (checkAbort && AbortThread)
             {
-                message = Resources.GetString(Resource.String.service_notification_abort);
+                message = context.Resources.GetString(Resource.String.service_notification_abort);
             }
 
             if (showProgress)
@@ -377,7 +382,7 @@ namespace BmwDeepObd
 
         private Android.App.Notification GetNotification()
         {
-            string message = GetStatusText();
+            string message = GetStatusText(this);
 
             Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
