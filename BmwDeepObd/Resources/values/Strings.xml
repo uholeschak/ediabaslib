@@ -145,6 +145,8 @@
   <string name="service_stop_comm_app">Open App and stop communication</string>
   <string name="service_stop_comm">Stop communication</string>
   <string name="service_abort_operation">Abort operation</string>
+  <string name="service_status_caption">Please wait, the start service is active.</string>
+  <string name="service_status_info">Service status:</string>
 
   <!-- Compile -->
   <string name="compile_cpu_usage">Checking CPU usage</string>
