@@ -988,6 +988,12 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityRequest.RequestServiceBusy:
+                    if (resultCode == Android.App.Result.Canceled)
+                    {
+                        Finish();
+                        return;
+                    }
+
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
