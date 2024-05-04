@@ -630,6 +630,12 @@ namespace BmwDeepObd
                     {
                         CommStateMachine();
 
+                        if (AbortThread)
+                        {
+                            _startState = StartState.Terminate;
+                            AbortThread = false;
+                        }
+
                         switch (_startState)
                         {
                             case StartState.None:
@@ -637,16 +643,6 @@ namespace BmwDeepObd
                             case StartState.Terminate:
                                 UpdateNotification();
                                 return;
-
-                            default:
-                                if (AbortThread)
-                                {
-                                    _startState = StartState.Error;
-                                    AbortThread = false;
-                                    UpdateNotification();
-                                    return;
-                                }
-                                break;
                         }
 
                         Thread.Sleep(UpdateInterval);
