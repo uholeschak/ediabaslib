@@ -199,32 +199,7 @@ namespace BmwDeepObd
 
                     if (!ActivityCommon.CommActive)
                     {
-                        if (_isStarted)
-                        {
-                            try
-                            {
-                                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-                                {
-                                    StopForeground(Android.App.StopForegroundFlags.Remove);
-                                }
-                                else
-                                {
-#pragma warning disable CS0618
-#pragma warning disable CA1422
-                                    StopForeground(true);
-#pragma warning restore CA1422
-#pragma warning restore CS0618
-                                }
-
-                                StopSelf();
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-
-                            _isStarted = false;
-                        }
+                        StopService();
                     }
                     break;
                 }
@@ -379,6 +354,36 @@ namespace BmwDeepObd
             return message;
         }
 
+        private void StopService()
+        {
+            if (_isStarted)
+            {
+                try
+                {
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                    {
+                        StopForeground(Android.App.StopForegroundFlags.Remove);
+                    }
+                    else
+                    {
+#pragma warning disable CS0618
+#pragma warning disable CA1422
+                        StopForeground(true);
+#pragma warning restore CA1422
+#pragma warning restore CS0618
+                    }
+
+                    StopSelf();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                _isStarted = false;
+            }
+        }
+
         private Android.App.Notification GetNotification()
         {
             string message = GetStatusText(this);
@@ -404,7 +409,7 @@ namespace BmwDeepObd
             {
                 if (_startState == StartState.Terminate)
                 {
-                    ActivityCommon.StopForegroundService(this);
+                    StopService();
                     return;
                 }
 
@@ -564,31 +569,7 @@ namespace BmwDeepObd
             }
             if (wait)
             {
-                if (_isStarted)
-                {
-                    try
-                    {
-                        if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-                        {
-                            StopForeground(Android.App.StopForegroundFlags.Remove);
-                        }
-                        else
-                        {
-#pragma warning disable CS0618
-#pragma warning disable CA1422
-                            StopForeground(true);
-#pragma warning restore CA1422
-#pragma warning restore CS0618
-                        }
-
-                        StopSelf();
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                    _isStarted = false;
-                }
+                StopService();
                 lock (ActivityCommon.GlobalLockObject)
                 {
                     if (ActivityCommon.EdiabasThread != null)
@@ -630,12 +611,6 @@ namespace BmwDeepObd
                     {
                         CommStateMachine();
 
-                        if (AbortThread)
-                        {
-                            _startState = StartState.Terminate;
-                            AbortThread = false;
-                        }
-
                         switch (_startState)
                         {
                             case StartState.None:
@@ -643,6 +618,16 @@ namespace BmwDeepObd
                             case StartState.Terminate:
                                 UpdateNotification();
                                 return;
+
+                            default:
+                                if (AbortThread)
+                                {
+                                    _startState = StartState.Terminate;
+                                    AbortThread = false;
+                                    UpdateNotification();
+                                }
+
+                                break;
                         }
 
                         Thread.Sleep(UpdateInterval);
