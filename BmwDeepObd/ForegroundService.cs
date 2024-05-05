@@ -514,12 +514,14 @@ namespace BmwDeepObd
         {
             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
             broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastFinishActivity);
-            InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
-            bool isEmpty = BaseActivity.IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
-            if (isEmpty)
+            if (!InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent))
             {
-                // if the activity has been destroyed, it will not be finished
-                BaseActivity.ClearActivityStack();
+                // if the activity has been destroyed, it will not be removed from the activity list
+                bool isEmpty = BaseActivity.IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
+                if (isEmpty)
+                {
+                    BaseActivity.ClearActivityStack();
+                }
             }
         }
 
