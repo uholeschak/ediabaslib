@@ -337,7 +337,6 @@ namespace BmwDeepObd
                     switch (_updateState)
                     {
                         case EdiabasThread.UpdateState.Init:
-                            message = context.Resources.GetString(Resource.String.service_notification_idle);
                             break;
 
                         case EdiabasThread.UpdateState.ReadErrors:
