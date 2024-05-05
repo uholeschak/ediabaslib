@@ -175,6 +175,12 @@ namespace BmwDeepObd
                                 StartCommThread();
                             }
                         }
+
+                        if (!IsCommThreadRunning())
+                        {
+                            _startState = StartState.None;
+                            PostUpdateNotification();
+                        }
                     }
                     break;
                 }
@@ -203,13 +209,6 @@ namespace BmwDeepObd
                                 }
                                 break;
                         }
-                        break;
-                    }
-
-                    if (!ActivityCommon.CommActive && !_isStarted)
-                    {
-                        NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
-                        notificationManager.Cancel(ServiceRunningNotificationId);
                         break;
                     }
 
@@ -428,19 +427,23 @@ namespace BmwDeepObd
         {
             string message = GetStatusText(this);
 
-            Android.App.Notification notification = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
                 .SetContentTitle(Resources.GetString(Resource.String.app_name))
                 .SetContentText(message)
                 .SetSmallIcon(Resource.Drawable.ic_stat_obd)
                 .SetContentIntent(BuildIntentToShowMainActivity())
                 .SetOnlyAlertOnce(true)
                 .SetOngoing(true)
-                .AddAction(BuildStopServiceAction())
                 .SetPriority(NotificationCompat.PriorityLow)
-                .SetCategory(NotificationCompat.CategoryService)
-                .Build();
+                .SetCategory(NotificationCompat.CategoryService);
 
-            return notification;
+            NotificationCompat.Action action = BuildStopServiceAction();
+            if (action != null)
+            {
+                builder.AddAction(action);
+            }
+
+            return builder.Build();
         }
 
         private void UpdateNotification(bool delayUpdate = false)
@@ -1112,16 +1115,6 @@ namespace BmwDeepObd
         /// <returns>The stop service action.</returns>
         private NotificationCompat.Action BuildStopServiceAction()
         {
-            Intent stopServiceIntent = new Intent(this, GetType());
-            stopServiceIntent.SetAction(ActionStopService);
-            stopServiceIntent.PutExtra(ExtraAbortThread, true);
-            Android.App.PendingIntentFlags intentFlags = 0;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
-            {
-                intentFlags |= Android.App.PendingIntentFlags.Mutable;
-            }
-            Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, intentFlags);
-
             string message;
             if (ActivityCommon.CommActive)
             {
@@ -1133,14 +1126,23 @@ namespace BmwDeepObd
                 {
                     case StartState.Error:
                     case StartState.Terminate:
-                        message = Resources.GetString(Resource.String.service_close_notification);
-                        break;
+                        return null;
 
                     default:
                         message = Resources.GetString(Resource.String.service_abort_operation);
                         break;
                 }
             }
+
+            Intent stopServiceIntent = new Intent(this, GetType());
+            stopServiceIntent.SetAction(ActionStopService);
+            stopServiceIntent.PutExtra(ExtraAbortThread, true);
+            Android.App.PendingIntentFlags intentFlags = 0;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+            {
+                intentFlags |= Android.App.PendingIntentFlags.Mutable;
+            }
+            Android.App.PendingIntent stopServicePendingIntent = Android.App.PendingIntent.GetService(this, 0, stopServiceIntent, intentFlags);
 
             NotificationCompat.Action.Builder builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel, message, stopServicePendingIntent);
             return builder.Build();
