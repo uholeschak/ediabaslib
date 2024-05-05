@@ -60,6 +60,8 @@ namespace BmwDeepObd
         private ActivityCommon.InstanceDataCommon _instanceData;
         private Handler _stopHandler;
         private Java.Lang.Runnable _stopRunnable;
+        private Handler _notificationHandler;
+        private UpdateNotificationRunnable _notificationRunnable;
         private long _notificationUpdateTime;
         private static long _progressValue;
         private static volatile EdiabasThread.UpdateState _updateState;
@@ -104,6 +106,8 @@ namespace BmwDeepObd
 #endif
             _stopHandler = new Handler(Looper.MainLooper);
             _stopRunnable = new Java.Lang.Runnable(StopEdiabasThread);
+            _notificationHandler = new Handler(Looper.MainLooper);
+            _notificationRunnable = new UpdateNotificationRunnable(this);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon?.SetLock(ActivityCommon.LockType.Cpu);
             _instanceData = null;
@@ -230,6 +234,19 @@ namespace BmwDeepObd
             //Log.Info(Tag, "OnDestroy: The started service is shutting down.");
 
             // Remove the notification from the status bar.
+            if (_notificationHandler != null)
+            {
+                try
+                {
+                    _notificationHandler.RemoveCallbacksAndMessages(null);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _notificationHandler = null;
+            }
+
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Cancel(ServiceRunningNotificationId);
             DisconnectEdiabasEvents();
@@ -273,6 +290,7 @@ namespace BmwDeepObd
                 }
                 _stopHandler = null;
             }
+
             base.OnDestroy();
         }
 
@@ -299,6 +317,10 @@ namespace BmwDeepObd
 
                     switch (_updateState)
                     {
+                        case EdiabasThread.UpdateState.Init:
+                            message = context.Resources.GetString(Resource.String.service_notification_idle);
+                            break;
+
                         case EdiabasThread.UpdateState.ReadErrors:
                         case EdiabasThread.UpdateState.Connected:
                             message = context.Resources.GetString(Resource.String.service_notification_comm_ok);
@@ -407,12 +429,6 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_startState == StartState.Terminate)
-                {
-                    StopService();
-                    return;
-                }
-
                 if (delayUpdate)
                 {
                     if (Stopwatch.GetTimestamp() - _notificationUpdateTime < NotificationUpdateDelay * ActivityCommon.TickResolMs)
@@ -430,6 +446,20 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        private void PostUpdateNotification(bool delayUpdate = false)
+        {
+            if (_notificationHandler == null)
+            {
+                return;
+            }
+
+            if (!_notificationHandler.HasCallbacks(_notificationRunnable))
+            {
+                _notificationRunnable.DelayUpdate = delayUpdate;
+                _notificationHandler.Post(_notificationRunnable);
             }
         }
 
@@ -525,7 +555,7 @@ namespace BmwDeepObd
 
             bool changed = _updateState != updateState;
             _updateState = updateState;
-            UpdateNotification(!changed);
+            PostUpdateNotification(!changed);
         }
 
         private void ThreadTerminated(object sender, EventArgs e)
@@ -607,36 +637,55 @@ namespace BmwDeepObd
 
                 _commThread = new Thread(() =>
                 {
-                    for (; ; )
+                    try
                     {
-                        CommStateMachine();
+                        for (; ; )
+                        {
+                            CommStateMachine();
+
+                            switch (_startState)
+                            {
+                                case StartState.None:
+                                case StartState.Error:
+                                case StartState.Terminate:
+                                    return;
+                            }
+
+                            Thread.Sleep(UpdateInterval);
+                        }
+                    }
+                    finally
+                    {
+                        lock (_threadLockObject)
+                        {
+                            _commThread = null;
+
+                            if (_abortThread)
+                            {
+                                _startState = StartState.Terminate;
+                                _abortThread = false;
+                            }
+                        }
 
                         switch (_startState)
                         {
-                            case StartState.None:
-                            case StartState.Error:
                             case StartState.Terminate:
-                                UpdateNotification();
-                                return;
+                                if (!ActivityCommon.CommActive)
+                                {
+                                    StopService();
+                                }
+                                break;
 
                             default:
-                                if (AbortThread)
-                                {
-                                    _startState = StartState.Terminate;
-                                    AbortThread = false;
-                                    UpdateNotification();
-                                }
-
+                                PostUpdateNotification();
                                 break;
                         }
-
-                        Thread.Sleep(UpdateInterval);
                     }
                 });
                 _commThread.Start();
             }
 
-            UpdateNotification();
+            PostUpdateNotification();
             return true;
         }
 
@@ -677,7 +726,7 @@ namespace BmwDeepObd
                         }
 
                         _progressValue = progress;
-                        UpdateNotification(true);
+                        PostUpdateNotification(true);
                         return AbortThread;
                     }))
                 {
@@ -700,7 +749,7 @@ namespace BmwDeepObd
                     }
 
                     _progressValue = progress;
-                    UpdateNotification(true);
+                    PostUpdateNotification(true);
                     return AbortThread;
                 }))
             {
@@ -806,7 +855,7 @@ namespace BmwDeepObd
 
                     compileIndex++;
                     _progressValue = compileIndex * 100 / compileCount;
-                    UpdateNotification(true);
+                    PostUpdateNotification(true);
                 }
 
                 return true;
@@ -845,7 +894,7 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "CommStateMachine: External storage available");
 #endif
                     _startState = StartState.LoadSettings;
-                    UpdateNotification();
+                    PostUpdateNotification();
                     break;
                 }
 
@@ -898,7 +947,7 @@ namespace BmwDeepObd
                         Android.Util.Log.Info(Tag, "CommStateMachine: LoadConfiguration Ok");
 #endif
                         _startState = StartState.CompileCode;
-                        UpdateNotification();
+                        PostUpdateNotification();
                     }
 
                     break;
@@ -931,7 +980,7 @@ namespace BmwDeepObd
 #endif
                     _startState = StartState.InitReader;
                     _progressValue = -1;
-                    UpdateNotification();
+                    PostUpdateNotification();
                     break;
                 }
 
@@ -962,7 +1011,7 @@ namespace BmwDeepObd
 #endif
                     _startState = StartState.StartComm;
                     _progressValue = -1;
-                    UpdateNotification();
+                    PostUpdateNotification();
                     break;
                 }
 
@@ -1161,6 +1210,31 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        public class UpdateNotificationRunnable : Java.Lang.Object, Java.Lang.IRunnable
+        {
+            private ForegroundService _foregroundService;
+
+            public bool DelayUpdate { get; set; }
+
+            public UpdateNotificationRunnable(ForegroundService foregroundService)
+            {
+                _foregroundService = foregroundService;
+                DelayUpdate = false;
+            }
+
+            public void Run()
+            {
+                try
+                {
+                    _foregroundService?.UpdateNotification(DelayUpdate);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
         }
     }
