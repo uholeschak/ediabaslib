@@ -317,6 +317,10 @@ namespace BmwDeepObd
 
                     switch (_updateState)
                     {
+                        case EdiabasThread.UpdateState.Init:
+                            message = context.Resources.GetString(Resource.String.service_notification_idle);
+                            break;
+
                         case EdiabasThread.UpdateState.ReadErrors:
                         case EdiabasThread.UpdateState.Connected:
                             message = context.Resources.GetString(Resource.String.service_notification_comm_ok);
@@ -425,12 +429,6 @@ namespace BmwDeepObd
         {
             try
             {
-                if (_startState == StartState.Terminate)
-                {
-                    StopService();
-                    return;
-                }
-
                 if (delayUpdate)
                 {
                     if (Stopwatch.GetTimestamp() - _notificationUpdateTime < NotificationUpdateDelay * ActivityCommon.TickResolMs)
@@ -651,15 +649,6 @@ namespace BmwDeepObd
                                 case StartState.Error:
                                 case StartState.Terminate:
                                     return;
-
-                                default:
-                                    if (AbortThread)
-                                    {
-                                        _startState = StartState.Terminate;
-                                        AbortThread = false;
-                                    }
-
-                                    break;
                             }
 
                             Thread.Sleep(UpdateInterval);
@@ -670,10 +659,27 @@ namespace BmwDeepObd
                         lock (_threadLockObject)
                         {
                             _commThread = null;
-                            _abortThread = false;   // already locked
+
+                            if (_abortThread)
+                            {
+                                _startState = StartState.Terminate;
+                                _abortThread = false;
+                            }
                         }
 
-                        PostUpdateNotification();
+                        switch (_startState)
+                        {
+                            case StartState.Terminate:
+                                if (!ActivityCommon.CommActive)
+                                {
+                                    StopService();
+                                }
+                                break;
+
+                            default:
+                                PostUpdateNotification();
+                                break;
+                        }
                     }
                 });
                 _commThread.Start();
