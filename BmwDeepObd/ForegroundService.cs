@@ -185,16 +185,31 @@ namespace BmwDeepObd
                     Android.Util.Log.Info(Tag, "OnStartCommand: The service is stopping.");
 #endif
                     bool abortThread = intent.GetBooleanExtra(ExtraAbortThread, false);
-                    if (IsCommThreadRunning() && _startState != StartState.Terminate)
+                    if (IsCommThreadRunning())
                     {
-                        if (abortThread)
+                        switch (_startState)
                         {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, "OnStartCommand: Aborting thread");
-#endif
-                            AbortThread = true;
-                        }
+                            case StartState.Error:
+                            case StartState.Terminate:
+                                break;
 
+                            default:
+                                if (abortThread)
+                                {
+#if DEBUG
+                                    Android.Util.Log.Info(Tag, "OnStartCommand: Aborting thread");
+#endif
+                                    AbortThread = true;
+                                }
+                                break;
+                        }
+                        break;
+                    }
+
+                    if (!ActivityCommon.CommActive && !_isStarted)
+                    {
+                        NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
+                        notificationManager.Cancel(ServiceRunningNotificationId);
                         break;
                     }
 
@@ -247,8 +262,12 @@ namespace BmwDeepObd
                 _notificationHandler = null;
             }
 
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
-            notificationManager.Cancel(ServiceRunningNotificationId);
+            if (_startState != StartState.Error)
+            {
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
+                notificationManager.Cancel(ServiceRunningNotificationId);
+            }
+
             DisconnectEdiabasEvents();
             lock (ActivityCommon.GlobalLockObject)
             {
@@ -669,6 +688,7 @@ namespace BmwDeepObd
 
                         switch (_startState)
                         {
+                            case StartState.Error:
                             case StartState.Terminate:
                                 if (!ActivityCommon.CommActive)
                                 {
@@ -1110,7 +1130,17 @@ namespace BmwDeepObd
             }
             else
             {
-                message = Resources.GetString(Resource.String.service_abort_operation);
+                switch (_startState)
+                {
+                    case StartState.Error:
+                    case StartState.Terminate:
+                        message = Resources.GetString(Resource.String.service_close_notification);
+                        break;
+
+                    default:
+                        message = Resources.GetString(Resource.String.service_abort_operation);
+                        break;
+                }
             }
 
             NotificationCompat.Action.Builder builder = new NotificationCompat.Action.Builder(Resource.Drawable.ic_stat_cancel, message, stopServicePendingIntent);

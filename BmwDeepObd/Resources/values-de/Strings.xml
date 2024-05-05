@@ -170,6 +170,7 @@
   <string name="service_stop_comm_app">App öffnen und Kommunikation beenden</string>
   <string name="service_stop_comm">Kommunikation beenden</string>
   <string name="service_abort_operation">Vorgang abbrechen</string>
+  <string name="service_close_notification">Schließen</string>
   <string name="service_status_caption">Bitte warten, der Startservice ist aktiv.</string>
   <string name="service_status_info">Servicestatus:</string>
 
