@@ -515,6 +515,12 @@ namespace BmwDeepObd
             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
             broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastFinishActivity);
             InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+            bool isEmpty = BaseActivity.IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
+            if (isEmpty)
+            {
+                // if the activity has been destroyed, it will not be finished
+                BaseActivity.ClearActivityStack();
+            }
         }
 
         private bool ShowMainActivity()
