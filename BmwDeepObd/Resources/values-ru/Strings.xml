@@ -178,6 +178,7 @@
   <string name="service_stop_comm">Прервать соединение</string>
   <!--Translate-->
   <string name="service_abort_operation">Прервать операцию</string>
+  <string name="service_close_notification">Закрыть</string>
   <!--Translate-->
   <string name="service_status_caption">Пожалуйста, подождите, служба запуска активна.</string>
   <!--Translate-->
