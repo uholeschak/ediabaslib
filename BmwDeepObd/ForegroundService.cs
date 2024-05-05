@@ -234,6 +234,19 @@ namespace BmwDeepObd
             //Log.Info(Tag, "OnDestroy: The started service is shutting down.");
 
             // Remove the notification from the status bar.
+            if (_notificationHandler != null)
+            {
+                try
+                {
+                    _notificationHandler.RemoveCallbacksAndMessages(null);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+                _notificationHandler = null;
+            }
+
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Cancel(ServiceRunningNotificationId);
             DisconnectEdiabasEvents();
@@ -276,19 +289,6 @@ namespace BmwDeepObd
                     // ignored
                 }
                 _stopHandler = null;
-            }
-
-            if (_notificationHandler != null)
-            {
-                try
-                {
-                    _notificationHandler.RemoveCallbacksAndMessages(null);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-                _notificationHandler = null;
             }
 
             base.OnDestroy();
