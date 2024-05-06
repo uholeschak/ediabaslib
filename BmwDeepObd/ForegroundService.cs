@@ -212,10 +212,8 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    if (!SendStopCommBroadcast())
-                    {
-                        StopEdiabasThread(false);
-                    }
+                    SendStopCommBroadcast();
+                    StopEdiabasThread(false);
 
                     if (!ActivityCommon.CommActive)
                     {
@@ -287,15 +285,7 @@ namespace BmwDeepObd
                 }
             }
 
-            if (!SendFinishActivityBroadcast())
-            {
-                // if the activity has been destroyed, it will not be removed from the activity list
-                bool isEmpty = BaseActivity.IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
-                if (isEmpty)
-                {
-                    BaseActivity.ClearActivityStack();
-                }
-            }
+            SendFinishActivityBroadcast();
 
             if (_activityCommon != null)
             {
@@ -513,18 +503,24 @@ namespace BmwDeepObd
             }
         }
 
-        private bool SendStopCommBroadcast()
+        private void SendStopCommBroadcast()
         {
             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
             broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastStopComm);
-            return InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+            InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
-        private bool SendFinishActivityBroadcast()
+        private void SendFinishActivityBroadcast()
         {
             Intent broadcastIntent = new Intent(NotificationBroadcastAction);
             broadcastIntent.PutExtra(BroadcastMessageKey, BroadcastFinishActivity);
-            return InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+            InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
+            // if the activity has been destroyed, it will not be removed from the activity list
+            bool isEmpty = BaseActivity.IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
+            if (isEmpty)
+            {
+                BaseActivity.ClearActivityStack();
+            }
         }
 
         private bool ShowMainActivity()
