@@ -244,9 +244,9 @@ namespace BmwDeepObd
 
         public override void OnDestroy()
         {
-            // We need to shut things down.
-            //Log.Info(Tag, "OnDestroy: The started service is shutting down.");
-
+#if DEBUG
+            Android.Util.Log.Info(Tag, "OnDestroy: Service is shutting down");
+#endif
             // Remove the notification from the status bar.
             if (_notificationHandler != null)
             {
@@ -261,11 +261,11 @@ namespace BmwDeepObd
                 _notificationHandler = null;
             }
 
-            if (_startState != StartState.Error)
-            {
-                NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
-                notificationManager.Cancel(ServiceRunningNotificationId);
-            }
+#if DEBUG
+            Android.Util.Log.Info(Tag, "OnDestroy: Removing notifications");
+#endif
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
+            notificationManager.Cancel(ServiceRunningNotificationId);
 
             DisconnectEdiabasEvents();
             lock (ActivityCommon.GlobalLockObject)
@@ -695,7 +695,6 @@ namespace BmwDeepObd
                             if (_abortThread)
                             {
                                 _startState = StartState.Terminate;
-                                //_startState = StartState.Error;     // enable to test error handling
                                 _abortThread = false;
                             }
                         }
