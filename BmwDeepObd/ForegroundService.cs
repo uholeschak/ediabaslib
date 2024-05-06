@@ -670,6 +670,11 @@ namespace BmwDeepObd
                         {
                             CommStateMachine();
 
+                            if (_abortThread)
+                            {
+                                return;
+                            }
+
                             switch (_startState)
                             {
                                 case StartState.None:
@@ -690,6 +695,7 @@ namespace BmwDeepObd
                             if (_abortThread)
                             {
                                 _startState = StartState.Terminate;
+                                //_startState = StartState.Error;     // enable to test error handling
                                 _abortThread = false;
                             }
                         }
