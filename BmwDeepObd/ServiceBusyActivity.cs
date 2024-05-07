@@ -62,9 +62,12 @@ public class ServiceBusyActivity : BaseActivity
                 {
                     if (!ForegroundService.IsCommThreadRunning())
                     {
-                        SetResult(Android.App.Result.Ok);
-                        Finish();
-                        return;
+                        if (ActivityCommon.CommActive)
+                        {
+                            SetResult(Android.App.Result.Ok);
+                            Finish();
+                            return;
+                        }
                     }
 
                     UpdateDisplay();
