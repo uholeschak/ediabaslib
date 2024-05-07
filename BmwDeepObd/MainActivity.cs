@@ -1956,6 +1956,7 @@ namespace BmwDeepObd
             if (ActivityCommon.CommActive)
             {
                 StopEdiabasThread(false);
+                StoreActiveJobIndex(true);
             }
             else
             {
@@ -2491,10 +2492,10 @@ namespace BmwDeepObd
             StoreSettings();
         }
 
-        private void StoreActiveJobIndex()
+        private void StoreActiveJobIndex(bool disable = false)
         {
             int selectedJobIndex = -1;
-            if (ActivityCommon.CommActive)
+            if (!disable && ActivityCommon.CommActive)
             {
                 JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread.JobPageInfo;
                 if (pageInfo != null)
