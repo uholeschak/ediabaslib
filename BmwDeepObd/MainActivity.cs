@@ -994,6 +994,15 @@ namespace BmwDeepObd
                         return;
                     }
 
+                    if (ActivityCommon.CommActive)
+                    {
+                        lock (ActivityCommon.GlobalLockObject)
+                        {
+                            DisconnectEdiabasEvents();
+                            ConnectEdiabasEvents();
+                        }
+                    }
+
                     UpdateOptionsMenu();
                     UpdateDisplay();
                     break;
