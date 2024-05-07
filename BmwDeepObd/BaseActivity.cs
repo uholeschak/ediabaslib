@@ -70,7 +70,7 @@ namespace BmwDeepObd
         public const string InstanceDataKeyBase = "InstanceDataBase";
         protected InstanceDataBase _instanceDataBase = new InstanceDataBase();
         protected bool _activityDestroyed;
-        private GestureDetectorCompat _gestureDetector;
+        private GestureDetector _gestureDetector;
         protected Configuration _currentConfiguration;
         private Android.App.ActivityManager _activityManager;
         protected View _decorView;
@@ -102,7 +102,7 @@ namespace BmwDeepObd
             ResetTitle();
 
             GestureListener gestureListener = new GestureListener(this);
-            _gestureDetector = new GestureDetectorCompat(this, gestureListener);
+            _gestureDetector = new GestureDetector(this, gestureListener);
 
             BackPressCallback backPressCallback = new BackPressCallback(this);
             OnBackPressedDispatcher.AddCallback(backPressCallback);
