@@ -13,6 +13,7 @@ namespace BmwDeepObd;
     {
         Intent.ActionBootCompleted,
         Intent.ActionReboot,
+        Intent.ActionShutdown,
         Intent.ActionMyPackageReplaced,
         Intent.ActionMyPackageUnsuspended,
         AndroidActionQuickBoot,
@@ -64,8 +65,20 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #endif
                 if (autoConnectType == ActivityCommon.AutoConnectType.StartBoot)
                 {
+#if DEBUG
+                    Log.Info(Tag, "Starting service");
+#endif
                     ActivityCommon.StartForegroundService(context, true);
                 }
+                break;
+            }
+
+            case Intent.ActionShutdown:
+            {
+#if DEBUG
+                Log.Info(Tag, "Shutting down service");
+#endif
+                ActivityCommon.StopForegroundService(context);
                 break;
             }
         }
