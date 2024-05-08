@@ -138,7 +138,7 @@
 #define BT_NAME_LENGTH 31
 #elif ADAPTER_TYPE == 0x06
 // ELM327 BT v1.5 Mini YiChip YC1021
-// has LED_OBD_TX = pa4, LED_OBD_RX = pa6, LED_RS_TX = pa7, LED_RS_RX = pa5
+// has LED_OBD_TX = PB4, LED_OBD_RX = PB6, LED_RS_TX = PB7, LED_RS_RX = PB5
 // with reprogrammed YC1021 Eeprom 115200 @ 16MHz without problems
 #elif ADAPTER_TYPE == 0x08
 // Standard fimrware with baud rate 115200 (e.g. YC1021 with external Bluetooth board)
