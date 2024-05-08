@@ -38,8 +38,8 @@ This page allows to change some global app settings.
 * _App start_ options:
   * _No connection establishment to vehicle_: No automatic connection establishment to vehicle.
   * _Auto connection establishment to vehicle_: If possible auto connect to vehicle. This is only possible if no dialog opens at startup.
-  * _Auto connection establishment to vehicle and close App (only if broadcast is active)_: If possible auto connect to vehicle. After the service has been started the App will be closed.  
-  This option is only active if _Send data broadcasts_ has been selected and the service is active.
+  * _Auto connection establishment to vehicle and close App__: If possible auto connect to vehicle. After the service has been started the App will be closed.  
+  * _Auto start the service at boot time to restore the last connection state__: When the device is rebooted while communication to the vehicle is active, the app will start as service in the background and use the last main page for communication.  
 * _App exit_ options:
   * _Double click required for app exit_: A double click on the back button is required to exit the app.
 * _Update check_ options:
