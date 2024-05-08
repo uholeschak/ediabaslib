@@ -57,7 +57,7 @@ The source for the firmware could be found in the subdirectory `CanAdapterElm`. 
   * `spp_uart.xpv` and `spp_uart.xdv`: Firmware for Bluetooth module with BC417 chipset
   * `usbspi.dll`: This is a replacement library for _BlueSuite_ and _BlueLab_ for programming CSR BC03/BC04 Bluetooth chipsets via FT232R breakout boards. For more information see the [`ReadMe.txt`](../EdiabasLib/CanAdapterElm/Bluetooth/spp_uart/ReadMe.txt) file.
 
-The is not LED configuration is specified the default is: RX LED PB6, TX LED BP7.  
+If there is no LED configuration specified, the default values are: RX LED PB6, TX LED BP7.  
 There are two firmware files, the complete file (`CanAdapterElm.X.production.unified.hex`) and the update file (`CanAdapterElm.X.production.hex`) without bootloader, that is only needed by the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_.  
 The latest firmware version will be always included in the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_.  
 Also you can get compiled firmware files from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
