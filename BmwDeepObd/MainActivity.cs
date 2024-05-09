@@ -143,6 +143,7 @@ namespace BmwDeepObd
             }
 
             public bool MtcBtDisconnectWarnShown { get; set; }
+            public bool AutoConnectExecuted { get; set; }
         }
 
 #if DEBUG
@@ -172,7 +173,6 @@ namespace BmwDeepObd
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
         private bool _lastCompileCrash;
-        private ActivityCommon.AutoConnectType _connectTypeRequest;
         private bool _backPressed;
         private long _lastBackPressedTime;
         private bool _activityActive;
@@ -357,7 +357,6 @@ namespace BmwDeepObd
                 _instanceDataBase.ActionBarVisible = true;
             }
 
-            _connectTypeRequest = ActivityCommon.AutoConnectHandling;
             if (ActivityCommon.CommActive)
             {
                 lock (ActivityCommon.GlobalLockObject)
@@ -495,23 +494,28 @@ namespace BmwDeepObd
             StoreActiveJobIndex();
             StoreLastAppState(ActivityCommon.LastAppState.TabsCreated);
 
-            switch (_connectTypeRequest)
+            if (!_instanceData.AutoConnectExecuted)
             {
-                case ActivityCommon.AutoConnectType.Connect:
-                case ActivityCommon.AutoConnectType.ConnectClose:
-                    if (ActivityCommon.JobReader.PageList.Count > 0 &&
-                        !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
-                    {
-                        ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
-                        if (UseCommService() && ActivityCommon.CommActive &&
-                            _connectTypeRequest == ActivityCommon.AutoConnectType.ConnectClose)
+                switch (ActivityCommon.AutoConnectHandling)
+                {
+                    case ActivityCommon.AutoConnectType.Connect:
+                    case ActivityCommon.AutoConnectType.ConnectClose:
+                        if (ActivityCommon.JobReader.PageList.Count > 0 &&
+                            !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
                         {
-                            Finish();
+                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                            if (UseCommService() && ActivityCommon.CommActive &&
+                                ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.ConnectClose)
+                            {
+                                _instanceData.AutoConnectExecuted = true;
+                                Finish();
+                            }
                         }
-                    }
-                    break;
+                        break;
+                }
+
+                _instanceData.AutoConnectExecuted = true;
             }
-            _connectTypeRequest = ActivityCommon.AutoConnectType.Offline;
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -696,6 +700,8 @@ namespace BmwDeepObd
         public override void Finish()
         {
             base.Finish();
+
+            _instanceData.AutoConnectExecuted = false;
             if (!ActivityCommon.CommActive && _activityCommon != null)
             {
                 _activityCommon.BluetoothDisableAtExit();
@@ -1869,7 +1875,8 @@ namespace BmwDeepObd
                 }
             }
 
-            if (!ActivityCommon.CommActive && _connectTypeRequest == ActivityCommon.AutoConnectType.Offline)
+            if (!ActivityCommon.CommActive &&
+                (_instanceData.AutoConnectExecuted || ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.Offline))
             {
                 if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
                 {
