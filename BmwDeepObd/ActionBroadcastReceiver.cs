@@ -16,6 +16,7 @@ namespace BmwDeepObd;
         Intent.ActionShutdown,
         Intent.ActionMyPackageReplaced,
         Intent.ActionMyPackageUnsuspended,
+        Intent.ActionScreenOn,
         AndroidActionQuickBoot,
         HtcActionQuickBoot,
     },
@@ -55,6 +56,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case Intent.ActionReboot:
             case Intent.ActionMyPackageReplaced:
             case Intent.ActionMyPackageUnsuspended:
+            case Intent.ActionScreenOn:
             case AndroidActionQuickBoot:
             case HtcActionQuickBoot:
             case ActionStartService:
