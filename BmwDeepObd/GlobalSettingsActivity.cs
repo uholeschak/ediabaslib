@@ -22,6 +22,7 @@ namespace BmwDeepObd
             public string CopyToAppDstPath { get; set; }
             public string CopyFromAppSrcPath { get; set; }
             public string CopyFromAppDstUri { get; set; }
+            public bool BootHintShown { get; set; }
         }
 
         // Intent extra
@@ -54,6 +55,7 @@ namespace BmwDeepObd
         private string _copyFileName;
         private bool _deleteFile;
         private string _selection;
+        private bool _ignoreCheckChange;
         private ActivityCommon _activityCommon;
         private string _exportFileName;
 
@@ -217,6 +219,25 @@ namespace BmwDeepObd
             _radioButtonStartConnect = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnect);
             _radioButtonStartConnectClose = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnectClose);
             _radioButtonStartBoot = FindViewById<RadioButton>(Resource.Id.radioButtonStartBoot);
+            _radioButtonStartBoot.CheckedChange += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                if (_ignoreCheckChange)
+                {
+                    return;
+                }
+
+                if (!_instanceData.BootHintShown &&
+                    _activityCommon.MtcBtService && _radioButtonStartBoot.Checked)
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.settings_mtc_boot_hint), Resource.String.alert_title_error);
+                    _instanceData.BootHintShown = true;
+                }
+            };
 
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
             _checkBoxSendDataBroadcast = FindViewById<CheckBox>(Resource.Id.checkBoxSendDataBroadcast);
@@ -517,159 +538,168 @@ namespace BmwDeepObd
 
         private void ReadSettings()
         {
-            string locale = ActivityCommon.SelectedLocale ?? string.Empty;
-            switch (locale.ToLowerInvariant())
+            try
             {
-                case "en":
-                    _radioButtonLocaleEn.Checked = true;
-                    break;
+                _ignoreCheckChange = true;
+                string locale = ActivityCommon.SelectedLocale ?? string.Empty;
+                switch (locale.ToLowerInvariant())
+                {
+                    case "en":
+                        _radioButtonLocaleEn.Checked = true;
+                        break;
 
-                case "de":
-                    _radioButtonLocaleDe.Checked = true;
-                    break;
+                    case "de":
+                        _radioButtonLocaleDe.Checked = true;
+                        break;
 
-                case "ru":
-                    _radioButtonLocaleRu.Checked = true;
-                    break;
+                    case "ru":
+                        _radioButtonLocaleRu.Checked = true;
+                        break;
 
-                default:
-                    _radioButtonLocaleDefault.Checked = true;
-                    break;
+                    default:
+                        _radioButtonLocaleDefault.Checked = true;
+                        break;
+                }
+
+                switch (ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault)
+                {
+                    case ActivityCommon.ThemeType.Light:
+                        _radioButtonThemeLight.Checked = true;
+                        break;
+
+                    default:
+                        _radioButtonThemeDark.Checked = true;
+                        break;
+                }
+
+                _checkBoxAutoHideTitleBar.Checked = ActivityCommon.AutoHideTitleBar;
+                _checkBoxSuppressTitleBar.Checked = ActivityCommon.SuppressTitleBar;
+                _checkBoxFullScreenMode.Checked = ActivityCommon.FullScreenMode;
+
+                _checkBoxSwapMultiWindowOrientation.Checked = ActivityCommon.SwapMultiWindowOrientation;
+
+                switch (ActivityCommon.SelectedInternetConnection)
+                {
+                    case ActivityCommon.InternetConnectionType.Wifi:
+                        _radioButtonInternetWifi.Checked = true;
+                        break;
+
+                    case ActivityCommon.InternetConnectionType.Ethernet:
+                        _radioButtonInternetEthernet.Checked = true;
+                        break;
+
+                    default:
+                        _radioButtonInternetCellular.Checked = true;
+                        break;
+                }
+
+                switch (ActivityCommon.BtEnbaleHandling)
+                {
+                    case ActivityCommon.BtEnableType.Ask:
+                        _radioButtonAskForBtEnable.Checked = true;
+                        break;
+
+                    case ActivityCommon.BtEnableType.Always:
+                        _radioButtonAlwaysEnableBt.Checked = true;
+                        break;
+
+                    default:
+                        _radioButtonNoBtHandling.Checked = true;
+                        break;
+                }
+
+                _checkBoxDisableBtAtExit.Checked = ActivityCommon.BtDisableHandling == ActivityCommon.BtDisableType.DisableIfByApp;
+
+                switch (ActivityCommon.LockTypeCommunication)
+                {
+                    case ActivityCommon.LockType.None:
+                        _radioButtonCommLockNone.Checked = true;
+                        break;
+
+                    case ActivityCommon.LockType.Cpu:
+                        _radioButtonCommLockCpu.Checked = true;
+                        break;
+
+                    case ActivityCommon.LockType.ScreenDim:
+                        _radioButtonCommLockDim.Checked = true;
+                        break;
+
+                    case ActivityCommon.LockType.ScreenBright:
+                        _radioButtonCommLockBright.Checked = true;
+                        break;
+                }
+
+                switch (ActivityCommon.LockTypeLogging)
+                {
+                    case ActivityCommon.LockType.None:
+                        _radioButtonLogLockNone.Checked = true;
+                        break;
+
+                    case ActivityCommon.LockType.Cpu:
+                        _radioButtonLogLockCpu.Checked = true;
+                        break;
+
+                    case ActivityCommon.LockType.ScreenDim:
+                        _radioButtonLogLockDim.Checked = true;
+                        break;
+
+                    case ActivityCommon.LockType.ScreenBright:
+                        _radioButtonLogLockBright.Checked = true;
+                        break;
+                }
+
+                _checkBoxStoreDataLogSettings.Checked = ActivityCommon.StoreDataLogSettings;
+
+                switch (ActivityCommon.AutoConnectHandling)
+                {
+                    case ActivityCommon.AutoConnectType.Offline:
+                        _radioButtonStartOffline.Checked = true;
+                        break;
+
+                    case ActivityCommon.AutoConnectType.Connect:
+                        _radioButtonStartConnect.Checked = true;
+                        break;
+
+                    case ActivityCommon.AutoConnectType.ConnectClose:
+                        _radioButtonStartConnectClose.Checked = true;
+                        break;
+
+                    case ActivityCommon.AutoConnectType.StartBoot:
+                        _radioButtonStartBoot.Checked = true;
+                        break;
+                }
+
+                _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
+
+                if (ActivityCommon.UpdateCheckDelay == TimeSpan.TicksPerDay * 7)
+                {
+                    _radioButtonUpdate1Week.Checked = true;
+                }
+                else if (ActivityCommon.UpdateCheckDelay < 0)
+                {
+                    _radioButtonUpdateOff.Checked = true;
+                }
+                else
+                {
+                    _radioButtonUpdate1Day.Checked = true;
+                }
+
+                _checkBoxSendDataBroadcast.Checked = ActivityCommon.SendDataBroadcast;
+                _checkBoxCheckCpuUsage.Checked = ActivityCommon.CheckCpuUsage;
+                _checkBoxCheckEcuFiles.Checked = ActivityCommon.CheckEcuFiles;
+                _checkBoxShowBatteryVoltageWarning.Checked = ActivityCommon.ShowBatteryVoltageWarning;
+                _checkBoxOldVagMode.Checked = ActivityCommon.OldVagMode;
+                _checkBoxUseBmwDatabase.Checked = ActivityCommon.UseBmwDatabase;
+                _checkBoxShowOnlyRelevantErrors.Checked = ActivityCommon.ShowOnlyRelevantErrors;
+                _checkBoxScanAllEcus.Checked = ActivityCommon.ScanAllEcus;
+                _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
+                _checkBoxUncompressedTrace.Checked = !ActivityCommon.CompressTrace;
+            }
+            finally
+            {
+                _ignoreCheckChange = false;
             }
 
-            switch (ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault)
-            {
-                case ActivityCommon.ThemeType.Light:
-                    _radioButtonThemeLight.Checked = true;
-                    break;
-
-                default:
-                    _radioButtonThemeDark.Checked = true;
-                    break;
-            }
-
-            _checkBoxAutoHideTitleBar.Checked = ActivityCommon.AutoHideTitleBar;
-            _checkBoxSuppressTitleBar.Checked = ActivityCommon.SuppressTitleBar;
-            _checkBoxFullScreenMode.Checked = ActivityCommon.FullScreenMode;
-
-            _checkBoxSwapMultiWindowOrientation.Checked = ActivityCommon.SwapMultiWindowOrientation;
-
-            switch (ActivityCommon.SelectedInternetConnection)
-            {
-                case ActivityCommon.InternetConnectionType.Wifi:
-                    _radioButtonInternetWifi.Checked = true;
-                    break;
-
-                case ActivityCommon.InternetConnectionType.Ethernet:
-                    _radioButtonInternetEthernet.Checked = true;
-                    break;
-
-                default:
-                    _radioButtonInternetCellular.Checked = true;
-                    break;
-            }
-
-            switch (ActivityCommon.BtEnbaleHandling)
-            {
-                case ActivityCommon.BtEnableType.Ask:
-                    _radioButtonAskForBtEnable.Checked = true;
-                    break;
-
-                case ActivityCommon.BtEnableType.Always:
-                    _radioButtonAlwaysEnableBt.Checked = true;
-                    break;
-
-                default:
-                    _radioButtonNoBtHandling.Checked = true;
-                    break;
-            }
-
-            _checkBoxDisableBtAtExit.Checked = ActivityCommon.BtDisableHandling == ActivityCommon.BtDisableType.DisableIfByApp;
-
-            switch (ActivityCommon.LockTypeCommunication)
-            {
-                case ActivityCommon.LockType.None:
-                    _radioButtonCommLockNone.Checked = true;
-                    break;
-
-                case ActivityCommon.LockType.Cpu:
-                    _radioButtonCommLockCpu.Checked = true;
-                    break;
-
-                case ActivityCommon.LockType.ScreenDim:
-                    _radioButtonCommLockDim.Checked = true;
-                    break;
-
-                case ActivityCommon.LockType.ScreenBright:
-                    _radioButtonCommLockBright.Checked = true;
-                    break;
-            }
-
-            switch (ActivityCommon.LockTypeLogging)
-            {
-                case ActivityCommon.LockType.None:
-                    _radioButtonLogLockNone.Checked = true;
-                    break;
-
-                case ActivityCommon.LockType.Cpu:
-                    _radioButtonLogLockCpu.Checked = true;
-                    break;
-
-                case ActivityCommon.LockType.ScreenDim:
-                    _radioButtonLogLockDim.Checked = true;
-                    break;
-
-                case ActivityCommon.LockType.ScreenBright:
-                    _radioButtonLogLockBright.Checked = true;
-                    break;
-            }
-
-            _checkBoxStoreDataLogSettings.Checked = ActivityCommon.StoreDataLogSettings;
-
-            switch (ActivityCommon.AutoConnectHandling)
-            {
-                case ActivityCommon.AutoConnectType.Offline:
-                    _radioButtonStartOffline.Checked = true;
-                    break;
-
-                case ActivityCommon.AutoConnectType.Connect:
-                    _radioButtonStartConnect.Checked = true;
-                    break;
-
-                case ActivityCommon.AutoConnectType.ConnectClose:
-                    _radioButtonStartConnectClose.Checked = true;
-                    break;
-
-                case ActivityCommon.AutoConnectType.StartBoot:
-                    _radioButtonStartBoot.Checked = true;
-                    break;
-            }
-
-            _checkBoxDoubleClickForAppExit.Checked = ActivityCommon.DoubleClickForAppExit;
-
-            if (ActivityCommon.UpdateCheckDelay == TimeSpan.TicksPerDay * 7)
-            {
-                _radioButtonUpdate1Week.Checked = true;
-            }
-            else if (ActivityCommon.UpdateCheckDelay < 0)
-            {
-                _radioButtonUpdateOff.Checked = true;
-            }
-            else
-            {
-                _radioButtonUpdate1Day.Checked = true;
-            }
-
-            _checkBoxSendDataBroadcast.Checked = ActivityCommon.SendDataBroadcast;
-            _checkBoxCheckCpuUsage.Checked = ActivityCommon.CheckCpuUsage;
-            _checkBoxCheckEcuFiles.Checked = ActivityCommon.CheckEcuFiles;
-            _checkBoxShowBatteryVoltageWarning.Checked = ActivityCommon.ShowBatteryVoltageWarning;
-            _checkBoxOldVagMode.Checked = ActivityCommon.OldVagMode;
-            _checkBoxUseBmwDatabase.Checked = ActivityCommon.UseBmwDatabase;
-            _checkBoxShowOnlyRelevantErrors.Checked = ActivityCommon.ShowOnlyRelevantErrors;
-            _checkBoxScanAllEcus.Checked = ActivityCommon.ScanAllEcus;
-            _checkBoxCollectDebugInfo.Checked = ActivityCommon.CollectDebugInfo;
-            _checkBoxUncompressedTrace.Checked = !ActivityCommon.CompressTrace;
             UpdateDisplay();
         }
 

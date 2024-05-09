@@ -550,6 +550,8 @@
   <string name="settings_import_settings">Импорт настроек</string>
   <string name="settings_import_no_file">Файл импорта не найден:</string>
   <string name="settings_export_private">Хотите также экспортировать личные данные?</string>
+  <!--Translate-->
+  <string name="settings_mtc_boot_hint">Опция загрузки очень часто не работает на радиостанциях Android.\nРекомендуется выбрать один из других вариантов автоматического запуска и настроить это приложение для автоматического запуска в Android.</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
