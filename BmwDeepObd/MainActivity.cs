@@ -2527,7 +2527,10 @@ namespace BmwDeepObd
             {
                 case ActivityCommon.AutoConnectType.Connect:
                 case ActivityCommon.AutoConnectType.ConnectClose:
-                    selectedJobIndex = _tabLayout.SelectedTabPosition;
+                    if (ActivityCommon.JobReader.PageList.Count > 0)
+                    {
+                        selectedJobIndex = _tabLayout.SelectedTabPosition;
+                    }
                     break;
 
                 case ActivityCommon.AutoConnectType.StartBoot:
