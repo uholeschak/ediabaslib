@@ -2523,13 +2523,23 @@ namespace BmwDeepObd
         private void StoreActiveJobIndex(bool disable = false)
         {
             int selectedJobIndex = -1;
-            if (!disable && ActivityCommon.CommActive)
+            switch (ActivityCommon.AutoConnectHandling)
             {
-                JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread.JobPageInfo;
-                if (pageInfo != null)
-                {
-                    selectedJobIndex = ActivityCommon.JobReader.PageList.IndexOf(pageInfo);
-                }
+                case ActivityCommon.AutoConnectType.Connect:
+                case ActivityCommon.AutoConnectType.ConnectClose:
+                    selectedJobIndex = _tabLayout.SelectedTabPosition;
+                    break;
+
+                case ActivityCommon.AutoConnectType.StartBoot:
+                    if (!disable && ActivityCommon.CommActive)
+                    {
+                        JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread.JobPageInfo;
+                        if (pageInfo != null)
+                        {
+                            selectedJobIndex = ActivityCommon.JobReader.PageList.IndexOf(pageInfo);
+                        }
+                    }
+                    break;
             }
 
             if (_instanceData.LastSelectedJobIndex != selectedJobIndex)
