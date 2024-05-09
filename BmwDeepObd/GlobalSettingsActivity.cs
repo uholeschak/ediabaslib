@@ -234,7 +234,7 @@ namespace BmwDeepObd
                 if (!_instanceData.BootHintShown &&
                     _activityCommon.MtcBtService && _radioButtonStartBoot.Checked)
                 {
-                    _activityCommon.ShowAlert(GetString(Resource.String.settings_mtc_boot_hint), Resource.String.alert_title_error);
+                    _activityCommon.ShowAlert(GetString(Resource.String.settings_mtc_boot_hint), Resource.String.alert_title_warning);
                     _instanceData.BootHintShown = true;
                 }
             };
