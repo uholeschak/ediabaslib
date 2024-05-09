@@ -429,6 +429,7 @@ namespace BmwDeepObd
             }
             _createTabsPending = false;
 
+            bool autoConnect = false;
             // get last active tab
             JobReader.PageInfo currentPage = null;
             if (IsCommActive())
@@ -438,6 +439,17 @@ namespace BmwDeepObd
             }
             else
             {
+                if (!_instanceData.AutoConnectExecuted)
+                {
+                    switch (ActivityCommon.AutoConnectHandling)
+                    {
+                        case ActivityCommon.AutoConnectType.Connect:
+                        case ActivityCommon.AutoConnectType.ConnectClose:
+                            autoConnect = true;
+                            break;
+                    }
+                }
+
                 if (_tabsCreated)
                 {
                     currentPage = GetSelectedPage();
@@ -445,17 +457,24 @@ namespace BmwDeepObd
             }
 
             int pageIndex = 0;
-            if (currentPage != null)
+            if (autoConnect)
             {
-                int i = 0;
-                foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                pageIndex = _instanceData.LastSelectedJobIndex;
+            }
+            else
+            {
+                if (currentPage != null)
                 {
-                    if (pageInfo == currentPage)
+                    int i = 0;
+                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                     {
-                        pageIndex = i;
-                        break;
+                        if (pageInfo == currentPage)
+                        {
+                            pageIndex = i;
+                            break;
+                        }
+                        i++;
                     }
-                    i++;
                 }
             }
 
@@ -491,31 +510,28 @@ namespace BmwDeepObd
             _ignoreTabsChange = false;
             _tabsCreated = true;
             UpdateDisplay();
-            StoreActiveJobIndex();
             StoreLastAppState(ActivityCommon.LastAppState.TabsCreated);
 
-            if (!_instanceData.AutoConnectExecuted)
+            if (autoConnect)
             {
-                switch (ActivityCommon.AutoConnectHandling)
+                if (ActivityCommon.JobReader.PageList.Count > 0 &&
+                    !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
                 {
-                    case ActivityCommon.AutoConnectType.Connect:
-                    case ActivityCommon.AutoConnectType.ConnectClose:
-                        if (ActivityCommon.JobReader.PageList.Count > 0 &&
-                            !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
-                        {
-                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
-                            if (UseCommService() && ActivityCommon.CommActive &&
-                                ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.ConnectClose)
-                            {
-                                _instanceData.AutoConnectExecuted = true;
-                                Finish();
-                            }
-                        }
-                        break;
+                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(true));
+                    if (UseCommService() && ActivityCommon.CommActive &&
+                        ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.ConnectClose)
+                    {
+                        _instanceData.AutoConnectExecuted = true;
+                        Finish();
+                    }
                 }
-
-                _instanceData.AutoConnectExecuted = true;
             }
+            else
+            {
+                StoreActiveJobIndex();
+            }
+
+            _instanceData.AutoConnectExecuted = true;
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -1858,6 +1874,12 @@ namespace BmwDeepObd
                 return;
             }
 
+            bool autoConnect = false;
+            if (e is EventArgsConnect eventArgsConnect)
+            {
+                autoConnect = eventArgsConnect.AutoConnect;
+            }
+
             if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
             {
                 if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _instanceData.AppDataPath, (s, args) =>
@@ -1875,8 +1897,7 @@ namespace BmwDeepObd
                 }
             }
 
-            if (!ActivityCommon.CommActive &&
-                (_instanceData.AutoConnectExecuted || ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.Offline))
+            if (!ActivityCommon.CommActive && !autoConnect)
             {
                 if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
                 {
@@ -7619,6 +7640,16 @@ namespace BmwDeepObd
                 }
 
                 _view = null;
+            }
+        }
+
+        private class EventArgsConnect : EventArgs
+        {
+            public bool AutoConnect { get; set; }
+
+            public EventArgsConnect(bool autoConnect)
+            {
+                AutoConnect = autoConnect;
             }
         }
 
