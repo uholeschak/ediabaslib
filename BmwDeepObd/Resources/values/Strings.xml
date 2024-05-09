@@ -516,6 +516,7 @@
   <string name="settings_import_settings">Import settings</string>
   <string name="settings_import_no_file">The import file has been found:</string>
   <string name="settings_export_private">Do you also want to export private data?</string>
+  <string name="settings_mtc_boot_hint">The boot option is very often not working on Android radios.\nIt\'s recommended to select one of the other auto start options and configure this app for auto start in Android.</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas tool</string>
