@@ -37,9 +37,14 @@ This page allows to change some global app settings.
   * _Store log data settings_: Store log data settings (not trace settings) from the main menu and restore them at app restart.
 * _App start_ options:
   * _No connection establishment to vehicle_: No automatic connection establishment to vehicle.
-  * _Auto connection establishment to vehicle_: If possible auto connect to vehicle with the last selected page. This is only possible if no dialog opens at startup.
-  * _Auto connection establishment to vehicle and close App__: If possible auto connect to vehicle with the last selected page. After the service has been started the app will be closed.
-  * _Auto start the service at boot time to restore the last connection state__: When the device is rebooted while communication to the vehicle is active, the app will start as service in the background and use the last main page for communication.  This option is not working on Android radios, because they have no standard boot support.
+  * _Auto connection establishment to vehicle_: If possible auto connect to vehicle with the last selected page.  
+    This is only possible if no dialog opens at startup (All requests have to be acknowledged before).
+  * _Auto connection establishment to vehicle and close App__: If possible auto connect to vehicle with the last selected page.  
+    This is only possible if no dialog opens at startup (All requests have to be acknowledged before).
+    After the service has been started the app will be closed.
+  * _Auto start the service at boot time to restore the last connection state__: When the device is rebooted while communication to the vehicle is active, the app will start as service in the background and use the last main page for communication.  
+    The boot option is very often not working on Android radios.  
+    It's recommended to select one of the other auto start options and configure this app for auto start at boot and standby in Android.
 * _App exit_ options:
   * _Double click required for app exit_: A double click on the back button is required to exit the app.
 * _Update check_ options:
