@@ -3548,6 +3548,7 @@ namespace EdiabasLib
                     {
                         try
                         {
+                            IcomAllocateDeviceHttpClient.CancelPendingRequests();
                             IcomAllocateDeviceHttpClient.Dispose();
                         }
                         catch (Exception)

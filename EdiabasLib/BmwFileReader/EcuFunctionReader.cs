@@ -204,14 +204,12 @@ namespace BmwFileReader
                     return false;
                 }
 
-                if (!relevantOnly)
+                if (relevantOnly)
                 {
-                    return true;
-                }
-
-                if (ecuFaultCode.Relevance.ConvertToInt() < 1)
-                {
-                    return false;
+                    if (ecuFaultCode.Relevance.ConvertToInt() < 1)
+                    {
+                        return false;
+                    }
                 }
 
                 if (ruleEvalBmw != null)
