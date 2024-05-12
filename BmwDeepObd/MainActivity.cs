@@ -4122,7 +4122,14 @@ namespace BmwDeepObd
                 string title = ecuVariant.Title?.GetTitle(language);
                 if (!string.IsNullOrEmpty(title))
                 {
-                    ecuTitle += " (" + title + ")";
+                    if (!string.IsNullOrEmpty(ecuTitle))
+                    {
+                        ecuTitle += " (" + title + ")";
+                    }
+                    else
+                    {
+                        ecuTitle = title;
+                    }
                 }
             }
 
@@ -4391,6 +4398,14 @@ namespace BmwDeepObd
                                     text2 = faultResultList[1];
                                 }
                             }
+
+                            if (!showUnknown)
+                            {
+                                if (!errorReport.IsVisible)
+                                {
+                                    errorCode = 0x0000;
+                                }
+                            }
                         }
                         else
                         {
@@ -4442,6 +4457,11 @@ namespace BmwDeepObd
                         srMessage.Append("\r\n");
                         if (!string.IsNullOrEmpty(textErrorCode))
                         {
+                            if (!errorReport.IsVisible)
+                            {
+                                srMessage.Append("(");
+                            }
+
                             if (errorReport.ReadIs)
                             {
                                 srMessage.Append(GetString(Resource.String.error_info_code));
@@ -4457,6 +4477,10 @@ namespace BmwDeepObd
                             }
                             srMessage.Append(": ");
                             srMessage.Append(textErrorCode);
+                            if (!errorReport.IsVisible)
+                            {
+                                srMessage.Append(")");
+                            }
                             srMessage.Append("\r\n");
                         }
 
@@ -4681,7 +4705,7 @@ namespace BmwDeepObd
             return GetResultString(new MultiMap<string, EdiabasNet.ResultData>(resultDict), dataName, 0, out found);
         }
 
-        public static String GetResultString(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, int index, out bool found)
+        public static string GetResultString(MultiMap<string, EdiabasNet.ResultData> resultDict, string dataName, int index, out bool found)
         {
             found = false;
             if (resultDict != null && resultDict.TryGetValue(dataName.ToUpperInvariant(), out IList<EdiabasNet.ResultData> resultDataList))
@@ -4700,7 +4724,7 @@ namespace BmwDeepObd
             return string.Empty;
         }
 
-        public static String GetPageString(JobReader.PageInfo pageInfo, string name)
+        public static string GetPageString(JobReader.PageInfo pageInfo, string name)
         {
             string lang = ActivityCommon.GetCurrentLanguageStatic();
             string langIso = ActivityCommon.GetCurrentLanguageStatic(true);
@@ -4718,12 +4742,19 @@ namespace BmwDeepObd
                     stringInfoSel = stringInfo;
                 }
             }
-            if (stringInfoSel == null) stringInfoSel = stringInfoDefault;
 
             string result = string.Empty;
             if (stringInfoSel != null)
             {
                 if (!stringInfoSel.StringDict.TryGetValue(name, out result))
+                {
+                    result = string.Empty;
+                }
+            }
+
+            if (string.IsNullOrEmpty(result) && stringInfoDefault != null)
+            {
+                if (!stringInfoDefault.StringDict.TryGetValue(name, out result))
                 {
                     result = string.Empty;
                 }

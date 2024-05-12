@@ -1580,7 +1580,7 @@ namespace BmwDeepObd
 
             if (jobOk)
             {
-                bool checkRelevant = ActivityCommon.EcuFunctionsActive && ActivityCommon.ShowOnlyRelevantErrors;
+                bool showOnlyRelevant = ActivityCommon.EcuFunctionsActive && ActivityCommon.ShowOnlyRelevantErrors;
                 Dictionary<string, EdiabasNet.ResultData> resultDict0 = null;
                 int dictIndex = 0;
                 foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
@@ -1621,7 +1621,12 @@ namespace BmwDeepObd
                                 isValid = ActivityCommon.EcuFunctionReader.IsValidFaultCode(errorCode, readIs, ecuVariant, _ruleEvalBmw, out isVisible);
                             }
 
-                            bool readDetail = !checkRelevant || isValid;
+                            bool readDetail = !showOnlyRelevant;
+                            if (isValid && isVisible)
+                            {
+                                readDetail = true;
+                            }
+
                             bool details = false;
                             if (readDetail && Ediabas.IsJobExisting(errorDetailJob))
                             {
