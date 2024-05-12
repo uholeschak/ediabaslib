@@ -3859,7 +3859,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    if (ActivityCommon.IsCommunicationError(errorReport.ExecptionText))
+                    if (ActivityCommon.IsCommunicationError(errorReport.ExceptionText))
                     {
                         commError = true;
                     }
