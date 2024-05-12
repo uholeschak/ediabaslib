@@ -4385,34 +4385,22 @@ namespace BmwDeepObd
                             }
                         }
 #endif
-                        if (errorReport.IsValid)
+                        if (errorCode != 0x0000)
                         {
-                            if (errorCode != 0x0000)
-                            {
-                                envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, errorReport.ReadIs, ecuVariant);
-                                List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport.ReadIs, errorReport, ecuVariant);
+                            envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, errorReport.ReadIs, ecuVariant);
+                            List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport.ReadIs, errorReport, ecuVariant);
 
-                                if (faultResultList != null && faultResultList.Count == 2)
-                                {
-                                    text1 = faultResultList[0];
-                                    text2 = faultResultList[1];
-                                }
-                            }
-
-                            if (!showUnknown)
+                            if (faultResultList != null && faultResultList.Count == 2)
                             {
-                                if (!errorReport.IsVisible)
-                                {
-                                    errorCode = 0x0000;
-                                }
+                                text1 = faultResultList[0];
+                                text2 = faultResultList[1];
                             }
                         }
-                        else
+
+                        bool isHidden = !(errorReport.IsValid && errorReport.IsVisible);
+                        if (!showUnknown && isHidden)
                         {
-                            if (!showUnknown)
-                            {
-                                errorCode = 0x0000;
-                            }
+                            errorCode = 0x0000;
                         }
                     }
 
@@ -4457,7 +4445,8 @@ namespace BmwDeepObd
                         srMessage.Append("\r\n");
                         if (!string.IsNullOrEmpty(textErrorCode))
                         {
-                            if (!errorReport.IsVisible)
+                            bool isHidden = !(errorReport.IsValid && errorReport.IsVisible);
+                            if (isHidden)
                             {
                                 srMessage.Append("(");
                             }
@@ -4477,7 +4466,7 @@ namespace BmwDeepObd
                             }
                             srMessage.Append(": ");
                             srMessage.Append(textErrorCode);
-                            if (!errorReport.IsVisible)
+                            if (isHidden)
                             {
                                 srMessage.Append(")");
                             }
