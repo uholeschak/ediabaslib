@@ -4397,8 +4397,8 @@ namespace BmwDeepObd
                             }
                         }
 
-                        bool isHidden = !(errorReport.IsValid && errorReport.IsVisible);
-                        if (!showUnknown && isHidden)
+                        bool isSuppressed = !(errorReport.IsValid && errorReport.IsVisible);
+                        if (!showUnknown && isSuppressed)
                         {
                             errorCode = 0x0000;
                         }
@@ -4445,10 +4445,16 @@ namespace BmwDeepObd
                         srMessage.Append("\r\n");
                         if (!string.IsNullOrEmpty(textErrorCode))
                         {
-                            bool isHidden = !(errorReport.IsValid && errorReport.IsVisible);
-                            if (isHidden)
+                            bool isValid = errorReport.IsValid;
+                            bool isVisible = errorReport.IsVisible;
+
+                            if (!isValid)
                             {
                                 srMessage.Append("(");
+                            }
+                            else if (!isVisible)
+                            {
+                                srMessage.Append("[");
                             }
 
                             if (errorReport.ReadIs)
@@ -4466,10 +4472,16 @@ namespace BmwDeepObd
                             }
                             srMessage.Append(": ");
                             srMessage.Append(textErrorCode);
-                            if (isHidden)
+
+                            if (!isValid)
                             {
                                 srMessage.Append(")");
                             }
+                            else if (!isVisible)
+                            {
+                                srMessage.Append("]");
+                            }
+
                             srMessage.Append("\r\n");
                         }
 
