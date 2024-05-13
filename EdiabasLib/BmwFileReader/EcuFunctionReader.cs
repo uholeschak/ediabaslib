@@ -190,8 +190,9 @@ namespace BmwFileReader
             return fixedFuncStructList;
         }
 
-        public bool IsValidFaultCode(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant, RuleEvalBmw ruleEvalBmw = null, bool relevantOnly = false)
+        public bool IsValidFaultCode(Int64 errorCode, bool info, EcuFunctionStructs.EcuVariant ecuVariant, RuleEvalBmw ruleEvalBmw, out bool isVisible)
         {
+            isVisible = true;
             lock (_lockObject)
             {
                 if (errorCode == 0x0000)
@@ -204,19 +205,16 @@ namespace BmwFileReader
                     return false;
                 }
 
-                if (relevantOnly)
+                if (ecuFaultCode.Relevance.ConvertToInt() < 1)
                 {
-                    if (ecuFaultCode.Relevance.ConvertToInt() < 1)
-                    {
-                        return false;
-                    }
+                    isVisible = false;
                 }
 
                 if (ruleEvalBmw != null)
                 {
                     if (!ruleEvalBmw.EvaluateRule(ecuFaultCode.Id, RuleEvalBmw.RuleType.Fault))
                     {
-                        return false;
+                        isVisible = false;
                     }
                 }
 
