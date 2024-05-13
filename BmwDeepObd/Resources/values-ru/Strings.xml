@@ -68,6 +68,8 @@
   <string name="error_error_code">Код ошибки</string>
   <string name="error_info_code">Инфокод</string>
   <string name="error_shadow">(Shadow)</string>
+  <string name="error_unknown">Неизвестный</string>
+  <string name="error_hidden">Скрытый</string>
   <string name="error_env_title">Условия окружающей среды:</string>
   <string name="error_env_frequency">Частота</string>
   <string name="error_env_log_count">Логистический счётчик</string>

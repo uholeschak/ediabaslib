@@ -4445,18 +4445,6 @@ namespace BmwDeepObd
                         srMessage.Append("\r\n");
                         if (!string.IsNullOrEmpty(textErrorCode))
                         {
-                            bool isValid = errorReport.IsValid;
-                            bool isVisible = errorReport.IsVisible;
-
-                            if (!isValid)
-                            {
-                                srMessage.Append("(");
-                            }
-                            else if (!isVisible)
-                            {
-                                srMessage.Append("[");
-                            }
-
                             if (errorReport.ReadIs)
                             {
                                 srMessage.Append(GetString(Resource.String.error_info_code));
@@ -4473,13 +4461,17 @@ namespace BmwDeepObd
                             srMessage.Append(": ");
                             srMessage.Append(textErrorCode);
 
-                            if (!isValid)
+                            if (!errorReport.IsValid)
                             {
+                                srMessage.Append(" (");
+                                srMessage.Append(GetString(Resource.String.error_unknown));
                                 srMessage.Append(")");
                             }
-                            else if (!isVisible)
+                            else if (!errorReport.IsVisible)
                             {
-                                srMessage.Append("]");
+                                srMessage.Append(" (");
+                                srMessage.Append(GetString(Resource.String.error_hidden));
+                                srMessage.Append(")");
                             }
 
                             srMessage.Append("\r\n");

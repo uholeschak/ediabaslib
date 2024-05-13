@@ -68,6 +68,8 @@
   <string name="error_error_code">Error code</string>
   <string name="error_info_code">Info code</string>
   <string name="error_shadow">(Shadow)</string>
+  <string name="error_unknown">Unknown</string>
+  <string name="error_hidden">Hidden</string>
   <string name="error_env_title">Environmental conditions:</string>
   <string name="error_env_frequency">Frequency</string>
   <string name="error_env_log_count">Logistics counter</string>
