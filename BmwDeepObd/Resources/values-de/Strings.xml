@@ -69,6 +69,8 @@
   <string name="error_error_code">Fehlercode</string>
   <string name="error_info_code">Infocode</string>
   <string name="error_shadow">(Shadow)</string>
+  <string name="error_unknown">Unbekannt</string>
+  <string name="error_hidden">Verborgen</string>
   <string name="error_env_title">Umgebungsbedingungen:</string>
   <string name="error_env_frequency">Häufigkeit</string>
   <string name="error_env_log_count">Logistikzähler</string>
