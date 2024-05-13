@@ -2634,39 +2634,7 @@ namespace BmwDeepObd
             Dictionary<string, int> envCountDict = new Dictionary<string, int>();
             if (envCondLabelList == null)
             {
-                string frequencyText = ActivityMain.FormatResultInt64(errorDetail, "F_HFK", "{0}");
-                if (!string.IsNullOrEmpty(frequencyText))
-                {
-                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_frequency), "F_HFK", frequencyText);
-                }
-
-                string logCountText = ActivityMain.FormatResultInt64(errorDetail, "F_LZ", "{0}");
-                if (!string.IsNullOrEmpty(logCountText))
-                {
-                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_log_count), "F_LZ", logCountText);
-                }
-
-                string pcodeText = ActivityMain.FormatResultString(errorDetail, "F_PCODE_STRING", "{0}");
-                if (pcodeText.Length >= 4)
-                {
-                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_pcode), "F_PCODE_STRING", pcodeText);
-                }
-
-                string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
-                if (string.IsNullOrEmpty(kmText))
-                {
-                    kmText = GetEnvCondKmLast(errorDetail);
-                }
-                if (!string.IsNullOrEmpty(kmText))
-                {
-                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_km), "F_UW_KM", kmText + " km");
-                }
-
-                string timeText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
-                if (!string.IsNullOrEmpty(timeText))
-                {
-                    AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_time), "F_UW_ZEIT", timeText + " s");
-                }
+                ConvertEnvCondErrorDetailUnknown(ref envCountDict, context, detailDict, errorDetail);
             }
             else
             {
@@ -2812,6 +2780,50 @@ namespace BmwDeepObd
                         }
                     }
                 }
+            }
+
+            return true;
+        }
+
+        public static bool ConvertEnvCondErrorDetailUnknown(ref Dictionary<string, int> envCountDict, Context context, OrderedDictionary detailDict, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null)
+        {
+            if (errorDetail == null)
+            {
+                return false;
+            }
+
+            string frequencyText = ActivityMain.FormatResultInt64(errorDetail, "F_HFK", "{0}");
+            if (!string.IsNullOrWhiteSpace(frequencyText))
+            {
+                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_frequency), "F_HFK", frequencyText);
+            }
+
+            string logCountText = ActivityMain.FormatResultInt64(errorDetail, "F_LZ", "{0}");
+            if (!string.IsNullOrEmpty(logCountText))
+            {
+                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_log_count), "F_LZ", logCountText);
+            }
+
+            string pcodeText = ActivityMain.FormatResultString(errorDetail, "F_PCODE_STRING", "{0}");
+            if (pcodeText.Length >= 4)
+            {
+                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_pcode), "F_PCODE_STRING", pcodeText);
+            }
+
+            string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
+            if (string.IsNullOrEmpty(kmText))
+            {
+                kmText = GetEnvCondKmLast(errorDetail);
+            }
+            if (!string.IsNullOrEmpty(kmText))
+            {
+                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_km), "F_UW_KM", kmText + " km");
+            }
+
+            string timeText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
+            if (!string.IsNullOrEmpty(timeText))
+            {
+                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_time), "F_UW_ZEIT", timeText + " s");
             }
 
             return true;
