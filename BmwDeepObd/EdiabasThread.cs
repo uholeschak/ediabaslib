@@ -2635,13 +2635,13 @@ namespace BmwDeepObd
             if (envCondLabelList == null)
             {
                 string frequencyText = ActivityMain.FormatResultInt64(errorDetail, "F_HFK", "{0}");
-                if (frequencyText.Length > 0)
+                if (!string.IsNullOrEmpty(frequencyText))
                 {
                     AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_frequency), "F_HFK", frequencyText);
                 }
 
                 string logCountText = ActivityMain.FormatResultInt64(errorDetail, "F_LZ", "{0}");
-                if (logCountText.Length > 0)
+                if (!string.IsNullOrEmpty(logCountText))
                 {
                     AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_log_count), "F_LZ", logCountText);
                 }
@@ -2657,13 +2657,13 @@ namespace BmwDeepObd
                 {
                     kmText = GetEnvCondKmLast(errorDetail);
                 }
-                if (kmText.Length > 0)
+                if (!string.IsNullOrEmpty(kmText))
                 {
                     AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_km), "F_UW_KM", kmText + " km");
                 }
 
                 string timeText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
-                if (timeText.Length > 0)
+                if (!string.IsNullOrEmpty(timeText))
                 {
                     AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_time), "F_UW_ZEIT", timeText + " s");
                 }
