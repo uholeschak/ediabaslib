@@ -2531,7 +2531,7 @@ namespace BmwDeepObd
             OrderedDictionary detailDict = new OrderedDictionary();
             if (errorReport.ErrorDetailSet == null)
             {
-                ConvertEnvCondErrorDetailSingle(context, detailDict, errorReport.ErrorDict, envCondLabelList);
+                ConvertEnvCondErrorDetailSingle(context, ref detailDict, errorReport.ErrorDict, envCondLabelList);
             }
             else
             {
@@ -2551,7 +2551,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    ConvertEnvCondErrorDetailSingle(context, detailDict, errorDetail, envCondLabelList);
+                    ConvertEnvCondErrorDetailSingle(context, ref detailDict, errorDetail, envCondLabelList);
                     dictIndex++;
                 }
             }
@@ -2563,7 +2563,7 @@ namespace BmwDeepObd
                 Dictionary<string, int> envCountTestDict = new Dictionary<string, int>();
                 foreach (EcuFunctionStructs.EcuEnvCondLabel envCondLabel in envCondLabelList)
                 {
-                    string language = ActivityCommon.GetCurrentLanguage();
+                    string language = ActivityCommon.GetCurrentLanguageStatic();
                     if (envCondLabel.EcuResultStateValueList != null && envCondLabel.EcuResultStateValueList.Count > 0)
                     {
                         string envName = envCondLabel.Title?.GetTitle(language);
@@ -2577,7 +2577,7 @@ namespace BmwDeepObd
                                 string envVal = ConvertEcuEnvCondResultValue(envCondLabel, testDataVal, out double? _) ?? string.Empty;
                                 if (!string.IsNullOrWhiteSpace(envVal))
                                 {
-                                    AddEnvCondErrorDetail(detailDict, envCountTestDict, envName, "@T" + iTextIndex.ToString(CultureInfo.InvariantCulture), envVal);
+                                    AddEnvCondErrorDetail(ref detailDict, envCountTestDict, envName, "@T" + iTextIndex.ToString(CultureInfo.InvariantCulture), envVal);
                                 }
                             }
                             catch (Exception)
@@ -2617,7 +2617,7 @@ namespace BmwDeepObd
         }
 
         // from: RheingoldDiagnostics.dll BMW.Rheingold.Diagnostics.VehicleIdent.doECUReadFS, doECUReadFSDetails
-        public static bool ConvertEnvCondErrorDetailSingle(Context context, OrderedDictionary detailDict, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
+        public static bool ConvertEnvCondErrorDetailSingle(Context context, ref OrderedDictionary detailDict, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
             if (errorDetail == null)
             {
@@ -2634,7 +2634,7 @@ namespace BmwDeepObd
             Dictionary<string, int> envCountDict = new Dictionary<string, int>();
             if (envCondLabelList == null)
             {
-                ConvertEnvCondErrorDetailUnknown(ref envCountDict, context, detailDict, errorDetail);
+                ConvertEnvCondErrorDetailUnknown(ref envCountDict, ref detailDict, context, errorDetail);
             }
             else
             {
@@ -2711,7 +2711,7 @@ namespace BmwDeepObd
                                     sbValue.Append(envUnit.Trim());
                                 }
 
-                                AddEnvCondErrorDetail(detailDict, envCountDict, envName, "#" + (envCondIndex + 1).ToString(CultureInfo.InvariantCulture), sbValue.ToString());
+                                AddEnvCondErrorDetail(ref detailDict, envCountDict, envName, "#" + (envCondIndex + 1).ToString(CultureInfo.InvariantCulture), sbValue.ToString());
                             }
                         }
                     }
@@ -2759,7 +2759,7 @@ namespace BmwDeepObd
                                         sbValue.Append(envUnit.Trim());
                                     }
 
-                                    AddEnvCondErrorDetail(detailDict, envCountDict, envName, "@" + envNum.ToString(CultureInfo.InvariantCulture), sbValue.ToString());
+                                    AddEnvCondErrorDetail(ref detailDict, envCountDict, envName, "@" + envNum.ToString(CultureInfo.InvariantCulture), sbValue.ToString());
                                 }
                             }
                         }
@@ -2785,29 +2785,24 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static bool ConvertEnvCondErrorDetailUnknown(ref Dictionary<string, int> envCountDict, Context context, OrderedDictionary detailDict, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null)
+        public static bool ConvertEnvCondErrorDetailUnknown(ref Dictionary<string, int> envCountDict, ref OrderedDictionary detailDict, Context context, Dictionary<string, EdiabasNet.ResultData> errorDetail)
         {
-            if (errorDetail == null)
-            {
-                return false;
-            }
-
             string frequencyText = ActivityMain.FormatResultInt64(errorDetail, "F_HFK", "{0}");
             if (!string.IsNullOrWhiteSpace(frequencyText))
             {
-                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_frequency), "F_HFK", frequencyText);
+                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_frequency), "F_HFK", frequencyText);
             }
 
             string logCountText = ActivityMain.FormatResultInt64(errorDetail, "F_LZ", "{0}");
             if (!string.IsNullOrEmpty(logCountText))
             {
-                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_log_count), "F_LZ", logCountText);
+                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_log_count), "F_LZ", logCountText);
             }
 
             string pcodeText = ActivityMain.FormatResultString(errorDetail, "F_PCODE_STRING", "{0}");
             if (pcodeText.Length >= 4)
             {
-                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_pcode), "F_PCODE_STRING", pcodeText);
+                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_pcode), "F_PCODE_STRING", pcodeText);
             }
 
             string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
@@ -2817,13 +2812,13 @@ namespace BmwDeepObd
             }
             if (!string.IsNullOrEmpty(kmText))
             {
-                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_km), "F_UW_KM", kmText + " km");
+                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_km), "F_UW_KM", kmText + " km");
             }
 
             string timeText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
             if (!string.IsNullOrEmpty(timeText))
             {
-                AddEnvCondErrorDetail(detailDict, envCountDict, context.GetString(Resource.String.error_env_time), "F_UW_ZEIT", timeText + " s");
+                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_time), "F_UW_ZEIT", timeText + " s");
             }
 
             return true;
@@ -2844,7 +2839,7 @@ namespace BmwDeepObd
             return string.Empty;
         }
 
-        public static void AddEnvCondErrorDetail(OrderedDictionary detailDict, Dictionary<string, int> envCountDict, string name, string key, string value)
+        public static void AddEnvCondErrorDetail(ref OrderedDictionary detailDict, Dictionary<string, int> envCountDict, string name, string key, string value)
         {
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
             {
