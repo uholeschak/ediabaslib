@@ -2754,6 +2754,16 @@ namespace BmwDeepObd
                             envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
                         }
 
+                        double? resultValue = null;
+                        if (resultDataVal.OpData is Int64)
+                        {
+                            resultValue = (Int64)resultDataVal.OpData;
+                        }
+                        else if (resultDataVal.OpData is Double)
+                        {
+                            resultValue = (Double)resultDataVal.OpData;
+                        }
+
                         if (envCondResult.MinLength.HasValue)
                         {
                             if (envVal.Length < envCondResult.MinLength.Value)
@@ -2764,16 +2774,6 @@ namespace BmwDeepObd
 
                         if (envCondResult.MinValue.HasValue)
                         {
-                            double? resultValue = null;
-                            if (resultDataVal.OpData is Int64)
-                            {
-                                resultValue = (Int64)resultDataVal.OpData;
-                            }
-                            else if (resultDataVal.OpData is Double)
-                            {
-                                resultValue = (Double)resultDataVal.OpData;
-                            }
-
                             if (resultValue.HasValue && resultValue < envCondResult.MinValue.Value)
                             {
                                 envVal = string.Empty;
@@ -2787,6 +2787,11 @@ namespace BmwDeepObd
                             if (!string.IsNullOrWhiteSpace(envCondLabel?.Unit))
                             {
                                 envUnit = envCondLabel.Unit;
+                            }
+
+                            if (!string.IsNullOrEmpty(envUnit) && string.Compare(envUnit, "s", StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                envVal = ActivityMain.FormatSecondsAsHour((long)resultValue.Value);
                             }
 
                             StringBuilder sbValue = new StringBuilder();
