@@ -162,12 +162,13 @@ namespace BmwDeepObd
 
         private class EnvCondResultInfo
         {
-            public EnvCondResultInfo(string result, string unit = null, int? resourceId = null, int? minLength = null)
+            public EnvCondResultInfo(string result, string unit = null, int? resourceId = null, int? minLength = null, double? minValue = null)
             {
                 Result = result;
                 Unit = unit;
                 ResourceId = resourceId;
                 MinLength = minLength;
+                MinValue = minValue;
             }
 
             public string Result { get; }
@@ -177,6 +178,8 @@ namespace BmwDeepObd
             public int? ResourceId { get; }
 
             public int? MinLength { get; }
+
+            public double? MinValue { get; }
         }
 
         private class EnvCondDetailInfo
@@ -314,8 +317,8 @@ namespace BmwDeepObd
             new EnvCondResultInfo("F_PCODE", null, Resource.String.error_env_pcode),
             new EnvCondResultInfo("F_CODE"),
             new EnvCondResultInfo("F_EREIGNIS_DTC"),
-            new EnvCondResultInfo("F_UW_KM", "km", Resource.String.error_env_km),
-            new EnvCondResultInfo("F_UW_ZEIT", "s", Resource.String.error_env_time),
+            new EnvCondResultInfo("F_UW_KM", "km", Resource.String.error_env_km, null, 1),
+            new EnvCondResultInfo("F_UW_ZEIT", "s", Resource.String.error_env_time, null, 1),
         };
 
         public static readonly Tuple<string, string>[] SpecialInfoResetJobs =
@@ -2627,93 +2630,10 @@ namespace BmwDeepObd
             }
 
             Dictionary<string, int> envCountDict = new Dictionary<string, int>();
-            if (envCondLabelList == null)
+            ConvertEnvCondErrorStd(ref envCountDict, ref detailDict, context, errorDetail, envCondLabelList);
+
+            if (envCondLabelList != null)
             {
-                ConvertEnvCondErrorDetailUnknown(ref envCountDict, ref detailDict, context, errorDetail);
-            }
-            else
-            {
-                int envCondIndex = 0;
-                foreach (EnvCondResultInfo envCondResult in ErrorEnvCondResultList)
-                {
-                    string envCondName = envCondResult.Result;
-                    string envValText = null;
-                    bool valueFound = errorDetail.TryGetValue(envCondName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
-                    if (!valueFound && string.Compare(envCondName, "F_UW_KM", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        string kmText = GetEnvCondKmLast(errorDetail);
-                        if (!string.IsNullOrEmpty(kmText))
-                        {
-                            envValText = kmText;
-                        }
-                    }
-
-                    if (valueFound || !string.IsNullOrEmpty(envValText))
-                    {
-                        string envName = null;
-                        EcuFunctionStructs.EcuEnvCondLabel envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envCondName).LastOrDefault();
-                        if (envCondLabel != null)
-                        {
-                            envName = envCondLabel.Title?.GetTitle(language);
-                        }
-
-                        if (string.IsNullOrWhiteSpace(envName))
-                        {
-                            if (envCondResult.ResourceId.HasValue)
-                            {
-                                envName = context.GetString(envCondResult.ResourceId.Value);
-                            }
-                        }
-
-                        if (!string.IsNullOrWhiteSpace(envName))
-                        {
-                            envName = envName.Trim();
-                            string envVal = string.Empty;
-                            if (!string.IsNullOrEmpty(envValText))
-                            {
-                                envVal = envValText;
-                            }
-                            else
-                            {
-                                if (envCondLabel != null)
-                                {
-                                    envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
-                                }
-                            }
-
-                            if (envCondResult.MinLength.HasValue)
-                            {
-                                if (envVal.Length < envCondResult.MinLength.Value)
-                                {
-                                    envVal = string.Empty;
-                                }
-                            }
-
-                            if (!string.IsNullOrWhiteSpace(envVal))
-                            {
-                                envVal = envVal.Trim();
-                                string envUnit = envCondResult.Unit;
-                                if (!string.IsNullOrWhiteSpace(envCondLabel?.Unit))
-                                {
-                                    envUnit = envCondLabel.Unit;
-                                }
-
-                                StringBuilder sbValue = new StringBuilder();
-                                sbValue.Append(envVal);
-                                if (!string.IsNullOrWhiteSpace(envUnit))
-                                {
-                                    sbValue.Append(" ");
-                                    sbValue.Append(envUnit.Trim());
-                                }
-
-                                AddEnvCondErrorDetail(ref detailDict, envCountDict, envName, "#" + (envCondIndex + 1).ToString(CultureInfo.InvariantCulture), sbValue.ToString());
-                            }
-                        }
-                    }
-
-                    envCondIndex++;
-                }
-
                 for (int index = 0; index < envCount; index++)
                 {
                     string envNumName = string.Format(CultureInfo.InvariantCulture, "F_UW{0}_NR", index + 1);
@@ -2780,8 +2700,9 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static bool ConvertEnvCondErrorDetailUnknown(ref Dictionary<string, int> envCountDict, ref OrderedDictionary detailDict, Context context, Dictionary<string, EdiabasNet.ResultData> errorDetail)
+        public static bool ConvertEnvCondErrorStd(ref Dictionary<string, int> envCountDict, ref OrderedDictionary detailDict, Context context, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
+            string language = ActivityCommon.GetCurrentLanguageStatic();
             int envCondIndex = 0;
             foreach (EnvCondResultInfo envCondResult in ErrorEnvCondResultList)
             {
@@ -2800,22 +2721,37 @@ namespace BmwDeepObd
                 if (valueFound || !string.IsNullOrEmpty(envValText))
                 {
                     string envName = null;
-                    if (envCondResult.ResourceId.HasValue)
+                    EcuFunctionStructs.EcuEnvCondLabel envCondLabel = null;
+                    if (envCondLabelList != null)
                     {
-                        envName = context.GetString(envCondResult.ResourceId.Value);
+                        envCondLabel = ActivityCommon.EcuFunctionReader.GetEnvCondLabelMatchList(envCondLabelList, envCondName).LastOrDefault();
+                    }
+
+                    if (envCondLabel != null)
+                    {
+                        envName = envCondLabel.Title?.GetTitle(language);
+                    }
+
+                    if (string.IsNullOrWhiteSpace(envName))
+                    {
+                        if (envCondResult.ResourceId.HasValue)
+                        {
+                            envName = context.GetString(envCondResult.ResourceId.Value);
+                        }
                     }
 
                     if (!string.IsNullOrWhiteSpace(envName))
                     {
                         envName = envName.Trim();
-                        string envVal = string.Empty;
+
+                        string envVal;
                         if (!string.IsNullOrEmpty(envValText))
                         {
                             envVal = envValText;
                         }
                         else
                         {
-                            envVal = ConvertEcuEnvCondResultValue(null, resultDataVal, out double? _) ?? string.Empty;
+                            envVal = ConvertEcuEnvCondResultValue(envCondLabel, resultDataVal, out double? _) ?? string.Empty;
                         }
 
                         if (envCondResult.MinLength.HasValue)
@@ -2826,10 +2762,32 @@ namespace BmwDeepObd
                             }
                         }
 
+                        if (envCondResult.MinValue.HasValue)
+                        {
+                            double? resultValue = null;
+                            if (resultDataVal.OpData is Int64)
+                            {
+                                resultValue = (Int64)resultDataVal.OpData;
+                            }
+                            else if (resultDataVal.OpData is Double)
+                            {
+                                resultValue = (Double)resultDataVal.OpData;
+                            }
+
+                            if (resultValue.HasValue && resultValue < envCondResult.MinValue.Value)
+                            {
+                                envVal = string.Empty;
+                            }
+                        }
+
                         if (!string.IsNullOrWhiteSpace(envVal))
                         {
                             envVal = envVal.Trim();
                             string envUnit = envCondResult.Unit;
+                            if (!string.IsNullOrWhiteSpace(envCondLabel?.Unit))
+                            {
+                                envUnit = envCondLabel.Unit;
+                            }
 
                             StringBuilder sbValue = new StringBuilder();
                             sbValue.Append(envVal);
