@@ -4598,6 +4598,14 @@ namespace BmwDeepObd
             buttonErrorCopy.Enabled = present;
         }
 
+        public static string FormatSecondsAsHour(long seconds)
+        {
+            long hours = seconds / 3600;
+            long mins = (seconds % 3600) / 60;
+            long sec = seconds % 60;
+            return string.Format(CultureInfo.InvariantCulture, "{0:D2}:{1:D2}:{2:D2}", hours, mins, sec);
+        }
+
         // ReSharper disable once UnusedMember.Global
         public static String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
