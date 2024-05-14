@@ -2264,12 +2264,7 @@ namespace BmwDeepObd
             resultValue = null;
             string resultString = null;
 
-            if (envCondLabel == null)
-            {
-                return string.Empty;
-            }
-
-            if (envCondLabel.EcuResultStateValueList != null && envCondLabel.EcuResultStateValueList.Count > 0)
+            if (envCondLabel != null && envCondLabel.EcuResultStateValueList != null && envCondLabel.EcuResultStateValueList.Count > 0)
             {
                 EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(envCondLabel.EcuResultStateValueList, resultData);
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
@@ -2278,7 +2273,7 @@ namespace BmwDeepObd
                     resultString = ecuResultStateValue.Title?.GetTitle(ActivityCommon.GetCurrentLanguageStatic());
                 }
             }
-            
+
             if (resultString == null)
             {
                 resultString = ConvertEcuResultValueEnv(resultData, out resultValue);
@@ -2787,38 +2782,69 @@ namespace BmwDeepObd
 
         public static bool ConvertEnvCondErrorDetailUnknown(ref Dictionary<string, int> envCountDict, ref OrderedDictionary detailDict, Context context, Dictionary<string, EdiabasNet.ResultData> errorDetail)
         {
-            string frequencyText = ActivityMain.FormatResultInt64(errorDetail, "F_HFK", "{0}");
-            if (!string.IsNullOrWhiteSpace(frequencyText))
+            int envCondIndex = 0;
+            foreach (EnvCondResultInfo envCondResult in ErrorEnvCondResultList)
             {
-                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_frequency), "F_HFK", frequencyText);
-            }
+                string envCondName = envCondResult.Result;
+                string envValText = null;
+                bool valueFound = errorDetail.TryGetValue(envCondName.ToUpperInvariant(), out EdiabasNet.ResultData resultDataVal);
+                if (!valueFound && string.Compare(envCondName, "F_UW_KM", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    string kmText = GetEnvCondKmLast(errorDetail);
+                    if (!string.IsNullOrEmpty(kmText))
+                    {
+                        envValText = kmText;
+                    }
+                }
 
-            string logCountText = ActivityMain.FormatResultInt64(errorDetail, "F_LZ", "{0}");
-            if (!string.IsNullOrEmpty(logCountText))
-            {
-                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_log_count), "F_LZ", logCountText);
-            }
+                if (valueFound || !string.IsNullOrEmpty(envValText))
+                {
+                    string envName = null;
+                    if (envCondResult.ResourceId.HasValue)
+                    {
+                        envName = context.GetString(envCondResult.ResourceId.Value);
+                    }
 
-            string pcodeText = ActivityMain.FormatResultString(errorDetail, "F_PCODE_STRING", "{0}");
-            if (pcodeText.Length >= 4)
-            {
-                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_pcode), "F_PCODE_STRING", pcodeText);
-            }
+                    if (!string.IsNullOrWhiteSpace(envName))
+                    {
+                        envName = envName.Trim();
+                        string envVal = string.Empty;
+                        if (!string.IsNullOrEmpty(envValText))
+                        {
+                            envVal = envValText;
+                        }
+                        else
+                        {
+                            envVal = ConvertEcuEnvCondResultValue(null, resultDataVal, out double? _) ?? string.Empty;
+                        }
 
-            string kmText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_KM", "{0}");
-            if (string.IsNullOrEmpty(kmText))
-            {
-                kmText = GetEnvCondKmLast(errorDetail);
-            }
-            if (!string.IsNullOrEmpty(kmText))
-            {
-                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_km), "F_UW_KM", kmText + " km");
-            }
+                        if (envCondResult.MinLength.HasValue)
+                        {
+                            if (envVal.Length < envCondResult.MinLength.Value)
+                            {
+                                envVal = string.Empty;
+                            }
+                        }
 
-            string timeText = ActivityMain.FormatResultInt64(errorDetail, "F_UW_ZEIT", "{0}");
-            if (!string.IsNullOrEmpty(timeText))
-            {
-                AddEnvCondErrorDetail(ref detailDict, envCountDict, context.GetString(Resource.String.error_env_time), "F_UW_ZEIT", timeText + " s");
+                        if (!string.IsNullOrWhiteSpace(envVal))
+                        {
+                            envVal = envVal.Trim();
+                            string envUnit = envCondResult.Unit;
+
+                            StringBuilder sbValue = new StringBuilder();
+                            sbValue.Append(envVal);
+                            if (!string.IsNullOrWhiteSpace(envUnit))
+                            {
+                                sbValue.Append(" ");
+                                sbValue.Append(envUnit.Trim());
+                            }
+
+                            AddEnvCondErrorDetail(ref detailDict, envCountDict, envName, "#" + (envCondIndex + 1).ToString(CultureInfo.InvariantCulture), sbValue.ToString());
+                        }
+                    }
+                }
+
+                envCondIndex++;
             }
 
             return true;
