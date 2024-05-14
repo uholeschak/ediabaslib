@@ -13,7 +13,7 @@ The following table shows which adapter and vehicle combination is supported:
 ## Vehicle legend:
 * _BMW-DS2_: BMW models (with DS2 protocol): E36, E38, E39, E46, E52, E53, E83, E85 and E86.  
 An OBD II Pin 7+8 connection in the adapter is required!
-* _BMW-FAST_: BMW E-models newer than _BMW-DS2_ (with BMW-FAST protocol).
+* _BMW-FAST_: BMW E series with BMW-FAST protocol (DS2 successor protocol).
 * _BMW-FAST-ENET_: BMW models with ENET (F series or higher with HSFZ or DoIP protocol).
 * _VAG_: All VAG models. This mode is still experimental!
 
