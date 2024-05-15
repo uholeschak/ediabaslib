@@ -1716,7 +1716,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    EdiabasNet.ResultData resultDataStartDate = null;
+                    Int64? startDateValue = null;
                     if (jobOk)
                     {
                         int dictIndex = 0;
@@ -1730,23 +1730,30 @@ namespace BmwDeepObd
 
                             if (resultDictLocal.TryGetValue(lifeStartDateJob.Item4, out EdiabasNet.ResultData resultData1))
                             {
-                                resultDataStartDate = resultData1;
-                                break;
+                                if (resultData1.OpData is Int64)
+                                {
+                                    startDateValue = (Int64)resultData1.OpData;
+                                    break;
+                                }
                             }
 
                             if (!string.IsNullOrEmpty(lifeStartDateJob.Item5))
                             {
                                 if (resultDictLocal.TryGetValue(lifeStartDateJob.Item5, out EdiabasNet.ResultData resultData2))
                                 {
-                                    resultDataStartDate = resultData2;
-                                    break;
+                                    if (resultData2.OpData is Int64)
+                                    {
+                                        startDateValue = (Int64)resultData2.OpData;
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
 
-                    if (resultDataStartDate != null)
+                    if (startDateValue.HasValue)
                     {
+                        dateTime = DateTime.Now.AddSeconds(-startDateValue.Value);
                         break;
                     }
                 }
