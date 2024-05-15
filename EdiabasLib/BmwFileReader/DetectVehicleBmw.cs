@@ -585,6 +585,7 @@ namespace BmwFileReader
                 ProgressFunc?.Invoke(100 * index / jobCount);
 
                 HandleSpecialEcus();
+                LifeStartDate = GetVehicleLifeStartDate();
 
                 Ds2Vehicle = false;
                 Valid = true;
@@ -1125,6 +1126,75 @@ namespace BmwFileReader
             }
 
             return null;
+        }
+
+        protected override DateTime? GetVehicleLifeStartDate()
+        {
+            DateTime? dateTime = null;
+
+            bool motorbike = IsMotorbike();
+            foreach (JobInfoLifeStartDate jobInfo in LifeStartDateJobs)
+            {
+                try
+                {
+                    if (jobInfo.Motorbike != motorbike)
+                    {
+                        continue;
+                    }
+
+                    ActivityCommon.ResolveSgbdFile(_ediabas, jobInfo.SgdbName);
+                    _ediabas.ArgString = jobInfo.JobArgs;
+                    _ediabas.ArgBinaryStd = null;
+                    _ediabas.ResultsRequests = string.Empty;
+
+                    _ediabas.ExecuteJob(jobInfo.JobName);
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
+
+                    Int64? startDateValue = null;
+                    int dictIndex = 0;
+                    foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                    {
+                        if (dictIndex == 0)
+                        {
+                            dictIndex++;
+                            continue;
+                        }
+
+                        if (resultDictLocal.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData1))
+                        {
+                            if (resultData1.OpData is Int64)
+                            {
+                                startDateValue = (Int64)resultData1.OpData;
+                                break;
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(jobInfo.JobResultAlt))
+                        {
+                            if (resultDictLocal.TryGetValue(jobInfo.JobResultAlt, out EdiabasNet.ResultData resultData2))
+                            {
+                                if (resultData2.OpData is Int64)
+                                {
+                                    startDateValue = (Int64)resultData2.OpData;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (startDateValue.HasValue)
+                    {
+                        dateTime = DateTime.Now.AddSeconds(-startDateValue.Value);
+                        break;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return dateTime;
         }
 
         protected override void LogInfoFormat(string format, params object[] args)
