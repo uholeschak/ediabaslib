@@ -336,6 +336,13 @@ namespace BmwDeepObd
             new Tuple<string, string>("STEUERN_ZFS_LOESCHEN", string.Empty),
         };
 
+        public static readonly Tuple<string, string, string, string, string>[] LifeStartDateJobs =
+        {
+            new Tuple<string, string, string, string, string>("G_ZGW", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT", string.Empty),
+            new Tuple<string, string, string, string, string>("BCP_SP21", "STATUS_LESEN", "ID;0x1769", "STAT_SYSTIME_SECONDS_WERT", "STAT_SYSTIME_SECONDS"),
+            new Tuple<string, string, string, string, string>("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT", string.Empty),
+        };
+
         private readonly string _resourceDatalogDate;
         private bool _disposed;
         private Context _context;
@@ -1684,6 +1691,74 @@ namespace BmwDeepObd
             return jobOk;
         }
 
+        public DateTime? GetVehicleLifeStartDate()
+        {
+            DateTime? dateTime = null;
+
+            foreach (Tuple<string, string, string, string, string> lifeStartDateJob in LifeStartDateJobs)
+            {
+                try
+                {
+                    ActivityCommon.ResolveSgbdFile(Ediabas, lifeStartDateJob.Item1);
+                    Ediabas.ArgString = lifeStartDateJob.Item3;
+                    Ediabas.ArgBinaryStd = null;
+                    Ediabas.ResultsRequests = string.Empty;
+
+                    Ediabas.ExecuteJob(lifeStartDateJob.Item2);
+                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
+
+                    bool jobOk = false;
+                    if (resultSets.Count > 1)
+                    {
+                        if (IsJobStatusOk(resultSets[^1]))
+                        {
+                            jobOk = true;
+                        }
+                    }
+
+                    EdiabasNet.ResultData resultDataStartDate = null;
+                    if (jobOk)
+                    {
+                        int dictIndex = 0;
+                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
+                        {
+                            if (dictIndex == 0)
+                            {
+                                dictIndex++;
+                                continue;
+                            }
+
+                            if (resultDictLocal.TryGetValue(lifeStartDateJob.Item4, out EdiabasNet.ResultData resultData1))
+                            {
+                                resultDataStartDate = resultData1;
+                                break;
+                            }
+
+                            if (!string.IsNullOrEmpty(lifeStartDateJob.Item5))
+                            {
+                                if (resultDictLocal.TryGetValue(lifeStartDateJob.Item5, out EdiabasNet.ResultData resultData2))
+                                {
+                                    resultDataStartDate = resultData2;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (resultDataStartDate != null)
+                    {
+                        break;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return dateTime;
+        }
+
         public bool ExecuteBmwStandardJob(JobReader.JobInfo jobInfo, bool firstRequestCall, ref MultiMap<string, EdiabasNet.ResultData> resultDict)
         {
             string argString;
@@ -2791,7 +2866,7 @@ namespace BmwDeepObd
 
                             if (!string.IsNullOrEmpty(envUnit) && string.Compare(envUnit, "s", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                envVal = ActivityMain.FormatSecondsAsHour((long)resultValue.Value);
+                                envVal = ActivityMain.FormatSecondsAsTime(resultValue.Value);
                             }
 
                             StringBuilder sbValue = new StringBuilder();

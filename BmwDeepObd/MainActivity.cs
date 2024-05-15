@@ -4598,12 +4598,22 @@ namespace BmwDeepObd
             buttonErrorCopy.Enabled = present;
         }
 
-        public static string FormatSecondsAsHour(long seconds)
+        public static string FormatSecondsAsTime(double seconds)
         {
-            long hours = seconds / 3600;
-            long mins = (seconds % 3600) / 60;
-            long sec = seconds % 60;
-            return string.Format(CultureInfo.InvariantCulture, "{0:D2}:{1:D2}:{2:D2}", hours, mins, sec);
+            try
+            {
+                if (seconds < TimeSpan.MinValue.TotalSeconds || seconds > TimeSpan.MaxValue.TotalSeconds)
+                {
+                    return string.Empty;
+                }
+
+                TimeSpan ts = TimeSpan.FromSeconds(seconds);
+                return string.Format(CultureInfo.InvariantCulture, "{0}d {1:D2}:{2:D2}:{3:D2}", ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
 
         // ReSharper disable once UnusedMember.Global
