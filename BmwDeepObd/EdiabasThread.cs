@@ -2791,7 +2791,7 @@ namespace BmwDeepObd
 
                             if (!string.IsNullOrEmpty(envUnit) && string.Compare(envUnit, "s", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                envVal = ActivityMain.FormatSecondsAsHour((long)resultValue.Value);
+                                envVal = ActivityMain.FormatSecondsAsTime(resultValue.Value);
                             }
 
                             StringBuilder sbValue = new StringBuilder();
