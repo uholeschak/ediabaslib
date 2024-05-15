@@ -195,6 +195,26 @@ namespace BmwDeepObd
             public int? Index { get; set; }
         }
 
+        public class JobInfo
+        {
+            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, string jobResultAlt = null, bool motorbike = false)
+            {
+                SgdbName = sgdbName;
+                JobName = jobName;
+                JobArgs = jobArgs;
+                JobResult = jobResult;
+                JobResultAlt = jobResultAlt;
+                Motorbike = motorbike;
+            }
+
+            public string SgdbName { get; }
+            public string JobName { get; }
+            public string JobArgs { get; }
+            public string JobResult { get; }
+            public string JobResultAlt { get; }
+            public bool Motorbike { get; }
+        }
+
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
         public event DataUpdatedEventHandler DataUpdated;
         public delegate void PageChangedEventHandler(object sender, EventArgs e);
@@ -336,11 +356,11 @@ namespace BmwDeepObd
             new Tuple<string, string>("STEUERN_ZFS_LOESCHEN", string.Empty),
         };
 
-        public static readonly Tuple<string, string, string, string, string>[] LifeStartDateJobs =
+        public static readonly JobInfo[] LifeStartDateJobs =
         {
-            new Tuple<string, string, string, string, string>("G_ZGW", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT", string.Empty),
-            new Tuple<string, string, string, string, string>("BCP_SP21", "STATUS_LESEN", "ID;0x1769", "STAT_SYSTIME_SECONDS_WERT", "STAT_SYSTIME_SECONDS"),
-            new Tuple<string, string, string, string, string>("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT", string.Empty),
+            new JobInfo("G_ZGW", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT"),
+            new JobInfo("BCP_SP21", "STATUS_LESEN", "ID;0x1769", "STAT_SYSTIME_SECONDS_WERT", "STAT_SYSTIME_SECONDS"),
+            new JobInfo("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT", null, true),
         };
 
         private readonly string _resourceDatalogDate;
@@ -1691,20 +1711,25 @@ namespace BmwDeepObd
             return jobOk;
         }
 
-        public DateTime? GetVehicleLifeStartDate()
+        public DateTime? GetVehicleLifeStartDate(bool motorbike = false)
         {
             DateTime? dateTime = null;
 
-            foreach (Tuple<string, string, string, string, string> lifeStartDateJob in LifeStartDateJobs)
+            foreach (JobInfo jobInfo in LifeStartDateJobs)
             {
                 try
                 {
-                    ActivityCommon.ResolveSgbdFile(Ediabas, lifeStartDateJob.Item1);
-                    Ediabas.ArgString = lifeStartDateJob.Item3;
+                    if (jobInfo.Motorbike != motorbike)
+                    {
+                        continue;
+                    }
+
+                    ActivityCommon.ResolveSgbdFile(Ediabas, jobInfo.SgdbName);
+                    Ediabas.ArgString = jobInfo.JobArgs;
                     Ediabas.ArgBinaryStd = null;
                     Ediabas.ResultsRequests = string.Empty;
 
-                    Ediabas.ExecuteJob(lifeStartDateJob.Item2);
+                    Ediabas.ExecuteJob(jobInfo.JobName);
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
 
                     bool jobOk = false;
@@ -1716,7 +1741,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    EdiabasNet.ResultData resultDataStartDate = null;
+                    Int64? startDateValue = null;
                     if (jobOk)
                     {
                         int dictIndex = 0;
@@ -1728,25 +1753,32 @@ namespace BmwDeepObd
                                 continue;
                             }
 
-                            if (resultDictLocal.TryGetValue(lifeStartDateJob.Item4, out EdiabasNet.ResultData resultData1))
+                            if (resultDictLocal.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData1))
                             {
-                                resultDataStartDate = resultData1;
-                                break;
+                                if (resultData1.OpData is Int64)
+                                {
+                                    startDateValue = (Int64)resultData1.OpData;
+                                    break;
+                                }
                             }
 
-                            if (!string.IsNullOrEmpty(lifeStartDateJob.Item5))
+                            if (!string.IsNullOrEmpty(jobInfo.JobResultAlt))
                             {
-                                if (resultDictLocal.TryGetValue(lifeStartDateJob.Item5, out EdiabasNet.ResultData resultData2))
+                                if (resultDictLocal.TryGetValue(jobInfo.JobResultAlt, out EdiabasNet.ResultData resultData2))
                                 {
-                                    resultDataStartDate = resultData2;
-                                    break;
+                                    if (resultData2.OpData is Int64)
+                                    {
+                                        startDateValue = (Int64)resultData2.OpData;
+                                        break;
+                                    }
                                 }
                             }
                         }
                     }
 
-                    if (resultDataStartDate != null)
+                    if (startDateValue.HasValue)
                     {
+                        dateTime = DateTime.Now.AddSeconds(-startDateValue.Value);
                         break;
                     }
                 }
