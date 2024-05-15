@@ -1150,7 +1150,7 @@ namespace BmwFileReader
                     _ediabas.ExecuteJob(jobInfo.JobName);
                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
 
-                    Int64? startDateValue = null;
+                    double? startDateValue = null;
                     int dictIndex = 0;
                     foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
                     {
@@ -1167,6 +1167,12 @@ namespace BmwFileReader
                                 startDateValue = (Int64)resultData1.OpData;
                                 break;
                             }
+
+                            if (resultData1.OpData is double)
+                            {
+                                startDateValue = (double)resultData1.OpData;
+                                break;
+                            }
                         }
 
                         if (!string.IsNullOrEmpty(jobInfo.JobResultAlt))
@@ -1176,6 +1182,12 @@ namespace BmwFileReader
                                 if (resultData2.OpData is Int64)
                                 {
                                     startDateValue = (Int64)resultData2.OpData;
+                                    break;
+                                }
+
+                                if (resultData2.OpData is double)
+                                {
+                                    startDateValue = (double)resultData2.OpData;
                                     break;
                                 }
                             }
