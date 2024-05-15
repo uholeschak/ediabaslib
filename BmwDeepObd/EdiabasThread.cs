@@ -195,26 +195,6 @@ namespace BmwDeepObd
             public int? Index { get; set; }
         }
 
-        public class JobInfo
-        {
-            public JobInfo(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, string jobResultAlt = null, bool motorbike = false)
-            {
-                SgdbName = sgdbName;
-                JobName = jobName;
-                JobArgs = jobArgs;
-                JobResult = jobResult;
-                JobResultAlt = jobResultAlt;
-                Motorbike = motorbike;
-            }
-
-            public string SgdbName { get; }
-            public string JobName { get; }
-            public string JobArgs { get; }
-            public string JobResult { get; }
-            public string JobResultAlt { get; }
-            public bool Motorbike { get; }
-        }
-
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
         public event DataUpdatedEventHandler DataUpdated;
         public delegate void PageChangedEventHandler(object sender, EventArgs e);
@@ -354,13 +334,6 @@ namespace BmwDeepObd
             new Tuple<string, string>("IS_LOESCHEN_SMC_L_LEAR", string.Empty),
             new Tuple<string, string>("IS_LOESCHEN_SMC_R_LEAR", string.Empty),
             new Tuple<string, string>("STEUERN_ZFS_LOESCHEN", string.Empty),
-        };
-
-        public static readonly JobInfo[] LifeStartDateJobs =
-        {
-            new JobInfo("G_ZGW", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT"),
-            new JobInfo("BCP_SP21", "STATUS_LESEN", "ID;0x1769", "STAT_SYSTIME_SECONDS_WERT", "STAT_SYSTIME_SECONDS"),
-            new JobInfo("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT", null, true),
         };
 
         private readonly string _resourceDatalogDate;
@@ -1709,86 +1682,6 @@ namespace BmwDeepObd
             }
 
             return jobOk;
-        }
-
-        public DateTime? GetVehicleLifeStartDate(bool motorbike = false)
-        {
-            DateTime? dateTime = null;
-
-            foreach (JobInfo jobInfo in LifeStartDateJobs)
-            {
-                try
-                {
-                    if (jobInfo.Motorbike != motorbike)
-                    {
-                        continue;
-                    }
-
-                    ActivityCommon.ResolveSgbdFile(Ediabas, jobInfo.SgdbName);
-                    Ediabas.ArgString = jobInfo.JobArgs;
-                    Ediabas.ArgBinaryStd = null;
-                    Ediabas.ResultsRequests = string.Empty;
-
-                    Ediabas.ExecuteJob(jobInfo.JobName);
-                    List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
-
-                    bool jobOk = false;
-                    if (resultSets.Count > 1)
-                    {
-                        if (IsJobStatusOk(resultSets[^1]))
-                        {
-                            jobOk = true;
-                        }
-                    }
-
-                    Int64? startDateValue = null;
-                    if (jobOk)
-                    {
-                        int dictIndex = 0;
-                        foreach (Dictionary<string, EdiabasNet.ResultData> resultDictLocal in resultSets)
-                        {
-                            if (dictIndex == 0)
-                            {
-                                dictIndex++;
-                                continue;
-                            }
-
-                            if (resultDictLocal.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData1))
-                            {
-                                if (resultData1.OpData is Int64)
-                                {
-                                    startDateValue = (Int64)resultData1.OpData;
-                                    break;
-                                }
-                            }
-
-                            if (!string.IsNullOrEmpty(jobInfo.JobResultAlt))
-                            {
-                                if (resultDictLocal.TryGetValue(jobInfo.JobResultAlt, out EdiabasNet.ResultData resultData2))
-                                {
-                                    if (resultData2.OpData is Int64)
-                                    {
-                                        startDateValue = (Int64)resultData2.OpData;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (startDateValue.HasValue)
-                    {
-                        dateTime = DateTime.Now.AddSeconds(-startDateValue.Value);
-                        break;
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
-
-            return dateTime;
         }
 
         public bool ExecuteBmwStandardJob(JobReader.JobInfo jobInfo, bool firstRequestCall, ref MultiMap<string, EdiabasNet.ResultData> resultDict)
