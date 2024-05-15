@@ -365,7 +365,7 @@ namespace BESTDIS
 		{
 			if ((args.Length != 1))
 			{
-				Console.Error.WriteLine("Usage BESTDIS bestobjfile");
+				Console.Error.WriteLine("Usage BESTDIS best file directory");
 				return -1;
 			}
 
