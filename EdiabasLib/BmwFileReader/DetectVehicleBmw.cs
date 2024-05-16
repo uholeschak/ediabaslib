@@ -1139,14 +1139,17 @@ namespace BmwFileReader
             bool motorbike = IsMotorbike();
             if (motorbike)
             {
-                if (string.Compare(BnType, "BN2000_MOTORBIKE", StringComparison.OrdinalIgnoreCase) == 0)
+                if (!string.IsNullOrEmpty(BnType))
                 {
-                    return null;
-                }
+                    if (string.Compare(BnType, "BN2000_MOTORBIKE", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return null;
+                    }
 
-                if (string.Compare(BnType, "BNK01X_MOTORBIKE", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    return null;
+                    if (string.Compare(BnType, "BNK01X_MOTORBIKE", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return null;
+                    }
                 }
             }
 
