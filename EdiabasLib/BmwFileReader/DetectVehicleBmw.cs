@@ -79,6 +79,7 @@ namespace BmwFileReader
                 ILevelShip = detectVehicleBmw.ILevelShip;
                 ILevelCurrent = detectVehicleBmw.ILevelCurrent;
                 ILevelBackup = detectVehicleBmw.ILevelBackup;
+                LifeStartDate = detectVehicleBmw.LifeStartDate;
                 EcuNameIdentDict = detectVehicleBmw.EcuNameIdentDict != null ? new SerializableDictionary<string, string>(detectVehicleBmw.EcuNameIdentDict).Clone() : null;
                 Ds2Vehicle = detectVehicleBmw.Ds2Vehicle;
                 Ds2GroupFiles = detectVehicleBmw.Ds2GroupFiles;
@@ -119,6 +120,7 @@ namespace BmwFileReader
                 detectVehicleBmw.ILevelShip = ILevelShip;
                 detectVehicleBmw.ILevelCurrent = ILevelCurrent;
                 detectVehicleBmw.ILevelBackup = ILevelBackup;
+                detectVehicleBmw.LifeStartDate = LifeStartDate;
                 detectVehicleBmw.EcuNameIdentDict = EcuNameIdentDict?.Clone();
                 detectVehicleBmw.Ds2Vehicle = Ds2Vehicle;
                 detectVehicleBmw.Ds2GroupFiles = Ds2GroupFiles;
@@ -154,6 +156,7 @@ namespace BmwFileReader
             [XmlElement("ILevelShip"), DefaultValue(null)] public string ILevelShip { get; set; }
             [XmlElement("ILevelCurrent"), DefaultValue(null)] public string ILevelCurrent { get; set; }
             [XmlElement("ILevelBackup"), DefaultValue(null)] public string ILevelBackup { get; set; }
+            [XmlElement("LifeStartDate"), DefaultValue(null)] public DateTime? LifeStartDate { get; set; }
             [XmlElement("EcuNameIdentDict")] public SerializableDictionary<string, string> EcuNameIdentDict { get; set; }
             [XmlElement("Ds2Vehicle"), DefaultValue(false)] public bool Ds2Vehicle { get; set; }
             [XmlElement("Ds2GroupFiles"), DefaultValue(null)] public string Ds2GroupFiles { get; set; }
