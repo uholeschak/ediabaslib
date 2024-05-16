@@ -18,6 +18,7 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using BmwFileReader;
 using PsdzClient.Core;
+using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 using PsdzClientLibrary.Core;
 
@@ -562,6 +563,7 @@ namespace PsdzClient.Programming
                 return false;
             }
 
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             VecInfo.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
             VecInfo.ILevelWerk = !string.IsNullOrEmpty(IstufeShipment) ? IstufeShipment : DetectVehicle.ILevelShip;
             VecInfo.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent: DetectVehicle.ILevelCurrent;
@@ -590,6 +592,15 @@ namespace PsdzClient.Programming
                     {
                         VecInfo.FA.C_DATETIME = DetectVehicle.ConstructDate.Value;
                     }
+                }
+            }
+
+            if (!VecInfo.FA.AlreadyDone && VecInfo.VehicleLifeStartDate == default(DateTime))
+            {
+                if (DetectVehicle.IsConnected())
+                {
+                    ECUKom ecuKom = new ECUKom("UpdateVehicle", DetectVehicle.Ediabas);
+                    service.SetVehicleLifeStartDate(VecInfo, ecuKom);
                 }
             }
 
@@ -666,7 +677,6 @@ namespace PsdzClient.Programming
                 VecInfo.ECU = EcuList;
             }
 
-            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             List<PsdzDatabase.Characteristics> characteristicsList = programmingService.PsdzDatabase.GetVehicleCharacteristics(VecInfo);
             if (characteristicsList == null)
             {
