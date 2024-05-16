@@ -1131,11 +1131,25 @@ namespace BmwFileReader
             return null;
         }
 
+        // from DiagnosticsBusinessData.dll BMW.Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.SetVehicleLifeStartDate
         protected override DateTime? GetVehicleLifeStartDate()
         {
             DateTime? dateTime = null;
 
             bool motorbike = IsMotorbike();
+            if (motorbike)
+            {
+                if (string.Compare(BnType, "BN2000_MOTORBIKE", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return null;
+                }
+
+                if (string.Compare(BnType, "BNK01X_MOTORBIKE", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return null;
+                }
+            }
+
             foreach (JobInfoLifeStartDate jobInfo in LifeStartDateJobs)
             {
                 try
