@@ -1163,37 +1163,27 @@ namespace BmwFileReader
                             continue;
                         }
 
-                        if (resultDictLocal.TryGetValue(jobInfo.JobResult, out EdiabasNet.ResultData resultData1))
+                        foreach (string jobResult in jobInfo.JobResults)
                         {
-                            if (resultData1.OpData is Int64)
+                            if (resultDictLocal.TryGetValue(jobResult, out EdiabasNet.ResultData resultData))
                             {
-                                startDateValue = (Int64)resultData1.OpData;
-                                break;
-                            }
+                                if (resultData.OpData is Int64)
+                                {
+                                    startDateValue = (Int64)resultData.OpData;
+                                    break;
+                                }
 
-                            if (resultData1.OpData is double)
-                            {
-                                startDateValue = (double)resultData1.OpData;
-                                break;
+                                if (resultData.OpData is double)
+                                {
+                                    startDateValue = (double)resultData.OpData;
+                                    break;
+                                }
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(jobInfo.JobResultAlt))
+                        if (startDateValue.HasValue)
                         {
-                            if (resultDictLocal.TryGetValue(jobInfo.JobResultAlt, out EdiabasNet.ResultData resultData2))
-                            {
-                                if (resultData2.OpData is Int64)
-                                {
-                                    startDateValue = (Int64)resultData2.OpData;
-                                    break;
-                                }
-
-                                if (resultData2.OpData is double)
-                                {
-                                    startDateValue = (double)resultData2.OpData;
-                                    break;
-                                }
-                            }
+                            break;
                         }
                     }
 

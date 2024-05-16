@@ -38,21 +38,19 @@ namespace BmwFileReader
 
         public class JobInfoLifeStartDate
         {
-            public JobInfoLifeStartDate(string sgdbName, string jobName, string jobArgs = null, string jobResult = null, string jobResultAlt = null, bool motorbike = false)
+            public JobInfoLifeStartDate(string sgdbName, string jobName, string jobArgs, List<string> jobResults, bool motorbike = false)
             {
                 SgdbName = sgdbName;
                 JobName = jobName;
                 JobArgs = jobArgs;
-                JobResult = jobResult;
-                JobResultAlt = jobResultAlt;
+                JobResults = jobResults;
                 Motorbike = motorbike;
             }
 
             public string SgdbName { get; }
             public string JobName { get; }
             public string JobArgs { get; }
-            public string JobResult { get; }
-            public string JobResultAlt { get; }
+            public List<string> JobResults { get; }
             public bool Motorbike { get; }
         }
 
@@ -219,9 +217,9 @@ namespace BmwFileReader
 
         public static readonly JobInfoLifeStartDate[] LifeStartDateJobs =
         {
-            new JobInfoLifeStartDate("G_ZGW", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT"),
-            new JobInfoLifeStartDate("BCP_SP21", "STATUS_LESEN", "ID;0x1769", "STAT_SYSTIME_SECONDS_WERT", "STAT_SYSTIME_SECONDS"),
-            new JobInfoLifeStartDate("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", "STAT_SYSTEMZEIT_WERT", null, true),
+            new JobInfoLifeStartDate("G_ZGW", "STATUS_LESEN", "ID;0x1701", new List<string>() {"STAT_SYSTEMZEIT_WERT"}),
+            new JobInfoLifeStartDate("BCP_SP21", "STATUS_LESEN", "ID;0x1769", new List<string>() {"STAT_SYSTIME_SECONDS_WERT", "STAT_SYSTIME_SECONDS"}),
+            new JobInfoLifeStartDate("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", new List<string>() {"STAT_SYSTEMZEIT_WERT"}, true),
         };
 
         public static readonly List<string> ReadMotorJobsDs2 = new List<string>()
