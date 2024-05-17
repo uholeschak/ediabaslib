@@ -138,21 +138,21 @@ namespace BmwFileReader
             [XmlElement("BrName"), DefaultValue(null)] public string BrName { get; set; }
             [XmlElement("Series"), DefaultValue(null)] public string Series { get; set; }
             [XmlElement("ProductType"), DefaultValue(null)] public string ProductType { get; set; }
-            [XmlElement("BnType"), DefaultValue(null)] public string BnType { get; private set; }
+            [XmlElement("BnType"), DefaultValue(null)] public string BnType { get; set; }
             [XmlElement("Brand"), DefaultValue(null)] public string Brand { get; set; }
             [XmlElement("TransmissionType"), DefaultValue(null)] public string TransmissionType { get; set; }
             [XmlElement("Motor"), DefaultValue(null)] public string Motor { get; set; }
-            [XmlElement("VehicleSeriesInfo"), DefaultValue(null)] public VehicleStructsBmw.VehicleSeriesInfo VehicleSeriesInfo { get; protected set; }
-            [XmlElement("EcuList"), DefaultValue(null)] public List<EcuInfo> EcuList { get; protected set; }
+            [XmlElement("VehicleSeriesInfo"), DefaultValue(null)] public VehicleStructsBmw.VehicleSeriesInfo VehicleSeriesInfo { get; set; }
+            [XmlElement("EcuList"), DefaultValue(null)] public List<EcuInfo> EcuList { get; set; }
             [XmlElement("ConstructYear"), DefaultValue(null)] public string ConstructYear { get; set; }
             [XmlElement("ConstructMonth"), DefaultValue(null)] public string ConstructMonth { get; set; }
-            [XmlElement("Paint"), DefaultValue(null)] public string Paint { get; private set; }
-            [XmlElement("Upholstery"), DefaultValue(null)] public string Upholstery { get; private set; }
-            [XmlElement("StandardFa"), DefaultValue(null)] public string StandardFa { get; private set; }
-            [XmlElement("Salapa"), DefaultValue(null)] public List<string> Salapa { get; private set; }
-            [XmlElement("HoWords"), DefaultValue(null)] public List<string> HoWords { get; private set; }
-            [XmlElement("EWords"), DefaultValue(null)] public List<string> EWords { get; private set; }
-            [XmlElement("ZbWords"), DefaultValue(null)] public List<string> ZbWords { get; private set; }
+            [XmlElement("Paint"), DefaultValue(null)] public string Paint { get; set; }
+            [XmlElement("Upholstery"), DefaultValue(null)] public string Upholstery { get; set; }
+            [XmlElement("StandardFa"), DefaultValue(null)] public string StandardFa { get; set; }
+            [XmlElement("Salapa"), DefaultValue(null)] public List<string> Salapa { get; set; }
+            [XmlElement("HoWords"), DefaultValue(null)] public List<string> HoWords { get; set; }
+            [XmlElement("EWords"), DefaultValue(null)] public List<string> EWords { get; set; }
+            [XmlElement("ZbWords"), DefaultValue(null)] public List<string> ZbWords { get; set; }
             [XmlElement("ILevelShip"), DefaultValue(null)] public string ILevelShip { get; set; }
             [XmlElement("ILevelCurrent"), DefaultValue(null)] public string ILevelCurrent { get; set; }
             [XmlElement("ILevelBackup"), DefaultValue(null)] public string ILevelBackup { get; set; }
