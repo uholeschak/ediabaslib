@@ -595,15 +595,6 @@ namespace PsdzClient.Programming
                 }
             }
 
-            if (!VecInfo.FA.AlreadyDone && VecInfo.VehicleLifeStartDate == default(DateTime))
-            {
-                if (DetectVehicle.IsConnected())
-                {
-                    ECUKom ecuKom = new ECUKom("UpdateVehicle", DetectVehicle.Ediabas);
-                    service.SetVehicleLifeStartDate(VecInfo, ecuKom);
-                }
-            }
-
             PsdzDatabase.VinRanges vinRangesByVin = programmingService.PsdzDatabase.GetVinRangesByVin17(VecInfo.VINType, VecInfo.VIN7, false, false);
             if (vinRangesByVin != null)
             {
@@ -708,6 +699,7 @@ namespace PsdzClient.Programming
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
 
             PerformVecInfoAssignments();
+            SetVehicleLifeStartDate(service);
 
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
             return true;
@@ -804,6 +796,18 @@ namespace PsdzClient.Programming
             }
 
             return true;
+        }
+
+        private void SetVehicleLifeStartDate(IDiagnosticsBusinessData service)
+        {
+            if (VecInfo.BrandName != null && VecInfo.BNType != BNType.UNKNOWN && VecInfo.VehicleLifeStartDate == default(DateTime))
+            {
+                if (DetectVehicle.IsConnected())
+                {
+                    ECUKom ecuKom = new ECUKom("UpdateVehicle", DetectVehicle.Ediabas);
+                    service.SetVehicleLifeStartDate(VecInfo, ecuKom);
+                }
+            }
         }
 
         // ToDo: Check on update
