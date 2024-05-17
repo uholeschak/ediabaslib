@@ -19,7 +19,7 @@ namespace BmwFileReader
         [XmlType("VehicleDataBmw")]
         public class VehicleDataBmw
         {
-            public const string DataVersion = "8";
+            public const string DataVersion = "9";
 
             public string GetVersionString(DetectVehicleBmw detectVehicleBmw)
             {
