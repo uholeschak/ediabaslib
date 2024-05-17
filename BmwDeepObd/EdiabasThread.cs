@@ -291,6 +291,11 @@ namespace BmwDeepObd
 
         public EdiabasNet Ediabas { get; private set; }
 
+        public DetectVehicleBmw DetectVehicleBmw
+        {
+            get => _detectVehicleBmw;
+        }
+
 #if DEBUG
         private static readonly string Tag = typeof(EdiabasThread).FullName;
 #endif
@@ -2702,6 +2707,7 @@ namespace BmwDeepObd
 
         public static bool ConvertEnvCondErrorStd(ref Dictionary<string, int> envCountDict, ref OrderedDictionary detailDict, Context context, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
+            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
             string language = ActivityCommon.GetCurrentLanguageStatic();
             int envCondIndex = 0;
             foreach (EnvCondResultInfo envCondResult in ErrorEnvCondResultList)
@@ -2791,7 +2797,7 @@ namespace BmwDeepObd
 
                             if (!string.IsNullOrEmpty(envUnit) && string.Compare(envUnit, "s", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                envVal = ActivityMain.FormatSecondsAsTime(resultValue.Value);
+                                envVal = FormatTimeStampEntry(resultValue.Value, ediabasThread?.DetectVehicleBmw);
                             }
 
                             StringBuilder sbValue = new StringBuilder();
@@ -2826,6 +2832,33 @@ namespace BmwDeepObd
             }
 
             return string.Empty;
+        }
+
+        // from: BMW.Rheingold.CoreFramework.DatabaseProvider.FaultCode.GetTimeStampDisplayItem
+        public static string FormatTimeStampEntry(double timeStamp, DetectVehicleBmw detectVehicleBmw)
+        {
+            try
+            {
+                DateTime? lifeStartDate = detectVehicleBmw?.LifeStartDate;
+                if (lifeStartDate.HasValue && lifeStartDate.Value != default(DateTime))
+                {
+                    DateTime timeStampDate = lifeStartDate.Value.AddSeconds(timeStamp);
+                    return timeStampDate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                }
+
+                if (timeStamp < TimeSpan.MinValue.TotalSeconds || timeStamp > TimeSpan.MaxValue.TotalSeconds)
+                {
+                    return string.Empty;
+                }
+
+                TimeSpan ts = TimeSpan.FromSeconds(timeStamp);
+                return string.Format(CultureInfo.InvariantCulture, "{0}d {1:D2}:{2:D2}:{3:D2}s", ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+
         }
 
         public static void AddEnvCondErrorDetail(ref OrderedDictionary detailDict, Dictionary<string, int> envCountDict, string name, string key, string value)

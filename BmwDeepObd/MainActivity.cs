@@ -4598,24 +4598,6 @@ namespace BmwDeepObd
             buttonErrorCopy.Enabled = present;
         }
 
-        public static string FormatSecondsAsTime(double seconds)
-        {
-            try
-            {
-                if (seconds < TimeSpan.MinValue.TotalSeconds || seconds > TimeSpan.MaxValue.TotalSeconds)
-                {
-                    return string.Empty;
-                }
-
-                TimeSpan ts = TimeSpan.FromSeconds(seconds);
-                return string.Format(CultureInfo.InvariantCulture, "{0}d {1:D2}:{2:D2}:{3:D2}", ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
-            }
-            catch (Exception)
-            {
-                return string.Empty;
-            }
-        }
-
         // ReSharper disable once UnusedMember.Global
         public static String FormatResultDouble(Dictionary<string, EdiabasNet.ResultData> resultDict, string dataName, string format)
         {
