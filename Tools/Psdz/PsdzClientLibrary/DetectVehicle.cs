@@ -830,6 +830,7 @@ namespace PsdzClient
                 }
             }
 
+            LifeStartDate = default(DateTime);
             return false;
         }
 
