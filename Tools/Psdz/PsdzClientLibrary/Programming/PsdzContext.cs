@@ -699,7 +699,7 @@ namespace PsdzClient.Programming
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
 
             PerformVecInfoAssignments();
-            SetVehicleLifeStartDate(service);
+            DetectVehicle.SetVehicleLifeStartDate(VecInfo);
 
             EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
             return true;
@@ -796,18 +796,6 @@ namespace PsdzClient.Programming
             }
 
             return true;
-        }
-
-        private void SetVehicleLifeStartDate(IDiagnosticsBusinessData service)
-        {
-            if (VecInfo.BrandName != null && VecInfo.BNType != BNType.UNKNOWN && VecInfo.VehicleLifeStartDate == default(DateTime))
-            {
-                if (DetectVehicle.IsConnected())
-                {
-                    ECUKom ecuKom = new ECUKom("UpdateVehicle", DetectVehicle.Ediabas);
-                    service.SetVehicleLifeStartDate(VecInfo, ecuKom);
-                }
-            }
         }
 
         // ToDo: Check on update

@@ -810,6 +810,22 @@ namespace PsdzClient
             return voltage;
         }
 
+        public bool SetVehicleLifeStartDate(Vehicle vehicle)
+        {
+            if (vehicle.BrandName != null && vehicle.BNType != BNType.UNKNOWN && vehicle.VehicleLifeStartDate == default(DateTime))
+            {
+                if (IsConnected())
+                {
+                    IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
+                    ECUKom ecuKom = new ECUKom("UpdateVehicle", _ediabas);
+                    service.SetVehicleLifeStartDate(vehicle, ecuKom);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public string ExecuteContainerXml(AbortDelegate abortFunc, string configurationContainerXml, Dictionary<string,string> runOverrideDict = null)
         {
             string result = string.Empty;
