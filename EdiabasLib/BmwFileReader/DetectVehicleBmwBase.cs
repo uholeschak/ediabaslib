@@ -1201,11 +1201,6 @@ namespace BmwFileReader
             return null;
         }
 
-        protected virtual DateTime? GetVehicleLifeStartDate()
-        {
-            return null;
-        }
-
         protected virtual void LogInfoFormat(string format, params object[] args)
         {
         }

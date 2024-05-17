@@ -812,13 +812,20 @@ namespace PsdzClient
 
         public bool SetVehicleLifeStartDate(Vehicle vehicle)
         {
-            if (vehicle.BrandName != null && vehicle.BNType != BNType.UNKNOWN && vehicle.VehicleLifeStartDate == default(DateTime))
+            if (LifeStartDate != null)
+            {
+                vehicle.VehicleLifeStartDate = LifeStartDate.Value;
+                return true;
+            }
+
+            if (vehicle.BrandName != null && vehicle.BNType != BNType.UNKNOWN)
             {
                 if (IsConnected())
                 {
                     IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
                     ECUKom ecuKom = new ECUKom("UpdateVehicle", _ediabas);
                     service.SetVehicleLifeStartDate(vehicle, ecuKom);
+                    LifeStartDate = vehicle.VehicleLifeStartDate;
                     return true;
                 }
             }

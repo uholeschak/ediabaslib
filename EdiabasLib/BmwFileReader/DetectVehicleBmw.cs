@@ -588,7 +588,7 @@ namespace BmwFileReader
                 ProgressFunc?.Invoke(100 * index / jobCount);
 
                 HandleSpecialEcus();
-                LifeStartDate = GetVehicleLifeStartDate();
+                SetVehicleLifeStartDate();
 
                 Ds2Vehicle = false;
                 Valid = true;
@@ -1088,54 +1088,10 @@ namespace BmwFileReader
             }
         }
 
-        protected override void ResetValues()
-        {
-            base.ResetValues();
-
-            Valid = false;
-            Ds2Vehicle = false;
-            Ds2GroupFiles = null;
-            Pin78ConnectRequire = false;
-            TypeKeyProperties = null;
-        }
-
-        public override string GetEcuNameByIdent(string sgbd)
-        {
-            try
-            {
-                if (Ediabas == null)
-                {
-                    return null;
-                }
-
-                if (string.IsNullOrEmpty(sgbd))
-                {
-                    return null;
-                }
-
-                ActivityCommon.ResolveSgbdFile(_ediabas, sgbd);
-
-                _ediabas.ArgString = string.Empty;
-                _ediabas.ArgBinaryStd = null;
-                _ediabas.ResultsRequests = string.Empty;
-                _ediabas.ExecuteJob("IDENT");
-
-                string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
-                return ecuName?.ToUpperInvariant();
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            return null;
-        }
-
         // from DiagnosticsBusinessData.dll BMW.Rheingold.DiagnosticsBusinessData.DiagnosticsBusinessData.SetVehicleLifeStartDate
-        protected override DateTime? GetVehicleLifeStartDate()
+        private bool SetVehicleLifeStartDate()
         {
-            DateTime? dateTime = null;
-
+            DateTime? lifeStartDate = null;
             bool motorbike = IsMotorbike();
             if (motorbike)
             {
@@ -1143,12 +1099,12 @@ namespace BmwFileReader
                 {
                     if (string.Compare(BnType, "BN2000_MOTORBIKE", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        return null;
+                        return false;
                     }
 
                     if (string.Compare(BnType, "BNK01X_MOTORBIKE", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        return null;
+                        return false;
                     }
                 }
             }
@@ -1206,7 +1162,7 @@ namespace BmwFileReader
 
                     if (startDateValue.HasValue)
                     {
-                        dateTime = DateTime.Now.AddSeconds(-startDateValue.Value);
+                        lifeStartDate = DateTime.Now.AddSeconds(-startDateValue.Value);
                         break;
                     }
                 }
@@ -1216,7 +1172,57 @@ namespace BmwFileReader
                 }
             }
 
-            return dateTime;
+            if (lifeStartDate.HasValue)
+            {
+                LogInfoFormat("Life start date: {0}", lifeStartDate.Value.ToString("G"));
+                LifeStartDate = lifeStartDate;
+                return true;
+            }
+
+            return false;
+        }
+
+        protected override void ResetValues()
+        {
+            base.ResetValues();
+
+            Valid = false;
+            Ds2Vehicle = false;
+            Ds2GroupFiles = null;
+            Pin78ConnectRequire = false;
+            TypeKeyProperties = null;
+        }
+
+        public override string GetEcuNameByIdent(string sgbd)
+        {
+            try
+            {
+                if (Ediabas == null)
+                {
+                    return null;
+                }
+
+                if (string.IsNullOrEmpty(sgbd))
+                {
+                    return null;
+                }
+
+                ActivityCommon.ResolveSgbdFile(_ediabas, sgbd);
+
+                _ediabas.ArgString = string.Empty;
+                _ediabas.ArgBinaryStd = null;
+                _ediabas.ResultsRequests = string.Empty;
+                _ediabas.ExecuteJob("IDENT");
+
+                string ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName);
+                return ecuName?.ToUpperInvariant();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
         }
 
         protected override void LogInfoFormat(string format, params object[] args)
