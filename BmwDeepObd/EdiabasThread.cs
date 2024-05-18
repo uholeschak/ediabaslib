@@ -2853,7 +2853,7 @@ namespace BmwDeepObd
                 }
 
                 TimeSpan ts = TimeSpan.FromSeconds(timeStamp);
-                return string.Format(CultureInfo.InvariantCulture, "{0}d {1:D2}:{2:D2}:{3:D2}s", ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
+                return string.Format(CultureInfo.InvariantCulture, "{0}:{1:D2}:{2:D2}:{3:D2}s", ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
             }
             catch (Exception)
             {
