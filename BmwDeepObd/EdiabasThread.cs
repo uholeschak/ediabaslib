@@ -2798,6 +2798,7 @@ namespace BmwDeepObd
                             if (!string.IsNullOrEmpty(envUnit) && string.Compare(envUnit, "s", StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 envVal = FormatTimeStampEntry(resultValue.Value, ediabasThread?.DetectVehicleBmw);
+                                envUnit = string.Empty;
                             }
 
                             StringBuilder sbValue = new StringBuilder();
