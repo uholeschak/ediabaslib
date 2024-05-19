@@ -29,10 +29,10 @@ This chapter describes how to replace the ELM327 BT V1.5 HW: V01_M_V2.3 adapter 
   * BLE name: 0x0FD0 / 0x0FC5, 1 byte length (max 24) and 32 byte BLE name ASCII chars
   * BaudRate: 0x0FF0 / 0x0FE5 (2 bytes, low byte first); default value: 0x04E2 is 38400 baud (for `default` PIC firmware), change to 0x01A1 for 115200 baud (for `def115200` or `yc1021` firmware)
 
-* EEPROM **24C64A** layout variant:
+* EEPROM **24C64** layout variant:
   * BT address: 0x18E3 (6 bytes, normally keep unchanged)
   * BLE address: 0x18E9 (6 bytes, normally keep unchanged)
-  * PinCode: 0x18EF, 1 byte length (max 15) and 15 byte PIN ASCII chars (for some unknown reason some have 0000 but the adapter accepts 1234)
+  * PinCode: 0x18EF, 1 byte length (max 15) and 15 byte PIN ASCII chars (for some unknown reason some have 0000 but the adapter accepts only 1234)
   * BT 2.x name: 0x1900, 1 byte length (max 32) and 32 byte BT name ASCII chars
   * BLE name: 0x1920, 1 byte length (max 24) and 32 byte BLE name ASCII chars
   * BaudRate: 0x1940 (2 bytes, low byte first); default value: 0x04E2 is 38400 baud (for `default` PIC firmware), change to 0x01A1 for 115200 baud (for `def115200` or `yc1021` firmware)
