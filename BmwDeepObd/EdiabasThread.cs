@@ -1050,7 +1050,7 @@ namespace BmwDeepObd
 
                         if (ReadErrors(ecuInfo, sgbdResolved, false, ecuVariant, lifeStartDate, errorReportList))
                         {
-                            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && ActivityCommon.EcuFunctionsActive)
+                            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                             {
                                 ReadErrors(ecuInfo, sgbdResolved, true, ecuVariant, lifeStartDate, errorReportList);
                             }
