@@ -2707,7 +2707,7 @@ namespace BmwDeepObd
 
         public static bool ConvertEnvCondErrorStd(ref Dictionary<string, int> envCountDict, ref OrderedDictionary detailDict, Context context, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
-            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+            DateTime? lifeStartDate = ActivityCommon.EdiabasThread?.DetectVehicleBmw?.LifeStartDate;
             string language = ActivityCommon.GetCurrentLanguageStatic();
             int envCondIndex = 0;
             foreach (EnvCondResultInfo envCondResult in ErrorEnvCondResultList)
@@ -2797,7 +2797,7 @@ namespace BmwDeepObd
 
                             if (!string.IsNullOrEmpty(envUnit) && string.Compare(envUnit, "s", StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                envVal = FormatTimeStampEntry(resultValue.Value, ediabasThread?.DetectVehicleBmw);
+                                envVal = FormatTimeStampEntry(resultValue.Value, lifeStartDate);
                                 envUnit = string.Empty;
                             }
 
@@ -2836,11 +2836,10 @@ namespace BmwDeepObd
         }
 
         // from: BMW.Rheingold.CoreFramework.DatabaseProvider.FaultCode.GetTimeStampDisplayItem
-        public static string FormatTimeStampEntry(double timeStamp, DetectVehicleBmw detectVehicleBmw)
+        public static string FormatTimeStampEntry(double timeStamp, DateTime? lifeStartDate)
         {
             try
             {
-                DateTime? lifeStartDate = detectVehicleBmw?.LifeStartDate;
                 if (lifeStartDate.HasValue && lifeStartDate.Value != default(DateTime))
                 {
                     DateTime timeStampDate = lifeStartDate.Value.AddSeconds(timeStamp);
