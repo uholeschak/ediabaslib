@@ -49,6 +49,7 @@ namespace BmwDeepObd
                 ErrorDetailSet = errorDetailSet;
                 ExceptionText = exceptionText;
                 EcuVariant = null;
+                LifeStartDate = null;
             }
 
             public string EcuName { get; }
@@ -74,6 +75,8 @@ namespace BmwDeepObd
             public string ExceptionText { get; }
 
             public EcuFunctionStructs.EcuVariant EcuVariant { get; set; }
+
+            public DateTime? LifeStartDate { get; set; }
         }
 
         public class EdiabasErrorShadowReport : EdiabasErrorReport
@@ -162,13 +165,14 @@ namespace BmwDeepObd
 
         private class EnvCondResultInfo
         {
-            public EnvCondResultInfo(string result, string unit = null, int? resourceId = null, int? minLength = null, double? minValue = null)
+            public EnvCondResultInfo(string result, string unit = null, int? resourceId = null, int? minLength = null, double? minValue = null, bool? convertDate = false)
             {
                 Result = result;
                 Unit = unit;
                 ResourceId = resourceId;
                 MinLength = minLength;
                 MinValue = minValue;
+                ConvertDate = convertDate;
             }
 
             public string Result { get; }
@@ -180,6 +184,8 @@ namespace BmwDeepObd
             public int? MinLength { get; }
 
             public double? MinValue { get; }
+
+            public bool? ConvertDate { get; }
         }
 
         private class EnvCondDetailInfo
@@ -323,7 +329,7 @@ namespace BmwDeepObd
             new EnvCondResultInfo("F_CODE"),
             new EnvCondResultInfo("F_EREIGNIS_DTC"),
             new EnvCondResultInfo("F_UW_KM", "km", Resource.String.error_env_km, null, 1),
-            new EnvCondResultInfo("F_UW_ZEIT", "s", Resource.String.error_env_time, null, 1),
+            new EnvCondResultInfo("F_UW_ZEIT", "s", Resource.String.error_env_time, null, 1, true),
         };
 
         public static readonly Tuple<string, string>[] SpecialInfoResetJobs =
@@ -931,6 +937,7 @@ namespace BmwDeepObd
                         }
 
                         EcuFunctionStructs.EcuVariant ecuVariant = null;
+                        DateTime? lifeStartDate = null;
                         if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw)
                         {
                             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
@@ -940,6 +947,7 @@ namespace BmwDeepObd
 
                             if (_detectVehicleBmw != null)
                             {
+                                lifeStartDate = _detectVehicleBmw.LifeStartDate;
                                 _detectVehicleBmw.Ediabas = Ediabas;
                                 _ruleEvalBmw.SetEvalProperties(_detectVehicleBmw, ecuVariant);
                             }
@@ -1037,11 +1045,11 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (ReadErrors(ecuInfo, sgbdResolved, false, ecuVariant, errorReportList))
+                        if (ReadErrors(ecuInfo, sgbdResolved, false, ecuVariant, lifeStartDate, errorReportList))
                         {
                             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && ActivityCommon.EcuFunctionsActive)
                             {
-                                ReadErrors(ecuInfo, sgbdResolved, true, ecuVariant, errorReportList);
+                                ReadErrors(ecuInfo, sgbdResolved, true, ecuVariant, lifeStartDate, errorReportList);
                             }
                         }
 
@@ -1482,7 +1490,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool ReadErrors(JobReader.EcuInfo ecuInfo, string sgbdResolved, bool readIs, EcuFunctionStructs.EcuVariant ecuVariant, List <EdiabasErrorReport> errorReportList)
+        public bool ReadErrors(JobReader.EcuInfo ecuInfo, string sgbdResolved, bool readIs, EcuFunctionStructs.EcuVariant ecuVariant, DateTime? lifeStartDate, List <EdiabasErrorReport> errorReportList)
         {
             string errorJob;
             string errorDetailJob = string.Empty;
@@ -1660,14 +1668,16 @@ namespace BmwDeepObd
                                 List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                                 errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, isValid, isVisible, resultDictLocal, resultSetsDetail)
                                 {
-                                    EcuVariant = ecuVariant
+                                    EcuVariant = ecuVariant,
+                                    LifeStartDate = lifeStartDate
                                 });
                             }
                             else
                             {
                                 errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, isValid, isVisible, resultDictLocal)
                                 {
-                                    EcuVariant = ecuVariant
+                                    EcuVariant = ecuVariant,
+                                    LifeStartDate = lifeStartDate
                                 });
                             }
                         }
@@ -1681,7 +1691,8 @@ namespace BmwDeepObd
                 {
                     errorReportList.Add(new EdiabasErrorReport(ecuInfo.Name, ecuInfo.Sgbd, sgbdResolved, ecuInfo.VagDataFileName, ecuInfo.VagUdsFileName, readIs, true, true)
                     {
-                        EcuVariant = ecuVariant
+                        EcuVariant = ecuVariant,
+                        LifeStartDate = lifeStartDate
                     });
                 }
             }
@@ -2534,7 +2545,7 @@ namespace BmwDeepObd
             OrderedDictionary detailDict = new OrderedDictionary();
             if (errorReport.ErrorDetailSet == null)
             {
-                ConvertEnvCondErrorDetailSingle(context, ref detailDict, errorReport.ErrorDict, envCondLabelList);
+                ConvertEnvCondErrorDetailSingle(context, errorReport, ref detailDict, errorReport.ErrorDict, envCondLabelList);
             }
             else
             {
@@ -2554,7 +2565,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    ConvertEnvCondErrorDetailSingle(context, ref detailDict, errorDetail, envCondLabelList);
+                    ConvertEnvCondErrorDetailSingle(context, errorReport, ref detailDict, errorDetail, envCondLabelList);
                     dictIndex++;
                 }
             }
@@ -2620,7 +2631,7 @@ namespace BmwDeepObd
         }
 
         // from: RheingoldDiagnostics.dll BMW.Rheingold.Diagnostics.VehicleIdent.doECUReadFS, doECUReadFSDetails
-        public static bool ConvertEnvCondErrorDetailSingle(Context context, ref OrderedDictionary detailDict, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
+        public static bool ConvertEnvCondErrorDetailSingle(Context context, EdiabasErrorReport errorReport, ref OrderedDictionary detailDict, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
             if (errorDetail == null)
             {
@@ -2635,7 +2646,7 @@ namespace BmwDeepObd
             }
 
             Dictionary<string, int> envCountDict = new Dictionary<string, int>();
-            ConvertEnvCondErrorStd(ref envCountDict, ref detailDict, context, errorDetail, envCondLabelList);
+            ConvertEnvCondErrorStd(ref envCountDict, ref detailDict, context, errorReport, errorDetail, envCondLabelList);
 
             if (envCondLabelList != null)
             {
@@ -2705,9 +2716,9 @@ namespace BmwDeepObd
             return true;
         }
 
-        public static bool ConvertEnvCondErrorStd(ref Dictionary<string, int> envCountDict, ref OrderedDictionary detailDict, Context context, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
+        public static bool ConvertEnvCondErrorStd(ref Dictionary<string, int> envCountDict, ref OrderedDictionary detailDict, Context context, EdiabasErrorReport errorReport, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
-            DateTime? lifeStartDate = ActivityCommon.EdiabasThread?.DetectVehicleBmw?.LifeStartDate;
+            DateTime? lifeStartDate = errorReport.LifeStartDate;
             string language = ActivityCommon.GetCurrentLanguageStatic();
             int envCondIndex = 0;
             foreach (EnvCondResultInfo envCondResult in ErrorEnvCondResultList)
@@ -2795,7 +2806,7 @@ namespace BmwDeepObd
                                 envUnit = envCondLabel.Unit;
                             }
 
-                            if (!string.IsNullOrEmpty(envUnit) && string.Compare(envUnit, "s", StringComparison.OrdinalIgnoreCase) == 0)
+                            if (envCondResult.ConvertDate.HasValue && envCondResult.ConvertDate.Value)
                             {
                                 envVal = FormatTimeStampEntry(resultValue.Value, lifeStartDate);
                                 envUnit = string.Empty;
