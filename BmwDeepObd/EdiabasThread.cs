@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Android.Content;
+using Android.Util;
+using BmwFileReader;
+using EdiabasLib;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -12,10 +16,6 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Android.Content;
-using Android.Util;
-using BmwFileReader;
-using EdiabasLib;
 // ReSharper disable StringLiteralTypo
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
