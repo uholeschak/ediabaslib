@@ -2284,8 +2284,12 @@ namespace BmwDeepObd
         public static string ConvertEcuEnvCondResultValue(EcuFunctionStructs.EcuEnvCondLabel envCondLabel, EdiabasNet.ResultData resultData, out double? resultValue)
         {
             resultValue = null;
-            string resultString = null;
+            if (resultData == null)
+            {
+                return null;
+            }
 
+            string resultString = null;
             if (envCondLabel != null && envCondLabel.EcuResultStateValueList != null && envCondLabel.EcuResultStateValueList.Count > 0)
             {
                 EcuFunctionStructs.EcuResultStateValue ecuResultStateValue = MatchEcuResultStateValue(envCondLabel.EcuResultStateValueList, resultData);
@@ -2791,13 +2795,16 @@ namespace BmwDeepObd
                         }
 
                         double? resultValue = null;
-                        if (resultDataVal.OpData is Int64)
+                        if (resultDataVal != null)
                         {
-                            resultValue = (Int64)resultDataVal.OpData;
-                        }
-                        else if (resultDataVal.OpData is Double)
-                        {
-                            resultValue = (Double)resultDataVal.OpData;
+                            if (resultDataVal.OpData is Int64)
+                            {
+                                resultValue = (Int64)resultDataVal.OpData;
+                            }
+                            else if (resultDataVal.OpData is Double)
+                            {
+                                resultValue = (Double)resultDataVal.OpData;
+                            }
                         }
 
                         if (envCondResult.MinLength.HasValue)
