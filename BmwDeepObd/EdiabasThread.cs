@@ -190,13 +190,16 @@ namespace BmwDeepObd
 
         private class EnvCondDetailInfo
         {
-            public EnvCondDetailInfo()
+            public EnvCondDetailInfo(string name, string value)
             {
-                SbDetail = new StringBuilder();
+                Name = name;
+                ValueList = new List<string> { value };
                 Index = null;
             }
 
-            public StringBuilder SbDetail { get; }
+            public string Name { get; }
+
+            public List<string> ValueList { get; }
 
             public int? Index { get; set; }
         }
@@ -2616,14 +2619,30 @@ namespace BmwDeepObd
 
             foreach (DictionaryEntry detailEntry in detailDict)
             {
-                if (detailEntry.Value is EnvCondDetailInfo envCondDetailInfo && envCondDetailInfo.SbDetail.Length > 0)
+                if (detailEntry.Value is EnvCondDetailInfo envCondDetailInfo && envCondDetailInfo.ValueList.Count > 0)
                 {
                     sbResult.Append("\r\n- ");
                     if (envCondDetailInfo.Index.HasValue && envCondDetailInfo.Index.Value > 0)
                     {
                         sbResult.Append(string.Format(CultureInfo.InvariantCulture, "({0}.) ", envCondDetailInfo.Index + 1));
                     }
-                    sbResult.Append(envCondDetailInfo.SbDetail.ToString());
+
+                    StringBuilder sbDetail = new StringBuilder();
+                    sbDetail.Append(envCondDetailInfo.Name);
+                    sbDetail.Append(": ");
+                    int index = 0;
+                    foreach (string value in envCondDetailInfo.ValueList)
+                    {
+                        if (index > 0)
+                        {
+                            sbDetail.Append(" | ");
+                        }
+
+                        sbDetail.Append(value);
+                        index++;
+                    }
+
+                    sbResult.Append(sbDetail.ToString());
                 }
             }
 
@@ -2690,7 +2709,7 @@ namespace BmwDeepObd
                                         sbValue.Append(envUnit.Trim());
                                     }
 
-                                    AddEnvCondErrorDetail(ref detailDict, envCountDict, envName, "@" + envNum.ToString(CultureInfo.InvariantCulture), sbValue.ToString());
+                                    AddEnvCondErrorDetail(ref detailDict, ref envCountDict, envName, "@" + envNum.ToString(CultureInfo.InvariantCulture), sbValue.ToString());
                                 }
                             }
                         }
@@ -2820,7 +2839,7 @@ namespace BmwDeepObd
                                 sbValue.Append(envUnit.Trim());
                             }
 
-                            AddEnvCondErrorDetail(ref detailDict, envCountDict, envName, "#" + (envCondIndex + 1).ToString(CultureInfo.InvariantCulture), sbValue.ToString());
+                            AddEnvCondErrorDetail(ref detailDict, ref envCountDict, envName, "#" + (envCondIndex + 1).ToString(CultureInfo.InvariantCulture), sbValue.ToString());
                         }
                     }
                 }
@@ -2872,7 +2891,7 @@ namespace BmwDeepObd
 
         }
 
-        public static void AddEnvCondErrorDetail(ref OrderedDictionary detailDict, Dictionary<string, int> envCountDict, string name, string key, string value)
+        public static void AddEnvCondErrorDetail(ref OrderedDictionary detailDict, ref Dictionary<string, int> envCountDict, string name, string key, string value)
         {
             if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(value))
             {
@@ -2894,17 +2913,16 @@ namespace BmwDeepObd
             EnvCondDetailInfo envCondDetailInfo = detailDict[detailKey] as EnvCondDetailInfo;
             if (envCondDetailInfo == null)
             {
-                envCondDetailInfo = new EnvCondDetailInfo();
+                envCondDetailInfo = new EnvCondDetailInfo(name, value);
                 detailDict.Add(detailKey, envCondDetailInfo);
-                envCondDetailInfo.SbDetail.Append(name);
-                envCondDetailInfo.SbDetail.Append(": ");
             }
             else
             {
-                envCondDetailInfo.SbDetail.Append(" | ");
+                if (!envCondDetailInfo.ValueList.Contains(value))
+                {
+                    envCondDetailInfo.ValueList.Add(value);
+                }
             }
-
-            envCondDetailInfo.SbDetail.Append(value);
         }
 
         // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionReadStatus.FindMatchingValue
