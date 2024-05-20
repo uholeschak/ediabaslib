@@ -356,6 +356,8 @@ namespace ApkUploader
             return true;
         }
 
+        // https://developers.google.com/identity/protocols/oauth2?hl=de
+        // https://console.cloud.google.com/apis/dashboard
         private UserCredential GetCredential()
         {
             UserCredential credential;
