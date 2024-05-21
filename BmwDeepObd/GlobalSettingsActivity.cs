@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
@@ -148,6 +149,11 @@ namespace BmwDeepObd
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
+            ApplicationInfo applicationInfo = _activityCommon.GetApplicationInfo();
+            if (applicationInfo != null)
+            {
+                string sourceDir = applicationInfo.SourceDir;
+            }
 
             bool allowExport = false;
             bool allowImport = false;

@@ -6566,6 +6566,12 @@ namespace BmwDeepObd
             return packageInfo != null ? PackageInfoCompat.GetLongVersionCode(packageInfo) : 0;
         }
 
+        public ApplicationInfo GetApplicationInfo()
+        {
+            PackageInfo packageInfo = GetPackageInfo();
+            return packageInfo?.ApplicationInfo;
+        }
+
         public static string GetInstallerPackageName(PackageManager packageManager, string packageName)
         {
             try
