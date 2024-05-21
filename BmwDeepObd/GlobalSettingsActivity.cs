@@ -672,7 +672,7 @@ namespace BmwDeepObd
                     case ActivityCommon.AutoConnectType.StartBoot:
                         if (!_radioButtonStartBoot.Enabled)
                         {
-                            _radioButtonStartConnectClose.Checked = true;
+                            _radioButtonStartOffline.Checked = true;
                             break;
                         }
                         _radioButtonStartBoot.Checked = true;
