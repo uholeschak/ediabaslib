@@ -232,25 +232,6 @@ namespace BmwDeepObd
             _radioButtonStartBoot = FindViewById<RadioButton>(Resource.Id.radioButtonStartBoot);
             _radioButtonStartBoot.Enabled = _internalStorageLocation;
             _radioButtonStartBoot.SetOnTouchListener(this);
-            _radioButtonStartBoot.CheckedChange += (sender, args) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                if (_ignoreCheckChange)
-                {
-                    return;
-                }
-
-                if (!_instanceData.BootHintShown &&
-                    _activityCommon.MtcBtService && _radioButtonStartBoot.Checked)
-                {
-                    _activityCommon.ShowAlert(GetString(Resource.String.settings_mtc_boot_hint), Resource.String.alert_title_warning);
-                    _instanceData.BootHintShown = true;
-                }
-            };
 
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
             _checkBoxSendDataBroadcast = FindViewById<CheckBox>(Resource.Id.checkBoxSendDataBroadcast);
@@ -423,12 +404,25 @@ namespace BmwDeepObd
                     if (v == _radioButtonStartOffline || v == _radioButtonStartConnect ||
                         v == _radioButtonStartConnectClose || v == _radioButtonStartBoot)
                     {
+                        string message = null;
                         if (!_radioButtonStartBoot.Enabled)
+                        {
+                            message = GetString(Resource.String.settings_internal_location_boot_hint);
+                        }
+                        else
+                        {
+                            if (v == _radioButtonStartBoot && _activityCommon.MtcBtService)
+                            {
+                                message = GetString(Resource.String.settings_mtc_boot_hint);
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(message))
                         {
                             if (!_instanceData.BootHintShown)
                             {
                                 Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                                balloonBuilder.Text = GetString(Resource.String.settings_internal_location_boot_hint);
+                                balloonBuilder.Text = message;
                                 Balloon balloon = balloonBuilder.Build();
                                 balloon.Show(_radioButtonStartBoot);
 
