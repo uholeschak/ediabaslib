@@ -3,6 +3,7 @@ using System.IO;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.OS.Storage;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
@@ -56,6 +57,7 @@ namespace BmwDeepObd
         private string _copyFileName;
         private bool _deleteFile;
         private string _selection;
+        private bool _internalStorageLocation;
         private bool _ignoreCheckChange;
         private ActivityCommon _activityCommon;
         private string _exportFileName;
@@ -149,11 +151,7 @@ namespace BmwDeepObd
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
-            ApplicationInfo applicationInfo = _activityCommon.GetApplicationInfo();
-            if (applicationInfo != null)
-            {
-                string sourceDir = applicationInfo.SourceDir;
-            }
+            _internalStorageLocation = _activityCommon.IsAppStorageLocationInternal();
 
             bool allowExport = false;
             bool allowImport = false;

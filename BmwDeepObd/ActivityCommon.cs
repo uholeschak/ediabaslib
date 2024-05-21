@@ -6572,6 +6572,22 @@ namespace BmwDeepObd
             return packageInfo?.ApplicationInfo;
         }
 
+        public bool IsAppStorageLocationInternal()
+        {
+            ApplicationInfo applicationInfo = GetApplicationInfo();
+            if (applicationInfo?.StorageUuid == null)
+            {
+                return false;
+            }
+
+            if (applicationInfo.StorageUuid != StorageManager.UuidDefault)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public static string GetInstallerPackageName(PackageManager packageManager, string packageName)
         {
             try
