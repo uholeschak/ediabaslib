@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using Android.Content;
+using Android.Content.PM;
 using Android.OS;
+using Android.OS.Storage;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
@@ -55,6 +57,7 @@ namespace BmwDeepObd
         private string _copyFileName;
         private bool _deleteFile;
         private string _selection;
+        private bool _internalStorageLocation;
         private bool _ignoreCheckChange;
         private ActivityCommon _activityCommon;
         private string _exportFileName;
@@ -148,6 +151,7 @@ namespace BmwDeepObd
             _selection = Intent.GetStringExtra(ExtraSelection);
 
             _activityCommon = new ActivityCommon(this);
+            _internalStorageLocation = _activityCommon.IsAppStorageLocationInternal();
 
             bool allowExport = false;
             bool allowImport = false;
@@ -219,6 +223,7 @@ namespace BmwDeepObd
             _radioButtonStartConnect = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnect);
             _radioButtonStartConnectClose = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnectClose);
             _radioButtonStartBoot = FindViewById<RadioButton>(Resource.Id.radioButtonStartBoot);
+            _radioButtonStartBoot.Enabled = _internalStorageLocation;
             _radioButtonStartBoot.CheckedChange += (sender, args) =>
             {
                 if (_activityCommon == null)
@@ -665,6 +670,11 @@ namespace BmwDeepObd
                         break;
 
                     case ActivityCommon.AutoConnectType.StartBoot:
+                        if (!_radioButtonStartBoot.Enabled)
+                        {
+                            _radioButtonStartConnectClose.Checked = true;
+                            break;
+                        }
                         _radioButtonStartBoot.Checked = true;
                         break;
                 }
