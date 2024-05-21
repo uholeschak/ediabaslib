@@ -6580,7 +6580,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (applicationInfo.StorageUuid != StorageManager.UuidDefault)
+            if (!applicationInfo.StorageUuid.Equals(StorageManager.UuidDefault))
             {
                 return false;
             }

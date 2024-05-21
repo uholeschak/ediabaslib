@@ -223,6 +223,7 @@ namespace BmwDeepObd
             _radioButtonStartConnect = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnect);
             _radioButtonStartConnectClose = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnectClose);
             _radioButtonStartBoot = FindViewById<RadioButton>(Resource.Id.radioButtonStartBoot);
+            _radioButtonStartBoot.Enabled = _internalStorageLocation;
             _radioButtonStartBoot.CheckedChange += (sender, args) =>
             {
                 if (_activityCommon == null)
@@ -669,6 +670,11 @@ namespace BmwDeepObd
                         break;
 
                     case ActivityCommon.AutoConnectType.StartBoot:
+                        if (!_radioButtonStartBoot.Enabled)
+                        {
+                            _radioButtonStartConnectClose.Checked = true;
+                            break;
+                        }
                         _radioButtonStartBoot.Checked = true;
                         break;
                 }
