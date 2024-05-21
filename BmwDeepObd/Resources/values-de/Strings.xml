@@ -543,6 +543,7 @@
   <string name="settings_import_no_file">Die Importdatei wurde nicht gefunden:</string>
   <string name="settings_export_private">Wollen Sie auch private Daten exportieren?</string>
   <string name="settings_mtc_boot_hint">Die Bootoption funktioniert oft nicht bei Android Radios.\nEs wird empfohlen eine der anderen Autostart-Optionen zu wählen und diese App für Autostart beim Boot und Standby in Android zu konfigurieren.</string>
+  <string name="settings_internal_location_boot_hint">Die Bootoption ist nur verfügbar, wenn die App im internen Speicher installiert ist.</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>

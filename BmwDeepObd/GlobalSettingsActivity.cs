@@ -9,6 +9,7 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.FilePicker;
+using Skydoves.BalloonLib;
 
 namespace BmwDeepObd
 {
@@ -16,7 +17,7 @@ namespace BmwDeepObd
         Name = ActivityCommon.AppNameSpace + "." + nameof(GlobalSettingsActivity),
         WindowSoftInputMode = SoftInput.StateAlwaysHidden,
         ConfigurationChanges = ActivityConfigChanges)]
-    public class GlobalSettingsActivity : BaseActivity
+    public class GlobalSettingsActivity : BaseActivity, View.IOnTouchListener
     {
         public class InstanceData
         {
@@ -220,10 +221,17 @@ namespace BmwDeepObd
             _checkBoxStoreDataLogSettings = FindViewById<CheckBox>(Resource.Id.checkBoxStoreDataLogSettings);
 
             _radioButtonStartOffline = FindViewById<RadioButton>(Resource.Id.radioButtonStartOffline);
+            _radioButtonStartOffline.SetOnTouchListener(this);
+
             _radioButtonStartConnect = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnect);
+            _radioButtonStartConnect.SetOnTouchListener(this);
+
             _radioButtonStartConnectClose = FindViewById<RadioButton>(Resource.Id.radioButtonStartConnectClose);
+            _radioButtonStartConnectClose.SetOnTouchListener(this);
+
             _radioButtonStartBoot = FindViewById<RadioButton>(Resource.Id.radioButtonStartBoot);
             _radioButtonStartBoot.Enabled = _internalStorageLocation;
+            _radioButtonStartBoot.SetOnTouchListener(this);
             _radioButtonStartBoot.CheckedChange += (sender, args) =>
             {
                 if (_activityCommon == null)
@@ -400,6 +408,37 @@ namespace BmwDeepObd
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        public bool OnTouch(View v, MotionEvent e)
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            switch (e.Action)
+            {
+                case MotionEventActions.Down:
+                    if (v == _radioButtonStartOffline || v == _radioButtonStartConnect ||
+                        v == _radioButtonStartConnectClose || v == _radioButtonStartBoot)
+                    {
+                        if (!_radioButtonStartBoot.Enabled)
+                        {
+                            if (!_instanceData.BootHintShown)
+                            {
+                                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                                balloonBuilder.Text = GetString(Resource.String.settings_internal_location_boot_hint);
+                                Balloon balloon = balloonBuilder.Build();
+                                balloon.Show(_radioButtonStartBoot);
+
+                                _instanceData.BootHintShown = true;
+                            }
+                        }
+                    }
+                    break;
+            }
+            return false;
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -672,7 +711,7 @@ namespace BmwDeepObd
                     case ActivityCommon.AutoConnectType.StartBoot:
                         if (!_radioButtonStartBoot.Enabled)
                         {
-                            _radioButtonStartConnectClose.Checked = true;
+                            _radioButtonStartOffline.Checked = true;
                             break;
                         }
                         _radioButtonStartBoot.Checked = true;
