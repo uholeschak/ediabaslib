@@ -64,7 +64,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
                 if (intent.Action == Intent.ActionLockedBootCompleted && !ActivityCommon.IsMtcService(context))
                 {
 #if DEBUG
-                    Log.Info(Tag, "Ignoring boot complete");
+                    Log.Info(Tag, "Ignoring locked boot complete");
 #endif
                     break;
                 }
