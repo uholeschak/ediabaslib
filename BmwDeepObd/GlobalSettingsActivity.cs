@@ -59,7 +59,9 @@ namespace BmwDeepObd
         private bool _deleteFile;
         private string _selection;
         private bool _internalStorageLocation;
+#pragma warning disable CS0414 // Field is assigned but its value is never used
         private bool _ignoreCheckChange;
+#pragma warning restore CS0414 // Field is assigned but its value is never used
         private ActivityCommon _activityCommon;
         private string _exportFileName;
 
