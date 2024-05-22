@@ -1160,31 +1160,38 @@ namespace BmwDeepObd
             }
         }
 
+        public static bool IsMtcService(Context context)
+        {
+            try
+            {
+                PackageManager packageManager = context?.PackageManager;
+                IList<ApplicationInfo> appList = GetInstalledApplications(packageManager, PackageInfoFlags.MatchAll);
+                if (appList != null)
+                {
+                    foreach (ApplicationInfo appInfo in appList)
+                    {
+                        if (string.Compare(appInfo.PackageName, "android.microntek.mtcser", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
+        }
+
         public bool MtcBtService
         {
             get
             {
                 if (_mtcBtService == null)
                 {
-                    try
-                    {
-                        IList<ApplicationInfo> appList = GetInstalledApplications(PackageInfoFlags.MatchAll);
-                        if (appList != null)
-                        {
-                            foreach (ApplicationInfo appInfo in appList)
-                            {
-                                if (string.Compare(appInfo.PackageName, "android.microntek.mtcser", StringComparison.OrdinalIgnoreCase) == 0)
-                                {
-                                    _mtcBtService = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        _mtcBtService = false;
-                    }
+                    _mtcBtService = IsMtcService(_context);
                 }
                 return _mtcBtService ?? false;
             }
