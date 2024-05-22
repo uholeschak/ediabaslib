@@ -61,7 +61,8 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case HtcActionQuickBoot:
             case ActionStartService:
             {
-                if (intent.Action == Intent.ActionLockedBootCompleted && !ActivityCommon.IsMtcService(context))
+                bool isMtcService = ActivityCommon.IsMtcService(context);
+                if (!isMtcService && intent.Action == Intent.ActionLockedBootCompleted)
                 {
 #if DEBUG
                     Log.Info(Tag, "Ignoring locked boot complete");
