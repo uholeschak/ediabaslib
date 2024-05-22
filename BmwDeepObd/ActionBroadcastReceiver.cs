@@ -11,7 +11,6 @@ namespace BmwDeepObd;
 )]
 [Android.App.IntentFilter(new[]
     {
-        Intent.ActionLockedBootCompleted,
         Intent.ActionBootCompleted,
         Intent.ActionReboot,
         Intent.ActionShutdown,
@@ -52,7 +51,6 @@ public class ActionBroadcastReceiver : BroadcastReceiver
 #endif
         switch (intent.Action)
         {
-            case Intent.ActionLockedBootCompleted:
             case Intent.ActionBootCompleted:
             case Intent.ActionReboot:
             case Intent.ActionMyPackageReplaced:
@@ -61,15 +59,6 @@ public class ActionBroadcastReceiver : BroadcastReceiver
             case HtcActionQuickBoot:
             case ActionStartService:
             {
-                bool isMtcService = ActivityCommon.IsMtcService(context);
-                if (!isMtcService && intent.Action == Intent.ActionLockedBootCompleted)
-                {
-#if DEBUG
-                    Log.Info(Tag, "Ignoring locked boot complete");
-#endif
-                    break;
-                }
-
                 ActivityCommon.AutoConnectType autoConnectType = ActivityCommon.GetAutoConnectSetting();
 #if DEBUG
                 Log.Info(Tag, string.Format(CultureInfo.InvariantCulture, "Auto start type: {0}", autoConnectType.ToString()));
