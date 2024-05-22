@@ -2230,7 +2230,7 @@ namespace BmwDeepObd
                 Intent startServiceIntent = new Intent(context, typeof(ForegroundService));
                 startServiceIntent.SetAction(ForegroundService.ActionStartService);
                 startServiceIntent.PutExtra(ForegroundService.ExtraStartComm, startComm);
-                context.StartService(startServiceIntent);
+                ContextCompat.StartForegroundService(context, startServiceIntent);
             }
             catch (Exception)
             {
