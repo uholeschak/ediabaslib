@@ -5248,15 +5248,29 @@ namespace BmwDeepObd
                         _compileProgress.Dismiss();
                         _compileProgress = null;
                         UpdateLockState();
+
+                        string balloonText = null;
                         if (cpuUsage >= CpuLoadCritical)
                         {
-                            _activityCommon.ShowAlert(string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage), Resource.String.alert_title_warning);
+                            balloonText = string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage);
                         }
                         else
                         {
                             if (ActivityCommon.JobReader.CompatIdsUsed)
                             {
-                                _activityCommon.ShowAlert(GetString(Resource.String.compile_compat_id_warn), Resource.String.alert_title_warning);
+                                 balloonText = GetString(Resource.String.compile_compat_id_warn);
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(balloonText))
+                        {
+                            View rootView = _contentView?.RootView;
+                            if (rootView != null)
+                            {
+                                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                                balloonBuilder.Text = GetString(Resource.String.compile_compat_id_warn);
+                                Balloon balloon = balloonBuilder.Build();
+                                balloon.Show(rootView);
                             }
                         }
                     });
