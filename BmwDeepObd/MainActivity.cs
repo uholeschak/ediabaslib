@@ -815,15 +815,7 @@ namespace BmwDeepObd
             {
                 _backPressed = true;
                 _lastBackPressedTime = Stopwatch.GetTimestamp();
-
-                View rootView = _contentView?.RootView;
-                if (rootView != null)
-                {
-                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                    balloonBuilder.Text = GetString(Resource.String.back_button_twice_for_exit);
-                    Balloon balloon = balloonBuilder.Build();
-                    balloon.Show(rootView);
-                }
+                ShowBallonMessage(GetString(Resource.String.back_button_twice_for_exit));
             }
         }
 
@@ -5248,15 +5240,17 @@ namespace BmwDeepObd
                         _compileProgress.Dismiss();
                         _compileProgress = null;
                         UpdateLockState();
+
                         if (cpuUsage >= CpuLoadCritical)
                         {
-                            _activityCommon.ShowAlert(string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage), Resource.String.alert_title_warning);
+                            string balloonMessage = string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage);
+                            ShowBallonMessage(balloonMessage);
                         }
                         else
                         {
                             if (ActivityCommon.JobReader.CompatIdsUsed)
                             {
-                                _activityCommon.ShowAlert(GetString(Resource.String.compile_compat_id_warn), Resource.String.alert_title_warning);
+                                ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn));
                             }
                         }
                     });
@@ -6565,6 +6559,18 @@ namespace BmwDeepObd
         private void OpenDonateLink()
         {
             _activityCommon.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
+        }
+
+        private void ShowBallonMessage(string message)
+        {
+            View rootView = _contentView?.RootView;
+            if (rootView != null)
+            {
+                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                balloonBuilder.Text = message;
+                Balloon balloon = balloonBuilder.Build();
+                balloon.Show(rootView);
+            }
         }
 
         private bool EditYandexKey()
