@@ -934,55 +934,60 @@ namespace BmwDeepObd
                 case StartState.LoadSettings:
                 {
                     string settingsFile = ActivityCommon.GetSettingsFileName();
-                    if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                    if (string.IsNullOrEmpty(settingsFile))
                     {
-                        ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
-                        if (!_activityCommon.GetSettings(instanceData, settingsFile, ActivityCommon.SettingsMode.All, true))
-                        {
 #if DEBUG
-                            Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings failed");
+                        Android.Util.Log.Info(Tag, "CommStateMachine: GetSettingsFileName failed");
 #endif
-                            _startState = StartState.Error;
-                            return;
-                        }
-
-                        if (!RequestStoragePermissions(instanceData))
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, "CommStateMachine: Request permissions failed");
-#endif
-                            _startState = StartState.Error;
-                            return;
-                        }
-
-                        if (instanceData.LastSelectedJobIndex < 0)
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, "CommStateMachine: No page selected");
-#endif
-                            _startState = StartState.Terminate;
-                            return;
-                        }
-
-                        _instanceData = instanceData;
-#if DEBUG
-                        Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings Ok");
-#endif
-                        if (!LoadConfiguration())
-                        {
-#if DEBUG
-                            Android.Util.Log.Info(Tag, "CommStateMachine: LoadConfiguration failed");
-#endif
-                            _startState = StartState.Error;
-                            return;
-                        }
-#if DEBUG
-                        Android.Util.Log.Info(Tag, "CommStateMachine: LoadConfiguration Ok");
-#endif
-                        _startState = StartState.CompileCode;
-                        PostUpdateNotification();
+                        _startState = StartState.Error;
+                        return;
                     }
 
+                    ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
+                    if (!_activityCommon.GetSettings(instanceData, settingsFile, ActivityCommon.SettingsMode.All, true))
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings failed");
+#endif
+                        _startState = StartState.Error;
+                        return;
+                    }
+
+                    if (!RequestStoragePermissions(instanceData))
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommStateMachine: Request permissions failed");
+#endif
+                        _startState = StartState.Error;
+                        return;
+                    }
+
+                    if (instanceData.LastSelectedJobIndex < 0)
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommStateMachine: No page selected");
+#endif
+                        _startState = StartState.Terminate;
+                        return;
+                    }
+
+                    _instanceData = instanceData;
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings Ok");
+#endif
+                    if (!LoadConfiguration())
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, "CommStateMachine: LoadConfiguration failed");
+#endif
+                        _startState = StartState.Error;
+                        return;
+                    }
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "CommStateMachine: LoadConfiguration Ok");
+#endif
+                    _startState = StartState.CompileCode;
+                    PostUpdateNotification();
                     break;
                 }
 
