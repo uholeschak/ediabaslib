@@ -815,15 +815,7 @@ namespace BmwDeepObd
             {
                 _backPressed = true;
                 _lastBackPressedTime = Stopwatch.GetTimestamp();
-
-                View rootView = _contentView?.RootView;
-                if (rootView != null)
-                {
-                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                    balloonBuilder.Text = GetString(Resource.String.back_button_twice_for_exit);
-                    Balloon balloon = balloonBuilder.Build();
-                    balloon.Show(rootView);
-                }
+                ShowBallonMessage(GetString(Resource.String.back_button_twice_for_exit));
             }
         }
 
@@ -5249,28 +5241,16 @@ namespace BmwDeepObd
                         _compileProgress = null;
                         UpdateLockState();
 
-                        string balloonText = null;
                         if (cpuUsage >= CpuLoadCritical)
                         {
-                            balloonText = string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage);
+                            string balloonMessage = string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage);
+                            ShowBallonMessage(balloonMessage);
                         }
                         else
                         {
                             if (ActivityCommon.JobReader.CompatIdsUsed)
                             {
-                                 balloonText = GetString(Resource.String.compile_compat_id_warn);
-                            }
-                        }
-
-                        if (!string.IsNullOrEmpty(balloonText))
-                        {
-                            View rootView = _contentView?.RootView;
-                            if (rootView != null)
-                            {
-                                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                                balloonBuilder.Text = balloonText;
-                                Balloon balloon = balloonBuilder.Build();
-                                balloon.Show(rootView);
+                                ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn));
                             }
                         }
                     });
@@ -6579,6 +6559,18 @@ namespace BmwDeepObd
         private void OpenDonateLink()
         {
             _activityCommon.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
+        }
+
+        private void ShowBallonMessage(string message)
+        {
+            View rootView = _contentView?.RootView;
+            if (rootView != null)
+            {
+                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                balloonBuilder.Text = message;
+                Balloon balloon = balloonBuilder.Build();
+                balloon.Show(rootView);
+            }
         }
 
         private bool EditYandexKey()
