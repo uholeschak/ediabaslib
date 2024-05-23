@@ -5268,7 +5268,7 @@ namespace BmwDeepObd
                             if (rootView != null)
                             {
                                 Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                                balloonBuilder.Text = GetString(Resource.String.compile_compat_id_warn);
+                                balloonBuilder.Text = balloonText;
                                 Balloon balloon = balloonBuilder.Build();
                                 balloon.Show(rootView);
                             }
