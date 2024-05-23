@@ -783,6 +783,7 @@ namespace BmwDeepObd
         public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string DefaultLang = "en";
+        public const string BackupExt = ".bak";
         public const string ZipExt = ".zip";
         public const string TraceFileNameStd = "ifh.trc";
         public const string TraceFileNameZip = TraceFileNameStd + ZipExt;
@@ -12313,6 +12314,34 @@ using System.Threading;"
 
         public bool GetSettings(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, bool forceInit)
         {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
+            if (File.Exists(fileName))
+            {
+                if (GetSettingsFromFile(instanceData, fileName, settingsMode, forceInit))
+                {
+                    return true;
+                }
+            }
+
+            string backupFileName = fileName + BackupExt;
+            if (File.Exists(backupFileName))
+            {
+                if (GetSettingsFromFile(instanceData, backupFileName, settingsMode, forceInit))
+                {
+                    File.Copy(backupFileName, fileName, true);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool GetSettingsFromFile(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, bool forceInit)
+        {
             if (instanceData == null)
             {
                 return false;
@@ -12512,8 +12541,20 @@ using System.Threading;"
                         }
                     }
 
-                    File.Copy(tempFileName, fileName, true);
-                    tempFile.Delete();
+                    if (File.Exists(fileName))
+                    {
+                        try
+                        {
+                            string backupFileName = fileName + BackupExt;
+                            File.Move(fileName, backupFileName, true);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+
+                    File.Move(tempFileName, fileName, true);
 
                     if (!export)
                     {

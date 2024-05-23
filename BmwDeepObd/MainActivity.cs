@@ -1058,7 +1058,7 @@ namespace BmwDeepObd
                             }
                             else if (!string.IsNullOrEmpty(importFileName))
                             {
-                                _activityCommon.GetSettings(_instanceData, importFileName, ActivityCommon.SettingsMode.Private, !_activityRecreated);
+                                _activityCommon.GetSettingsFromFile(_instanceData, importFileName, ActivityCommon.SettingsMode.Private, !_activityRecreated);
                             }
                         }
 
@@ -2483,7 +2483,7 @@ namespace BmwDeepObd
             ActivityCommon.AssetFileSize = _assetFileSize;
 
             string settingsFile = ActivityCommon.GetSettingsFileName();
-            if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+            if (!string.IsNullOrEmpty(settingsFile))
             {
                 if (_activityCommon.GetSettings(_instanceData, settingsFile, ActivityCommon.SettingsMode.All, !_activityRecreated))
                 {
