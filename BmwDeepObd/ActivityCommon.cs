@@ -12136,7 +12136,38 @@ using System.Threading;"
             return Path.Combine(filesDir.AbsolutePath, SettingsFile);
         }
 
-        public static StorageData GetStorageData(string fileName, SettingsMode settingsMode = SettingsMode.All)
+        public static StorageData GetStorageData(SettingsMode settingsMode = SettingsMode.All)
+        {
+            string settingsFile = GetSettingsFileName();
+            StorageData storageData = GetStorageDataFromFile(settingsFile);
+            if (storageData != null)
+            {
+                return storageData;
+            }
+
+            string backupFileName = settingsFile + BackupExt;
+            if (File.Exists(backupFileName))
+            {
+                storageData = GetStorageDataFromFile(backupFileName);
+                if (storageData != null)
+                {
+                    try
+                    {
+                        File.Copy(backupFileName, settingsFile, true);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    return storageData;
+                }
+            }
+
+            return new StorageData();
+        }
+
+        public static StorageData GetStorageDataFromFile(string fileName, SettingsMode settingsMode = SettingsMode.All)
         {
             StorageData storageData = null;
             try
@@ -12165,8 +12196,6 @@ using System.Threading;"
             {
                 return null;
             }
-
-            storageData ??= new StorageData();
 
             return storageData;
         }
@@ -12229,11 +12258,7 @@ using System.Threading;"
                 {
                     if (SelectedLocale == null)
                     {
-                        string settingsFile = GetSettingsFileName();
-                        if (!string.IsNullOrEmpty(settingsFile))
-                        {
-                            GetLocaleThemeSettings(settingsFile, true, false);
-                        }
+                        GetLocaleThemeSettings(true, false);
                     }
 
                     if (SelectedLocale != null)
@@ -12254,9 +12279,9 @@ using System.Threading;"
             }
         }
 
-        public static bool GetLocaleThemeSettings(string fileName, bool updateLocale, bool updateTheme)
+        public static bool GetLocaleThemeSettings(bool updateLocale, bool updateTheme)
         {
-            StorageData storageData = GetStorageData(fileName);
+            StorageData storageData = GetStorageData();
 
             if (updateLocale)
             {
@@ -12277,22 +12302,15 @@ using System.Threading;"
             {
                 if (instanceData == null)
                 {
-                    string settingsFile = GetSettingsFileName();
-                    if (!string.IsNullOrEmpty(settingsFile))
+                    if (SelectedTheme == null)
                     {
-                        if (SelectedTheme == null)
-                        {
-                            GetLocaleThemeSettings(settingsFile, false, true);
-                        }
-
-                        return;
+                        GetLocaleThemeSettings(false, true);
                     }
+
+                    return;
                 }
 
-                if (instanceData != null)
-                {
-                    instanceData.LastThemeType = SelectedTheme;
-                }
+                instanceData.LastThemeType = SelectedTheme;
             }
             catch (Exception)
             {
@@ -12314,41 +12332,12 @@ using System.Threading;"
 
         public bool GetSettings(InstanceDataCommon instanceData, SettingsMode settingsMode, bool forceInit)
         {
-            string settingsFile = GetSettingsFileName();
-            if (string.IsNullOrEmpty(settingsFile))
-            {
-                return false;
-            }
-
-            if (File.Exists(settingsFile))
-            {
-                if (GetSettingsFromFile(instanceData, settingsFile, settingsMode, forceInit))
-                {
-                    return true;
-                }
-            }
-
-            string backupFileName = settingsFile + BackupExt;
-            if (File.Exists(backupFileName))
-            {
-                if (GetSettingsFromFile(instanceData, backupFileName, settingsMode, forceInit))
-                {
-                    File.Copy(backupFileName, settingsFile, true);
-                    return true;
-                }
-            }
-
-            return false;
+            return GetSettingsFromFile(instanceData, null, settingsMode, forceInit);
         }
 
         public bool GetSettingsFromFile(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, bool forceInit)
         {
             if (instanceData == null)
-            {
-                return false;
-            }
-
-            if (string.IsNullOrEmpty(fileName))
             {
                 return false;
             }
@@ -12364,7 +12353,21 @@ using System.Threading;"
                     SetDefaultSettings();
                 }
 
-                StorageData storageData = GetStorageData(fileName, settingsMode);
+                StorageData storageData;
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    storageData = GetStorageData(settingsMode);
+                }
+                else
+                {
+                    storageData = GetStorageDataFromFile(fileName, settingsMode);
+                }
+
+                if (storageData == null)
+                {
+                    return false;
+                }
+
                 hash = storageData.CalcualeHash();
 
                 if (init || import)
@@ -12581,14 +12584,8 @@ using System.Threading;"
 
         public static AutoConnectType GetAutoConnectSetting()
         {
-            string settingsFile = GetSettingsFileName();
-            if (!string.IsNullOrEmpty(settingsFile))
-            {
-                StorageData storageData = GetStorageData(settingsFile);
-                return storageData.AutoConnectHandling;
-            }
-
-            return AutoConnectType.Offline;
+            StorageData storageData = GetStorageData();
+            return storageData.AutoConnectHandling;
         }
 
         public bool UpdateDirectories(InstanceDataCommon instanceData)
