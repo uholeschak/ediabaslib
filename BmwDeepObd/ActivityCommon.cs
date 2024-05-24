@@ -12141,7 +12141,7 @@ using System.Threading;"
             StorageData storageData = null;
             try
             {
-                if (File.Exists(fileName))
+                if (!string.IsNullOrEmpty(fileName) && File.Exists(fileName))
                 {
                     try
                     {
@@ -12230,7 +12230,7 @@ using System.Threading;"
                     if (SelectedLocale == null)
                     {
                         string settingsFile = GetSettingsFileName();
-                        if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                        if (!string.IsNullOrEmpty(settingsFile))
                         {
                             GetLocaleThemeSettings(settingsFile, true, false);
                         }
@@ -12278,7 +12278,7 @@ using System.Threading;"
                 if (instanceData == null)
                 {
                     string settingsFile = GetSettingsFileName();
-                    if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+                    if (!string.IsNullOrEmpty(settingsFile))
                     {
                         if (SelectedTheme == null)
                         {
@@ -12580,7 +12580,7 @@ using System.Threading;"
         public static AutoConnectType GetAutoConnectSetting()
         {
             string settingsFile = GetSettingsFileName();
-            if (!string.IsNullOrEmpty(settingsFile) && File.Exists(settingsFile))
+            if (!string.IsNullOrEmpty(settingsFile))
             {
                 StorageData storageData = GetStorageData(settingsFile);
                 return storageData.AutoConnectHandling;
