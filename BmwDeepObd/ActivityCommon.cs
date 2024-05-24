@@ -12471,6 +12471,11 @@ using System.Threading;"
 
         public bool StoreSettings(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, out string errorMessage)
         {
+            return StoreSettingsToFile(instanceData, fileName, settingsMode, out errorMessage, true);
+        }
+
+        public bool StoreSettingsToFile(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, out string errorMessage, bool createBackup = false)
+        {
             errorMessage = null;
             if (instanceData == null)
             {
@@ -12541,7 +12546,7 @@ using System.Threading;"
                         }
                     }
 
-                    if (File.Exists(fileName))
+                    if (createBackup && File.Exists(fileName))
                     {
                         try
                         {
