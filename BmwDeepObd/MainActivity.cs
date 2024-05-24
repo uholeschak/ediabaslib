@@ -1040,7 +1040,7 @@ namespace BmwDeepObd
                                 (int)ActivityCommon.SettingsMode.Private);
                             if (!string.IsNullOrEmpty(exportFileName))
                             {
-                                if (!_activityCommon.StoreSettings(_instanceData, exportFileName, settingsMode, out string errorMessage))
+                                if (!_activityCommon.StoreSettingsToFile(_instanceData, exportFileName, settingsMode, out string errorMessage))
                                 {
                                     string message = GetString(Resource.String.store_settings_failed);
                                     if (errorMessage != null)
