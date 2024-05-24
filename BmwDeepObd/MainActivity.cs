@@ -2482,7 +2482,7 @@ namespace BmwDeepObd
             ActivityCommon.AssetFileName = _assetFileName;
             ActivityCommon.AssetFileSize = _assetFileSize;
 
-            if (_activityCommon.GetSettings(_instanceData, ActivityCommon.GetSettingsFileName(), ActivityCommon.SettingsMode.All, !_activityRecreated))
+            if (_activityCommon.GetSettings(_instanceData, ActivityCommon.SettingsMode.All, !_activityRecreated))
             {
                 return;
             }
@@ -2490,7 +2490,7 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
-            if (!_activityCommon.StoreSettings(_instanceData, ActivityCommon.GetSettingsFileName(), ActivityCommon.SettingsMode.All, out string errorMessage))
+            if (!_activityCommon.StoreSettings(_instanceData, ActivityCommon.SettingsMode.All, out string errorMessage))
             {
                 string message = GetString(Resource.String.store_settings_failed);
                 if (errorMessage != null)
