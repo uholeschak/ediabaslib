@@ -934,7 +934,7 @@ namespace BmwDeepObd
                 case StartState.LoadSettings:
                 {
                     ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
-                    if (!_activityCommon.GetSettings(instanceData, ActivityCommon.GetSettingsFileName(), ActivityCommon.SettingsMode.All, true))
+                    if (!_activityCommon.GetSettings(instanceData, ActivityCommon.SettingsMode.All, true))
                     {
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: GetSettings failed");

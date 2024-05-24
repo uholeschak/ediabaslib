@@ -12312,27 +12312,28 @@ using System.Threading;"
             }
         }
 
-        public bool GetSettings(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, bool forceInit)
+        public bool GetSettings(InstanceDataCommon instanceData, SettingsMode settingsMode, bool forceInit)
         {
-            if (string.IsNullOrEmpty(fileName))
+            string settingsFile = GetSettingsFileName();
+            if (string.IsNullOrEmpty(settingsFile))
             {
                 return false;
             }
 
-            if (File.Exists(fileName))
+            if (File.Exists(settingsFile))
             {
-                if (GetSettingsFromFile(instanceData, fileName, settingsMode, forceInit))
+                if (GetSettingsFromFile(instanceData, settingsFile, settingsMode, forceInit))
                 {
                     return true;
                 }
             }
 
-            string backupFileName = fileName + BackupExt;
+            string backupFileName = settingsFile + BackupExt;
             if (File.Exists(backupFileName))
             {
                 if (GetSettingsFromFile(instanceData, backupFileName, settingsMode, forceInit))
                 {
-                    File.Copy(backupFileName, fileName, true);
+                    File.Copy(backupFileName, settingsFile, true);
                     return true;
                 }
             }
@@ -12469,9 +12470,10 @@ using System.Threading;"
             return false;
         }
 
-        public bool StoreSettings(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, out string errorMessage)
+        public bool StoreSettings(InstanceDataCommon instanceData, SettingsMode settingsMode, out string errorMessage)
         {
-            return StoreSettingsToFile(instanceData, fileName, settingsMode, out errorMessage, true);
+            string settingsFile = GetSettingsFileName();
+            return StoreSettingsToFile(instanceData, settingsFile, settingsMode, out errorMessage, true);
         }
 
         public bool StoreSettingsToFile(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, out string errorMessage, bool createBackup = false)
