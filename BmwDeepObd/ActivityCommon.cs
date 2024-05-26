@@ -12125,9 +12125,11 @@ using System.Threading;"
             return true;
         }
 
-        public static string GetSettingsFileName()
+        public static string GetSettingsFileName(bool secondLocation = false)
         {
-            Java.IO.File filesDir = Android.App.Application.Context.FilesDir;
+            Java.IO.File filesDir = secondLocation ?
+                Android.App.Application.Context.NoBackupFilesDir : Android.App.Application.Context.FilesDir;
+
             if (filesDir == null)
             {
                 return string.Empty;
@@ -12138,32 +12140,35 @@ using System.Threading;"
 
         public static StorageData GetStorageData(SettingsMode settingsMode = SettingsMode.All)
         {
-            string settingsFile = GetSettingsFileName();
-            StorageData storageData = GetStorageDataFromFile(settingsFile);
-            if (storageData != null)
+            for (int i = 0; i < 2; i++)
             {
-                return storageData;
-            }
-
-            string backupFileName = settingsFile + BackupExt;
-            if (File.Exists(backupFileName))
-            {
-                storageData = GetStorageDataFromFile(backupFileName);
+                string settingsFile = GetSettingsFileName(i > 0);
+                StorageData storageData = GetStorageDataFromFile(settingsFile);
                 if (storageData != null)
                 {
-                    try
-                    {
-                        File.Copy(backupFileName, settingsFile, true);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-
                     return storageData;
                 }
-            }
 
+                string backupFileName = settingsFile + BackupExt;
+                if (File.Exists(backupFileName))
+                {
+                    storageData = GetStorageDataFromFile(backupFileName);
+                    if (storageData != null)
+                    {
+                        try
+                        {
+                            File.Copy(backupFileName, settingsFile, true);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        return storageData;
+                    }
+                }
+
+            }
             return new StorageData();
         }
 
