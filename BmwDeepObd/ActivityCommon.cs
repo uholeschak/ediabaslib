@@ -48,7 +48,6 @@ using BmwDeepObd.Dialogs;
 using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
 using Android.App.Backup;
-using Java.Nio.FileNio.Attributes;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
