@@ -48,6 +48,7 @@ using BmwDeepObd.Dialogs;
 using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
 using Android.App.Backup;
+using Java.Nio.FileNio.Attributes;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -12125,9 +12126,11 @@ using System.Threading;"
             return true;
         }
 
-        public static string GetSettingsFileName()
+        public static string GetSettingsFileName(bool secondLocation = false)
         {
-            Java.IO.File filesDir = Android.App.Application.Context.FilesDir;
+            Java.IO.File filesDir = secondLocation ?
+                Android.App.Application.Context.NoBackupFilesDir : Android.App.Application.Context.FilesDir;
+
             if (filesDir == null)
             {
                 return string.Empty;
@@ -12138,32 +12141,40 @@ using System.Threading;"
 
         public static StorageData GetStorageData(SettingsMode settingsMode = SettingsMode.All)
         {
-            string settingsFile = GetSettingsFileName();
-            StorageData storageData = GetStorageDataFromFile(settingsFile);
-            if (storageData != null)
+            for (int i = 0; i < 2; i++)
             {
-                return storageData;
-            }
+                string settingsFile = GetSettingsFileName(i > 0);
+                if (string.IsNullOrEmpty(settingsFile))
+                {
+                    continue;
+                }
 
-            string backupFileName = settingsFile + BackupExt;
-            if (File.Exists(backupFileName))
-            {
-                storageData = GetStorageDataFromFile(backupFileName);
+                StorageData storageData = GetStorageDataFromFile(settingsFile, settingsMode);
                 if (storageData != null)
                 {
-                    try
-                    {
-                        File.Copy(backupFileName, settingsFile, true);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-
                     return storageData;
                 }
-            }
 
+                string backupFileName = settingsFile + BackupExt;
+                if (File.Exists(backupFileName))
+                {
+                    storageData = GetStorageDataFromFile(backupFileName, settingsMode);
+                    if (storageData != null)
+                    {
+                        try
+                        {
+                            File.Copy(backupFileName, settingsFile, true);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        return storageData;
+                    }
+                }
+
+            }
             return new StorageData();
         }
 
@@ -12476,7 +12487,38 @@ using System.Threading;"
         public bool StoreSettings(InstanceDataCommon instanceData, SettingsMode settingsMode, out string errorMessage)
         {
             string settingsFile = GetSettingsFileName();
-            return StoreSettingsToFile(instanceData, settingsFile, settingsMode, out errorMessage, true);
+            if (!StoreSettingsToFile(instanceData, settingsFile, settingsMode, out errorMessage, true))
+            {
+                return false;
+            }
+
+            string settingsFile2 = GetSettingsFileName(true);
+            if (File.Exists(settingsFile))
+            {
+                try
+                {
+                    File.Copy(settingsFile, settingsFile2, true);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            string backupFileName = settingsFile + BackupExt;
+            if (File.Exists(backupFileName))
+            {
+                try
+                {
+                    File.Copy(backupFileName, settingsFile2 + BackupExt, true);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return true;
         }
 
         public bool StoreSettingsToFile(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, out string errorMessage, bool createBackup = false)
