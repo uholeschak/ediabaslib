@@ -2484,6 +2484,30 @@ namespace BmwDeepObd
             return true;
         }
 
+        public bool IsAppInstalled(string packageName)
+        {
+            if (string.IsNullOrEmpty(packageName))
+            {
+                return false;
+            }
+
+            try
+            {
+                Intent intent = _packageManager?.GetLaunchIntentForPackage(packageName);
+                if (intent == null)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return false;
+        }
+
         public bool StartApp(string packageName, bool marketRedirect = false)
         {
             if (string.IsNullOrEmpty(packageName))
