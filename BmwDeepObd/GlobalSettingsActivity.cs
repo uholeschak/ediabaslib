@@ -59,6 +59,7 @@ namespace BmwDeepObd
         private bool _deleteFile;
         private string _selection;
         private bool _internalStorageLocation;
+        private bool _hasAppConfigUtility;
 #pragma warning disable CS0414 // Field is assigned but its value is never used
         private bool _ignoreCheckChange;
 #pragma warning restore CS0414 // Field is assigned but its value is never used
@@ -155,6 +156,7 @@ namespace BmwDeepObd
 
             _activityCommon = new ActivityCommon(this);
             _internalStorageLocation = _activityCommon.IsAppStorageLocationInternal();
+            _hasAppConfigUtility = _activityCommon.IsAppInstalled(ActivityCommon.FreeflaxAutosetAppName);
 
             bool allowExport = false;
             bool allowImport = false;

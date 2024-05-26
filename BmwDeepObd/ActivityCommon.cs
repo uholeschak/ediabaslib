@@ -782,6 +782,7 @@ namespace BmwDeepObd
         public const SslProtocols DefaultSslProtocols = SslProtocols.None;
         public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
+        public const string FreeflaxAutosetAppName = @"freeflax.autoset";
         public const string DefaultLang = "en";
         public const string BackupExt = ".bak";
         public const string ZipExt = ".zip";
