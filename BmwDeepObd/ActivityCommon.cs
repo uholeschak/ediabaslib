@@ -48,6 +48,7 @@ using BmwDeepObd.Dialogs;
 using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
 using Android.App.Backup;
+using Java.Nio.FileNio.Attributes;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -12143,7 +12144,12 @@ using System.Threading;"
             for (int i = 0; i < 2; i++)
             {
                 string settingsFile = GetSettingsFileName(i > 0);
-                StorageData storageData = GetStorageDataFromFile(settingsFile);
+                if (string.IsNullOrEmpty(settingsFile))
+                {
+                    continue;
+                }
+
+                StorageData storageData = GetStorageDataFromFile(settingsFile, settingsMode);
                 if (storageData != null)
                 {
                     return storageData;
@@ -12152,7 +12158,7 @@ using System.Threading;"
                 string backupFileName = settingsFile + BackupExt;
                 if (File.Exists(backupFileName))
                 {
-                    storageData = GetStorageDataFromFile(backupFileName);
+                    storageData = GetStorageDataFromFile(backupFileName, settingsMode);
                     if (storageData != null)
                     {
                         try
@@ -12481,7 +12487,38 @@ using System.Threading;"
         public bool StoreSettings(InstanceDataCommon instanceData, SettingsMode settingsMode, out string errorMessage)
         {
             string settingsFile = GetSettingsFileName();
-            return StoreSettingsToFile(instanceData, settingsFile, settingsMode, out errorMessage, true);
+            if (!StoreSettingsToFile(instanceData, settingsFile, settingsMode, out errorMessage, true))
+            {
+                return false;
+            }
+
+            string settingsFile2 = GetSettingsFileName(true);
+            if (File.Exists(settingsFile))
+            {
+                try
+                {
+                    File.Copy(settingsFile, settingsFile2, true);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            string backupFileName = settingsFile + BackupExt;
+            if (File.Exists(backupFileName))
+            {
+                try
+                {
+                    File.Copy(backupFileName, settingsFile2 + BackupExt, true);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return true;
         }
 
         public bool StoreSettingsToFile(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, out string errorMessage, bool createBackup = false)
