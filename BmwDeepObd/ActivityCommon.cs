@@ -12505,11 +12505,23 @@ using System.Threading;"
             }
 
             string backupFileName = settingsFile + BackupExt;
+            string backupFile2Name = settingsFile2 + BackupExt;
             if (File.Exists(backupFileName))
             {
                 try
                 {
-                    File.Copy(backupFileName, settingsFile2 + BackupExt, true);
+                    File.Copy(backupFileName, backupFile2Name, true);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+            else
+            {
+                try
+                {
+                    File.Delete(backupFile2Name);
                 }
                 catch (Exception)
                 {
