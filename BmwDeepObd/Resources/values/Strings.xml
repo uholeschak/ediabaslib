@@ -482,7 +482,7 @@
   <string name="settings_update_1day">Every day</string>
   <string name="settings_update_1week">Every week</string>
   <string name="settings_caption_app_exit">App exit</string>
-  <string name="settings_app_config">Configure app start</string>
+  <string name="settings_app_config">App manager</string>
   <string name="settings_double_click_for_app_exit">Double click required for app exit</string>
   <string name="settings_caption_broadcast">Broadcast</string>
   <string name="settings_send_data_broadcast">Send data broadcast</string>
@@ -519,7 +519,7 @@
   <string name="settings_import_settings">Import settings</string>
   <string name="settings_import_no_file">The import file has not been found:</string>
   <string name="settings_export_private">Do you also want to export private data?</string>
-  <string name="settings_mtc_boot_hint">The boot option is very often not working on Android radios.\nIt\'s recommended to select one of the other auto start options and configure this app for auto start at boot and standby in Android.</string>
+  <string name="settings_mtc_boot_hint">The boot option is very often not working correctly on Android radios.\nIt\'s recommended to configure Deep OBD in the app manager to stay active in standby.</string>
   <string name="settings_internal_location_boot_hint">The boot option is only available if the app install location is internal.</string>
   <string name="settings_start_app_failed">The app could not be started.</string>
 
