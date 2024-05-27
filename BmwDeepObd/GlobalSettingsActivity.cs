@@ -100,6 +100,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonStartConnect;
         private RadioButton _radioButtonStartConnectClose;
         private RadioButton _radioButtonStartBoot;
+        private Button _buttonManageAppConfig;
         private CheckBox _checkBoxDoubleClickForAppExit;
         private CheckBox _checkBoxSendDataBroadcast;
         private RadioButton _radioButtonUpdateOff;
@@ -146,7 +147,7 @@ namespace BmwDeepObd
             SupportActionBar.SetHomeButtonEnabled(true);
             SupportActionBar.SetDisplayShowHomeEnabled(true);
             SupportActionBar.SetDisplayHomeAsUpEnabled(true);
-            SetContentView(Resource.Layout.settings);
+            SetContentView(Resource.Layout.global_settings);
 
             SetResult(Android.App.Result.Canceled);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
@@ -236,6 +237,18 @@ namespace BmwDeepObd
             _radioButtonStartBoot = FindViewById<RadioButton>(Resource.Id.radioButtonStartBoot);
             _radioButtonStartBoot.Enabled = _internalStorageLocation;
             _radioButtonStartBoot.SetOnTouchListener(this);
+
+            _buttonManageAppConfig = FindViewById<Button>(Resource.Id.buttonManageAppConfig);
+            _buttonManageAppConfig.Visibility = _hasAppConfigUtility ? ViewStates.Visible : ViewStates.Gone;
+            _buttonManageAppConfig.Click += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                _activityCommon.StartApp(ActivityCommon.FreeflaxAutosetAppName);
+            };
 
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
             _checkBoxSendDataBroadcast = FindViewById<CheckBox>(Resource.Id.checkBoxSendDataBroadcast);
