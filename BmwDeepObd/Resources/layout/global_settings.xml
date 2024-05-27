@@ -262,6 +262,11 @@
               android:layout_height="wrap_content"
               android:text="@string/settings_start_boot" />
         </RadioGroup>
+        <Button
+            android:text="@string/settings_app_config"
+            android:id="@+id/buttonManageAppConfig"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <TextView
             android:text="@string/settings_caption_app_exit"
             android:id="@+id/textViewCaptionAppExit"
