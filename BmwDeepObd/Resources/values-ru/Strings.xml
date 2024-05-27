@@ -558,6 +558,8 @@
   <string name="settings_mtc_boot_hint">Опция загрузки очень часто не работает на радиостанциях Android.\nРекомендуется выбрать один из других вариантов автоматического запуска и настроить это приложение для автоматического запуска при загрузке и режиме ожидания в Android.</string>
   <!--Translate-->
   <string name="settings_internal_location_boot_hint">Параметр загрузки доступен только в том случае, если местоположение установки приложения является внутренним.</string>
+  <!--Translate-->
+  <string name="settings_start_app_failed">Приложение не удалось запустить.</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
