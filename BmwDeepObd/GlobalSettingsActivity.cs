@@ -247,7 +247,10 @@ namespace BmwDeepObd
                     return;
                 }
 
-                _activityCommon.StartApp(ActivityCommon.FreeflaxAutosetAppName);
+                if (!_activityCommon.StartApp(ActivityCommon.FreeflaxAutosetAppName))
+                {
+                    _activityCommon.ShowAlert(GetString(Resource.String.settings_start_app_failed), Resource.String.alert_title_error);
+                }
             };
 
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
