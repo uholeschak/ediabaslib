@@ -1337,7 +1337,12 @@ namespace BmwDeepObd
             IMenuItem addErrorsMenu = menu.FindItem(Resource.Id.menu_xml_tool_add_errors_page);
             if (addErrorsMenu != null)
             {
-                addErrorsMenu.SetEnabled(!commActive && _ecuList.Count > 0 && !_instanceData.NoErrorsPageUpdate);
+                int ecuListCount;
+                lock (_ecuListLock)
+                {
+                    ecuListCount = _ecuList.Count;
+                }
+                addErrorsMenu.SetEnabled(!commActive && ecuListCount > 0 && !_instanceData.NoErrorsPageUpdate);
                 addErrorsMenu.SetChecked(_instanceData.AddErrorsPage);
             }
 
@@ -1575,7 +1580,12 @@ namespace BmwDeepObd
             }
 
 #if USE_DRAG_LIST
-            if (_ecuList.Count > 1)
+            int ecuListCount;
+            lock (_ecuListLock)
+            {
+                ecuListCount = _ecuList.Count;
+            }
+            if (ecuListCount > 1)
             {
                 if (!_instanceData.ListMoveHintShown)
                 {
