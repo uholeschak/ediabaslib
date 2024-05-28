@@ -1857,7 +1857,14 @@ namespace BmwDeepObd
             }
 
             _ecuListAdapter.ClearItems();
-            if (_ecuList.Count == 0)
+
+            int ecuListCount;
+            lock (_ecuListLock)
+            {
+                ecuListCount = _ecuList.Count;
+            }
+
+            if (ecuListCount == 0)
             {
                 ClearEcuList();
             }
@@ -1874,9 +1881,13 @@ namespace BmwDeepObd
                 {
                     return;
                 }
-                foreach (EcuInfo ecu in _ecuList)
+
+                lock (_ecuListLock)
                 {
-                    _ecuListAdapter.AppendItem(ecu);
+                    foreach (EcuInfo ecu in _ecuList)
+                    {
+                        _ecuListAdapter.AppendItem(ecu);
+                    }
                 }
             }
             if (!ActivityCommon.EnableTranslation)
