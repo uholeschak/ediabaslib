@@ -649,6 +649,7 @@ namespace BmwDeepObd
         private SgFunctions _sgFunctions;
         private Thread _jobThread;
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
+        private static object _ecuListLock = new object();
         private EcuInfo _ecuInfoMot;
         private EcuInfo _ecuInfoDid;
         private EcuInfo _ecuInfoBmwServiceMenu;
@@ -662,9 +663,12 @@ namespace BmwDeepObd
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
 
-            if (_ecuList == null)
+            lock (_ecuListLock)
             {
-                _ecuList = new List<EcuInfo>();
+                if (_ecuList == null)
+                {
+                    _ecuList = new List<EcuInfo>();
+                }
             }
 
             if (_ruleEvalBmw == null)
@@ -679,7 +683,10 @@ namespace BmwDeepObd
             }
             else
             {
-                _ecuList.Clear();
+                lock (_ecuListLock)
+                {
+                    _ecuList.Clear();
+                }
                 _ruleEvalBmw?.ClearEvalProperties();
             }
 
@@ -1041,7 +1048,10 @@ namespace BmwDeepObd
         {
             base.Finish();
             StoreTranslation();
-            _ecuList.Clear();
+            lock (_ecuListLock)
+            {
+                _ecuList.Clear();
+            }
             _ruleEvalBmw.ClearEvalProperties();
         }
 
