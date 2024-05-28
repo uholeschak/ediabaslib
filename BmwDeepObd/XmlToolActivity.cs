@@ -1068,9 +1068,12 @@ namespace BmwDeepObd
             }
 
             int resourceId = Resource.String.xml_tool_msg_save_config_select;
-            if (!_ecuList.Any(x => x.Selected))
+            lock (_ecuListLock)
             {
-                resourceId = Resource.String.xml_tool_msg_save_config_empty;
+                if (!_ecuList.Any(x => x.Selected))
+                {
+                    resourceId = Resource.String.xml_tool_msg_save_config_empty;
+                }
             }
             new AlertDialog.Builder(this)
                 .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -1127,16 +1130,26 @@ namespace BmwDeepObd
                         {
                             break;
                         }
-                        if (_ecuList.Any(ecuInfo => string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
+
+                        lock (_ecuListLock)
                         {
-                            break;
+                            if (_ecuList.Any(ecuInfo => string.Compare(ecuInfo.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
+                            {
+                                break;
+                            }
                         }
+
                         EcuInfo ecuInfoNew = new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty)
                         {
                             PageName = string.Empty,
                             EcuName = string.Empty
                         };
-                        _ecuList.Add(ecuInfoNew);
+
+                        lock (_ecuListLock)
+                        {
+                            _ecuList.Add(ecuInfoNew);
+                        }
+
                         ExecuteUpdateEcuInfo();
                         UpdateOptionsMenu();
                         UpdateDisplay();
@@ -1402,10 +1415,14 @@ namespace BmwDeepObd
                     if (_buttonSafe.Enabled)
                     {
                         int resourceId = Resource.String.xml_tool_msg_save_config_select;
-                        if (!_ecuList.Any(x => x.Selected))
+                        lock (_ecuListLock)
                         {
-                            resourceId = Resource.String.xml_tool_msg_save_config_empty;
+                            if (!_ecuList.Any(x => x.Selected))
+                            {
+                                resourceId = Resource.String.xml_tool_msg_save_config_empty;
+                            }
                         }
+
                         new AlertDialog.Builder(this)
                             .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                             {
@@ -1722,7 +1739,10 @@ namespace BmwDeepObd
         private void ClearEcuList()
         {
             ClearVehicleInfo();
-            _ecuList.Clear();
+            lock (_ecuListLock)
+            {
+                _ecuList.Clear();
+            }
             _ecuInfoMot = null;
             _ecuInfoDid = null;
             _detectVehicleBmw = null;
