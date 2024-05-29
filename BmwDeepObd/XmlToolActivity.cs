@@ -658,6 +658,20 @@ namespace BmwDeepObd
         private bool _translateActive;
         private bool _ecuListTranslated;
 
+        private static int EcuListCount
+        {
+            get
+            {
+                int ecuListCount;
+                lock (_ecuListLock)
+                {
+                    ecuListCount = _ecuList.Count;
+                }
+
+                return ecuListCount;
+            }
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(ActivityCommon.SelectedThemeId);
@@ -820,7 +834,7 @@ namespace BmwDeepObd
                 }
 
                 int pos = args.Position;
-                if (pos >= 0 && pos < _ecuList.Count)
+                if (pos >= 0 && pos < EcuListCount)
                 {
                     PerformJobsRead(_ecuList[pos]);
                 }
@@ -1337,12 +1351,7 @@ namespace BmwDeepObd
             IMenuItem addErrorsMenu = menu.FindItem(Resource.Id.menu_xml_tool_add_errors_page);
             if (addErrorsMenu != null)
             {
-                int ecuListCount;
-                lock (_ecuListLock)
-                {
-                    ecuListCount = _ecuList.Count;
-                }
-                addErrorsMenu.SetEnabled(!commActive && ecuListCount > 0 && !_instanceData.NoErrorsPageUpdate);
+                addErrorsMenu.SetEnabled(!commActive && EcuListCount > 0 && !_instanceData.NoErrorsPageUpdate);
                 addErrorsMenu.SetChecked(_instanceData.AddErrorsPage);
             }
 
@@ -1580,12 +1589,7 @@ namespace BmwDeepObd
             }
 
 #if USE_DRAG_LIST
-            int ecuListCount;
-            lock (_ecuListLock)
-            {
-                ecuListCount = _ecuList.Count;
-            }
-            if (ecuListCount > 1)
+            if (EcuListCount > 1)
             {
                 if (!_instanceData.ListMoveHintShown)
                 {
@@ -1858,13 +1862,7 @@ namespace BmwDeepObd
 
             _ecuListAdapter.ClearItems();
 
-            int ecuListCount;
-            lock (_ecuListLock)
-            {
-                ecuListCount = _ecuList.Count;
-            }
-
-            if (ecuListCount == 0)
+            if (EcuListCount == 0)
             {
                 ClearEcuList();
             }
@@ -1899,11 +1897,11 @@ namespace BmwDeepObd
                 Resource.String.button_xml_tool_edit : Resource.String.button_xml_tool_read);
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
             int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
-            _buttonSafe.Enabled = (_ecuList.Count > 0) && (_instanceData.AddErrorsPage || (selectedCount > 0));
+            _buttonSafe.Enabled = (EcuListCount > 0) && (_instanceData.AddErrorsPage || (selectedCount > 0));
             _ecuListAdapter.NotifyDataSetChanged();
 
             string statusText = string.Empty;
-            if (_ecuList.Count > 0)
+            if (EcuListCount > 0)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(GetString(Resource.String.xml_tool_ecu_list));
@@ -2516,7 +2514,7 @@ namespace BmwDeepObd
                 switch (args.Item.ItemId)
                 {
                     case Resource.Id.menu_xml_tool_edit_detect:
-                        if (_ecuList.Count > 0)
+                        if (EcuListCount > 0)
                         {
                             if (_instanceData.EcuSearchAbortIndex >= 0)
                             {
@@ -2585,7 +2583,7 @@ namespace BmwDeepObd
             AndroidX.AppCompat.Widget.PopupMenu popupContext = new AndroidX.AppCompat.Widget.PopupMenu(this, anchor);
             popupContext.Inflate(Resource.Menu.xml_tool_context);
 
-            bool itemInEcuList = itemPos >= 0 && itemPos < _ecuList.Count;
+            bool itemInEcuList = itemPos >= 0 && itemPos < EcuListCount;
             bool enableMenuAction = itemPos >= 0 && itemPos < _ecuListAdapter.ItemsCount && !IsJobRunning();
             bool bmwVisible = ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw;
             bool vagVisible = ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw;
@@ -2672,7 +2670,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (itemPos < 0 || itemPos >= _ecuList.Count)
+                if (itemPos < 0 || itemPos >= EcuListCount)
                 {
                     return;
                 }
@@ -2703,7 +2701,7 @@ namespace BmwDeepObd
                         break;
 
                     case Resource.Id.menu_xml_tool_move_down:
-                        if (itemPos + 1 >= _ecuList.Count)
+                        if (itemPos + 1 >= EcuListCount)
                         {
                             break;
                         }
@@ -4462,9 +4460,9 @@ namespace BmwDeepObd
                     {
                         _instanceData.Vin = vin;
                         ReadAllXml(true);
-                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECUs found for VIN: {0}", _ecuList.Count);
+                        _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECUs found for VIN: {0}", EcuListCount);
                         bool readEcus = true;
-                        if (_ecuList.Count > 0)
+                        if (EcuListCount > 0)
                         {
                             readEcus = false;
                             Semaphore waitSem = new Semaphore(0, 1);
@@ -4918,7 +4916,7 @@ namespace BmwDeepObd
                 int detectCount = 0;
                 if (searchStartIndex >= 0)
                 {
-                    detectCount = _ecuList.Count;
+                    detectCount = EcuListCount;
                 }
                 foreach (ActivityCommon.VagEcuEntry ecuEntry in ecuVagList)
                 {
@@ -5145,7 +5143,7 @@ namespace BmwDeepObd
                     UpdateOptionsMenu();
                     UpdateDisplay();
 
-                    if (!_ediabasJobAbort && ((_ecuList.Count == 0) || (detectCount == 0)))
+                    if (!_ediabasJobAbort && ((EcuListCount == 0) || (detectCount == 0)))
                     {
                         _instanceData.CommErrorsOccurred = true;
                         ShowAlert(Resource.String.alert_title_error, Resource.String.xml_tool_no_response);
@@ -7485,7 +7483,7 @@ namespace BmwDeepObd
             EdiabasOpen();
 
             UpdateDisplay();
-            if ((_ecuList.Count == 0) || (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None))
+            if ((EcuListCount == 0) || (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None))
             {
                 _translateEnabled = true;
                 handler?.Invoke(true);
@@ -9324,7 +9322,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (_ecuList == null || _ecuList.Count == 0)
+            if (_ecuList == null || EcuListCount == 0)
             {
                 return false;
             }
@@ -9351,7 +9349,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (_ecuList == null || _ecuList.Count == 0)
+            if (_ecuList == null || EcuListCount == 0)
             {
                 return false;
             }
@@ -10276,7 +10274,7 @@ namespace BmwDeepObd
 #if DEBUG
                     Log.Debug(Tag, string.Format("OnItemDragEnded: {0} -> {1}", p0, p1));
 #endif
-                    if (p0 >= 0 && p0 < _ecuList.Count && p1 >= 0 && p1 < _ecuList.Count)
+                    if (p0 >= 0 && p0 < EcuListCount && p1 >= 0 && p1 < EcuListCount)
                     {
                         int oldIndex = p0;
                         int newIndex = p1;
@@ -10306,7 +10304,7 @@ namespace BmwDeepObd
 
             public bool CanDragItemAtPosition(int p0)
             {
-                if (p0 < 0 || p0 >= _ecuList.Count)
+                if (p0 < 0 || p0 >= EcuListCount)
                 {
                     return false;
                 }
