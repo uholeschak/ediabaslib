@@ -1896,7 +1896,11 @@ namespace BmwDeepObd
             _buttonRead.Text = GetString((_instanceData.ManualConfigIdx > 0) ?
                 Resource.String.button_xml_tool_edit : Resource.String.button_xml_tool_read);
             _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
-            int selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
+            int selectedCount;
+            lock (_ecuListLock)
+            {
+                selectedCount = _ecuList.Count(ecuInfo => ecuInfo.Selected);
+            }
             _buttonSafe.Enabled = (EcuListCount > 0) && (_instanceData.AddErrorsPage || (selectedCount > 0));
             _ecuListAdapter.NotifyDataSetChanged();
 
@@ -2546,15 +2550,19 @@ namespace BmwDeepObd
 
                     case Resource.Id.menu_xml_tool_edit_del:
                     {
-                        for (int i = 0; i < _ecuList.Count; i++)
+                        lock (_ecuListLock)
                         {
-                            EcuInfo ecuInfo = _ecuList[i];
-                            if (!ecuInfo.Selected)
+                            for (int i = 0; i < _ecuList.Count; i++)
                             {
-                                _ecuList.Remove(ecuInfo);
-                                i = 0;
+                                EcuInfo ecuInfo = _ecuList[i];
+                                if (!ecuInfo.Selected)
+                                {
+                                    _ecuList.Remove(ecuInfo);
+                                    i = 0;
+                                }
                             }
                         }
+
                         UpdateDisplay();
                         break;
                     }
@@ -2683,9 +2691,13 @@ namespace BmwDeepObd
 
                     case Resource.Id.menu_xml_tool_move_top:
                     {
-                        EcuInfo oldItem = _ecuList[itemPos];
-                        _ecuList.RemoveAt(itemPos);
-                        _ecuList.Insert(0, oldItem);
+                        lock (_ecuListLock)
+                        {
+                            EcuInfo oldItem = _ecuList[itemPos];
+                            _ecuList.RemoveAt(itemPos);
+                            _ecuList.Insert(0, oldItem);
+                        }
+
                         UpdateDisplay();
                         break;
                     }
@@ -2696,7 +2708,10 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        (_ecuList[itemPos], _ecuList[itemPos - 1]) = (_ecuList[itemPos - 1], _ecuList[itemPos]);
+                        lock (_ecuListLock)
+                        {
+                            (_ecuList[itemPos], _ecuList[itemPos - 1]) = (_ecuList[itemPos - 1], _ecuList[itemPos]);
+                        }
                         UpdateDisplay();
                         break;
 
@@ -2706,15 +2721,22 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        (_ecuList[itemPos], _ecuList[itemPos + 1]) = (_ecuList[itemPos + 1], _ecuList[itemPos]);
+                        lock (_ecuListLock)
+                        {
+                            (_ecuList[itemPos], _ecuList[itemPos + 1]) = (_ecuList[itemPos + 1], _ecuList[itemPos]);
+                        }
                         UpdateDisplay();
                         break;
 
                     case Resource.Id.menu_xml_tool_move_bottom:
                     {
-                        EcuInfo oldItem = _ecuList[itemPos];
-                        _ecuList.RemoveAt(itemPos);
-                        _ecuList.Add(oldItem);
+                        lock (_ecuListLock)
+                        {
+                            EcuInfo oldItem = _ecuList[itemPos];
+                            _ecuList.RemoveAt(itemPos);
+                            _ecuList.Add(oldItem);
+                        }
+
                         UpdateDisplay();
                         break;
                     }
