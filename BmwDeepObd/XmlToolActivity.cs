@@ -672,6 +672,24 @@ namespace BmwDeepObd
             }
         }
 
+        private EcuInfo GetEcuInfo(int index)
+        {
+            EcuInfo ecuInfo;
+            lock (_ecuListLock)
+            {
+                if (index >= 0 && index < _ecuList.Count)
+                {
+                    ecuInfo = _ecuList[index];
+                }
+                else
+                {
+                    ecuInfo = null;
+                }
+            }
+
+            return ecuInfo;
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(ActivityCommon.SelectedThemeId);
@@ -2626,7 +2644,7 @@ namespace BmwDeepObd
             IMenuItem bmwServiceMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_service);
             if (bmwServiceMenu != null)
             {
-                bool enableBmwService = enableMenuAction && itemInEcuList && ShowBwmServiceMenu(_ecuList[itemPos]) > 0;
+                bool enableBmwService = enableMenuAction && itemInEcuList && ShowBwmServiceMenu(GetEcuInfo(itemPos)) > 0;
                 bmwServiceMenu.SetEnabled(enableBmwService);
                 bmwServiceMenu.SetVisible(bmwVisible && bmwDatabaseActive);
             }
@@ -2686,7 +2704,7 @@ namespace BmwDeepObd
                 switch (args.Item.ItemId)
                 {
                     case Resource.Id.menu_xml_tool_config_ecu:
-                        PerformJobsRead(_ecuList[itemPos]);
+                        PerformJobsRead(GetEcuInfo(itemPos));
                         break;
 
                     case Resource.Id.menu_xml_tool_move_top:
@@ -2742,35 +2760,35 @@ namespace BmwDeepObd
                     }
 
                     case Resource.Id.menu_xml_tool_ediabas_tool:
-                        StartEdiabasTool(_ecuList[itemPos]);
+                        StartEdiabasTool(GetEcuInfo(itemPos));
                         break;
 
                     case Resource.Id.menu_xml_tool_bmw_actuator:
-                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.BmwActuator);
+                        CallEcuFunction(GetEcuInfo(itemPos), EcuFunctionCallType.BmwActuator);
                         break;
 
                     case Resource.Id.menu_xml_tool_bmw_service:
-                        ShowBwmServiceMenu(_ecuList[itemPos], anchor);
+                        ShowBwmServiceMenu(GetEcuInfo(itemPos), anchor);
                         break;
 
                     case Resource.Id.menu_xml_tool_vag_coding:
-                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagCoding);
+                        CallEcuFunction(GetEcuInfo(itemPos), EcuFunctionCallType.VagCoding);
                         break;
 
                     case Resource.Id.menu_xml_tool_vag_coding2:
-                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagCoding2);
+                        CallEcuFunction(GetEcuInfo(itemPos), EcuFunctionCallType.VagCoding2);
                         break;
 
                     case Resource.Id.menu_xml_tool_vag_adaption:
-                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagAdaption);
+                        CallEcuFunction(GetEcuInfo(itemPos), EcuFunctionCallType.VagAdaption);
                         break;
 
                     case Resource.Id.menu_xml_tool_vag_login:
-                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagLogin);
+                        CallEcuFunction(GetEcuInfo(itemPos), EcuFunctionCallType.VagLogin);
                         break;
 
                     case Resource.Id.menu_xml_tool_vag_sec_access:
-                        CallEcuFunction(_ecuList[itemPos], EcuFunctionCallType.VagSecAccess);
+                        CallEcuFunction(GetEcuInfo(itemPos), EcuFunctionCallType.VagSecAccess);
                         break;
                 }
             };
@@ -2836,6 +2854,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (ecuInfo == null)
+                {
+                    return -1;
+                }
+
                 if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
                 {
                     return -1;
@@ -5177,6 +5200,11 @@ namespace BmwDeepObd
 
         private void PerformJobsRead(EcuInfo ecuInfo)
         {
+            if (ecuInfo == null)
+            {
+                return;
+            }
+
             if (IsJobRunning())
             {
                 return;
