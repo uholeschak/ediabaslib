@@ -649,7 +649,7 @@ namespace BmwDeepObd
         private SgFunctions _sgFunctions;
         private Thread _jobThread;
         private static List<EcuInfo> _ecuList = new List<EcuInfo>();
-        private static object _ecuListLock = new object();
+        private static readonly object _ecuListLock = new object();
         private EcuInfo _ecuInfoMot;
         private EcuInfo _ecuInfoDid;
         private EcuInfo _ecuInfoBmwServiceMenu;
@@ -672,7 +672,7 @@ namespace BmwDeepObd
             }
         }
 
-        private EcuInfo GetEcuInfo(int index)
+        private static EcuInfo GetEcuInfo(int index)
         {
             EcuInfo ecuInfo;
             lock (_ecuListLock)
@@ -688,6 +688,14 @@ namespace BmwDeepObd
             }
 
             return ecuInfo;
+        }
+
+        private static void ClearStaticEcuList()
+        {
+            lock (_ecuListLock)
+            {
+                _ecuList.Clear();
+            }
         }
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -715,10 +723,7 @@ namespace BmwDeepObd
             }
             else
             {
-                lock (_ecuListLock)
-                {
-                    _ecuList.Clear();
-                }
+                ClearStaticEcuList();
                 _ruleEvalBmw?.ClearEvalProperties();
             }
 
@@ -1080,10 +1085,7 @@ namespace BmwDeepObd
         {
             base.Finish();
             StoreTranslation();
-            lock (_ecuListLock)
-            {
-                _ecuList.Clear();
-            }
+            ClearStaticEcuList();
             _ruleEvalBmw.ClearEvalProperties();
         }
 
@@ -1771,10 +1773,7 @@ namespace BmwDeepObd
         private void ClearEcuList()
         {
             ClearVehicleInfo();
-            lock (_ecuListLock)
-            {
-                _ecuList.Clear();
-            }
+            ClearStaticEcuList();
             _ecuInfoMot = null;
             _ecuInfoDid = null;
             _detectVehicleBmw = null;
