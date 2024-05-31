@@ -45,6 +45,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestDevelopmentSettings,
+            RequestApplicationSettings,
             RequestNotificationSettings,
             RequestOpenDocumentTreeToApp,
             RequestOpenDocumentTreeFromApp,
@@ -239,7 +240,7 @@ namespace BmwDeepObd
             _radioButtonStartBoot.SetOnTouchListener(this);
 
             _buttonManageAppConfig = FindViewById<Button>(Resource.Id.buttonManageAppConfig);
-            _buttonManageAppConfig.Visibility = _hasAppConfigUtility ? ViewStates.Visible : ViewStates.Gone;
+            _buttonManageAppConfig.Visibility = _hasAppConfigUtility || _activityCommon.MtcBtService ? ViewStates.Visible : ViewStates.Gone;
             _buttonManageAppConfig.Click += (sender, args) =>
             {
                 if (_activityCommon == null)
@@ -247,10 +248,16 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (!_activityCommon.StartApp(ActivityCommon.FreeflaxAutosetAppName))
+                if (_hasAppConfigUtility)
                 {
-                    _activityCommon.ShowAlert(GetString(Resource.String.settings_start_app_failed), Resource.String.alert_title_error);
+                    if (!_activityCommon.StartApp(ActivityCommon.FreeflaxAutosetAppName))
+                    {
+                        _activityCommon.ShowAlert(GetString(Resource.String.settings_start_app_failed), Resource.String.alert_title_error);
+                    }
+                    return;
                 }
+
+                ShowApplicationSettings();
             };
 
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
@@ -431,7 +438,7 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            if (v == _radioButtonStartBoot && _activityCommon.MtcBtService)
+                            if (v == _radioButtonStartBoot && (_hasAppConfigUtility || _activityCommon.MtcBtService))
                             {
                                 message = GetString(Resource.String.settings_mtc_boot_hint);
                             }
@@ -460,6 +467,10 @@ namespace BmwDeepObd
             switch ((ActivityRequest) requestCode)
             {
                 case ActivityRequest.RequestDevelopmentSettings:
+                    UpdateDisplay();
+                    break;
+
+                case ActivityRequest.RequestApplicationSettings:
                     UpdateDisplay();
                     break;
 
@@ -1027,12 +1038,26 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-            private bool ShowDevelopmentSettings()
+        private bool ShowDevelopmentSettings()
         {
             try
             {
                 Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDevelopmentSettings);
                 StartActivityForResult(intent, (int)ActivityRequest.RequestDevelopmentSettings);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool ShowApplicationSettings()
+        {
+            try
+            {
+                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationSettings);
+                StartActivityForResult(intent, (int)ActivityRequest.RequestApplicationSettings);
                 return true;
             }
             catch (Exception)
