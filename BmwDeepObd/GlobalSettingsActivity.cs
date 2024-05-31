@@ -257,7 +257,7 @@ namespace BmwDeepObd
                     return;
                 }
 
-                ShowApplicationSettings();
+                ShowSystemSettings();
             };
 
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
@@ -1052,11 +1052,11 @@ namespace BmwDeepObd
             }
         }
 
-        private bool ShowApplicationSettings()
+        private bool ShowSystemSettings()
         {
             try
             {
-                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationSettings);
+                Intent intent = new Intent(Android.Provider.Settings.ActionSettings);
                 StartActivityForResult(intent, (int)ActivityRequest.RequestApplicationSettings);
                 return true;
             }
