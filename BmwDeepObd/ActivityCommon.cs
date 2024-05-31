@@ -6607,6 +6607,11 @@ namespace BmwDeepObd
 
         public bool IsAppStorageLocationInternal()
         {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            {
+                return true;
+            }
+
             ApplicationInfo applicationInfo = GetApplicationInfo();
             if (applicationInfo?.StorageUuid == null)
             {
