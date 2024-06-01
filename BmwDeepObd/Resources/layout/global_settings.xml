@@ -263,8 +263,8 @@
               android:text="@string/settings_start_boot" />
         </RadioGroup>
         <Button
-            android:text="@string/settings_app_config"
-            android:id="@+id/buttonManageAppConfig"
+            android:text="@string/settings_sys_config"
+            android:id="@+id/buttonManageSysConfig"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <TextView
