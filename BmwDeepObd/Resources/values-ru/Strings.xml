@@ -517,7 +517,7 @@
   <string name="settings_update_1week">Каждую неделю</string>
   <string name="settings_caption_app_exit">Выход из приложения</string>
   <!--Translate-->
-  <string name="settings_app_config">Менеджер приложений</string>
+  <string name="settings_sys_config">Настройки системы</string>
   <string name="settings_double_click_for_app_exit">Для выхода из приложения требуется двойное нажатие</string>
   <string name="settings_caption_broadcast">Broadcast</string>
   <string name="settings_send_data_broadcast">Послать Broadcasts-данные</string>

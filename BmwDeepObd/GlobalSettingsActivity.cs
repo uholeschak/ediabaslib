@@ -101,7 +101,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonStartConnect;
         private RadioButton _radioButtonStartConnectClose;
         private RadioButton _radioButtonStartBoot;
-        private Button _buttonManageAppConfig;
+        private Button _buttonManageSysConfig;
         private CheckBox _checkBoxDoubleClickForAppExit;
         private CheckBox _checkBoxSendDataBroadcast;
         private RadioButton _radioButtonUpdateOff;
@@ -239,9 +239,9 @@ namespace BmwDeepObd
             _radioButtonStartBoot.Enabled = _internalStorageLocation;
             _radioButtonStartBoot.SetOnTouchListener(this);
 
-            _buttonManageAppConfig = FindViewById<Button>(Resource.Id.buttonManageAppConfig);
-            _buttonManageAppConfig.Visibility = _hasAppConfigUtility || _activityCommon.MtcBtService ? ViewStates.Visible : ViewStates.Gone;
-            _buttonManageAppConfig.Click += (sender, args) =>
+            _buttonManageSysConfig = FindViewById<Button>(Resource.Id.buttonManageSysConfig);
+            _buttonManageSysConfig.Visibility = _hasAppConfigUtility || _activityCommon.MtcBtService ? ViewStates.Visible : ViewStates.Gone;
+            _buttonManageSysConfig.Click += (sender, args) =>
             {
                 if (_activityCommon == null)
                 {

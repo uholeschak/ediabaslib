@@ -482,7 +482,7 @@
   <string name="settings_update_1day">Every day</string>
   <string name="settings_update_1week">Every week</string>
   <string name="settings_caption_app_exit">App exit</string>
-  <string name="settings_app_config">App manager</string>
+  <string name="settings_sys_config">System settings</string>
   <string name="settings_double_click_for_app_exit">Double click required for app exit</string>
   <string name="settings_caption_broadcast">Broadcast</string>
   <string name="settings_send_data_broadcast">Send data broadcast</string>
