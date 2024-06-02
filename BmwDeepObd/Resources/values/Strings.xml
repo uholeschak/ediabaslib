@@ -519,7 +519,9 @@
   <string name="settings_import_settings">Import settings</string>
   <string name="settings_import_no_file">The import file has not been found:</string>
   <string name="settings_export_private">Do you also want to export private data?</string>
-  <string name="settings_mtc_boot_hint">The boot option is very often not working correctly on Android radios.\nIt\'s recommended to configure Deep OBD in the app manager to stay active in standby.</string>
+  <string name="settings_mtc_boot_hint_title">The boot option is very often not working correctly on Android radios.</string>
+  <string name="settings_mtc_boot_hint_app_manger">It\'s recommended to configure Deep OBD in the app manager to stay active in standby.</string>
+  <string name="settings_mtc_boot_hint_start">It\'s recommended to select the app auto close option and start Deep OBD with other tools after standby.</string>
   <string name="settings_internal_location_boot_hint">The boot option is only available if the app install location is internal.</string>
   <string name="settings_start_app_failed">The app could not be started.</string>
 

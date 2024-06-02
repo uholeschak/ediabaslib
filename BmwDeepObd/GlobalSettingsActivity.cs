@@ -440,7 +440,15 @@ namespace BmwDeepObd
                         {
                             if (v == _radioButtonStartBoot && (_hasAppConfigUtility || _activityCommon.MtcBtService))
                             {
-                                message = GetString(Resource.String.settings_mtc_boot_hint);
+                                message = GetString(Resource.String.settings_mtc_boot_hint_title) + "\r\n";
+                                if (_hasAppConfigUtility)
+                                {
+                                    message += GetString(Resource.String.settings_mtc_boot_hint_app_manger);
+                                }
+                                else
+                                {
+                                    message += GetString(Resource.String.settings_mtc_boot_hint_start);
+                                }
                             }
                         }
 
