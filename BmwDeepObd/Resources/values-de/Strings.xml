@@ -545,7 +545,7 @@
   <string name="settings_export_private">Wollen Sie auch private Daten exportieren?</string>
   <string name="settings_mtc_boot_hint_title">Die Bootoption funktioniert oft nicht korrekt bei Android Radios.</string>
   <string name="settings_mtc_boot_hint_app_manger">Es wird empfohlen Deep OBD im App-Manager so zu konfigurieren, dass es im Standby aktiv bleibt.</string>
-  <string name="settings_mtc_boot_hint_start">Es wird empfohlen die App automatisch beenden Option zu aktivieren und Deep OBD mit anderen Tools nach dem Standby zu starten.</string>
+  <string name="settings_mtc_boot_hint_start">Es wird empfohlen die Startoption darüber zu wählen und Deep OBD mit anderen Tools nach dem Standby zu starten.</string>
   <string name="settings_internal_location_boot_hint">Die Bootoption ist nur verfügbar, wenn die App im internen Speicher installiert ist.</string>
   <string name="settings_start_app_failed">Die App konnte nicht gestartet werden.</string>
 
