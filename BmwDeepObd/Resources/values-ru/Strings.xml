@@ -559,7 +559,7 @@
   <!--Translate-->
   <string name="settings_mtc_boot_hint_app_manger">Рекомендуется настроить Deep OBD в диспетчере приложений, чтобы оставаться активным в режиме ожидания.</string>
   <!--Translate-->
-  <string name="settings_mtc_boot_hint_start">Рекомендуется выбрать опцию автоматического закрытия приложения и запустить Deep OBD с другими инструментами после режима ожидания.</string>
+  <string name="settings_mtc_boot_hint_start">Рекомендуется выбрать вариант запуска, указанный выше, и запустить Deep OBD с помощью других инструментов после режима ожидания.</string>
   <!--Translate-->
   <string name="settings_internal_location_boot_hint">Параметр загрузки доступен только в том случае, если местоположение установки приложения является внутренним.</string>
   <!--Translate-->
