@@ -783,6 +783,7 @@ namespace BmwDeepObd
         public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
         public const string FreeflaxAutosetAppName = @"freeflax.autoset";
+        public const string AutomationAppName = @"com.jens.automation2";
         public const string MacrodroidAppName = @"com.arlosoft.macrodroid";
         public const string DefaultLang = "en";
         public const string BackupExt = ".bak";
