@@ -506,7 +506,7 @@
   <string name="settings_update_1day">Jeden Tag</string>
   <string name="settings_update_1week">Jede Woche</string>
   <string name="settings_caption_app_exit">App beenden</string>
-  <string name="settings_sys_config">Systemeinstellungen</string>
+  <string name="settings_sys_config">App-Start konfigurieren</string>
   <string name="settings_double_click_for_app_exit">Doppelklick notwendig um App zu beenden</string>
   <string name="settings_caption_broadcast">Broadcast</string>
   <string name="settings_send_data_broadcast">Daten-Broadcasts senden</string>
