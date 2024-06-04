@@ -270,13 +270,9 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (hasMacrodroidApp)
+                if (!_activityCommon.StartApp(ActivityCommon.MacrodroidAppName))
                 {
-                    if (!_activityCommon.StartApp(ActivityCommon.MacrodroidAppName))
-                    {
-                        _activityCommon.ShowAlert(GetString(Resource.String.settings_start_app_failed), Resource.String.alert_title_error);
-                    }
-                    return;
+                    _activityCommon.ShowAlert(GetString(Resource.String.settings_start_app_failed), Resource.String.alert_title_error);
                 }
             };
 
