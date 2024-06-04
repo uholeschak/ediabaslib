@@ -257,16 +257,20 @@ namespace BmwDeepObd
                     return;
                 }
 
-                if (_activityCommon.IsAppInstalled(ActivityCommon.AutomationAppName))
+                bool hasAutomationApp = _activityCommon.IsAppInstalled(ActivityCommon.AutomationAppName);
+                bool hasMacrodroidApp = _activityCommon.IsAppInstalled(ActivityCommon.MacrodroidAppName);
+                bool installApp = !hasAutomationApp && !hasMacrodroidApp;
+
+                if (hasAutomationApp || installApp)
                 {
-                    if (!_activityCommon.StartApp(ActivityCommon.AutomationAppName))
+                    if (!_activityCommon.StartApp(ActivityCommon.AutomationAppName, installApp))
                     {
                         _activityCommon.ShowAlert(GetString(Resource.String.settings_start_app_failed), Resource.String.alert_title_error);
                     }
                     return;
                 }
 
-                if (_activityCommon.IsAppInstalled(ActivityCommon.MacrodroidAppName))
+                if (hasMacrodroidApp)
                 {
                     if (!_activityCommon.StartApp(ActivityCommon.MacrodroidAppName))
                     {
@@ -274,8 +278,6 @@ namespace BmwDeepObd
                     }
                     return;
                 }
-
-                ShowSystemSettings();
             };
 
             _checkBoxDoubleClickForAppExit = FindViewById<CheckBox>(Resource.Id.checkBoxDoubleClickForAppExit);
@@ -1070,20 +1072,6 @@ namespace BmwDeepObd
             {
                 Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDevelopmentSettings);
                 StartActivityForResult(intent, (int)ActivityRequest.RequestDevelopmentSettings);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        private bool ShowSystemSettings()
-        {
-            try
-            {
-                Intent intent = new Intent(Android.Provider.Settings.ActionSettings);
-                StartActivityForResult(intent, (int)ActivityRequest.RequestApplicationSettings);
                 return true;
             }
             catch (Exception)
