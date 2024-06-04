@@ -662,10 +662,13 @@ namespace BmwDeepObd
         {
             get
             {
-                int ecuListCount;
+                int ecuListCount = 0;
                 lock (_ecuListLock)
                 {
-                    ecuListCount = _ecuList.Count;
+                    if (_ecuList != null)
+                    {
+                        ecuListCount = _ecuList.Count;
+                    }
                 }
 
                 return ecuListCount;
@@ -1171,16 +1174,13 @@ namespace BmwDeepObd
                             {
                                 break;
                             }
-                        }
 
-                        EcuInfo ecuInfoNew = new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty)
-                        {
-                            PageName = string.Empty,
-                            EcuName = string.Empty
-                        };
+                            EcuInfo ecuInfoNew = new EcuInfo(ecuName, -1, string.Empty, ecuName, string.Empty)
+                            {
+                                PageName = string.Empty,
+                                EcuName = string.Empty
+                            };
 
-                        lock (_ecuListLock)
-                        {
                             _ecuList.Add(ecuInfoNew);
                         }
 
@@ -2093,19 +2093,22 @@ namespace BmwDeepObd
 
         private void ResetTranslations()
         {
-            foreach (EcuInfo ecu in _ecuList)
+            lock (_ecuListLock)
             {
-                ecu.DescriptionTrans = null;
-                if (ecu.JobList != null)
+                foreach (EcuInfo ecu in _ecuList)
                 {
-                    foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
+                    ecu.DescriptionTrans = null;
+                    if (ecu.JobList != null)
                     {
-                        jobInfo.CommentsTrans = null;
-                        if (jobInfo.Results != null)
+                        foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                         {
-                            foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                            jobInfo.CommentsTrans = null;
+                            if (jobInfo.Results != null)
                             {
-                                result.CommentsTrans = null;
+                                foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                                {
+                                    result.CommentsTrans = null;
+                                }
                             }
                         }
                     }
@@ -8866,19 +8869,23 @@ namespace BmwDeepObd
                         continue;
                     }
                     bool found = false;
-                    for (int i = 0; i < _ecuList.Count; i++)
+                    lock (_ecuListLock)
                     {
-                        EcuInfo ecuInfo = _ecuList[i];
-                        string ecuFileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
-                        if (string.Compare(ecuFileName, fileName, StringComparison.OrdinalIgnoreCase) == 0)
+                        for (int i = 0; i < _ecuList.Count; i++)
                         {
-                            found = true;
-                            ecuInfo.Selected = true;
-                            _ecuList.Remove(ecuInfo);
-                            _ecuList.Insert(0, ecuInfo);
-                            break;
+                            EcuInfo ecuInfo = _ecuList[i];
+                            string ecuFileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
+                            if (string.Compare(ecuFileName, fileName, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                found = true;
+                                ecuInfo.Selected = true;
+                                _ecuList.Remove(ecuInfo);
+                                _ecuList.Insert(0, ecuInfo);
+                                break;
+                            }
                         }
                     }
+
                     if (!found)
                     {
                         string ecuName = Path.GetFileNameWithoutExtension(fileName);
@@ -8944,34 +8951,37 @@ namespace BmwDeepObd
                     pagesNodeNew.ReplaceAttributes(from el in pagesNodeOld.Attributes() select new XAttribute(el));
                 }
 
-                foreach (EcuInfo ecuInfo in _ecuList)
+                lock (_ecuListLock)
                 {
-                    string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
-                    if (!ecuInfo.Selected || !File.Exists(Path.Combine(xmlFileDir, fileName)))
+                    foreach (EcuInfo ecuInfo in _ecuList)
                     {
-                        continue;
-                    }
-                    XElement fileNode = null;
-                    if (pagesNodeOld != null)
-                    {
-                        fileNode = GetFileNode(fileName, ns, pagesNodeOld);
-                        if (fileNode != null)
+                        string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
+                        if (!ecuInfo.Selected || !File.Exists(Path.Combine(xmlFileDir, fileName)))
                         {
-                            fileNode = new XElement(fileNode);
+                            continue;
                         }
-                    }
-                    if (fileNode == null)
-                    {
-                        fileNode = new XElement(ns + "include");
-                    }
-                    else
-                    {
-                        XAttribute attr = fileNode.Attribute("filename");
-                        attr?.Remove();
-                    }
+                        XElement fileNode = null;
+                        if (pagesNodeOld != null)
+                        {
+                            fileNode = GetFileNode(fileName, ns, pagesNodeOld);
+                            if (fileNode != null)
+                            {
+                                fileNode = new XElement(fileNode);
+                            }
+                        }
+                        if (fileNode == null)
+                        {
+                            fileNode = new XElement(ns + "include");
+                        }
+                        else
+                        {
+                            XAttribute attr = fileNode.Attribute("filename");
+                            attr?.Remove();
+                        }
 
-                    fileNode.Add(new XAttribute("filename", fileName));
-                    pagesNodeNew.Add(fileNode);
+                        fileNode.Add(new XAttribute("filename", fileName));
+                        pagesNodeNew.Add(fileNode);
+                    }
                 }
 
                 {
@@ -9237,37 +9247,40 @@ namespace BmwDeepObd
             {
                 Directory.CreateDirectory(xmlFileDir);
                 // page files
-                foreach (EcuInfo ecuInfo in _ecuList)
+                lock (_ecuListLock)
                 {
-                    if (ecuInfo.JobList == null || !ecuInfo.JobListValid)
+                    foreach (EcuInfo ecuInfo in _ecuList)
                     {
-                        continue;
-                    }
+                        if (ecuInfo.JobList == null || !ecuInfo.JobListValid)
+                        {
+                            continue;
+                        }
 
-                    if (!ecuInfo.Selected) continue;
-                    string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
-                    XDocument documentPage = null;
-                    if (File.Exists(xmlPageFile))
-                    {
-                        try
+                        if (!ecuInfo.Selected) continue;
+                        string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
+                        XDocument documentPage = null;
+                        if (File.Exists(xmlPageFile))
                         {
-                            documentPage = XDocument.Load(xmlPageFile);
+                            try
+                            {
+                                documentPage = XDocument.Load(xmlPageFile);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
-                        catch (Exception)
+                        XDocument documentPageNew = GeneratePageXml(ecuInfo, documentPage);
+                        if (documentPageNew != null)
                         {
-                            // ignored
-                        }
-                    }
-                    XDocument documentPageNew = GeneratePageXml(ecuInfo, documentPage);
-                    if (documentPageNew != null)
-                    {
-                        try
-                        {
-                            documentPageNew.Save(xmlPageFile);
-                        }
-                        catch (Exception)
-                        {
-                            return null;
+                            try
+                            {
+                                documentPageNew.Save(xmlPageFile);
+                            }
+                            catch (Exception)
+                            {
+                                return null;
+                            }
                         }
                     }
                 }
@@ -9371,7 +9384,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (_ecuList == null || EcuListCount == 0)
+            if (EcuListCount == 0)
             {
                 return false;
             }
@@ -9398,7 +9411,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (_ecuList == null || EcuListCount == 0)
+            if (EcuListCount == 0)
             {
                 return false;
             }
@@ -10328,9 +10341,12 @@ namespace BmwDeepObd
                         int oldIndex = p0;
                         int newIndex = p1;
 
-                        EcuInfo ecuInfo = _ecuList[oldIndex];
-                        _ecuList.RemoveAt(oldIndex);
-                        _ecuList.Insert(newIndex, ecuInfo);
+                        lock (_ecuListLock)
+                        {
+                            EcuInfo ecuInfo = _ecuList[oldIndex];
+                            _ecuList.RemoveAt(oldIndex);
+                            _ecuList.Insert(newIndex, ecuInfo);
+                        }
 
                         _activity.UpdateDisplay();
                     }
