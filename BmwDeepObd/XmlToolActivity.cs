@@ -680,7 +680,7 @@ namespace BmwDeepObd
             EcuInfo ecuInfo;
             lock (_ecuListLock)
             {
-                if (index >= 0 && index < _ecuList.Count)
+                if (_ecuList != null && index >= 0 && index < _ecuList.Count)
                 {
                     ecuInfo = _ecuList[index];
                 }
@@ -697,7 +697,7 @@ namespace BmwDeepObd
         {
             lock (_ecuListLock)
             {
-                _ecuList.Clear();
+                _ecuList?.Clear();
             }
         }
 
@@ -708,16 +708,10 @@ namespace BmwDeepObd
 
             lock (_ecuListLock)
             {
-                if (_ecuList == null)
-                {
-                    _ecuList = new List<EcuInfo>();
-                }
+                _ecuList ??= new List<EcuInfo>();
             }
 
-            if (_ruleEvalBmw == null)
-            {
-                _ruleEvalBmw = new RuleEvalBmw();
-            }
+            _ruleEvalBmw ??= new RuleEvalBmw();
 
             if (savedInstanceState != null)
             {
@@ -1957,48 +1951,52 @@ namespace BmwDeepObd
                 {
                     _ecuListTranslated = true;
                     List<string> stringList = new List<string>();
-                    foreach (EcuInfo ecu in _ecuList)
+                    lock (_ecuListLock)
                     {
-                        if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTransRequired && ecu.DescriptionTrans == null)
+                        foreach (EcuInfo ecu in _ecuList)
                         {
-                            stringList.Add(ecu.Description);
-                        }
-                        if (ecu.JobList != null && ecu.JobListValid)
-                        {
-                            // ReSharper disable LoopCanBeConvertedToQuery
-                            foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
+                            if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTransRequired && ecu.DescriptionTrans == null)
                             {
-                                if (jobInfo.Comments != null && jobInfo.CommentsTransRequired && jobInfo.CommentsTrans == null &&
-                                    XmlToolEcuActivity.IsValidJob(jobInfo, ecu))
+                                stringList.Add(ecu.Description);
+                            }
+                            if (ecu.JobList != null && ecu.JobListValid)
+                            {
+                                // ReSharper disable LoopCanBeConvertedToQuery
+                                foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                                 {
-                                    foreach (string comment in jobInfo.Comments)
+                                    if (jobInfo.Comments != null && jobInfo.CommentsTransRequired && jobInfo.CommentsTrans == null &&
+                                        XmlToolEcuActivity.IsValidJob(jobInfo, ecu))
                                     {
-                                        if (!string.IsNullOrEmpty(comment))
+                                        foreach (string comment in jobInfo.Comments)
                                         {
-                                            stringList.Add(comment);
+                                            if (!string.IsNullOrEmpty(comment))
+                                            {
+                                                stringList.Add(comment);
+                                            }
                                         }
                                     }
-                                }
-                                if (jobInfo.Results != null)
-                                {
-                                    foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                                    if (jobInfo.Results != null)
                                     {
-                                        if (result.Comments != null && result.CommentsTransRequired && result.CommentsTrans == null)
+                                        foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
                                         {
-                                            foreach (string comment in result.Comments)
+                                            if (result.Comments != null && result.CommentsTransRequired && result.CommentsTrans == null)
                                             {
-                                                if (!string.IsNullOrEmpty(comment))
+                                                foreach (string comment in result.Comments)
                                                 {
-                                                    stringList.Add(comment);
+                                                    if (!string.IsNullOrEmpty(comment))
+                                                    {
+                                                        stringList.Add(comment);
+                                                    }
                                                 }
                                             }
                                         }
                                     }
                                 }
+                                // ReSharper restore LoopCanBeConvertedToQuery
                             }
-                            // ReSharper restore LoopCanBeConvertedToQuery
                         }
                     }
+
                     if (stringList.Count == 0)
                     {
                         return false;
