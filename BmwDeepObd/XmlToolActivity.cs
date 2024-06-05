@@ -4148,12 +4148,15 @@ namespace BmwDeepObd
                                         }
 
                                         EcuInfo ecuInfoMatch = null;
-                                        foreach (EcuInfo ecuInfo in _ecuList)
+                                        lock (_ecuListLock)
                                         {
-                                            if (ecuInfo.Address == ecuAdr)
+                                            foreach (EcuInfo ecuInfo in _ecuList)
                                             {
-                                                ecuInfoMatch = ecuInfo;
-                                                break;
+                                                if (ecuInfo.Address == ecuAdr)
+                                                {
+                                                    ecuInfoMatch = ecuInfo;
+                                                    break;
+                                                }
                                             }
                                         }
 
@@ -4274,7 +4277,10 @@ namespace BmwDeepObd
                                         }
                                     }
 
-                                    _ecuList.Add(ecuInfoAdd);
+                                    lock (_ecuListLock)
+                                    {
+                                        _ecuList.Add(ecuInfoAdd);
+                                    }
                                 }
                                 catch (Exception)
                                 {
