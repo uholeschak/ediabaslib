@@ -4027,7 +4027,10 @@ namespace BmwDeepObd
                 else
                 {
                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deteted ecu count: {0}", ecuListUse.Count);
-                    _ecuList.AddRange(ecuListUse.OrderBy(x => x.Name));
+                    lock (_ecuListLock)
+                    {
+                        _ecuList.AddRange(ecuListUse.OrderBy(x => x.Name));
+                    }
 
                     if (!string.IsNullOrEmpty(ecuFileNameUse))
                     {
@@ -4047,7 +4050,13 @@ namespace BmwDeepObd
                         {
                             foreach (DetectVehicleBmwBase.EcuInfo ecuInfoAdd in detectVehicleBmw.EcuList)
                             {
-                                if (!EcuListContainsAddr(_ecuList, ecuInfoAdd.Address))
+                                bool containsAddr;
+                                lock (_ecuListLock)
+                                {
+                                    containsAddr = EcuListContainsAddr(_ecuList, ecuInfoAdd.Address);
+                                }
+
+                                if (!containsAddr)
                                 {
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Additional ecu added: {0}", ecuInfoAdd.Name);
                                     ecuInfoAddList.Add(new EcuInfo(ecuInfoAdd.Name, ecuInfoAdd.Address, string.Empty, string.Empty, ecuInfoAdd.Grp));
