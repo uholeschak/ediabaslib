@@ -1,6 +1,7 @@
 #define USE_DRAG_LIST
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -28,6 +29,7 @@ using BmwDeepObd.Dialogs;
 using BmwFileReader;
 using Com.Woxthebox.Draglistview;
 using Skydoves.BalloonLib;
+using System.Runtime.InteropServices;
 
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
@@ -691,6 +693,19 @@ namespace BmwDeepObd
             }
 
             return ecuInfo;
+        }
+
+        private static ImmutableArray<EcuInfo> GetImmutableEcuList()
+        {
+            lock (_ecuListLock)
+            {
+                if (_ecuList == null)
+                {
+                    return ImmutableArray<EcuInfo>.Empty;
+                }
+
+                return _ecuList.ToImmutableArray();
+            }
         }
 
         private static void ClearStaticEcuList()
@@ -1951,49 +1966,47 @@ namespace BmwDeepObd
                 {
                     _ecuListTranslated = true;
                     List<string> stringList = new List<string>();
-                    lock (_ecuListLock)
+
+                    foreach (EcuInfo ecu in GetImmutableEcuList())
                     {
-                        foreach (EcuInfo ecu in _ecuList)
+                        if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTransRequired && ecu.DescriptionTrans == null)
                         {
-                            if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTransRequired && ecu.DescriptionTrans == null)
+                            stringList.Add(ecu.Description);
+                        }
+                        if (ecu.JobList != null && ecu.JobListValid)
+                        {
+                            // ReSharper disable LoopCanBeConvertedToQuery
+                            foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
                             {
-                                stringList.Add(ecu.Description);
-                            }
-                            if (ecu.JobList != null && ecu.JobListValid)
-                            {
-                                // ReSharper disable LoopCanBeConvertedToQuery
-                                foreach (XmlToolEcuActivity.JobInfo jobInfo in ecu.JobList)
+                                if (jobInfo.Comments != null && jobInfo.CommentsTransRequired && jobInfo.CommentsTrans == null &&
+                                    XmlToolEcuActivity.IsValidJob(jobInfo, ecu))
                                 {
-                                    if (jobInfo.Comments != null && jobInfo.CommentsTransRequired && jobInfo.CommentsTrans == null &&
-                                        XmlToolEcuActivity.IsValidJob(jobInfo, ecu))
+                                    foreach (string comment in jobInfo.Comments)
                                     {
-                                        foreach (string comment in jobInfo.Comments)
+                                        if (!string.IsNullOrEmpty(comment))
                                         {
-                                            if (!string.IsNullOrEmpty(comment))
-                                            {
-                                                stringList.Add(comment);
-                                            }
+                                            stringList.Add(comment);
                                         }
                                     }
-                                    if (jobInfo.Results != null)
+                                }
+                                if (jobInfo.Results != null)
+                                {
+                                    foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
                                     {
-                                        foreach (XmlToolEcuActivity.ResultInfo result in jobInfo.Results)
+                                        if (result.Comments != null && result.CommentsTransRequired && result.CommentsTrans == null)
                                         {
-                                            if (result.Comments != null && result.CommentsTransRequired && result.CommentsTrans == null)
+                                            foreach (string comment in result.Comments)
                                             {
-                                                foreach (string comment in result.Comments)
+                                                if (!string.IsNullOrEmpty(comment))
                                                 {
-                                                    if (!string.IsNullOrEmpty(comment))
-                                                    {
-                                                        stringList.Add(comment);
-                                                    }
+                                                    stringList.Add(comment);
                                                 }
                                             }
                                         }
                                     }
                                 }
-                                // ReSharper restore LoopCanBeConvertedToQuery
                             }
+                            // ReSharper restore LoopCanBeConvertedToQuery
                         }
                     }
 
@@ -2016,7 +2029,7 @@ namespace BmwDeepObd
                                 if (transList != null && transList.Count == stringList.Count)
                                 {
                                     int transIndex = 0;
-                                    foreach (EcuInfo ecu in _ecuList)
+                                    foreach (EcuInfo ecu in GetImmutableEcuList())
                                     {
                                         if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTransRequired && ecu.DescriptionTrans == null)
                                         {
@@ -3363,7 +3376,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                foreach (EcuInfo ecuInfo in _ecuList)
+                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
                 {
                     if (ecuInfo.JobList == null)
                     {
@@ -7632,11 +7645,15 @@ namespace BmwDeepObd
                             ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                         }
 
-                        if (_ecuList.Any(info => !info.Equals(ecuInfo) && string.Compare(info.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
-                        {   // already existing
-                            _ecuList.Remove(ecuInfo);
-                            continue;
+                        lock (_ecuListLock)
+                        {
+                            if (_ecuList.Any(info => !info.Equals(ecuInfo) && string.Compare(info.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
+                            {   // already existing
+                                _ecuList.Remove(ecuInfo);
+                                continue;
+                            }
                         }
+
                         string displayName = ecuName;
                         if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw && ecuVagList != null && ecuNameDict != null)
                         {
@@ -7765,7 +7782,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                foreach (EcuInfo ecuInfo in _ecuList)
+                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
                 {
                     string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
                     if (string.Compare(xmlPageFile, pageFileName, StringComparison.OrdinalIgnoreCase) == 0)
@@ -8580,7 +8597,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            foreach (EcuInfo ecuInfo in _ecuList)
+            foreach (EcuInfo ecuInfo in GetImmutableEcuList())
             {
                 XElement ecuNode = GetEcuNode(ecuInfo, ns, errorsNode);
                 if (ecuNode != null)
@@ -8727,7 +8744,7 @@ namespace BmwDeepObd
                     errorsNodeNew.Add(new XAttribute("brand_name", _instanceData.BrandName));
                 }
 
-                foreach (EcuInfo ecuInfo in _ecuList)
+                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
                 {
                     XElement ecuNode = null;
                     if (errorsNodeOld != null)
@@ -8902,12 +8919,16 @@ namespace BmwDeepObd
                                     out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict, out string vagDataFileName, out string vagUdsFileName);
                                 if (!string.IsNullOrEmpty(sgbdName))
                                 {
-                                    _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape,
-                                                        mwTabFileName, mwTabEcuDict, vagDataFileName, vagUdsFileName)
+                                    lock (_ecuListLock)
                                     {
-                                        Selected = true,
-                                        NoUpdate = noUpdate
-                                    });
+                                        _ecuList.Insert(0, new EcuInfo(ecuName, -1, string.Empty, sgbdName,
+                                            string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape,
+                                            mwTabFileName, mwTabEcuDict, vagDataFileName, vagUdsFileName)
+                                        {
+                                            Selected = true,
+                                            NoUpdate = noUpdate
+                                        });
+                                    }
                                 }
                             }
                             catch (Exception)
@@ -8955,37 +8976,34 @@ namespace BmwDeepObd
                     pagesNodeNew.ReplaceAttributes(from el in pagesNodeOld.Attributes() select new XAttribute(el));
                 }
 
-                lock (_ecuListLock)
+                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
                 {
-                    foreach (EcuInfo ecuInfo in _ecuList)
+                    string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
+                    if (!ecuInfo.Selected || !File.Exists(Path.Combine(xmlFileDir, fileName)))
                     {
-                        string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
-                        if (!ecuInfo.Selected || !File.Exists(Path.Combine(xmlFileDir, fileName)))
-                        {
-                            continue;
-                        }
-                        XElement fileNode = null;
-                        if (pagesNodeOld != null)
-                        {
-                            fileNode = GetFileNode(fileName, ns, pagesNodeOld);
-                            if (fileNode != null)
-                            {
-                                fileNode = new XElement(fileNode);
-                            }
-                        }
-                        if (fileNode == null)
-                        {
-                            fileNode = new XElement(ns + "include");
-                        }
-                        else
-                        {
-                            XAttribute attr = fileNode.Attribute("filename");
-                            attr?.Remove();
-                        }
-
-                        fileNode.Add(new XAttribute("filename", fileName));
-                        pagesNodeNew.Add(fileNode);
+                        continue;
                     }
+                    XElement fileNode = null;
+                    if (pagesNodeOld != null)
+                    {
+                        fileNode = GetFileNode(fileName, ns, pagesNodeOld);
+                        if (fileNode != null)
+                        {
+                            fileNode = new XElement(fileNode);
+                        }
+                    }
+                    if (fileNode == null)
+                    {
+                        fileNode = new XElement(ns + "include");
+                    }
+                    else
+                    {
+                        XAttribute attr = fileNode.Attribute("filename");
+                        attr?.Remove();
+                    }
+
+                    fileNode.Add(new XAttribute("filename", fileName));
+                    pagesNodeNew.Add(fileNode);
                 }
 
                 {
@@ -9251,40 +9269,37 @@ namespace BmwDeepObd
             {
                 Directory.CreateDirectory(xmlFileDir);
                 // page files
-                lock (_ecuListLock)
+                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
                 {
-                    foreach (EcuInfo ecuInfo in _ecuList)
+                    if (ecuInfo.JobList == null || !ecuInfo.JobListValid)
                     {
-                        if (ecuInfo.JobList == null || !ecuInfo.JobListValid)
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if (!ecuInfo.Selected) continue;
-                        string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
-                        XDocument documentPage = null;
-                        if (File.Exists(xmlPageFile))
+                    if (!ecuInfo.Selected) continue;
+                    string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
+                    XDocument documentPage = null;
+                    if (File.Exists(xmlPageFile))
+                    {
+                        try
                         {
-                            try
-                            {
-                                documentPage = XDocument.Load(xmlPageFile);
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
+                            documentPage = XDocument.Load(xmlPageFile);
                         }
-                        XDocument documentPageNew = GeneratePageXml(ecuInfo, documentPage);
-                        if (documentPageNew != null)
+                        catch (Exception)
                         {
-                            try
-                            {
-                                documentPageNew.Save(xmlPageFile);
-                            }
-                            catch (Exception)
-                            {
-                                return null;
-                            }
+                            // ignored
+                        }
+                    }
+                    XDocument documentPageNew = GeneratePageXml(ecuInfo, documentPage);
+                    if (documentPageNew != null)
+                    {
+                        try
+                        {
+                            documentPageNew.Save(xmlPageFile);
+                        }
+                        catch (Exception)
+                        {
+                            return null;
                         }
                     }
                 }
