@@ -8626,22 +8626,26 @@ namespace BmwDeepObd
                     string vagDataFileName = vagDataAttr?.Value;
                     XAttribute vagUdsAttr = ecuNode.Attribute("vag_uds_file");
                     string vagUdsFileName = vagUdsAttr?.Value;
-                    bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(sgbdName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0);
-                    if (!ecuFound)
+
+                    lock (_ecuListLock)
                     {
-                        // ReSharper disable once PossibleNullReferenceException
-                        EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty,
-                            JobReader.PageInfo.DisplayModeType.List, DisplayFontSize.Small, JobReader.GaugesPortraitDefault, JobReader.GaugesLandscapeDefault, string.Empty, null,
-                            vagDataFileName, vagUdsFileName)
+                        bool ecuFound = _ecuList.Any(ecuInfo => string.Compare(sgbdName, ecuInfo.Sgbd, StringComparison.OrdinalIgnoreCase) == 0);
+                        if (!ecuFound)
                         {
-                            PageName = string.Empty,
-                            EcuName = string.Empty
-                        };
-                        if (SetEcuNameFromStringsNode(ns, ecuInfo, stringsNode))
-                        {
-                            ecuInfo.PageName = ecuInfo.EcuName;
+                            // ReSharper disable once PossibleNullReferenceException
+                            EcuInfo ecuInfo = new EcuInfo(sgbdName.ToUpperInvariant(), -1, string.Empty, sgbdName, string.Empty,
+                                JobReader.PageInfo.DisplayModeType.List, DisplayFontSize.Small, JobReader.GaugesPortraitDefault, JobReader.GaugesLandscapeDefault, string.Empty, null,
+                                vagDataFileName, vagUdsFileName)
+                            {
+                                PageName = string.Empty,
+                                EcuName = string.Empty
+                            };
+                            if (SetEcuNameFromStringsNode(ns, ecuInfo, stringsNode))
+                            {
+                                ecuInfo.PageName = ecuInfo.EcuName;
+                            }
+                            _ecuList.Add(ecuInfo);
                         }
-                        _ecuList.Add(ecuInfo);
                     }
                 }
             }
@@ -8862,12 +8866,15 @@ namespace BmwDeepObd
                             out string mwTabFileName, out Dictionary<long, EcuMwTabEntry> mwTabEcuDict, out string vagDataFileName, out string vagUdsFileName);
                         if (!string.IsNullOrEmpty(sgbdName))
                         {
-                            _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape,
-                                            mwTabFileName, mwTabEcuDict, vagDataFileName, vagUdsFileName)
+                            lock (_ecuListLock)
                             {
-                                Selected = true,
-                                NoUpdate = noUpdate
-                            });
+                                _ecuList.Add(new EcuInfo(ecuName, -1, string.Empty, sgbdName, string.Empty, displayMode, fontSize, gaugesPortrait, gaugesLandscape,
+                                    mwTabFileName, mwTabEcuDict, vagDataFileName, vagUdsFileName)
+                                {
+                                    Selected = true,
+                                    NoUpdate = noUpdate
+                                });
+                            }
                         }
                     }
                     catch (Exception)
