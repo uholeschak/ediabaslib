@@ -7581,9 +7581,16 @@ namespace BmwDeepObd
                     ecuVagList = ActivityCommon.ReadVagEcuList(_ecuDir);
                     ecuNameDict = ActivityCommon.GetVagEcuNamesDict(_ecuDir);
                 }
-                for (int idx = 0; idx < _ecuList.Count; idx++)
+
+                List<EcuInfo> ecuListTemp;
+                lock (_ecuListLock)
                 {
-                    EcuInfo ecuInfo = _ecuList[idx];
+                    ecuListTemp = new List<EcuInfo>(_ecuList);
+                }
+
+                for (int idx = 0; idx < ecuListTemp.Count; idx++)
+                {
+                    EcuInfo ecuInfo = ecuListTemp[idx];
                     if (ecuInfo.Address >= 0)
                     {
                         continue;
@@ -7651,13 +7658,10 @@ namespace BmwDeepObd
                             ecuName = Path.GetFileNameWithoutExtension(_ediabas.SgbdFileName) ?? string.Empty;
                         }
 
-                        lock (_ecuListLock)
-                        {
-                            if (_ecuList.Any(info => !info.Equals(ecuInfo) && string.Compare(info.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
-                            {   // already existing
-                                _ecuList.Remove(ecuInfo);
-                                continue;
-                            }
+                        if (ecuListTemp.Any(info => !info.Equals(ecuInfo) && string.Compare(info.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
+                        {   // already existing
+                            ecuListTemp.Remove(ecuInfo);
+                            continue;
                         }
 
                         string displayName = ecuName;
@@ -7707,6 +7711,11 @@ namespace BmwDeepObd
                     {
                         readFailed = true;
                     }
+                }
+
+                lock (_ecuListLock)
+                {
+                    _ecuList = ecuListTemp;
                 }
 
                 RunOnUiThread(() =>
