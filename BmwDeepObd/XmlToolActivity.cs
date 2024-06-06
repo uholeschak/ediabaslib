@@ -695,16 +695,16 @@ namespace BmwDeepObd
             return ecuInfo;
         }
 
-        private static ImmutableArray<EcuInfo> GetImmutableEcuList()
+        private static ImmutableList<EcuInfo> GetImmutableEcuList()
         {
             lock (_ecuListLock)
             {
                 if (_ecuList == null)
                 {
-                    return ImmutableArray<EcuInfo>.Empty;
+                    return ImmutableList<EcuInfo>.Empty;
                 }
 
-                return _ecuList.ToImmutableArray();
+                return _ecuList.ToImmutableList();
             }
         }
 
@@ -4046,17 +4046,12 @@ namespace BmwDeepObd
                     try
                     {
                         List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
+                        List<EcuInfo> immutableEcuList = GetImmutableEcuList().ToList();
                         lock (detectVehicleBmw.GlobalLockObject)
                         {
                             foreach (DetectVehicleBmwBase.EcuInfo ecuInfoAdd in detectVehicleBmw.EcuList)
                             {
-                                bool containsAddr;
-                                lock (_ecuListLock)
-                                {
-                                    containsAddr = EcuListContainsAddr(_ecuList, ecuInfoAdd.Address);
-                                }
-
-                                if (!containsAddr)
+                                if (!EcuListContainsAddr(immutableEcuList.ToList(), ecuInfoAdd.Address))
                                 {
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Additional ecu added: {0}", ecuInfoAdd.Name);
                                     ecuInfoAddList.Add(new EcuInfo(ecuInfoAdd.Name, ecuInfoAdd.Address, string.Empty, string.Empty, ecuInfoAdd.Grp));
