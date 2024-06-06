@@ -2646,7 +2646,7 @@ namespace BmwDeepObd
             IMenuItem bmwActuatorMenu = popupContext.Menu.FindItem(Resource.Id.menu_xml_tool_bmw_actuator);
             if (bmwActuatorMenu != null)
             {
-                bool enableBmwActuator = enableMenuAction && itemInEcuList && XmlToolEcuActivity.ControlActuatorCount(_ecuList[itemPos]) > 0;
+                bool enableBmwActuator = enableMenuAction && itemInEcuList && XmlToolEcuActivity.ControlActuatorCount(GetEcuInfo(itemPos)) > 0;
                 bmwActuatorMenu.SetEnabled(enableBmwActuator);
                 bmwActuatorMenu.SetVisible(bmwVisible && bmwDatabaseActive);
             }

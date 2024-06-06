@@ -1243,7 +1243,7 @@ namespace BmwDeepObd
             }
 
             int count = 0;
-            if (ecuInfo.JobList != null)
+            if (ecuInfo?.JobList != null)
             {
                 foreach (JobInfo jobInfo in ecuInfo.JobList)
                 {
