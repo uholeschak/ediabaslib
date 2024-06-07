@@ -7586,12 +7586,7 @@ namespace BmwDeepObd
                     ecuNameDict = ActivityCommon.GetVagEcuNamesDict(_ecuDir);
                 }
 
-                List<EcuInfo> ecuListTemp;
-                lock (_ecuListLock)
-                {
-                    ecuListTemp = new List<EcuInfo>(_ecuList);
-                }
-
+                List<EcuInfo> ecuListTemp = GetClonedEcuList();
                 for (int idx = 0; idx < ecuListTemp.Count; idx++)
                 {
                     if (idx < 0)
