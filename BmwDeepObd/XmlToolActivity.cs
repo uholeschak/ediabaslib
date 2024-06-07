@@ -695,16 +695,16 @@ namespace BmwDeepObd
             return ecuInfo;
         }
 
-        private static ImmutableList<EcuInfo> GetImmutableEcuList()
+        private static List<EcuInfo> GetClonedEcuList()
         {
             lock (_ecuListLock)
             {
                 if (_ecuList == null)
                 {
-                    return ImmutableList<EcuInfo>.Empty;
+                    return new List<EcuInfo>();
                 }
 
-                return _ecuList.ToImmutableList();
+                return new List<EcuInfo>(_ecuList);
             }
         }
 
@@ -1967,7 +1967,7 @@ namespace BmwDeepObd
                     _ecuListTranslated = true;
                     List<string> stringList = new List<string>();
 
-                    foreach (EcuInfo ecu in GetImmutableEcuList())
+                    foreach (EcuInfo ecu in GetClonedEcuList())
                     {
                         if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTransRequired && ecu.DescriptionTrans == null)
                         {
@@ -2029,7 +2029,7 @@ namespace BmwDeepObd
                                 if (transList != null && transList.Count == stringList.Count)
                                 {
                                     int transIndex = 0;
-                                    foreach (EcuInfo ecu in GetImmutableEcuList())
+                                    foreach (EcuInfo ecu in GetClonedEcuList())
                                     {
                                         if (!string.IsNullOrEmpty(ecu.Description) && ecu.DescriptionTransRequired && ecu.DescriptionTrans == null)
                                         {
@@ -2104,7 +2104,7 @@ namespace BmwDeepObd
 
         private void ResetTranslations()
         {
-            foreach (EcuInfo ecu in GetImmutableEcuList())
+            foreach (EcuInfo ecu in GetClonedEcuList())
             {
                 ecu.DescriptionTrans = null;
                 if (ecu.JobList != null)
@@ -3373,7 +3373,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
+                foreach (EcuInfo ecuInfo in GetClonedEcuList())
                 {
                     if (ecuInfo.JobList == null)
                     {
@@ -4043,12 +4043,12 @@ namespace BmwDeepObd
                     try
                     {
                         List<EcuInfo> ecuInfoAddList = new List<EcuInfo>();
-                        List<EcuInfo> immutableEcuList = GetImmutableEcuList().ToList();
+                        List<EcuInfo> tempEcuList = GetClonedEcuList();
                         lock (detectVehicleBmw.GlobalLockObject)
                         {
                             foreach (DetectVehicleBmwBase.EcuInfo ecuInfoAdd in detectVehicleBmw.EcuList)
                             {
-                                if (!EcuListContainsAddr(immutableEcuList.ToList(), ecuInfoAdd.Address))
+                                if (!EcuListContainsAddr(tempEcuList, ecuInfoAdd.Address))
                                 {
                                     _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Additional ecu added: {0}", ecuInfoAdd.Name);
                                     ecuInfoAddList.Add(new EcuInfo(ecuInfoAdd.Name, ecuInfoAdd.Address, string.Empty, string.Empty, ecuInfoAdd.Grp));
@@ -4160,7 +4160,7 @@ namespace BmwDeepObd
                                         }
 
                                         EcuInfo ecuInfoMatch = null;
-                                        foreach (EcuInfo ecuInfo in GetImmutableEcuList())
+                                        foreach (EcuInfo ecuInfo in GetClonedEcuList())
                                         {
                                             if (ecuInfo.Address == ecuAdr)
                                             {
@@ -4316,7 +4316,7 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        _instanceData.Vin = GetBestVin(GetImmutableEcuList().ToList());
+                        _instanceData.Vin = GetBestVin(GetClonedEcuList());
                     }
 
                     RunOnUiThread(() =>
@@ -4378,7 +4378,7 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            _instanceData.Vin = GetBestVin(GetImmutableEcuList().ToList());
+                            _instanceData.Vin = GetBestVin(GetClonedEcuList());
                         }
 
                         _detectVehicleBmw = detectVehicleBmw;
@@ -4567,7 +4567,7 @@ namespace BmwDeepObd
                         if (!readEcus)
                         {
                             _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Keep existing ECU list");
-                            ecuList = GetImmutableEcuList().ToList();
+                            ecuList = GetClonedEcuList();
                             ClearEcuList();
                             foreach (EcuInfo ecuInfo in ecuList)
                             {
@@ -7805,7 +7805,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
+                foreach (EcuInfo ecuInfo in GetClonedEcuList())
                 {
                     string xmlPageFile = Path.Combine(xmlFileDir, ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension));
                     if (string.Compare(xmlPageFile, pageFileName, StringComparison.OrdinalIgnoreCase) == 0)
@@ -8620,7 +8620,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            foreach (EcuInfo ecuInfo in GetImmutableEcuList())
+            foreach (EcuInfo ecuInfo in GetClonedEcuList())
             {
                 XElement ecuNode = GetEcuNode(ecuInfo, ns, errorsNode);
                 if (ecuNode != null)
@@ -8771,7 +8771,7 @@ namespace BmwDeepObd
                     errorsNodeNew.Add(new XAttribute("brand_name", _instanceData.BrandName));
                 }
 
-                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
+                foreach (EcuInfo ecuInfo in GetClonedEcuList())
                 {
                     XElement ecuNode = null;
                     if (errorsNodeOld != null)
@@ -9006,7 +9006,7 @@ namespace BmwDeepObd
                     pagesNodeNew.ReplaceAttributes(from el in pagesNodeOld.Attributes() select new XAttribute(el));
                 }
 
-                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
+                foreach (EcuInfo ecuInfo in GetClonedEcuList())
                 {
                     string fileName = ActivityCommon.CreateValidFileName(ecuInfo.Name + PageExtension);
                     if (!ecuInfo.Selected || !File.Exists(Path.Combine(xmlFileDir, fileName)))
@@ -9299,7 +9299,7 @@ namespace BmwDeepObd
             {
                 Directory.CreateDirectory(xmlFileDir);
                 // page files
-                foreach (EcuInfo ecuInfo in GetImmutableEcuList())
+                foreach (EcuInfo ecuInfo in GetClonedEcuList())
                 {
                     if (ecuInfo.JobList == null || !ecuInfo.JobListValid)
                     {
