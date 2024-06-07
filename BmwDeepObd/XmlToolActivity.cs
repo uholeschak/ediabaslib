@@ -7590,6 +7590,11 @@ namespace BmwDeepObd
 
                 for (int idx = 0; idx < ecuListTemp.Count; idx++)
                 {
+                    if (idx < 0)
+                    {
+                        continue;
+                    }
+
                     EcuInfo ecuInfo = ecuListTemp[idx];
                     if (ecuInfo.Address >= 0)
                     {
@@ -7660,7 +7665,10 @@ namespace BmwDeepObd
 
                         if (ecuListTemp.Any(info => !info.Equals(ecuInfo) && string.Compare(info.Sgbd, ecuName, StringComparison.OrdinalIgnoreCase) == 0))
                         {   // already existing
-                            ecuListTemp.Remove(ecuInfo);
+                            if (ecuListTemp.Remove(ecuInfo))
+                            {
+                                idx--;
+                            }
                             continue;
                         }
 
