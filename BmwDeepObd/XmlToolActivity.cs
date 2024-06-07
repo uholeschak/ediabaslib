@@ -869,10 +869,7 @@ namespace BmwDeepObd
                 }
 
                 int pos = args.Position;
-                if (pos >= 0 && pos < EcuListCount)
-                {
-                    PerformJobsRead(_ecuList[pos]);
-                }
+                PerformJobsRead(GetEcuInfo(pos));
             };
 #endif
             _activityCommon = new ActivityCommon(this, () =>
@@ -2582,11 +2579,18 @@ namespace BmwDeepObd
                         {
                             for (int i = 0; i < _ecuList.Count; i++)
                             {
+                                if (i < 0)
+                                {
+                                    continue;
+                                }
+
                                 EcuInfo ecuInfo = _ecuList[i];
                                 if (!ecuInfo.Selected)
                                 {
-                                    _ecuList.Remove(ecuInfo);
-                                    i = 0;
+                                    if (_ecuList.Remove(ecuInfo))
+                                    {
+                                        i--;
+                                    }
                                 }
                             }
                         }
