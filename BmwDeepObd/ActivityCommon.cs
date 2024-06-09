@@ -767,10 +767,6 @@ namespace BmwDeepObd
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
-
-#if !NET
-        public const Bind BindAllowActivityStarts = (Bind) 0x00000200;
-#endif
         public const int UdsDtcStatusOverride = 0x2C;
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
@@ -1040,9 +1036,7 @@ namespace BmwDeepObd
         private static readonly object RecentConfigLockObject = new object();
         private static readonly object LastSerialLockObject = new object();
         private static readonly object SerialInfoLockObject = new object();
-#if NET
         private static readonly object CompileLock = new object();
-#endif
         private static int _instanceCount;
         private static string _externalPath;
         private static string _externalWritePath;
@@ -2275,11 +2269,7 @@ namespace BmwDeepObd
                 Bind bindFlags = Bind.AutoCreate;
                 if (Build.VERSION.SdkInt > BuildVersionCodes.Tiramisu)
                 {
-#if NET
                     bindFlags |= Bind.AllowActivityStarts;
-#else
-                    bindFlags |= BindAllowActivityStarts;
-#endif
                 }
 
                 startServiceIntent.SetComponent(new ComponentName(MtcServiceConnection.ServicePkg, MtcServiceConnection.ServiceClsV1));
@@ -11250,7 +11240,6 @@ namespace BmwDeepObd
             return true;
         }
 
-#if NET
         public bool ExtraktPackageAssemblies(string outputPath, bool forceUpdate = false)
         {
             try
@@ -11384,13 +11373,8 @@ namespace BmwDeepObd
 
             return referencesList;
         }
-#endif
 
-#if NET
         public string CompileCode(JobReader.PageInfo pageInfo, List<Microsoft.CodeAnalysis.MetadataReference> referencesList)
-#else
-        public string CompileCode(JobReader.PageInfo pageInfo)
-#endif
         {
             string classCode = @"
 using Android.Views;
@@ -11405,7 +11389,6 @@ using System.Threading;"
         + pageInfo.ClassCode;
 
             string result = string.Empty;
-#if NET
             try
             {
                 // ToDo: Mono init bug, limit to one thread: https://github.com/dotnet/runtime/issues/96804
@@ -11469,46 +11452,7 @@ using System.Threading;"
                     result = EdiabasNet.GetExceptionText(ex, false, false);
                 }
             }
-#else
-            StringWriter reportWriter = new StringWriter();
-            try
-            {
-                Mono.CSharp.Evaluator evaluator = new Mono.CSharp.Evaluator(new Mono.CSharp.CompilerContext(new Mono.CSharp.CompilerSettings(), new Mono.CSharp.ConsoleReportPrinter(reportWriter)));
-                evaluator.ReferenceAssembly(Assembly.GetExecutingAssembly());
-                evaluator.ReferenceAssembly(typeof(EdiabasNet).Assembly);
-                evaluator.ReferenceAssembly(typeof(View).Assembly);
-                evaluator.Compile(classCode);
-                object classObject = evaluator.Evaluate("new PageClass()");
-                if (((infoLocal.JobsInfo == null) || (infoLocal.JobsInfo.JobList.Count == 0)) &&
-                    ((infoLocal.ErrorsInfo == null) || (infoLocal.ErrorsInfo.EcuList.Count == 0)))
-                {
-                    if (classObject == null)
-                    {
-                        throw new Exception("Compiling PageClass failed");
-                    }
-                    Type pageType = classObject.GetType();
-                    if (pageType.GetMethod("ExecuteJob") == null)
-                    {
-                        throw new Exception("No ExecuteJob method");
-                    }
-                }
-                infoLocal.ClassObject = classObject;
-            }
-            catch (Exception ex)
-            {
-                infoLocal.ClassObject = null;
-                result = reportWriter.ToString();
-                if (string.IsNullOrEmpty(result))
-                {
-                    result = EdiabasNet.GetExceptionText(ex, false, false);
-                }
-                result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
-            }
-            if (infoLocal.CodeShowWarnings && string.IsNullOrEmpty(result))
-            {
-                result = reportWriter.ToString();
-            }
-#endif
+
             return result;
         }
 

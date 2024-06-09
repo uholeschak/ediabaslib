@@ -5111,7 +5111,6 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.JobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
                     {
-#if NET
                         if (!_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir))
                         {
 #if DEBUG
@@ -5140,7 +5139,7 @@ namespace BmwDeepObd
                             Log.Info(Tag, "CompileCode GetLoadedMetadataReferences failed");
 #endif
                         }
-#endif
+
                         bool progressUpdated = false;
                         List<string> compileResultList = new List<string>();
                         List<Thread> threadList = new List<Thread>();
@@ -5184,12 +5183,7 @@ namespace BmwDeepObd
                             JobReader.PageInfo infoLocal = pageInfo;
                             Thread compileThread = new Thread(() =>
                             {
-#if NET
                                 string result = _activityCommon.CompileCode(infoLocal, referencesList);
-#else
-                                string result = _activityCommon.CompileCode(infoLocal);
-#endif
-
                                 if (!string.IsNullOrEmpty(result))
                                 {
                                     result = GetPageString(infoLocal, infoLocal.Name) + ":\r\n" + result;
