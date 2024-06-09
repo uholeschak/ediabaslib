@@ -837,10 +837,19 @@ namespace BmwDeepObd
         public static Regex Ipv4RegEx = new Regex(@"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
-        public const int RequestPermissionExternalStorage = 0;
-        public const int RequestPermissionNotifications = 1;
-        public const int RequestPermissionBluetooth = 2;
-        public const int RequestPermissionLocation = 3;
+        public enum PermissionRequestCodes
+        {
+            RequestPermissionExternalStorage,
+            RequestPermissionNotifications,
+            RequestPermissionBluetooth,
+            RequestPermissionLocation,
+        }
+
+        public const int RequestPermissionExternalStorage = (int) PermissionRequestCodes.RequestPermissionExternalStorage;
+        public const int RequestPermissionNotifications = (int)PermissionRequestCodes.RequestPermissionNotifications;
+        public const int RequestPermissionBluetooth = (int)PermissionRequestCodes.RequestPermissionBluetooth;
+        public const int RequestPermissionLocation = (int)PermissionRequestCodes.RequestPermissionLocation;
+
         public static readonly string[] PermissionsBluetooth =
         {
             Android.Manifest.Permission.BluetoothScan,
