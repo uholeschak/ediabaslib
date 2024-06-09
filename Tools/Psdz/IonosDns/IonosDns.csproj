@@ -35,7 +35,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ScriptyContinueOnError>true</ScriptyContinueOnError>
+    <ScriptyContinueOnError>false</ScriptyContinueOnError>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -66,8 +66,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>@echo off
-SETLOCAL EnableDelayedExpansion
+    <PreBuildEvent>SETLOCAL EnableDelayedExpansion
 set "ScriptyPath=%25PATH_SCRIPTY%25"
 set "ScriptyExe=!ScriptyPath!\Scripty.exe"
 IF NOT EXIST "!ScriptyExe!" (
@@ -75,6 +74,7 @@ IF NOT EXIST "!ScriptyExe!" (
   EXIT 1
 )
 echo Calling Scripty ...
-"!ScriptyExe!" "$(ProjectPath)" "User.csx" || EXIT</PreBuildEvent>
+"!ScriptyExe!" "$(ProjectPath)" "User.csx" || EXIT
+</PreBuildEvent>
   </PropertyGroup>
 </Project>
