@@ -75,6 +75,6 @@ IF NOT EXIST "!ScriptyExe!" (
   EXIT 1
 )
 echo Calling Scripty ...
-"!ScriptyExe!" "$(ProjectPath)" || EXIT</PreBuildEvent>
+"!ScriptyExe!" "$(ProjectPath)" "User.csx" || EXIT</PreBuildEvent>
   </PropertyGroup>
 </Project>
