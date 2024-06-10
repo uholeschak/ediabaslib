@@ -52,6 +52,14 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="User1.csx">
+      <Generator>CodegenCS</Generator>
+      <LastGenOutput>User1.log</LastGenOutput>
+    </Content>
+    <None Include="Users1.config">
+      <DependentUpon>User1.csx</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="User.config">
