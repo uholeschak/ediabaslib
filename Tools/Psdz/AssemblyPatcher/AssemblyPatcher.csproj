@@ -83,10 +83,11 @@ set "ScriptyPath=%25PATH_SCRIPTY%25"
 set "ScriptyExe=!ScriptyPath!\Scripty.exe"
 IF NOT EXIST "!ScriptyExe!" (
   echo !ScriptyExe! not found!
-  EXIT 1
-)
+  echo no User.config file is generated!
+) else (
 echo Calling Scripty ...
 "!ScriptyExe!" "$(ProjectPath)" "User.csx" || EXIT
+)
 </PreBuildEvent>
   </PropertyGroup>
 </Project>
