@@ -1,11 +1,14 @@
 ﻿using System.IO;
 using System.Xml;
 using System;
+using System.Reflection;
 
 public class UserTemplate
 {
     int Main(ICodegenContext context)
     {
+        Assembly.LoadFrom("C:\\Program Files (x86)\\Reference Assemblies\\Microsoft\\Framework\\.NETFramework\\v4.7.2\\System.Xml.dll");
+
         if (!GenerateConfig(context["Users1.config"]))
         {
             return 1;
@@ -21,6 +24,7 @@ public class UserTemplate
         string patchMethodClass = string.Empty;
         string patchMethodName = string.Empty;
         string licFileName = string.Empty;
+
 #if false
         try
         {
