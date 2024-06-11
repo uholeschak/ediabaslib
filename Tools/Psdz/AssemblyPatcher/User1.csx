@@ -21,7 +21,7 @@ public class UserTemplate
 
     int Main(ICodegenContext context)
     {
-        if (!GenerateConfig(context["Users1.config"]))
+        if (!GenerateConfig(context["User1.config"]))
         {
             return 1;
         }
@@ -72,7 +72,7 @@ public class UserTemplate
         }
 
         writer.WriteLine(
-            $@"<?xml version=""1.0"" encoding=""utf-8""?>
+$@"<?xml version=""1.0"" encoding=""utf-8""?>
 <appSettings>
     <add key=""PatchCtorNamespace"" value=""{patchCtorNamespace}""/>
     <add key=""PatchCtorClass"" value=""{patchCtorClass}""/>

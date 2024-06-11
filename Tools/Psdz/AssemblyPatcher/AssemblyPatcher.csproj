@@ -56,10 +56,6 @@
       <Generator>CodegenCS</Generator>
       <LastGenOutput>User1.log</LastGenOutput>
     </Content>
-    <None Include="Users1.config">
-      <DependentUpon>User1.csx</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="User.config">
@@ -67,6 +63,10 @@
     </None>
     <None Include="App.config" />
     <Content Include="User.csx" />
+    <None Include="User1.config">
+      <DependentUpon>User1.csx</DependentUpon>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnpatch\dnpatch.csproj">
