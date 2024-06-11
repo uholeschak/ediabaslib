@@ -1,18 +1,31 @@
-﻿using System.IO;
-using System.Xml;
+﻿using Newtonsoft.Json;
+using System.IO;
 using System;
 using System.Reflection;
+using System.Collections.Generic;
 
 public class UserTemplate
 {
+    public class Info
+    {
+        public string Namespace { set; get; }
+        public string Class { set; get; }
+        public string Name { set; get; }
+        public string Filename { set; get; }
+    }
+
+    public class InfoDict
+    {
+        public Dictionary<string, Info> PatchInfo { set; get; }
+    }
+
     int Main(ICodegenContext context)
     {
-        Assembly.LoadFrom("C:\\Program Files (x86)\\Reference Assemblies\\Microsoft\\Framework\\.NETFramework\\v4.7.2\\System.Xml.dll");
-
         if (!GenerateConfig(context["Users1.config"]))
         {
             return 1;
         }
+
         return 0;
     }
 
@@ -25,59 +38,30 @@ public class UserTemplate
         string patchMethodName = string.Empty;
         string licFileName = string.Empty;
 
-#if false
         try
         {
-            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_patcher.xml");
+            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_patcher.json");
             if (File.Exists(fileName))
             {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(fileName);
-                XmlNode nodeCtor = doc.SelectSingleNode("/patch_info/ctor");
-                if (nodeCtor != null)
+                InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
+                if (infoDict != null)
                 {
-                    XmlAttribute attribNamespace = nodeCtor.Attributes["namespace"];
-                    if (attribNamespace != null)
+                    if (infoDict.PatchInfo.TryGetValue("Ctor", out Info ctorInfo))
                     {
-                        patchCtorNamespace = attribNamespace.Value;
+                        patchCtorNamespace = ctorInfo.Namespace;
+                        patchCtorClass = ctorInfo.Class;
                     }
 
-                    XmlAttribute attribClass = nodeCtor.Attributes["class"];
-                    if (attribClass != null)
+                    if (infoDict.PatchInfo.TryGetValue("Method", out Info methodInfo))
                     {
-                        patchCtorClass = attribClass.Value;
-                    }
-                }
-
-                XmlNode nodeMethod = doc.SelectSingleNode("/patch_info/method");
-                if (nodeMethod != null)
-                {
-                    XmlAttribute attribNamespace = nodeMethod.Attributes["namespace"];
-                    if (attribNamespace != null)
-                    {
-                        patchMethodNamespace = attribNamespace.Value;
+                        patchMethodNamespace = methodInfo.Namespace;
+                        patchMethodClass = methodInfo.Class;
+                        patchMethodName = methodInfo.Name;
                     }
 
-                    XmlAttribute attribClass = nodeMethod.Attributes["class"];
-                    if (attribClass != null)
+                    if (infoDict.PatchInfo.TryGetValue("License", out Info licInfo))
                     {
-                        patchMethodClass = attribClass.Value;
-                    }
-
-                    XmlAttribute attribName = nodeMethod.Attributes["name"];
-                    if (attribName != null)
-                    {
-                        patchMethodName = attribName.Value;
-                    }
-                }
-
-                XmlNode nodeLic = doc.SelectSingleNode("/patch_info/license");
-                if (nodeLic != null)
-                {
-                    XmlAttribute attribFileName = nodeLic.Attributes["file_name"];
-                    if (attribFileName != null)
-                    {
-                        licFileName = attribFileName.Value;
+                        licFileName = licInfo.Filename;
                     }
                 }
             }
@@ -86,7 +70,7 @@ public class UserTemplate
         {
             return false;
         }
-#endif
+
         writer.WriteLine(
             $@"<?xml version=""1.0"" encoding=""utf-8""?>
 <appSettings>
