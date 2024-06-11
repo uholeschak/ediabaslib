@@ -44,7 +44,8 @@ This page allows to change some global app settings.
     After the service has been started the app will be closed.
   * _Auto start the service at boot time to restore the last connection state__: When the device is rebooted while communication to the vehicle is active, the app will start as service in the background and use the last main page for communication.  
     The boot option is very often not working on Android radios.  
-    It's recommended to select one of the other auto start options and configure this app for auto start at boot and standby in Android.
+    If an Android app manager is available, it's recommended to configure Deep OBD in the app manager to stay active in standby.  
+    Otherwise choose the second start option and keep Deep OBD always in foreground to make the app remain active after standby.\nWith other tools (e.g. Automation, Macrodroid) the app has to be launched after booting.
 * _App exit_ options:
   * _Double click required for app exit_: A double click on the back button is required to exit the app.
 * _Update check_ options:
