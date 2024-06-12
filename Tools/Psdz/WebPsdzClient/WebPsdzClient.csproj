@@ -461,12 +461,9 @@
     <Compile Include="Site.Mobile.Master.designer.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
     </Compile>
-    <Content Include="User1.config">
-      <DependentUpon>User1.csx</DependentUpon>
-    </Content>
-    <None Include="User1.csx">
+    <None Include="User.csx">
       <Generator>CodegenCS</Generator>
-      <LastGenOutput>User1.log</LastGenOutput>
+      <LastGenOutput>User.log</LastGenOutput>
     </None>
     <Compile Include="ViewSwitcher.ascx.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
@@ -481,8 +478,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="User.csx" />
-    <Content Include="User.config" />
+    <Content Include="User.config">
+      <DependentUpon>User.csx</DependentUpon>
+    </Content>
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.0.min.map" />
     <Content Include="Scripts\umd\popper.min.js.map" />
@@ -577,19 +575,6 @@
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.8\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.8\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets')" />
   <Import Project="..\packages\Microsoft.TypeScript.MSBuild.5.4.4\build\Microsoft.TypeScript.MSBuild.targets" Condition="Exists('..\packages\Microsoft.TypeScript.MSBuild.5.4.4\build\Microsoft.TypeScript.MSBuild.targets')" />
-  <PropertyGroup>
-    <PreBuildEvent>SETLOCAL EnableDelayedExpansion
-set "ScriptyPath=%25PATH_SCRIPTY%25"
-set "ScriptyExe=!ScriptyPath!\Scripty.exe"
-IF NOT EXIST "!ScriptyExe!" (
-  echo !ScriptyExe! not found!
-  echo no User.config file is generated!
-) else (
-echo Calling Scripty ...
-"!ScriptyExe!" "$(ProjectPath)" "User.csx" || EXIT
-)
-</PreBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

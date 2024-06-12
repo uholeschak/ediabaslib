@@ -1,83 +1,83 @@
-﻿using System.IO;
-using System.Xml;
+﻿// Requires CodegenCS VS extension
+// https://marketplace.visualstudio.com/items?itemName=Drizin.CodegenCS
+using Newtonsoft.Json;
+using System.IO;
+using System;
+using System.Collections.Generic;
 
-Output.SetExtension(".config");
-Output.BuildAction = BuildAction.Content;
-
-string istaLocation = "C:\\ISTA-D";
-string sqlUrl = "url";
-string sqlUser = "user";
-string sqlPassword = "password";
-string accessPassword = string.Empty;
-string testLic = string.Empty;
-
-try
+public class UserTemplate
 {
-    string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_credentials.xml");
-    if (File.Exists(fileName))
+    public class Info
     {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(fileName);
-        XmlNode nodeSqlServer = doc.SelectSingleNode("/credentials_info/sqlserver");
-        XmlNode nodeIsta = doc.SelectSingleNode("/credentials_info/ista");
-        if (nodeIsta != null)
-        {
-            XmlAttribute attribLocation = nodeIsta.Attributes["location"];
-            if (attribLocation != null)
-            {
-                istaLocation = attribLocation.Value;
-            }
-        }
-
-        if (nodeSqlServer != null)
-        {
-            XmlAttribute attribUrl = nodeSqlServer.Attributes["url"];
-            if (attribUrl != null)
-            {
-                sqlUrl = attribUrl.Value;
-            }
-
-            XmlAttribute attribName = nodeSqlServer.Attributes["name"];
-            if (attribName != null)
-            {
-                sqlUser = attribName.Value;
-            }
-
-            XmlAttribute attribPassword = nodeSqlServer.Attributes["password"];
-            if (attribPassword != null)
-            {
-                sqlPassword = attribPassword.Value;
-            }
-        }
-
-        XmlNode nodeAuth = doc.SelectSingleNode("/credentials_info/authentication");
-        if (nodeAuth != null)
-        {
-            XmlAttribute attribPassword = nodeAuth.Attributes["password"];
-            if (attribPassword != null)
-            {
-                accessPassword = attribPassword.Value;
-            }
-        }
-
-        XmlNode nodeLic = doc.SelectSingleNode("/credentials_info/licenses");
-        if (nodeLic != null)
-        {
-            XmlAttribute attribTest = nodeLic.Attributes["test"];
-            if (attribTest != null)
-            {
-                testLic = attribTest.Value;
-            }
-        }
+        public string Location { set; get; }
+        public string Url { set; get; }
+        public string Name { set; get; }
+        public string Password { set; get; }
+        public string Test { set; get; }
     }
-}
-catch (Exception ex)
-{
-    Output.WriteLine("Exception: {0}", ex.Message);
-    return;
-}
 
-Output.WriteLine(
+    public class InfoDict
+    {
+        public Dictionary<string, Info> CredentialsInfo { set; get; }
+    }
+
+    int Main(ICodegenContext context)
+    {
+        if (!GenerateConfig(context["User.config"]))
+        {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    bool GenerateConfig(ICodegenTextWriter writer)
+    {
+        string istaLocation = "C:\\ISTA-D";
+        string sqlUrl = "url";
+        string sqlUser = "user";
+        string sqlPassword = "password";
+        string accessPassword = string.Empty;
+        string testLic = string.Empty;
+
+        try
+        {
+            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_credentials.json");
+            if (File.Exists(fileName))
+            {
+                InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
+                if (infoDict != null)
+                {
+                    if (infoDict.CredentialsInfo.TryGetValue("Ista", out Info istaInfo))
+                    {
+                        istaLocation = istaInfo.Location;
+                    }
+
+                    if (infoDict.CredentialsInfo.TryGetValue("SqlServer", out Info sqlInfo))
+                    {
+                        sqlUrl = sqlInfo.Url;
+                        sqlUser = sqlInfo.Name;
+                        sqlPassword = sqlInfo.Password;
+                    }
+
+                    if (infoDict.CredentialsInfo.TryGetValue("Authentication", out Info authInfo))
+                    {
+                        accessPassword = authInfo.Password;
+                    }
+
+                    if (infoDict.CredentialsInfo.TryGetValue("Licenses", out Info licensesInfo))
+                    {
+                        testLic = licensesInfo.Test;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+
+        writer.WriteLine(
 $@"<?xml version=""1.0"" encoding=""utf-8""?>
 <appSettings>
     <add key=""DealerId"" value=""32395""/>
@@ -87,3 +87,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
     <add key=""TestLicenses"" value=""{testLic}""/>
     <add key=""DisplayOptions"" value=""Hardware""/>
 </appSettings>");
+
+        return true;
+    }
+}
