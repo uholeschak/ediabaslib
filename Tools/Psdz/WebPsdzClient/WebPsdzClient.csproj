@@ -461,6 +461,13 @@
     <Compile Include="Site.Mobile.Master.designer.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
     </Compile>
+    <Content Include="User1.config">
+      <DependentUpon>User1.csx</DependentUpon>
+    </Content>
+    <None Include="User1.csx">
+      <Generator>CodegenCS</Generator>
+      <LastGenOutput>User1.log</LastGenOutput>
+    </None>
     <Compile Include="ViewSwitcher.ascx.cs">
       <DependentUpon>ViewSwitcher.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
