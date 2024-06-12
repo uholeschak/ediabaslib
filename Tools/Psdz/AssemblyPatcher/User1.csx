@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿// Requires CodegenCS VS extension
+// https://marketplace.visualstudio.com/items?itemName=Drizin.CodegenCS
+using Newtonsoft.Json;
 using System.IO;
 using System;
 using System.Reflection;
