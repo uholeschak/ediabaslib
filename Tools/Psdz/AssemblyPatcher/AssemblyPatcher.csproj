@@ -52,21 +52,17 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="User1.csx">
+    <None Include="User.csx">
       <Generator>CodegenCS</Generator>
-      <LastGenOutput>User1.log</LastGenOutput>
-    </Content>
+      <LastGenOutput>User.log</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="User.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>User.csx</DependentUpon>
     </None>
     <None Include="App.config" />
-    <Content Include="User.csx" />
-    <None Include="User1.config">
-      <DependentUpon>User1.csx</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnpatch\dnpatch.csproj">
@@ -85,17 +81,4 @@
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>SETLOCAL EnableDelayedExpansion
-set "ScriptyPath=%25PATH_SCRIPTY%25"
-set "ScriptyExe=!ScriptyPath!\Scripty.exe"
-IF NOT EXIST "!ScriptyExe!" (
-  echo !ScriptyExe! not found!
-  echo no User.config file is generated!
-) else (
-echo Calling Scripty ...
-"!ScriptyExe!" "$(ProjectPath)" "User.csx" || EXIT
-)
-</PreBuildEvent>
-  </PropertyGroup>
 </Project>

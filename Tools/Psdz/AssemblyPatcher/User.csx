@@ -1,79 +1,78 @@
-﻿using System.IO;
-using System.Xml;
+﻿// Requires CodegenCS VS extension
+// https://marketplace.visualstudio.com/items?itemName=Drizin.CodegenCS
+using Newtonsoft.Json;
+using System.IO;
+using System;
+using System.Collections.Generic;
 
-Output.SetExtension(".config");
-Output.BuildAction = BuildAction.Content;
-
-string patchCtorNamespace = string.Empty;
-string patchCtorClass = string.Empty;
-string patchMethodNamespace = string.Empty;
-string patchMethodClass = string.Empty;
-string patchMethodName = string.Empty;
-string licFileName = string.Empty;
-
-try
+public class UserTemplate
 {
-    string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_patcher.xml");
-    if (File.Exists(fileName))
+    public class Info
     {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(fileName);
-        XmlNode nodeCtor = doc.SelectSingleNode("/patch_info/ctor");
-        if (nodeCtor != null)
-        {
-            XmlAttribute attribNamespace = nodeCtor.Attributes["namespace"];
-            if (attribNamespace != null)
-            {
-                patchCtorNamespace = attribNamespace.Value;
-            }
-
-            XmlAttribute attribClass = nodeCtor.Attributes["class"];
-            if (attribClass != null)
-            {
-                patchCtorClass = attribClass.Value;
-            }
-        }
-
-        XmlNode nodeMethod = doc.SelectSingleNode("/patch_info/method");
-        if (nodeMethod != null)
-        {
-            XmlAttribute attribNamespace = nodeMethod.Attributes["namespace"];
-            if (attribNamespace != null)
-            {
-                patchMethodNamespace = attribNamespace.Value;
-            }
-
-            XmlAttribute attribClass = nodeMethod.Attributes["class"];
-            if (attribClass != null)
-            {
-                patchMethodClass = attribClass.Value;
-            }
-
-            XmlAttribute attribName = nodeMethod.Attributes["name"];
-            if (attribName != null)
-            {
-                patchMethodName = attribName.Value;
-            }
-        }
-
-        XmlNode nodeLic = doc.SelectSingleNode("/patch_info/license");
-        if (nodeLic != null)
-        {
-            XmlAttribute attribFileName = nodeLic.Attributes["file_name"];
-            if (attribFileName != null)
-            {
-                licFileName = attribFileName.Value;
-            }
-        }
+        public string Namespace { set; get; }
+        public string Class { set; get; }
+        public string Name { set; get; }
+        public string Filename { set; get; }
     }
-}
-catch (Exception ex)
-{
-    Output.WriteLine("Exception: {0}", ex.Message);
-    return;
-}
 
-Output.WriteLine(
+    public class InfoDict
+    {
+        public Dictionary<string, Info> PatchInfo { set; get; }
+    }
+
+    int Main(ICodegenContext context)
+    {
+        if (!GenerateConfig(context["User.config"]))
+        {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    bool GenerateConfig(ICodegenTextWriter writer)
+    {
+        string patchCtorNamespace = string.Empty;
+        string patchCtorClass = string.Empty;
+        string patchMethodNamespace = string.Empty;
+        string patchMethodClass = string.Empty;
+        string patchMethodName = string.Empty;
+        string licFileName = string.Empty;
+
+        try
+        {
+            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_patcher.json");
+            if (File.Exists(fileName))
+            {
+                InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
+                if (infoDict != null)
+                {
+                    if (infoDict.PatchInfo.TryGetValue("Ctor", out Info ctorInfo))
+                    {
+                        patchCtorNamespace = ctorInfo.Namespace;
+                        patchCtorClass = ctorInfo.Class;
+                    }
+
+                    if (infoDict.PatchInfo.TryGetValue("Method", out Info methodInfo))
+                    {
+                        patchMethodNamespace = methodInfo.Namespace;
+                        patchMethodClass = methodInfo.Class;
+                        patchMethodName = methodInfo.Name;
+                    }
+
+                    if (infoDict.PatchInfo.TryGetValue("License", out Info licInfo))
+                    {
+                        licFileName = licInfo.Filename;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            return false;
+        }
+
+        writer.WriteLine(
 $@"<?xml version=""1.0"" encoding=""utf-8""?>
 <appSettings>
     <add key=""PatchCtorNamespace"" value=""{patchCtorNamespace}""/>
@@ -83,3 +82,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
     <add key=""PatchMethodName"" value=""{patchMethodName}""/>
     <add key=""LicFileName"" value=""{licFileName}""/>
 </appSettings>");
+
+        return true;
+    }
+}
