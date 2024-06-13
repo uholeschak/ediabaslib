@@ -49,23 +49,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Program.cs">
+      <RunCustomToolOn>User.csx</RunCustomToolOn>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="User1.config">
-      <DependentUpon>User1.csx</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="User1.csx">
+    <None Include="User.csx">
       <Generator>CodegenCS</Generator>
-      <LastGenOutput>User1.log</LastGenOutput>
+      <LastGenOutput>User.log</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="User.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>User.csx</DependentUpon>
     </None>
-    <Content Include="User.csx" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json">
@@ -74,16 +72,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>SETLOCAL EnableDelayedExpansion
-set "ScriptyPath=%25PATH_SCRIPTY%25"
-set "ScriptyExe=!ScriptyPath!\Scripty.exe"
-IF NOT EXIST "!ScriptyExe!" (
-  echo !ScriptyExe! not found!
-  echo no User.config file is generated!
-) else (
-echo Calling Scripty ...
-"!ScriptyExe!" "$(ProjectPath)" "User.csx" || EXIT
-)
-</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>

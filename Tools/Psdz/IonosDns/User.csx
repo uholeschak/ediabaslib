@@ -1,44 +1,66 @@
-﻿using System.IO;
-using System.Xml;
+﻿// Requires CodegenCS VS extension
+// https://marketplace.visualstudio.com/items?itemName=Drizin.CodegenCS
+using Newtonsoft.Json;
+using System.IO;
+using System;
+using System.Collections.Generic;
 
-Output.SetExtension(".config");
-Output.BuildAction = BuildAction.Content;
-
-string prefix = string.Empty;
-string key = string.Empty;
-
-try
+public class UserTemplate
 {
-    string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "ionos_dns.xml");
-    if (File.Exists(fileName))
+    public class Info
     {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(fileName);
-        XmlNode nodeDns = doc.SelectSingleNode("/dns_info/api");
-        if (nodeDns != null)
+        public string Prefix { set; get; }
+        public string Key { set; get; }
+    }
+
+    public class InfoDict
+    {
+        public Dictionary<string, Info> DnsInfo { set; get; }
+    }
+
+    int Main(ICodegenContext context)
+    {
+        if (!GenerateConfig(context["User.config"]))
         {
-            XmlAttribute attribPrefix = nodeDns.Attributes["prefix"];
-            if (attribPrefix != null)
+            return 1;
+        }
+
+        return 0;
+    }
+
+    bool GenerateConfig(ICodegenTextWriter writer)
+    {
+        string prefix = string.Empty;
+        string key = string.Empty;
+
+        try
+        {
+            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "ionos_dns.json");
+            if (File.Exists(fileName))
             {
-                prefix = attribPrefix.Value;
-            }
-            XmlAttribute attribKey = nodeDns.Attributes["key"];
-            if (attribKey != null)
-            {
-                key = attribKey.Value;
+                InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
+                if (infoDict != null)
+                {
+                    if (infoDict.DnsInfo.TryGetValue("Api", out Info apiInfo))
+                    {
+                        prefix = apiInfo.Prefix;
+                        key = apiInfo.Key;
+                    }
+                }
             }
         }
-    }
-}
-catch (Exception ex)
-{
-    Output.WriteLine("Exception: {0}", ex.Message);
-    return;
-}
+        catch (Exception ex)
+        {
+            return false;
+        }
 
-Output.WriteLine(
+        writer.WriteLine(
 $@"<?xml version=""1.0"" encoding=""utf-8""?>
 <appSettings>
     <add key=""Prefix"" value=""{prefix}""/>
     <add key=""Key"" value=""{key}""/>
 </appSettings>");
+
+        return true;
+    }
+}
