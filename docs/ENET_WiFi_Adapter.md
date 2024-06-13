@@ -1,5 +1,5 @@
 # ENET WiFi Adapter
-For the BMW F-models there is a WiFi adapter available, that allows to communicate directly using the BMW ENET protocol.  
+For the BMW F-series or higher there **was** a WiFi adapter available, that allows to communicate directly using the BMW ENET protocol.  
 It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org/toh/unbranded/a5-v11). The adapter has the following features:
 * MediaTek/Ralink RT5350F processor with 350MHz
 * DC/DC converter for improved power consumption
@@ -19,9 +19,10 @@ It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org
 ![ENET adapter closed](ENET_WiFi_Adapter_EnetAdapter2ClosedSmall.png) ![Web interface](ENET_WiFi_Adapter_WebInterfaceSmall.png) 
 
 ## Alternative WiFi adapter
-There is an alternative commercial [Unichip ENET WiFi adapter](https://unichip-tec.com/product/bmw-enet-wifi-adapter/) available. It's recommended to changed the settings of the adapter to the values of the `EnetWifiSettings.dat` configuration file.  
-Another alternative is the [modBM Wifi ENET adapter](https://modbm.com/shop/wifi-enet/) which also uses the [A5-V11 3G/4G Router](https://wiki.openwrt.org/toh/unbranded/a5-v11).  
-For BMW pre F-models use the [Bluetooth adapter](Replacement_firmware_for_ELM327.md)
+Since the adapter is no longer available, there are some commercial alternatives:  
+**modBM**: [modBM Wifi ENET adapter](https://modbm.com/shop/wifi-enet/) which also uses the [A5-V11 3G/4G Router](https://wiki.openwrt.org/toh/unbranded/a5-v11).  
+**Unichip**: [Unichip ENET WiFi adapter](https://unichip-tec.com/product/bmw-enet-wifi-adapter/) (company not existing any more) It's recommended to changed the settings of the adapter to the values of the `EnetWifiSettings.dat` configuration file.  
+For BMW pre F-series use the [Bluetooth adapter](Replacement_firmware_for_ELM327.md)
 
 ## Adapter cable
 You could also use an ENET adapter cable, in this case you have to configure the Android LAN adapter with an Auto IP address (APIPA address),
@@ -42,7 +43,7 @@ If the adapter gets unreachable after a misconfiguration there is a possibility 
 You have to open the adapter and press the reset button after the adapter has booted.
 
 ## Use the adapter with INPA, Tool32 or ISTA-D
-You could use the Bluetooth adapter on a windows PC with INPA, Tool32 or ISTA-D as a replacement for an ENET adapter cable. The following steps are required to establish the connection:
+You could use the ENET WiFi adapter on a windows PC with INPA, Tool32 or ISTA-D as a replacement for an ENET adapter cable. If the vehicle is in your local network the will be also detected. The following steps are required to establish the connection:
 * Install [.NET framework 4.7.2](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472) or higher and [VS2015 C++ runtime](https://www.microsoft.com/de-de/download/details.aspx?id=48145) (recommended, but not required)
 * Optionally connect the ENET adapter with the PC. The PC automatically gets an IP address from the adapter DHCP server.
 * Download the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package and extract the .zip file. Start `Api32\EdiabasLibConfigTool.exe` and follow the instructions in the status window: Search the adapter, select it, optionally click `Connect`, click `Check Connection` and patch the required EDIABAS installations.
