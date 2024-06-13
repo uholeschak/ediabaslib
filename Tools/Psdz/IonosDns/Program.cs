@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Security.Authentication;
 using System.Text;
-using Newtonsoft.Json.Linq;
 
 namespace IonosDns
 {
@@ -35,7 +33,7 @@ namespace IonosDns
                     try
                     {
                         logFile.WriteLine("------------------------------------");
-                        logFile.WriteLine("Date: {0}", DateTime.Now.ToString());
+                        logFile.WriteLine("Date: {0}", DateTime.Now.ToString(CultureInfo.CurrentCulture));
 
                         string prefix = ConfigurationManager.AppSettings["Prefix"];
                         if (string.IsNullOrEmpty(prefix))
