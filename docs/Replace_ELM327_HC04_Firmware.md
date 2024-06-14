@@ -34,7 +34,6 @@ REVS: Y
 ## Step2: Program PIC18F25K80
 * Connect your PICkit 3/4 to the test points on the board of ELM327 adapter (see photo above)
 * Connect 12V (pin 16) and GND (pin 4) from power supply to ELM327 ODB2 connector: https://www.obd-2.de/stecker-belegungen.html
-* Try to read hex file from PIC18F25K80. Do not continue until you get a proper hex file
 * Take `CanAdaapterElm.X.production.unified.hex` from `hc04` folder of the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package
 * Try to flash CanAdaapterElm.X.production.unified.hex. If it fails with the error "Cannot flash Device-ID", then edit it using Tools->Testmemory to the value in the original hex-file
 
