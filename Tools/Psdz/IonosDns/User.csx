@@ -18,9 +18,10 @@ public class UserTemplate
         public Dictionary<string, Info> DnsInfo { set; get; }
     }
 
-    int Main(ICodegenContext context)
+    int Main(ICodegenContext context, VSExecutionContext vsContext)
     {
-        if (!GenerateConfig(context["User.config"]))
+        string templateName = Path.GetFileNameWithoutExtension(vsContext.TemplatePath);
+        if (!GenerateConfig(context[templateName + ".config"]))
         {
             return 1;
         }
