@@ -20,7 +20,13 @@ public class UserTemplate
 
     int Main(ICodegenContext context, VSExecutionContext vsContext)
     {
-        string templateName = Path.GetFileNameWithoutExtension(vsContext.TemplatePath);
+        string templatePath = vsContext?.TemplatePath;
+        if (string.IsNullOrEmpty(templatePath))
+        {
+            templatePath = "User.csx";
+        }
+
+        string templateName = Path.GetFileNameWithoutExtension(templatePath);
         if (!GenerateConfig(context[templateName + ".config"]))
         {
             return 1;
