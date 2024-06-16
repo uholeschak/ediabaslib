@@ -5,6 +5,8 @@ using System.IO;
 using dnlib.DotNet.Emit;
 using dnpatch;
 
+// switch to artifacs directory layout:
+// create dotnet new buildprops --use-artifacts
 namespace AssemblyPatcher
 {
     internal class Program

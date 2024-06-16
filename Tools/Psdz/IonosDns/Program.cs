@@ -9,6 +9,8 @@ using System.Reflection;
 using System.Security.Authentication;
 using System.Text;
 
+// switch to artifacs directory layout:
+// create dotnet new buildprops --use-artifacts
 namespace IonosDns
 {
     internal class Program
