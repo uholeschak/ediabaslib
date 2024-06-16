@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleTestServer", "Vehicl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssemblyPatcher", "AssemblyPatcher\AssemblyPatcher.csproj", "{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnpatch", "dnpatch\dnpatch.csproj", "{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dnpatch", "dnpatch\dnpatch.csproj", "{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IonosDns", "IonosDns\IonosDns.csproj", "{F0536AF3-EA10-4B9C-ADFF-D45EA2FEF8EE}"
 EndProject
