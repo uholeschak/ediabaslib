@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AssemblyPatcher": {
+      "commandName": "Project",
+      "commandLineArgs": "E:\\ISTA-D-4.39.20\\TesterGUI\\bin\\ReleaseMod"
+    }
+  }
+}
