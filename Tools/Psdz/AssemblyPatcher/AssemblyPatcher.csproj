@@ -18,6 +18,9 @@
     <NoWarn />
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="User.log" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="User.csx">
       <Generator>CodegenCS</Generator>
       <LastGenOutput>User.log</LastGenOutput>

@@ -20,9 +20,16 @@ public class UserTemplate
         public Dictionary<string, Info> PatchInfo { set; get; }
     }
 
-    int Main(ICodegenContext context)
+    int Main(ICodegenContext context, VSExecutionContext vsContext)
     {
-        if (!GenerateConfig(context["User.config"]))
+        string templatePath = vsContext?.TemplatePath;
+        if (string.IsNullOrEmpty(templatePath))
+        {
+            templatePath = "User.csx";
+        }
+
+        string templateName = Path.GetFileNameWithoutExtension(templatePath);
+        if (!GenerateConfig(context[templateName + ".config"]))
         {
             return 1;
         }
