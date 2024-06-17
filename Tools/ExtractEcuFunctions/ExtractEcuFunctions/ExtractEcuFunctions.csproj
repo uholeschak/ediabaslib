@@ -9,6 +9,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <Nullable>disable</Nullable>
+    <Authors>Ulrich Holeschak</Authors>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\EdiabasLib\BmwFileReader\EcuFunctionStructs.cs">
