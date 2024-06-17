@@ -61,7 +61,7 @@ namespace IonosDns
                         string apiKey = prefix + "." + key;
                         if (args.Length < 1)
                         {
-                            logFile.WriteLine("No operation specified");
+                            logFile.WriteLine("No operation specified, must be 'create' or 'delete'");
                             return 1;
                         }
 
@@ -71,7 +71,7 @@ namespace IonosDns
 
                         if (!create && !delete)
                         {
-                            logFile.WriteLine("Operation must be create or delete");
+                            logFile.WriteLine("First argument must be 'create' or 'delete'");
                             return 1;
                         }
 
@@ -79,7 +79,7 @@ namespace IonosDns
                         {
                             if (args.Length < 4)
                             {
-                                logFile.WriteLine("Create argument: create {Identifier} {RecordName} {Token}");
+                                logFile.WriteLine("Arguments for create: create {Identifier} {RecordName} {Token}");
                                 return 1;
                             }
                         }
@@ -88,7 +88,7 @@ namespace IonosDns
                         {
                             if (args.Length < 3)
                             {
-                                logFile.WriteLine("Create argument: create {Identifier} {RecordName}");
+                                logFile.WriteLine("Arguments for delete: delete {Identifier} {RecordName}");
                                 return 1;
                             }
                         }
@@ -117,7 +117,7 @@ namespace IonosDns
                         string zonesId = GetZonesId(domain);
                         if (string.IsNullOrEmpty(zonesId))
                         {
-                            logFile.WriteLine("No zones ID");
+                            logFile.WriteLine("No zones ID for domain {0} found", domain);
                             return 1;
                         }
 
@@ -129,27 +129,27 @@ namespace IonosDns
                             logFile.WriteLine("Delete Record ID: {0}", recordId);
                             if (!DeleteRecord(zonesId, recordId))
                             {
-                                logFile.WriteLine("Delete record failed");
+                                logFile.WriteLine("Delete record ID {0} failed", recordId);
                                 return 1;
                             }
 
-                            logFile.WriteLine("Deleted Record ID: {0}", recordId);
+                            logFile.WriteLine("Deleted Record ID {0} successful", recordId);
                         }
                         else
                         {
-                            logFile.WriteLine("Record not found: '{0}'", recordName);
+                            logFile.WriteLine("Record name '{0}' not found", recordName);
                         }
 
                         if (create)
                         {
-                            logFile.WriteLine("Create Record: '{0}' '{1}'", recordName, recordToken);
+                            logFile.WriteLine("Create record: Name='{0}', Token='{1}'", recordName, recordToken);
                             if (!CreateRecord(zonesId, recordName, recordToken))
                             {
                                 logFile.WriteLine("Create record failed");
                                 return 1;
                             }
 
-                            logFile.WriteLine("Created Record: '{0}' '{1}'", recordName, recordToken);
+                            logFile.WriteLine("Create record successful: Name='{0}', Token='{1}'", recordName, recordToken);
                         }
                     }
                     catch (Exception e)
