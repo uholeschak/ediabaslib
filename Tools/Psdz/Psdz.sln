@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPsdzClient", "WebPsdzCli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzClientLibrary", "PsdzClientLibrary\PsdzClientLibrary.csproj", "{EEF1264D-D00F-44D4-B21C-D65CF54E149E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleTestServer", "VehicleTestServer\VehicleTestServer.csproj", "{66FDF0E2-F789-4362-A5DF-B114ED7C8D4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleTestServer", "VehicleTestServer\VehicleTestServer.csproj", "{66FDF0E2-F789-4362-A5DF-B114ED7C8D4B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssemblyPatcher", "AssemblyPatcher\AssemblyPatcher.csproj", "{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}"
 EndProject
