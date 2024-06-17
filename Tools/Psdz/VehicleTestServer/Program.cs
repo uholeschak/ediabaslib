@@ -23,6 +23,7 @@ namespace VehicleTestServer
     {
         static int Main(string[] args)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             TextWriter outWriter = Console.Out;
             EdiabasNet ediabas = EdiabasSetup();
             EdWebServer edWebServer = new EdWebServer(ediabas, message =>
