@@ -196,6 +196,17 @@ namespace PsdzClient.Programming
                 HwInstall
             }
 
+            public enum TalExecutionStateEnum
+            {
+                Idle,
+                BackupTalExecuting,
+                BackupTalExecuted,
+                TalExecuting,
+                TalExecuted,
+                RestoreTalExecuting,
+                restoreTalExecuted,
+            }
+
             public OperationStateData()
             {
             }
@@ -204,10 +215,12 @@ namespace PsdzClient.Programming
             {
                 Operation = operation;
                 DiagAddrList = diagAddrList;
+                TalExecutionState = TalExecutionStateEnum.Idle;
             }
 
             [XmlElement("Operation"), DefaultValue(null)] public OperationEnum Operation { get; set; }
             [XmlElement("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
+            [XmlElement("TalExecutionState"), DefaultValue(null)] public TalExecutionStateEnum TalExecutionState { get; set; }
         }
 
         public delegate void UpdateStatusDelegate(string message = null);
