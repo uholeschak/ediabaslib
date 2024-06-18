@@ -1504,8 +1504,10 @@ namespace PsdzClient.Programming
                             CacheResponseType = CacheType.NoResponse;
                             log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
 
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting);
                             IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                                 PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuted);
                             if (backupTalResult == null)
                             {
                                 log.ErrorFormat("Execute backup TAL failed");
@@ -1602,8 +1604,10 @@ namespace PsdzClient.Programming
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
+                        UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting);
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
+                        UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuted);
                         log.Info("Execute Tal result:");
                         log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", executeTalResult.AsXml.Length);
                         log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", executeTalResult.TalExecutionState);
@@ -1731,8 +1735,10 @@ namespace PsdzClient.Programming
                             {
                                 PsdzContext.IndividualDataRestoreTal = psdzRestoreTal;
                                 log.InfoFormat(CultureInfo.InvariantCulture, "Executing restore TAL");
+                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuting);
                                 IPsdzTal restoreTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncRestoreTal(
                                     PsdzContext.Connection, PsdzContext.IndividualDataRestoreTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings);
+                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.restoreTalExecuted);
                                 if (restoreTalResult == null)
                                 {
                                     log.ErrorFormat("Execute restore TAL failed");
@@ -1923,6 +1929,7 @@ namespace PsdzClient.Programming
                         }
                     }
 
+                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.Idle);
                     sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                     UpdateStatus(sbResult.ToString());
                     return true;
@@ -3060,7 +3067,9 @@ namespace PsdzClient.Programming
                 }
 
                 string fileName = backupPath.TrimEnd('\\') + ".xml";
-                if (OperationState == null || OperationState.Operation == OperationStateData.OperationEnum.Idle)
+                bool bDelete = OperationState.Operation == OperationStateData.OperationEnum.Idle &&
+                    OperationState.TalExecutionState == OperationStateData.TalExecutionStateEnum.Idle;
+                if (OperationState == null || bDelete)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "SaveOperationState Deleting: {0}", fileName);
                     if (File.Exists(fileName))
@@ -3167,6 +3176,7 @@ namespace PsdzClient.Programming
                 OperationState = new OperationStateData();
             }
 
+            log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTalExecutionState: State={0}", talExecutionState.ToString());
             OperationState.TalExecutionState = talExecutionState;
             return SaveOperationState();
         }
