@@ -200,11 +200,14 @@ namespace PsdzClient.Programming
             {
                 Idle,
                 BackupTalExecuting,
-                BackupTalExecuted,
+                BackupTalExecuteOk,
+                BackupTalExecuteError,
                 TalExecuting,
-                TalExecuted,
+                TalExecuteOk,
+                TalExecuteError,
                 RestoreTalExecuting,
-                restoreTalExecuted,
+                RestoreTalExecuteOk,
+                RestoreTalExecuteError,
             }
 
             public OperationStateData()
@@ -1507,9 +1510,9 @@ namespace PsdzClient.Programming
                             UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting);
                             IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                                 PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuted);
                             if (backupTalResult == null)
                             {
+                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuteError);
                                 log.ErrorFormat("Execute backup TAL failed");
                                 sbResult.AppendLine(Strings.TalExecuteError);
                                 UpdateStatus(sbResult.ToString());
@@ -1547,6 +1550,15 @@ namespace PsdzClient.Programming
                                 }
 
                                 UpdateStatus(sbResult.ToString());
+                            }
+
+                            if (talExecutionFailed)
+                            {
+                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuteError);
+                            }
+                            else
+                            {
+                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuteOk);
                             }
 
                             CacheClearRequired = true;
@@ -1607,7 +1619,6 @@ namespace PsdzClient.Programming
                         UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting);
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
-                        UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuted);
                         log.Info("Execute Tal result:");
                         log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", executeTalResult.AsXml.Length);
                         log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", executeTalResult.TalExecutionState);
@@ -1648,6 +1659,15 @@ namespace PsdzClient.Programming
                             }
 
                             UpdateStatus(sbResult.ToString());
+                        }
+
+                        if (talExecutionFailed)
+                        {
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuteError);
+                        }
+                        else
+                        {
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuteOk);
                         }
 
                         CacheClearRequired = true;
@@ -1738,7 +1758,6 @@ namespace PsdzClient.Programming
                                 UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuting);
                                 IPsdzTal restoreTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncRestoreTal(
                                     PsdzContext.Connection, PsdzContext.IndividualDataRestoreTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings);
-                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.restoreTalExecuted);
                                 if (restoreTalResult == null)
                                 {
                                     log.ErrorFormat("Execute restore TAL failed");
@@ -1777,6 +1796,15 @@ namespace PsdzClient.Programming
                                     }
 
                                     UpdateStatus(sbResult.ToString());
+                                }
+
+                                if (talExecutionFailed)
+                                {
+                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuteError);
+                                }
+                                else
+                                {
+                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuteOk);
                                 }
 
                                 if (!CheckVoltage(cts, sbResult))
@@ -1890,6 +1918,7 @@ namespace PsdzClient.Programming
 
                         if (!talExecutionFailed)
                         {
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.Idle);
                             if (RegisterGroup == PsdzDatabase.SwiRegisterGroup.HwInstall)
                             {
                                 ResetOperationState();
@@ -1929,7 +1958,6 @@ namespace PsdzClient.Programming
                         }
                     }
 
-                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.Idle);
                     sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                     UpdateStatus(sbResult.ToString());
                     return true;
