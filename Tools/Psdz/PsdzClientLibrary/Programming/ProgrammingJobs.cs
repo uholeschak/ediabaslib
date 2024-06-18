@@ -208,6 +208,9 @@ namespace PsdzClient.Programming
                 RestoreTalExecuting,
                 RestoreTalExecuteOk,
                 RestoreTalExecuteError,
+                TslUpdateExecuting,
+                TslUpdateExecuteOk,
+                TslUpdateExecuteError,
             }
 
             public OperationStateData()
@@ -1552,14 +1555,9 @@ namespace PsdzClient.Programming
                                 UpdateStatus(sbResult.ToString());
                             }
 
-                            if (talExecutionFailed)
-                            {
-                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuteError);
-                            }
-                            else
-                            {
-                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuteOk);
-                            }
+                            UpdateTalExecutionState(talExecutionFailed
+                                ? OperationStateData.TalExecutionStateEnum.BackupTalExecuteError
+                                : OperationStateData.TalExecutionStateEnum.BackupTalExecuteOk);
 
                             CacheClearRequired = true;
                             cts?.Token.ThrowIfCancellationRequested();
@@ -1567,6 +1565,7 @@ namespace PsdzClient.Programming
 
                         if (!LicenseValid)
                         {
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.Idle);
                             log.ErrorFormat(CultureInfo.InvariantCulture, "No valid license for TAL execution");
                             sbResult.AppendLine(Strings.NoVehiceLicense);
                             UpdateStatus(sbResult.ToString());
@@ -1579,6 +1578,7 @@ namespace PsdzClient.Programming
                             {
                                 if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteErrorContinue, false, true))
                                 {
+                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.Idle);
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
                                     return false;
                                 }
@@ -1597,6 +1597,7 @@ namespace PsdzClient.Programming
                                 {
                                     if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteOkContinue, false, true))
                                     {
+                                        UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.Idle);
                                         log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
                                         return false;
                                     }
@@ -1661,14 +1662,9 @@ namespace PsdzClient.Programming
                             UpdateStatus(sbResult.ToString());
                         }
 
-                        if (talExecutionFailed)
-                        {
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuteError);
-                        }
-                        else
-                        {
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuteOk);
-                        }
+                        UpdateTalExecutionState(talExecutionFailed
+                            ? OperationStateData.TalExecutionStateEnum.TalExecuteError
+                            : OperationStateData.TalExecutionStateEnum.TalExecuteOk);
 
                         CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
@@ -1798,14 +1794,9 @@ namespace PsdzClient.Programming
                                     UpdateStatus(sbResult.ToString());
                                 }
 
-                                if (talExecutionFailed)
-                                {
-                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuteError);
-                                }
-                                else
-                                {
-                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuteOk);
-                                }
+                                UpdateTalExecutionState(talExecutionFailed
+                                    ? OperationStateData.TalExecutionStateEnum.RestoreTalExecuteError
+                                    : OperationStateData.TalExecutionStateEnum.RestoreTalExecuteOk);
 
                                 if (!CheckVoltage(cts, sbResult))
                                 {
@@ -1820,6 +1811,7 @@ namespace PsdzClient.Programming
                         try
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Updating TSL");
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuting);
                             ProgrammingService.Psdz.ProgrammingService.TslUpdate(PsdzContext.Connection, true, PsdzContext.SvtActual, PsdzContext.Sollverbauung.Svt);
                             sbResult.AppendLine(Strings.TslUpdated);
                             UpdateStatus(sbResult.ToString());
@@ -1831,6 +1823,10 @@ namespace PsdzClient.Programming
                             sbResult.AppendLine(Strings.TslUpdateFailed);
                             UpdateStatus(sbResult.ToString());
                         }
+
+                        UpdateTalExecutionState(talExecutionFailed
+                            ? OperationStateData.TalExecutionStateEnum.TslUpdateExecuteError
+                            : OperationStateData.TalExecutionStateEnum.TslUpdateExecuteOk);
 
                         CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
