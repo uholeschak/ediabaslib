@@ -1534,6 +1534,7 @@ namespace PsdzClient.Programming
 
                             if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState, true))
                             {
+                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuteError);
                                 talExecutionFailed = true;
                                 backupFailed = true;
                                 log.Error(backupTalResult.AsXml);
@@ -1542,6 +1543,7 @@ namespace PsdzClient.Programming
                             }
                             else
                             {
+                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuteOk);
                                 if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState))
                                 {
                                     log.Info(backupTalResult.AsXml);
@@ -1554,10 +1556,6 @@ namespace PsdzClient.Programming
 
                                 UpdateStatus(sbResult.ToString());
                             }
-
-                            UpdateTalExecutionState(talExecutionFailed
-                                ? OperationStateData.TalExecutionStateEnum.BackupTalExecuteError
-                                : OperationStateData.TalExecutionStateEnum.BackupTalExecuteOk);
 
                             CacheClearRequired = true;
                             cts?.Token.ThrowIfCancellationRequested();
@@ -1631,6 +1629,7 @@ namespace PsdzClient.Programming
                         }
                         if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState, true))
                         {
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuteError);
                             talExecutionFailed = true;
                             log.Error(executeTalResult.AsXml);
                             sbResult.AppendLine(Strings.TalExecuteError);
@@ -1649,6 +1648,7 @@ namespace PsdzClient.Programming
                         }
                         else
                         {
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuteOk);
                             if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState))
                             {
                                 log.Info(executeTalResult.AsXml);
@@ -1661,10 +1661,6 @@ namespace PsdzClient.Programming
 
                             UpdateStatus(sbResult.ToString());
                         }
-
-                        UpdateTalExecutionState(talExecutionFailed
-                            ? OperationStateData.TalExecutionStateEnum.TalExecuteError
-                            : OperationStateData.TalExecutionStateEnum.TalExecuteOk);
 
                         CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
@@ -1774,6 +1770,7 @@ namespace PsdzClient.Programming
 
                                 if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState, true))
                                 {
+                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuteError);
                                     talExecutionFailed = true;
                                     log.Error(restoreTalResult.AsXml);
                                     sbResult.AppendLine(Strings.TalExecuteError);
@@ -1781,6 +1778,7 @@ namespace PsdzClient.Programming
                                 }
                                 else
                                 {
+                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuteOk);
                                     if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState))
                                     {
                                         log.Info(restoreTalResult.AsXml);
@@ -1793,10 +1791,6 @@ namespace PsdzClient.Programming
 
                                     UpdateStatus(sbResult.ToString());
                                 }
-
-                                UpdateTalExecutionState(talExecutionFailed
-                                    ? OperationStateData.TalExecutionStateEnum.RestoreTalExecuteError
-                                    : OperationStateData.TalExecutionStateEnum.RestoreTalExecuteOk);
 
                                 if (!CheckVoltage(cts, sbResult))
                                 {
@@ -1815,18 +1809,16 @@ namespace PsdzClient.Programming
                             ProgrammingService.Psdz.ProgrammingService.TslUpdate(PsdzContext.Connection, true, PsdzContext.SvtActual, PsdzContext.Sollverbauung.Svt);
                             sbResult.AppendLine(Strings.TslUpdated);
                             UpdateStatus(sbResult.ToString());
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuteOk);
                         }
                         catch (Exception ex)
                         {
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuteError);
                             talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Tsl update failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.TslUpdateFailed);
                             UpdateStatus(sbResult.ToString());
                         }
-
-                        UpdateTalExecutionState(talExecutionFailed
-                            ? OperationStateData.TalExecutionStateEnum.TslUpdateExecuteError
-                            : OperationStateData.TalExecutionStateEnum.TslUpdateExecuteOk);
 
                         CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
