@@ -3159,6 +3159,18 @@ namespace PsdzClient.Programming
             OperationState = new OperationStateData(operation, diagAddrList);
         }
 
+        public bool UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum talExecutionState)
+        {
+            if (OperationState == null)
+            {
+                log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTalExecutionState No data");
+                OperationState = new OperationStateData();
+            }
+
+            OperationState.TalExecutionState = talExecutionState;
+            return SaveOperationState();
+        }
+
         public bool RestoreOperationState()
         {
             if (OperationState == null)
