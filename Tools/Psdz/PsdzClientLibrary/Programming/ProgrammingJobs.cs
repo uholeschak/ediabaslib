@@ -211,6 +211,12 @@ namespace PsdzClient.Programming
                 TslUpdateExecuting,
                 TslUpdateExecuteOk,
                 TslUpdateExecuteError,
+                WriteILevelExecuting,
+                WriteILevelExecuteOk,
+                WriteILevelExecuteError,
+                WriteILevelBackupExecuting,
+                WriteILevelBackupExecuteOk,
+                WriteILevelBackupExecuteError,
             }
 
             public OperationStateData()
@@ -1807,9 +1813,9 @@ namespace PsdzClient.Programming
                             log.InfoFormat(CultureInfo.InvariantCulture, "Updating TSL");
                             UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuting);
                             ProgrammingService.Psdz.ProgrammingService.TslUpdate(PsdzContext.Connection, true, PsdzContext.SvtActual, PsdzContext.Sollverbauung.Svt);
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuteOk);
                             sbResult.AppendLine(Strings.TslUpdated);
                             UpdateStatus(sbResult.ToString());
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuteOk);
                         }
                         catch (Exception ex)
                         {
@@ -1826,12 +1832,15 @@ namespace PsdzClient.Programming
                         try
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Writing ILevels");
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuting);
                             ProgrammingService.Psdz.VcmService.WriteIStufen(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuteOk);
                             sbResult.AppendLine(Strings.ILevelUpdated);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuteError);
                             talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.ILevelUpdateFailed);
@@ -1844,12 +1853,15 @@ namespace PsdzClient.Programming
                         try
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Writing ILevels backup");
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelBackupExecuting);
                             ProgrammingService.Psdz.VcmService.WriteIStufenToBackup(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelBackupExecuteOk);
                             sbResult.AppendLine(Strings.ILevelBackupUpdated);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
+                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelBackupExecuteError);
                             talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel backup failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.ILevelBackupFailed);
