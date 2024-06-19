@@ -205,6 +205,9 @@ namespace PsdzClient.Programming
                 TslUpdateExecuting,
                 WriteILevelExecuting,
                 WriteILevelBackupExecuting,
+                UpdatePiaMasterExecuting,
+                WriteFaExecuting,
+                WriteFaBackupExecuting
             }
 
             public OperationStateData()
@@ -1864,23 +1867,39 @@ namespace PsdzClient.Programming
                         cts?.Token.ThrowIfCancellationRequested();
 
                         log.InfoFormat(CultureInfo.InvariantCulture, "Updating PIA master");
+                        StartTalExecutionState(OperationStateData.TalExecutionStateEnum.UpdatePiaMasterExecuting);
                         IPsdzResponse piaResponse = ProgrammingService.Psdz.EcuService.UpdatePiaPortierungsmaster(PsdzContext.Connection, PsdzContext.SvtActual);
                         log.ErrorFormat(CultureInfo.InvariantCulture, "PIA master update Success={0}, Cause={1}",
                             piaResponse.IsSuccessful, piaResponse.Cause);
 
-                        sbResult.AppendLine(piaResponse.IsSuccessful ? Strings.PiaMasterUpdated : Strings.PiaMasterUpdateFailed);
-                        UpdateStatus(sbResult.ToString());
+                        if (piaResponse.IsSuccessful)
+                        {
+                            FinishTalExecutionState();
+                            sbResult.AppendLine(Strings.PiaMasterUpdated);
+                            UpdateStatus(sbResult.ToString());
+                        }
+                        else
+                        {
+                            FinishTalExecutionState(true);
+                            talExecutionFailed = true;
+                            sbResult.AppendLine(Strings.PiaMasterUpdateFailed);
+                            UpdateStatus(sbResult.ToString());
+                        }
+
                         cts?.Token.ThrowIfCancellationRequested();
 
                         try
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Writing FA");
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteFaExecuting);
                             ProgrammingService.Psdz.VcmService.WriteFa(PsdzContext.Connection, PsdzContext.FaTarget);
+                            FinishTalExecutionState();
                             sbResult.AppendLine(Strings.FaWritten);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
+                            FinishTalExecutionState(true);
                             talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "FA write failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.FaWriteFailed);
@@ -1893,12 +1912,15 @@ namespace PsdzClient.Programming
                         try
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Writing FA backup");
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteFaBackupExecuting);
                             ProgrammingService.Psdz.VcmService.WriteFaToBackup(PsdzContext.Connection, PsdzContext.FaTarget);
+                            FinishTalExecutionState();
                             sbResult.AppendLine(Strings.FaBackupWritten);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
+                            FinishTalExecutionState(true);
                             talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "FA backup write failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.FaBackupWriteFailed);
@@ -1926,6 +1948,7 @@ namespace PsdzClient.Programming
                             {
                                 if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionFailMessage, true, true))
                                 {
+                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage aborted");
                                     return false;
                                 }
