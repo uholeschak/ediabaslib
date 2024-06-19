@@ -1508,12 +1508,12 @@ namespace PsdzClient.Programming
                             CacheResponseType = CacheType.NoResponse;
                             log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
 
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting, true);
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting);
                             IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
                                 PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
                             if (backupTalResult == null)
                             {
-                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting, false, true);
+                                FinishTalExecutionState(true);
                                 log.ErrorFormat("Execute backup TAL failed");
                                 sbResult.AppendLine(Strings.TalExecuteError);
                                 UpdateStatus(sbResult.ToString());
@@ -1532,7 +1532,7 @@ namespace PsdzClient.Programming
 
                             if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState, true))
                             {
-                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting, false, true);
+                                FinishTalExecutionState(true);
                                 talExecutionFailed = true;
                                 backupFailed = true;
                                 log.Error(backupTalResult.AsXml);
@@ -1541,7 +1541,7 @@ namespace PsdzClient.Programming
                             }
                             else
                             {
-                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting, false);
+                                FinishTalExecutionState();
                                 if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState))
                                 {
                                     log.Info(backupTalResult.AsXml);
@@ -1561,7 +1561,7 @@ namespace PsdzClient.Programming
 
                         if (!LicenseValid)
                         {
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.None, false);
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
                             log.ErrorFormat(CultureInfo.InvariantCulture, "No valid license for TAL execution");
                             sbResult.AppendLine(Strings.NoVehiceLicense);
                             UpdateStatus(sbResult.ToString());
@@ -1574,7 +1574,7 @@ namespace PsdzClient.Programming
                             {
                                 if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteErrorContinue, false, true))
                                 {
-                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.None, false);
+                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
                                     return false;
                                 }
@@ -1593,7 +1593,7 @@ namespace PsdzClient.Programming
                                 {
                                     if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteOkContinue, false, true))
                                     {
-                                        UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.None, false);
+                                        StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
                                         log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecuteContinue aborted");
                                         return false;
                                     }
@@ -1613,7 +1613,7 @@ namespace PsdzClient.Programming
                         sbResult.AppendLine(Strings.ExecutingTal);
                         UpdateStatus(sbResult.ToString());
                         log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
-                        UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting, true);
+                        StartTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting);
                         IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
                             null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
                         log.Info("Execute Tal result:");
@@ -1627,7 +1627,7 @@ namespace PsdzClient.Programming
                         }
                         if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState, true))
                         {
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting, false, true);
+                            FinishTalExecutionState( true);
                             talExecutionFailed = true;
                             log.Error(executeTalResult.AsXml);
                             sbResult.AppendLine(Strings.TalExecuteError);
@@ -1646,7 +1646,7 @@ namespace PsdzClient.Programming
                         }
                         else
                         {
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting, false);
+                            FinishTalExecutionState();
                             if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState))
                             {
                                 log.Info(executeTalResult.AsXml);
@@ -1745,7 +1745,7 @@ namespace PsdzClient.Programming
                             {
                                 PsdzContext.IndividualDataRestoreTal = psdzRestoreTal;
                                 log.InfoFormat(CultureInfo.InvariantCulture, "Executing restore TAL");
-                                UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuting, true);
+                                StartTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuting);
                                 IPsdzTal restoreTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncRestoreTal(
                                     PsdzContext.Connection, PsdzContext.IndividualDataRestoreTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings);
                                 if (restoreTalResult == null)
@@ -1768,7 +1768,7 @@ namespace PsdzClient.Programming
 
                                 if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState, true))
                                 {
-                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuting, false, true);
+                                    FinishTalExecutionState(true);
                                     talExecutionFailed = true;
                                     log.Error(restoreTalResult.AsXml);
                                     sbResult.AppendLine(Strings.TalExecuteError);
@@ -1776,7 +1776,7 @@ namespace PsdzClient.Programming
                                 }
                                 else
                                 {
-                                    UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.RestoreTalExecuting, false);
+                                    FinishTalExecutionState();
                                     if (!IsTalExecutionStateOk(restoreTalResult.TalExecutionState))
                                     {
                                         log.Info(restoreTalResult.AsXml);
@@ -1803,15 +1803,15 @@ namespace PsdzClient.Programming
                         try
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Updating TSL");
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuting, true);
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuting);
                             ProgrammingService.Psdz.ProgrammingService.TslUpdate(PsdzContext.Connection, true, PsdzContext.SvtActual, PsdzContext.Sollverbauung.Svt);
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuting, false);
+                            FinishTalExecutionState();
                             sbResult.AppendLine(Strings.TslUpdated);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuting, false, true);
+                            FinishTalExecutionState(true);
                             talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Tsl update failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.TslUpdateFailed);
@@ -1824,15 +1824,15 @@ namespace PsdzClient.Programming
                         try
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Writing ILevels");
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuting, true);
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuting);
                             ProgrammingService.Psdz.VcmService.WriteIStufen(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuting, false);
+                            FinishTalExecutionState();
                             sbResult.AppendLine(Strings.ILevelUpdated);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuting, false, true);
+                            FinishTalExecutionState(true);
                             talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.ILevelUpdateFailed);
@@ -1845,15 +1845,15 @@ namespace PsdzClient.Programming
                         try
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, "Writing ILevels backup");
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelBackupExecuting, true);
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelBackupExecuting);
                             ProgrammingService.Psdz.VcmService.WriteIStufenToBackup(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelBackupExecuting, false);
+                            FinishTalExecutionState();
                             sbResult.AppendLine(Strings.ILevelBackupUpdated);
                             UpdateStatus(sbResult.ToString());
                         }
                         catch (Exception ex)
                         {
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelBackupExecuting, false, true);
+                            FinishTalExecutionState(true);
                             talExecutionFailed = true;
                             log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel backup failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.ILevelBackupFailed);
@@ -1910,7 +1910,7 @@ namespace PsdzClient.Programming
 
                         if (!talExecutionFailed)
                         {
-                            UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum.None, false);
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
                             if (RegisterGroup == PsdzDatabase.SwiRegisterGroup.HwInstall)
                             {
                                 ResetOperationState();
@@ -3188,30 +3188,40 @@ namespace PsdzClient.Programming
             OperationState = new OperationStateData(operation, diagAddrList);
         }
 
-        public bool UpdateTalExecutionState(OperationStateData.TalExecutionStateEnum talExecutionState, bool active, bool failure = false)
+        public bool StartTalExecutionState(OperationStateData.TalExecutionStateEnum talExecutionState)
         {
             if (OperationState == null)
             {
-                log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTalExecutionState No data");
+                log.InfoFormat(CultureInfo.InvariantCulture, "StartTalExecutionState No data");
                 OperationState = new OperationStateData();
             }
 
-            log.InfoFormat(CultureInfo.InvariantCulture, "UpdateTalExecutionState: State={0}, Failure={1}", talExecutionState.ToString(), failure);
+            log.InfoFormat(CultureInfo.InvariantCulture, "StartTalExecutionState: State={0}", talExecutionState.ToString());
             OperationState.TalExecutionState = talExecutionState;
-            OperationState.TalExecutionActive = active;
+            OperationState.TalExecutionActive = true;
+            if (talExecutionState == OperationStateData.TalExecutionStateEnum.None)
+            {
+                OperationState.TalExecutionFailed = OperationStateData.TalExecutionStateEnum.None;
+            }
 
+            return SaveOperationState();
+        }
+
+        public bool FinishTalExecutionState(bool failure = false)
+        {
+            if (OperationState == null)
+            {
+                log.InfoFormat(CultureInfo.InvariantCulture, "FinishTalExecutionState No data");
+                return false;
+            }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "FinishTalExecutionState: Failure={0}", failure);
+            OperationState.TalExecutionActive = false;
             if (failure)
             {
                 if (OperationState.TalExecutionFailed == OperationStateData.TalExecutionStateEnum.None)
                 {
-                    OperationState.TalExecutionFailed = talExecutionState;
-                }
-            }
-            else
-            {
-                if (talExecutionState == OperationStateData.TalExecutionStateEnum.None)
-                {
-                    OperationState.TalExecutionFailed = talExecutionState;
+                    OperationState.TalExecutionFailed = OperationState.TalExecutionState;
                 }
             }
 
