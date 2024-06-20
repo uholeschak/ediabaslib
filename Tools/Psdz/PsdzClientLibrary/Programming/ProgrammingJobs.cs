@@ -218,16 +218,16 @@ namespace PsdzClient.Programming
             {
                 Operation = operation;
                 DiagAddrList = diagAddrList;
-                TalExecutionState = TalExecutionStateEnum.None;
                 TalExecutionActive = false;
+                TalExecutionState = TalExecutionStateEnum.None;
                 TalExecutionFailed = TalExecutionStateEnum.None;
             }
 
             [XmlElement("Operation"), DefaultValue(null)] public OperationEnum Operation { get; set; }
             [XmlElement("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
-            [XmlElement("TalExecutionState"), DefaultValue(null)] public TalExecutionStateEnum TalExecutionState { get; set; }
-            [XmlElement("TalExecutionActive"), DefaultValue(false)] public bool TalExecutionActive { get; set; }
-            [XmlElement("TalExecutionFailed"), DefaultValue(null)] public TalExecutionStateEnum TalExecutionFailed { get; set; }
+            [XmlElement("TalExecutionActive")] public bool TalExecutionActive { get; set; }
+            [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
+            [XmlElement("TalExecutionFailed")] public TalExecutionStateEnum TalExecutionFailed { get; set; }
         }
 
         public delegate void UpdateStatusDelegate(string message = null);
@@ -3220,11 +3220,16 @@ namespace PsdzClient.Programming
             }
 
             log.InfoFormat(CultureInfo.InvariantCulture, "StartTalExecutionState: State={0}", talExecutionState.ToString());
-            OperationState.TalExecutionState = talExecutionState;
-            OperationState.TalExecutionActive = true;
             if (talExecutionState == OperationStateData.TalExecutionStateEnum.None)
             {
+                OperationState.TalExecutionActive = false;
+                OperationState.TalExecutionState = OperationStateData.TalExecutionStateEnum.None;
                 OperationState.TalExecutionFailed = OperationStateData.TalExecutionStateEnum.None;
+            }
+            else
+            {
+                OperationState.TalExecutionActive = true;
+                OperationState.TalExecutionState = talExecutionState;
             }
 
             return SaveOperationState();
