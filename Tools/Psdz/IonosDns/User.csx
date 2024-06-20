@@ -1,5 +1,6 @@
 ﻿// Requires CodegenCS VS extension
 // https://marketplace.visualstudio.com/items?itemName=Drizin.CodegenCS
+using CodegenCS.Runtime;
 using Newtonsoft.Json;
 using System.IO;
 using System;
@@ -19,7 +20,7 @@ public class UserTemplate
         public Dictionary<string, Info> DnsInfo { set; get; }
     }
 
-    async Task<int> Main(ICodegenContext context, VSExecutionContext vsContext, CodegenCS.Runtime.ILogger logger)
+    async Task<int> Main(ICodegenContext context, ILogger logger, VSExecutionContext vsContext)
     {
         string templatePath = vsContext?.TemplatePath;
         if (string.IsNullOrEmpty(templatePath))
@@ -30,7 +31,8 @@ public class UserTemplate
 
         string templateName = Path.GetFileNameWithoutExtension(templatePath);
         await logger.WriteLineAsync($"Template name: {templatePath}");
-        if (!GenerateConfig(context[templateName + ".config"]))
+        bool result = await GenerateConfig(context[templateName + ".config"], logger);
+        if (!result)
         {
             return 1;
         }
@@ -38,7 +40,7 @@ public class UserTemplate
         return 0;
     }
 
-    bool GenerateConfig(ICodegenTextWriter writer)
+    async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger)
     {
         string prefix = string.Empty;
         string key = string.Empty;
@@ -57,6 +59,10 @@ public class UserTemplate
                         key = apiInfo.Key;
                     }
                 }
+            }
+            else
+            {
+                await logger.WriteLineAsync($"File not found: {fileName}");
             }
         }
         catch (Exception ex)
