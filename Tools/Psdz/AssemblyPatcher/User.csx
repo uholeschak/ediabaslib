@@ -1,9 +1,11 @@
 ﻿// Requires CodegenCS VS extension
 // https://marketplace.visualstudio.com/items?itemName=Drizin.CodegenCS
+using CodegenCS.Runtime;
 using Newtonsoft.Json;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class UserTemplate
 {
@@ -20,16 +22,19 @@ public class UserTemplate
         public Dictionary<string, Info> PatchInfo { set; get; }
     }
 
-    int Main(ICodegenContext context, VSExecutionContext vsContext)
+    async Task<int> Main(ICodegenContext context, ILogger logger, VSExecutionContext vsContext)
     {
         string templatePath = vsContext?.TemplatePath;
         if (string.IsNullOrEmpty(templatePath))
         {
             templatePath = "User.csx";
+            await logger.WriteLineAsync($"Template path is empty using: {templatePath}");
         }
 
         string templateName = Path.GetFileNameWithoutExtension(templatePath);
-        if (!GenerateConfig(context[templateName + ".config"]))
+        await logger.WriteLineAsync($"Template name: {templatePath}");
+        bool result = await GenerateConfig(context[templateName + ".config"], logger);
+        if (!result)
         {
             return 1;
         }
@@ -37,7 +42,7 @@ public class UserTemplate
         return 0;
     }
 
-    bool GenerateConfig(ICodegenTextWriter writer)
+    async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger)
     {
         string patchCtorNamespace = string.Empty;
         string patchCtorClass = string.Empty;
@@ -58,6 +63,7 @@ public class UserTemplate
                     {
                         patchCtorNamespace = ctorInfo.Namespace;
                         patchCtorClass = ctorInfo.Class;
+                        await logger.WriteLineAsync($"Ctor: Namespace={patchCtorNamespace}, Class={patchCtorClass}");
                     }
 
                     if (infoDict.PatchInfo.TryGetValue("Method", out Info methodInfo))
@@ -65,17 +71,24 @@ public class UserTemplate
                         patchMethodNamespace = methodInfo.Namespace;
                         patchMethodClass = methodInfo.Class;
                         patchMethodName = methodInfo.Name;
+                        await logger.WriteLineAsync($"Method: Namespace={patchMethodNamespace}, Class={patchMethodClass}, Name={patchMethodName}");
                     }
 
                     if (infoDict.PatchInfo.TryGetValue("License", out Info licInfo))
                     {
                         licFileName = licInfo.Filename;
+                        await logger.WriteLineAsync($"License: Filename={licFileName}");
                     }
                 }
+            }
+            else
+            {
+                await logger.WriteLineAsync($"Configuration file not found: {fileName}");
             }
         }
         catch (Exception ex)
         {
+            await logger.WriteLineAsync($"Exception: {ex.Message}");
             return false;
         }
 
