@@ -18,15 +18,17 @@ public class UserTemplate
         public Dictionary<string, Info> DnsInfo { set; get; }
     }
 
-    int Main(ICodegenContext context, VSExecutionContext vsContext)
+    int Main(ICodegenContext context, VSExecutionContext vsContext, CodegenCS.Runtime.ILogger logger)
     {
         string templatePath = vsContext?.TemplatePath;
         if (string.IsNullOrEmpty(templatePath))
         {
             templatePath = "User.csx";
+            logger.WriteLineAsync($"Template path is empty using: {templatePath}");
         }
 
         string templateName = Path.GetFileNameWithoutExtension(templatePath);
+        logger.WriteLineAsync($"Template name: {templatePath}");
         if (!GenerateConfig(context[templateName + ".config"]))
         {
             return 1;
