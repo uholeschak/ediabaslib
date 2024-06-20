@@ -478,9 +478,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="User.config">
+    <None Include="User.config">
       <DependentUpon>User.csx</DependentUpon>
-    </Content>
+    </None>
     <Content Include="Scripts\jquery-3.7.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.0.min.map" />
     <Content Include="Scripts\umd\popper.min.js.map" />
