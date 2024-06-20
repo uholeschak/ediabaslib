@@ -57,6 +57,7 @@ public class UserTemplate
                     {
                         prefix = apiInfo.Prefix;
                         key = apiInfo.Key;
+                        await logger.WriteLineAsync($"Api: Prefix={prefix}, Key={key}");
                     }
                 }
             }
