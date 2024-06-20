@@ -223,7 +223,7 @@ namespace PsdzClient.Programming
                 TalExecutionFailed = TalExecutionStateEnum.None;
             }
 
-            [XmlElement("Operation"), DefaultValue(null)] public OperationEnum Operation { get; set; }
+            [XmlElement("Operation")] public OperationEnum Operation { get; set; }
             [XmlElement("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
             [XmlElement("TalExecutionActive")] public bool TalExecutionActive { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
