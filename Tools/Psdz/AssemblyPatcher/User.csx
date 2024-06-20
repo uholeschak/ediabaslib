@@ -36,6 +36,7 @@ public class UserTemplate
         bool result = await GenerateConfig(context[templateName + ".config"], logger);
         if (!result)
         {
+            await logger.WriteLineAsync("GenerateConfig failed");
             return 1;
         }
 
