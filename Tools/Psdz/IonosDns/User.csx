@@ -62,11 +62,12 @@ public class UserTemplate
             }
             else
             {
-                await logger.WriteLineAsync($"File not found: {fileName}");
+                await logger.WriteLineAsync($"Configuration file not found: {fileName}");
             }
         }
         catch (Exception ex)
         {
+            await logger.WriteLineAsync($"Exception: {ex.Message}");
             return false;
         }
 
