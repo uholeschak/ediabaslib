@@ -219,6 +219,7 @@ namespace PsdzClient.Programming
                 Operation = operation;
                 DiagAddrList = diagAddrList;
                 TalExecutionActive = false;
+                BackupTalCreated = false;
                 TalExecutionState = TalExecutionStateEnum.None;
                 TalExecutionFailed = TalExecutionStateEnum.None;
             }
@@ -226,6 +227,7 @@ namespace PsdzClient.Programming
             [XmlElement("Operation")] public OperationEnum Operation { get; set; }
             [XmlElement("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
             [XmlElement("TalExecutionActive")] public bool TalExecutionActive { get; set; }
+            [XmlElement("BackupTalCreated")] public bool BackupTalCreated { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
             [XmlElement("TalExecutionFailed")] public TalExecutionStateEnum TalExecutionFailed { get; set; }
         }
@@ -3245,6 +3247,12 @@ namespace PsdzClient.Programming
 
             log.InfoFormat(CultureInfo.InvariantCulture, "FinishTalExecutionState: Failure={0}", failure);
             OperationState.TalExecutionActive = false;
+
+            if (OperationState.TalExecutionState == OperationStateData.TalExecutionStateEnum.BackupTalExecuting)
+            {
+                OperationState.BackupTalCreated = !failure;
+            }
+
             if (failure)
             {
                 if (OperationState.TalExecutionFailed == OperationStateData.TalExecutionStateEnum.None)
