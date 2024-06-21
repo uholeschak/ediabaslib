@@ -341,6 +341,9 @@ Possibly the software is not consistent in all ECUs.</value>
   <data name="TalIdrGenerating" xml:space="preserve">
     <value>Generating individual data TAL ...</value>
   </data>
+  <data name="TalKeepBackupData" xml:space="preserve">
+    <value>Do you want to keep the last backaup data?</value>
+  </data>
   <data name="TalMissing" xml:space="preserve">
     <value>TAL not present.</value>
   </data>

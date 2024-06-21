@@ -341,6 +341,9 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
   <data name="TalIdrGenerating" xml:space="preserve">
     <value>Generiere Individualdaten TAL ...</value>
   </data>
+  <data name="TalKeepBackupData" xml:space="preserve">
+    <value>Wollen Sie die letzten Backupdaten behalten?</value>
+  </data>
   <data name="TalMissing" xml:space="preserve">
     <value>TAL nicht vorhanden.</value>
   </data>

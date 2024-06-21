@@ -1503,65 +1503,91 @@ namespace PsdzClient.Programming
                                 break;
                         }
 
-                        PsdzContext.RemoveBackupData();
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: Execute={0}", executeBackupTal);
-                        if (executeBackupTal)
+                        bool hwChange = false;
+                        switch (RegisterGroup)
                         {
-                            sbResult.AppendLine(Strings.ExecutingBackupTal);
-                            UpdateStatus(sbResult.ToString());
+                            case PsdzDatabase.SwiRegisterGroup.HwDeinstall:
+                            case PsdzDatabase.SwiRegisterGroup.HwInstall:
+                                hwChange = true;
+                                break;
+                        }
 
-                            CacheResponseType = CacheType.NoResponse;
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
-
-                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting);
-                            IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
-                                PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
-                            if (backupTalResult == null)
+                        bool backupValid = !hwChange && OperationState != null && OperationState.BackupTalCreated && PsdzContext.HasBackupData();
+                        bool keepBackupData = backupValid;
+                        if (backupValid && executeBackupTal)
+                        {
+                            if (ShowMessageEvent != null)
                             {
-                                FinishTalExecutionState(true);
-                                log.ErrorFormat("Execute backup TAL failed");
-                                sbResult.AppendLine(Strings.TalExecuteError);
-                                UpdateStatus(sbResult.ToString());
-                                return false;
-                            }
-
-                            log.Info("Backup Tal result:");
-                            log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", backupTalResult.AsXml.Length);
-                            log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", backupTalResult.TalExecutionState);
-                            log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", backupTalResult.AffectedEcus.Count());
-                            foreach (IPsdzEcuIdentifier ecuIdentifier in backupTalResult.AffectedEcus)
-                            {
-                                log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                                    ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
-                            }
-
-                            if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState, true))
-                            {
-                                FinishTalExecutionState(true);
-                                talExecutionFailed = true;
-                                backupFailed = true;
-                                log.Error(backupTalResult.AsXml);
-                                sbResult.AppendLine(Strings.TalExecuteError);
-                                UpdateStatus(sbResult.ToString());
-                            }
-                            else
-                            {
-                                FinishTalExecutionState();
-                                if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState))
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalKeepBackupData, false, true))
                                 {
-                                    log.Info(backupTalResult.AsXml);
-                                    sbResult.AppendLine(Strings.TalExecuteWarning);
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalKeepBackupData: Keep backup");
+                                    keepBackupData = false;
+                                }
+                            }
+                        }
+
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: Execute={0}, KeepBackup={1}", executeBackupTal, keepBackupData);
+                        if (!keepBackupData)
+                        {
+                            PsdzContext.RemoveBackupData();
+                            if (executeBackupTal)
+                            {
+                                sbResult.AppendLine(Strings.ExecutingBackupTal);
+                                UpdateStatus(sbResult.ToString());
+
+                                CacheResponseType = CacheType.NoResponse;
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Executing backup TAL");
+
+                                StartTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting);
+                                IPsdzTal backupTalResult = ProgrammingService.Psdz.IndividualDataRestoreService.ExecuteAsyncBackupTal(
+                                    PsdzContext.Connection, PsdzContext.IndividualDataBackupTal, null, PsdzContext.FaTarget, psdzVin, talExecutionSettings, PsdzContext.PathToBackupData);
+                                if (backupTalResult == null)
+                                {
+                                    FinishTalExecutionState(true);
+                                    log.ErrorFormat("Execute backup TAL failed");
+                                    sbResult.AppendLine(Strings.TalExecuteError);
+                                    UpdateStatus(sbResult.ToString());
+                                    return false;
+                                }
+
+                                log.Info("Backup Tal result:");
+                                log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", backupTalResult.AsXml.Length);
+                                log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", backupTalResult.TalExecutionState);
+                                log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", backupTalResult.AffectedEcus.Count());
+                                foreach (IPsdzEcuIdentifier ecuIdentifier in backupTalResult.AffectedEcus)
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                                        ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
+                                }
+
+                                if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState, true))
+                                {
+                                    FinishTalExecutionState(true);
+                                    talExecutionFailed = true;
+                                    backupFailed = true;
+                                    log.Error(backupTalResult.AsXml);
+                                    sbResult.AppendLine(Strings.TalExecuteError);
+                                    UpdateStatus(sbResult.ToString());
                                 }
                                 else
                                 {
-                                    sbResult.AppendLine(Strings.TalExecuteOk);
+                                    FinishTalExecutionState();
+                                    if (!IsTalExecutionStateOk(backupTalResult.TalExecutionState))
+                                    {
+                                        log.Info(backupTalResult.AsXml);
+                                        sbResult.AppendLine(Strings.TalExecuteWarning);
+                                    }
+                                    else
+                                    {
+                                        sbResult.AppendLine(Strings.TalExecuteOk);
+                                    }
+
+                                    UpdateStatus(sbResult.ToString());
                                 }
 
-                                UpdateStatus(sbResult.ToString());
+                                CacheClearRequired = true;
+                                cts?.Token.ThrowIfCancellationRequested();
                             }
-
-                            CacheClearRequired = true;
-                            cts?.Token.ThrowIfCancellationRequested();
                         }
 
                         if (!LicenseValid)
@@ -3225,6 +3251,7 @@ namespace PsdzClient.Programming
             if (talExecutionState == OperationStateData.TalExecutionStateEnum.None)
             {
                 OperationState.TalExecutionActive = false;
+                OperationState.BackupTalCreated = false;
                 OperationState.TalExecutionState = OperationStateData.TalExecutionStateEnum.None;
                 OperationState.TalExecutionFailed = OperationStateData.TalExecutionStateEnum.None;
             }

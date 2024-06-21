@@ -693,6 +693,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to keep the last backaup data? ähnelt.
+        /// </summary>
+        internal static string TalKeepBackupData {
+            get {
+                return ResourceManager.GetString("TalKeepBackupData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL not present. ähnelt.
         /// </summary>
         internal static string TalMissing {
