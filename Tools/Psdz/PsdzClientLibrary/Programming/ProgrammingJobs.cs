@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -193,7 +194,8 @@ namespace PsdzClient.Programming
             {
                 Idle,
                 HwDeinstall,
-                HwInstall
+                HwInstall,
+                Modification,
             }
 
             public enum TalExecutionStateEnum
@@ -1704,8 +1706,8 @@ namespace PsdzClient.Programming
                             }
 
                             RegisterGroup = PsdzDatabase.SwiRegisterGroup.HwInstall;
-                            UpdateOperationState();
-                            RestoreOperationState();
+                            UpdateReplaceOperationState();
+                            RestoreReplaceOperationState();
                             SaveOperationState();
 
                             if (ShowMessageEvent != null)
@@ -2424,7 +2426,7 @@ namespace PsdzClient.Programming
 
                         if (restoreOperation)
                         {
-                            RestoreOperationState();
+                            RestoreReplaceOperationState();
                         }
                         else
                         {
@@ -3205,7 +3207,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public void UpdateOperationState()
+        public void UpdateReplaceOperationState()
         {
             OperationStateData.OperationEnum operation = OperationStateData.OperationEnum.Idle;
             List<int> diagAddrList = null;
@@ -3248,27 +3250,40 @@ namespace PsdzClient.Programming
                 OperationState = new OperationStateData();
             }
 
-            log.InfoFormat(CultureInfo.InvariantCulture, "StartTalExecutionState: State={0}", talExecutionState.ToString());
-            if (talExecutionState == OperationStateData.TalExecutionStateEnum.None)
+            OperationStateData.OperationEnum operation = OperationStateData.OperationEnum.Idle;
+            switch (RegisterGroup)
             {
-                OperationState.TalExecutionActive = false;
-                OperationState.BackupTalCreated = false;
-                OperationState.TalExecutionState = OperationStateData.TalExecutionStateEnum.None;
-                OperationState.TalExecutionFailed = OperationStateData.TalExecutionStateEnum.None;
-            }
-            else
-            {
-                OperationState.TalExecutionActive = true;
-                OperationState.TalExecutionState = talExecutionState;
+                case PsdzDatabase.SwiRegisterGroup.Modification:
+                    operation = OperationStateData.OperationEnum.Modification;
+                    break;
             }
 
-            List<string> selectedOptionIdList = new List<string>();
-            foreach (OptionsItem optionsItem in SelectedOptions)
+            OperationState.Operation = operation;
+            if (operation != OperationStateData.OperationEnum.Idle)
             {
-                selectedOptionIdList.Add(optionsItem.Id);
+                log.InfoFormat(CultureInfo.InvariantCulture, "StartTalExecutionState: State={0}", talExecutionState.ToString());
+                if (talExecutionState == OperationStateData.TalExecutionStateEnum.None)
+                {
+                    OperationState.TalExecutionActive = false;
+                    OperationState.BackupTalCreated = false;
+                    OperationState.TalExecutionState = OperationStateData.TalExecutionStateEnum.None;
+                    OperationState.TalExecutionFailed = OperationStateData.TalExecutionStateEnum.None;
+                }
+                else
+                {
+                    OperationState.TalExecutionActive = true;
+                    OperationState.TalExecutionState = talExecutionState;
+                }
+
+                List<string> selectedOptionIdList = new List<string>();
+                foreach (OptionsItem optionsItem in SelectedOptions)
+                {
+                    selectedOptionIdList.Add(optionsItem.Id);
+                }
+
+                OperationState.SelectedOptionIdList = selectedOptionIdList;
             }
 
-            OperationState.SelectedOptionIdList = selectedOptionIdList;
             return SaveOperationState();
         }
 
@@ -3299,11 +3314,11 @@ namespace PsdzClient.Programming
             return SaveOperationState();
         }
 
-        public bool RestoreOperationState()
+        public bool RestoreReplaceOperationState()
         {
             if (OperationState == null)
             {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreOperationState No data");
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreReplaceOperationState No data");
                 return false;
             }
 
@@ -3321,17 +3336,17 @@ namespace PsdzClient.Programming
 
             if (swiRegisterEnum == null)
             {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreOperationState Nothing to restore");
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreReplaceOperationState Nothing to restore");
                 return false;
             }
 
-            log.InfoFormat(CultureInfo.InvariantCulture, "RestoreOperationState Restoring: {0}", swiRegisterEnum.Value);
+            log.InfoFormat(CultureInfo.InvariantCulture, "RestoreReplaceOperationState Restoring: {0}", swiRegisterEnum.Value);
             List<OptionsItem> optionsReplacement = null;
             if (OptionsDict != null)
             {
                 if (!OptionsDict.TryGetValue(swiRegisterEnum.Value, out optionsReplacement))
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreOperationState Options for {0} not found", swiRegisterEnum);
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreReplaceOperationState Options for {0} not found", swiRegisterEnum);
                 }
             }
 
@@ -3353,7 +3368,7 @@ namespace PsdzClient.Programming
 
                     if (!itemFound)
                     {
-                        log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreOperationState Item for address not found: {0}", address);
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreReplaceOperationState Item for address not found: {0}", address);
                     }
                 }
             }
