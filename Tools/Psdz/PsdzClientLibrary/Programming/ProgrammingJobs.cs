@@ -2436,6 +2436,13 @@ namespace PsdzClient.Programming
                                     log.InfoFormat(CultureInfo.InvariantCulture, "No modification options selected");
                                     break;
                                 }
+
+                                if (!OperationState.BackupTalCreated)
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "No backup TAL created");
+                                    break;
+                                }
+
                                 if (ShowMessageEvent != null)
                                 {
                                     if (!ShowMessageEvent.Invoke(cts, Strings.TalOperationContinue, false, true))
@@ -3366,6 +3373,22 @@ namespace PsdzClient.Programming
             if (swiRegisterEnum == null)
             {
                 log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Nothing to restore");
+                return false;
+            }
+
+            bool bOptionTypeValid = false;
+            foreach (OptionType optionType in _optionTypes)
+            {
+                if (optionType.SwiRegisterEnum == swiRegisterEnum)
+                {
+                    bOptionTypeValid = true;
+                    break;
+                }
+            }
+
+            if (!bOptionTypeValid)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Invalid SWI type: {0}", swiRegisterEnum.Value);
                 return false;
             }
 
