@@ -3379,7 +3379,14 @@ namespace PsdzClient.Programming
             bool bOptionTypeValid = false;
             foreach (OptionType optionType in _optionTypes)
             {
-                if (optionType.SwiRegisterEnum == swiRegisterEnum)
+                PsdzDatabase.SwiRegisterEnum swiRegisterOption = optionType.SwiRegisterEnum;
+                if (swiRegisterOption == PsdzDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement ||
+                    swiRegisterOption == PsdzDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement)
+                {
+                    continue;
+                }
+
+                if (swiRegisterOption == swiRegisterEnum)
                 {
                     bOptionTypeValid = true;
                     break;
