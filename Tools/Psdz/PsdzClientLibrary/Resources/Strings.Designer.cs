@@ -711,6 +711,16 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die A TAL operation is active.
+        ///Do you want to continue the last TAL operation? ähnelt.
+        /// </summary>
+        internal static string TalOperationContinue {
+            get {
+                return ResourceManager.GetString("TalOperationContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Restore TAL generation failed. ähnelt.
         /// </summary>
         internal static string TalRestoreGenerationFailed {

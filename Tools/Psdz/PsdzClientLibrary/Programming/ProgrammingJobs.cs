@@ -2404,26 +2404,59 @@ namespace PsdzClient.Programming
                         UpdateOptions(optionsDict);
                         LoadOperationState();
 
-                        bool restoreOperation = false;
-                        if (OperationState.Operation == OperationStateData.OperationEnum.HwInstall)
+                        bool restoreReplaceOperation = false;
+                        bool restoreTalOperation = false;
+                        switch (OperationState.Operation)
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Hw replace operation active");
-                            if (ShowMessageEvent != null)
-                            {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.HwReplaceContinue, false, true))
+                            case OperationStateData.OperationEnum.HwInstall:
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Hw replace operation active");
+                                if (OperationState.DiagAddrList == null || OperationState.DiagAddrList.Count == 0)
                                 {
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent HwReplaceContinue aborted");
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "No replace addresses selected");
+                                    break;
                                 }
-                                else
+
+                                if (ShowMessageEvent != null)
                                 {
-                                    restoreOperation = true;
+                                    if (!ShowMessageEvent.Invoke(cts, Strings.HwReplaceContinue, false, true))
+                                    {
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent HwReplaceContinue aborted");
+                                    }
+                                    else
+                                    {
+                                        restoreReplaceOperation = true;
+                                    }
                                 }
-                            }
+                                break;
+
+                            case OperationStateData.OperationEnum.Modification:
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Modification operation active");
+                                if (OperationState.SelectedOptionIdList == null || OperationState.SelectedOptionIdList.Count == 0)
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "No modification options selected");
+                                    break;
+                                }
+                                if (ShowMessageEvent != null)
+                                {
+                                    if (!ShowMessageEvent.Invoke(cts, Strings.TalOperationContinue, false, true))
+                                    {
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalOperationContinue aborted");
+                                    }
+                                    else
+                                    {
+                                        restoreTalOperation = true;
+                                    }
+                                }
+                                break;
                         }
 
-                        if (restoreOperation)
+                        if (restoreReplaceOperation)
                         {
                             RestoreReplaceOperationState();
+                        }
+                        else if (restoreTalOperation)
+                        {
+                            RestoreTalOperationState();
                         }
                         else
                         {
@@ -3312,6 +3345,65 @@ namespace PsdzClient.Programming
             }
 
             return SaveOperationState();
+        }
+
+        public bool RestoreTalOperationState()
+        {
+            if (OperationState == null)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState No data");
+                return false;
+            }
+
+            PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null;
+            switch (OperationState.Operation)
+            {
+                case OperationStateData.OperationEnum.Modification:
+                    swiRegisterEnum = OperationState.SwiRegister;
+                    break;
+            }
+
+            if (swiRegisterEnum == null)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Nothing to restore");
+                return false;
+            }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Restoring: {0}", swiRegisterEnum.Value);
+            List<OptionsItem> optionsSwi = null;
+            if (OptionsDict != null)
+            {
+                if (!OptionsDict.TryGetValue(swiRegisterEnum.Value, out optionsSwi))
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Options for {0} not found", swiRegisterEnum);
+                }
+            }
+
+            SelectedOptions.Clear();
+            if (optionsSwi != null && OperationState.SelectedOptionIdList != null)
+            {
+                foreach (string optionId in OperationState.SelectedOptionIdList)
+                {
+                    bool itemFound = false;
+                    foreach (OptionsItem optionsItem in optionsSwi)
+                    {
+                        if (string.Compare(optionsItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            itemFound = true;
+                            SelectedOptions.Add(optionsItem);
+                            break;
+                        }
+                    }
+
+                    if (!itemFound)
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Item for id not found: {0}", optionId);
+                    }
+                }
+            }
+
+            UpdateOptionSelections(swiRegisterEnum);
+            return true;
         }
 
         public bool RestoreReplaceOperationState()

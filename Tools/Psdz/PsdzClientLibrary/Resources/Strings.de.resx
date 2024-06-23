@@ -347,6 +347,10 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
   <data name="TalMissing" xml:space="preserve">
     <value>TAL nicht vorhanden.</value>
   </data>
+  <data name="TalOperationContinue" xml:space="preserve">
+    <value>Ein TAL Ausführung ist aktiv.
+Wollen Sie den letzte TAL Ausführung fortsetzen?</value>
+  </data>
   <data name="TalRestoreGenerationFailed" xml:space="preserve">
     <value>Restore TAL Generierung fehlgeschlagen.</value>
   </data>
