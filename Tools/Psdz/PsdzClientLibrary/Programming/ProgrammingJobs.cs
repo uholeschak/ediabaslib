@@ -9,13 +9,10 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
-using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
@@ -35,7 +32,6 @@ using EdiabasLib;
 using log4net;
 using log4net.Config;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClientLibrary.Core;
 using PsdzClientLibrary.Resources;
 using VCIDeviceType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType;
@@ -232,6 +228,7 @@ namespace PsdzClient.Programming
             [XmlElement("BackupTalCreated")] public bool BackupTalCreated { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
             [XmlElement("TalExecutionFailed")] public TalExecutionStateEnum TalExecutionFailed { get; set; }
+            [XmlElement("SwiRegister")] public PsdzDatabase.SwiRegisterEnum SwiRegister { get; set; }
             [XmlElement("SelectedOptionIdList"), DefaultValue(null)] public List<string> SelectedOptionIdList { get; set; }
         }
 
@@ -3275,12 +3272,15 @@ namespace PsdzClient.Programming
                     OperationState.TalExecutionState = talExecutionState;
                 }
 
+                PsdzDatabase.SwiRegisterEnum swiRegisterEnum = PsdzDatabase.SwiRegisterEnum.Common;
                 List<string> selectedOptionIdList = new List<string>();
                 foreach (OptionsItem optionsItem in SelectedOptions)
                 {
+                    swiRegisterEnum = optionsItem.SwiRegisterEnum;
                     selectedOptionIdList.Add(optionsItem.Id);
                 }
 
+                OperationState.SwiRegister = swiRegisterEnum;
                 OperationState.SelectedOptionIdList = selectedOptionIdList;
             }
 
