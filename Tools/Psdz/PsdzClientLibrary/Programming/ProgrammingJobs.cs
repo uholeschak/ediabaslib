@@ -230,6 +230,7 @@ namespace PsdzClient.Programming
             [XmlElement("BackupTalCreated")] public bool BackupTalCreated { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
             [XmlElement("TalExecutionFailed")] public TalExecutionStateEnum TalExecutionFailed { get; set; }
+            [XmlElement("SelectedOptionIdList"), DefaultValue(null)] public List<string> SelectedOptionIdList { get; set; }
         }
 
         public delegate void UpdateStatusDelegate(string message = null);
@@ -3261,6 +3262,13 @@ namespace PsdzClient.Programming
                 OperationState.TalExecutionState = talExecutionState;
             }
 
+            List<string> selectedOptionIdList = new List<string>();
+            foreach (OptionsItem optionsItem in SelectedOptions)
+            {
+                selectedOptionIdList.Add(optionsItem.Id);
+            }
+
+            OperationState.SelectedOptionIdList = selectedOptionIdList;
             return SaveOperationState();
         }
 
