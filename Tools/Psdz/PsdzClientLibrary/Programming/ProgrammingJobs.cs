@@ -3348,6 +3348,7 @@ namespace PsdzClient.Programming
                 {
                     OperationState.TalExecutionActive = false;
                     OperationState.BackupTalCreated = false;
+                    OperationState.BackupTargetFA = null;
                     OperationState.TalExecutionState = OperationStateData.TalExecutionStateEnum.None;
                     OperationState.TalExecutionFailed = OperationStateData.TalExecutionStateEnum.None;
                 }
@@ -3388,18 +3389,26 @@ namespace PsdzClient.Programming
 
             if (OperationState.TalExecutionState == OperationStateData.TalExecutionStateEnum.BackupTalExecuting)
             {
-                OperationState.BackupTalCreated = !failure;
-
-                string backupTargetFA = null;
-                if (PsdzContext?.FaTarget != null)
+                if (failure)
                 {
-                    if (ProgrammingUtils.BuildFa(PsdzContext.FaTarget) is VehicleOrder faTarget)
-                    {
-                        backupTargetFA = faTarget.ToString();
-                    }
+                    OperationState.BackupTalCreated = false;
+                    OperationState.BackupTargetFA = null;
                 }
+                else
+                {
+                    OperationState.BackupTalCreated = true;
 
-                OperationState.BackupTargetFA = backupTargetFA;
+                    string backupTargetFA = null;
+                    if (PsdzContext?.FaTarget != null)
+                    {
+                        if (ProgrammingUtils.BuildFa(PsdzContext.FaTarget) is VehicleOrder faTarget)
+                        {
+                            backupTargetFA = faTarget.ToString();
+                        }
+                    }
+
+                    OperationState.BackupTargetFA = backupTargetFA;
+                }
             }
 
             if (failure)
