@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
+using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
@@ -236,6 +237,7 @@ namespace PsdzClient.Programming
                 DiagAddrList = diagAddrList;
                 TalExecutionActive = false;
                 BackupTalCreated = false;
+                BackupTargetFA = null;
                 TalExecutionState = TalExecutionStateEnum.None;
                 TalExecutionFailed = TalExecutionStateEnum.None;
             }
@@ -244,6 +246,7 @@ namespace PsdzClient.Programming
             [XmlArray("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
             [XmlElement("TalExecutionActive")] public bool TalExecutionActive { get; set; }
             [XmlElement("BackupTalCreated")] public bool BackupTalCreated { get; set; }
+            [XmlElement("BackupTargetFA"), DefaultValue(null)] public string BackupTargetFA { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
             [XmlElement("TalExecutionFailed")] public TalExecutionStateEnum TalExecutionFailed { get; set; }
             [XmlArray("SelectedOptionList"), DefaultValue(null)] public List<SelectedOptionData> SelectedOptionList { get; set; }
@@ -3386,6 +3389,17 @@ namespace PsdzClient.Programming
             if (OperationState.TalExecutionState == OperationStateData.TalExecutionStateEnum.BackupTalExecuting)
             {
                 OperationState.BackupTalCreated = !failure;
+
+                string backupTargetFA = null;
+                if (PsdzContext?.FaTarget != null)
+                {
+                    if (ProgrammingUtils.BuildFa(PsdzContext.FaTarget) is VehicleOrder faTarget)
+                    {
+                        backupTargetFA = faTarget.ToString();
+                    }
+                }
+
+                OperationState.BackupTargetFA = backupTargetFA;
             }
 
             if (failure)
