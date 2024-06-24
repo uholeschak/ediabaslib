@@ -693,7 +693,8 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to keep the last backaup data? ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to keep the last backup data?
+        ///This is recommended, if an error in TAL processing occured before. ähnelt.
         /// </summary>
         internal static string TalKeepBackupData {
             get {

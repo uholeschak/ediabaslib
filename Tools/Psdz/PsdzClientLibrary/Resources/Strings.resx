@@ -342,7 +342,8 @@ Possibly the software is not consistent in all ECUs.</value>
     <value>Generating individual data TAL ...</value>
   </data>
   <data name="TalKeepBackupData" xml:space="preserve">
-    <value>Do you want to keep the last backaup data?</value>
+    <value>Do you want to keep the last backup data?
+This is recommended, if an error in TAL processing occured before.</value>
   </data>
   <data name="TalMissing" xml:space="preserve">
     <value>TAL not present.</value>
