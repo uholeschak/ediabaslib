@@ -7,6 +7,7 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml;
 
 public class UserTemplate
 {
@@ -49,17 +50,25 @@ public class UserTemplate
 
         try
         {
-            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "ionos_dns.json");
+            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "ionos_dns.xml");
             if (File.Exists(fileName))
             {
-                InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
-                if (infoDict != null)
+                XmlDocument doc = new XmlDocument();
+                doc.Load(fileName);
+                XmlNode nodeDns = doc.SelectSingleNode("/dns_info/api");
+                if (nodeDns != null)
                 {
-                    if (infoDict.DnsInfo.TryGetValue("Api", out Info apiInfo))
+                    XmlAttribute attribPrefix = nodeDns.Attributes["prefix"];
+                    if (attribPrefix != null)
                     {
-                        prefix = apiInfo.Prefix;
-                        key = apiInfo.Key;
-                        await logger.WriteLineAsync($"Api: Prefix={prefix}, Key={key}");
+                        prefix = attribPrefix.Value;
+                        await logger.WriteLineAsync($"Api: Prefix={prefix}");
+                    }
+                    XmlAttribute attribKey = nodeDns.Attributes["key"];
+                    if (attribKey != null)
+                    {
+                        key = attribKey.Value;
+                        await logger.WriteLineAsync($"Api: Key={key}");
                     }
                 }
             }
@@ -72,6 +81,37 @@ public class UserTemplate
         {
             await logger.WriteLineAsync($"Exception: {ex.Message}");
             return false;
+        }
+
+        bool xmlOk = !string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(key);
+        if (!xmlOk)
+        {
+            try
+            {
+                string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "ionos_dns.json");
+                if (File.Exists(fileName))
+                {
+                    InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
+                    if (infoDict != null)
+                    {
+                        if (infoDict.DnsInfo.TryGetValue("Api", out Info apiInfo))
+                        {
+                            prefix = apiInfo.Prefix;
+                            key = apiInfo.Key;
+                            await logger.WriteLineAsync($"Api: Prefix={prefix}, Key={key}");
+                        }
+                    }
+                }
+                else
+                {
+                    await logger.WriteLineAsync($"Configuration file not found: {fileName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                await logger.WriteLineAsync($"Exception: {ex.Message}");
+                return false;
+            }
         }
 
         writer.WriteLine(
