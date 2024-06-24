@@ -2133,8 +2133,6 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                PsdzContext.RemoveBackupData();
-
                 IPsdzStandardFa standardFa = ProgrammingService.Psdz.VcmService.GetStandardFaActual(PsdzContext.Connection);
                 if (standardFa == null)
                 {
@@ -2406,6 +2404,8 @@ namespace PsdzClient.Programming
 
                         bool restoreReplaceOperation = false;
                         bool restoreTalOperation = false;
+                        bool removeBackupData = true;
+
                         switch (OperationState.Operation)
                         {
                             case OperationStateData.OperationEnum.HwInstall:
@@ -2463,12 +2463,20 @@ namespace PsdzClient.Programming
                         }
                         else if (restoreTalOperation)
                         {
-                            RestoreTalOperationState();
+                            if (RestoreTalOperationState())
+                            {
+                                removeBackupData = false;
+                            }
                         }
                         else
                         {
                             ResetOperationState();
                             UpdateOptions(optionsDict);
+                        }
+
+                        if (removeBackupData)
+                        {
+                            PsdzContext.RemoveBackupData();
                         }
                     }
 
