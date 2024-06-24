@@ -183,7 +183,25 @@ namespace PsdzClient.Programming
             }
         }
 
-        [XmlType("OperationStateDataXml")]
+        [XmlType("SelectedOptionData")]
+        public class SelectedOptionData
+        {
+            public SelectedOptionData()
+            {
+            }
+
+            public SelectedOptionData(string swiId, PsdzDatabase.SwiRegisterEnum swiRegister)
+            {
+                SwiId = swiId;
+                SwiRegister = swiRegister;
+            }
+
+            [XmlElement("SwiId")] public string SwiId { get; set; }
+            [XmlElement("SwiRegister")] public PsdzDatabase.SwiRegisterEnum SwiRegister { get; set; }
+        }
+
+        [XmlInclude(typeof(SelectedOptionData))]
+        [XmlType("OperationStateData")]
         public class OperationStateData
         {
             public enum OperationEnum
@@ -228,8 +246,7 @@ namespace PsdzClient.Programming
             [XmlElement("BackupTalCreated")] public bool BackupTalCreated { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
             [XmlElement("TalExecutionFailed")] public TalExecutionStateEnum TalExecutionFailed { get; set; }
-            [XmlElement("SwiRegister")] public PsdzDatabase.SwiRegisterEnum SwiRegister { get; set; }
-            [XmlArray("SelectedOptionIdList"), DefaultValue(null)] public List<string> SelectedOptionIdList { get; set; }
+            [XmlArray("SelectedOptionList"), DefaultValue(null)] public List<SelectedOptionData> SelectedOptionList { get; set; }
         }
 
         public delegate void UpdateStatusDelegate(string message = null);
@@ -2431,7 +2448,7 @@ namespace PsdzClient.Programming
 
                             case OperationStateData.OperationEnum.Modification:
                                 log.InfoFormat(CultureInfo.InvariantCulture, "Modification operation active");
-                                if (OperationState.SelectedOptionIdList == null || OperationState.SelectedOptionIdList.Count == 0)
+                                if (OperationState.SelectedOptionList == null || OperationState.SelectedOptionList.Count == 0)
                                 {
                                     log.InfoFormat(CultureInfo.InvariantCulture, "No modification options selected");
                                     break;
@@ -3337,8 +3354,7 @@ namespace PsdzClient.Programming
                     OperationState.TalExecutionState = talExecutionState;
                 }
 
-                PsdzDatabase.SwiRegisterEnum swiRegisterEnum = PsdzDatabase.SwiRegisterEnum.Common;
-                List<string> selectedOptionIdList = new List<string>();
+                List<SelectedOptionData> selectedOptionList = new List<SelectedOptionData>();
                 foreach (OptionsItem optionsItem in SelectedOptions)
                 {
                     string swiActionId = optionsItem.SwiAction.Id;
@@ -3347,12 +3363,10 @@ namespace PsdzClient.Programming
                         continue;
                     }
 
-                    swiRegisterEnum = optionsItem.SwiRegisterEnum;
-                    selectedOptionIdList.Add(swiActionId);
+                    selectedOptionList.Add(new SelectedOptionData(swiActionId, optionsItem.SwiRegisterEnum));
                 }
 
-                OperationState.SwiRegister = swiRegisterEnum;
-                OperationState.SelectedOptionIdList = selectedOptionIdList;
+                OperationState.SelectedOptionList = selectedOptionList;
             }
 
             return SaveOperationState();
@@ -3393,58 +3407,34 @@ namespace PsdzClient.Programming
                 return false;
             }
 
+            if (OptionsDict == null)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState No options dict");
+                return false;
+            }
+
+            if (OperationState.Operation != OperationStateData.OperationEnum.Modification)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Invalid operation: {0}", OperationState.Operation);
+                return false;
+            }
+
             PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null;
-            switch (OperationState.Operation)
-            {
-                case OperationStateData.OperationEnum.Modification:
-                    swiRegisterEnum = OperationState.SwiRegister;
-                    break;
-            }
-
-            if (swiRegisterEnum == null)
-            {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Nothing to restore");
-                return false;
-            }
-
-            bool bOptionTypeValid = false;
-            foreach (OptionType optionType in _optionTypes)
-            {
-                PsdzDatabase.SwiRegisterEnum swiRegisterOption = optionType.SwiRegisterEnum;
-                if (swiRegisterOption == PsdzDatabase.SwiRegisterEnum.EcuReplacementBeforeReplacement ||
-                    swiRegisterOption == PsdzDatabase.SwiRegisterEnum.EcuReplacementAfterReplacement)
-                {
-                    continue;
-                }
-
-                if (swiRegisterOption == swiRegisterEnum)
-                {
-                    bOptionTypeValid = true;
-                    break;
-                }
-            }
-
-            if (!bOptionTypeValid)
-            {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Invalid SWI type: {0}", swiRegisterEnum.Value);
-                return false;
-            }
-
-            log.InfoFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Restoring: {0}", swiRegisterEnum.Value);
-            List<OptionsItem> optionsSwi = null;
-            if (OptionsDict != null)
-            {
-                if (!OptionsDict.TryGetValue(swiRegisterEnum.Value, out optionsSwi))
-                {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Options for {0} not found", swiRegisterEnum);
-                }
-            }
-
             SelectedOptions.Clear();
-            if (optionsSwi != null && OperationState.SelectedOptionIdList != null)
+            if (OptionsDict != null && OperationState.SelectedOptionList != null)
             {
-                foreach (string optionId in OperationState.SelectedOptionIdList)
+                foreach (SelectedOptionData optionData in OperationState.SelectedOptionList)
                 {
+                    if (!OptionsDict.TryGetValue(optionData.SwiRegister, out List<OptionsItem> optionsSwi))
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Options for {0} not found", optionData.SwiRegister);
+                    }
+
+                    if (optionsSwi == null)
+                    {
+                        continue;
+                    }
+
                     bool itemFound = false;
                     foreach (OptionsItem optionsItem in optionsSwi)
                     {
@@ -3454,9 +3444,10 @@ namespace PsdzClient.Programming
                             continue;
                         }
 
-                        if (string.Compare(swiActionId, optionId, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(swiActionId, optionData.SwiId, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             itemFound = true;
+                            swiRegisterEnum = optionData.SwiRegister;
                             SelectedOptions.Add(optionsItem);
                             break;
                         }
@@ -3464,9 +3455,15 @@ namespace PsdzClient.Programming
 
                     if (!itemFound)
                     {
-                        log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Item for id not found: {0}", optionId);
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState Item for id not found: {0}", optionData.SwiId);
                     }
                 }
+            }
+
+            if (swiRegisterEnum == null)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "RestoreTalOperationState SwiRegister missing");
+                return false;
             }
 
             UpdateOptionSelections(swiRegisterEnum);
