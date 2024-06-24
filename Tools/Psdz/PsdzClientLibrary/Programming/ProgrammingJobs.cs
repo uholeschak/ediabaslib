@@ -223,13 +223,13 @@ namespace PsdzClient.Programming
             }
 
             [XmlElement("Operation")] public OperationEnum Operation { get; set; }
-            [XmlElement("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
+            [XmlArray("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
             [XmlElement("TalExecutionActive")] public bool TalExecutionActive { get; set; }
             [XmlElement("BackupTalCreated")] public bool BackupTalCreated { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
             [XmlElement("TalExecutionFailed")] public TalExecutionStateEnum TalExecutionFailed { get; set; }
             [XmlElement("SwiRegister")] public PsdzDatabase.SwiRegisterEnum SwiRegister { get; set; }
-            [XmlElement("SelectedOptionIdList"), DefaultValue(null)] public List<string> SelectedOptionIdList { get; set; }
+            [XmlArray("SelectedOptionIdList"), DefaultValue(null)] public List<string> SelectedOptionIdList { get; set; }
         }
 
         public delegate void UpdateStatusDelegate(string message = null);
