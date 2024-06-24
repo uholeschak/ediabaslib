@@ -3185,10 +3185,27 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
+                bool deleteFiles = true;
+                if (OperationState != null)
+                {
+                    switch (OperationState.Operation)
+                    {
+                        case OperationStateData.OperationEnum.HwInstall:
+                        case OperationStateData.OperationEnum.HwDeinstall:
+                            deleteFiles = false;
+                            break;
+
+                        case OperationStateData.OperationEnum.Modification:
+                            if (OperationState.TalExecutionState != OperationStateData.TalExecutionStateEnum.None)
+                            {
+                                deleteFiles = false;
+                            }
+                            break;
+                    }
+                }
+
                 string fileName = backupPath.TrimEnd('\\') + ".xml";
-                bool bDelete = OperationState.Operation == OperationStateData.OperationEnum.Idle &&
-                    OperationState.TalExecutionState == OperationStateData.TalExecutionStateEnum.None;
-                if (OperationState == null || bDelete)
+                if (deleteFiles)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "SaveOperationState Deleting: {0}", fileName);
                     if (File.Exists(fileName))
