@@ -86,6 +86,8 @@ public class UserTemplate
         bool xmlOk = !string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(key);
         if (!xmlOk)
         {
+            await logger.WriteLineAsync($"XML data invalid, using json");
+
             try
             {
                 string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "ionos_dns.json");
