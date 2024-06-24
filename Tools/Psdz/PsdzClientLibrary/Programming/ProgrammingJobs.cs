@@ -3316,8 +3316,14 @@ namespace PsdzClient.Programming
                 List<string> selectedOptionIdList = new List<string>();
                 foreach (OptionsItem optionsItem in SelectedOptions)
                 {
+                    string swiActionId = optionsItem.SwiAction.Id;
+                    if (string.IsNullOrEmpty(swiActionId))
+                    {
+                        continue;
+                    }
+
                     swiRegisterEnum = optionsItem.SwiRegisterEnum;
-                    selectedOptionIdList.Add(optionsItem.Id);
+                    selectedOptionIdList.Add(swiActionId);
                 }
 
                 OperationState.SwiRegister = swiRegisterEnum;
@@ -3417,7 +3423,13 @@ namespace PsdzClient.Programming
                     bool itemFound = false;
                     foreach (OptionsItem optionsItem in optionsSwi)
                     {
-                        if (string.Compare(optionsItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
+                        string swiActionId = optionsItem.SwiAction.Id;
+                        if (string.IsNullOrEmpty(swiActionId))
+                        {
+                            continue;
+                        }
+
+                        if (string.Compare(swiActionId, optionId, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             itemFound = true;
                             SelectedOptions.Add(optionsItem);
