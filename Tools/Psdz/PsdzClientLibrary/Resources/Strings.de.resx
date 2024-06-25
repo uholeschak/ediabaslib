@@ -290,7 +290,7 @@ Vermutlich haben Sie eine kostenpflichtig Option ausgewählt.</value>
   </data>
   <data name="TalBackupFaChanged" xml:space="preserve">
     <value>Die FA hat sich seit dem letzten Backup geändert.
-Wollen Sie die letzten Einstellungen wiederherstellen?</value>
+Wollen Sie die Einstellungen vom letzten Backups wiederherstellen?</value>
   </data>
   <data name="TalBackupGenerating" xml:space="preserve">
     <value>Generiere Backup TAL ...</value>
@@ -305,7 +305,7 @@ Wollen Sie die letzten Einstellungen wiederherstellen?</value>
     <value>TAL Ausführung mit Fehlern beendet.</value>
   </data>
   <data name="TalExecuteErrorContinue" xml:space="preserve">
-    <value>Es sind Probleme in der Vorbereitsungspahse auftegetreten.
+    <value>Es sind Probleme in der Vorbereitsungsphase auftegetreten.
 Keine Haftung bei Schäden oder Problemen nach der Kodierung!
 Wollen Sie trotzdem die TAL ausführen?</value>
   </data>
@@ -333,11 +333,11 @@ Wollen Sie Fortfahren?</value>
     <value>Die TAL enthält Flashoperationen, aber flashen ist aus Sicherheitsgründen deaktiviert.
 Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
   </data>
+  <data name="TalGenerating" xml:space="preserve">
+    <value>Generiere TAL ...</value>
+  </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL Generierung fehlgeschlagen.</value>
-  </data>
-  <data name="TalGenrating" xml:space="preserve">
-    <value>Generiere TAL ...</value>
   </data>
   <data name="TalHwDeinstallFinished" xml:space="preserve">
     <value>Wählen Sie nach dem Tausch die ersetzten Steuergeräte in der Kategorie 'nach dem Tausch'.</value>

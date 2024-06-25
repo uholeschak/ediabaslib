@@ -290,7 +290,7 @@ Probably you have selected a chargable option.</value>
   </data>
   <data name="TalBackupFaChanged" xml:space="preserve">
     <value>The FA has changed since the last backup.
-Do you want to restore the last settings?</value>
+Do you want to restore the settings of the last backup?</value>
   </data>
   <data name="TalBackupGenerating" xml:space="preserve">
     <value>Generating backup TAL ...</value>
@@ -333,11 +333,11 @@ Do you want to continue?</value>
     <value>The TAL contains flash operations but flashing is disabled for safety reasons.
 Possibly the software is not consistent in all ECUs.</value>
   </data>
+  <data name="TalGenerating" xml:space="preserve">
+    <value>Generating TAL ...</value>
+  </data>
   <data name="TalGenerationFailed" xml:space="preserve">
     <value>TAL generation failed.</value>
-  </data>
-  <data name="TalGenrating" xml:space="preserve">
-    <value>Generating TAL ...</value>
   </data>
   <data name="TalHwDeinstallFinished" xml:space="preserve">
     <value>After replacement select the replaced ECUs at the category 'after the exchange'.</value>
@@ -347,7 +347,7 @@ Possibly the software is not consistent in all ECUs.</value>
   </data>
   <data name="TalKeepBackupData" xml:space="preserve">
     <value>Do you want to keep the last backup data?
-This is recommended, if an error in TAL processing occured before.</value>
+This is recommended, if the last TAL processing failed.</value>
   </data>
   <data name="TalMissing" xml:space="preserve">
     <value>TAL not present.</value>

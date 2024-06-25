@@ -551,7 +551,7 @@ namespace PsdzClientLibrary.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The FA has changed since the last backup.
-        ///Do you want to restore the last settings? ähnelt.
+        ///Do you want to restore the settings of the last backup? ähnelt.
         /// </summary>
         internal static string TalBackupFaChanged {
             get {
@@ -667,20 +667,20 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generating TAL ... ähnelt.
+        /// </summary>
+        internal static string TalGenerating {
+            get {
+                return ResourceManager.GetString("TalGenerating", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL generation failed. ähnelt.
         /// </summary>
         internal static string TalGenerationFailed {
             get {
                 return ResourceManager.GetString("TalGenerationFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Generating TAL ... ähnelt.
-        /// </summary>
-        internal static string TalGenrating {
-            get {
-                return ResourceManager.GetString("TalGenrating", resourceCulture);
             }
         }
         
@@ -704,7 +704,7 @@ namespace PsdzClientLibrary.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to keep the last backup data?
-        ///This is recommended, if an error in TAL processing occured before. ähnelt.
+        ///This is recommended, if the last TAL processing failed. ähnelt.
         /// </summary>
         internal static string TalKeepBackupData {
             get {

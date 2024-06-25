@@ -2725,7 +2725,7 @@ namespace PsdzClient.Programming
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
-                sbResult.AppendLine(Strings.TalGenrating);
+                sbResult.AppendLine(Strings.TalGenerating);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Generating TAL");
                 IPsdzTal psdzTal = ProgrammingService.Psdz.LogicService.GenerateTal(PsdzContext.Connection, PsdzContext.SvtActual, psdzSollverbauung, PsdzContext.SwtAction, PsdzContext.TalFilter, PsdzContext.FaActual.Vin);
