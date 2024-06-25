@@ -3399,8 +3399,8 @@ namespace PsdzClient.Programming
                 if (talExecutionState == TalExecutionData.TalExecutionStateEnum.None)
                 {
                     OperationState.TalExecutionActive = false;
-                    OperationState.BackupTargetFA = null;
                     OperationState.TalExecutionState = TalExecutionData.TalExecutionStateEnum.None;
+                    OperationState.BackupTargetFA = null;
                     OperationState.TalExecutionList = null;
                 }
                 else
