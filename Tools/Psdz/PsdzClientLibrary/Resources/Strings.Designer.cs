@@ -722,8 +722,9 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die A TAL operation is active.
-        ///Do you want to continue the last TAL operation? ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die A TAL operation has been aborted.
+        ///Do you want to continue the last TAL operation?
+        ///The last settings have to stay unmodified! ähnelt.
         /// </summary>
         internal static string TalOperationContinue {
             get {

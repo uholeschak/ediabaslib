@@ -353,8 +353,9 @@ Dies wird empfohlen, wenn vorher ein Fehler in der TAL Ausführung aufgetreten i
     <value>TAL nicht vorhanden.</value>
   </data>
   <data name="TalOperationContinue" xml:space="preserve">
-    <value>Ein TAL Ausführung ist aktiv.
-Wollen Sie den letzte TAL Ausführung fortsetzen?</value>
+    <value>Eine TAL Ausführung wurde abgebrochen.
+Wollen Sie den letzte TAL Ausführung fortsetzen?
+Die letzten Einstellungen dürfen nicht verändert werden!</value>
   </data>
   <data name="TalRestoreGenerationFailed" xml:space="preserve">
     <value>Restore TAL Generierung fehlgeschlagen.</value>

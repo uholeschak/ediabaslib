@@ -353,8 +353,9 @@ This is recommended, if the last TAL processing failed.</value>
     <value>TAL not present.</value>
   </data>
   <data name="TalOperationContinue" xml:space="preserve">
-    <value>A TAL operation is active.
-Do you want to continue the last TAL operation?</value>
+    <value>A TAL operation has been aborted.
+Do you want to continue the last TAL operation?
+The last settings have to stay unmodified!</value>
   </data>
   <data name="TalRestoreGenerationFailed" xml:space="preserve">
     <value>Restore TAL generation failed.</value>
