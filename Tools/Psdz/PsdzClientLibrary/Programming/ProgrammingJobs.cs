@@ -1545,6 +1545,10 @@ namespace PsdzClient.Programming
                                     if (!ShowMessageEvent.Invoke(cts, Strings.TalBackupFaChanged, true, true))
                                     {
                                         log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalBackupFaChanged: Keep backup");
+                                        RestoreTalOperationState();
+                                        sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
+                                        UpdateStatus(sbResult.ToString());
+                                        return false;
                                     }
                                 }
                             }
@@ -2472,7 +2476,7 @@ namespace PsdzClient.Programming
                                     break;
                                 }
 
-                                if (!string.IsNullOrEmpty(OperationState.BackupTargetFA))
+                                if (string.IsNullOrEmpty(OperationState.BackupTargetFA))
                                 {
                                     log.InfoFormat(CultureInfo.InvariantCulture, "No backup TAL created");
                                     break;
