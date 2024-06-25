@@ -551,7 +551,7 @@ namespace PsdzClientLibrary.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The FA has changed since the last backup.
-        ///The backup data could not be used. ähnelt.
+        ///Do you want to restore the last settings? ähnelt.
         /// </summary>
         internal static string TalBackupFaChanged {
             get {

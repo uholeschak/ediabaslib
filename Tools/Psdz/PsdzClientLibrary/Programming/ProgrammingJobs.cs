@@ -1539,16 +1539,20 @@ namespace PsdzClient.Programming
 
                             if (faChanged)
                             {
-                                keepBackupData = false;
                                 if (ShowMessageEvent != null)
                                 {
-                                    if (!ShowMessageEvent.Invoke(cts, Strings.TalBackupFaChanged, true, true))
+                                    if (ShowMessageEvent.Invoke(cts, Strings.TalBackupFaChanged, false, true))
                                     {
-                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalBackupFaChanged: Keep backup");
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalBackupFaChanged: Restore settings");
                                         RestoreTalOperationState();
                                         sbResult.AppendLine(Strings.ExecutingVehicleFuncFinished);
                                         UpdateStatus(sbResult.ToString());
                                         return false;
+                                    }
+                                    else
+                                    {
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalBackupFaChanged: Keep settings");
+                                        keepBackupData = false;
                                     }
                                 }
                             }

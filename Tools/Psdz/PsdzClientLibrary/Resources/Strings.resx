@@ -290,7 +290,7 @@ Probably you have selected a chargable option.</value>
   </data>
   <data name="TalBackupFaChanged" xml:space="preserve">
     <value>The FA has changed since the last backup.
-The backup data could not be used.</value>
+Do you want to restore the last settings?</value>
   </data>
   <data name="TalBackupGenerating" xml:space="preserve">
     <value>Generating backup TAL ...</value>
