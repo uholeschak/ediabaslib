@@ -236,7 +236,6 @@ namespace PsdzClient.Programming
                 Operation = operation;
                 DiagAddrList = diagAddrList;
                 TalExecutionActive = false;
-                BackupTalCreated = false;
                 BackupTargetFA = null;
                 TalExecutionState = TalExecutionStateEnum.None;
                 TalExecutionFailed = TalExecutionStateEnum.None;
@@ -245,7 +244,6 @@ namespace PsdzClient.Programming
             [XmlElement("Operation")] public OperationEnum Operation { get; set; }
             [XmlArray("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
             [XmlElement("TalExecutionActive")] public bool TalExecutionActive { get; set; }
-            [XmlElement("BackupTalCreated")] public bool BackupTalCreated { get; set; }
             [XmlElement("BackupTargetFA"), DefaultValue(null)] public string BackupTargetFA { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
             [XmlElement("TalExecutionFailed")] public TalExecutionStateEnum TalExecutionFailed { get; set; }
@@ -1532,7 +1530,7 @@ namespace PsdzClient.Programming
                                 break;
                         }
 
-                        bool backupValid = !hwChange && OperationState != null && OperationState.BackupTalCreated && PsdzContext.HasBackupData();
+                        bool backupValid = !hwChange && OperationState != null && !string.IsNullOrEmpty(OperationState.BackupTargetFA) && PsdzContext.HasBackupData();
                         bool keepBackupData = backupValid;
                         if (backupValid && executeBackupTal)
                         {
@@ -2457,7 +2455,7 @@ namespace PsdzClient.Programming
                                     break;
                                 }
 
-                                if (!OperationState.BackupTalCreated)
+                                if (!string.IsNullOrEmpty(OperationState.BackupTargetFA))
                                 {
                                     log.InfoFormat(CultureInfo.InvariantCulture, "No backup TAL created");
                                     break;
@@ -3055,6 +3053,20 @@ namespace PsdzClient.Programming
             return false;
         }
 
+
+        private string GetFaString(IPsdzFa ifa)
+        {
+            if (ifa != null)
+            {
+                if (ProgrammingUtils.BuildFa(ifa) is VehicleOrder faTarget)
+                {
+                    return faTarget.ToString();
+                }
+            }
+
+            return null;
+        }
+
         private bool CheckVoltage(CancellationTokenSource cts, StringBuilder sbResult, bool showInfo = false, bool addMessage = false)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage vehicle: Show info={0}", showInfo);
@@ -3347,7 +3359,6 @@ namespace PsdzClient.Programming
                 if (talExecutionState == OperationStateData.TalExecutionStateEnum.None)
                 {
                     OperationState.TalExecutionActive = false;
-                    OperationState.BackupTalCreated = false;
                     OperationState.BackupTargetFA = null;
                     OperationState.TalExecutionState = OperationStateData.TalExecutionStateEnum.None;
                     OperationState.TalExecutionFailed = OperationStateData.TalExecutionStateEnum.None;
@@ -3391,20 +3402,14 @@ namespace PsdzClient.Programming
             {
                 if (failure)
                 {
-                    OperationState.BackupTalCreated = false;
                     OperationState.BackupTargetFA = null;
                 }
                 else
                 {
-                    OperationState.BackupTalCreated = true;
-
                     string backupTargetFA = null;
-                    if (PsdzContext?.FaTarget != null)
+                    if (PsdzContext != null)
                     {
-                        if (ProgrammingUtils.BuildFa(PsdzContext.FaTarget) is VehicleOrder faTarget)
-                        {
-                            backupTargetFA = faTarget.ToString();
-                        }
+                        backupTargetFA = GetFaString(PsdzContext.FaTarget);
                     }
 
                     OperationState.BackupTargetFA = backupTargetFA;
