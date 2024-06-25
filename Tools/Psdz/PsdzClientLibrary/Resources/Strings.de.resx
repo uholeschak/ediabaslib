@@ -288,6 +288,10 @@ Vermutlich haben Sie eine kostenpflichtig Option ausgewählt.</value>
   <data name="SwtActionFailed" xml:space="preserve">
     <value>SWT Aktionen abrufen fehlgeschlagen.</value>
   </data>
+  <data name="TalBackupFaChanged" xml:space="preserve">
+    <value>Die FA hat sich seit dem letyten backup geändert.
+Das Backup kann nciht verwendet werden.</value>
+  </data>
   <data name="TalBackupGenerating" xml:space="preserve">
     <value>Generiere Backup TAL ...</value>
   </data>

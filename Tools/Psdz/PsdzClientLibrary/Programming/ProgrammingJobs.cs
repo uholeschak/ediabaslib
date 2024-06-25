@@ -1534,12 +1534,29 @@ namespace PsdzClient.Programming
                         bool keepBackupData = backupValid;
                         if (backupValid && executeBackupTal)
                         {
-                            if (ShowMessageEvent != null)
+                            string currentTargetFA = GetFaString(PsdzContext.FaTarget);
+                            bool faChanged = string.CompareOrdinal(currentTargetFA, OperationState.BackupTargetFA) != 0;
+
+                            if (faChanged)
                             {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.TalKeepBackupData, false, true))
+                                keepBackupData = false;
+                                if (ShowMessageEvent != null)
                                 {
-                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalKeepBackupData: Keep backup");
-                                    keepBackupData = false;
+                                    if (!ShowMessageEvent.Invoke(cts, Strings.TalBackupFaChanged, true, true))
+                                    {
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalBackupFaChanged: Keep backup");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (ShowMessageEvent != null)
+                                {
+                                    if (!ShowMessageEvent.Invoke(cts, Strings.TalKeepBackupData, false, true))
+                                    {
+                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalKeepBackupData: Keep backup");
+                                        keepBackupData = false;
+                                    }
                                 }
                             }
                         }

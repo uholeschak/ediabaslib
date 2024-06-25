@@ -550,6 +550,16 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The FA has changed since the last backup.
+        ///The backup data could not be used. ähnelt.
+        /// </summary>
+        internal static string TalBackupFaChanged {
+            get {
+                return ResourceManager.GetString("TalBackupFaChanged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Generating backup TAL ... ähnelt.
         /// </summary>
         internal static string TalBackupGenerating {

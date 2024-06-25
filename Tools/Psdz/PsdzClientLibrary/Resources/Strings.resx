@@ -288,6 +288,10 @@ Probably you have selected a chargable option.</value>
   <data name="SwtActionFailed" xml:space="preserve">
     <value>Request SWT action failed.</value>
   </data>
+  <data name="TalBackupFaChanged" xml:space="preserve">
+    <value>The FA has changed since the last backup.
+The backup data could not be used.</value>
+  </data>
   <data name="TalBackupGenerating" xml:space="preserve">
     <value>Generating backup TAL ...</value>
   </data>
