@@ -3370,7 +3370,7 @@ namespace PsdzClient.Programming
             OperationState = new OperationStateData(operation, diagAddrList);
         }
 
-        public bool StartTalExecutionState(OperationStateData.TalExecutionStateEnum talExecutionState)
+        public bool StartTalExecutionState(OperationStateData.TalExecutionStateEnum talExecutionState, bool skipped = false)
         {
             if (OperationState == null)
             {
@@ -3405,7 +3405,7 @@ namespace PsdzClient.Programming
                         OperationState.TalExecutionDict = new SerializableDictionary<OperationStateData.TalExecutionStateEnum, OperationStateData.TalExecutionResultEnum>();
                     }
 
-                    OperationState.TalExecutionDict[OperationState.TalExecutionState] = OperationStateData.TalExecutionResultEnum.Started;
+                    OperationState.TalExecutionDict[OperationState.TalExecutionState] = skipped ? OperationStateData.TalExecutionResultEnum.Skipped : OperationStateData.TalExecutionResultEnum.Started;
                 }
 
                 List<SelectedOptionData> selectedOptionList = new List<SelectedOptionData>();
