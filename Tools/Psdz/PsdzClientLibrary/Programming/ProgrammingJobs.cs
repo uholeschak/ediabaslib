@@ -1579,7 +1579,11 @@ namespace PsdzClient.Programming
                         }
 
                         log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: Execute={0}, KeepBackup={1}", executeBackupTal, keepBackupData);
-                        if (!keepBackupData)
+                        if (keepBackupData)
+                        {
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting, true);
+                        }
+                        else
                         {
                             PsdzContext.RemoveBackupData();
                             if (executeBackupTal)
@@ -3389,7 +3393,7 @@ namespace PsdzClient.Programming
             OperationState.Operation = operation;
             if (operation != OperationStateData.OperationEnum.Idle)
             {
-                log.InfoFormat(CultureInfo.InvariantCulture, "StartTalExecutionState: State={0}", talExecutionState.ToString());
+                log.InfoFormat(CultureInfo.InvariantCulture, "StartTalExecutionState: State={0}, Skipped={1}", talExecutionState.ToString(), skipped);
                 if (talExecutionState == OperationStateData.TalExecutionStateEnum.None)
                 {
                     OperationState.TalExecutionState = OperationStateData.TalExecutionStateEnum.None;
@@ -3403,6 +3407,11 @@ namespace PsdzClient.Programming
                     if (OperationState.TalExecutionDict == null)
                     {
                         OperationState.TalExecutionDict = new SerializableDictionary<OperationStateData.TalExecutionStateEnum, OperationStateData.TalExecutionResultEnum>();
+                    }
+
+                    if (talExecutionState == OperationStateData.TalExecutionStateEnum.BackupTalExecuting)
+                    {
+                        OperationState.TalExecutionDict.Clear();
                     }
 
                     OperationState.TalExecutionDict[OperationState.TalExecutionState] = skipped ? OperationStateData.TalExecutionResultEnum.Skipped : OperationStateData.TalExecutionResultEnum.Started;
@@ -3456,13 +3465,11 @@ namespace PsdzClient.Programming
                     }
                 }
 
-                if (OperationState.TalExecutionDict == null)
+                if (OperationState.TalExecutionDict != null)
                 {
-                    OperationState.TalExecutionDict = new SerializableDictionary<OperationStateData.TalExecutionStateEnum, OperationStateData.TalExecutionResultEnum>();
+                    OperationState.TalExecutionDict[OperationState.TalExecutionState] =
+                        failure ? OperationStateData.TalExecutionResultEnum.Failure : OperationStateData.TalExecutionResultEnum.Success;
                 }
-
-                OperationState.TalExecutionDict[OperationState.TalExecutionState] =
-                    failure ? OperationStateData.TalExecutionResultEnum.Failure : OperationStateData.TalExecutionResultEnum.Success;
             }
 
             return SaveOperationState();
