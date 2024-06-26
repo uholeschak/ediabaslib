@@ -587,6 +587,16 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to execute the TAL again?
+        ///Last time processing was successful. ähnelt.
+        /// </summary>
+        internal static string TalExecuteAgain {
+            get {
+                return ResourceManager.GetString("TalExecuteAgain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution finished with errors. ähnelt.
         /// </summary>
         internal static string TalExecuteError {
@@ -699,16 +709,6 @@ namespace PsdzClientLibrary.Resources {
         internal static string TalIdrGenerating {
             get {
                 return ResourceManager.GetString("TalIdrGenerating", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to keep the last backup data?
-        ///This is recommended, if the last TAL processing failed. ähnelt.
-        /// </summary>
-        internal static string TalKeepBackupData {
-            get {
-                return ResourceManager.GetString("TalKeepBackupData", resourceCulture);
             }
         }
         

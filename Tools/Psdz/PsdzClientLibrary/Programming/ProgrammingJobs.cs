@@ -1548,6 +1548,8 @@ namespace PsdzClient.Programming
 
                             if (faChanged)
                             {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalBackupFaChanged");
+
                                 if (ShowMessageEvent != null)
                                 {
                                     if (ShowMessageEvent.Invoke(cts, Strings.TalBackupFaChanged, false, true))
@@ -1561,17 +1563,6 @@ namespace PsdzClient.Programming
                                     else
                                     {
                                         log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalBackupFaChanged: Keep settings");
-                                        keepBackupData = false;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (ShowMessageEvent != null)
-                                {
-                                    if (!ShowMessageEvent.Invoke(cts, Strings.TalKeepBackupData, false, true))
-                                    {
-                                        log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalKeepBackupData: Keep backup");
                                         keepBackupData = false;
                                     }
                                 }
@@ -1704,7 +1695,19 @@ namespace PsdzClient.Programming
                             return false;
                         }
 
-                        if (lastTalExecutionResult != OperationStateData.TalExecutionResultEnum.Success)
+                        bool executeTal = true;
+                        if (lastTalExecutionResult == OperationStateData.TalExecutionResultEnum.Success)
+                        {
+                            if (ShowMessageEvent != null)
+                            {
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteAgain, false, true))
+                                {
+                                    executeTal = false;
+                                }
+                            }
+                        }
+
+                        if (executeTal)
                         {
                             sbResult.AppendLine(Strings.ExecutingTal);
                             UpdateStatus(sbResult.ToString());
