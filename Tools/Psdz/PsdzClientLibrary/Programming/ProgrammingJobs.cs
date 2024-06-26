@@ -1579,8 +1579,15 @@ namespace PsdzClient.Programming
                         }
 
                         log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: Execute={0}, KeepBackup={1}", executeBackupTal, keepBackupData);
+                        OperationStateData.TalExecutionResultEnum lastTalExecutionResult = OperationStateData.TalExecutionResultEnum.None;
+
                         if (keepBackupData)
                         {
+                            if (!OperationState.TalExecutionDict.TryGetValue(OperationStateData.TalExecutionStateEnum.TalExecuting, out lastTalExecutionResult))
+                            {
+                                lastTalExecutionResult = OperationStateData.TalExecutionResultEnum.None;
+                            }
+
                             StartTalExecutionState(OperationStateData.TalExecutionStateEnum.BackupTalExecuting, true);
                         }
                         else
@@ -1697,54 +1704,57 @@ namespace PsdzClient.Programming
                             return false;
                         }
 
-                        sbResult.AppendLine(Strings.ExecutingTal);
-                        UpdateStatus(sbResult.ToString());
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
-                        StartTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting);
-                        IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
-                            null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
-                        log.Info("Execute Tal result:");
-                        log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", executeTalResult.AsXml.Length);
-                        log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", executeTalResult.TalExecutionState);
-                        log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", executeTalResult.AffectedEcus.Count());
-                        foreach (IPsdzEcuIdentifier ecuIdentifier in executeTalResult.AffectedEcus)
+                        if (lastTalExecutionResult != OperationStateData.TalExecutionResultEnum.Success)
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
-                                ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
-                        }
-                        if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState, true))
-                        {
-                            FinishTalExecutionState( true);
-                            talExecutionFailed = true;
-                            log.Error(executeTalResult.AsXml);
-                            sbResult.AppendLine(Strings.TalExecuteError);
-                            if (executeTalResult.FailureCauses != null)
+                            sbResult.AppendLine(Strings.ExecutingTal);
+                            UpdateStatus(sbResult.ToString());
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting);
+                            IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
+                                null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
+                            log.Info("Execute Tal result:");
+                            log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", executeTalResult.AsXml.Length);
+                            log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", executeTalResult.TalExecutionState);
+                            log.InfoFormat(CultureInfo.InvariantCulture, " Ecus: {0}", executeTalResult.AffectedEcus.Count());
+                            foreach (IPsdzEcuIdentifier ecuIdentifier in executeTalResult.AffectedEcus)
                             {
-                                foreach (IPsdzFailureCause failureCause in executeTalResult.FailureCauses)
+                                log.InfoFormat(CultureInfo.InvariantCulture, "  Affected Ecu: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
+                                    ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
+                            }
+                            if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState, true))
+                            {
+                                FinishTalExecutionState(true);
+                                talExecutionFailed = true;
+                                log.Error(executeTalResult.AsXml);
+                                sbResult.AppendLine(Strings.TalExecuteError);
+                                if (executeTalResult.FailureCauses != null)
                                 {
-                                    if (!string.IsNullOrEmpty(failureCause.Message))
+                                    foreach (IPsdzFailureCause failureCause in executeTalResult.FailureCauses)
                                     {
-                                        sbResult.AppendLine(failureCause.Message);
+                                        if (!string.IsNullOrEmpty(failureCause.Message))
+                                        {
+                                            sbResult.AppendLine(failureCause.Message);
+                                        }
                                     }
                                 }
-                            }
 
-                            UpdateStatus(sbResult.ToString());
-                        }
-                        else
-                        {
-                            FinishTalExecutionState();
-                            if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState))
-                            {
-                                log.Info(executeTalResult.AsXml);
-                                sbResult.AppendLine(Strings.TalExecuteWarning);
+                                UpdateStatus(sbResult.ToString());
                             }
                             else
                             {
-                                sbResult.AppendLine(Strings.TalExecuteOk);
-                            }
+                                FinishTalExecutionState();
+                                if (!IsTalExecutionStateOk(executeTalResult.TalExecutionState))
+                                {
+                                    log.Info(executeTalResult.AsXml);
+                                    sbResult.AppendLine(Strings.TalExecuteWarning);
+                                }
+                                else
+                                {
+                                    sbResult.AppendLine(Strings.TalExecuteOk);
+                                }
 
-                            UpdateStatus(sbResult.ToString());
+                                UpdateStatus(sbResult.ToString());
+                            }
                         }
 
                         CacheClearRequired = true;
