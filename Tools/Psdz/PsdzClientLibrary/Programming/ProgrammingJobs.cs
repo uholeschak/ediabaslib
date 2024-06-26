@@ -255,7 +255,7 @@ namespace PsdzClient.Programming
             [XmlArray("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
             [XmlElement("BackupTargetFA"), DefaultValue(null)] public string BackupTargetFA { get; set; }
-            [XmlArray("TalExecutionDict"), DefaultValue(null)] public SerializableDictionary<TalExecutionStateEnum, TalExecutionResultEnum> TalExecutionDict { get; set; }
+            [XmlElement("TalExecutionDict"), DefaultValue(null)] public SerializableDictionary<TalExecutionStateEnum, TalExecutionResultEnum> TalExecutionDict { get; set; }
             [XmlArray("SelectedOptionList"), DefaultValue(null)] public List<SelectedOptionData> SelectedOptionList { get; set; }
         }
 
