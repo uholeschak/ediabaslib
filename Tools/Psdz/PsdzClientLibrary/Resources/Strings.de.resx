@@ -334,6 +334,10 @@ Wollen Sie die Backupdaten löschen (nicht empfohlen)?</value>
 Schließen oder minimieren Sie diese Seite nicht, weil dies die Verbindung zum Fahrzeug unterbricht!
 Wollen Sie Fortfahren?</value>
   </data>
+  <data name="TalExecutionOkMessage" xml:space="preserve">
+    <value>Die TAL wurde erfolgreich ausgeführt.
+Wollen Sie die Backupdaten behalten?</value>
+  </data>
   <data name="TalFlashOperation" xml:space="preserve">
     <value>Die TAL enthält Flashoperationen, aber flashen ist aus Sicherheitsgründen deaktiviert.
 Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>

@@ -2035,7 +2035,21 @@ namespace PsdzClient.Programming
 
                         if (!talExecutionFailed)
                         {
-                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
+                            if (ShowMessageEvent != null)
+                            {
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionOkMessage, false, true))
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionOkMessage Keep backup");
+                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.Finished);
+                                }
+                                else
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionOkMessage Delete backup");
+                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
+                                    PsdzContext.RemoveBackupData();
+                                }
+                            }
+
                             if (RegisterGroup == PsdzDatabase.SwiRegisterGroup.HwInstall)
                             {
                                 ResetOperationState();

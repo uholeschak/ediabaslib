@@ -668,6 +668,16 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The TAL execution has been finished successfully.
+        ///Do you want to keep the backup data? ähnelt.
+        /// </summary>
+        internal static string TalExecutionOkMessage {
+            get {
+                return ResourceManager.GetString("TalExecutionOkMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The TAL contains flash operations but flashing is disabled for safety reasons.
         ///Possibly the software is not consistent in all ECUs. ähnelt.
         /// </summary>

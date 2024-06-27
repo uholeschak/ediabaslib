@@ -334,6 +334,10 @@ Do you want to delete the backup data (not recommended)?</value>
 Don't close or minimize this page, because this will interrupt vehicle communcation!
 Do you want to continue?</value>
   </data>
+  <data name="TalExecutionOkMessage" xml:space="preserve">
+    <value>The TAL execution has been finished successfully.
+Do you want to keep the backup data?</value>
+  </data>
   <data name="TalFlashOperation" xml:space="preserve">
     <value>The TAL contains flash operations but flashing is disabled for safety reasons.
 Possibly the software is not consistent in all ECUs.</value>
