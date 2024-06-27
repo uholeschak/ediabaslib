@@ -226,7 +226,8 @@ namespace PsdzClient.Programming
                 WriteILevelBackupExecuting,
                 UpdatePiaMasterExecuting,
                 WriteFaExecuting,
-                WriteFaBackupExecuting
+                WriteFaBackupExecuting,
+                Finished,
             }
 
             public enum TalExecutionResultEnum
@@ -2043,11 +2044,16 @@ namespace PsdzClient.Programming
                         {
                             if (ShowMessageEvent != null)
                             {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionFailMessage, true, true))
+                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionFailMessage, false, true))
                                 {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage Keep backup");
+                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.Finished);
+                                }
+                                else
+                                {
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage Delete backup");
                                     StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
-                                    log.ErrorFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage aborted");
-                                    return false;
+                                    PsdzContext.RemoveBackupData();
                                 }
                             }
                         }

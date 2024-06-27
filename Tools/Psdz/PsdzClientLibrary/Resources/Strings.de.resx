@@ -326,7 +326,8 @@ Wollen Sie die TAL ausführen?</value>
   </data>
   <data name="TalExecutionFailMessage" xml:space="preserve">
     <value>Die Ausführung der TAL ist fehlgeschlagen.
-Sie können versuchen die TAL nochmals auszuführen, um die Fehler zu beheben.</value>
+Sie können versuchen die TAL nochmals auszuführen, um die Fehler zu beheben.
+Wollen Sie die Backupdaten löschen (nicht empfohlen)?</value>
   </data>
   <data name="TalExecutionHint" xml:space="preserve">
     <value>Stellen Sie sicher, dass die Zündung eingeschaltet, der Motor gestoppt und ein zerifiziertes Ladegerät mit dem Fahrzeug verbunden ist.

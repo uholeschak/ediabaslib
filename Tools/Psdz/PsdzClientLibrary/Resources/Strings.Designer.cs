@@ -647,7 +647,8 @@ namespace PsdzClientLibrary.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution failed.
-        ///You could try to execute the TAL again to fix the errors. ähnelt.
+        ///You could try to execute the TAL again to fix the errors.
+        ///Do you want to delete the backup data (not recommended)? ähnelt.
         /// </summary>
         internal static string TalExecutionFailMessage {
             get {

@@ -326,7 +326,8 @@ Do you want to continue with TAL execution?</value>
   </data>
   <data name="TalExecutionFailMessage" xml:space="preserve">
     <value>TAL execution failed.
-You could try to execute the TAL again to fix the errors.</value>
+You could try to execute the TAL again to fix the errors.
+Do you want to delete the backup data (not recommended)?</value>
   </data>
   <data name="TalExecutionHint" xml:space="preserve">
     <value>Make sure that the ignition is switched on, the motor is stopped and a certified charger is connected to the vehicle.
