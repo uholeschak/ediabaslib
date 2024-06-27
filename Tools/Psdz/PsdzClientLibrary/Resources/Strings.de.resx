@@ -326,8 +326,7 @@ Wollen Sie die TAL ausführen?</value>
   </data>
   <data name="TalExecutionFailMessage" xml:space="preserve">
     <value>Die Ausführung der TAL ist fehlgeschlagen.
-Sie können versuchen die TAL nochmals auszuführen, um die Fehler zu beheben.
-Wollen Sie die Backupdaten löschen (nicht empfohlen)?</value>
+Wollen Sie die TAL Ausführung später mit den gleiche Einstellungen nochmals wiederholen?</value>
   </data>
   <data name="TalExecutionHint" xml:space="preserve">
     <value>Stellen Sie sicher, dass die Zündung eingeschaltet, der Motor gestoppt und ein zerifiziertes Ladegerät mit dem Fahrzeug verbunden ist.
@@ -358,9 +357,9 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
     <value>TAL nicht vorhanden.</value>
   </data>
   <data name="TalOperationContinue" xml:space="preserve">
-    <value>Eine TAL Ausführung wurde abgebrochen.
-Wollen Sie den letzte TAL Ausführung fortsetzen?
-Die letzten Einstellungen dürfen nicht verändert werden!</value>
+    <value>Die letzte TAL Ausführung wurde abgebrochen.
+Wollen Sie die TAL Ausführung fortsetzen?
+Die letzten Einstellungen dürfen dabei nicht verändert werden!</value>
   </data>
   <data name="TalRestoreGenerationFailed" xml:space="preserve">
     <value>Restore TAL Generierung fehlgeschlagen.</value>

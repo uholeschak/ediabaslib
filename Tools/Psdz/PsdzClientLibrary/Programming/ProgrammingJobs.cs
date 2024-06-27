@@ -2035,24 +2035,26 @@ namespace PsdzClient.Programming
 
                         if (!talExecutionFailed)
                         {
-                            if (ShowMessageEvent != null)
-                            {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionOkMessage, false, true))
-                                {
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionOkMessage Keep backup");
-                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.Finished);
-                                }
-                                else
-                                {
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionOkMessage Delete backup");
-                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
-                                    PsdzContext.RemoveBackupData();
-                                }
-                            }
-
                             if (RegisterGroup == PsdzDatabase.SwiRegisterGroup.HwInstall)
                             {
                                 ResetOperationState();
+                            }
+                            else
+                            {
+                                if (ShowMessageEvent != null)
+                                {
+                                    if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionOkMessage, false, true))
+                                    {
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionOkMessage Delete backup");
+                                        StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
+                                        PsdzContext.RemoveBackupData();
+                                    }
+                                    else
+                                    {
+                                        log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionOkMessage Keep backup");
+                                        StartTalExecutionState(OperationStateData.TalExecutionStateEnum.Finished);
+                                    }
+                                }
                             }
                             // finally reset TAL
                             PsdzContext.Tal = null;
@@ -2065,14 +2067,14 @@ namespace PsdzClient.Programming
                             {
                                 if (!ShowMessageEvent.Invoke(cts, Strings.TalExecutionFailMessage, false, true))
                                 {
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage Keep backup");
-                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.Finished);
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage No retry");
+                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
+                                    PsdzContext.RemoveBackupData();
                                 }
                                 else
                                 {
-                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage Delete backup");
-                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.None);
-                                    PsdzContext.RemoveBackupData();
+                                    log.InfoFormat(CultureInfo.InvariantCulture, "ShowMessageEvent TalExecutionFailMessage Retry ");
+                                    StartTalExecutionState(OperationStateData.TalExecutionStateEnum.Finished);
                                 }
                             }
                         }

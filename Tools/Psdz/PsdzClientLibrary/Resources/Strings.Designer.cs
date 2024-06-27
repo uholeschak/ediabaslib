@@ -647,8 +647,7 @@ namespace PsdzClientLibrary.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die TAL execution failed.
-        ///You could try to execute the TAL again to fix the errors.
-        ///Do you want to delete the backup data (not recommended)? ähnelt.
+        ///Do you want to retry TAL execution with the same settings later? ähnelt.
         /// </summary>
         internal static string TalExecutionFailMessage {
             get {
@@ -733,8 +732,8 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die A TAL operation has been aborted.
-        ///Do you want to continue the last TAL operation?
+        ///   Sucht eine lokalisierte Zeichenfolge, die The last TAL operation has been aborted.
+        ///Do you want to continue the TAL operation?
         ///The last settings have to stay unmodified! ähnelt.
         /// </summary>
         internal static string TalOperationContinue {

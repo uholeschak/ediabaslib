@@ -326,8 +326,7 @@ Do you want to continue with TAL execution?</value>
   </data>
   <data name="TalExecutionFailMessage" xml:space="preserve">
     <value>TAL execution failed.
-You could try to execute the TAL again to fix the errors.
-Do you want to delete the backup data (not recommended)?</value>
+Do you want to retry TAL execution with the same settings later?</value>
   </data>
   <data name="TalExecutionHint" xml:space="preserve">
     <value>Make sure that the ignition is switched on, the motor is stopped and a certified charger is connected to the vehicle.
@@ -358,8 +357,8 @@ Possibly the software is not consistent in all ECUs.</value>
     <value>TAL not present.</value>
   </data>
   <data name="TalOperationContinue" xml:space="preserve">
-    <value>A TAL operation has been aborted.
-Do you want to continue the last TAL operation?
+    <value>The last TAL operation has been aborted.
+Do you want to continue the TAL operation?
 The last settings have to stay unmodified!</value>
   </data>
   <data name="TalRestoreGenerationFailed" xml:space="preserve">
