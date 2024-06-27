@@ -1697,7 +1697,8 @@ namespace PsdzClient.Programming
                         }
 
                         bool executeTal = true;
-                        if (lastTalExecutionResult == OperationStateData.TalExecutionResultEnum.Success)
+                        if (lastTalExecutionResult == OperationStateData.TalExecutionResultEnum.Success ||
+                            lastTalExecutionResult == OperationStateData.TalExecutionResultEnum.Skipped)
                         {
                             if (ShowMessageEvent != null)
                             {
