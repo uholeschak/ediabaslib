@@ -1760,6 +1760,10 @@ namespace PsdzClient.Programming
                                 UpdateStatus(sbResult.ToString());
                             }
                         }
+                        else
+                        {
+                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting, true);
+                        }
 
                         CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
