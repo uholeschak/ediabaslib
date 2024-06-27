@@ -302,7 +302,7 @@ Wollen Sie die Einstellungen vom letzten Backups wiederherstellen?</value>
     <value>Wollen Sie alle Flashoperationen in dieser Sitzung deaktivieren?</value>
   </data>
   <data name="TalExecuteAgain" xml:space="preserve">
-    <value>Wollen Sie die TAL nochmals ausführen?
+    <value>Wollen Sie die Haupt-TAL nochmals ausführen (langsam)?
 Das letzte Mal war die Ausführung erfolgreich.</value>
   </data>
   <data name="TalExecuteError" xml:space="preserve">
@@ -357,9 +357,9 @@ Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
     <value>TAL nicht vorhanden.</value>
   </data>
   <data name="TalOperationContinue" xml:space="preserve">
-    <value>Die letzte TAL Ausführung wurde abgebrochen.
-Wollen Sie die TAL Ausführung fortsetzen?
-Die letzten Einstellungen dürfen dabei nicht verändert werden!</value>
+    <value>Es ist ein Backup der letzten TAL vorhanden.
+Wollen Sie die letzte TAL nochmals ausführen?
+Die letzten Einstellungen dürfen in diesem Fall nicht verändert werden.</value>
   </data>
   <data name="TalRestoreGenerationFailed" xml:space="preserve">
     <value>Restore TAL Generierung fehlgeschlagen.</value>

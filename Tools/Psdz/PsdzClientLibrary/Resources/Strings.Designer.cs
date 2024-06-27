@@ -587,7 +587,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to execute the TAL again?
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to execute the main TAL again (slow)?
         ///Last time processing was successful. ähnelt.
         /// </summary>
         internal static string TalExecuteAgain {
@@ -732,9 +732,9 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die The last TAL operation has been aborted.
-        ///Do you want to continue the TAL operation?
-        ///The last settings have to stay unmodified! ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die A backup of the last TAL is present.
+        ///Do you want to execute the last TAL again?
+        ///The last settings have to stay unmodified in this case. ähnelt.
         /// </summary>
         internal static string TalOperationContinue {
             get {
