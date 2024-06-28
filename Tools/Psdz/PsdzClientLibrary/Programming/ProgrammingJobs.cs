@@ -243,9 +243,9 @@ namespace PsdzClient.Programming
             {
             }
 
-            public OperationStateData(VehicleStructsBmw.VersionInfo version, OperationEnum operation, List<int> diagAddrList = null)
+            public OperationStateData(OperationEnum operation, List<int> diagAddrList = null)
             {
-                Version = version;
+                Version = null;
                 Operation = operation;
                 DiagAddrList = diagAddrList;
                 BackupTargetFA = null;
@@ -3315,6 +3315,9 @@ namespace PsdzClient.Programming
                             }
                             break;
                     }
+
+                    PsdzDatabase.DbInfo dbInfo = ProgrammingService.PsdzDatabase.GetDbInfo();
+                    OperationState.Version = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
                 }
 
                 string fileName = backupPath.TrimEnd('\\') + ".xml";
@@ -3370,6 +3373,16 @@ namespace PsdzClient.Programming
                     {
                         OperationState = serializer.Deserialize(streamReader) as OperationStateData;
                     }
+
+                    if (OperationState != null)
+                    {
+                        PsdzDatabase.DbInfo dbInfo = ProgrammingService.PsdzDatabase.GetDbInfo();
+                        if (OperationState.Version == null || !OperationState.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
+                        {
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "LoadOperationState Version mismatch");
+                            OperationState = new OperationStateData();
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -3414,9 +3427,7 @@ namespace PsdzClient.Programming
                 OperationState.DiagAddrList = diagAddrList;
             }
 
-            PsdzDatabase.DbInfo dbInfo = ProgrammingService.PsdzDatabase.GetDbInfo();
-            VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
-            OperationState = new OperationStateData(versionInfo, operation, diagAddrList);
+            OperationState = new OperationStateData(operation, diagAddrList);
         }
 
         public bool StartTalExecutionState(OperationStateData.TalExecutionStateEnum talExecutionState, bool skipped = false)
@@ -3426,9 +3437,6 @@ namespace PsdzClient.Programming
                 log.InfoFormat(CultureInfo.InvariantCulture, "StartTalExecutionState No data");
                 OperationState = new OperationStateData();
             }
-
-            PsdzDatabase.DbInfo dbInfo = ProgrammingService.PsdzDatabase.GetDbInfo();
-            OperationState.Version = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
 
             OperationStateData.OperationEnum operation = OperationStateData.OperationEnum.Idle;
             switch (RegisterGroup)
