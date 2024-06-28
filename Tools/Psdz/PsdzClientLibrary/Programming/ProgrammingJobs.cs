@@ -3320,6 +3320,7 @@ namespace PsdzClient.Programming
                             break;
                     }
 
+                    OperationState.StructVersion = OperationStateData.StructVersionCurrent;
                     PsdzDatabase.DbInfo dbInfo = ProgrammingService.PsdzDatabase.GetDbInfo();
                     OperationState.Version = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
                 }
