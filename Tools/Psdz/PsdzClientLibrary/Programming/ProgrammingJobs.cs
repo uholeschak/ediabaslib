@@ -203,7 +203,7 @@ namespace PsdzClient.Programming
         }
 
 
-        [XmlInclude(typeof(SelectedOptionData))]
+        [XmlInclude(typeof(SelectedOptionData)), XmlInclude(typeof(VehicleStructsBmw.VersionInfo))]
         [XmlType("OperationStateData")]
         public class OperationStateData
         {
@@ -243,8 +243,9 @@ namespace PsdzClient.Programming
             {
             }
 
-            public OperationStateData(OperationEnum operation, List<int> diagAddrList = null)
+            public OperationStateData(VehicleStructsBmw.VersionInfo version, OperationEnum operation, List<int> diagAddrList = null)
             {
+                Version = version;
                 Operation = operation;
                 DiagAddrList = diagAddrList;
                 BackupTargetFA = null;
@@ -252,6 +253,7 @@ namespace PsdzClient.Programming
                 SelectedOptionList = null;
             }
 
+            [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
             [XmlElement("Operation")] public OperationEnum Operation { get; set; }
             [XmlArray("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
             [XmlElement("TalExecutionState")] public TalExecutionStateEnum TalExecutionState { get; set; }
@@ -2056,6 +2058,7 @@ namespace PsdzClient.Programming
                                     }
                                 }
                             }
+
                             // finally reset TAL
                             PsdzContext.Tal = null;
                             RegisterGroup = PsdzDatabase.SwiRegisterGroup.Modification;
@@ -3411,7 +3414,9 @@ namespace PsdzClient.Programming
                 OperationState.DiagAddrList = diagAddrList;
             }
 
-            OperationState = new OperationStateData(operation, diagAddrList);
+            PsdzDatabase.DbInfo dbInfo = ProgrammingService.PsdzDatabase.GetDbInfo();
+            VehicleStructsBmw.VersionInfo versionInfo = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
+            OperationState = new OperationStateData(versionInfo, operation, diagAddrList);
         }
 
         public bool StartTalExecutionState(OperationStateData.TalExecutionStateEnum talExecutionState, bool skipped = false)
@@ -3421,6 +3426,9 @@ namespace PsdzClient.Programming
                 log.InfoFormat(CultureInfo.InvariantCulture, "StartTalExecutionState No data");
                 OperationState = new OperationStateData();
             }
+
+            PsdzDatabase.DbInfo dbInfo = ProgrammingService.PsdzDatabase.GetDbInfo();
+            OperationState.Version = new VehicleStructsBmw.VersionInfo(dbInfo?.Version, dbInfo?.DateTime);
 
             OperationStateData.OperationEnum operation = OperationStateData.OperationEnum.Idle;
             switch (RegisterGroup)
@@ -3454,7 +3462,13 @@ namespace PsdzClient.Programming
                         OperationState.TalExecutionDict.Clear();
                     }
 
-                    OperationState.TalExecutionDict[OperationState.TalExecutionState] = skipped ? OperationStateData.TalExecutionResultEnum.Skipped : OperationStateData.TalExecutionResultEnum.Started;
+                    OperationStateData.TalExecutionResultEnum talExecutionResult = OperationStateData.TalExecutionResultEnum.None;
+                    if (talExecutionState != OperationStateData.TalExecutionStateEnum.Finished)
+                    {
+                        talExecutionResult = skipped ? OperationStateData.TalExecutionResultEnum.Skipped : OperationStateData.TalExecutionResultEnum.Started;
+                    }
+
+                    OperationState.TalExecutionDict[OperationState.TalExecutionState] = talExecutionResult;
                 }
 
                 List<SelectedOptionData> selectedOptionList = new List<SelectedOptionData>();
