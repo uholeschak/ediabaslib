@@ -207,6 +207,8 @@ namespace PsdzClient.Programming
         [XmlType("OperationStateData")]
         public class OperationStateData
         {
+            public const int StructVersionCurrent = 1;
+
             public enum OperationEnum
             {
                 Idle,
@@ -245,6 +247,7 @@ namespace PsdzClient.Programming
 
             public OperationStateData(OperationEnum operation, List<int> diagAddrList = null)
             {
+                StructVersion = StructVersionCurrent;
                 Version = null;
                 Operation = operation;
                 DiagAddrList = diagAddrList;
@@ -253,6 +256,7 @@ namespace PsdzClient.Programming
                 SelectedOptionList = null;
             }
 
+            [XmlElement("StructVersion")] public int StructVersion { get; set; }
             [XmlElement("Version"), DefaultValue(null)] public VehicleStructsBmw.VersionInfo Version { get; set; }
             [XmlElement("Operation")] public OperationEnum Operation { get; set; }
             [XmlArray("DiagAddrList"), DefaultValue(null)] public List<int> DiagAddrList { get; set; }
@@ -3376,10 +3380,25 @@ namespace PsdzClient.Programming
 
                     if (OperationState != null)
                     {
-                        PsdzDatabase.DbInfo dbInfo = ProgrammingService.PsdzDatabase.GetDbInfo();
-                        if (OperationState.Version == null || !OperationState.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
+                        bool dataValid = true;
+                        if (OperationState.StructVersion != OperationStateData.StructVersionCurrent)
                         {
-                            log.ErrorFormat(CultureInfo.InvariantCulture, "LoadOperationState Version mismatch");
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "LoadOperationState StructVersion mismatch");
+                            dataValid = false;
+                        }
+
+                        if (dataValid)
+                        {
+                            PsdzDatabase.DbInfo dbInfo = ProgrammingService.PsdzDatabase.GetDbInfo();
+                            if (OperationState.Version == null || !OperationState.Version.IsIdentical(dbInfo?.Version, dbInfo?.DateTime))
+                            {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "LoadOperationState Version mismatch");
+                                dataValid = false;
+                            }
+                        }
+
+                        if (!dataValid)
+                        {
                             OperationState = new OperationStateData();
                         }
                     }
