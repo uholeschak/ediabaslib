@@ -3624,6 +3624,7 @@ namespace PsdzClient.Programming
                 return false;
             }
 
+            PsdzContext.Tal = null;
             UpdateOptionSelections(swiRegisterEnum);
             return true;
         }
@@ -3687,6 +3688,7 @@ namespace PsdzClient.Programming
                 }
             }
 
+            PsdzContext.Tal = null;
             UpdateOptionSelections(swiRegisterEnum);
             return true;
         }
