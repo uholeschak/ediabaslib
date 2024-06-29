@@ -44,4 +44,7 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="rem %25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe template run &quot;$(ProjectDir)User&quot; -r:System.Xml.dll" />
+  </Target>
 </Project>
