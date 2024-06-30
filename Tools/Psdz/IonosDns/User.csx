@@ -23,15 +23,9 @@ public class UserTemplate
         public Dictionary<string, Info> DnsInfo { set; get; }
     }
 
-    async Task<int> Main(ICodegenContext context, ILogger logger, VSExecutionContext vsContext)
+    async Task<int> Main(ICodegenContext context, ILogger logger)
     {
-        string templatePath = vsContext?.TemplatePath;
-        if (string.IsNullOrEmpty(templatePath))
-        {
-            templatePath = "User.csx";
-            await logger.WriteLineAsync($"Template path is empty using: {templatePath}");
-        }
-
+        string templatePath = "User.csx";
         string templateName = Path.GetFileNameWithoutExtension(templatePath);
         await logger.WriteLineAsync($"Template name: {templatePath}");
         bool result = await GenerateConfig(context[templateName + ".config"], logger);
