@@ -1709,15 +1709,10 @@ namespace PsdzClient.Programming
                             if (ShowMessageEvent != null)
                             {
                                 StringBuilder sbMessage = new StringBuilder();
-                                sbMessage.AppendLine(Strings.TalExecuteAgain);
-                                if (lastTalExecutionResult == OperationStateData.TalExecutionResultEnum.Success)
-                                {
-                                    sbMessage.Append(Strings.TalExecuteLastSuccess);
-                                }
-                                else
-                                {
-                                    sbMessage.Append(Strings.TalExecuteLastSkipped);
-                                }
+                                sbMessage.Append(Strings.TalExecuteAgain);
+                                sbMessage.Append(Environment.NewLine);
+                                sbMessage.Append(lastTalExecutionResult == OperationStateData.TalExecutionResultEnum.Success ?
+                                    Strings.TalExecuteLastSuccess : Strings.TalExecuteLastSkipped);
 
                                 if (!ShowMessageEvent.Invoke(cts, sbMessage.ToString(), false, true))
                                 {
