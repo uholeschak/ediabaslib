@@ -45,6 +45,6 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe template run &quot;$(ProjectDir)User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll" />
+    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;set &quot;OutputDir=$(ProjectDir)&quot;&#xD;&#xA;IF &quot;!OutputDir:~-1!&quot;==&quot;\&quot; SET &quot;OutputDir=!OutputDir:~0,-1!&quot;&#xD;&#xA;echo Output dir: &quot;!OutputDir!&quot;&#xD;&#xA;%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe  template run &quot;$(ProjectDir)User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;!OutputDir!&quot;" />
   </Target>
 </Project>
