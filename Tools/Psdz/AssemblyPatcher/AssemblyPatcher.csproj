@@ -48,4 +48,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe template run &quot;$(ProjectDir)User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll" />
+  </Target>
 </Project>
