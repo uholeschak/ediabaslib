@@ -1,11 +1,13 @@
 ﻿// Requires CodegenCS VS extension
 // https://marketplace.visualstudio.com/items?itemName=Drizin.CodegenCS
+// Additionally install: dotnet tool install --global dotnet-codegencs
 using CodegenCS.Runtime;
 using Newtonsoft.Json;
 using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Reflection;
 
 public class UserTemplate
 {
@@ -23,25 +25,28 @@ public class UserTemplate
         public Dictionary<string, Info> CredentialsInfo { set; get; }
     }
 
-    async Task<int> Main(ICodegenContext context, ILogger logger, VSExecutionContext vsContext)
+    async Task<int> Main(ICodegenContext context, ILogger logger)
     {
-        string templatePath = vsContext?.TemplatePath;
-        if (string.IsNullOrEmpty(templatePath))
+        try
         {
-            templatePath = "User.csx";
-            await logger.WriteLineAsync($"Template path is empty using: {templatePath}");
-        }
+            string assemblyPath = Assembly.GetExecutingAssembly().Location;
+            await logger.WriteLineAsync($"Assembly path: {assemblyPath}");
+            string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
+            await logger.WriteLineAsync($"Template name: {templateName}");
+            bool result = await GenerateConfig(context[templateName + ".config"], logger);
+            if (!result)
+            {
+                await logger.WriteLineAsync("GenerateConfig failed");
+                return 1;
+            }
 
-        string templateName = Path.GetFileNameWithoutExtension(templatePath);
-        await logger.WriteLineAsync($"Template name: {templatePath}");
-        bool result = await GenerateConfig(context[templateName + ".config"], logger);
-        if (!result)
+            return 0;
+        }
+        catch (Exception ex)
         {
-            await logger.WriteLineAsync("GenerateConfig failed");
+            await logger.WriteLineAsync($"Exception: {ex.Message}");
             return 1;
         }
-
-        return 0;
     }
 
     async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger)
