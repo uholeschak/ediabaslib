@@ -587,8 +587,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to execute the main TAL again (slow)?
-        ///Last time processing was successful. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to execute the main TAL again (slow)? ähnelt.
         /// </summary>
         internal static string TalExecuteAgain {
             get {
@@ -613,6 +612,24 @@ namespace PsdzClientLibrary.Resources {
         internal static string TalExecuteErrorContinue {
             get {
                 return ResourceManager.GetString("TalExecuteErrorContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The last time the TAL execution has been skipped. ähnelt.
+        /// </summary>
+        internal static string TalExecuteLastSkipped {
+            get {
+                return ResourceManager.GetString("TalExecuteLastSkipped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The last time the TAL has been executed successfully. ähnelt.
+        /// </summary>
+        internal static string TalExecuteLastSuccess {
+            get {
+                return ResourceManager.GetString("TalExecuteLastSuccess", resourceCulture);
             }
         }
         

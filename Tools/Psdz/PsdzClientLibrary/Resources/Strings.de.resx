@@ -302,8 +302,7 @@ Wollen Sie die Einstellungen vom letzten Backups wiederherstellen?</value>
     <value>Wollen Sie alle Flashoperationen in dieser Sitzung deaktivieren?</value>
   </data>
   <data name="TalExecuteAgain" xml:space="preserve">
-    <value>Wollen Sie die Haupt-TAL nochmals ausführen (langsam)?
-Das letzte Mal war die Ausführung erfolgreich.</value>
+    <value>Wollen Sie die Haupt-TAL nochmals ausführen (langsam)?</value>
   </data>
   <data name="TalExecuteError" xml:space="preserve">
     <value>TAL Ausführung mit Fehlern beendet.</value>
@@ -312,6 +311,12 @@ Das letzte Mal war die Ausführung erfolgreich.</value>
     <value>Es sind Probleme in der Vorbereitsungsphase auftegetreten.
 Keine Haftung bei Schäden oder Problemen nach der Kodierung!
 Wollen Sie trotzdem die TAL ausführen?</value>
+  </data>
+  <data name="TalExecuteLastSkipped" xml:space="preserve">
+    <value>Das letzte Mal wurde die TAL Ausführung übersprungen.</value>
+  </data>
+  <data name="TalExecuteLastSuccess" xml:space="preserve">
+    <value>Das letzte Mal wurde die TAL erfolgreich ausgeführt</value>
   </data>
   <data name="TalExecuteOk" xml:space="preserve">
     <value>TAL Ausführung ohne Fehler beendet.</value>

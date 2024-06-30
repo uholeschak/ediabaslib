@@ -1708,7 +1708,18 @@ namespace PsdzClient.Programming
                         {
                             if (ShowMessageEvent != null)
                             {
-                                if (!ShowMessageEvent.Invoke(cts, Strings.TalExecuteAgain, false, true))
+                                StringBuilder sbMessage = new StringBuilder();
+                                sbMessage.AppendLine(Strings.TalExecuteAgain);
+                                if (lastTalExecutionResult == OperationStateData.TalExecutionResultEnum.Success)
+                                {
+                                    sbMessage.Append(Strings.TalExecuteLastSuccess);
+                                }
+                                else
+                                {
+                                    sbMessage.Append(Strings.TalExecuteLastSkipped);
+                                }
+
+                                if (!ShowMessageEvent.Invoke(cts, sbMessage.ToString(), false, true))
                                 {
                                     executeTal = false;
                                 }
