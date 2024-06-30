@@ -39,14 +39,14 @@ public class UserTemplate
                 await logger.WriteLineAsync("GenerateConfig failed");
                 return 1;
             }
-
-            return 0;
         }
         catch (Exception ex)
         {
             await logger.WriteLineAsync($"Exception: {ex.Message}");
             return 1;
         }
+
+        return 0;
     }
 
     async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger)

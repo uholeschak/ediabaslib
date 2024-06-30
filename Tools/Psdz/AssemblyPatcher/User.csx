@@ -22,21 +22,24 @@ public class UserTemplate
         public Dictionary<string, Info> PatchInfo { set; get; }
     }
 
-    async Task<int> Main(ICodegenContext context, ILogger logger, VSExecutionContext vsContext)
+    async Task<int> Main(ICodegenContext context, ILogger logger)
     {
-        string templatePath = vsContext?.TemplatePath;
-        if (string.IsNullOrEmpty(templatePath))
+        try
         {
-            templatePath = "User.csx";
-            await logger.WriteLineAsync($"Template path is empty using: {templatePath}");
+            string assemblyPath = Assembly.GetExecutingAssembly().Location;
+            await logger.WriteLineAsync($"Assembly path: {assemblyPath}");
+            string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
+            await logger.WriteLineAsync($"Template name: {templateName}");
+            bool result = await GenerateConfig(context[templateName + ".config"], logger);
+            if (!result)
+            {
+                await logger.WriteLineAsync("GenerateConfig failed");
+                return 1;
+            }
         }
-
-        string templateName = Path.GetFileNameWithoutExtension(templatePath);
-        await logger.WriteLineAsync($"Template name: {templatePath}");
-        bool result = await GenerateConfig(context[templateName + ".config"], logger);
-        if (!result)
+        catch (Exception ex)
         {
-            await logger.WriteLineAsync("GenerateConfig failed");
+            await logger.WriteLineAsync($"Exception: {ex.Message}");
             return 1;
         }
 
