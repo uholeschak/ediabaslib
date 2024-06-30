@@ -576,8 +576,11 @@
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.8\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.8\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets')" />
   <Import Project="..\packages\Microsoft.TypeScript.MSBuild.5.5.2\build\Microsoft.TypeScript.MSBuild.targets" Condition="Exists('..\packages\Microsoft.TypeScript.MSBuild.5.5.2\build\Microsoft.TypeScript.MSBuild.targets')" />
   <PropertyGroup>
-    <PreBuildEvent>%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe template run "$(ProjectDir)User" -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll
-</PreBuildEvent>
+    <PreBuildEvent>SETLOCAL EnableDelayedExpansion
+set "OutputDir=$(ProjectDir)"
+IF "!OutputDir:~-1!"=="\" SET "OutputDir=!OutputDir:~0,-1!"
+echo Output dir: "!OutputDir!"
+%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe  template run "$(ProjectDir)User" -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder "!OutputDir!"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
