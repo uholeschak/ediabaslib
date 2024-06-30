@@ -25,9 +25,10 @@ public class UserTemplate
 
     async Task<int> Main(ICodegenContext context, ILogger logger)
     {
-        string templatePath = "User.csx";
-        string templateName = Path.GetFileNameWithoutExtension(templatePath);
-        await logger.WriteLineAsync($"Template name: {templatePath}");
+        string assemblyPath = Assembly.GetExecutingAssembly().Location;
+        await logger.WriteLineAsync($"Assembly path: {assemblyPath}");
+        string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
+        await logger.WriteLineAsync($"Template name: {templateName}");
         bool result = await GenerateConfig(context[templateName + ".config"], logger);
         if (!result)
         {
