@@ -24,18 +24,11 @@
     <None Remove="User.log" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="User.csx">
-      <Generator>CodegenCS</Generator>
-      <LastGenOutput>User.log</LastGenOutput>
-    </None>
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CodegenCSOutput" />
+    <AdditionalFiles Include="User.csx" CodegenCSOutput="File" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="User.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <DependentUpon>User.csx</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
+    <PackageReference Include="CodegenCS.SourceGenerator" Version="3.5.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -44,7 +37,9 @@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;set &quot;OutputDir=$(ProjectDir)&quot;&#xD;&#xA;IF &quot;!OutputDir:~-1!&quot;==&quot;\&quot; SET &quot;OutputDir=!OutputDir:~0,-1!&quot;&#xD;&#xA;echo Output dir: &quot;!OutputDir!&quot;&#xD;&#xA;%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe  template run &quot;$(ProjectDir)User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;!OutputDir!&quot;" />
-  </Target>
+  <ItemGroup>
+    <None Update="User.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
