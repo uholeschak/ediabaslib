@@ -580,7 +580,7 @@
 set "CodegenCs=%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe"
 IF NOT EXIST !CodegenCs! (
   echo install: dotnet tool install --global dotnet-codegencs
-  EXIT /b1
+  EXIT /b 1
 )
 set "OutputDir=$(ProjectDir)"
 IF "!OutputDir:~-1!"=="\" SET "OutputDir=!OutputDir:~0,-1!"
