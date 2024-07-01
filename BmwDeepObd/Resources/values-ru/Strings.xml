@@ -81,7 +81,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.
 \n\nИзменения в этой версии:\n</string>
-  <string name="version_last_changes">- Начните с параметра загрузки.\n- Обновление прошивки ELM327.\n- EDIABAS 7.6.0 с поддержкой DoIP.\n- Исправлена база данных BMW.\n- Поддержка Yandex Cloud.\n- Поддержка Android 14.\n- Возможность изменения порядка отображения строк из меню.\n- Генератор конфигурации: нажмите и удерживайте, чтобы изменить порядок ЭБУ.\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Изменены стартовые опции.\n- Обновление прошивки ELM327.\n- EDIABAS 7.6.0 с поддержкой DoIP.\n- Исправлена база данных BMW.\n- Поддержка Yandex Cloud.\n- Поддержка Android 14.\n- Возможность изменения порядка отображения строк меню.\n- Генератор конфигурации: долгое нажатие, для изменения порядка ЭБУ.\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.\nКонфигурации для нового режима VAG необходимо генерировать заново.\nВ диалоговом окне настроек можно снова выбрать старый режим VAG.</string>
 
@@ -159,31 +159,20 @@
   <!-- Service -->
   <string name="service_notification_comm_active">Соединение активно</string>
   <string name="service_notification_comm_ok">Соединение с автомобилем установлено</string>
-  <!--Translate-->
-  <string name="service_notification_comm_error">Нет связи с автомобилем</string>
-  <!--Translate-->
+  <string name="service_notification_comm_error">Ошибка связи с автомобилем</string>
   <string name="service_notification_idle">Неактивный</string>
-  <!--Translate-->
-  <string name="service_notification_wait_media">Ожидание носителя</string>
-  <!--Translate-->
+  <string name="service_notification_wait_media">Ожидание носителя информации</string>
   <string name="service_notification_load_settings">Чтение настроек</string>
   <string name="service_notification_compile_code">Компилировать код пользователя</string>
-  <!--Translate-->
   <string name="service_notification_init_reader">Чтение базы данных</string>
-  <!--Translate-->
   <string name="service_notification_connecting">Установка соединения</string>
-  <!--Translate-->
-  <string name="service_notification_error">Не удалось начать</string>
-  <!--Translate-->
-  <string name="service_notification_abort">Прерывание</string>
+  <string name="service_notification_error">Ошибка старта</string>
+  <string name="service_notification_abort">Отмена</string>
   <string name="service_stop_comm_app">Открыть приложение и прервать соединение</string>
   <string name="service_stop_comm">Прервать соединение</string>
-  <!--Translate-->
-  <string name="service_abort_operation">Прервать операцию</string>
-  <!--Translate-->
-  <string name="service_status_caption">Пожалуйста, подождите, служба запуска активна.</string>
-  <!--Translate-->
-  <string name="service_status_info">Статус услуги:</string>
+  <string name="service_abort_operation">Отмена процесса</string>
+  <string name="service_status_caption">Пожалуйста, подождите, активен процесс старта.</string>
+  <string name="service_status_info">Статус процесса:</string>
 
   <!-- Compile -->
   <string name="compile_cpu_usage">Проверка загрузки процессора</string>
