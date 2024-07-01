@@ -577,10 +577,15 @@
   <Import Project="..\packages\Microsoft.TypeScript.MSBuild.5.5.2\build\Microsoft.TypeScript.MSBuild.targets" Condition="Exists('..\packages\Microsoft.TypeScript.MSBuild.5.5.2\build\Microsoft.TypeScript.MSBuild.targets')" />
   <PropertyGroup>
     <PreBuildEvent>SETLOCAL EnableDelayedExpansion
+set "CodegenCs=%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe"
+IF NOT EXIST !CodegenCs! (
+  echo install: dotnet tool install --global dotnet-codegencs
+  EXIT /b1
+)
 set "OutputDir=$(ProjectDir)"
 IF "!OutputDir:~-1!"=="\" SET "OutputDir=!OutputDir:~0,-1!"
 echo Output dir: "!OutputDir!"
-%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe  template run "$(ProjectDir)User" -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder "!OutputDir!"</PreBuildEvent>
+!CodegenCs!  template run "$(ProjectDir)User" -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder "!OutputDir!"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
