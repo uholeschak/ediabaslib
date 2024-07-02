@@ -1,5 +1,5 @@
-﻿// Requires CodegenCS VS extension
-// https://marketplace.visualstudio.com/items?itemName=Drizin.CodegenCS
+﻿#r "System.Xml.dll"
+// Requires CodegenCS.SourceGenerator NuGet package
 using CodegenCS.Runtime;
 using Newtonsoft.Json;
 using System.IO;
