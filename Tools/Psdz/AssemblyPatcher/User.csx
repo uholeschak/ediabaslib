@@ -6,6 +6,7 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml;
 
 public class UserTemplate
 {
@@ -57,30 +58,61 @@ public class UserTemplate
 
         try
         {
-            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_patcher.json");
+            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_patcher.xml");
             if (File.Exists(fileName))
             {
-                InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
-                if (infoDict != null)
+                XmlDocument doc = new XmlDocument();
+                doc.Load(fileName);
+                XmlNode nodeCtor = doc.SelectSingleNode("/patch_info/ctor");
+                if (nodeCtor != null)
                 {
-                    if (infoDict.PatchInfo.TryGetValue("Ctor", out Info ctorInfo))
+                    XmlAttribute attribNamespace = nodeCtor.Attributes["namespace"];
+                    if (attribNamespace != null)
                     {
-                        patchCtorNamespace = ctorInfo.Namespace;
-                        patchCtorClass = ctorInfo.Class;
-                        await logger.WriteLineAsync($"Ctor: Namespace={patchCtorNamespace}, Class={patchCtorClass}");
+                        patchCtorNamespace = attribNamespace.Value;
+                        await logger.WriteLineAsync($"Ctor: Namespace={patchCtorNamespace}");
                     }
 
-                    if (infoDict.PatchInfo.TryGetValue("Method", out Info methodInfo))
+                    XmlAttribute attribClass = nodeCtor.Attributes["class"];
+                    if (attribClass != null)
                     {
-                        patchMethodNamespace = methodInfo.Namespace;
-                        patchMethodClass = methodInfo.Class;
-                        patchMethodName = methodInfo.Name;
-                        await logger.WriteLineAsync($"Method: Namespace={patchMethodNamespace}, Class={patchMethodClass}, Name={patchMethodName}");
+                        patchCtorClass = attribClass.Value;
+                        await logger.WriteLineAsync($"Ctor: Class={patchCtorClass}");
+                    }
+                }
+
+                XmlNode nodeMethod = doc.SelectSingleNode("/patch_info/method");
+                if (nodeMethod != null)
+                {
+                    XmlAttribute attribNamespace = nodeMethod.Attributes["namespace"];
+                    if (attribNamespace != null)
+                    {
+                        patchMethodNamespace = attribNamespace.Value;
+                        await logger.WriteLineAsync($"Method: Namespace={patchMethodNamespace}");
                     }
 
-                    if (infoDict.PatchInfo.TryGetValue("License", out Info licInfo))
+                    XmlAttribute attribClass = nodeMethod.Attributes["class"];
+                    if (attribClass != null)
                     {
-                        licFileName = licInfo.Filename;
+                        patchMethodClass = attribClass.Value;
+                        await logger.WriteLineAsync($"Method: Class={patchMethodClass}");
+                    }
+
+                    XmlAttribute attribName = nodeMethod.Attributes["name"];
+                    if (attribName != null)
+                    {
+                        patchMethodName = attribName.Value;
+                        await logger.WriteLineAsync($"Method: Name={patchMethodName}");
+                    }
+                }
+
+                XmlNode nodeLic = doc.SelectSingleNode("/patch_info/license");
+                if (nodeLic != null)
+                {
+                    XmlAttribute attribFileName = nodeLic.Attributes["file_name"];
+                    if (attribFileName != null)
+                    {
+                        licFileName = attribFileName.Value;
                         await logger.WriteLineAsync($"License: Filename={licFileName}");
                     }
                 }
@@ -94,6 +126,57 @@ public class UserTemplate
         {
             await logger.WriteLineAsync($"Exception: {ex.Message}");
             return false;
+        }
+
+        bool xmlOk = !string.IsNullOrEmpty(patchCtorNamespace) && !string.IsNullOrEmpty(patchCtorClass) &&
+                     !string.IsNullOrEmpty(patchMethodNamespace) && !string.IsNullOrEmpty(patchMethodClass) &&
+                     !string.IsNullOrEmpty(patchMethodName) &&
+                     !string.IsNullOrEmpty(licFileName);
+
+        if (!xmlOk)
+        {
+            await logger.WriteLineAsync($"XML data invalid, using json");
+
+            try
+            {
+                string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_patcher.json");
+                if (File.Exists(fileName))
+                {
+                    InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
+                    if (infoDict != null)
+                    {
+                        if (infoDict.PatchInfo.TryGetValue("Ctor", out Info ctorInfo))
+                        {
+                            patchCtorNamespace = ctorInfo.Namespace;
+                            patchCtorClass = ctorInfo.Class;
+                            await logger.WriteLineAsync($"Ctor: Namespace={patchCtorNamespace}, Class={patchCtorClass}");
+                        }
+
+                        if (infoDict.PatchInfo.TryGetValue("Method", out Info methodInfo))
+                        {
+                            patchMethodNamespace = methodInfo.Namespace;
+                            patchMethodClass = methodInfo.Class;
+                            patchMethodName = methodInfo.Name;
+                            await logger.WriteLineAsync($"Method: Namespace={patchMethodNamespace}, Class={patchMethodClass}, Name={patchMethodName}");
+                        }
+
+                        if (infoDict.PatchInfo.TryGetValue("License", out Info licInfo))
+                        {
+                            licFileName = licInfo.Filename;
+                            await logger.WriteLineAsync($"License: Filename={licFileName}");
+                        }
+                    }
+                }
+                else
+                {
+                    await logger.WriteLineAsync($"Configuration file not found: {fileName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                await logger.WriteLineAsync($"Exception: {ex.Message}");
+                return false;
+            }
         }
 
         writer.WriteLine(
