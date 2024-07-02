@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Xml;
 
 public class UserTemplate
 {
@@ -61,35 +62,65 @@ public class UserTemplate
 
         try
         {
-            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_credentials.json");
+            string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_credentials.xml");
             if (File.Exists(fileName))
             {
-                InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
-                if (infoDict != null)
+                XmlDocument doc = new XmlDocument();
+                doc.Load(fileName);
+                XmlNode nodeSqlServer = doc.SelectSingleNode("/credentials_info/sqlserver");
+                XmlNode nodeIsta = doc.SelectSingleNode("/credentials_info/ista");
+                if (nodeIsta != null)
                 {
-                    if (infoDict.CredentialsInfo.TryGetValue("Ista", out Info istaInfo))
+                    XmlAttribute attribLocation = nodeIsta.Attributes["location"];
+                    if (attribLocation != null)
                     {
-                        istaLocation = istaInfo.Location;
+                        istaLocation = attribLocation.Value;
                         await logger.WriteLineAsync($"Ista: Location={istaLocation}");
                     }
+                }
 
-                    if (infoDict.CredentialsInfo.TryGetValue("SqlServer", out Info sqlInfo))
+                if (nodeSqlServer != null)
+                {
+                    XmlAttribute attribUrl = nodeSqlServer.Attributes["url"];
+                    if (attribUrl != null)
                     {
-                        sqlUrl = sqlInfo.Url;
-                        sqlUser = sqlInfo.Name;
-                        sqlPassword = sqlInfo.Password;
-                        await logger.WriteLineAsync($"SqlServer: Url={sqlUrl}, Name={sqlUser}, Password={sqlPassword}");
+                        sqlUrl = attribUrl.Value;
+                        await logger.WriteLineAsync($"SqlServer: Url={sqlUrl}");
                     }
 
-                    if (infoDict.CredentialsInfo.TryGetValue("Authentication", out Info authInfo))
+                    XmlAttribute attribName = nodeSqlServer.Attributes["name"];
+                    if (attribName != null)
                     {
-                        accessPassword = authInfo.Password;
+                        sqlUser = attribName.Value;
+                        await logger.WriteLineAsync($"SqlServer: Name={sqlUser}");
+                    }
+
+                    XmlAttribute attribPassword = nodeSqlServer.Attributes["password"];
+                    if (attribPassword != null)
+                    {
+                        sqlPassword = attribPassword.Value;
+                        await logger.WriteLineAsync($"SqlServer: Password={sqlPassword}");
+                    }
+                }
+
+                XmlNode nodeAuth = doc.SelectSingleNode("/credentials_info/authentication");
+                if (nodeAuth != null)
+                {
+                    XmlAttribute attribPassword = nodeAuth.Attributes["password"];
+                    if (attribPassword != null)
+                    {
+                        accessPassword = attribPassword.Value;
                         await logger.WriteLineAsync($"Authentication: Password={accessPassword}");
                     }
+                }
 
-                    if (infoDict.CredentialsInfo.TryGetValue("Licenses", out Info licensesInfo))
+                XmlNode nodeLic = doc.SelectSingleNode("/credentials_info/licenses");
+                if (nodeLic != null)
+                {
+                    XmlAttribute attribTest = nodeLic.Attributes["test"];
+                    if (attribTest != null)
                     {
-                        testLic = licensesInfo.Test;
+                        testLic = attribTest.Value;
                         await logger.WriteLineAsync($"Licenses: Test={testLic}");
                     }
                 }
@@ -103,6 +134,59 @@ public class UserTemplate
         {
             await logger.WriteLineAsync($"Exception: {ex.Message}");
             return false;
+        }
+
+        bool xmlOk = !string.IsNullOrEmpty(istaLocation) && !string.IsNullOrEmpty(sqlUrl) &&
+                     !string.IsNullOrEmpty(sqlUser) && !string.IsNullOrEmpty(sqlPassword) &&
+                     !string.IsNullOrEmpty(accessPassword) && !string.IsNullOrEmpty(testLic);
+
+        if (!xmlOk)
+        {
+            try
+            {
+                string fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".apk", "psdz_credentials.json");
+                if (File.Exists(fileName))
+                {
+                    InfoDict infoDict = JsonConvert.DeserializeObject<InfoDict>(File.ReadAllText(fileName));
+                    if (infoDict != null)
+                    {
+                        if (infoDict.CredentialsInfo.TryGetValue("Ista", out Info istaInfo))
+                        {
+                            istaLocation = istaInfo.Location;
+                            await logger.WriteLineAsync($"Ista: Location={istaLocation}");
+                        }
+
+                        if (infoDict.CredentialsInfo.TryGetValue("SqlServer", out Info sqlInfo))
+                        {
+                            sqlUrl = sqlInfo.Url;
+                            sqlUser = sqlInfo.Name;
+                            sqlPassword = sqlInfo.Password;
+                            await logger.WriteLineAsync($"SqlServer: Url={sqlUrl}, Name={sqlUser}, Password={sqlPassword}");
+                        }
+
+                        if (infoDict.CredentialsInfo.TryGetValue("Authentication", out Info authInfo))
+                        {
+                            accessPassword = authInfo.Password;
+                            await logger.WriteLineAsync($"Authentication: Password={accessPassword}");
+                        }
+
+                        if (infoDict.CredentialsInfo.TryGetValue("Licenses", out Info licensesInfo))
+                        {
+                            testLic = licensesInfo.Test;
+                            await logger.WriteLineAsync($"Licenses: Test={testLic}");
+                        }
+                    }
+                }
+                else
+                {
+                    await logger.WriteLineAsync($"Configuration file not found: {fileName}");
+                }
+            }
+            catch (Exception ex)
+            {
+                await logger.WriteLineAsync($"Exception: {ex.Message}");
+                return false;
+            }
         }
 
         writer.WriteLine(
