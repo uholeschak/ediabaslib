@@ -31,7 +31,7 @@ public class UserTemplate
             string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
             await logger.WriteLineAsync($"Template name: {templateName}");
 
-            string logFileName = Path.Combine(Directory.GetCurrentDirectory(), templateName + ".log");
+            string logFileName = Path.Combine(Environment.CurrentDirectory, templateName + ".log");
             using TextWriter logWriter = new StreamWriter(logFileName);
             logWriter.WriteLine($"Template name: {templateName}");
 
