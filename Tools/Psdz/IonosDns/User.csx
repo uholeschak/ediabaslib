@@ -28,19 +28,17 @@ public class UserTemplate
         {
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
             await logger.WriteLineAsync($"Assembly path: {assemblyPath}");
-
             string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
             await logger.WriteLineAsync($"Template name: {templateName}");
 
             string logFileName = Path.Combine(Directory.GetCurrentDirectory(), templateName + ".log");
-            await logger.WriteLineAsync($"Logfile path: {logFileName}");
             using TextWriter logWriter = new StreamWriter(logFileName);
             logWriter.WriteLine($"Template name: {templateName}");
 
-            bool result = await GenerateConfig(context[templateName + ".config"], logger, logWriter);
+            bool result = await GenerateConfig(context[templateName + ".config"], logWriter);
             if (!result)
             {
-                await logger.WriteLineAsync("GenerateConfig failed");
+                logWriter.WriteLine("GenerateConfig failed");
                 return 1;
             }
         }
@@ -53,7 +51,7 @@ public class UserTemplate
         return 0;
     }
 
-    async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger, TextWriter logWriter)
+    async Task<bool> GenerateConfig(ICodegenTextWriter writer, TextWriter logWriter)
     {
         string prefix = string.Empty;
         string key = string.Empty;
@@ -72,31 +70,31 @@ public class UserTemplate
                     if (attribPrefix != null)
                     {
                         prefix = attribPrefix.Value;
-                        await logger.WriteLineAsync($"Api: Prefix={prefix}");
+                        logWriter.WriteLine($"Api: Prefix={prefix}");
                     }
                     XmlAttribute attribKey = nodeDns.Attributes["key"];
                     if (attribKey != null)
                     {
                         key = attribKey.Value;
-                        await logger.WriteLineAsync($"Api: Key={key}");
+                        logWriter.WriteLine($"Api: Key={key}");
                     }
                 }
             }
             else
             {
-                await logger.WriteLineAsync($"Configuration file not found: {fileName}");
+                logWriter.WriteLine($"Configuration file not found: {fileName}");
             }
         }
         catch (Exception ex)
         {
-            await logger.WriteLineAsync($"Exception: {ex.Message}");
+            logWriter.WriteLine($"Exception: {ex.Message}");
             return false;
         }
 
         bool xmlOk = !string.IsNullOrEmpty(prefix) && !string.IsNullOrEmpty(key);
         if (!xmlOk)
         {
-            await logger.WriteLineAsync($"XML data invalid, using json");
+            logWriter.WriteLine($"XML data invalid, using json");
 
             try
             {
@@ -110,18 +108,18 @@ public class UserTemplate
                         {
                             prefix = apiInfo.Prefix;
                             key = apiInfo.Key;
-                            await logger.WriteLineAsync($"Api: Prefix={prefix}, Key={key}");
+                            logWriter.WriteLine($"Api: Prefix={prefix}, Key={key}");
                         }
                     }
                 }
                 else
                 {
-                    await logger.WriteLineAsync($"Configuration file not found: {fileName}");
+                    logWriter.WriteLine($"Configuration file not found: {fileName}");
                 }
             }
             catch (Exception ex)
             {
-                await logger.WriteLineAsync($"Exception: {ex.Message}");
+                logWriter.WriteLine($"Exception: {ex.Message}");
                 return false;
             }
         }
