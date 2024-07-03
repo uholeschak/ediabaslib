@@ -28,8 +28,15 @@ public class UserTemplate
         {
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
             await logger.WriteLineAsync($"Assembly path: {assemblyPath}");
+
             string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
             await logger.WriteLineAsync($"Template name: {templateName}");
+
+            string logFileName = Path.Combine(Path.GetDirectoryName(assemblyPath), templateName + ".log");
+            await logger.WriteLineAsync($"Logfile path: {logFileName}");
+            using TextWriter logWriter = new StreamWriter(logFileName);
+            logWriter.WriteLine($"Template name: {templateName}");
+
             bool result = await GenerateConfig(context[templateName + ".config"], logger);
             if (!result)
             {
