@@ -32,12 +32,12 @@ public class UserTemplate
             string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
             await logger.WriteLineAsync($"Template name: {templateName}");
 
-            string logFileName = Path.Combine(Path.GetDirectoryName(assemblyPath), templateName + ".log");
+            string logFileName = Path.Combine(Directory.GetCurrentDirectory(), templateName + ".log");
             await logger.WriteLineAsync($"Logfile path: {logFileName}");
             using TextWriter logWriter = new StreamWriter(logFileName);
             logWriter.WriteLine($"Template name: {templateName}");
 
-            bool result = await GenerateConfig(context[templateName + ".config"], logger);
+            bool result = await GenerateConfig(context[templateName + ".config"], logger, logWriter);
             if (!result)
             {
                 await logger.WriteLineAsync("GenerateConfig failed");
@@ -53,7 +53,7 @@ public class UserTemplate
         return 0;
     }
 
-    async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger)
+    async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger, TextWriter logWriter)
     {
         string prefix = string.Empty;
         string key = string.Empty;
