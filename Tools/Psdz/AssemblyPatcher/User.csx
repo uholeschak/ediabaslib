@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Reflection;
 
 public class UserTemplate
 {
@@ -25,29 +26,34 @@ public class UserTemplate
 
     async Task<int> Main(ICodegenContext context, ILogger logger)
     {
+        ICodegenTextWriter logWriter = null;
         try
         {
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
             await logger.WriteLineAsync($"Assembly path: {assemblyPath}");
             string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
             await logger.WriteLineAsync($"Template name: {templateName}");
-            bool result = await GenerateConfig(context[templateName + ".config"], logger);
+
+            logWriter = context[templateName + ".log"];
+            logWriter.WriteLine($"Template name: {templateName}");
+
+            bool result = await GenerateConfig(context[templateName + ".config"], logWriter);
             if (!result)
             {
-                await logger.WriteLineAsync("GenerateConfig failed");
+                logWriter.WriteLine("GenerateConfig failed");
                 return 1;
             }
         }
         catch (Exception ex)
         {
-            await logger.WriteLineAsync($"Exception: {ex.Message}");
+            logWriter?.WriteLine($"Exception: {ex.Message}");
             return 1;
         }
 
         return 0;
     }
 
-    async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger)
+    async Task<bool> GenerateConfig(ICodegenTextWriter writer, ICodegenTextWriter logWriter)
     {
         string patchCtorNamespace = string.Empty;
         string patchCtorClass = string.Empty;
@@ -70,14 +76,14 @@ public class UserTemplate
                     if (attribNamespace != null)
                     {
                         patchCtorNamespace = attribNamespace.Value;
-                        await logger.WriteLineAsync($"Ctor: Namespace={patchCtorNamespace}");
+                        logWriter.WriteLine($"Ctor: Namespace={patchCtorNamespace}");
                     }
 
                     XmlAttribute attribClass = nodeCtor.Attributes["class"];
                     if (attribClass != null)
                     {
                         patchCtorClass = attribClass.Value;
-                        await logger.WriteLineAsync($"Ctor: Class={patchCtorClass}");
+                        logWriter.WriteLine($"Ctor: Class={patchCtorClass}");
                     }
                 }
 
@@ -88,21 +94,21 @@ public class UserTemplate
                     if (attribNamespace != null)
                     {
                         patchMethodNamespace = attribNamespace.Value;
-                        await logger.WriteLineAsync($"Method: Namespace={patchMethodNamespace}");
+                        logWriter.WriteLine($"Method: Namespace={patchMethodNamespace}");
                     }
 
                     XmlAttribute attribClass = nodeMethod.Attributes["class"];
                     if (attribClass != null)
                     {
                         patchMethodClass = attribClass.Value;
-                        await logger.WriteLineAsync($"Method: Class={patchMethodClass}");
+                        logWriter.WriteLine($"Method: Class={patchMethodClass}");
                     }
 
                     XmlAttribute attribName = nodeMethod.Attributes["name"];
                     if (attribName != null)
                     {
                         patchMethodName = attribName.Value;
-                        await logger.WriteLineAsync($"Method: Name={patchMethodName}");
+                        logWriter.WriteLine($"Method: Name={patchMethodName}");
                     }
                 }
 
@@ -113,18 +119,18 @@ public class UserTemplate
                     if (attribFileName != null)
                     {
                         licFileName = attribFileName.Value;
-                        await logger.WriteLineAsync($"License: Filename={licFileName}");
+                        logWriter.WriteLine($"License: Filename={licFileName}");
                     }
                 }
             }
             else
             {
-                await logger.WriteLineAsync($"Configuration file not found: {fileName}");
+                logWriter.WriteLine($"Configuration file not found: {fileName}");
             }
         }
         catch (Exception ex)
         {
-            await logger.WriteLineAsync($"Exception: {ex.Message}");
+            logWriter.WriteLine($"Exception: {ex.Message}");
             return false;
         }
 
@@ -135,7 +141,7 @@ public class UserTemplate
 
         if (!xmlOk)
         {
-            await logger.WriteLineAsync($"XML data invalid, using json");
+            logWriter.WriteLine($"XML data invalid, using json");
 
             try
             {
@@ -149,7 +155,7 @@ public class UserTemplate
                         {
                             patchCtorNamespace = ctorInfo.Namespace;
                             patchCtorClass = ctorInfo.Class;
-                            await logger.WriteLineAsync($"Ctor: Namespace={patchCtorNamespace}, Class={patchCtorClass}");
+                            logWriter.WriteLine($"Ctor: Namespace={patchCtorNamespace}, Class={patchCtorClass}");
                         }
 
                         if (infoDict.PatchInfo.TryGetValue("Method", out Info methodInfo))
@@ -157,24 +163,24 @@ public class UserTemplate
                             patchMethodNamespace = methodInfo.Namespace;
                             patchMethodClass = methodInfo.Class;
                             patchMethodName = methodInfo.Name;
-                            await logger.WriteLineAsync($"Method: Namespace={patchMethodNamespace}, Class={patchMethodClass}, Name={patchMethodName}");
+                            logWriter.WriteLine($"Method: Namespace={patchMethodNamespace}, Class={patchMethodClass}, Name={patchMethodName}");
                         }
 
                         if (infoDict.PatchInfo.TryGetValue("License", out Info licInfo))
                         {
                             licFileName = licInfo.Filename;
-                            await logger.WriteLineAsync($"License: Filename={licFileName}");
+                            logWriter.WriteLine($"License: Filename={licFileName}");
                         }
                     }
                 }
                 else
                 {
-                    await logger.WriteLineAsync($"Configuration file not found: {fileName}");
+                    logWriter.WriteLine($"Configuration file not found: {fileName}");
                 }
             }
             catch (Exception ex)
             {
-                await logger.WriteLineAsync($"Exception: {ex.Message}");
+                logWriter.WriteLine($"Exception: {ex.Message}");
                 return false;
             }
         }
