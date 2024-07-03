@@ -24,6 +24,7 @@ public class UserTemplate
 
     async Task<int> Main(ICodegenContext context, ILogger logger)
     {
+        ICodegenTextWriter logWriter = null;
         try
         {
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
@@ -31,8 +32,7 @@ public class UserTemplate
             string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
             await logger.WriteLineAsync($"Template name: {templateName}");
 
-            string logFileName = Path.Combine(Environment.CurrentDirectory, templateName + ".log");
-            using TextWriter logWriter = new StreamWriter(logFileName);
+            logWriter = context[templateName + ".log"];
             logWriter.WriteLine($"Template name: {templateName}");
 
             bool result = await GenerateConfig(context[templateName + ".config"], logWriter);
@@ -44,14 +44,14 @@ public class UserTemplate
         }
         catch (Exception ex)
         {
-            await logger.WriteLineAsync($"Exception: {ex.Message}");
+            logWriter?.WriteLine($"Exception: {ex.Message}");
             return 1;
         }
 
         return 0;
     }
 
-    async Task<bool> GenerateConfig(ICodegenTextWriter writer, TextWriter logWriter)
+    async Task<bool> GenerateConfig(ICodegenTextWriter writer, ICodegenTextWriter logWriter)
     {
         string prefix = string.Empty;
         string key = string.Empty;
