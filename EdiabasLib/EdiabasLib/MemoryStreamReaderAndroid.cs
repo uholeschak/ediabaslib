@@ -92,6 +92,7 @@ namespace EdiabasLib
             _fileLength = fileInfo.Length;
 
             bool openSuccess = false;
+            string failureReason = string.Empty;
             _fd = Android.Systems.Os.Open(path, ORdonly, Deffilemode);
             if (_fd != null)
             {
@@ -100,11 +101,20 @@ namespace EdiabasLib
                 {
                     openSuccess = true;
                 }
+                else
+                {
+                    failureReason = "Os.Mmap failed";
+                }
             }
+            else
+            {
+                failureReason = "Os.Open failed";
+            }
+
             if (!openSuccess)
             {
                 CloseHandles();
-                throw new FileNotFoundException();
+                throw new FileNotFoundException(failureReason);
             }
         }
 
