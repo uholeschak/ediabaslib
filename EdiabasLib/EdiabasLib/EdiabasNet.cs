@@ -4882,6 +4882,7 @@ namespace EdiabasLib
             {
                 localFileName = grpFileName;
             }
+
             if (string.IsNullOrEmpty(localFileName))
             {   // now try for case sensitive file systems
                 try
@@ -4915,7 +4916,7 @@ namespace EdiabasLib
             catch (Exception ex)
             {
                 LogFormat(EdLogLevel.Error, "GetFileType Exception: {0}", GetExceptionText(ex));
-                LogFormat(EdLogLevel.Error, "GetFileType file not found: {0}", fileName);
+                LogFormat(EdLogLevel.Error, "GetFileType file not found: '{0}'->'{1}'", fileName, localFileName);
                 throw new ArgumentOutOfRangeException(fileName, "GetFileType: Unable to read file");
             }
             return fileType;
