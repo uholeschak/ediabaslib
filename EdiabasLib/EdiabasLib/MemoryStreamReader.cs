@@ -16,62 +16,13 @@ namespace EdiabasLib
             };
         }
 
-        public MemoryStreamReader(string path)
+        public MemoryStreamReader(string filePath)
         {
-            if (!File.Exists(path))
-            {   // get the case sensitive name from the directory
-                switch (Environment.OSVersion.Platform)
-                {
-                    case PlatformID.Unix:
-                    case PlatformID.MacOSX:
-                        break;
-
-                    default:
-                        throw new FileNotFoundException();
-                }
-                string fileName = Path.GetFileName(path);
-                string dirName = Path.GetDirectoryName(path);
-                if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(dirName))
-                {
-                    throw new FileNotFoundException();
-                }
-                lock (DirDictLock)
-                {
-                    if ((_dirDict == null) || (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
-                    {
-                        Dictionary<string, string> dirDict = GetDirDict(dirName);
-                        if (dirDict == null)
-                        {
-                            throw new FileNotFoundException();
-                        }
-                        _dirDictName = dirName;
-                        _dirDict = dirDict;
-                        RemoveDirectoryWatcher();
-                        _fsw = new FileSystemWatcher(dirName);
-                        _fsw.Changed += DirectoryChangedEvent;
-                        _fsw.Created += DirectoryChangedEvent;
-                        _fsw.Deleted += DirectoryChangedEvent;
-                        _fsw.Renamed += DirectoryChangedEvent;
-                        _fsw.IncludeSubdirectories = true;
-                        _fsw.EnableRaisingEvents = true;
-                    }
-                    string realName;
-                    if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
-                    {
-                        throw new FileNotFoundException();
-                    }
-                    path = Path.Combine(dirName, realName);
-                    if (!File.Exists(path))
-                    {
-                        throw new FileNotFoundException();
-                    }
-                }
-            }
-
-            FileInfo fileInfo = new FileInfo(path);
+            string realPath = GetRealFileName(filePath);
+            FileInfo fileInfo = new FileInfo(realPath);
             _fileLength = fileInfo.Length;
 
-            FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
+            FileStream fs = new FileStream(realPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
             try
             {
                 _mmFile = MemoryMappedFile.CreateFromFile(fs, null, 0, MemoryMappedFileAccess.Read, null, HandleInheritability.None, false);
@@ -87,6 +38,19 @@ namespace EdiabasLib
         public static MemoryStreamReader OpenRead(string path)
         {
             return new MemoryStreamReader(path);
+        }
+
+        public static bool Exists(string path)
+        {
+            try
+            {
+                path = GetRealFileName(path);
+                return File.Exists(path);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public override bool CanRead
@@ -266,7 +230,7 @@ namespace EdiabasLib
             }
         }
 
-        private Dictionary<string, string> GetDirDict(string dirName)
+        private static Dictionary<string, string> GetDirDict(string dirName)
         {
             try
             {
@@ -291,6 +255,67 @@ namespace EdiabasLib
                 return null;
             }
         }
+
+        private static string GetRealFileName(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                return filePath;
+            }
+
+            // get the case-sensitive name from the directory
+            switch (Environment.OSVersion.Platform)
+            {
+                case PlatformID.Unix:
+                case PlatformID.MacOSX:
+                    break;
+
+                default:
+                    throw new FileNotFoundException();
+            }
+
+            string fileName = Path.GetFileName(filePath);
+            string dirName = Path.GetDirectoryName(filePath);
+            if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(dirName))
+            {
+                throw new FileNotFoundException();
+            }
+            lock (DirDictLock)
+            {
+                if ((_dirDict == null) || (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
+                {
+                    Dictionary<string, string> dirDict = GetDirDict(dirName);
+                    if (dirDict == null)
+                    {
+                        throw new FileNotFoundException();
+                    }
+                    _dirDictName = dirName;
+                    _dirDict = dirDict;
+                    RemoveDirectoryWatcher();
+                    _fsw = new FileSystemWatcher(dirName);
+                    _fsw.Changed += DirectoryChangedEvent;
+                    _fsw.Created += DirectoryChangedEvent;
+                    _fsw.Deleted += DirectoryChangedEvent;
+                    _fsw.Renamed += DirectoryChangedEvent;
+                    _fsw.IncludeSubdirectories = true;
+                    _fsw.EnableRaisingEvents = true;
+                }
+                string realName;
+                if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
+                {
+                    throw new FileNotFoundException();
+                }
+
+                string realPath = Path.Combine(dirName, realName);
+                if (!File.Exists(realPath))
+                {
+                    throw new FileNotFoundException();
+                }
+
+                return realPath;
+            }
+        }
+
 
         private static void RemoveDirectoryWatcher()
         {
