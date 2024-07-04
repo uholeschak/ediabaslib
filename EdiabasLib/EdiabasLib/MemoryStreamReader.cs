@@ -300,8 +300,8 @@ namespace EdiabasLib
                     _fsw.IncludeSubdirectories = true;
                     _fsw.EnableRaisingEvents = true;
                 }
-                string realName;
-                if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out realName))
+
+                if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out string realName))
                 {
                     throw new FileNotFoundException();
                 }
