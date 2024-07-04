@@ -4912,9 +4912,10 @@ namespace EdiabasLib
                     fileType = BitConverter.ToUInt32(buffer, 0);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                LogString(EdLogLevel.Error, "GetFileType file not found: " + fileName);
+                LogFormat(EdLogLevel.Error, "GetFileType Exception: {0}", GetExceptionText(ex));
+                LogFormat(EdLogLevel.Error, "GetFileType file not found: {0}", fileName);
                 throw new ArgumentOutOfRangeException(fileName, "GetFileType: Unable to read file");
             }
             return fileType;
