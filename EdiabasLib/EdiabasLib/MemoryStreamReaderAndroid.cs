@@ -206,9 +206,10 @@ namespace EdiabasLib
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    CloseHandles();
                 }
 
+                // Free unmanged resources.
+                CloseHandles();
                 // Note disposing has been done.
                 _disposed = true;
             }
