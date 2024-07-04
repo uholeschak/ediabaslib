@@ -4884,7 +4884,7 @@ namespace EdiabasLib
             }
 
             if (string.IsNullOrEmpty(localFileName))
-            {   // now try for case sensitive file systems
+            {   // now try for case-sensitive file systems
                 try
                 {
                     using (MemoryStreamReader.OpenRead(prgFileName))
