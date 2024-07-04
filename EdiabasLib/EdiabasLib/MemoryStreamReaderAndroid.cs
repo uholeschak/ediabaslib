@@ -34,66 +34,20 @@ namespace EdiabasLib
         private static Dictionary<string, string> _dirDict;
         private static DirectoryObserver _directoryObserver;
 
-        public MemoryStreamReader(string path)
+        public MemoryStreamReader(string filePath)
         {
             _filePos = 0;
             _fileLength = 0;
             _fd = null;
             _mapAddr = (IntPtr)(-1);
 
-            if (!File.Exists(path))
-            {   // get the case sensitive name from the directory
-                string fileName = Path.GetFileName(path);
-                string dirName = Path.GetDirectoryName(path);
-                if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(dirName))
-                {
-                    throw new FileNotFoundException("Empty file name");
-                }
-                lock (DirDictLock)
-                {
-                    if ((_dirDict == null) || (_directoryObserver == null) ||
-                        (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
-                    {
-                        Dictionary<string, string> dirDict = GetDirDict(dirName);
-                        // ReSharper disable once JoinNullCheckWithUsage
-                        if (dirDict == null)
-                        {
-                            throw new FileNotFoundException("Dir dict empty");
-                        }
-                        _dirDictName = dirName;
-                        _dirDict = dirDict;
-                        RemoveDirectoryObserver();
-                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
-                        {
-                            _directoryObserver = new DirectoryObserver(dirName);
-                        }
-                        else
-                        {
-                            _directoryObserver = new DirectoryObserver(new Java.IO.File(dirName));
-                        }
-                        _directoryObserver.StartWatching();
-                    }
-
-                    if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out string realName))
-                    {
-                        throw new FileNotFoundException($"File not found in dict: {fileName}");
-                    }
-
-                    path = Path.Combine(dirName, realName);
-                    if (!File.Exists(path))
-                    {
-                        throw new FileNotFoundException($"Real file not found: {realName}");
-                    }
-                }
-            }
-
-            FileInfo fileInfo = new FileInfo(path);
+            string realPath = GetRealFileName(filePath);
+            FileInfo fileInfo = new FileInfo(realPath);
             _fileLength = fileInfo.Length;
 
             bool openSuccess = false;
             string failureReason = string.Empty;
-            _fd = Android.Systems.Os.Open(path, ORdonly, Deffilemode);
+            _fd = Android.Systems.Os.Open(realPath, ORdonly, Deffilemode);
             if (_fd != null)
             {
                 _mapAddr = Android.Systems.Os.Mmap(0, _fileLength, ProtRead, MapPrivate, _fd, 0);
@@ -121,6 +75,19 @@ namespace EdiabasLib
         public static MemoryStreamReader OpenRead(string path)
         {
             return new MemoryStreamReader(path);
+        }
+
+        public static bool Exists(string path)
+        {
+            try
+            {
+                path = GetRealFileName(path);
+                return File.Exists(path);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public override bool CanRead
@@ -327,7 +294,7 @@ namespace EdiabasLib
             }
         }
 
-        private Dictionary<string, string> GetDirDict(string dirName)
+        private static Dictionary<string, string> GetDirDict(string dirName)
         {
             try
             {
@@ -350,6 +317,61 @@ namespace EdiabasLib
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        private static string GetRealFileName(string filePath)
+        {
+            if (File.Exists(filePath))
+            {
+                return filePath;
+            }
+
+            // get the case-sensitive name from the directory
+            string fileName = Path.GetFileName(filePath);
+            string dirName = Path.GetDirectoryName(filePath);
+            if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(dirName))
+            {
+                throw new FileNotFoundException("Empty file name");
+            }
+            lock (DirDictLock)
+            {
+                if ((_dirDict == null) || (_directoryObserver == null) ||
+                    (string.Compare(dirName, _dirDictName, StringComparison.Ordinal) != 0))
+                {
+                    Dictionary<string, string> dirDict = GetDirDict(dirName);
+                    // ReSharper disable once JoinNullCheckWithUsage
+                    if (dirDict == null)
+                    {
+                        throw new FileNotFoundException("Dir dict empty");
+                    }
+                    _dirDictName = dirName;
+                    _dirDict = dirDict;
+                    RemoveDirectoryObserver();
+                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+                    {
+                        _directoryObserver = new DirectoryObserver(dirName);
+                    }
+                    else
+                    {
+                        _directoryObserver = new DirectoryObserver(new Java.IO.File(dirName));
+                    }
+                    _directoryObserver.StartWatching();
+                }
+
+                if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out string realName))
+                {
+                    throw new FileNotFoundException($"File not found in dict: {fileName}");
+                }
+
+                string realPath = Path.Combine(dirName, realName);
+                if (!File.Exists(realPath))
+                {
+                    throw new FileNotFoundException($"Real file not found: {realName}");
+                }
+
+                return realPath;
             }
         }
 

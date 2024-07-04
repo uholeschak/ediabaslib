@@ -4874,28 +4874,20 @@ namespace EdiabasLib
             string prgFileName = Path.Combine(dirName, baseFileName + ".prg");
             string grpFileName = Path.Combine(dirName, baseFileName + ".grp");
             string localFileName = string.Empty;
-            if (File.Exists(prgFileName))
+
+            if (MemoryStreamReader.Exists(prgFileName))
             {
                 localFileName = prgFileName;
             }
-            else if (File.Exists(grpFileName))
+            else if (MemoryStreamReader.Exists(grpFileName))
             {
                 localFileName = grpFileName;
             }
 
             if (string.IsNullOrEmpty(localFileName))
-            {   // now try for case-sensitive file systems
-                try
-                {
-                    using (MemoryStreamReader.OpenRead(prgFileName))
-                    {
-                    }
-                    localFileName = prgFileName;
-                }
-                catch (Exception)
-                {
-                    localFileName = grpFileName;
-                }
+            {
+                LogFormat(EdLogLevel.Error, "GetFileType file not found: '{0}'", fileName);
+                throw new ArgumentOutOfRangeException(fileName, "GetFileType: File not found");
             }
 
             try
