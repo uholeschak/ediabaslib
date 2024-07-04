@@ -47,7 +47,7 @@ namespace EdiabasLib
                 string dirName = Path.GetDirectoryName(path);
                 if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(dirName))
                 {
-                    throw new FileNotFoundException();
+                    throw new FileNotFoundException("Empty file name");
                 }
                 lock (DirDictLock)
                 {
@@ -58,7 +58,7 @@ namespace EdiabasLib
                         // ReSharper disable once JoinNullCheckWithUsage
                         if (dirDict == null)
                         {
-                            throw new FileNotFoundException();
+                            throw new FileNotFoundException("Dir dict empty");
                         }
                         _dirDictName = dirName;
                         _dirDict = dirDict;
@@ -77,13 +77,13 @@ namespace EdiabasLib
 
                     if (!_dirDict.TryGetValue(fileName.ToUpperInvariant(), out string realName))
                     {
-                        throw new FileNotFoundException();
+                        throw new FileNotFoundException($"File not found in dict: {fileName}");
                     }
 
                     path = Path.Combine(dirName, realName);
                     if (!File.Exists(path))
                     {
-                        throw new FileNotFoundException();
+                        throw new FileNotFoundException($"Real file not found: {realName}");
                     }
                 }
             }
@@ -103,12 +103,12 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    failureReason = "Os.Mmap failed";
+                    failureReason = "Mmap failed";
                 }
             }
             else
             {
-                failureReason = "Os.Open failed";
+                failureReason = "Open failed";
             }
 
             if (!openSuccess)
