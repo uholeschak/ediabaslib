@@ -8,6 +8,16 @@ namespace EdiabasLib
 {
     public class MemoryStreamReader : Stream
     {
+        private bool _disposed;
+        private FileStream _fs;
+        private MemoryMappedFile _mmFile;
+        private MemoryMappedViewStream _mmStream;
+        private readonly long _fileLength;
+        private static readonly object DirDictLock = new object();
+        private static string _dirDictName = string.Empty;
+        private static Dictionary<string, string> _dirDict;
+        private static FileSystemWatcher _fsw;
+
         static MemoryStreamReader()
         {
             AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
@@ -22,10 +32,10 @@ namespace EdiabasLib
             FileInfo fileInfo = new FileInfo(realPath);
             _fileLength = fileInfo.Length;
 
-            FileStream fs = new FileStream(realPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
             try
             {
-                _mmFile = MemoryMappedFile.CreateFromFile(fs, null, 0, MemoryMappedFileAccess.Read, null, HandleInheritability.None, false);
+                _fs = new FileStream(realPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
+                _mmFile = MemoryMappedFile.CreateFromFile(_fs, null, 0, MemoryMappedFileAccess.Read, null, HandleInheritability.None, false);
                 _mmStream = _mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
             }
             catch (Exception)
@@ -126,9 +136,26 @@ namespace EdiabasLib
             _mmStream.Flush();
         }
 
-        public override void Close()
+        // Stream Close() calls Dispose(true)
+        protected override void Dispose(bool disposing)
         {
-            CloseHandles();
+            // Check to see if Dispose has already been called.
+            if (!_disposed)
+            {
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
+                if (disposing)
+                {
+                    // Dispose managed resources.
+                }
+
+                // Free unmanged resources.
+                CloseHandles();
+                // Note disposing has been done.
+                _disposed = true;
+            }
+
+            base.Dispose(disposing);
         }
 
         public override int Read(byte[] buffer, int offset, int count)
@@ -223,10 +250,17 @@ namespace EdiabasLib
                 _mmStream.Dispose();
                 _mmStream = null;
             }
+
             if (_mmFile != null)
             {
                 _mmFile.Dispose();
                 _mmFile = null;
+            }
+
+            if (_fs != null)
+            {
+                _fs.Dispose();
+                _fs = null;
             }
         }
 
@@ -353,13 +387,5 @@ namespace EdiabasLib
                 _dirDict = null;
             }
         }
-
-        private MemoryMappedFile _mmFile;
-        private MemoryMappedViewStream _mmStream;
-        private readonly long _fileLength;
-        private static readonly object DirDictLock = new object();
-        private static string _dirDictName = string.Empty;
-        private static Dictionary<string, string> _dirDict;
-        private static FileSystemWatcher _fsw;
     }
 }
