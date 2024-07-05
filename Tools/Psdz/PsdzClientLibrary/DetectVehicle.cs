@@ -1194,16 +1194,16 @@ namespace PsdzClient
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                if (_ediabas != null)
-                {
-                    _ediabas.Dispose();
-                    _ediabas = null;
-                }
-
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    // Dispose managed resources.
+                    if (_ediabas != null)
+                    {
+                        _ediabas.Dispose();
+                        _ediabas = null;
+                    }
                 }
 
                 // Note disposing has been done.

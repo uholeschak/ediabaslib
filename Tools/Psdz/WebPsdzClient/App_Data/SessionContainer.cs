@@ -2901,44 +2901,43 @@ namespace WebPsdzClient.App_Data
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                while (TaskActive)
-                {
-                    Thread.Sleep(100);
-                }
-
-                CloseVehicleLog();
-
-                if (ProgrammingJobs != null)
-                {
-                    ProgrammingJobs.Dispose();
-                    ProgrammingJobs = null;
-                }
-
-                StopTcpListener();
-
-#if EDIABAS_CONNECTION
-                if (_ediabas != null)
-                {
-                    _ediabas.Dispose();
-                    _ediabas = null;
-                }
-#endif
-                if (_enetTcpMutex != null)
-                {
-                    _enetTcpMutex.Dispose();
-                    _enetTcpMutex = null;
-                }
-
-                lock (SessionContainers)
-                {
-                    SessionContainers.Remove(this);
-                }
-
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
+                    while (TaskActive)
+                    {
+                        Thread.Sleep(100);
+                    }
+
+                    CloseVehicleLog();
+
+                    if (ProgrammingJobs != null)
+                    {
+                        ProgrammingJobs.Dispose();
+                        ProgrammingJobs = null;
+                    }
+
+                    StopTcpListener();
+
+#if EDIABAS_CONNECTION
+                    if (_ediabas != null)
+                    {
+                        _ediabas.Dispose();
+                        _ediabas = null;
+                    }
+#endif
+                    if (_enetTcpMutex != null)
+                    {
+                        _enetTcpMutex.Dispose();
+                        _enetTcpMutex = null;
+                    }
+
+                    lock (SessionContainers)
+                    {
+                        SessionContainers.Remove(this);
+                    }
                 }
 
                 // Note disposing has been done.
