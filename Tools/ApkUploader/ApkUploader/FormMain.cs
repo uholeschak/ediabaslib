@@ -898,10 +898,14 @@ namespace ApkUploader
                                             }
                                             if (trackRelease.Status != null)
                                             {
-                                                sb.AppendLine($"Status: {trackRelease.Status}");
+                                                sb.Append($"Status: {trackRelease.Status}");
                                                 if (trackRelease.UserFraction != null)
                                                 {
-                                                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "Fraction: {0:0.0}%", trackRelease.UserFraction * 100));
+                                                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, ", User fraction: {0:0.0}%", trackRelease.UserFraction * 100));
+                                                }
+                                                else
+                                                {
+                                                    sb.AppendLine();
                                                 }
                                             }
 
