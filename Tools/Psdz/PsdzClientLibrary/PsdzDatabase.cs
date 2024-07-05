@@ -5396,17 +5396,16 @@ namespace PsdzClient
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                if (_mDbConnection != null)
-                {
-                    _mDbConnection.Close();
-                    _mDbConnection.Dispose();
-                    _mDbConnection = null;
-                }
-
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    if (_mDbConnection != null)
+                    {
+                        _mDbConnection.Close();
+                        _mDbConnection.Dispose();
+                        _mDbConnection = null;
+                    }
                 }
 
                 // Note disposing has been done.

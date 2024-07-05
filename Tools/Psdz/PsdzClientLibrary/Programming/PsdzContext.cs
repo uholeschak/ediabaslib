@@ -1182,18 +1182,17 @@ namespace PsdzClient.Programming
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                if (DetectVehicle != null)
-                {
-                    DetectVehicle.Dispose();
-                    DetectVehicle = null;
-                }
-
-                VecInfo = null;
-
 				// If disposing equals true, dispose all managed
 				// and unmanaged resources.
 				if (disposing)
                 {
+                    if (DetectVehicle != null)
+                    {
+                        DetectVehicle.Dispose();
+                        DetectVehicle = null;
+                    }
+
+                    VecInfo = null;
                 }
 
                 // Note disposing has been done.

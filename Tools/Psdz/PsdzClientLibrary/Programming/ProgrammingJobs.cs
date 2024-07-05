@@ -3933,25 +3933,24 @@ namespace PsdzClient.Programming
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                if (ProgrammingService != null)
-                {
-                    ProgrammingService.Dispose();
-                    ProgrammingService = null;
-                }
-
-                ClearProgrammingObjects();
-
-                if (ClientContext != null)
-                {
-                    ClientContext.Dispose();
-                    ClientContext = null;
-                }
-
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
+                    if (ProgrammingService != null)
+                    {
+                        ProgrammingService.Dispose();
+                        ProgrammingService = null;
+                    }
+
+                    ClearProgrammingObjects();
+
+                    if (ClientContext != null)
+                    {
+                        ClientContext.Dispose();
+                        ClientContext = null;
+                    }
                 }
 
                 // Note disposing has been done.
