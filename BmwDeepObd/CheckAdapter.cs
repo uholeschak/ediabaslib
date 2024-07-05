@@ -492,9 +492,9 @@ public class CheckAdapter : IDisposable
                 }
             }
 
+            _activityCommon = null;
             // Note disposing has been done.
             _disposed = true;
-            _activityCommon = null;
         }
     }
 }
