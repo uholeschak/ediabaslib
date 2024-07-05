@@ -440,14 +440,13 @@ namespace EdiabasLib
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                EdiabasDisconnect();
-                EdiabasDispose();
-
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
+                    EdiabasDisconnect();
+                    EdiabasDispose();
                 }
 
                 // Note disposing has been done.
