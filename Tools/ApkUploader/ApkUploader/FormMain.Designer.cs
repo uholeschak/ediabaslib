@@ -70,13 +70,13 @@
             // textBoxStatus
             // 
             textBoxStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxStatus.Location = new System.Drawing.Point(14, 261);
+            textBoxStatus.Location = new System.Drawing.Point(13, 254);
             textBoxStatus.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxStatus.Multiline = true;
             textBoxStatus.Name = "textBoxStatus";
             textBoxStatus.ReadOnly = true;
             textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            textBoxStatus.Size = new System.Drawing.Size(1236, 454);
+            textBoxStatus.Size = new System.Drawing.Size(1239, 464);
             textBoxStatus.TabIndex = 22;
             textBoxStatus.TabStop = false;
             // 
@@ -95,7 +95,7 @@
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonClose.Location = new System.Drawing.Point(1163, 722);
+            buttonClose.Location = new System.Drawing.Point(1164, 724);
             buttonClose.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(88, 27);
@@ -108,7 +108,7 @@
             // 
             buttonAbort.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonAbort.Location = new System.Drawing.Point(1069, 722);
+            buttonAbort.Location = new System.Drawing.Point(1068, 724);
             buttonAbort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonAbort.Name = "buttonAbort";
             buttonAbort.Size = new System.Drawing.Size(88, 27);
@@ -147,7 +147,7 @@
             // buttonSelectBundleFile
             // 
             buttonSelectBundleFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            buttonSelectBundleFile.Location = new System.Drawing.Point(1216, 93);
+            buttonSelectBundleFile.Location = new System.Drawing.Point(1217, 90);
             buttonSelectBundleFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectBundleFile.Name = "buttonSelectBundleFile";
             buttonSelectBundleFile.Size = new System.Drawing.Size(35, 27);
@@ -159,7 +159,7 @@
             // labelApkFile
             // 
             labelApkFile.AutoSize = true;
-            labelApkFile.Location = new System.Drawing.Point(14, 77);
+            labelApkFile.Location = new System.Drawing.Point(14, 75);
             labelApkFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelApkFile.Name = "labelApkFile";
             labelApkFile.Size = new System.Drawing.Size(125, 15);
@@ -169,7 +169,7 @@
             // textBoxBundleFile
             // 
             textBoxBundleFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxBundleFile.Location = new System.Drawing.Point(14, 96);
+            textBoxBundleFile.Location = new System.Drawing.Point(13, 93);
             textBoxBundleFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxBundleFile.Name = "textBoxBundleFile";
             textBoxBundleFile.Size = new System.Drawing.Size(1194, 23);
@@ -178,7 +178,7 @@
             // labelObbFile
             // 
             labelObbFile.AutoSize = true;
-            labelObbFile.Location = new System.Drawing.Point(14, 122);
+            labelObbFile.Location = new System.Drawing.Point(14, 119);
             labelObbFile.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelObbFile.Name = "labelObbFile";
             labelObbFile.Size = new System.Drawing.Size(226, 15);
@@ -188,7 +188,7 @@
             // textBoxObbFile
             // 
             textBoxObbFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxObbFile.Location = new System.Drawing.Point(14, 141);
+            textBoxObbFile.Location = new System.Drawing.Point(13, 137);
             textBoxObbFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxObbFile.Name = "textBoxObbFile";
             textBoxObbFile.Size = new System.Drawing.Size(1194, 23);
@@ -197,7 +197,7 @@
             // buttonSelectObbFile
             // 
             buttonSelectObbFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            buttonSelectObbFile.Location = new System.Drawing.Point(1216, 138);
+            buttonSelectObbFile.Location = new System.Drawing.Point(1217, 134);
             buttonSelectObbFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectObbFile.Name = "buttonSelectObbFile";
             buttonSelectObbFile.Size = new System.Drawing.Size(35, 27);
@@ -218,7 +218,7 @@
             // labelRescourceFolder
             // 
             labelRescourceFolder.AutoSize = true;
-            labelRescourceFolder.Location = new System.Drawing.Point(14, 167);
+            labelRescourceFolder.Location = new System.Drawing.Point(13, 163);
             labelRescourceFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelRescourceFolder.Name = "labelRescourceFolder";
             labelRescourceFolder.Size = new System.Drawing.Size(92, 15);
@@ -228,7 +228,7 @@
             // textBoxResourceFolder
             // 
             textBoxResourceFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxResourceFolder.Location = new System.Drawing.Point(14, 186);
+            textBoxResourceFolder.Location = new System.Drawing.Point(13, 181);
             textBoxResourceFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxResourceFolder.Name = "textBoxResourceFolder";
             textBoxResourceFolder.Size = new System.Drawing.Size(1194, 23);
@@ -237,7 +237,7 @@
             // buttonSelectResourceFolder
             // 
             buttonSelectResourceFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            buttonSelectResourceFolder.Location = new System.Drawing.Point(1216, 183);
+            buttonSelectResourceFolder.Location = new System.Drawing.Point(1217, 178);
             buttonSelectResourceFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectResourceFolder.Name = "buttonSelectResourceFolder";
             buttonSelectResourceFolder.Size = new System.Drawing.Size(35, 27);
@@ -262,7 +262,7 @@
             comboBoxTrackUnassign.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             comboBoxTrackUnassign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxTrackUnassign.FormattingEnabled = true;
-            comboBoxTrackUnassign.Location = new System.Drawing.Point(1092, 45);
+            comboBoxTrackUnassign.Location = new System.Drawing.Point(1091, 45);
             comboBoxTrackUnassign.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             comboBoxTrackUnassign.Name = "comboBoxTrackUnassign";
             comboBoxTrackUnassign.Size = new System.Drawing.Size(116, 23);
@@ -273,7 +273,7 @@
             comboBoxTrackAssign.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             comboBoxTrackAssign.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxTrackAssign.FormattingEnabled = true;
-            comboBoxTrackAssign.Location = new System.Drawing.Point(1092, 12);
+            comboBoxTrackAssign.Location = new System.Drawing.Point(1091, 12);
             comboBoxTrackAssign.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             comboBoxTrackAssign.Name = "comboBoxTrackAssign";
             comboBoxTrackAssign.Size = new System.Drawing.Size(116, 23);
@@ -346,7 +346,7 @@
             // checkBoxUpdateName
             // 
             checkBoxUpdateName.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            checkBoxUpdateName.Location = new System.Drawing.Point(809, 44);
+            checkBoxUpdateName.Location = new System.Drawing.Point(809, 42);
             checkBoxUpdateName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkBoxUpdateName.Name = "checkBoxUpdateName";
             checkBoxUpdateName.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -369,7 +369,7 @@
             // labelSerialFileName
             // 
             labelSerialFileName.AutoSize = true;
-            labelSerialFileName.Location = new System.Drawing.Point(14, 212);
+            labelSerialFileName.Location = new System.Drawing.Point(13, 207);
             labelSerialFileName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelSerialFileName.Name = "labelSerialFileName";
             labelSerialFileName.Size = new System.Drawing.Size(90, 15);
@@ -379,7 +379,7 @@
             // textBoxSerialFileName
             // 
             textBoxSerialFileName.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxSerialFileName.Location = new System.Drawing.Point(14, 231);
+            textBoxSerialFileName.Location = new System.Drawing.Point(13, 225);
             textBoxSerialFileName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxSerialFileName.Name = "textBoxSerialFileName";
             textBoxSerialFileName.Size = new System.Drawing.Size(1194, 23);
@@ -388,7 +388,7 @@
             // buttonSelectSerialFile
             // 
             buttonSelectSerialFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            buttonSelectSerialFile.Location = new System.Drawing.Point(1216, 228);
+            buttonSelectSerialFile.Location = new System.Drawing.Point(1217, 222);
             buttonSelectSerialFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSelectSerialFile.Name = "buttonSelectSerialFile";
             buttonSelectSerialFile.Size = new System.Drawing.Size(35, 27);
@@ -426,7 +426,7 @@
             // labelSerialOem
             // 
             labelSerialOem.AutoSize = true;
-            labelSerialOem.Location = new System.Drawing.Point(506, 20);
+            labelSerialOem.Location = new System.Drawing.Point(506, 18);
             labelSerialOem.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelSerialOem.Name = "labelSerialOem";
             labelSerialOem.Size = new System.Drawing.Size(67, 15);
