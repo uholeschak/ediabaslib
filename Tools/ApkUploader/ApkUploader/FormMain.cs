@@ -1253,6 +1253,12 @@ namespace ApkUploader
                         AppEdit appEdit = await editRequest.ExecuteAsync(_cts.Token);
                         Track trackResponse = await edits.Tracks.Get(PackageName, appEdit.Id, track).ExecuteAsync(_cts.Token);
                         sb.AppendLine($"Track: {track}");
+                        if (trackResponse.Releases == null)
+                        {
+                            sb.AppendLine($"No releases");
+                            UpdateStatus(sb.ToString());
+                            throw new Exception("No releases");
+                        }
                         if (trackResponse.Releases.Count != 1)
                         {
                             sb.AppendLine($"Invalid release count: {trackResponse.Releases.Count}");
