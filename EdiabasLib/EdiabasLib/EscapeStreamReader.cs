@@ -201,10 +201,10 @@ namespace EdiabasLib
                     {
                         // ignored
                     }
-
-                    // Note disposing has been done.
-                    _disposed = true;
                 }
+
+                // Note disposing has been done.
+                _disposed = true;
             }
 
             base.Dispose(disposing);

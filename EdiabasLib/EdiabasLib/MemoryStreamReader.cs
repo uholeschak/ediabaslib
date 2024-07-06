@@ -142,6 +142,9 @@ namespace EdiabasLib
             // Check to see if Dispose has already been called.
             if (!_disposed)
             {
+                // Dispose unmanged resources.
+                CloseHandles();
+
                 // If disposing equals true, dispose all managed
                 // and unmanaged resources.
                 if (disposing)
@@ -149,8 +152,6 @@ namespace EdiabasLib
                     // Dispose managed resources.
                 }
 
-                // Free unmanged resources.
-                CloseHandles();
                 // Note disposing has been done.
                 _disposed = true;
             }
