@@ -170,12 +170,23 @@ namespace EdiabasLib
             int useCount = count;
             if (num2 > _fileLength)
             {
-                useCount = (int)(_fileLength - offset - _mmStream.Position);
+                useCount = (int)(_fileLength - _mmStream.Position);
                 if (useCount < 0)
                 {
                     useCount = 0;
                 }
+
+                if (useCount > count)
+                {
+                    useCount = count;
+                }
             }
+
+            if (useCount == 0)
+            {
+                return 0;
+            }
+
             return _mmStream.Read(buffer, offset, useCount);
         }
 
