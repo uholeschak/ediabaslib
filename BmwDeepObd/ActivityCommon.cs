@@ -11356,15 +11356,38 @@ namespace BmwDeepObd
                     {
                         if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                         {
-                            string abi = Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty;
+                            string abi = Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0].Trim() : string.Empty;
                             if (!string.IsNullOrEmpty(abi))
                             {
-                                string abiPath = abi.Replace('-', '_').Trim();
-                                location = Path.Combine(assembliesDir, abiPath, fileName);
+                                string abiDir = Path.Combine(assembliesDir, abi);
+                                if (!Directory.Exists(abiDir))
+                                {
+                                    abiDir = Path.Combine(assembliesDir, abi.Replace('-', '_'));
+                                    if (!Directory.Exists(abiDir))
+                                    {
+#if DEBUG
+                                        Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI dir not found: {0}", abi));
+#endif
+                                    }
+                                }
+
+                                location = Path.Combine(abiDir, fileName);
+#if DEBUG
+                                Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI={0}, Location={1}", abi, location));
+#endif
                                 if (!File.Exists(location))
                                 {
+#if DEBUG
+                                    Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences File not found: {0}", fileName));
+#endif
                                     location = null;
                                 }
+                            }
+                            else
+                            {
+#if DEBUG
+                                Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences No ABI for file: {0}", fileName));
+#endif
                             }
                         }
                     }
@@ -11380,6 +11403,9 @@ namespace BmwDeepObd
                 }
             }
 
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences Has errors: {0}", hasErrors));
+#endif
             return referencesList;
         }
 
