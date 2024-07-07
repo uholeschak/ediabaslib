@@ -167,10 +167,11 @@ namespace EdiabasLib
             {
                 throw new Exception("Attempt to read before the start of the stream");
             }
-            int useCount = count;
+
+            long useCount = count;
             if (num2 > _fileLength)
             {
-                useCount = (int)(_fileLength - _mmStream.Position);
+                useCount = _fileLength - _mmStream.Position;
                 if (useCount < 0)
                 {
                     useCount = 0;
@@ -187,7 +188,7 @@ namespace EdiabasLib
                 return 0;
             }
 
-            return _mmStream.Read(buffer, offset, useCount);
+            return _mmStream.Read(buffer, offset, (int) useCount);
         }
 
         public override long Seek(long offset, SeekOrigin origin)
