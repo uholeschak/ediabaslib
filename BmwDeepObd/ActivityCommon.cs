@@ -11361,10 +11361,19 @@ namespace BmwDeepObd
                             {
                                 string abiPath = abi.Replace('-', '_').Trim();
                                 location = Path.Combine(assembliesDir, abiPath, fileName);
+#if DEBUG
+                                Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI={0}, Location={1}", abi, location));
+#endif
                                 if (!File.Exists(location))
                                 {
                                     location = null;
                                 }
+                            }
+                            else
+                            {
+#if DEBUG
+                                Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences No ABI for file: {0}", fileName));
+#endif
                             }
                         }
                     }
@@ -11380,6 +11389,9 @@ namespace BmwDeepObd
                 }
             }
 
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences Has errors: {0}", hasErrors));
+#endif
             return referencesList;
         }
 
