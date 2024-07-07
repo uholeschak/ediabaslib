@@ -27,7 +27,6 @@ namespace EdiabasLib
         private bool _disposed;
         private long _filePos;
         private readonly long _fileLength;
-        private Java.IO.FileDescriptor _fd;
         private long _mapAddr;
         private static readonly object DirDictLock = new object();
         private static string _dirDictName = string.Empty;
@@ -38,8 +37,7 @@ namespace EdiabasLib
         {
             _filePos = 0;
             _fileLength = 0;
-            _fd = null;
-            _mapAddr = (IntPtr)(-1);
+            _mapAddr = -1;
 
             string realPath = GetRealFileName(filePath);
             FileInfo fileInfo = new FileInfo(realPath);
@@ -47,22 +45,33 @@ namespace EdiabasLib
 
             bool openSuccess = false;
             string failureReason = string.Empty;
-            _fd = Android.Systems.Os.Open(realPath, ORdonly, Deffilemode);
-            if (_fd != null)
+            Java.IO.FileDescriptor fd = Android.Systems.Os.Open(realPath, ORdonly, Deffilemode);
+
+            try
             {
-                _mapAddr = Android.Systems.Os.Mmap(0, _fileLength, ProtRead, MapPrivate, _fd, 0);
-                if (_mapAddr != -1)
+                if (fd != null)
                 {
-                    openSuccess = true;
+                    _mapAddr = Android.Systems.Os.Mmap(0, _fileLength, ProtRead, MapPrivate, fd, 0);
+                    if (_mapAddr != -1)
+                    {
+                        openSuccess = true;
+                    }
+                    else
+                    {
+                        failureReason = "Mmap failed";
+                    }
                 }
                 else
                 {
-                    failureReason = "Mmap failed";
+                    failureReason = "Open failed";
                 }
             }
-            else
+            finally
             {
-                failureReason = "Open failed";
+                if (fd != null)
+                {
+                    Android.Systems.Os.Close(fd);
+                }
             }
 
             if (!openSuccess)
@@ -298,12 +307,6 @@ namespace EdiabasLib
             {
                 Android.Systems.Os.Munmap(_mapAddr, _fileLength);
                 _mapAddr = -1;
-            }
-
-            if (_fd != null)
-            {
-                Android.Systems.Os.Close(_fd);
-                _fd = null;
             }
         }
 
