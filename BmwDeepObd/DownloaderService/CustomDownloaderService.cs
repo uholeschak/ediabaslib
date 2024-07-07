@@ -425,20 +425,20 @@ namespace BmwDeepObd
                 return -1;
             }
 
-            int status = -1;
+            int dbStatus = -1;
             try
             {
-                IntPtr statusFieldId = Android.Runtime.JNIEnv.GetFieldID(db.Class.Handle, "mStatus", "I");
-                if (statusFieldId != IntPtr.Zero)
+                nint statusFieldId = Android.Runtime.JNIEnv.GetFieldID(db.Class.Handle, "mStatus", "I");
+                if (statusFieldId != nint.Zero)
                 {
-                    status = Android.Runtime.JNIEnv.GetIntField(db.Handle, statusFieldId);
+                    dbStatus = Android.Runtime.JNIEnv.GetIntField(db.Handle, statusFieldId);
                 }
             }
             catch (Exception)
             {
-                status = -1;
+                dbStatus = -1;
             }
-            return status;
+            return dbStatus;
         }
 
         public static DownloadInfo GetDownloadInfoByFileName(DownloadsDB db, string filename)
@@ -468,8 +468,8 @@ namespace BmwDeepObd
             int fileStatus = -1;
             try
             {
-                IntPtr statusFieldId = Android.Runtime.JNIEnv.GetFieldID(ex.Class.Handle, "mStatus", "I");
-                if (statusFieldId != IntPtr.Zero)
+                nint statusFieldId = Android.Runtime.JNIEnv.GetFieldID(ex.Class.Handle, "mStatus", "I");
+                if (statusFieldId != nint.Zero)
                 {
                     fileStatus = Android.Runtime.JNIEnv.GetIntField(ex.Handle, statusFieldId);
                 }
@@ -491,11 +491,11 @@ namespace BmwDeepObd
             string message = string.Empty;
             try
             {
-                IntPtr messageFieldId = Android.Runtime.JNIEnv.GetFieldID(ex.Class.Handle, "mMessage", "Ljava/lang/String;");
-                if (messageFieldId != IntPtr.Zero)
+                nint messageFieldId = Android.Runtime.JNIEnv.GetFieldID(ex.Class.Handle, "mMessage", "Ljava/lang/String;");
+                if (messageFieldId != nint.Zero)
                 {
-                    IntPtr messageObject = Android.Runtime.JNIEnv.GetObjectField(ex.Handle, messageFieldId);
-                    if (messageObject != IntPtr.Zero)
+                    nint messageObject = Android.Runtime.JNIEnv.GetObjectField(ex.Handle, messageFieldId);
+                    if (messageObject != nint.Zero)
                     {
                         Java.Lang.String javaString = GetObject<Java.Lang.String>(messageObject, Android.Runtime.JniHandleOwnership.DoNotTransfer);
                         if (javaString != null)
@@ -869,9 +869,9 @@ namespace BmwDeepObd
                 this.packageInfo = ActivityCommon.GetPackageInfo(this.PackageManager, this.PackageName);
                 string applicationLabel = this.PackageManager?.GetApplicationLabel(this.ApplicationInfo);
 #if false
-                IntPtr downloaderNotification = Android.Runtime.JNIEnv.CreateInstance(typeof(DownloadNotification),
+                nint downloaderNotification = Android.Runtime.JNIEnv.CreateInstance(typeof(DownloadNotification),
                     "(Landroid/content/Context;Ljava/lang/CharSequence;)V", new Android.Runtime.JValue[] {new (this), new (new Java.Lang.String(applicationLabel)) });
-                if (downloaderNotification != IntPtr.Zero)
+                if (downloaderNotification != nint.Zero)
                 {
                     this.downloadNotification = GetObject<DownloadNotification>(downloaderNotification, Android.Runtime.JniHandleOwnership.DoNotTransfer);
                 }
