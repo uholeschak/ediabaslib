@@ -255,15 +255,15 @@ namespace EdiabasLib
                         if (_bluetoothSocket == null)
                         {
                             // this socket sometimes looses data for long telegrams
-                            IntPtr createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
+                            nint createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
                                 "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
-                            if (createRfcommSocket == IntPtr.Zero)
+                            if (createRfcommSocket == nint.Zero)
                             {
                                 throw new Exception("No createRfcommSocket");
                             }
-                            IntPtr rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
+                            nint rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
                                 createRfcommSocket, new Android.Runtime.JValue(1));
-                            if (rfCommSocket == IntPtr.Zero)
+                            if (rfCommSocket == nint.Zero)
                             {
                                 throw new Exception("No rfCommSocket");
                             }

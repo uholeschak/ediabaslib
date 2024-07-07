@@ -20,7 +20,7 @@ namespace BmwDeepObd
     // ReSharper disable once UnusedMember.Global
     public class MyApplication : Android.App.Application
     {
-        public MyApplication(IntPtr handle, Android.Runtime.JniHandleOwnership ownerShip) : base(handle, ownerShip)
+        public MyApplication(nint handle, Android.Runtime.JniHandleOwnership ownerShip) : base(handle, ownerShip)
         {
         }
 
