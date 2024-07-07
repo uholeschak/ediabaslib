@@ -4899,7 +4899,7 @@ namespace EdiabasLib
                     int readBytes = tempFs.Read(buffer, 0, buffer.Length);
                     if (readBytes != buffer.Length)
                     {
-                        LogFormat(EdLogLevel.Error, "GetFileType Invalid read size: {0}", readBytes);
+                        LogFormat(EdLogLevel.Error, "GetFileType Invalid read size={0}, stream len={1}", readBytes, tempFs.Length);
                         throw new ArgumentOutOfRangeException(fileName, "GetFileType: Invalid read size");
                     }
 
