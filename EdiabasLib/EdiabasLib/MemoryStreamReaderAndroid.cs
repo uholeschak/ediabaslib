@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.MemoryMappedFiles;
 using System.Runtime.InteropServices;
 using Android.OS;
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -32,6 +31,9 @@ namespace EdiabasLib
         private static string _dirDictName = string.Empty;
         private static Dictionary<string, string> _dirDict;
         private static DirectoryObserver _directoryObserver;
+#if DEBUG
+        private static readonly string Tag = typeof(MemoryStreamReader).FullName;
+#endif
 
         public MemoryStreamReader(string filePath)
         {
@@ -74,6 +76,9 @@ namespace EdiabasLib
                 }
             }
 
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("MemoryStreamReader Success={0}, FileLength={1}, Address={2:X08}", openSuccess, _fileLength, _mapAddr));
+#endif
             if (!openSuccess)
             {
                 CloseHandles();
@@ -206,6 +211,9 @@ namespace EdiabasLib
             long useCount = count;
             if (num2 > _fileLength)
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("Read Overflow Pos={0}, FileLength={1}", num2, _fileLength));
+#endif
                 useCount = _fileLength - _filePos;
                 if (useCount < 0)
                 {
@@ -223,7 +231,7 @@ namespace EdiabasLib
                 return 0;
             }
 
-            Marshal.Copy(PosPtr, buffer, offset, (int) useCount);
+            Marshal.Copy((nint) PosPtr, buffer, offset, (int) useCount);
             _filePos += useCount;
             return (int) useCount;
         }
@@ -293,11 +301,11 @@ namespace EdiabasLib
             RemoveDirectoryObserver();
         }
 
-        private IntPtr PosPtr
+        private long PosPtr
         {
             get
             {
-                return new IntPtr(_mapAddr + _filePos);
+                return _mapAddr + _filePos;
             }
         }
 
