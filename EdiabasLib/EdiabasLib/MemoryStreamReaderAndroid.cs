@@ -193,10 +193,11 @@ namespace EdiabasLib
             {
                 throw new Exception("Attempt to read before the start of the stream");
             }
-            int useCount = count;
+
+            long useCount = count;
             if (num2 > _fileLength)
             {
-                useCount = (int)(_fileLength - _filePos);
+                useCount = _fileLength - _filePos;
                 if (useCount < 0)
                 {
                     useCount = 0;
@@ -213,9 +214,9 @@ namespace EdiabasLib
                 return 0;
             }
 
-            Marshal.Copy(PosPtr, buffer, offset, useCount);
+            Marshal.Copy(PosPtr, buffer, offset, (int) useCount);
             _filePos += useCount;
-            return useCount;
+            return (int) useCount;
         }
 
         public override long Seek(long offset, SeekOrigin origin)
