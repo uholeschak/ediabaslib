@@ -196,12 +196,23 @@ namespace EdiabasLib
             int useCount = count;
             if (num2 > _fileLength)
             {
-                useCount = (int)(_fileLength - offset - _filePos);
+                useCount = (int)(_fileLength - _filePos);
                 if (useCount < 0)
                 {
                     useCount = 0;
                 }
+
+                if (useCount > count)
+                {
+                    useCount = count;
+                }
             }
+
+            if (useCount == 0)
+            {
+                return 0;
+            }
+
             Marshal.Copy(PosPtr, buffer, offset, useCount);
             _filePos += useCount;
             return useCount;

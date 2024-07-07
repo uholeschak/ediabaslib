@@ -4892,11 +4892,16 @@ namespace EdiabasLib
 
             try
             {
-                using (Stream tempFs = MemoryStreamReader.OpenRead(localFileName))
+                using (MemoryStreamReader tempFs = MemoryStreamReader.OpenRead(localFileName))
                 {
                     byte[] buffer = new byte[4];
                     tempFs.Position = 0x10;
-                    tempFs.Read(buffer, 0, buffer.Length);
+                    int readBytes = tempFs.Read(buffer, 0, buffer.Length);
+                    if (readBytes != buffer.Length)
+                    {
+                        LogFormat(EdLogLevel.Error, "GetFileType Invalid read size: {0}", readBytes);
+                        throw new ArgumentOutOfRangeException(fileName, "GetFileType: Invalid read size");
+                    }
 
                     if (!BitConverter.IsLittleEndian)
                     {
