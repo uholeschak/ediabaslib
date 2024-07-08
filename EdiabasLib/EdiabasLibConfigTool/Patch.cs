@@ -204,12 +204,19 @@ namespace EdiabasLibConfigTool
                 {
                     return null;
                 }
-                ApiCheckVersion apiCheckVersion = (ApiCheckVersion)Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof(ApiCheckVersion));
+
+                ApiCheckVersion apiCheckVersion = Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof(ApiCheckVersion)) as ApiCheckVersion;
+                if (apiCheckVersion == null)
+                {
+                    return null;
+                }
+
                 sbyte[] versionInfo = new sbyte[0x100];
                 if (apiCheckVersion(0x700, versionInfo) == 0)
                 {
                     return null;
                 }
+
                 string version = Encoding.ASCII.GetString(versionInfo.TakeWhile(value => value != 0).Select(value => (byte)value).ToArray());
                 return version;
             }
