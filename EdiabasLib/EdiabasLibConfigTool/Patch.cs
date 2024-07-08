@@ -37,13 +37,13 @@ namespace EdiabasLibConfigTool
         static class NativeMethods
         {
             [DllImport("kernel32.dll")]
-            public static extern IntPtr LoadLibrary(string dllToLoad);
+            public static extern int LoadLibrary(string dllToLoad);
 
             [DllImport("kernel32.dll")]
-            public static extern IntPtr GetProcAddress(IntPtr hModule, string procedureName);
+            public static extern IntPtr GetProcAddress(int hModule, string procedureName);
 
             [DllImport("kernel32.dll")]
-            public static extern bool FreeLibrary(IntPtr hModule);
+            public static extern bool FreeLibrary(int hModule);
 
             [DllImport("kernel32.dll")]
             public static extern bool SetDllDirectory(string lpPathName);
@@ -190,24 +190,33 @@ namespace EdiabasLibConfigTool
             {
                 // ignored
             }
-            IntPtr hDll = NativeMethods.LoadLibrary(fileName);
+
+            int hDll = NativeMethods.LoadLibrary(fileName);
             try
             {
-                if (hDll == IntPtr.Zero)
+                if (hDll == 0)
                 {
                     return null;
                 }
+
                 IntPtr pApiCheckVersion = NativeMethods.GetProcAddress(hDll, "__apiCheckVersion");
                 if (pApiCheckVersion == IntPtr.Zero)
                 {
                     return null;
                 }
-                ApiCheckVersion apiCheckVersion = (ApiCheckVersion)Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof(ApiCheckVersion));
+
+                ApiCheckVersion apiCheckVersion = Marshal.GetDelegateForFunctionPointer(pApiCheckVersion, typeof(ApiCheckVersion)) as ApiCheckVersion;
+                if (apiCheckVersion == null)
+                {
+                    return null;
+                }
+
                 sbyte[] versionInfo = new sbyte[0x100];
                 if (apiCheckVersion(0x700, versionInfo) == 0)
                 {
                     return null;
                 }
+
                 string version = Encoding.ASCII.GetString(versionInfo.TakeWhile(value => value != 0).Select(value => (byte)value).ToArray());
                 return version;
             }
