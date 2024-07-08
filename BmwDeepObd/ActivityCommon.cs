@@ -11333,7 +11333,7 @@ namespace BmwDeepObd
             }
         }
 
-        public List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(string packageAssembiesDir, out bool hasErrors)
+        public static List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(string packageAssembiesDir, out bool hasErrors)
         {
             string assembliesDir = packageAssembiesDir;
             Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();

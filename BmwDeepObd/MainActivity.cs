@@ -5118,12 +5118,12 @@ namespace BmwDeepObd
 #endif
                         }
 
-                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = _activityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out bool hasErrors);
+                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out bool hasErrors);
                         if (hasErrors)
                         {
                             if (_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir, true))
                             {
-                                referencesList = _activityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out hasErrors);
+                                referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out hasErrors);
                             }
                             else
                             {
