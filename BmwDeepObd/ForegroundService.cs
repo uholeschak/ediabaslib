@@ -852,7 +852,7 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                List<Microsoft.CodeAnalysis.MetadataReference> referencesList = _activityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out bool hasErrors);
+                List<Microsoft.CodeAnalysis.MetadataReference> referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out bool hasErrors);
                 if (hasErrors)
                 {
 #if DEBUG
