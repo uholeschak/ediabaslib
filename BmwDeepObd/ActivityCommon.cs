@@ -11354,55 +11354,71 @@ namespace BmwDeepObd
                     location = Path.Combine(assembliesDir, fileName);
                     if (!File.Exists(location))
                     {
+                        List<string> abiList = new List<string>();
+#pragma warning disable CS0618 // Type or member is obsolete
+                        if (!string.IsNullOrWhiteSpace(Build.CpuAbi))
+                        {   // this is the currently running ABI
+                            string abi = Build.CpuAbi.Trim();
+                            abiList.Add(abi);
+                        }
+#pragma warning restore CS0618 // Type or member is obsolete
+
                         if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                         {
                             if (Build.SupportedAbis != null)
                             {
                                 foreach (string supportedAbi in Build.SupportedAbis)
                                 {
-                                    if (string.IsNullOrWhiteSpace(supportedAbi))
+                                    if (!string.IsNullOrWhiteSpace(supportedAbi))
                                     {
-                                        continue;
-                                    }
-
-                                    string abi = supportedAbi.Trim();
-                                    string abiDir = Path.Combine(assembliesDir, abi);
-                                    if (!Directory.Exists(abiDir))
-                                    {
-                                        abiDir = Path.Combine(assembliesDir, abi.Replace('-', '_'));
-                                        if (!Directory.Exists(abiDir))
+                                        string abi = supportedAbi.Trim();
+                                        if (!abiList.Contains(abi))
                                         {
-#if DEBUG
-                                            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI dir not found: {0}", abi));
-#endif
+                                            abiList.Add(abi);
                                         }
                                     }
-
-                                    location = Path.Combine(abiDir, fileName);
-#if DEBUG
-                                    Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI={0}, Location={1}", abi, location));
-#endif
-                                    if (!File.Exists(location))
-                                    {
-#if DEBUG
-                                        Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences File not found: {0}", fileName));
-#endif
-                                        location = null;
-                                    }
-
-                                    if (location != null)
-                                    {
-                                        break;
-                                    }
                                 }
+                            }
+                        }
 
-                                if (location == null)
+                        foreach (string supportedAbi in abiList)
+                        {
+                            string abi = supportedAbi.Trim();
+                            string abiDir = Path.Combine(assembliesDir, abi);
+                            if (!Directory.Exists(abiDir))
+                            {
+                                abiDir = Path.Combine(assembliesDir, abi.Replace('-', '_'));
+                                if (!Directory.Exists(abiDir))
                                 {
 #if DEBUG
-                                    Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences No ABI for file found: {0}", fileName));
+                                    Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI dir not found: {0}", abi));
 #endif
                                 }
                             }
+
+                            location = Path.Combine(abiDir, fileName);
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI={0}, Location={1}", abi, location));
+#endif
+                            if (!File.Exists(location))
+                            {
+#if DEBUG
+                                Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences File not found: {0}", fileName));
+#endif
+                                location = null;
+                            }
+
+                            if (location != null)
+                            {
+                                break;
+                            }
+                        }
+
+                        if (location == null)
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences No ABI for file found: {0}", fileName));
+#endif
                         }
                     }
                 }
