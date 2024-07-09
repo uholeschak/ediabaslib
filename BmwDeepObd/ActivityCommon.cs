@@ -11370,6 +11370,9 @@ namespace BmwDeepObd
             hasErrors = false;
 
             string abi = GetCurrentAbiName();
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI={0}", abi));
+#endif
             foreach (Assembly assembly in loadedAssemblies)
             {
                 string location = assembly.Location;
