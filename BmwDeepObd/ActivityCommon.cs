@@ -11333,7 +11333,7 @@ namespace BmwDeepObd
             }
         }
 
-        public static string GetCurrentAbiName()
+        public static List<string> GetCurrentAbiDirs()
         {
             string abi = string.Empty;
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
@@ -11355,10 +11355,10 @@ namespace BmwDeepObd
             bool is64Bit = System.Environment.Is64BitProcess;
             if (isArm)
             {
-                return is64Bit ? "arm64-v8a" : "armeabi-v7a";
+                return is64Bit ? ["arm64-v8a", "arm64_v8a"] : ["armeabi-v7a", "armeabi_v7a"];
             }
 
-            return is64Bit ? "x86_64" : "x86";
+            return is64Bit ? ["x86-64", "x86_64"] : ["x86"];
         }
 
 
@@ -11369,9 +11369,9 @@ namespace BmwDeepObd
             List<Microsoft.CodeAnalysis.MetadataReference> referencesList = new List<Microsoft.CodeAnalysis.MetadataReference>();
             hasErrors = false;
 
-            string abi = GetCurrentAbiName();
+            List<string> abiDirs = GetCurrentAbiDirs();
 #if DEBUG
-            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI={0}", abi));
+            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI dirs={0}", string.Join(", ", abiDirs)));
 #endif
             foreach (Assembly assembly in loadedAssemblies)
             {
@@ -11387,12 +11387,19 @@ namespace BmwDeepObd
                     location = Path.Combine(assembliesDir, fileName);
                     if (!File.Exists(location))
                     {
-                        location = Path.Combine(assembliesDir, abi, fileName);
-#if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI={0}, Location={1}", abi, location));
-#endif
-                        if (!File.Exists(location))
+                        foreach (string abi in abiDirs)
                         {
+                            location = Path.Combine(assembliesDir, abi, fileName);
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences ABI={0}, Location={1}", abi, location));
+#endif
+                            if (File.Exists(location))
+                            {
+#if DEBUG
+                                Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences File found: {0}", fileName));
+#endif
+                                break;
+                            }
 #if DEBUG
                             Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences File not found: {0}", fileName));
 #endif
