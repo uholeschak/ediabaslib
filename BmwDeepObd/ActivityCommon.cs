@@ -11354,6 +11354,7 @@ namespace BmwDeepObd
                     location = Path.Combine(assembliesDir, fileName);
                     if (!File.Exists(location))
                     {
+                        Guid assemblyGuid = assembly.ManifestModule.ModuleVersionId;
                         List<string> abiList = new List<string>();
 #pragma warning disable CS0618 // Type or member is obsolete
                         if (!string.IsNullOrWhiteSpace(Build.CpuAbi))
@@ -11412,10 +11413,12 @@ namespace BmwDeepObd
                                 try
                                 {
                                     Assembly testAssembly = Assembly.LoadFrom(location);
-                                    if (testAssembly != assembly)
+                                    Guid testAssemblyGuid = testAssembly.ManifestModule.ModuleVersionId;
+                                    if (testAssemblyGuid.CompareTo(assemblyGuid) != 0)
                                     {
 #if DEBUG
-                                        Android.Util.Log.Info(Tag, "GetLoadedMetadataReferences LoadFrom: assembly changed");
+                                        Android.Util.Log.Info(Tag, "GetLoadedMetadataReferences LoadFrom: GUID different: {0} {1}",
+                                            assemblyGuid.ToString(), testAssemblyGuid.ToString());
 #endif
                                         location = null;
                                     }
