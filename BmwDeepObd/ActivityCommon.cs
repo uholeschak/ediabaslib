@@ -11407,6 +11407,21 @@ namespace BmwDeepObd
 #endif
                                 location = null;
                             }
+                            else
+                            {
+                                try
+                                {
+                                    Assembly.LoadFrom(location);
+                                }
+                                catch (Exception ex)
+                                {
+#if DEBUG
+                                    Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences LoadFrom Exception {0}",
+                                        EdiabasNet.GetExceptionText(ex, false, false)));
+#endif
+                                    location = null;
+                                }
+                            }
 
                             if (location != null)
                             {
