@@ -11411,7 +11411,14 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    Assembly.LoadFrom(location);
+                                    Assembly testAssembly = Assembly.LoadFrom(location);
+                                    if (testAssembly != assembly)
+                                    {
+#if DEBUG
+                                        Android.Util.Log.Info(Tag, "GetLoadedMetadataReferences LoadFrom: assembly changed");
+#endif
+                                        location = null;
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
