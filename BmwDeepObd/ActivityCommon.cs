@@ -11335,19 +11335,57 @@ namespace BmwDeepObd
 
         public static List<string> GetCurrentAbiDirs()
         {
-            string soArch;
+            bool isArm = false;
+            string abi = null;
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+            {
+                if (Build.SupportedAbis != null && Build.SupportedAbis.Count > 0)
+                {
+                    abi = Build.SupportedAbis[0];
+                }
+            }
+            else
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                abi = Build.CpuAbi;
+#pragma warning restore CS0618 // Type or member is obsolete
+            }
+
+            if (!string.IsNullOrEmpty(abi))
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("GetCurrentAbiDirs ABI={0}", abi));
+#endif
+                if (abi.Contains("arm", StringComparison.OrdinalIgnoreCase))
+                {
+                    isArm = true;
+                }
+            }
+
             try
             {
-                soArch = Java.Lang.JavaSystem.GetProperty("os.arch");
+                string soArch = Java.Lang.JavaSystem.GetProperty("os.arch");
+                if (!string.IsNullOrEmpty(soArch))
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("GetCurrentAbiDirs Arch={0}", soArch));
+#endif
+                    if (soArch.Contains("arm", StringComparison.OrdinalIgnoreCase))
+                    {
+                        isArm = true;
+                    }
+                }
             }
             catch (Exception)
             {
-                soArch = string.Empty;
+                // ignored
             }
 
-            bool isArm = soArch != null && soArch.Contains("arm", StringComparison.OrdinalIgnoreCase);
             bool is64Bit = IntPtr.Size == 8;
-
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("GetCurrentAbiDirs ARM={0}, 64Bit={1}", isArm, is64Bit));
+#endif
             if (isArm)
             {
                 return is64Bit ? ["arm64-v8a", "arm64_v8a"] : ["armeabi-v7a", "armeabi_v7a"];
