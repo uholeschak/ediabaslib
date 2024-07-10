@@ -11335,24 +11335,19 @@ namespace BmwDeepObd
 
         public static List<string> GetCurrentAbiDirs()
         {
-            string abi = string.Empty;
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+            string soArch;
+            try
             {
-                if (Build.SupportedAbis != null && Build.SupportedAbis.Count > 0)
-                {
-                    abi = Build.SupportedAbis[0];
-                }
+                soArch = Java.Lang.JavaSystem.GetProperty("os.arch");
+            }
+            catch (Exception)
+            {
+                soArch = string.Empty;
             }
 
-            if (string.IsNullOrEmpty(abi))
-            {
-#pragma warning disable CS0618 // Type or member is obsolete
-                abi = Build.CpuAbi;
-#pragma warning restore CS0618 // Type or member is obsolete
-            }
+            bool isArm = soArch != null && soArch.Contains("arm", StringComparison.OrdinalIgnoreCase);
+            bool is64Bit = IntPtr.Size == 8;
 
-            bool isArm = abi != null && abi.Contains("arm", StringComparison.OrdinalIgnoreCase);
-            bool is64Bit = System.Environment.Is64BitProcess;
             if (isArm)
             {
                 return is64Bit ? ["arm64-v8a", "arm64_v8a"] : ["armeabi-v7a", "armeabi_v7a"];
