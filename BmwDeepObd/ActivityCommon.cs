@@ -7284,6 +7284,16 @@ namespace BmwDeepObd
                       // ignored
                     }
 
+                    string soArch = string.Empty;
+                    try
+                    {
+                        soArch = Java.Lang.JavaSystem.GetProperty("os.arch");
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
                     StringBuilder sb = new StringBuilder();
                     sb.Append("Deep OBD Trace info");
                     sb.Append(string.Format("\nDate: {0:u}", DateTime.Now));
@@ -7307,6 +7317,7 @@ namespace BmwDeepObd
                         sb.Append(string.Format("\nAndroid abi: {0}", Build.SupportedAbis.Count > 0 ? Build.SupportedAbis[0] : string.Empty));
                     }
 
+                    sb.Append(string.Format("\nOS arch: {0}", soArch ?? string.Empty));
                     sb.Append(string.Format("\nAndroid user: {0}", Build.User ?? string.Empty));
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo?.VersionName ?? string.Empty));
                     sb.Append(string.Format("\nApp version code: {0}", VersionCode));
@@ -11388,10 +11399,12 @@ namespace BmwDeepObd
 #endif
             if (isArm)
             {
-                return is64Bit ? ["arm64-v8a", "arm64_v8a"] : ["armeabi-v7a", "armeabi_v7a"];
+                // the release version uses _ and debug uses -
+                return is64Bit ? ["arm64_v8a", "arm64-v8a"] : ["armeabi_v7a", "armeabi-v7a"];
             }
 
-            return is64Bit ? ["x86-64", "x86_64"] : ["x86"];
+            // only the _ variant is used for release and debug
+            return is64Bit ? ["x86_64", "x86-64"] : ["x86"];
         }
 
 
