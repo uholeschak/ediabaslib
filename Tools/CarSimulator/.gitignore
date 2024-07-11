@@ -1,7 +1,6 @@
-/bin/
-/obj/
 /*.suo
 /*.ncb
 /.vs/
 /packages/
 *.sln.DotSettings.user
+/artifacts/
