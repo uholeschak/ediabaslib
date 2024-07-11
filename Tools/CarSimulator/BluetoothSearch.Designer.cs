@@ -43,12 +43,12 @@
             listViewDevices.FullRowSelect = true;
             listViewDevices.GridLines = true;
             listViewDevices.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            listViewDevices.Location = new System.Drawing.Point(14, 14);
+            listViewDevices.Location = new System.Drawing.Point(13, 12);
             listViewDevices.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             listViewDevices.MultiSelect = false;
             listViewDevices.Name = "listViewDevices";
             listViewDevices.ShowGroups = false;
-            listViewDevices.Size = new System.Drawing.Size(591, 313);
+            listViewDevices.Size = new System.Drawing.Size(594, 314);
             listViewDevices.TabIndex = 0;
             listViewDevices.UseCompatibleStateImageBehavior = false;
             listViewDevices.View = System.Windows.Forms.View.Details;
@@ -69,7 +69,7 @@
             // buttonCancel
             // 
             buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonCancel.Location = new System.Drawing.Point(518, 335);
+            buttonCancel.Location = new System.Drawing.Point(519, 332);
             buttonCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(88, 27);
@@ -81,7 +81,7 @@
             // buttonOk
             // 
             buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            buttonOk.Location = new System.Drawing.Point(424, 335);
+            buttonOk.Location = new System.Drawing.Point(423, 332);
             buttonOk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new System.Drawing.Size(88, 27);
@@ -91,16 +91,16 @@
             // 
             // textBoxStatus
             // 
-            textBoxStatus.Location = new System.Drawing.Point(14, 337);
+            textBoxStatus.Location = new System.Drawing.Point(13, 335);
             textBoxStatus.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxStatus.Name = "textBoxStatus";
             textBoxStatus.ReadOnly = true;
-            textBoxStatus.Size = new System.Drawing.Size(307, 23);
+            textBoxStatus.Size = new System.Drawing.Size(306, 23);
             textBoxStatus.TabIndex = 3;
             // 
             // buttonSearch
             // 
-            buttonSearch.Location = new System.Drawing.Point(329, 335);
+            buttonSearch.Location = new System.Drawing.Point(327, 332);
             buttonSearch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSearch.Name = "buttonSearch";
             buttonSearch.Size = new System.Drawing.Size(88, 27);
@@ -115,7 +115,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonCancel;
-            ClientSize = new System.Drawing.Size(620, 375);
+            ClientSize = new System.Drawing.Size(620, 371);
             Controls.Add(buttonSearch);
             Controls.Add(textBoxStatus);
             Controls.Add(buttonOk);
