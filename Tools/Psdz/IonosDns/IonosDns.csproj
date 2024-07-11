@@ -28,7 +28,7 @@
     <AdditionalFiles Include="User.csx" CodegenCSOutput="File" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CodegenCS.SourceGenerator" Version="3.5.0" />
+    <PackageReference Include="CodegenCS.SourceGenerator" Version="3.5.2" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
