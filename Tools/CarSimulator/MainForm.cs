@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Ports;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BmwFileReader;
 using EdiabasLib;
+using Microsoft.Win32;
 using Peak.Can.Basic;
 // ReSharper disable LocalizableElement
 
@@ -15,7 +17,10 @@ namespace CarSimulator
 {
     public partial class MainForm : Form
     {
+        public const string Api32DllName = @"api32.dll";
         private const string StdResponseFile = "g31_coding.txt";
+        private string _ediabasDirBmw;
+        private string _ediabasDirIstad;
         private string _rootFolder;
         private string _ecuFolder;
         private string _responseDir;
@@ -40,6 +45,7 @@ namespace CarSimulator
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
             InitializeComponent();
 
+            GetDirectories();
             _rootFolder = Properties.Settings.Default.RootFolder;
             _ecuFolder = Properties.Settings.Default.EcuFolder;
             string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -51,6 +57,18 @@ namespace CarSimulator
                 }
             }
             _responseDir = _rootFolder;
+
+            if (string.IsNullOrEmpty(_ecuFolder))
+            {
+                if (!string.IsNullOrEmpty(_ediabasDirBmw))
+                {
+                    _ecuFolder = _ediabasDirBmw;
+                }
+                else if (!string.IsNullOrEmpty(_ediabasDirIstad))
+                {
+                    _ecuFolder = _ediabasDirIstad;
+                }
+            }
 
             _lastPortCount = -1;
             _configData = new CommThread.ConfigData();
@@ -95,6 +113,92 @@ namespace CarSimulator
             Properties.Settings.Default.RootFolder = _rootFolder;
             Properties.Settings.Default.EcuFolder = _ecuFolder;
             Properties.Settings.Default.Save();
+        }
+
+        private void GetDirectories()
+        {
+            string dirBmw = Environment.GetEnvironmentVariable("ediabas_config_dir");
+            if (!IsValidEdiabasDir(dirBmw))
+            {
+                string path = Environment.GetEnvironmentVariable("EDIABAS_PATH");
+                if (!string.IsNullOrEmpty(path))
+                {
+                    dirBmw = Path.Combine(path, @"bin");
+                }
+            }
+
+            if (!IsValidEdiabasDir(dirBmw))
+            {
+                string path = LocateFileInPath(Api32DllName);
+                if (!string.IsNullOrEmpty(path))
+                {
+                    dirBmw = path;
+                }
+            }
+
+            if (IsValidEdiabasDir(dirBmw))
+            {
+                _ediabasDirBmw = dirBmw;
+            }
+
+            try
+            {
+                using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+                {
+                    using (RegistryKey key = localMachine32.OpenSubKey(@"SOFTWARE\BMWGroup\ISPI\ISTA"))
+                    {
+                        string path = key?.GetValue("InstallLocation", null) as string;
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            string dirIstad = Path.Combine(path, @"Ediabas", @"BIN");
+                            if (IsValidEdiabasDir(dirIstad))
+                            {
+                                _ediabasDirIstad = dirIstad;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        public string LocateFileInPath(string fileName)
+        {
+            string envPath = Environment.GetEnvironmentVariable("PATH");
+            if (string.IsNullOrEmpty(envPath))
+            {
+                return null;
+            }
+
+            string result = envPath
+                .Split(';')
+                .FirstOrDefault(s => File.Exists(Path.Combine(s, fileName)));
+
+            return result;
+        }
+
+        public static bool IsValidEdiabasDir(string dirName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(dirName))
+                {
+                    return false;
+                }
+                string dllFile = Path.Combine(dirName, Api32DllName);
+                if (!File.Exists(dllFile))
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         private void UpdatePorts()
