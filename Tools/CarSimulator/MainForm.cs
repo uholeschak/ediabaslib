@@ -62,13 +62,17 @@ namespace CarSimulator
 
             if (string.IsNullOrEmpty(_ecuFolder))
             {
+                if (!string.IsNullOrEmpty(_ediabasEcuDirIstad))
+                {
+                    _ecuFolder = _ediabasEcuDirIstad;
+                }
+            }
+
+            if (string.IsNullOrEmpty(_ecuFolder))
+            {
                 if (!string.IsNullOrEmpty(_ediabasEcuDirBmw))
                 {
                     _ecuFolder = _ediabasEcuDirBmw;
-                }
-                else if (!string.IsNullOrEmpty(_ediabasEcuDirIstad))
-                {
-                    _ecuFolder = _ediabasEcuDirIstad;
                 }
             }
 
@@ -193,6 +197,11 @@ namespace CarSimulator
 
                 while (!string.IsNullOrEmpty(parentDir) && level < 2)
                 {
+                    if (!Directory.Exists(parentDir))
+                    {
+                        return null;
+                    }
+
                     DirectoryInfo directoryInfo = Directory.GetParent(parentDir);
                     if (directoryInfo == null)
                     {
@@ -200,12 +209,8 @@ namespace CarSimulator
                     }
 
                     parentDir = directoryInfo.FullName;
-                    if (!Directory.Exists(parentDir))
-                    {
-                        return null;
-                    }
-
                     string ecuDir = Path.Combine(parentDir, "Ecu");
+
                     if (Directory.Exists(ecuDir))
                     {
                         return ecuDir;
