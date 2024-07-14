@@ -60,7 +60,7 @@ namespace CarSimulator
             }
             _responseDir = _rootFolder;
 
-            if (string.IsNullOrEmpty(_ecuFolder))
+            if (string.IsNullOrEmpty(_ecuFolder) || !Directory.Exists(_ecuFolder))
             {
                 if (!string.IsNullOrEmpty(_ediabasEcuDirIstad))
                 {
