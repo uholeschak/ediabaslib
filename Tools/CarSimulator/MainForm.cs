@@ -322,6 +322,12 @@ namespace CarSimulator
 
                 foreach (DirectoryInfo di in dir.GetDirectories())
                 {
+                    if (di.Attributes.HasFlag(FileAttributes.Directory) &&
+                        string.Compare(di.Name, "runtimes", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        continue;
+                    }
+
                     TreeNode child = new TreeNode
                     {
                         Text = di.Name,
