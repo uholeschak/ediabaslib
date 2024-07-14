@@ -19,6 +19,7 @@ namespace CarSimulator
     {
         public const string Api32DllName = @"api32.dll";
         private const string StdResponseFile = "g31_coding.txt";
+        private string _appDir;
         private string _ediabasBinDirBmw;
         private string _ediabasEcuDirBmw;
         private string _ediabasBinDirIstad;
@@ -50,14 +51,12 @@ namespace CarSimulator
             GetDirectories();
             _rootFolder = Properties.Settings.Default.RootFolder;
             _ecuFolder = Properties.Settings.Default.EcuFolder;
-            string appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            if (!string.IsNullOrEmpty(appDir))
+            _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
             {
-                if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
-                {
-                    _rootFolder = appDir;
-                }
+                _rootFolder = GetParentSubDir(_appDir, "Response", 4);
             }
+
             _responseDir = _rootFolder;
 
             if (string.IsNullOrEmpty(_ecuFolder) || !Directory.Exists(_ecuFolder))
@@ -145,7 +144,7 @@ namespace CarSimulator
             if (IsValidEdiabasDir(dirBmw))
             {
                 _ediabasBinDirBmw = dirBmw;
-                _ediabasEcuDirBmw = GetEdiabasEcuDir(_ediabasBinDirBmw);
+                _ediabasEcuDirBmw = GetParentSubDir(_ediabasBinDirBmw, "Ecu", 2);
             }
 
             try
@@ -161,7 +160,7 @@ namespace CarSimulator
                             if (IsValidEdiabasDir(dirIstad))
                             {
                                 _ediabasBinDirIstad = dirIstad;
-                                _ediabasEcuDirIstad = GetEdiabasEcuDir(_ediabasBinDirIstad);
+                                _ediabasEcuDirIstad = GetParentSubDir(_ediabasBinDirIstad,"Ecu", 2);
                             }
                         }
                     }
@@ -188,14 +187,14 @@ namespace CarSimulator
             return result;
         }
 
-        public string GetEdiabasEcuDir(string ediabasBinDir)
+        public string GetParentSubDir(string startDir, string subDir, int maxLevel)
         {
             try
             {
-                string parentDir = ediabasBinDir;
+                string parentDir = startDir;
                 int level = 0;
 
-                while (!string.IsNullOrEmpty(parentDir) && level < 2)
+                while (!string.IsNullOrEmpty(parentDir) && level < maxLevel)
                 {
                     if (!Directory.Exists(parentDir))
                     {
@@ -209,7 +208,7 @@ namespace CarSimulator
                     }
 
                     parentDir = directoryInfo.FullName;
-                    string ecuDir = Path.Combine(parentDir, "Ecu");
+                    string ecuDir = Path.Combine(parentDir, subDir);
 
                     if (Directory.Exists(ecuDir))
                     {
@@ -347,26 +346,31 @@ namespace CarSimulator
 
         private void UpdateResponseFiles(string path)
         {
-            string[] files = Directory.GetFiles(path, "*.txt");
             listBoxResponseFiles.BeginUpdate();
-            listBoxResponseFiles.Items.Clear();
-            string selectItem = null;
-            foreach (string file in files)
+
+            if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
             {
-                string baseFileName = Path.GetFileName(file);
-                if (!string.IsNullOrEmpty(baseFileName))
+                string[] files = Directory.GetFiles(path, "*.txt");
+                listBoxResponseFiles.Items.Clear();
+                string selectItem = null;
+                foreach (string file in files)
                 {
-                    if (string.Compare(baseFileName, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
+                    string baseFileName = Path.GetFileName(file);
+                    if (!string.IsNullOrEmpty(baseFileName))
                     {
-                        selectItem = baseFileName;
+                        if (string.Compare(baseFileName, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            selectItem = baseFileName;
+                        }
+                        listBoxResponseFiles.Items.Add(baseFileName);
                     }
-                    listBoxResponseFiles.Items.Add(baseFileName);
+                }
+                if (selectItem != null)
+                {
+                    listBoxResponseFiles.SelectedItem = selectItem;
                 }
             }
-            if (selectItem != null)
-            {
-                listBoxResponseFiles.SelectedItem = selectItem;
-            }
+
             listBoxResponseFiles.EndUpdate();
         }
 
