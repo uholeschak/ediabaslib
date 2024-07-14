@@ -189,7 +189,9 @@ namespace CarSimulator
             try
             {
                 string parentDir = ediabasBinDir;
-                while (!string.IsNullOrEmpty(parentDir))
+                int level = 0;
+
+                while (!string.IsNullOrEmpty(parentDir) && level < 2)
                 {
                     DirectoryInfo directoryInfo = Directory.GetParent(parentDir);
                     if (directoryInfo == null)
@@ -208,6 +210,8 @@ namespace CarSimulator
                     {
                         return ecuDir;
                     }
+
+                    level++;
                 }
 
                 return null;
