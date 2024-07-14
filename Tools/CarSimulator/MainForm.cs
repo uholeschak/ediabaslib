@@ -141,15 +141,7 @@ namespace CarSimulator
             if (IsValidEdiabasDir(dirBmw))
             {
                 _ediabasBinDirBmw = dirBmw;
-            }
-
-            if (!string.IsNullOrEmpty(_ediabasBinDirBmw))
-            {
-                string ecuDir = Path.Combine(_ediabasBinDirBmw, "..", "Ecu");
-                if (Directory.Exists(ecuDir))
-                {
-                    _ediabasEcuDirBmw = ecuDir;
-                }
+                _ediabasEcuDirBmw = GetEdiabasEcuDir(_ediabasBinDirBmw);
             }
 
             try
@@ -165,6 +157,7 @@ namespace CarSimulator
                             if (IsValidEdiabasDir(dirIstad))
                             {
                                 _ediabasBinDirIstad = dirIstad;
+                                _ediabasEcuDirIstad = GetEdiabasEcuDir(_ediabasBinDirIstad);
                             }
                         }
                     }
@@ -173,15 +166,6 @@ namespace CarSimulator
             catch (Exception)
             {
                 // ignored
-            }
-
-            if (!string.IsNullOrEmpty(_ediabasBinDirIstad))
-            {
-                string ecuDir = Path.Combine(_ediabasBinDirIstad, "..", "..", "Ecu");
-                if (Directory.Exists(ecuDir))
-                {
-                    _ediabasEcuDirIstad = ecuDir;
-                }
             }
         }
 
@@ -198,6 +182,40 @@ namespace CarSimulator
                 .FirstOrDefault(s => File.Exists(Path.Combine(s, fileName)));
 
             return result;
+        }
+
+        public string GetEdiabasEcuDir(string ediabasBinDir)
+        {
+            try
+            {
+                string parentDir = ediabasBinDir;
+                while (!string.IsNullOrEmpty(parentDir))
+                {
+                    DirectoryInfo directoryInfo = Directory.GetParent(parentDir);
+                    if (directoryInfo == null)
+                    {
+                        return null;
+                    }
+
+                    parentDir = directoryInfo.FullName;
+                    if (!Directory.Exists(parentDir))
+                    {
+                        return null;
+                    }
+
+                    string ecuDir = Path.Combine(parentDir, "Ecu");
+                    if (Directory.Exists(ecuDir))
+                    {
+                        return ecuDir;
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public static bool IsValidEdiabasDir(string dirName)
