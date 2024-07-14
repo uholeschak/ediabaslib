@@ -19,8 +19,10 @@ namespace CarSimulator
     {
         public const string Api32DllName = @"api32.dll";
         private const string StdResponseFile = "g31_coding.txt";
-        private string _ediabasDirBmw;
-        private string _ediabasDirIstad;
+        private string _ediabasBinDirBmw;
+        private string _ediabasEcuDirBmw;
+        private string _ediabasBinDirIstad;
+        private string _ediabasEcuDirIstad;
         private string _rootFolder;
         private string _ecuFolder;
         private string _responseDir;
@@ -60,13 +62,13 @@ namespace CarSimulator
 
             if (string.IsNullOrEmpty(_ecuFolder))
             {
-                if (!string.IsNullOrEmpty(_ediabasDirBmw))
+                if (!string.IsNullOrEmpty(_ediabasEcuDirBmw))
                 {
-                    _ecuFolder = _ediabasDirBmw;
+                    _ecuFolder = _ediabasEcuDirBmw;
                 }
-                else if (!string.IsNullOrEmpty(_ediabasDirIstad))
+                else if (!string.IsNullOrEmpty(_ediabasEcuDirIstad))
                 {
-                    _ecuFolder = _ediabasDirIstad;
+                    _ecuFolder = _ediabasEcuDirIstad;
                 }
             }
 
@@ -138,7 +140,16 @@ namespace CarSimulator
 
             if (IsValidEdiabasDir(dirBmw))
             {
-                _ediabasDirBmw = dirBmw;
+                _ediabasBinDirBmw = dirBmw;
+            }
+
+            if (!string.IsNullOrEmpty(_ediabasBinDirBmw))
+            {
+                string ecuDir = Path.Combine(_ediabasBinDirBmw, "..", "Ecu");
+                if (Directory.Exists(ecuDir))
+                {
+                    _ediabasEcuDirBmw = ecuDir;
+                }
             }
 
             try
@@ -153,7 +164,7 @@ namespace CarSimulator
                             string dirIstad = Path.Combine(path, @"Ediabas", @"BIN");
                             if (IsValidEdiabasDir(dirIstad))
                             {
-                                _ediabasDirIstad = dirIstad;
+                                _ediabasBinDirIstad = dirIstad;
                             }
                         }
                     }
@@ -162,6 +173,15 @@ namespace CarSimulator
             catch (Exception)
             {
                 // ignored
+            }
+
+            if (!string.IsNullOrEmpty(_ediabasBinDirIstad))
+            {
+                string ecuDir = Path.Combine(_ediabasBinDirIstad, "..", "..", "Ecu");
+                if (Directory.Exists(ecuDir))
+                {
+                    _ediabasEcuDirIstad = ecuDir;
+                }
             }
         }
 
