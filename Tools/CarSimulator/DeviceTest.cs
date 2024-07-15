@@ -27,6 +27,7 @@ namespace CarSimulator
         private NetworkStream _dataStream;
         private Stream _dataStreamWrite;
         private Thread _workerThread;
+        private string _responseFileE61;
         private bool _connectActive;
         private bool _executeInnerTest;
         private int _testCount;
@@ -444,6 +445,13 @@ namespace CarSimulator
                 return false;
             }
 
+            _responseFileE61 = Path.Combine(_form.responseDir, "e61.txt");
+            if (!File.Exists(_responseFileE61))
+            {
+                _form.UpdateTestStatusText("Response file e61.txt not found");
+                return false;
+            }
+
             try
             {
                 if (wifi)
@@ -801,7 +809,7 @@ namespace CarSimulator
                 }
             }
 
-            if (!_form.ReadResponseFile(Path.Combine(_form.responseDir, "e61.txt"), CommThread.ConceptType.ConceptBwmFast))
+            if (!_form.ReadResponseFile(_responseFileE61, CommThread.ConceptType.ConceptBwmFast))
             {
                 sr.Append("\r\n");
                 sr.Append("Reading response file failed!");
