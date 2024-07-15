@@ -17,8 +17,10 @@ namespace CarSimulator
 {
     public partial class MainForm : Form
     {
-        public const string Api32DllName = @"api32.dll";
+        private const string Api32DllName = @"api32.dll";
         private const string StdResponseFile = "g31_coding.txt";
+        private const string EcuDirName = "Ecu";
+        private const string ResponseDirName = "Response";
         private string _appDir;
         private string _ediabasBinDirBmw;
         private string _ediabasEcuDirBmw;
@@ -54,7 +56,7 @@ namespace CarSimulator
             _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
             {
-                _rootFolder = GetParentSubDir(_appDir, "Response", 4);
+                _rootFolder = GetParentSubDir(_appDir, ResponseDirName, 4);
             }
 
             _responseDir = _rootFolder;
@@ -144,7 +146,7 @@ namespace CarSimulator
             if (IsValidEdiabasDir(dirBmw))
             {
                 _ediabasBinDirBmw = dirBmw;
-                _ediabasEcuDirBmw = GetParentSubDir(_ediabasBinDirBmw, "Ecu", 2);
+                _ediabasEcuDirBmw = GetParentSubDir(_ediabasBinDirBmw, EcuDirName, 1);
             }
 
             try
@@ -160,7 +162,7 @@ namespace CarSimulator
                             if (IsValidEdiabasDir(dirIstad))
                             {
                                 _ediabasBinDirIstad = dirIstad;
-                                _ediabasEcuDirIstad = GetParentSubDir(_ediabasBinDirIstad,"Ecu", 2);
+                                _ediabasEcuDirIstad = GetParentSubDir(_ediabasBinDirIstad, EcuDirName, 2);
                             }
                         }
                     }
