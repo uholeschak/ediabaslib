@@ -17,8 +17,9 @@ namespace CarSimulator
 {
     public partial class MainForm : Form
     {
-        private const string Api32DllName = @"api32.dll";
-        private const string StdResponseFile = "g31_coding.txt";
+        public const string Api32DllName = @"api32.dll";
+        public const string ResponseFileStd = "g31_coding.txt";
+        public const string ResponseFileE61 = "e61.txt";
         private const string EcuDirName = "Ecu";
         private const string ResponseDirName = "Response";
         private string _appDir;
@@ -360,7 +361,7 @@ namespace CarSimulator
                     string baseFileName = Path.GetFileName(file);
                     if (!string.IsNullOrEmpty(baseFileName))
                     {
-                        if (string.Compare(baseFileName, StdResponseFile, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (string.Compare(baseFileName, ResponseFileStd, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             selectItem = baseFileName;
                         }
@@ -689,13 +690,16 @@ namespace CarSimulator
             bool connected = _commThread != null && _commThread.ThreadRunning();
             bool testing = _deviceTest != null && _deviceTest.TestActive;
             bool testAborted = _deviceTest != null && _deviceTest.AbortTest;
-            bool active = connected || testing; 
+            bool active = connected || testing;
+            string responseFileE61 = Path.Combine(responseDir, ResponseFileE61);
+            bool testFilePresent = File.Exists(responseFileE61);
+
             textBoxEcuFolder.Text = _ecuFolder;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonErrorDefault.Enabled = !testing;
-            buttonDeviceTestBt.Enabled = !active;
-            buttonDeviceTestWifi.Enabled = !active;
+            buttonDeviceTestBt.Enabled = !active && testFilePresent;
+            buttonDeviceTestWifi.Enabled = !active && testFilePresent;
             buttonAbortTest.Enabled = testing && !testAborted;
             buttonEcuFolder.Enabled = !active;
             buttonRootFolder.Enabled = !active;

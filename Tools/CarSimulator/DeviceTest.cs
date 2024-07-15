@@ -445,7 +445,7 @@ namespace CarSimulator
                 return false;
             }
 
-            _responseFileE61 = Path.Combine(_form.responseDir, "e61.txt");
+            _responseFileE61 = Path.Combine(_form.responseDir, MainForm.ResponseFileE61);
             if (!File.Exists(_responseFileE61))
             {
                 _form.UpdateTestStatusText("Response file e61.txt not found");
