@@ -829,10 +829,11 @@ namespace CarSimulator
             try
             {
                 TreeNode node = e.Node;
-                if (node.Tag is string path)
+                if (node?.Tag is string path)
                 {
                     _responseDir = path;
                     UpdateResponseFiles(path);
+                    UpdateDisplay();
                 }
             }
             catch (Exception)
