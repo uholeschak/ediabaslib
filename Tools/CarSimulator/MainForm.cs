@@ -888,6 +888,7 @@ namespace CarSimulator
             {
                 _rootFolder = folderBrowserDialog.SelectedPath;
                 UpdateDirectoryList(_rootFolder);
+                UpdateDisplay();
             }
         }
 
