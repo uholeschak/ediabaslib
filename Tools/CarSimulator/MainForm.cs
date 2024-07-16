@@ -691,12 +691,7 @@ namespace CarSimulator
             bool testing = _deviceTest != null && _deviceTest.TestActive;
             bool testAborted = _deviceTest != null && _deviceTest.AbortTest;
             bool active = connected || testing;
-            bool testFilePresent = false;
-            if (!string.IsNullOrEmpty(responseDir))
-            {
-                string responseFileE61 = Path.Combine(responseDir, ResponseFileE61);
-                testFilePresent = File.Exists(responseFileE61);
-            }
+            bool testFilePresent = !string.IsNullOrEmpty(responseDir) && File.Exists(Path.Combine(responseDir, ResponseFileE61));
             bool ecuFolderExits = !string.IsNullOrEmpty(_ecuFolder) && Directory.Exists(_ecuFolder);
 
             textBoxEcuFolder.Text = _ecuFolder ?? string.Empty;
