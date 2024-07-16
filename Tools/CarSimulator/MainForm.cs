@@ -693,13 +693,14 @@ namespace CarSimulator
             bool active = connected || testing;
             string responseFileE61 = Path.Combine(responseDir, ResponseFileE61);
             bool testFilePresent = File.Exists(responseFileE61);
+            bool ecuFolderExits = Directory.Exists(_ecuFolder);
 
             textBoxEcuFolder.Text = _ecuFolder;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonErrorDefault.Enabled = !testing;
-            buttonDeviceTestBt.Enabled = !active && testFilePresent;
-            buttonDeviceTestWifi.Enabled = !active && testFilePresent;
+            buttonDeviceTestBt.Enabled = !active && testFilePresent && ecuFolderExits;
+            buttonDeviceTestWifi.Enabled = !active && testFilePresent && ecuFolderExits;
             buttonAbortTest.Enabled = testing && !testAborted;
             buttonEcuFolder.Enabled = !active;
             buttonRootFolder.Enabled = !active;
