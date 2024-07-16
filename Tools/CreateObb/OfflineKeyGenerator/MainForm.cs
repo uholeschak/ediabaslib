@@ -59,14 +59,14 @@ namespace OfflineKeyGenerator
                     return null;
                 }
 
-                using (AesCryptoServiceProvider crypto = new AesCryptoServiceProvider())
+                using (Aes crypto = Aes.Create())
                 {
                     crypto.Mode = CipherMode.CBC;
                     crypto.Padding = PaddingMode.PKCS7;
                     crypto.KeySize = 256;
 
                     byte[] appIdBytes = Encoding.ASCII.GetBytes(appId.ToLowerInvariant());
-                    using (SHA256Managed sha256 = new SHA256Managed())
+                    using (SHA256 sha256 = SHA256.Create())
                     {
                         crypto.Key = sha256.ComputeHash(appIdBytes);
                     }
