@@ -43,7 +43,7 @@
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonClose.Location = new System.Drawing.Point(380, 147);
+            buttonClose.Location = new System.Drawing.Point(351, 148);
             buttonClose.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(88, 27);
@@ -68,7 +68,7 @@
             textBoxObbKey.Location = new System.Drawing.Point(10, 27);
             textBoxObbKey.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxObbKey.Name = "textBoxObbKey";
-            textBoxObbKey.Size = new System.Drawing.Size(458, 23);
+            textBoxObbKey.Size = new System.Drawing.Size(429, 23);
             textBoxObbKey.TabIndex = 2;
             // 
             // labelAppId
@@ -87,7 +87,7 @@
             textBoxAppId.Location = new System.Drawing.Point(10, 71);
             textBoxAppId.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxAppId.Name = "textBoxAppId";
-            textBoxAppId.Size = new System.Drawing.Size(458, 23);
+            textBoxAppId.Size = new System.Drawing.Size(429, 23);
             textBoxAppId.TabIndex = 4;
             // 
             // labelOfflineKey
@@ -107,14 +107,14 @@
             textBoxOfflineKey.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxOfflineKey.Name = "textBoxOfflineKey";
             textBoxOfflineKey.ReadOnly = true;
-            textBoxOfflineKey.Size = new System.Drawing.Size(458, 23);
+            textBoxOfflineKey.Size = new System.Drawing.Size(429, 23);
             textBoxOfflineKey.TabIndex = 6;
             // 
             // buttonCalculate
             // 
             buttonCalculate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             buttonCalculate.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonCalculate.Location = new System.Drawing.Point(284, 147);
+            buttonCalculate.Location = new System.Drawing.Point(255, 148);
             buttonCalculate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCalculate.Name = "buttonCalculate";
             buttonCalculate.Size = new System.Drawing.Size(88, 27);
@@ -129,7 +129,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(481, 186);
+            ClientSize = new System.Drawing.Size(452, 187);
             Controls.Add(buttonCalculate);
             Controls.Add(textBoxOfflineKey);
             Controls.Add(labelOfflineKey);
@@ -138,6 +138,7 @@
             Controls.Add(textBoxObbKey);
             Controls.Add(labelObbKey);
             Controls.Add(buttonClose);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MaximizeBox = false;
