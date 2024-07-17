@@ -17,6 +17,6 @@
     <LibraryProjectZip Include="library-release.aar" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.3.2.5" />
+    <PackageReference Include="Xamarin.AndroidX.RecyclerView" Version="1.3.2.6" />
   </ItemGroup>
 </Project>
