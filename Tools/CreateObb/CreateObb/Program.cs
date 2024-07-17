@@ -153,20 +153,19 @@ namespace CreateObb
         {
             try
             {
-                AesCryptoServiceProvider crypto = null;
+                Aes crypto = null;
                 FileStream fsOut = null;
                 ZipOutputStream zipStream = null;
                 try
                 {
                     if (!string.IsNullOrEmpty(key))
                     {
-                        crypto = new AesCryptoServiceProvider
-                        {
-                            Mode = CipherMode.CBC,
-                            Padding = PaddingMode.PKCS7,
-                            KeySize = 256
-                        };
-                        using (SHA256Managed sha256 = new SHA256Managed())
+                        crypto = Aes.Create();
+                        crypto.Mode = CipherMode.CBC;
+                        crypto.Padding = PaddingMode.PKCS7;
+                        crypto.KeySize = 256;
+
+                        using (SHA256 sha256 = SHA256.Create())
                         {
                             crypto.Key = sha256.ComputeHash(Encoding.ASCII.GetBytes(key));
                         }
