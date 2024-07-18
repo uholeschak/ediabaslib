@@ -93,6 +93,7 @@ namespace BmwDeepObd
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            SupportRequestWindowFeature(WindowCompat.FeatureActionBar);
             if (savedInstanceState != null)
             {
                 _instanceDataBase = GetInstanceState(savedInstanceState, _instanceDataBase, InstanceDataKeyBase) as InstanceDataBase;
@@ -678,28 +679,20 @@ namespace BmwDeepObd
                 {
                     if (enable)
                     {
-                        if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
-                        {
-                            Window.InsetsController.SystemBarsBehavior = (int) WindowInsetsControllerBehavior.ShowTransientBarsBySwipe;
-                            Window.InsetsController.SetSystemBarsAppearance((int) (WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars),
-                                (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
-                        }
+                        Window.InsetsController.SystemBarsBehavior = (int) WindowInsetsControllerBehavior.ShowTransientBarsBySwipe;
+                        Window.InsetsController.SetSystemBarsAppearance((int) (WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars),
+                            (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
 
-                        Window.SetDecorFitsSystemWindows(false);
                         Window.InsetsController.Hide(WindowInsets.Type.StatusBars());
                         Window.InsetsController.Hide(WindowInsets.Type.CaptionBar());
                         Window.InsetsController.Hide(WindowInsets.Type.SystemBars());
                     }
                     else
                     {
-                        if (Build.VERSION.SdkInt > BuildVersionCodes.Q)
-                        {
-                            Window.InsetsController.SystemBarsBehavior = (int)WindowInsetsControllerBehavior.ShowBarsByTouch;
-                            Window.InsetsController.SetSystemBarsAppearance(0,
-                                (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
-                        }
+                        Window.InsetsController.SystemBarsBehavior = (int)WindowInsetsControllerBehavior.ShowBarsByTouch;
+                        Window.InsetsController.SetSystemBarsAppearance(0,
+                            (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
 
-                        Window.SetDecorFitsSystemWindows(true);
                         Window.InsetsController.Show(WindowInsets.Type.StatusBars());
                         Window.InsetsController.Show(WindowInsets.Type.CaptionBar());
                         Window.InsetsController.Show(WindowInsets.Type.SystemBars());
