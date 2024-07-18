@@ -93,7 +93,7 @@ namespace BmwDeepObd
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SupportRequestWindowFeature(WindowCompat.FeatureActionBar);
+            //SupportRequestWindowFeature(WindowCompat.FeatureActionBar);
             if (savedInstanceState != null)
             {
                 _instanceDataBase = GetInstanceState(savedInstanceState, _instanceDataBase, InstanceDataKeyBase) as InstanceDataBase;
