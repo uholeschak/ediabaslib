@@ -677,25 +677,26 @@ namespace BmwDeepObd
             {
                 if (Window != null && Window.InsetsController != null)
                 {
+                    WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, Window.DecorView);
                     if (enable)
                     {
-                        Window.InsetsController.SystemBarsBehavior = (int) WindowInsetsControllerBehavior.ShowTransientBarsBySwipe;
+                        controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
                         Window.InsetsController.SetSystemBarsAppearance((int) (WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars),
                             (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
 
-                        Window.InsetsController.Hide(WindowInsets.Type.StatusBars());
-                        Window.InsetsController.Hide(WindowInsets.Type.CaptionBar());
-                        Window.InsetsController.Hide(WindowInsets.Type.SystemBars());
+                        controller.Hide(WindowInsetsCompat.Type.StatusBars());
+                        controller.Hide(WindowInsetsCompat.Type.CaptionBar());
+                        controller.Hide(WindowInsetsCompat.Type.SystemBars());
                     }
                     else
                     {
-                        Window.InsetsController.SystemBarsBehavior = (int)WindowInsetsControllerBehavior.ShowBarsByTouch;
+                        controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorDefault;
                         Window.InsetsController.SetSystemBarsAppearance(0,
                             (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
 
-                        Window.InsetsController.Show(WindowInsets.Type.StatusBars());
-                        Window.InsetsController.Show(WindowInsets.Type.CaptionBar());
-                        Window.InsetsController.Show(WindowInsets.Type.SystemBars());
+                        controller.Show(WindowInsetsCompat.Type.StatusBars());
+                        controller.Show(WindowInsetsCompat.Type.CaptionBar());
+                        controller.Show(WindowInsetsCompat.Type.SystemBars());
                     }
                 }
             }
