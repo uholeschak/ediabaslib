@@ -654,45 +654,24 @@ namespace BmwDeepObd
 
         public void EnableFullScreenMode(bool enable)
         {
-            if (Build.VERSION.SdkInt <= BuildVersionCodes.Q)
+            if (Window != null && _decorView != null)
             {
-                if (_decorView != null)
+                WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, _decorView);
+                if (enable)
                 {
-                    if (enable)
-                    {
-#pragma warning disable 618
-                        _decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.Immersive | SystemUiFlags.HideNavigation | SystemUiFlags.Fullscreen);
-#pragma warning restore 618
-                    }
-                    else
-                    {
-#pragma warning disable 618
-                        _decorView.SystemUiVisibility = (StatusBarVisibility)(SystemUiFlags.HideNavigation);
-#pragma warning restore 618
-                    }
+                    controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
+                    controller.AppearanceLightNavigationBars = true;
+                    controller.AppearanceLightStatusBars = true;
+
+                    controller.Hide(WindowInsetsCompat.Type.SystemBars());
                 }
-            }
-            else
-            {
-                if (Window != null && _decorView != null)
+                else
                 {
-                    WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, _decorView);
-                    if (enable)
-                    {
-                        controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
-                        controller.AppearanceLightNavigationBars = true;
-                        controller.AppearanceLightStatusBars = true;
+                    controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorDefault;
+                    controller.AppearanceLightNavigationBars = false;
+                    controller.AppearanceLightStatusBars = false;
 
-                        controller.Hide(WindowInsetsCompat.Type.SystemBars());
-                    }
-                    else
-                    {
-                        controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorDefault;
-                        controller.AppearanceLightNavigationBars = false;
-                        controller.AppearanceLightStatusBars = false;
-
-                        controller.Show(WindowInsetsCompat.Type.SystemBars());
-                    }
+                    controller.Show(WindowInsetsCompat.Type.SystemBars());
                 }
             }
         }
