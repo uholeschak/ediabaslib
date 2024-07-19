@@ -675,14 +675,14 @@ namespace BmwDeepObd
             }
             else
             {
-                if (Window != null && Window.InsetsController != null)
+                if (Window != null)
                 {
-                    WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, Window.DecorView);
+                    WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, _decorView);
                     if (enable)
                     {
                         controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
-                        Window.InsetsController.SetSystemBarsAppearance((int) (WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars),
-                            (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
+                        controller.AppearanceLightNavigationBars = true;
+                        controller.AppearanceLightStatusBars = true;
 
                         controller.Hide(WindowInsetsCompat.Type.StatusBars());
                         controller.Hide(WindowInsetsCompat.Type.CaptionBar());
@@ -691,8 +691,8 @@ namespace BmwDeepObd
                     else
                     {
                         controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorDefault;
-                        Window.InsetsController.SetSystemBarsAppearance(0,
-                            (int)(WindowInsetsControllerAppearance.LightNavigationBars | WindowInsetsControllerAppearance.LightStatusBars));
+                        controller.AppearanceLightNavigationBars = false;
+                        controller.AppearanceLightStatusBars = false;
 
                         controller.Show(WindowInsetsCompat.Type.StatusBars());
                         controller.Show(WindowInsetsCompat.Type.CaptionBar());
