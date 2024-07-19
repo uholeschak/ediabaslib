@@ -659,6 +659,7 @@ namespace BmwDeepObd
                 WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, _decorView);
                 if (enable)
                 {
+                    WindowCompat.SetDecorFitsSystemWindows(Window, true);
                     controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
                     controller.AppearanceLightNavigationBars = true;
                     controller.AppearanceLightStatusBars = true;
@@ -667,6 +668,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
+                    WindowCompat.SetDecorFitsSystemWindows(Window, true);
                     controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorDefault;
                     controller.AppearanceLightNavigationBars = false;
                     controller.AppearanceLightStatusBars = false;
