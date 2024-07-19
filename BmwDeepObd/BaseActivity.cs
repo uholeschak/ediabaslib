@@ -675,7 +675,7 @@ namespace BmwDeepObd
             }
             else
             {
-                if (Window != null)
+                if (Window != null && _decorView != null)
                 {
                     WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, _decorView);
                     if (enable)
@@ -684,8 +684,6 @@ namespace BmwDeepObd
                         controller.AppearanceLightNavigationBars = true;
                         controller.AppearanceLightStatusBars = true;
 
-                        controller.Hide(WindowInsetsCompat.Type.StatusBars());
-                        controller.Hide(WindowInsetsCompat.Type.CaptionBar());
                         controller.Hide(WindowInsetsCompat.Type.SystemBars());
                     }
                     else
@@ -694,8 +692,6 @@ namespace BmwDeepObd
                         controller.AppearanceLightNavigationBars = false;
                         controller.AppearanceLightStatusBars = false;
 
-                        controller.Show(WindowInsetsCompat.Type.StatusBars());
-                        controller.Show(WindowInsetsCompat.Type.CaptionBar());
                         controller.Show(WindowInsetsCompat.Type.SystemBars());
                     }
                 }
