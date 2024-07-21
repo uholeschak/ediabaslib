@@ -15,14 +15,14 @@ namespace BmwDeepObd;
     },
     Categories = new[]
     {
-        CategoryIot
+        CategoryCarAppIot
     })
 ]
 
 public class CarService : CarAppService
 {
     public const string IntentCarAppService = "androidx.car.app.CarAppService";
-    public const string CategoryIot = "androidx.car.app.category.IOT";
+    public const string CategoryCarAppIot = "androidx.car.app.category.IOT";
 
     public override HostValidator CreateHostValidator()
     {
