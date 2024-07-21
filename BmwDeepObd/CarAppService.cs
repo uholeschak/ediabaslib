@@ -4,12 +4,14 @@ using AndroidX.Car.App.Model;
 using AndroidX.Car.App.Validation;
 
 [assembly: Android.App.UsesFeature("android.hardware.type.automotive", Required = true)]
+[assembly: Android.App.UsesFeature("android.software.car.templates_host", Required = true)]
 
 namespace BmwDeepObd
 {
     [Android.App.MetaData("androidx.car.app.minCarApiLevel", Value = "1")]
+    [Android.App.MetaData("com.android.automotive", Value = "@xml/automotive_app_desc")]
 
-    [Android.App.Service(Label = "@string/app_name",
+    [Android.App.Service(
         Exported = true,
         Enabled = true,
         Name = ActivityCommon.AppNameSpace + "." + nameof(CarService)
