@@ -641,6 +641,11 @@ namespace EdiabasLib
                         ParSupportFrequent = true;
                         break;
 
+                    case 0x010B:    // KWP2000 Standard (motorbikes)
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Concept KWP2000 standard not implemented");
+                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
+                        return;
+
                     case 0x010C:    // KWP2000 BMW
                         if (CommParameterProtected.Length < 33)
                         {
