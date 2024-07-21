@@ -773,6 +773,7 @@ namespace EdiabasLib
                         break;
 
                     default:
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Concept not implemented: {0:X04}", concept);
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                         return;
                 }
