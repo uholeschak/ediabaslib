@@ -657,9 +657,18 @@ namespace BmwDeepObd
             if (Window != null && _decorView != null)
             {
                 WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, _decorView);
+                WindowCompat.SetDecorFitsSystemWindows(Window, true);
+                if (Window.Attributes != null)
+                {
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+                    {
+                        Window.Attributes.LayoutInDisplayCutoutMode =
+                            enable ? LayoutInDisplayCutoutMode.Never : LayoutInDisplayCutoutMode.Default;
+                    }
+                }
+
                 if (enable)
                 {
-                    WindowCompat.SetDecorFitsSystemWindows(Window, true);
                     controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
                     controller.AppearanceLightNavigationBars = true;
                     controller.AppearanceLightStatusBars = true;
@@ -668,7 +677,6 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    WindowCompat.SetDecorFitsSystemWindows(Window, true);
                     controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorDefault;
                     controller.AppearanceLightNavigationBars = false;
                     controller.AppearanceLightStatusBars = false;
