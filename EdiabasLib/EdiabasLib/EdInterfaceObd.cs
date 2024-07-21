@@ -408,6 +408,7 @@ namespace EdiabasLib
                 }
                 if (CommParameterProtected.Length < 1)
                 {
+                    EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Parameter length too short: {0}", CommParameterProtected.Length);
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                     return;
                 }
@@ -442,11 +443,13 @@ namespace EdiabasLib
                     case 0x0000:    // Raw (EDIC)
                         if (!EdicSimulation)
                         {
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No EDIC simulation mode");
                             EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                             return;
                         }
                         if (CommParameterProtected.Length < 5)
                         {
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Concept 0 parameter length too short: {0}", CommParameterProtected.Length);
                             EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
                         }
@@ -642,7 +645,7 @@ namespace EdiabasLib
                         break;
 
                     case 0x010B:    // KWP2000 Standard (motorbikes)
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Concept KWP2000 standard not implemented");
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Concept KWP2000 standard not implemented");
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                         return;
 
@@ -778,7 +781,7 @@ namespace EdiabasLib
                         break;
 
                     default:
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Concept not implemented: {0:X04}", concept);
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Concept not implemented: {0:X04}", concept);
                         EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                         return;
                 }
