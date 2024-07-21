@@ -3,72 +3,77 @@ using AndroidX.Car.App;
 using AndroidX.Car.App.Model;
 using AndroidX.Car.App.Validation;
 
-namespace BmwDeepObd;
+[assembly: Android.App.UsesFeature("android.hardware.type.automotive", Required = true)]
 
-[Android.App.Service(
-    Exported = true,
-    Enabled = true,
-    Name = ActivityCommon.AppNameSpace + "." + nameof(CarService)
-)]
-[Android.App.IntentFilter(new[]
-    {
-        IntentCarAppService,
-    },
-    Categories = new[]
-    {
-        CategoryCarAppIot
-    })
-]
-
-// Testing with Desktop Head Unit (DHU)
-// https://developer.android.com/training/cars/testing/dhu
-// Start Android Auto Emulation Server on the smartphone
-// Select: Connect vehicle
-// adb forward tcp:5277 tcp:5277
-// cd SDK_LOCATION/extras/google/auto
-// desktop-head-unit.exe
-
-public class CarService : CarAppService
+namespace BmwDeepObd
 {
-    public const string IntentCarAppService = "androidx.car.app.CarAppService";
-    public const string CategoryCarAppIot = "androidx.car.app.category.IOT";
+    [Android.App.MetaData("androidx.car.app.minCarApiLevel", Value = "1")]
 
-    public override HostValidator CreateHostValidator()
-    {
-        return HostValidator.AllowAllHostsValidator;
-    }
-
-    public override Session OnCreateSession()
-    {
-        return new CarSession();
-    }
-
-    public class CarSession : Session
-    {
-        public override Screen OnCreateScreen(Intent intent)
+    [Android.App.Service(Label = "@string/app_name",
+        Exported = true,
+        Enabled = true,
+        Name = ActivityCommon.AppNameSpace + "." + nameof(CarService)
+    )]
+    [Android.App.IntentFilter(new[]
         {
-            return new MainScreen(CarContext);
+            IntentCarAppService,
+        },
+        Categories = new[]
+        {
+            CategoryCarAppIot
+        })
+    ]
+
+    // Testing with Desktop Head Unit (DHU)
+    // https://developer.android.com/training/cars/testing/dhu
+    // Start Android Auto Emulation Server on the smartphone
+    // Select: Connect vehicle
+    // adb forward tcp:5277 tcp:5277
+    // cd SDK_LOCATION/extras/google/auto
+    // desktop-head-unit.exe
+
+    public class CarService : CarAppService
+    {
+        public const string IntentCarAppService = "androidx.car.app.CarAppService";
+        public const string CategoryCarAppIot = "androidx.car.app.category.IOT";
+
+        public override HostValidator CreateHostValidator()
+        {
+            return HostValidator.AllowAllHostsValidator;
         }
-    }
 
-    public class MainScreen(CarContext carContext) : Screen(carContext)
-    {
-        public override ITemplate OnGetTemplate()
+        public override Session OnCreateSession()
         {
-            ItemList.Builder listBuilder = new ItemList.Builder();
+            return new CarSession();
+        }
 
-            listBuilder.AddItem(new GridItem.Builder()
-                .SetTitle("Item1")
-                .Build());
+        public class CarSession : Session
+        {
+            public override Screen OnCreateScreen(Intent intent)
+            {
+                return new MainScreen(CarContext);
+            }
+        }
 
-            listBuilder.AddItem(new GridItem.Builder()
-                .SetTitle("Item2")
-                .Build());
+        public class MainScreen(CarContext carContext) : Screen(carContext)
+        {
+            public override ITemplate OnGetTemplate()
+            {
+                ItemList.Builder listBuilder = new ItemList.Builder();
 
-            return new GridTemplate.Builder().SetTitle("Items")
-                .SetHeaderAction(Action.AppIcon)
-                .SetSingleList(listBuilder.Build())
-                .Build();
+                listBuilder.AddItem(new GridItem.Builder()
+                    .SetTitle("Item1")
+                    .Build());
+
+                listBuilder.AddItem(new GridItem.Builder()
+                    .SetTitle("Item2")
+                    .Build());
+
+                return new GridTemplate.Builder().SetTitle("Items")
+                    .SetHeaderAction(Action.AppIcon)
+                    .SetSingleList(listBuilder.Build())
+                    .Build();
+            }
         }
     }
 }

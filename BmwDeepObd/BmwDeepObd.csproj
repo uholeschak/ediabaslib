@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Resources\layout\service_busy.xml" />
+    <None Remove="Resources\xml\automotive_app_desc.xml" />
     <None Remove="Xml\BmwDeepObd.xsd" />
   </ItemGroup>
   <ItemGroup>
