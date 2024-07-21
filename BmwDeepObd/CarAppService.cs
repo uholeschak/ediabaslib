@@ -20,6 +20,14 @@ namespace BmwDeepObd;
     })
 ]
 
+// Testing with Desktop Head Unit (DHU)
+// https://developer.android.com/training/cars/testing/dhu
+// Start Android Auto Emulation Server on the smartphone
+// Select: Connect vehicle
+// adb forward tcp:5277 tcp:5277
+// cd SDK_LOCATION/extras/google/auto
+// desktop-head-unit.exe
+
 public class CarService : CarAppService
 {
     public const string IntentCarAppService = "androidx.car.app.CarAppService";
