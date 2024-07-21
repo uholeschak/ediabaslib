@@ -656,17 +656,17 @@ namespace BmwDeepObd
         {
             if (Window != null && _decorView != null)
             {
-                WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, _decorView);
                 WindowCompat.SetDecorFitsSystemWindows(Window, true);
                 if (Window.Attributes != null)
                 {
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
                     {
                         Window.Attributes.LayoutInDisplayCutoutMode =
-                            enable ? LayoutInDisplayCutoutMode.Never : LayoutInDisplayCutoutMode.Default;
+                            enable ? LayoutInDisplayCutoutMode.ShortEdges : LayoutInDisplayCutoutMode.Default;
                     }
                 }
 
+                WindowInsetsControllerCompat controller = new WindowInsetsControllerCompat(Window, _decorView);
                 if (enable)
                 {
                     controller.SystemBarsBehavior = WindowInsetsControllerCompat.BehaviorShowTransientBarsBySwipe;
