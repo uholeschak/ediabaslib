@@ -3,15 +3,15 @@ using AndroidX.Car.App;
 using AndroidX.Car.App.Model;
 using AndroidX.Car.App.Validation;
 
-[assembly: Android.App.UsesFeature("android.hardware.type.automotive", Required = true)]
-[assembly: Android.App.UsesFeature("android.software.car.templates_host", Required = true)]
-[assembly: Android.App.UsesFeature("android.hardware.wifi", Required = false)]
-[assembly: Android.App.UsesFeature("android.hardware.screen.portrait", Required = false)]
-[assembly: Android.App.UsesFeature("android.hardware.screen.landscape", Required = false)]
+[assembly: Android.App.UsesPermission("androidx.car.app.MAP_TEMPLATES")]
+[assembly: Android.App.UsesPermission("androidx.car.app.NAVIGATION_TEMPLATES")]
+[assembly: Android.App.UsesPermission("androidx.car.app.ACCESS_SURFACE")]
 
 namespace BmwDeepObd
 {
     [Android.App.Service(
+        Label = "@string/app_name",
+        Icon = "@drawable/icon",
         Exported = true,
         Name = ActivityCommon.AppNameSpace + "." + nameof(CarService)
     )]
@@ -35,6 +35,11 @@ namespace BmwDeepObd
 
     public class CarService : CarAppService
     {
+        public CarService()
+        {
+            // Exported services must have an empty public constructor.
+        }
+
         public override HostValidator CreateHostValidator()
         {
             return HostValidator.AllowAllHostsValidator;
@@ -57,20 +62,31 @@ namespace BmwDeepObd
         {
             public override ITemplate OnGetTemplate()
             {
-                ItemList.Builder listBuilder = new ItemList.Builder();
+#if false
+                ItemList.Builder itemList = new ItemList.Builder();
 
-                listBuilder.AddItem(new GridItem.Builder()
+                itemList.AddItem(new GridItem.Builder()
                     .SetTitle("Item1")
+                    .SetLoading(true)
                     .Build());
 
-                listBuilder.AddItem(new GridItem.Builder()
+                itemList.AddItem(new GridItem.Builder()
                     .SetTitle("Item2")
+                    .SetLoading(true)
                     .Build());
 
                 return new GridTemplate.Builder().SetTitle("Items")
-                    .SetHeaderAction(Action.AppIcon)
-                    .SetSingleList(listBuilder.Build())
+                    .SetLoading(false)
+                    .SetSingleList(itemList.Build())
                     .Build();
+#else
+                Pane.Builder paneBuilder = new Pane.Builder();
+                paneBuilder.AddRow(new Row.Builder().SetTitle("Row1").Build());
+                paneBuilder.AddRow(new Row.Builder().SetTitle("Row2").Build());
+                return new PaneTemplate.Builder(paneBuilder.Build())
+                    .SetHeaderAction(Action.AppIcon)
+                    .Build();
+#endif
             }
         }
     }
