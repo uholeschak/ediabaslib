@@ -17,6 +17,9 @@ namespace BmwDeepObd
     [Android.App.MetaData("android.webkit.WebView.EnableSafeBrowsing", Value = "false")]
     [Android.App.MetaData("android.webkit.WebView.MetricsOptOut", Value = "true")]
     [Android.App.MetaData("com.google.android.backup.api_key", Value = "unused")]
+    [Android.App.MetaData("androidx.car.app.minCarApiLevel", Value = "1")]
+    [Android.App.MetaData("com.android.automotive", Value = "@xml/automotive_app_desc")]
+
     // ReSharper disable once UnusedMember.Global
     public class MyApplication : Android.App.Application
     {

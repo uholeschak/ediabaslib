@@ -11,9 +11,6 @@ using AndroidX.Car.App.Validation;
 
 namespace BmwDeepObd
 {
-    [Android.App.MetaData("androidx.car.app.minCarApiLevel", Value = "1")]
-    [Android.App.MetaData("com.android.automotive", Value = "@xml/automotive_app_desc")]
-
     [Android.App.Service(
         Exported = true,
         Name = ActivityCommon.AppNameSpace + "." + nameof(CarService)
@@ -31,7 +28,7 @@ namespace BmwDeepObd
     // Testing with Desktop Head Unit (DHU)
     // https://developer.android.com/training/cars/testing/dhu
     // Start Android Auto Emulation Server on the smartphone
-    // Select: Connect vehicle
+    // Select once: Connect vehicle
     // adb forward tcp:5277 tcp:5277
     // cd SDK_LOCATION/extras/google/auto
     // desktop-head-unit.exe
