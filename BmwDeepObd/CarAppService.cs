@@ -16,7 +16,6 @@ namespace BmwDeepObd
 
     [Android.App.Service(
         Exported = true,
-        Enabled = true,
         Name = ActivityCommon.AppNameSpace + "." + nameof(CarService)
     )]
     [Android.App.IntentFilter(new[]
