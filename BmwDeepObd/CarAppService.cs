@@ -81,12 +81,35 @@ namespace BmwDeepObd
                     .Build();
 #else
                 Pane.Builder paneBuilder = new Pane.Builder();
-                paneBuilder.AddRow(new Row.Builder().SetTitle("Row1").Build());
+                paneBuilder.AddRow(new Row.Builder()
+                    .SetTitle("Page 1")
+                    .AddAction(new Action.Builder().SetTitle("Action1")
+                        .SetIcon(CarIcon.AppIcon)
+                        .SetOnClickListener(new ActionListener((sender,
+                        args) =>
+                    {
+                        ScreenManager.Push(new MainScreen(CarContext));
+                    })).Build())
+                    .Build());
                 paneBuilder.AddRow(new Row.Builder().SetTitle("Row2").Build());
                 return new PaneTemplate.Builder(paneBuilder.Build())
-                    .SetHeaderAction(Action.AppIcon)
+                    .SetHeaderAction(Action.Back)
                     .Build();
 #endif
+            }
+        }
+
+        public class ActionListener : Java.Lang.Object, IOnClickListener
+        {
+            private System.EventHandler _handler;
+
+            public ActionListener(System.EventHandler handler)
+            {
+                _handler = handler;
+            }
+
+            public void OnClick()
+            {
             }
         }
     }
