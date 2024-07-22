@@ -35,6 +35,11 @@ namespace BmwDeepObd
 
     public class CarService : CarAppService
     {
+        public CarService()
+        {
+            // Exported services must have an empty public constructor.
+        }
+
         public override HostValidator CreateHostValidator()
         {
             return HostValidator.AllowAllHostsValidator;
