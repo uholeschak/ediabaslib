@@ -5,6 +5,9 @@ using AndroidX.Car.App.Validation;
 
 [assembly: Android.App.UsesFeature("android.hardware.type.automotive", Required = true)]
 [assembly: Android.App.UsesFeature("android.software.car.templates_host", Required = true)]
+[assembly: Android.App.UsesFeature("android.hardware.wifi", Required = false)]
+[assembly: Android.App.UsesFeature("android.hardware.screen.portrait", Required = false)]
+[assembly: Android.App.UsesFeature("android.hardware.screen.landscape", Required = false)]
 
 namespace BmwDeepObd
 {
@@ -18,11 +21,11 @@ namespace BmwDeepObd
     )]
     [Android.App.IntentFilter(new[]
         {
-            IntentCarAppService,
+            "androidx.car.app.CarAppService"
         },
         Categories = new[]
         {
-            CategoryCarAppIot
+            "androidx.car.app.category.IOT"
         })
     ]
 
@@ -36,9 +39,6 @@ namespace BmwDeepObd
 
     public class CarService : CarAppService
     {
-        public const string IntentCarAppService = "androidx.car.app.CarAppService";
-        public const string CategoryCarAppIot = "androidx.car.app.category.IOT";
-
         public override HostValidator CreateHostValidator()
         {
             return HostValidator.AllowAllHostsValidator;
