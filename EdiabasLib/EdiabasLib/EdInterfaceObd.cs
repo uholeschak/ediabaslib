@@ -130,6 +130,8 @@ namespace EdiabasLib
         protected int AddRecTimeout = 20;
         protected bool EnableFtdiBitBang;
         protected bool ConnectedProtected;
+        protected int BatteryVoltageValue = 12000;
+        protected int IgnitionVoltageValue = 12000;
         protected const int DefaultStdTimeout = 60000;  // 60 sec.
         protected const int EchoTimeout = 100;
         protected const int Kwp1281ByteTimeout = 55;
@@ -333,6 +335,18 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     EnableFtdiBitBang = EdiabasNet.StringToValue(prop) != 0;
+                }
+
+                prop = EdiabasProtected.GetConfigProperty("ObdBatteryVoltage");
+                if (prop != null)
+                {
+                    BatteryVoltageValue = (int) EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected.GetConfigProperty("ObdIgnitionVoltage");
+                if (prop != null)
+                {
+                    IgnitionVoltageValue = (int)EdiabasNet.StringToValue(prop);
                 }
             }
         }
@@ -1012,7 +1026,7 @@ namespace EdiabasLib
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
-                Int64 voltage = GetDsrState() ? 12000 : 0;
+                Int64 voltage = GetDsrState() ? BatteryVoltageValue : 0;
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Battery voltage: {0}", voltage);
                 return voltage;
             }
@@ -1031,7 +1045,7 @@ namespace EdiabasLib
                 }
                 if (!HasIgnitionStatus || EdicSimulation || (ParTransmitFunc != null && ParTransmitFunc != TransBmwFast))
                 {
-                    voltage = GetDsrState() ? 12000 : 0;
+                    voltage = GetDsrState() ? IgnitionVoltageValue : 0;
                     EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ignition voltage from DSR: {0}", voltage);
                     return voltage;
                 }
@@ -1076,7 +1090,7 @@ namespace EdiabasLib
                 if (RecErrorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ignition status failed, assume active");
-                    return 12000;
+                    return IgnitionVoltageValue;
                 }
                 byte[] receiveData;
                 lock (CommThreadLock)
@@ -1101,7 +1115,7 @@ namespace EdiabasLib
                         ignitionOn = true;
                     }
                 }
-                voltage = ignitionOn ? 12000 : 0;
+                voltage = ignitionOn ? IgnitionVoltageValue : 0;
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ignition voltage: {0}", voltage);
 
                 return voltage;
