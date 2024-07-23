@@ -93,17 +93,16 @@ namespace BmwDeepObd
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle($"Page {i + 1}")
                         .AddText($"Show page {i + 1}")
-                        .AddAction(new Action.Builder().SetTitle($"Show page {i + 1}")
-                            .SetIcon(CarIcon.ComposeMessage)
-                            .SetOnClickListener(new ActionListener((page) =>
+                        .SetBrowsable(true)
+                        .SetOnClickListener(new ActionListener((page) =>
+                        {
+                            int pageIndex = -1;
+                            if (page is int pageValue)
                             {
-                                int pageIndex = -1;
-                                if (page is int pageValue)
-                                {
-                                    pageIndex = pageValue;
-                                }
-                                ScreenManager.Push(new PageScreen(CarContext, pageIndex));
-                            }, i)).Build())
+                                pageIndex = pageValue;
+                            }
+                            ScreenManager.Push(new PageScreen(CarContext, pageIndex));
+                        }))
                         .Build());
                 }
 
