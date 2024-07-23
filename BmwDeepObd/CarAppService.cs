@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using AndroidX.Car.App;
+using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
 using AndroidX.Car.App.Validation;
 
@@ -56,16 +57,40 @@ namespace BmwDeepObd
             {
                 return new MainScreen(CarContext);
             }
+
+            public static int GetContentLimit(CarContext carContext, int contentLimitType)
+            {
+                try
+                {
+                    if (carContext.GetCarService(Java.Lang.Class.FromType(typeof(ConstraintManager))) is ConstraintManager constraintManager)
+                    {
+                        return constraintManager.GetContentLimit(ConstraintManager.ContentLimitTypeList);
+                    }
+                }
+                catch (System.Exception)
+                {
+                    // ignored
+                }
+
+                return 0;
+            }
         }
 
         public class MainScreen(CarContext carContext) : Screen(carContext)
         {
             public override ITemplate OnGetTemplate()
             {
-                Pane.Builder paneBuilder = new Pane.Builder();
-                for (int i = 0; i < 10; i++)
+                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
+                int listSize = 10;
+                if (listLimit < listSize)
                 {
-                    paneBuilder.AddRow(new Row.Builder()
+                    listSize = listLimit;
+                }
+
+                ItemList.Builder itemBuilder = new ItemList.Builder();
+                for (int i = 0; i < listSize; i++)
+                {
+                    itemBuilder.AddItem(new Row.Builder()
                         .SetTitle($"Page {i + 1}")
                         .AddText($"Show page {i + 1}")
                         .AddAction(new Action.Builder().SetTitle($"Show page {i + 1}")
@@ -82,9 +107,10 @@ namespace BmwDeepObd
                         .Build());
                 }
 
-                return new PaneTemplate.Builder(paneBuilder.Build())
+                return new ListTemplate.Builder()
                     .SetHeaderAction(Action.AppIcon)
                     .SetTitle("Main page")
+                    .SetSingleList(itemBuilder.Build())
                     .Build();
             }
         }
@@ -93,15 +119,27 @@ namespace BmwDeepObd
         {
             public override ITemplate OnGetTemplate()
             {
-                Pane.Builder paneBuilder = new Pane.Builder();
-                for (int i = 0; i < 10; i++)
+                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
+                int listSize = 10;
+                if (listLimit < listSize)
                 {
-                    paneBuilder.AddRow(new Row.Builder().SetTitle($"Row {i + 1}").Build());
+                    listSize = listLimit;
                 }
 
-                return new PaneTemplate.Builder(paneBuilder.Build())
+                ItemList.Builder itemBuilder = new ItemList.Builder();
+                for (int i = 0; i < listSize; i++)
+                {
+                    itemBuilder.AddItem(
+                        new Row.Builder()
+                        .SetTitle($"Row title {i + 1}")
+                        .AddText($"Row text {i + 1}")
+                        .Build());
+                }
+
+                return new ListTemplate.Builder()
                     .SetHeaderAction(Action.Back)
                     .SetTitle($"Page {pageIndex + 1}")
+                    .SetSingleList(itemBuilder.Build())
                     .Build();
             }
         }
