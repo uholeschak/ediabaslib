@@ -69,7 +69,7 @@ namespace BmwDeepObd
                         .SetTitle($"Page {i + 1}")
                         .AddText($"Show page {i + 1}")
                         .AddAction(new Action.Builder().SetTitle($"Show page {i + 1}")
-                            .SetIcon(CarIcon.Pan)
+                            .SetIcon(CarIcon.ComposeMessage)
                             .SetOnClickListener(new ActionListener((page) =>
                             {
                                 int pageIndex = -1;
