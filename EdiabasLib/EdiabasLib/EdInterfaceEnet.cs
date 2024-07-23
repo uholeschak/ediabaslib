@@ -379,6 +379,8 @@ namespace EdiabasLib
         protected int DiagnosticPort = 6801;
         protected int DoIpPort = 13400;
         protected int ConnectTimeout = 5000;
+        protected int BatteryVoltageValue = 12000;
+        protected int IgnitionVoltageValue = 12000;
         protected int DoIpTimeoutAcknowledge = 25000;
         protected int AddRecTimeoutProtected = 1000;
         protected int AddRecTimeoutIcomProtected = 2000;
@@ -511,6 +513,18 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetBatteryVoltage");
+                if (prop != null)
+                {
+                    BatteryVoltageValue = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetIgnitionVoltage");
+                if (prop != null)
+                {
+                    IgnitionVoltageValue = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutAcknowledge");
@@ -733,7 +747,7 @@ namespace EdiabasLib
                     EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return Int64.MinValue;
                 }
-                return 12000;
+                return BatteryVoltageValue;
             }
         }
 
@@ -782,7 +796,7 @@ namespace EdiabasLib
                     }
                     if ((RecBuffer[6] & 0x0C) == 0x04)
                     {   // ignition on
-                        return 12000;
+                        return IgnitionVoltageValue;
                     }
                 }
                 catch (Exception)
