@@ -30,7 +30,7 @@ namespace BmwDeepObd
     // Start Android Auto Emulation Server on the smartphone
     // Select once: Connect vehicle
     // adb forward tcp:5277 tcp:5277
-    // cd SDK_LOCATION/extras/google/auto
+    // cd C:\Users\Ulrich\AppData\Local\Android\android-sdk\extras\google\auto
     // desktop-head-unit.exe
 
     public class CarService : CarAppService
@@ -80,6 +80,7 @@ namespace BmwDeepObd
 
                 return new PaneTemplate.Builder(paneBuilder.Build())
                     .SetHeaderAction(Action.AppIcon)
+                    .SetTitle("Main page")
                     .Build();
             }
         }
@@ -89,7 +90,6 @@ namespace BmwDeepObd
             public override ITemplate OnGetTemplate()
             {
                 Pane.Builder paneBuilder = new Pane.Builder();
-                paneBuilder.AddRow(new Row.Builder().SetTitle($"Page {pageIndex + 1}").Build());
                 for (int i = 0; i < 10; i++)
                 {
                     paneBuilder.AddRow(new Row.Builder().SetTitle($"Row {i + 1}").Build());
@@ -97,6 +97,7 @@ namespace BmwDeepObd
 
                 return new PaneTemplate.Builder(paneBuilder.Build())
                     .SetHeaderAction(Action.Back)
+                    .SetTitle($"Page {pageIndex + 1}")
                     .Build();
             }
         }
