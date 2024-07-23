@@ -102,7 +102,7 @@ namespace BmwDeepObd
                                 pageIndex = pageValue;
                             }
                             ScreenManager.Push(new PageScreen(CarContext, pageIndex));
-                        }))
+                        }, i))
                         .Build());
                 }
 
