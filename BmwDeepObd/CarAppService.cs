@@ -62,40 +62,37 @@ namespace BmwDeepObd
         {
             public override ITemplate OnGetTemplate()
             {
-#if false
-                ItemList.Builder itemList = new ItemList.Builder();
-
-                itemList.AddItem(new GridItem.Builder()
-                    .SetTitle("Item1")
-                    .SetLoading(true)
-                    .Build());
-
-                itemList.AddItem(new GridItem.Builder()
-                    .SetTitle("Item2")
-                    .SetLoading(true)
-                    .Build());
-
-                return new GridTemplate.Builder().SetTitle("Items")
-                    .SetLoading(false)
-                    .SetSingleList(itemList.Build())
-                    .Build();
-#else
                 Pane.Builder paneBuilder = new Pane.Builder();
-                paneBuilder.AddRow(new Row.Builder()
-                    .SetTitle("Page 1")
-                    .AddAction(new Action.Builder().SetTitle("Action1")
-                        .SetIcon(CarIcon.AppIcon)
-                        .SetOnClickListener(new ActionListener((sender,
-                        args) =>
-                    {
-                        ScreenManager.Push(new MainScreen(CarContext));
-                    })).Build())
-                    .Build());
+                for (int i = 0; i < 10; i++)
+                {
+                    paneBuilder.AddRow(new Row.Builder()
+                        .SetTitle($"Page {i + 1}")
+                        .AddAction(new Action.Builder().SetTitle($"Action {i + 1}")
+                            .SetIcon(CarIcon.Pan)
+                            .SetOnClickListener(new ActionListener((sender,
+                                args) =>
+                            {
+                                ScreenManager.Push(new PageScreen(CarContext, i));
+                            })).Build())
+                        .Build());
+                }
+
+                return new PaneTemplate.Builder(paneBuilder.Build())
+                    .SetHeaderAction(Action.AppIcon)
+                    .Build();
+            }
+        }
+
+        public class PageScreen(CarContext carContext, int pageIndex) : Screen(carContext)
+        {
+            public override ITemplate OnGetTemplate()
+            {
+                Pane.Builder paneBuilder = new Pane.Builder();
+                paneBuilder.AddRow(new Row.Builder().SetTitle("Row2").Build());
                 paneBuilder.AddRow(new Row.Builder().SetTitle("Row2").Build());
                 return new PaneTemplate.Builder(paneBuilder.Build())
                     .SetHeaderAction(Action.Back)
                     .Build();
-#endif
             }
         }
 
