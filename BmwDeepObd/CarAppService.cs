@@ -81,29 +81,42 @@ namespace BmwDeepObd
             public override ITemplate OnGetTemplate()
             {
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
-                int listSize = 10;
-                if (listLimit < listSize)
-                {
-                    listSize = listLimit;
-                }
 
                 ItemList.Builder itemBuilder = new ItemList.Builder();
-                for (int i = 0; i < listSize; i++)
+                if (!ActivityCommon.CommActive)
                 {
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle($"Page {i + 1}")
-                        .AddText($"Show page {i + 1}")
-                        .SetBrowsable(true)
-                        .SetOnClickListener(new ActionListener((page) =>
-                        {
-                            int pageIndex = -1;
-                            if (page is int pageValue)
-                            {
-                                pageIndex = pageValue;
-                            }
-                            ScreenManager.Push(new PageScreen(CarContext, pageIndex));
-                        }, i))
+                        .SetTitle("Vehicle is disconnected")
+                        .AddText("Connect the vehicle in the app")
                         .Build());
+                }
+                else
+                {
+                    int pageIndex = 0;
+                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                    {
+                        if (pageIndex >= listLimit)
+                        {
+                            break;
+                        }
+
+                        string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
+                        itemBuilder.AddItem(new Row.Builder()
+                            .SetTitle(pageName)
+                            .AddText(pageName)
+                            .SetBrowsable(true)
+                            .SetOnClickListener(new ActionListener((page) =>
+                            {
+                                int index = -1;
+                                if (page is int pageValue)
+                                {
+                                    index = pageValue;
+                                }
+                                ScreenManager.Push(new PageScreen(CarContext, index));
+                            }, pageIndex))
+                            .Build());
+                        pageIndex++;
+                    }
                 }
 
                 return new ListTemplate.Builder()
