@@ -41,6 +41,26 @@ namespace BmwDeepObd
             // Exported services must have an empty public constructor.
         }
 
+        public override void OnCreate()
+        {
+            base.OnCreate();
+
+            lock (ActivityCommon.GlobalLockObject)
+            {
+                ConnectEdiabasEvents();
+            }
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            lock (ActivityCommon.GlobalLockObject)
+            {
+                DisconnectEdiabasEvents();
+            }
+        }
+
         public override HostValidator CreateHostValidator()
         {
             return HostValidator.AllowAllHostsValidator;
@@ -49,6 +69,38 @@ namespace BmwDeepObd
         public override Session OnCreateSession()
         {
             return new CarSession();
+        }
+
+        private void ConnectEdiabasEvents()
+        {
+            if (ActivityCommon.EdiabasThread != null)
+            {
+                ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
+                ActivityCommon.EdiabasThread.PageChanged += PageChanged;
+                ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
+            }
+        }
+
+        private void DisconnectEdiabasEvents()
+        {
+            if (ActivityCommon.EdiabasThread != null)
+            {
+                ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
+                ActivityCommon.EdiabasThread.PageChanged -= PageChanged;
+                ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
+            }
+        }
+
+        private void DataUpdated(object sender, System.EventArgs e)
+        {
+        }
+
+        private void PageChanged(object sender, System.EventArgs e)
+        {
+        }
+
+        private void ThreadTerminated(object sender, System.EventArgs e)
+        {
         }
 
         public class CarSession : Session
