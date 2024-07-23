@@ -65,6 +65,7 @@ namespace BmwDeepObd
                 Pane.Builder paneBuilder = new Pane.Builder();
                 for (int i = 0; i < 10; i++)
                 {
+                    int pageIndex = i;
                     paneBuilder.AddRow(new Row.Builder()
                         .SetTitle($"Page {i + 1}")
                         .AddAction(new Action.Builder().SetTitle($"Action {i + 1}")
@@ -72,7 +73,7 @@ namespace BmwDeepObd
                             .SetOnClickListener(new ActionListener((sender,
                                 args) =>
                             {
-                                ScreenManager.Push(new PageScreen(CarContext, i));
+                                ScreenManager.Push(new PageScreen(CarContext, pageIndex));
                             })).Build())
                         .Build());
                 }
@@ -85,11 +86,17 @@ namespace BmwDeepObd
 
         public class PageScreen(CarContext carContext, int pageIndex) : Screen(carContext)
         {
+            int _pageIndex = pageIndex;
+
             public override ITemplate OnGetTemplate()
             {
                 Pane.Builder paneBuilder = new Pane.Builder();
-                paneBuilder.AddRow(new Row.Builder().SetTitle("Row2").Build());
-                paneBuilder.AddRow(new Row.Builder().SetTitle("Row2").Build());
+                paneBuilder.AddRow(new Row.Builder().SetTitle($"Page {_pageIndex + 1}").Build());
+                for (int i = 0; i < 10; i++)
+                {
+                    paneBuilder.AddRow(new Row.Builder().SetTitle($"Row {i + 1}").Build());
+                }
+
                 return new PaneTemplate.Builder(paneBuilder.Build())
                     .SetHeaderAction(Action.Back)
                     .Build();
