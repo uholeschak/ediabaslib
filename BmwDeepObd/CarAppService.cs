@@ -65,16 +65,20 @@ namespace BmwDeepObd
                 Pane.Builder paneBuilder = new Pane.Builder();
                 for (int i = 0; i < 10; i++)
                 {
-                    int pageIndex = i;
                     paneBuilder.AddRow(new Row.Builder()
                         .SetTitle($"Page {i + 1}")
+                        .AddText($"Show page {i + 1}")
                         .AddAction(new Action.Builder().SetTitle($"Show page {i + 1}")
                             .SetIcon(CarIcon.Pan)
-                            .SetOnClickListener(new ActionListener((sender,
-                                args) =>
+                            .SetOnClickListener(new ActionListener((page) =>
                             {
+                                int pageIndex = -1;
+                                if (page is int pageValue)
+                                {
+                                    pageIndex = pageValue;
+                                }
                                 ScreenManager.Push(new PageScreen(CarContext, pageIndex));
-                            })).Build())
+                            }, i)).Build())
                         .Build());
                 }
 
@@ -102,11 +106,13 @@ namespace BmwDeepObd
             }
         }
 
-        public class ActionListener(System.EventHandler handler) : Java.Lang.Object, IOnClickListener
+        public class ActionListener(ActionListener.ClickDelegate handler, object parameter = null) : Java.Lang.Object, IOnClickListener
         {
+            public delegate void ClickDelegate(object parameter);
+
             public void OnClick()
             {
-                handler?.Invoke(this, System.EventArgs.Empty);
+                handler?.Invoke(parameter);
             }
         }
     }
