@@ -65,14 +65,15 @@ namespace BmwDeepObd
                 Pane.Builder paneBuilder = new Pane.Builder();
                 for (int i = 0; i < 10; i++)
                 {
+                    int pageIndex = i;
                     paneBuilder.AddRow(new Row.Builder()
                         .SetTitle($"Page {i + 1}")
-                        .AddAction(new Action.Builder().SetTitle($"Action {i + 1}")
+                        .AddAction(new Action.Builder().SetTitle($"Show page {i + 1}")
                             .SetIcon(CarIcon.Pan)
                             .SetOnClickListener(new ActionListener((sender,
                                 args) =>
                             {
-                                ScreenManager.Push(new PageScreen(CarContext, i));
+                                ScreenManager.Push(new PageScreen(CarContext, pageIndex));
                             })).Build())
                         .Build());
                 }
@@ -88,25 +89,23 @@ namespace BmwDeepObd
             public override ITemplate OnGetTemplate()
             {
                 Pane.Builder paneBuilder = new Pane.Builder();
-                paneBuilder.AddRow(new Row.Builder().SetTitle("Row2").Build());
-                paneBuilder.AddRow(new Row.Builder().SetTitle("Row2").Build());
+                paneBuilder.AddRow(new Row.Builder().SetTitle($"Page {pageIndex + 1}").Build());
+                for (int i = 0; i < 10; i++)
+                {
+                    paneBuilder.AddRow(new Row.Builder().SetTitle($"Row {i + 1}").Build());
+                }
+
                 return new PaneTemplate.Builder(paneBuilder.Build())
                     .SetHeaderAction(Action.Back)
                     .Build();
             }
         }
 
-        public class ActionListener : Java.Lang.Object, IOnClickListener
+        public class ActionListener(System.EventHandler handler) : Java.Lang.Object, IOnClickListener
         {
-            private System.EventHandler _handler;
-
-            public ActionListener(System.EventHandler handler)
-            {
-                _handler = handler;
-            }
-
             public void OnClick()
             {
+                handler?.Invoke(this, System.EventArgs.Empty);
             }
         }
     }
