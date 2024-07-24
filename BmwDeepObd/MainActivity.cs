@@ -3183,12 +3183,8 @@ namespace BmwDeepObd
                 {
                     return;
                 }
-                bool newCommActive = !newPageInfo.JobActivate;
-                if (ActivityCommon.EdiabasThread.JobPageInfo != newPageInfo)
-                {
-                    ActivityCommon.EdiabasThread.CommActive = newCommActive;
-                    ActivityCommon.EdiabasThread.JobPageInfo = newPageInfo;
-                }
+
+                ActivityCommon.EdiabasThread.JobPageInfo = newPageInfo;
             }
             finally
             {

@@ -235,10 +235,16 @@ namespace BmwDeepObd
             get => _jobPageInfo;
             set
             {
+                if (value == null)
+                {
+                    return;
+                }
+
                 bool changed = _jobPageInfo != value;
-                _jobPageInfo = value;
                 if (changed)
                 {
+                    CommActive = !value.JobActivate;
+                    _jobPageInfo = value;
                     PageChangedEvent();
                 }
             }

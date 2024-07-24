@@ -237,6 +237,14 @@ namespace BmwDeepObd
                                     index = pageValue;
                                 }
 
+                                if (index < 0 || index >= ActivityCommon.JobReader.PageList.Count)
+                                {
+                                    return;
+                                }
+
+                                JobReader.PageInfo newPageInfo = ActivityCommon.JobReader.PageList[index];
+                                ActivityCommon.EdiabasThread.JobPageInfo = newPageInfo;
+
                                 ScreenManager.Push(new PageScreen(CarContext, index));
                             }, pageIndex));
 
