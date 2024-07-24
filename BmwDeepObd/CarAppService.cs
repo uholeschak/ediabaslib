@@ -207,16 +207,16 @@ namespace BmwDeepObd
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
 
                 ItemList.Builder itemBuilder = new ItemList.Builder();
-                if (!ActivityCommon.CommActive)
+                JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                if (!ActivityCommon.CommActive || pageInfoActive == null)
                 {
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle(carContext.GetString(Resource.String.car_service_disconnected))
-                        .AddText(carContext.GetString(Resource.String.car_service_disconnected_hint))
+                        .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
+                        .AddText(CarContext.GetString(Resource.String.car_service_disconnected_hint))
                         .Build());
                 }
                 else
                 {
-                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
                     int pageIndex = 0;
                     foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                     {
@@ -251,7 +251,7 @@ namespace BmwDeepObd
                         bool activePage = pageInfo == pageInfoActive;
                         if (activePage)
                         {
-                            row.AddText(carContext.GetString(Resource.String.car_service_active_page));
+                            row.AddText(CarContext.GetString(Resource.String.car_service_active_page));
                         }
 
                         itemBuilder.AddItem(row.Build());
@@ -261,13 +261,13 @@ namespace BmwDeepObd
 
                 ListTemplate listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(Action.AppIcon)
-                    .SetTitle(carContext.GetString(Resource.String.app_name))
+                    .SetTitle(CarContext.GetString(Resource.String.app_name))
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
                 _lastContent = GetContentString();
-
                 RequestUpdate();
+
                 return listTemplate;
             }
 
@@ -287,13 +287,13 @@ namespace BmwDeepObd
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
-                    if (!ActivityCommon.CommActive)
+                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                    if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
-                        sbContent.Append(carContext.GetString(Resource.String.car_service_disconnected));
+                        sbContent.Append(CarContext.GetString(Resource.String.car_service_disconnected));
                     }
                     else
                     {
-                        JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
                         foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                         {
                             string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
@@ -301,7 +301,7 @@ namespace BmwDeepObd
                             bool activePage = pageInfo == pageInfoActive;
                             if (activePage)
                             {
-                                sbContent.Append(carContext.GetString(Resource.String.car_service_active_page));
+                                sbContent.Append(CarContext.GetString(Resource.String.car_service_active_page));
                             }
                         }
                     }
@@ -317,6 +317,8 @@ namespace BmwDeepObd
 
         public class PageScreen(CarContext carContext, int pageIndex) : BaseScreen(carContext)
         {
+            private string _lastContent = string.Empty;
+
             public override ITemplate OnGetTemplate()
             {
 #if DEBUG
@@ -324,30 +326,86 @@ namespace BmwDeepObd
 #endif
 
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
-                int listSize = 10;
-                if (listLimit < listSize)
-                {
-                    listSize = listLimit;
-                }
 
                 ItemList.Builder itemBuilder = new ItemList.Builder();
-                for (int i = 0; i < listSize; i++)
+                JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                string pageTitle = CarContext.GetString(Resource.String.app_name);
+
+                if (!ActivityCommon.CommActive || pageInfoActive == null)
                 {
-                    itemBuilder.AddItem(
-                        new Row.Builder()
-                        .SetTitle($"Row title {i + 1}")
-                        .AddText($"Row text {i + 1}")
+                    itemBuilder.AddItem(new Row.Builder()
+                        .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
+                        .AddText(CarContext.GetString(Resource.String.car_service_disconnected_hint))
                         .Build());
+                }
+                else
+                {
+                    pageTitle = ActivityMain.GetPageString(pageInfoActive, pageInfoActive.Name);
+                    int lineIndex = 0;
+                    foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
+                    {
+                        if (lineIndex >= listLimit)
+                        {
+                            break;
+                        }
+
+                        string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
+                        Row.Builder row = new Row.Builder()
+                            .SetTitle(rowTitle);
+
+                        itemBuilder.AddItem(row.Build());
+                        lineIndex++;
+                    }
                 }
 
                 ListTemplate listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(Action.Back)
-                    .SetTitle($"Page {pageIndex + 1}")
+                    .SetTitle(pageTitle)
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
+                _lastContent = GetContentString();
                 RequestUpdate();
+
                 return listTemplate;
+            }
+
+            public override bool ContentChanged()
+            {
+                string newContent = GetContentString();
+                if (string.Compare(_lastContent, newContent, System.StringComparison.Ordinal) == 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            private string GetContentString()
+            {
+                try
+                {
+                    StringBuilder sbContent = new StringBuilder();
+                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                    if (!ActivityCommon.CommActive || pageInfoActive == null)
+                    {
+                        sbContent.Append(CarContext.GetString(Resource.String.car_service_disconnected));
+                    }
+                    else
+                    {
+                        foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
+                        {
+                            string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
+                            sbContent.Append(rowTitle);
+                        }
+                    }
+
+                    return sbContent.ToString();
+                }
+                catch (System.Exception)
+                {
+                    return string.Empty;
+                }
             }
         }
 
