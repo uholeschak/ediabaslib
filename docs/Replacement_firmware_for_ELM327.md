@@ -63,11 +63,11 @@ There are two firmware files, the complete file (`CanAdapterElm.X.production.uni
 The latest firmware version will be always included in the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_.  
 Also you can get compiled firmware files from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
 
-## ELM327 V1.5 firmware
-There is improved ELM327 V1.5 (V1.4 with patched version number) firmware available. It switches adapter to a mode compatible with most ELM327 softwares. 
+## ELM327 V2.3 firmware
+There is improved ELM327 V2.3 compatible firmware available. It switches adapter to a mode compatible with most ELM327 softwares. 
 Flashing can be done over bluetooth with the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_ (at the moment this is only available for Bluetooth adapters).
 Afterwards you can flash the Deep OBD replacement firmware over Bluetooth firmware again.  
-Binariy files (complete `ELM327V15.X.production.unified.hex`) and (update `ELM327V15.X.production.hex`) could also found in the the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
+Binariy files (complete `ELM327V23.X.production.unified.hex`) and (update `ELM327V23.X.production.hex`) could also found in the the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
 
 ## Firmware update failure
 If the firmware update or switching to the ELM327 firmware fails, all LEDs are active and the adapter stops in the bootloader mode.  
