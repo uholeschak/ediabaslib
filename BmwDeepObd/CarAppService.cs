@@ -1,6 +1,5 @@
 ﻿using Android.Content;
 using Android.OS;
-using Android.Service.Controls.Templates;
 using AndroidX.Car.App;
 using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
@@ -210,16 +209,14 @@ namespace BmwDeepObd
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 if (!ActivityCommon.CommActive)
                 {
-                    string title = "Vehicle is disconnected";
-                    string text = "Connect the vehicle in the app first";
-
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle(title)
-                        .AddText(text)
+                        .SetTitle(carContext.GetString(Resource.String.car_service_disconnected))
+                        .AddText(carContext.GetString(Resource.String.car_service_disconnected_hint))
                         .Build());
                 }
                 else
                 {
+                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
                     int pageIndex = 0;
                     foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                     {
@@ -229,7 +226,7 @@ namespace BmwDeepObd
                         }
 
                         string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
-                        itemBuilder.AddItem(new Row.Builder()
+                        Row.Builder row = new Row.Builder()
                             .SetTitle(pageName)
                             .SetBrowsable(true)
                             .SetOnClickListener(new ActionListener((page) =>
@@ -239,16 +236,24 @@ namespace BmwDeepObd
                                 {
                                     index = pageValue;
                                 }
+
                                 ScreenManager.Push(new PageScreen(CarContext, index));
-                            }, pageIndex))
-                            .Build());
+                            }, pageIndex));
+
+                        bool activePage = pageInfo == pageInfoActive;
+                        if (activePage)
+                        {
+                            row.AddText(carContext.GetString(Resource.String.car_service_active_page));
+                        }
+
+                        itemBuilder.AddItem(row.Build());
                         pageIndex++;
                     }
                 }
 
                 ListTemplate listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(Action.AppIcon)
-                    .SetTitle("Main page")
+                    .SetTitle(carContext.GetString(Resource.String.app_name))
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
@@ -276,14 +281,20 @@ namespace BmwDeepObd
                     StringBuilder sbContent = new StringBuilder();
                     if (!ActivityCommon.CommActive)
                     {
-                        sbContent.Append("NoComm");
+                        sbContent.Append(carContext.GetString(Resource.String.car_service_disconnected));
                     }
                     else
                     {
+                        JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
                         foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                         {
                             string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
                             sbContent.Append(pageName);
+                            bool activePage = pageInfo == pageInfoActive;
+                            if (activePage)
+                            {
+                                sbContent.Append(carContext.GetString(Resource.String.car_service_active_page));
+                            }
                         }
                     }
 

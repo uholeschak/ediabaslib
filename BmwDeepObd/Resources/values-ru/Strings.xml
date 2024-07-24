@@ -859,4 +859,10 @@
   <string name="button_can_adapter_fw_update">Обновление прошивки</string>
   <string name="button_can_adapter_fw_change_elm">Прошить программное обеспечение ELM327</string>
   <string name="button_can_adapter_fw_change_custom">Прошить альтернативное программное обеспечение ELM327</string>
+
+  <!-- CarService -->
+  <!--Translate-->
+  <string name="car_service_disconnected">Автомобиль отключен.</string>
+  <string name="car_service_disconnected_hint">Откройте приложение, чтобы подключить автомобиль.</string>
+  <string name="car_service_active_page">Активная страница</string>
 </resources>
