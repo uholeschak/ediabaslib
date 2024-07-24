@@ -43,7 +43,7 @@ namespace BmwDeepObd
 #if DEBUG
         private static readonly string Tag = typeof(CarService).FullName;
 #endif
-        public const int UpdateInterval = 2000;
+        public const int UpdateInterval = 1000;
 
         public override void OnCreate()
         {
