@@ -1,4 +1,6 @@
 ﻿using Android.Content;
+using Android.OS;
+using Android.Service.Controls.Templates;
 using AndroidX.Car.App;
 using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
@@ -36,6 +38,8 @@ namespace BmwDeepObd
 
     public class CarService : CarAppService
     {
+        public const int UpdateInterval = 2000;
+
         public CarService()
         {
             // Exported services must have an empty public constructor.
@@ -128,7 +132,30 @@ namespace BmwDeepObd
             }
         }
 
-        public class MainScreen(CarContext carContext) : Screen(carContext)
+        public class BaseScreen : Screen
+        {
+            private readonly Handler _updateHandler;
+            private readonly UpdateScreenRunnable _updateScreenRunnable;
+
+            public BaseScreen(CarContext carContext) : base(carContext)
+            {
+                _updateHandler = new Handler(Looper.MainLooper);
+                _updateScreenRunnable = new UpdateScreenRunnable(this);
+            }
+
+            public override ITemplate OnGetTemplate()
+            {
+                return null;
+            }
+
+            public void StartUpdate()
+            {
+                _updateHandler.RemoveCallbacks(_updateScreenRunnable);
+                _updateHandler.PostDelayed(_updateScreenRunnable, UpdateInterval);
+            }
+        }
+
+        public class MainScreen(CarContext carContext) : BaseScreen(carContext)
         {
             public override ITemplate OnGetTemplate()
             {
@@ -171,15 +198,18 @@ namespace BmwDeepObd
                     }
                 }
 
-                return new ListTemplate.Builder()
+                ListTemplate listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(Action.AppIcon)
                     .SetTitle("Main page")
                     .SetSingleList(itemBuilder.Build())
                     .Build();
+
+                StartUpdate();
+                return listTemplate;
             }
         }
 
-        public class PageScreen(CarContext carContext, int pageIndex) : Screen(carContext)
+        public class PageScreen(CarContext carContext, int pageIndex) : BaseScreen(carContext)
         {
             public override ITemplate OnGetTemplate()
             {
@@ -200,11 +230,14 @@ namespace BmwDeepObd
                         .Build());
                 }
 
-                return new ListTemplate.Builder()
+                ListTemplate listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(Action.Back)
                     .SetTitle($"Page {pageIndex + 1}")
                     .SetSingleList(itemBuilder.Build())
                     .Build();
+
+                StartUpdate();
+                return listTemplate;
             }
         }
 
@@ -215,6 +248,25 @@ namespace BmwDeepObd
             public void OnClick()
             {
                 handler?.Invoke(parameter);
+            }
+        }
+
+        public class UpdateScreenRunnable(BaseScreen screen) : Java.Lang.Object, Java.Lang.IRunnable
+        {
+            public void Run()
+            {
+                try
+                {
+                    if (screen != null)
+                    {
+                        screen.Invalidate();
+                        screen.StartUpdate();
+                    }
+                }
+                catch (System.Exception)
+                {
+                    // ignored
+                }
             }
         }
     }
