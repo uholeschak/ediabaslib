@@ -151,7 +151,10 @@ namespace BmwDeepObd
             public void StartUpdate()
             {
                 _updateHandler.RemoveCallbacks(_updateScreenRunnable);
-                _updateHandler.PostDelayed(_updateScreenRunnable, UpdateInterval);
+                if (ScreenManager.Top == this)
+                {
+                    _updateHandler.PostDelayed(_updateScreenRunnable, UpdateInterval);
+                }
             }
         }
 
