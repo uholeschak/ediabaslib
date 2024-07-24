@@ -5,6 +5,7 @@ using AndroidX.Car.App;
 using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
 using AndroidX.Car.App.Validation;
+using AndroidX.Lifecycle;
 
 [assembly: Android.App.UsesPermission("androidx.car.app.MAP_TEMPLATES")]
 [assembly: Android.App.UsesPermission("androidx.car.app.NAVIGATION_TEMPLATES")]
@@ -38,12 +39,10 @@ namespace BmwDeepObd
 
     public class CarService : CarAppService
     {
+#if DEBUG
+        private static readonly string Tag = typeof(CarService).FullName;
+#endif
         public const int UpdateInterval = 2000;
-
-        public CarService()
-        {
-            // Exported services must have an empty public constructor.
-        }
 
         public override void OnCreate()
         {
@@ -132,26 +131,46 @@ namespace BmwDeepObd
             }
         }
 
-        public class BaseScreen : Screen
+        public class BaseScreen : Screen, ILifecycleEventObserver
         {
             private readonly Handler _updateHandler;
             private readonly UpdateScreenRunnable _updateScreenRunnable;
 
             public BaseScreen(CarContext carContext) : base(carContext)
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("BaseScreen: Class={0}", GetType().FullName));
+#endif
                 _updateHandler = new Handler(Looper.MainLooper);
                 _updateScreenRunnable = new UpdateScreenRunnable(this);
+                Lifecycle.AddObserver(this);
+            }
+
+            public void OnStateChanged(ILifecycleOwner source, Lifecycle.Event e)
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("BaseScreen: OnStateChanged State={0}", e));
+#endif
+                if (e == Lifecycle.Event.OnStart)
+                {
+                    StartUpdate();
+                }
+                else if (e == Lifecycle.Event.OnStop)
+                {
+                    StartUpdate(true);
+                }
             }
 
             public override ITemplate OnGetTemplate()
             {
-                return null;
+                return null!;
             }
 
-            public void StartUpdate()
+            public void StartUpdate(bool stop = false)
             {
                 _updateHandler.RemoveCallbacks(_updateScreenRunnable);
-                if (ScreenManager.Top == this)
+                if (ScreenManager.Top == this && !stop &&
+                    Lifecycle.CurrentState == Lifecycle.State.Started)
                 {
                     _updateHandler.PostDelayed(_updateScreenRunnable, UpdateInterval);
                 }
@@ -162,6 +181,9 @@ namespace BmwDeepObd
         {
             public override ITemplate OnGetTemplate()
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "MainScreen: OnGetTemplate");
+#endif
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
 
                 ItemList.Builder itemBuilder = new ItemList.Builder();
@@ -216,6 +238,10 @@ namespace BmwDeepObd
         {
             public override ITemplate OnGetTemplate()
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("PageScreen: OnGetTemplate Index={0}", pageIndex));
+#endif
+
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
                 int listSize = 10;
                 if (listLimit < listSize)
@@ -262,6 +288,9 @@ namespace BmwDeepObd
                 {
                     if (screen != null)
                     {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("UpdateScreenRunnable: Invalidate ScreenClass={0}", screen.GetType().FullName));
+#endif
                         screen.Invalidate();
                         screen.StartUpdate();
                     }
