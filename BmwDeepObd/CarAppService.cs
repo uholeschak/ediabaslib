@@ -5,6 +5,7 @@ using AndroidX.Car.App;
 using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
 using AndroidX.Car.App.Validation;
+using AndroidX.Lifecycle;
 
 [assembly: Android.App.UsesPermission("androidx.car.app.MAP_TEMPLATES")]
 [assembly: Android.App.UsesPermission("androidx.car.app.NAVIGATION_TEMPLATES")]
@@ -145,13 +146,14 @@ namespace BmwDeepObd
 
             public override ITemplate OnGetTemplate()
             {
-                return null;
+                return null!;
             }
 
             public void StartUpdate()
             {
                 _updateHandler.RemoveCallbacks(_updateScreenRunnable);
-                if (ScreenManager.Top == this)
+                if (ScreenManager.Top == this &&
+                    Lifecycle.CurrentState == Lifecycle.State.Started)
                 {
                     _updateHandler.PostDelayed(_updateScreenRunnable, UpdateInterval);
                 }
