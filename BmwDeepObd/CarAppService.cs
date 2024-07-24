@@ -170,12 +170,12 @@ namespace BmwDeepObd
             public virtual void RequestUpdate(bool stop = false)
             {
                 Lifecycle.State currentState = Lifecycle.CurrentState;
-                bool stateValid = currentState == Lifecycle.State.Started || currentState == Lifecycle.State.Resumed;
+                bool isValid = currentState == Lifecycle.State.Started || currentState == Lifecycle.State.Resumed;
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("RequestUpdate: State={0}, Valid={1}, Stop={2}, Class={3}", currentState, stateValid, stop, GetType().FullName));
+                Android.Util.Log.Info(Tag, string.Format("RequestUpdate: State={0}, Valid={1}, Stop={2}, Class={3}", currentState, isValid, stop, GetType().FullName));
 #endif
                 _updateHandler.RemoveCallbacks(_updateScreenRunnable);
-                if (ScreenManager.Top == this && !stop && stateValid)
+                if (isValid && !stop)
                 {
 #if DEBUG
                     Android.Util.Log.Info(Tag, string.Format("RequestUpdate: PostDelayed Class={0}", GetType().FullName));
