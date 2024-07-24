@@ -6,6 +6,7 @@ using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
 using AndroidX.Car.App.Validation;
 using AndroidX.Lifecycle;
+using System.Text;
 
 [assembly: Android.App.UsesPermission("androidx.car.app.MAP_TEMPLATES")]
 [assembly: Android.App.UsesPermission("androidx.car.app.NAVIGATION_TEMPLATES")]
@@ -166,7 +167,7 @@ namespace BmwDeepObd
                 return null!;
             }
 
-            public void RequestUpdate(bool stop = false)
+            public virtual void RequestUpdate(bool stop = false)
             {
                 Lifecycle.State currentState = Lifecycle.CurrentState;
                 bool stateValid = currentState == Lifecycle.State.Started || currentState == Lifecycle.State.Resumed;
@@ -188,10 +189,17 @@ namespace BmwDeepObd
 #endif
                 }
             }
+
+            public virtual bool ContentChanged()
+            {
+                return false;
+            }
         }
 
         public class MainScreen(CarContext carContext) : BaseScreen(carContext)
         {
+            private string _lastContent = string.Empty;
+
             public override ITemplate OnGetTemplate()
             {
 #if DEBUG
@@ -202,9 +210,12 @@ namespace BmwDeepObd
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 if (!ActivityCommon.CommActive)
                 {
+                    string title = "Vehicle is disconnected";
+                    string text = "Connect the vehicle in the app first";
+
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle("Vehicle is disconnected")
-                        .AddText("Connect the vehicle in the app")
+                        .SetTitle(title)
+                        .AddText(text)
                         .Build());
                 }
                 else
@@ -220,7 +231,6 @@ namespace BmwDeepObd
                         string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
                         itemBuilder.AddItem(new Row.Builder()
                             .SetTitle(pageName)
-                            .AddText(pageName)
                             .SetBrowsable(true)
                             .SetOnClickListener(new ActionListener((page) =>
                             {
@@ -242,8 +252,47 @@ namespace BmwDeepObd
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
+                _lastContent = GetContentString();
+
                 RequestUpdate();
                 return listTemplate;
+            }
+
+            public override bool ContentChanged()
+            {
+                string newContent = GetContentString();
+                if (string.Compare(_lastContent, newContent, System.StringComparison.Ordinal) == 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            private string GetContentString()
+            {
+                try
+                {
+                    StringBuilder sbContent = new StringBuilder();
+                    if (!ActivityCommon.CommActive)
+                    {
+                        sbContent.Append("NoComm");
+                    }
+                    else
+                    {
+                        foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                        {
+                            string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
+                            sbContent.Append(pageName);
+                        }
+                    }
+
+                    return sbContent.ToString();
+                }
+                catch (System.Exception)
+                {
+                    return string.Empty;
+                }
             }
         }
 
@@ -301,10 +350,15 @@ namespace BmwDeepObd
                 {
                     if (screen != null)
                     {
+                        bool invalidate = screen.ContentChanged();
 #if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("UpdateScreenRunnable: Invalidate Class={0}", screen.GetType().FullName));
+                        Android.Util.Log.Info(Tag, string.Format("UpdateScreenRunnable: Invalidate={0}, Class={1}", invalidate, screen.GetType().FullName));
 #endif
-                        screen.Invalidate();
+                        if (invalidate)
+                        {
+                            screen.Invalidate();
+                        }
+
                         screen.RequestUpdate();
                     }
                 }
