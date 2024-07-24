@@ -149,15 +149,15 @@ namespace BmwDeepObd
             public void OnStateChanged(ILifecycleOwner source, Lifecycle.Event e)
             {
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("BaseScreen: OnStateChanged State={0}", e));
+                Android.Util.Log.Info(Tag, string.Format("BaseScreen: OnStateChanged Class={0}, State={1}", GetType().FullName, e));
 #endif
                 if (e == Lifecycle.Event.OnStart)
                 {
-                    StartUpdate();
+                    RequestUpdate();
                 }
                 else if (e == Lifecycle.Event.OnStop)
                 {
-                    StartUpdate(true);
+                    RequestUpdate(true);
                 }
             }
 
@@ -166,13 +166,26 @@ namespace BmwDeepObd
                 return null!;
             }
 
-            public void StartUpdate(bool stop = false)
+            public void RequestUpdate(bool stop = false)
             {
+                Lifecycle.State currentState = Lifecycle.CurrentState;
+                bool stateValid = currentState == Lifecycle.State.Started || currentState == Lifecycle.State.Resumed;
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("RequestUpdate: State={0}, Valid={1}, Stop={2}, Class={3}", currentState, stateValid, stop, GetType().FullName));
+#endif
                 _updateHandler.RemoveCallbacks(_updateScreenRunnable);
-                if (ScreenManager.Top == this && !stop &&
-                    Lifecycle.CurrentState == Lifecycle.State.Started)
+                if (ScreenManager.Top == this && !stop && stateValid)
                 {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("RequestUpdate: PostDelayed Class={0}", GetType().FullName));
+#endif
                     _updateHandler.PostDelayed(_updateScreenRunnable, UpdateInterval);
+                }
+                else
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("RequestUpdate: Stopped Class={0}", GetType().FullName));
+#endif
                 }
             }
         }
@@ -229,7 +242,7 @@ namespace BmwDeepObd
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
-                StartUpdate();
+                RequestUpdate();
                 return listTemplate;
             }
         }
@@ -265,7 +278,7 @@ namespace BmwDeepObd
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
-                StartUpdate();
+                RequestUpdate();
                 return listTemplate;
             }
         }
@@ -289,10 +302,10 @@ namespace BmwDeepObd
                     if (screen != null)
                     {
 #if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("UpdateScreenRunnable: Invalidate ScreenClass={0}", screen.GetType().FullName));
+                        Android.Util.Log.Info(Tag, string.Format("UpdateScreenRunnable: Invalidate Class={0}", screen.GetType().FullName));
 #endif
                         screen.Invalidate();
-                        screen.StartUpdate();
+                        screen.RequestUpdate();
                     }
                 }
                 catch (System.Exception)
