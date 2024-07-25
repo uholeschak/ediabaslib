@@ -6,6 +6,7 @@ using AndroidX.Car.App.Model;
 using AndroidX.Car.App.Validation;
 using AndroidX.Lifecycle;
 using EdiabasLib;
+using System;
 using System.Text;
 
 namespace BmwDeepObd
@@ -119,7 +120,7 @@ namespace BmwDeepObd
                         return constraintManager.GetContentLimit(ConstraintManager.ContentLimitTypeList);
                     }
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     // ignored
                 }
@@ -268,7 +269,7 @@ namespace BmwDeepObd
                 }
 
                 ListTemplate listTemplate = new ListTemplate.Builder()
-                    .SetHeaderAction(Action.AppIcon)
+                    .SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon)
                     .SetTitle(CarContext.GetString(Resource.String.app_name))
                     .SetSingleList(itemBuilder.Build())
                     .Build();
@@ -319,7 +320,7 @@ namespace BmwDeepObd
 
                     return sbContent.ToString();
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     return string.Empty;
                 }
@@ -346,7 +347,7 @@ namespace BmwDeepObd
                     CarContext.StartActivity(intent);
                     return true;
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     // ignored
                 }
@@ -416,7 +417,7 @@ namespace BmwDeepObd
                 }
 
                 ListTemplate listTemplate = new ListTemplate.Builder()
-                    .SetHeaderAction(Action.Back)
+                    .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
                     .SetTitle(pageTitle)
                     .SetSingleList(itemBuilder.Build())
                     .Build();
@@ -488,7 +489,7 @@ namespace BmwDeepObd
 
                     return sbContent.ToString();
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     return string.Empty;
                 }
@@ -525,7 +526,7 @@ namespace BmwDeepObd
                         screen.RequestUpdate();
                     }
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     // ignored
                 }
