@@ -5,6 +5,7 @@ using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
 using AndroidX.Car.App.Validation;
 using AndroidX.Lifecycle;
+using EdiabasLib;
 using System.Text;
 
 namespace BmwDeepObd
@@ -203,7 +204,8 @@ namespace BmwDeepObd
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
 
                 ItemList.Builder itemBuilder = new ItemList.Builder();
-                JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
                 if (!ActivityCommon.CommActive || pageInfoActive == null)
                 {
                     itemBuilder.AddItem(new Row.Builder()
@@ -245,7 +247,11 @@ namespace BmwDeepObd
                                 }
 
                                 JobReader.PageInfo newPageInfo = ActivityCommon.JobReader.PageList[index];
-                                ActivityCommon.EdiabasThread.JobPageInfo = newPageInfo;
+                                EdiabasThread ediabasThreadLocal = ActivityCommon.EdiabasThread;
+                                if (ediabasThreadLocal != null)
+                                {
+                                    ediabasThreadLocal.JobPageInfo = newPageInfo;
+                                }
 
                                 ScreenManager.Push(new PageScreen(CarContext));
                             }, pageIndex));
@@ -290,7 +296,8 @@ namespace BmwDeepObd
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
-                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                    JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
                         disconnected = true;
@@ -361,7 +368,8 @@ namespace BmwDeepObd
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
 
                 ItemList.Builder itemBuilder = new ItemList.Builder();
-                JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
                 string pageTitle = CarContext.GetString(Resource.String.app_name);
 
                 if (!ActivityCommon.CommActive || pageInfoActive == null)
@@ -372,6 +380,15 @@ namespace BmwDeepObd
                 }
                 else
                 {
+                    MultiMap<string, EdiabasNet.ResultData> resultDict = null;
+                    lock (EdiabasThread.DataLock)
+                    {
+                        if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
+                        {
+                            resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
+                        }
+                    }
+
                     pageTitle = ActivityMain.GetPageString(pageInfoActive, pageInfoActive.Name);
                     int lineIndex = 0;
                     foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
@@ -385,6 +402,14 @@ namespace BmwDeepObd
                         Row.Builder row = new Row.Builder()
                             .SetTitle(rowTitle);
 
+                        if (ediabasThread != null && resultDict != null)
+                        {
+                            string result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
+                            if (!string.IsNullOrEmpty(result))
+                            {
+                                row.AddText(result);
+                            }
+                        }
                         itemBuilder.AddItem(row.Build());
                         lineIndex++;
                     }
@@ -428,7 +453,8 @@ namespace BmwDeepObd
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
-                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                    JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
                         disconnected = true;
@@ -436,10 +462,27 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        MultiMap<string, EdiabasNet.ResultData> resultDict = null;
+                        lock (EdiabasThread.DataLock)
+                        {
+                            if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
+                            {
+                                resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
+                            }
+                        }
+
                         foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
                         {
                             string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
                             sbContent.AppendLine(rowTitle);
+                            if (ediabasThread != null && resultDict != null)
+                            {
+                                string result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
+                                if (!string.IsNullOrEmpty(result))
+                                {
+                                    sbContent.AppendLine(result);
+                                }
+                            }
                         }
                     }
 
