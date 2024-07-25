@@ -840,6 +840,6 @@
 
   <!-- CarService -->
   <string name="car_service_disconnected">The vehicle is disconnected.</string>
-  <string name="car_service_disconnected_hint">Open the app to connect the vehicle.</string>
+  <string name="car_service_disconnected_hint">Connect to the vehicle in the app first.</string>
   <string name="car_service_active_page">Active page</string>
 </resources>

@@ -2322,19 +2322,23 @@ namespace BmwDeepObd
         private bool UseCommService()
         {
             bool useService = true;
-            if (_instanceData.DataLogActive)
+            if (ActivityCommon.AutoConnectHandling != ActivityCommon.AutoConnectType.StartBoot)
             {
-                if (ActivityCommon.LockTypeLogging == ActivityCommon.LockType.None)
+                if (_instanceData.DataLogActive)
                 {
-                    useService = false;
+                    if (ActivityCommon.LockTypeLogging == ActivityCommon.LockType.None)
+                    {
+                        useService = false;
+                    }
                 }
-            }
-            else
-            {
-                if (ActivityCommon.LockTypeCommunication == ActivityCommon.LockType.None)
+                else
                 {
-                    useService = false;
+                    if (ActivityCommon.LockTypeCommunication == ActivityCommon.LockType.None)
+                    {
+                        useService = false;
+                    }
                 }
+
             }
             return useService;
         }

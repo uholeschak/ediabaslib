@@ -863,6 +863,6 @@
   <!-- CarService -->
   <!--Translate-->
   <string name="car_service_disconnected">Автомобиль отключен.</string>
-  <string name="car_service_disconnected_hint">Откройте приложение, чтобы подключить автомобиль.</string>
+  <string name="car_service_disconnected_hint">Сначала подключитесь к автомобилю в приложении.</string>
   <string name="car_service_active_page">Активная страница</string>
 </resources>
