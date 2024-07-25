@@ -209,6 +209,10 @@ namespace BmwDeepObd
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
                         .AddText(CarContext.GetString(Resource.String.car_service_disconnected_hint))
+                        .SetOnClickListener(new ActionListener((page) =>
+                        {
+                            ShowApp();
+                        }))
                         .Build());
                 }
                 else
@@ -310,6 +314,35 @@ namespace BmwDeepObd
                     return string.Empty;
                 }
             }
+
+            public bool ShowApp()
+            {
+                try
+                {
+                    string packageName = CarContext.PackageName;
+                    if (string.IsNullOrEmpty(packageName))
+                    {
+                        return false;
+                    }
+
+                    Intent intent = CarContext.PackageManager?.GetLaunchIntentForPackage(packageName);
+                    if (intent == null)
+                    {
+                        return false;
+                    }
+
+                    intent.AddCategory(Intent.CategoryLauncher);
+                    intent.SetFlags(ActivityFlags.NewTask);
+                    CarContext.StartActivity(intent);
+                    return true;
+                }
+                catch (System.Exception)
+                {
+                    // ignored
+                }
+                return false;
+            }
+
         }
 
         public class PageScreen(CarContext carContext) : BaseScreen(carContext)
