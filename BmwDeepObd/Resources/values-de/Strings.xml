@@ -865,5 +865,6 @@
   <!-- CarService -->
   <string name="car_service_disconnected">Das Fahrzeug ist nicht verbunden.</string>
   <string name="car_service_disconnected_hint">Die Kommuniation muss erst in der App gestartet werden.</string>
+  <string name="car_service_app_displayed">Die App wird auf dem Smartphone angezeigt.</string>
   <string name="car_service_active_page">Aktive Seite</string>
 </resources>

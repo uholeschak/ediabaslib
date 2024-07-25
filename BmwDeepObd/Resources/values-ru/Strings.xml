@@ -864,5 +864,6 @@
   <!--Translate-->
   <string name="car_service_disconnected">Автомобиль отключен.</string>
   <string name="car_service_disconnected_hint">Сначала подключитесь к автомобилю в приложении.</string>
+  <string name="car_service_app_displayed">Приложение отобразилось на смартфоне.</string>
   <string name="car_service_active_page">Активная страница</string>
 </resources>
