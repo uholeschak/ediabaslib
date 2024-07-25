@@ -7,10 +7,6 @@ using AndroidX.Car.App.Validation;
 using AndroidX.Lifecycle;
 using System.Text;
 
-[assembly: Android.App.UsesPermission("androidx.car.app.MAP_TEMPLATES")]
-[assembly: Android.App.UsesPermission("androidx.car.app.NAVIGATION_TEMPLATES")]
-[assembly: Android.App.UsesPermission("androidx.car.app.ACCESS_SURFACE")]
-
 namespace BmwDeepObd
 {
     [Android.App.Service(
@@ -265,7 +261,7 @@ namespace BmwDeepObd
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
-                _lastContent = GetContentString();
+                _lastContent = GetContentString(out _);
                 RequestUpdate();
 
                 return listTemplate;
@@ -273,7 +269,7 @@ namespace BmwDeepObd
 
             public override bool ContentChanged()
             {
-                string newContent = GetContentString();
+                string newContent = GetContentString(out _);
                 if (string.Compare(_lastContent, newContent, System.StringComparison.Ordinal) == 0)
                 {
                     return false;
@@ -282,26 +278,28 @@ namespace BmwDeepObd
                 return true;
             }
 
-            private string GetContentString()
+            private string GetContentString(out bool disconnected)
             {
+                disconnected = false;
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
                     JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
-                        sbContent.Append(CarContext.GetString(Resource.String.car_service_disconnected));
+                        disconnected = true;
+                        sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                     }
                     else
                     {
                         foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                         {
                             string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
-                            sbContent.Append(pageName);
+                            sbContent.AppendLine(pageName);
                             bool activePage = pageInfo == pageInfoActive;
                             if (activePage)
                             {
-                                sbContent.Append(CarContext.GetString(Resource.String.car_service_active_page));
+                                sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_active_page));
                             }
                         }
                     }
@@ -335,7 +333,6 @@ namespace BmwDeepObd
                 {
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
-                        .AddText(CarContext.GetString(Resource.String.car_service_disconnected_hint))
                         .Build());
                 }
                 else
@@ -364,7 +361,7 @@ namespace BmwDeepObd
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
-                _lastContent = GetContentString();
+                _lastContent = GetContentString(out _);
                 RequestUpdate();
 
                 return listTemplate;
@@ -372,7 +369,16 @@ namespace BmwDeepObd
 
             public override bool ContentChanged()
             {
-                string newContent = GetContentString();
+                string newContent = GetContentString(out bool disconnected);
+                if (disconnected)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged disconnected");
+#endif
+                    ScreenManager.Pop();
+                    return false;
+                }
+
                 if (string.Compare(_lastContent, newContent, System.StringComparison.Ordinal) == 0)
                 {
                     return false;
@@ -381,22 +387,24 @@ namespace BmwDeepObd
                 return true;
             }
 
-            private string GetContentString()
+            private string GetContentString(out bool disconnected)
             {
+                disconnected = false;
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
                     JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
-                        sbContent.Append(CarContext.GetString(Resource.String.car_service_disconnected));
+                        disconnected = true;
+                        sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                     }
                     else
                     {
                         foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
                         {
                             string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
-                            sbContent.Append(rowTitle);
+                            sbContent.AppendLine(rowTitle);
                         }
                     }
 
