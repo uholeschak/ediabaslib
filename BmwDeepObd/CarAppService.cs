@@ -227,10 +227,9 @@ namespace BmwDeepObd
                             .SetBrowsable(true)
                             .SetOnClickListener(new ActionListener((page) =>
                             {
-                                int index = -1;
-                                if (page is int pageValue)
+                                if (!(page is int index))
                                 {
-                                    index = pageValue;
+                                    return;
                                 }
 
                                 if (index < 0 || index >= ActivityCommon.JobReader.PageList.Count)
@@ -241,7 +240,7 @@ namespace BmwDeepObd
                                 JobReader.PageInfo newPageInfo = ActivityCommon.JobReader.PageList[index];
                                 ActivityCommon.EdiabasThread.JobPageInfo = newPageInfo;
 
-                                ScreenManager.Push(new PageScreen(CarContext, index));
+                                ScreenManager.Push(new PageScreen(CarContext));
                             }, pageIndex));
 
                         bool activePage = pageInfo == pageInfoActive;
@@ -313,14 +312,14 @@ namespace BmwDeepObd
             }
         }
 
-        public class PageScreen(CarContext carContext, int pageIndex) : BaseScreen(carContext)
+        public class PageScreen(CarContext carContext) : BaseScreen(carContext)
         {
             private string _lastContent = string.Empty;
 
             public override ITemplate OnGetTemplate()
             {
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("PageScreen: OnGetTemplate Index={0}", pageIndex));
+                Android.Util.Log.Info(Tag, "PageScreen: OnGetTemplate");
 #endif
 
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
