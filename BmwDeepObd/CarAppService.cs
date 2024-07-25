@@ -211,7 +211,10 @@ namespace BmwDeepObd
                         .AddText(CarContext.GetString(Resource.String.car_service_disconnected_hint))
                         .SetOnClickListener(new ActionListener((page) =>
                         {
-                            ShowApp();
+                            if (ShowApp())
+                            {
+                                CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed, CarToast.LengthLong).Show();
+                            }
                         }))
                         .Build());
                 }
