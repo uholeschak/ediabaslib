@@ -7,6 +7,7 @@ using AndroidX.Car.App.Validation;
 using AndroidX.Lifecycle;
 using EdiabasLib;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace BmwDeepObd
@@ -381,9 +382,18 @@ namespace BmwDeepObd
                 }
                 else
                 {
+                    pageTitle = ActivityMain.GetPageString(pageInfoActive, pageInfoActive.Name);
+
                     if (pageInfoActive.ErrorsInfo != null)
                     {
-
+                        List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
+                        lock (EdiabasThread.DataLock)
+                        {
+                            if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
+                            {
+                                errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
+                            }
+                        }
                     }
                     else
                     {
@@ -396,7 +406,6 @@ namespace BmwDeepObd
                             }
                         }
 
-                        pageTitle = ActivityMain.GetPageString(pageInfoActive, pageInfoActive.Name);
                         int lineIndex = 0;
                         foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
                         {
@@ -463,6 +472,8 @@ namespace BmwDeepObd
                     StringBuilder sbContent = new StringBuilder();
                     EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                     JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
+                    string pageTitle = CarContext.GetString(Resource.String.app_name);
+
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
                         disconnected = true;
@@ -470,9 +481,18 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        pageTitle = ActivityMain.GetPageString(pageInfoActive, pageInfoActive.Name);
+
                         if (pageInfoActive.ErrorsInfo != null)
                         {
-
+                            List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
+                            lock (EdiabasThread.DataLock)
+                            {
+                                if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
+                                {
+                                    errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
+                                }
+                            }
                         }
                         else
                         {
@@ -501,6 +521,7 @@ namespace BmwDeepObd
                         }
                     }
 
+                    sbContent.AppendLine(pageTitle);
                     return sbContent.ToString();
                 }
                 catch (Exception)
