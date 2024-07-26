@@ -114,11 +114,17 @@ namespace BmwDeepObd
         {
             if (IsErrorEvalJobRunning())
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "EvaluateErrorMessages: Thread still active");
+#endif
                 return false;
             }
 
             _errorEvalThread = new Thread(() =>
             {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "EvaluateErrorMessages: Thread started");
+#endif
                 List<ErrorMessageEntry> errorList = new List<ErrorMessageEntry>();
                 List<ActivityCommon.VagDtcEntry> dtcList = null;
                 int errorIndex = 0;
@@ -136,6 +142,9 @@ namespace BmwDeepObd
 
                 if (resultHandler != null)
                 {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, string.Format("EvaluateErrorMessages: Thread finished items: {0}", errorList.Count));
+#endif
                     resultHandler.Invoke(errorList);
                 }
             });
@@ -419,6 +428,8 @@ namespace BmwDeepObd
         public class PageScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
         {
             private string _lastContent = string.Empty;
+            private object _errorLockObject = new object();
+            private List<ErrorMessageEntry> _errorList;
 
             public override ITemplate OnGetTemplate()
             {
@@ -445,16 +456,6 @@ namespace BmwDeepObd
 
                     if (pageInfoActive.ErrorsInfo != null)
                     {
-                        List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
-                        lock (EdiabasThread.DataLock)
-                        {
-                            if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
-                            {
-                                errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
-                            }
-                        }
-
-                        ActivityCommon activityCommon = CarServiceInst.ActivityCommon;
                     }
                     else
                     {
@@ -553,6 +554,18 @@ namespace BmwDeepObd
                                 {
                                     errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
                                 }
+                            }
+
+                            if (errorReportList != null)
+                            {
+                                CarServiceInst.EvaluateErrorMessages(pageInfoActive, errorReportList, null,
+                                    list =>
+                                    {
+                                        lock (_errorLockObject)
+                                        {
+                                            _errorList = list;
+                                        }
+                                    });
                             }
                         }
                         else
