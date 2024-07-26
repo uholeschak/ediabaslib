@@ -210,6 +210,7 @@ namespace BmwDeepObd
         public event PageChangedEventHandler PageChanged;
         public delegate void ThreadTerminatedEventHandler(object sender, EventArgs e);
         public event ThreadTerminatedEventHandler ThreadTerminated;
+        public delegate Tuple<string, string> TranslateDelegate(Tuple<string, string> tupleText);
 
         public Context ActiveContext
         {
@@ -368,6 +369,7 @@ namespace BmwDeepObd
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
         private long _lastUpdateTime;
+        private string _ecuPath;
         private string _vagPath;
         private string _bmwPath;
         private string _logDir;
@@ -459,6 +461,7 @@ namespace BmwDeepObd
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
                 _lastUpdateTime = Stopwatch.GetTimestamp();
+                _ecuPath = instanceData.EcuPath;
                 _vagPath = instanceData.VagPath;
                 _bmwPath = instanceData.BmwPath;
                 _logDir = instanceData.DataLogDir;
@@ -608,6 +611,389 @@ namespace BmwDeepObd
             }
             return result;
         }
+
+        public string GenerateErrorMessage(Context context, ActivityCommon activityCommon, JobReader.PageInfo pageInfo, EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref TranslateDelegate translateFunc, ref List<ActivityCommon.VagDtcEntry> dtcList)
+        {
+            StringBuilder srMessage = new StringBuilder();
+            string language = activityCommon.GetCurrentLanguage();
+            bool shadow = errorReport is EdiabasErrorShadowReport;
+            string ecuTitle = ActivityMain.GetPageString(pageInfo, errorReport.EcuName);
+            EcuFunctionStructs.EcuVariant ecuVariant = errorReport.EcuVariant;
+            if (ecuVariant != null)
+            {
+                string title = ecuVariant.Title?.GetTitle(language);
+                if (!string.IsNullOrEmpty(title))
+                {
+                    if (!string.IsNullOrEmpty(ecuTitle))
+                    {
+                        ecuTitle += " (" + title + ")";
+                    }
+                    else
+                    {
+                        ecuTitle = title;
+                    }
+                }
+            }
+
+            srMessage.Append(ecuTitle);
+            srMessage.Append(": ");
+
+            if (errorReport.ErrorDict == null)
+            {
+                srMessage.Append(context.GetString(Resource.String.error_no_response));
+            }
+            else
+            {
+                if (ActivityCommon.SelectedManufacturer != ActivityCommon.ManufacturerType.Bmw)
+                {
+                    Int64 errorCode = 0;
+                    if (errorReport.ErrorDict.TryGetValue("FNR_WERT", out EdiabasNet.ResultData resultData))
+                    {
+                        if (resultData.OpData is Int64)
+                        {
+                            errorCode = (Int64)resultData.OpData;
+                        }
+                    }
+
+                    byte[] ecuResponse1 = null;
+                    List<byte[]> ecuResponseList = new List<byte[]>();
+                    foreach (string key in errorReport.ErrorDict.Keys)
+                    {
+                        if (key.StartsWith("ECU_RESPONSE", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (errorReport.ErrorDict.TryGetValue(key, out resultData))
+                            {
+                                if (resultData.OpData.GetType() == typeof(byte[]))
+                                {
+                                    if (string.Compare(key, "ECU_RESPONSE1", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        ecuResponse1 = (byte[])resultData.OpData;
+                                    }
+                                    else
+                                    {
+                                        ecuResponseList.Add((byte[])resultData.OpData);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    List<long> errorTypeList = new List<long>();
+                    for (int i = 0; i < 1000; i++)
+                    {
+                        if (!errorReport.ErrorDict.TryGetValue(string.Format(CultureInfo.InvariantCulture, "FART{0}_WERT", i + 1), out resultData))
+                        {
+                            break;
+                        }
+                        if (!(resultData.OpData is Int64))
+                        {
+                            break;
+                        }
+                        Int64 errorType = (Int64)resultData.OpData;
+                        errorTypeList.Add(errorType);
+                    }
+                    bool kwp1281 = false;
+                    bool uds = false;
+                    bool saeMode = false;
+                    bool saeDetail = false;
+                    if (errorReport.ErrorDict.TryGetValue("OBJECT", out resultData))
+                    {
+                        // ReSharper disable once UsePatternMatching
+                        string objectName = resultData.OpData as string;
+                        if (objectName != null)
+                        {
+                            if (XmlToolActivity.Is1281EcuName(objectName))
+                            {
+                                kwp1281 = true;
+                            }
+                            else if (XmlToolActivity.IsUdsEcuName(objectName))
+                            {
+                                uds = true;
+                            }
+                        }
+                    }
+                    if (errorReport.ErrorDict.TryGetValue("SAE", out resultData))
+                    {
+                        if (resultData.OpData is Int64)
+                        {
+                            if ((Int64)resultData.OpData != 0)
+                            {
+                                saeMode = true;
+                                saeDetail = true;
+                                errorCode <<= 8;
+                            }
+                        }
+                    }
+
+                    ActivityCommon.VagDtcEntry dtcEntry = null;
+                    if (kwp1281)
+                    {
+                        dtcList = null;
+                        byte dtcDetail = 0;
+                        if (errorTypeList.Count >= 2)
+                        {
+                            dtcDetail = (byte)((errorTypeList[0] & 0x7F) | (errorTypeList[1] << 7));
+                        }
+
+                        dtcEntry = new ActivityCommon.VagDtcEntry((uint)errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Iso9141);
+                    }
+                    else if (uds)
+                    {
+                        dtcList = null;
+                        byte dtcDetail = 0;
+                        if (errorTypeList.Count >= 8)
+                        {
+                            for (int idx = 0; idx < 8; idx++)
+                            {
+                                if (errorTypeList[idx] == 1)
+                                {
+                                    dtcDetail |= (byte)(1 << idx);
+                                }
+                            }
+                        }
+
+                        dtcEntry = new ActivityCommon.VagDtcEntry((uint)errorCode, dtcDetail, UdsFileReader.DataReader.ErrorType.Uds);
+                        saeMode = true;
+                        errorCode <<= 8;
+                    }
+                    else
+                    {
+                        if (ecuResponse1 != null)
+                        {
+                            errorIndex = 0;
+                            dtcList = ActivityCommon.ParseEcuDtcResponse(ecuResponse1, saeMode);
+                        }
+
+                        if (dtcList != null && errorIndex < dtcList.Count)
+                        {
+                            dtcEntry = dtcList[errorIndex];
+                        }
+                    }
+
+                    List<string> textList = null;
+                    if (ActivityCommon.VagUdsActive && dtcEntry != null)
+                    {
+                        if (dtcEntry.ErrorType != UdsFileReader.DataReader.ErrorType.Uds)
+                        {
+                            string dataFileName = null;
+                            if (!string.IsNullOrEmpty(errorReport.VagDataFileName))
+                            {
+                                dataFileName = Path.Combine(_vagPath, errorReport.VagDataFileName);
+                            }
+                            UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(dataFileName);
+                            if (udsReader != null)
+                            {
+                                textList = udsReader.DataReader.ErrorCodeToString(
+                                    dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType, udsReader);
+                                if (saeDetail && ecuResponseList.Count > 0)
+                                {
+                                    byte[] detailData = ActivityCommon.ParseSaeDetailDtcResponse(ecuResponseList[0]);
+                                    if (detailData != null)
+                                    {
+                                        List<string> saeDetailList = udsReader.DataReader.SaeErrorDetailHeadToString(detailData, udsReader);
+                                        if (saeDetailList != null)
+                                        {
+                                            textList.AddRange(saeDetailList);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!string.IsNullOrEmpty(errorReport.VagUdsFileName))
+                            {
+                                string udsFileName = null;
+                                if (!string.IsNullOrEmpty(errorReport.VagUdsFileName))
+                                {
+                                    udsFileName = Path.Combine(_vagPath, errorReport.VagUdsFileName);
+                                }
+                                UdsFileReader.UdsReader udsReader = ActivityCommon.GetUdsReader(udsFileName);
+                                if (udsReader != null)
+                                {
+                                    textList = udsReader.ErrorCodeToString(udsFileName, dtcEntry.DtcCode, dtcEntry.DtcDetail);
+                                    if (ecuResponseList.Count > 0)
+                                    {
+                                        byte[] response = ActivityCommon.ExtractUdsEcuResponses(ecuResponseList[0]);
+                                        if (response != null)
+                                        {
+                                            List<string> errorDetailList = udsReader.ErrorDetailBlockToString(udsFileName, response);
+                                            if (errorDetailList != null)
+                                            {
+                                                textList.AddRange(errorDetailList);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        srMessage.Append("\r\n");
+                        srMessage.Append(context.GetString(Resource.String.error_error_code));
+                        srMessage.Append(": ");
+                        srMessage.Append(string.Format("0x{0:X04} 0x{1:X02} {2}", dtcEntry.DtcCode, dtcEntry.DtcDetail, dtcEntry.ErrorType.ToString()));
+                    }
+                    if (textList == null)
+                    {
+                        textList = activityCommon.ConvertVagDtcCode(_ecuPath, errorCode, errorTypeList, kwp1281, saeMode);
+                        srMessage.Append("\r\n");
+                        srMessage.Append(context.GetString(Resource.String.error_error_code));
+                        srMessage.Append(": ");
+                        srMessage.Append(string.Format("0x{0:X}", errorCode));
+                        foreach (long errorType in errorTypeList)
+                        {
+                            srMessage.Append(string.Format(";{0}", errorType));
+                        }
+
+                        if (saeMode)
+                        {
+                            srMessage.Append("\r\n");
+                            srMessage.Append(string.Format("{0}-{1:X02}", ActivityCommon.SaeCode16ToString(errorCode >> 8), errorCode & 0xFF));
+                        }
+                    }
+                    if (textList != null)
+                    {
+                        // ReSharper disable once LoopCanBeConvertedToQuery
+                        foreach (string text in textList)
+                        {
+                            srMessage.Append("\r\n");
+                            srMessage.Append(text);
+                        }
+                    }
+                }
+                else
+                {
+                    // BMW
+                    string text1 = string.Empty;
+                    string text2 = string.Empty;
+                    Int64 errorCode = ActivityMain.GetResultInt64(errorReport.ErrorDict, "F_ORT_NR", out bool errorCodeFound);
+                    if (!errorCodeFound)
+                    {
+                        errorCode = 0x0000;
+                    }
+
+                    bool showUnknown = !(ActivityCommon.EcuFunctionsActive && ActivityCommon.ShowOnlyRelevantErrors);
+                    List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList = null;
+                    if (ecuVariant != null)
+                    {
+#if false   // test code for result states
+                        List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelResultList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelListWithResultStates(ecuVariant);
+                        if (envCondLabelResultList != null && envCondLabelResultList.Count > 0)
+                        {
+                            string detailTestText = EdiabasThread.ConvertEnvCondErrorDetail(this, errorReport, envCondLabelResultList);
+                            if (!string.IsNullOrEmpty(detailTestText))
+                            {
+                                srMessage.Append("\r\n");
+                                srMessage.Append(detailTestText);
+                            }
+                        }
+#endif
+                        if (errorCode != 0x0000)
+                        {
+                            envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, errorReport.ReadIs, ecuVariant);
+                            List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport.ReadIs, errorReport, ecuVariant);
+
+                            if (faultResultList != null && faultResultList.Count == 2)
+                            {
+                                text1 = faultResultList[0];
+                                text2 = faultResultList[1];
+                            }
+                        }
+
+                        bool isSuppressed = !(errorReport.IsValid && errorReport.IsVisible);
+                        if (!showUnknown && isSuppressed)
+                        {
+                            errorCode = 0x0000;
+                        }
+                    }
+
+                    if (showUnknown && errorCode != 0x0000 && string.IsNullOrEmpty(text1))
+                    {
+                        text1 = ActivityMain.FormatResultString(errorReport.ErrorDict, "F_ORT_TEXT", "{0}");
+                        text2 = ActivityMain.FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
+                        if (translateFunc != null)
+                        {
+                            Tuple<string, string> tupleTrans = translateFunc.Invoke(new Tuple<string, string>(text1, text2));
+                            text1 = tupleTrans.Item1;
+                            text2 = tupleTrans.Item2;
+                        }
+                    }
+
+                    string textErrorCode = ActivityMain.FormatResultInt64(errorReport.ErrorDict, "F_ORT_NR", "{0:X04}");
+                    if (errorCode == 0x0000 || (string.IsNullOrEmpty(text1) && string.IsNullOrEmpty(textErrorCode)))
+                    {
+                        srMessage.Clear();
+                    }
+                    else
+                    {
+                        srMessage.Append("\r\n");
+                        if (!string.IsNullOrEmpty(textErrorCode))
+                        {
+                            if (errorReport.ReadIs)
+                            {
+                                srMessage.Append(context.GetString(Resource.String.error_info_code));
+                            }
+                            else
+                            {
+                                srMessage.Append(context.GetString(Resource.String.error_error_code));
+                                if (shadow)
+                                {
+                                    srMessage.Append(" ");
+                                    srMessage.Append(context.GetString(Resource.String.error_shadow));
+                                }
+                            }
+                            srMessage.Append(": ");
+                            srMessage.Append(textErrorCode);
+
+                            if (!errorReport.IsValid)
+                            {
+                                srMessage.Append(" (");
+                                srMessage.Append(context.GetString(Resource.String.error_unknown));
+                                srMessage.Append(")");
+                            }
+                            else if (!errorReport.IsVisible)
+                            {
+                                srMessage.Append(" (");
+                                srMessage.Append(context.GetString(Resource.String.error_hidden));
+                                srMessage.Append(")");
+                            }
+
+                            srMessage.Append("\r\n");
+                        }
+
+                        srMessage.Append(text1);
+                        if (!string.IsNullOrEmpty(text2))
+                        {
+                            srMessage.Append(", ");
+                            srMessage.Append(text2);
+                        }
+
+                        string detailText = ConvertEnvCondErrorDetail(context, errorReport, envCondLabelList);
+                        if (!string.IsNullOrEmpty(detailText))
+                        {
+                            srMessage.Append("\r\n");
+                            srMessage.Append(detailText);
+                        }
+                    }
+                }
+            }
+
+            string message = srMessage.ToString();
+            if (formatErrorResult != null)
+            {
+                try
+                {
+                    object[] args = { pageInfo, errorReport, message };
+                    message = formatErrorResult.Invoke(pageInfo.ClassObject, args) as string;
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return message;
+        }
+
 
         private void ProcessResults(JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
         {
