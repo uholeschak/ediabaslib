@@ -7,6 +7,7 @@ using AndroidX.Car.App.Validation;
 using AndroidX.Lifecycle;
 using EdiabasLib;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace BmwDeepObd
@@ -381,38 +382,53 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    MultiMap<string, EdiabasNet.ResultData> resultDict = null;
-                    lock (EdiabasThread.DataLock)
-                    {
-                        if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
-                        {
-                            resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
-                        }
-                    }
-
                     pageTitle = ActivityMain.GetPageString(pageInfoActive, pageInfoActive.Name);
-                    int lineIndex = 0;
-                    foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
+
+                    if (pageInfoActive.ErrorsInfo != null)
                     {
-                        if (lineIndex >= listLimit)
+                        List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
+                        lock (EdiabasThread.DataLock)
                         {
-                            break;
-                        }
-
-                        string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
-                        Row.Builder row = new Row.Builder()
-                            .SetTitle(rowTitle);
-
-                        if (ediabasThread != null && resultDict != null)
-                        {
-                            string result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
-                            if (!string.IsNullOrEmpty(result))
+                            if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
                             {
-                                row.AddText(result);
+                                errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
                             }
                         }
-                        itemBuilder.AddItem(row.Build());
-                        lineIndex++;
+                    }
+                    else
+                    {
+                        MultiMap<string, EdiabasNet.ResultData> resultDict = null;
+                        lock (EdiabasThread.DataLock)
+                        {
+                            if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
+                            {
+                                resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
+                            }
+                        }
+
+                        int lineIndex = 0;
+                        foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
+                        {
+                            if (lineIndex >= listLimit)
+                            {
+                                break;
+                            }
+
+                            string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
+                            Row.Builder row = new Row.Builder()
+                                .SetTitle(rowTitle);
+
+                            if (ediabasThread != null && resultDict != null)
+                            {
+                                string result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
+                                if (!string.IsNullOrEmpty(result))
+                                {
+                                    row.AddText(result);
+                                }
+                            }
+                            itemBuilder.AddItem(row.Build());
+                            lineIndex++;
+                        }
                     }
                 }
 
@@ -456,6 +472,8 @@ namespace BmwDeepObd
                     StringBuilder sbContent = new StringBuilder();
                     EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                     JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
+                    string pageTitle = CarContext.GetString(Resource.String.app_name);
+
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
                         disconnected = true;
@@ -463,30 +481,47 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        MultiMap<string, EdiabasNet.ResultData> resultDict = null;
-                        lock (EdiabasThread.DataLock)
+                        pageTitle = ActivityMain.GetPageString(pageInfoActive, pageInfoActive.Name);
+
+                        if (pageInfoActive.ErrorsInfo != null)
                         {
-                            if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
+                            List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
+                            lock (EdiabasThread.DataLock)
                             {
-                                resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
+                                if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
+                                {
+                                    errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
+                                }
                             }
                         }
-
-                        foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
+                        else
                         {
-                            string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
-                            sbContent.AppendLine(rowTitle);
-                            if (ediabasThread != null && resultDict != null)
+                            MultiMap<string, EdiabasNet.ResultData> resultDict = null;
+                            lock (EdiabasThread.DataLock)
                             {
-                                string result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
-                                if (!string.IsNullOrEmpty(result))
+                                if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
                                 {
-                                    sbContent.AppendLine(result);
+                                    resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
+                                }
+                            }
+
+                            foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
+                            {
+                                string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
+                                sbContent.AppendLine(rowTitle);
+                                if (ediabasThread != null && resultDict != null)
+                                {
+                                    string result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
+                                    if (!string.IsNullOrEmpty(result))
+                                    {
+                                        sbContent.AppendLine(result);
+                                    }
                                 }
                             }
                         }
                     }
 
+                    sbContent.AppendLine(pageTitle);
                     return sbContent.ToString();
                 }
                 catch (Exception)
