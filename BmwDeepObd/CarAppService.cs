@@ -42,6 +42,27 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(CarService).FullName;
 #endif
         public const int UpdateInterval = 1000;
+        private ActivityCommon _activityCommon;
+
+        public ActivityCommon ActivityCommon => _activityCommon;
+
+        public override void OnCreate()
+        {
+            base.OnCreate();
+
+            _activityCommon = new ActivityCommon(this);
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            if (_activityCommon != null)
+            {
+                _activityCommon.Dispose();
+                _activityCommon = null;
+            }
+        }
 
         public override HostValidator CreateHostValidator()
         {
@@ -50,14 +71,14 @@ namespace BmwDeepObd
 
         public override Session OnCreateSession()
         {
-            return new CarSession();
+            return new CarSession(this);
         }
 
-        public class CarSession : Session
+        public class CarSession(CarService carService) : Session
         {
             public override Screen OnCreateScreen(Intent intent)
             {
-                return new MainScreen(CarContext);
+                return new MainScreen(CarContext, carService);
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType)
@@ -80,14 +101,18 @@ namespace BmwDeepObd
 
         public class BaseScreen : Screen, ILifecycleEventObserver
         {
+            private CarService _carServiceInst;
             private readonly Handler _updateHandler;
             private readonly UpdateScreenRunnable _updateScreenRunnable;
 
-            public BaseScreen(CarContext carContext) : base(carContext)
+            public CarService CarServiceInst => _carServiceInst;
+
+            public BaseScreen(CarContext carContext, CarService carService) : base(carContext)
             {
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("BaseScreen: Class={0}", GetType().FullName));
 #endif
+                _carServiceInst = carService;
                 _updateHandler = new Handler(Looper.MainLooper);
                 _updateScreenRunnable = new UpdateScreenRunnable(this);
                 Lifecycle.AddObserver(this);
@@ -142,7 +167,7 @@ namespace BmwDeepObd
             }
         }
 
-        public class MainScreen(CarContext carContext) : BaseScreen(carContext)
+        public class MainScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
         {
             private string _lastContent = string.Empty;
 
@@ -203,7 +228,7 @@ namespace BmwDeepObd
                                     ediabasThreadLocal.JobPageInfo = newPageInfo;
                                 }
 
-                                ScreenManager.Push(new PageScreen(CarContext));
+                                ScreenManager.Push(new PageScreen(CarContext, CarServiceInst));
                             }, pageIndex));
 
                         bool activePage = pageInfo == pageInfoActive;
@@ -305,7 +330,7 @@ namespace BmwDeepObd
 
         }
 
-        public class PageScreen(CarContext carContext) : BaseScreen(carContext)
+        public class PageScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
         {
             private string _lastContent = string.Empty;
 
@@ -342,6 +367,8 @@ namespace BmwDeepObd
                                 errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
                             }
                         }
+
+                        ActivityCommon activityCommon = CarServiceInst.ActivityCommon;
                     }
                     else
                     {
