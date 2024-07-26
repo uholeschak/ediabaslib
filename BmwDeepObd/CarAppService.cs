@@ -8,7 +8,9 @@ using AndroidX.Lifecycle;
 using EdiabasLib;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 
 namespace BmwDeepObd
 {
@@ -38,11 +40,26 @@ namespace BmwDeepObd
 
     public class CarService : CarAppService
     {
+        public class ErrorMessageEntry
+        {
+            public ErrorMessageEntry(EdiabasThread.EdiabasErrorReport errorReport, string message)
+            {
+                ErrorReport = errorReport;
+                Message = message;
+            }
+
+            public EdiabasThread.EdiabasErrorReport ErrorReport { get; }
+            public string Message { get; }
+        }
+
+        public delegate void ErrorMessageResultDelegate(List<ErrorMessageEntry> errorList);
+
 #if DEBUG
         private static readonly string Tag = typeof(CarService).FullName;
 #endif
         public const int UpdateInterval = 1000;
         private ActivityCommon _activityCommon;
+        private Thread _errorEvalThread;
 
         public ActivityCommon ActivityCommon => _activityCommon;
 
@@ -56,6 +73,11 @@ namespace BmwDeepObd
         public override void OnDestroy()
         {
             base.OnDestroy();
+
+            if (IsErrorEvalJobRunning())
+            {
+                _errorEvalThread.Join();
+            }
 
             if (_activityCommon != null)
             {
@@ -73,6 +95,70 @@ namespace BmwDeepObd
         {
             return new CarSession(this);
         }
+
+        public bool IsErrorEvalJobRunning()
+        {
+            if (_errorEvalThread == null)
+            {
+                return false;
+            }
+            if (_errorEvalThread.IsAlive)
+            {
+                return true;
+            }
+            _errorEvalThread = null;
+            return false;
+        }
+
+        public bool EvaluateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult, ErrorMessageResultDelegate resultHandler)
+        {
+            if (IsErrorEvalJobRunning())
+            {
+                return false;
+            }
+
+            _errorEvalThread = new Thread(() =>
+            {
+                List<ErrorMessageEntry> errorList = new List<ErrorMessageEntry>();
+                List<ActivityCommon.VagDtcEntry> dtcList = null;
+                int errorIndex = 0;
+                foreach (EdiabasThread.EdiabasErrorReport errorReport in errorReportList)
+                {
+                    if (errorReport is EdiabasThread.EdiabasErrorReportReset)
+                    {
+                        continue;
+                    }
+
+                    string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref dtcList);
+                    errorList.Add(new ErrorMessageEntry(errorReport, message));
+                    errorIndex++;
+                }
+
+                if (resultHandler != null)
+                {
+                    resultHandler.Invoke(errorList);
+                }
+            });
+
+            _errorEvalThread.Start();
+
+            return true;
+        }
+
+        private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<ActivityCommon.VagDtcEntry> dtcList)
+        {
+
+            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+            if (ediabasThread == null)
+            {
+                return string.Empty;
+            }
+
+            List<string> translationList = new List<string>();
+            return ediabasThread.GenerateErrorMessage(this, _activityCommon, pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList,
+                null, ref dtcList);
+        }
+
 
         public class CarSession(CarService carService) : Session
         {
