@@ -42,6 +42,27 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(CarService).FullName;
 #endif
         public const int UpdateInterval = 1000;
+        private ActivityCommon _activityCommon;
+
+        public ActivityCommon ActivityCommon => _activityCommon;
+
+        public override void OnCreate()
+        {
+            base.OnCreate();
+
+            _activityCommon = new ActivityCommon(this);
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            if (_activityCommon != null)
+            {
+                _activityCommon.Dispose();
+                _activityCommon = null;
+            }
+        }
 
         public override HostValidator CreateHostValidator()
         {
