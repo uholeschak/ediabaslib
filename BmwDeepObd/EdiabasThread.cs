@@ -210,7 +210,7 @@ namespace BmwDeepObd
         public event PageChangedEventHandler PageChanged;
         public delegate void ThreadTerminatedEventHandler(object sender, EventArgs e);
         public event ThreadTerminatedEventHandler ThreadTerminated;
-        public delegate Tuple<string, string> TranslateDelegate(Tuple<string, string> tupleText);
+        public delegate Tuple<string, string> TranslateDelegate(Tuple<string, string> tupleText, ref List<string> transList);
 
         public Context ActiveContext
         {
@@ -612,7 +612,8 @@ namespace BmwDeepObd
             return result;
         }
 
-        public string GenerateErrorMessage(Context context, ActivityCommon activityCommon, JobReader.PageInfo pageInfo, EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref TranslateDelegate translateFunc, ref List<ActivityCommon.VagDtcEntry> dtcList)
+        public string GenerateErrorMessage(Context context, ActivityCommon activityCommon, JobReader.PageInfo pageInfo, EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult,
+            ref List<string> translationList, TranslateDelegate translateFunc, ref List<ActivityCommon.VagDtcEntry> dtcList)
         {
             StringBuilder srMessage = new StringBuilder();
             string language = activityCommon.GetCurrentLanguage();
@@ -912,7 +913,7 @@ namespace BmwDeepObd
                         text2 = ActivityMain.FormatResultString(errorReport.ErrorDict, "F_VORHANDEN_TEXT", "{0}");
                         if (translateFunc != null)
                         {
-                            Tuple<string, string> tupleTrans = translateFunc.Invoke(new Tuple<string, string>(text1, text2));
+                            Tuple<string, string> tupleTrans = translateFunc.Invoke(new Tuple<string, string>(text1, text2), ref translationList);
                             text1 = tupleTrans.Item1;
                             text2 = tupleTrans.Item2;
                         }
