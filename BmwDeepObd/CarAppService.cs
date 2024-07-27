@@ -456,6 +456,36 @@ namespace BmwDeepObd
 
                     if (pageInfoActive.ErrorsInfo != null)
                     {
+                        List<ErrorMessageEntry> _errorListCopy = null;
+                        lock (_errorLockObject)
+                        {
+                            _errorListCopy = _errorList;
+                        }
+
+                        if (_errorListCopy != null)
+                        {
+                            int lineIndex = 0;
+                            foreach (ErrorMessageEntry errorEntry in _errorListCopy)
+                            {
+                                if (lineIndex >= listLimit)
+                                {
+                                    break;
+                                }
+
+                                string message = errorEntry.Message;
+                                if (!string.IsNullOrEmpty(message))
+                                {
+                                    EdiabasThread.EdiabasErrorReport errorReport = errorEntry.ErrorReport;
+
+                                    Row.Builder row = new Row.Builder()
+                                        .SetTitle(errorReport.EcuName)
+                                        .AddText(message);
+
+                                    itemBuilder.AddItem(row.Build());
+                                    lineIndex++;
+                                }
+                            }
+                        }
                     }
                     else
                     {
@@ -488,6 +518,7 @@ namespace BmwDeepObd
                                     row.AddText(result);
                                 }
                             }
+
                             itemBuilder.AddItem(row.Build());
                             lineIndex++;
                         }
@@ -566,6 +597,28 @@ namespace BmwDeepObd
                                             _errorList = list;
                                         }
                                     });
+                            }
+
+                            List<ErrorMessageEntry> _errorListCopy = null;
+                            lock (_errorLockObject)
+                            {
+                                _errorListCopy = _errorList;
+                            }
+
+                            if (_errorListCopy != null)
+                            {
+                                int lineIndex = 0;
+                                foreach (ErrorMessageEntry errorEntry in _errorListCopy)
+                                {
+                                    string message = errorEntry.Message;
+                                    if (!string.IsNullOrEmpty(message))
+                                    {
+                                        EdiabasThread.EdiabasErrorReport errorReport = errorEntry.ErrorReport;
+
+                                        sbContent.AppendLine(errorReport.EcuName);
+                                        sbContent.AppendLine(message);
+                                    }
+                                }
                             }
                         }
                         else
