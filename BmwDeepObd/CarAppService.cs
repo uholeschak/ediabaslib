@@ -462,9 +462,9 @@ namespace BmwDeepObd
                             _errorListCopy = _errorList;
                         }
 
+                        int lineIndex = 0;
                         if (_errorListCopy != null)
                         {
-                            int lineIndex = 0;
                             foreach (ErrorMessageEntry errorEntry in _errorListCopy)
                             {
                                 if (lineIndex >= listLimit)
@@ -515,6 +515,14 @@ namespace BmwDeepObd
                                     }
                                 }
                             }
+                        }
+
+                        if (lineIndex == 0)
+                        {
+                            Row.Builder row = new Row.Builder()
+                                .SetTitle(CarContext.GetString(Resource.String.error_no_error));
+
+                            itemBuilder.AddItem(row.Build());
                         }
                     }
                     else
@@ -635,6 +643,7 @@ namespace BmwDeepObd
                                 _errorListCopy = _errorList;
                             }
 
+                            int lineIndex = 0;
                             if (_errorListCopy != null)
                             {
                                 foreach (ErrorMessageEntry errorEntry in _errorListCopy)
@@ -643,8 +652,14 @@ namespace BmwDeepObd
                                     if (!string.IsNullOrEmpty(message))
                                     {
                                         sbContent.AppendLine(message);
+                                        lineIndex++;
                                     }
                                 }
+                            }
+
+                            if (lineIndex == 0)
+                            {
+                                sbContent.AppendLine(CarContext.GetString(Resource.String.error_no_error));
                             }
                         }
                         else
