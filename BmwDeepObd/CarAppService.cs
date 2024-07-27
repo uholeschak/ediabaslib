@@ -323,7 +323,14 @@ namespace BmwDeepObd
                                     ediabasThreadLocal.JobPageInfo = newPageInfo;
                                 }
 
-                                ScreenManager.Push(new PageScreen(CarContext, CarServiceInst));
+                                try
+                                {
+                                    ScreenManager.Push(new PageScreen(CarContext, CarServiceInst));
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
                             }, pageIndex));
 
                         bool activePage = pageInfo == pageInfoActive;
@@ -583,7 +590,15 @@ namespace BmwDeepObd
 #if DEBUG
                     Android.Util.Log.Info(Tag, "PageScreen: ContentChanged disconnected");
 #endif
-                    ScreenManager.Pop();
+                    try
+                    {
+                        ScreenManager.PopToRoot();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
                     return false;
                 }
 
