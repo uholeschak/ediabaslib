@@ -475,14 +475,44 @@ namespace BmwDeepObd
                                 string message = errorEntry.Message;
                                 if (!string.IsNullOrEmpty(message))
                                 {
-                                    EdiabasThread.EdiabasErrorReport errorReport = errorEntry.ErrorReport;
+                                    string[] messageLines = message.Split(new[] { '\r', '\n' });
 
-                                    Row.Builder row = new Row.Builder()
-                                        .SetTitle(errorReport.EcuName)
-                                        .AddText(message);
+                                    string title = string.Empty;
+                                    StringBuilder sbText = new StringBuilder();
+                                    int lineCount = 0;
 
-                                    itemBuilder.AddItem(row.Build());
-                                    lineIndex++;
+                                    foreach (string messageLine in messageLines)
+                                    {
+                                        if (string.IsNullOrEmpty(messageLine))
+                                        {
+                                            continue;
+                                        }
+
+                                        if (lineCount == 0)
+                                        {
+                                            title = messageLine;
+                                        }
+                                        else
+                                        {
+                                            if (sbText.Length > 0)
+                                            {
+                                                sbText.AppendLine();
+                                            }
+
+                                            sbText.Append(messageLine);
+                                        }
+                                        lineCount++;
+                                    }
+
+                                    if (!string.IsNullOrEmpty(title) && sbText.Length > 0)
+                                    {
+                                        Row.Builder row = new Row.Builder()
+                                            .SetTitle(title)
+                                            .AddText(message);
+
+                                        itemBuilder.AddItem(row.Build());
+                                        lineIndex++;
+                                    }
                                 }
                             }
                         }
@@ -549,7 +579,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (string.Compare(_lastContent, newContent, System.StringComparison.Ordinal) == 0)
+                if (string.Compare(_lastContent, newContent, StringComparison.Ordinal) == 0)
                 {
                     return false;
                 }
@@ -607,15 +637,11 @@ namespace BmwDeepObd
 
                             if (_errorListCopy != null)
                             {
-                                int lineIndex = 0;
                                 foreach (ErrorMessageEntry errorEntry in _errorListCopy)
                                 {
                                     string message = errorEntry.Message;
                                     if (!string.IsNullOrEmpty(message))
                                     {
-                                        EdiabasThread.EdiabasErrorReport errorReport = errorEntry.ErrorReport;
-
-                                        sbContent.AppendLine(errorReport.EcuName);
                                         sbContent.AppendLine(message);
                                     }
                                 }
