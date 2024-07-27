@@ -508,7 +508,7 @@ namespace BmwDeepObd
                                     {
                                         Row.Builder row = new Row.Builder()
                                             .SetTitle(title)
-                                            .AddText(message);
+                                            .AddText(sbText.ToString());
 
                                         itemBuilder.AddItem(row.Build());
                                         lineIndex++;
