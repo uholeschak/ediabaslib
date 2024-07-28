@@ -265,25 +265,53 @@ namespace BmwDeepObd
         public class MainScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
         {
             private string _lastContent = string.Empty;
+            private readonly object _lockObject = new object();
+            private bool _disconnected = true;
+            private List<PageInfoEntry> _pageList;
+
+            private class PageInfoEntry
+            {
+                public PageInfoEntry(string name, bool activePage)
+                {
+                    Name = name;
+                    ActivePage = activePage;
+                }
+
+                public string Name { get; }
+
+                public bool ActivePage { get; }
+            }
 
             public override ITemplate OnGetTemplate()
             {
 #if DEBUG
                 Android.Util.Log.Info(Tag, "MainScreen: OnGetTemplate");
 #endif
-                _lastContent = GetContentString(out bool disconnected);
+                if (string.IsNullOrEmpty(_lastContent))
+                {
+                    _lastContent = GetContentString();
+                }
+
+                bool disconnectedCopy;
+                List<PageInfoEntry> pageListCopy;
+
+                lock (_lockObject)
+                {
+                    disconnectedCopy = _disconnected;
+                    pageListCopy = _pageList;
+                }
 
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
-                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
-                if (disconnected)
+
+                if (disconnectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
                         .AddText(CarContext.GetString(Resource.String.car_service_disconnected_hint))
                         .SetOnClickListener(new ActionListener((page) =>
                         {
+                            _lastContent = string.Empty;
                             if (ShowApp())
                             {
                                 CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed, CarToast.LengthLong).Show();
@@ -294,54 +322,66 @@ namespace BmwDeepObd
                 else
                 {
                     int pageIndex = 0;
-                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                    if (pageListCopy != null)
                     {
-                        if (pageIndex >= listLimit)
+                        foreach (PageInfoEntry pageInfo in pageListCopy)
                         {
-                            break;
-                        }
-
-                        string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
-                        Row.Builder row = new Row.Builder()
-                            .SetTitle(pageName)
-                            .SetBrowsable(true)
-                            .SetOnClickListener(new ActionListener((page) =>
+                            if (pageIndex >= listLimit)
                             {
-                                if (!(page is int index))
-                                {
-                                    return;
-                                }
+                                break;
+                            }
 
-                                if (index < 0 || index >= ActivityCommon.JobReader.PageList.Count)
-                                {
-                                    return;
-                                }
+                            string pageName = pageInfo.Name;
+                            bool activePage = pageInfo.ActivePage;
 
-                                JobReader.PageInfo newPageInfo = ActivityCommon.JobReader.PageList[index];
-                                EdiabasThread ediabasThreadLocal = ActivityCommon.EdiabasThread;
-                                if (ediabasThreadLocal != null)
+                            Row.Builder row = new Row.Builder()
+                                .SetTitle(pageName)
+                                .SetBrowsable(true)
+                                .SetOnClickListener(new ActionListener((page) =>
                                 {
-                                    ediabasThreadLocal.JobPageInfo = newPageInfo;
-                                }
+                                    if (!(page is int index))
+                                    {
+                                        return;
+                                    }
 
-                                try
-                                {
-                                    ScreenManager.Push(new PageScreen(CarContext, CarServiceInst));
-                                }
-                                catch (Exception)
-                                {
-                                    // ignored
-                                }
-                            }, pageIndex));
+                                    if (index < 0 || index >= ActivityCommon.JobReader.PageList.Count)
+                                    {
+                                        return;
+                                    }
 
-                        bool activePage = pageInfo == pageInfoActive;
-                        if (activePage)
-                        {
-                            row.AddText(CarContext.GetString(Resource.String.car_service_active_page));
+                                    JobReader.PageInfo newPageInfo = ActivityCommon.JobReader.PageList[index];
+                                    EdiabasThread ediabasThreadLocal = ActivityCommon.EdiabasThread;
+                                    if (ediabasThreadLocal != null)
+                                    {
+                                        ediabasThreadLocal.JobPageInfo = newPageInfo;
+                                    }
+
+                                    try
+                                    {
+                                        _lastContent = string.Empty;
+                                        ScreenManager.Push(new PageScreen(CarContext, CarServiceInst));
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                }, pageIndex));
+
+                            if (activePage)
+                            {
+                                row.AddText(CarContext.GetString(Resource.String.car_service_active_page));
+                            }
+
+                            itemBuilder.AddItem(row.Build());
+                            pageIndex++;
                         }
 
-                        itemBuilder.AddItem(row.Build());
-                        pageIndex++;
+                        if (pageIndex == 0)
+                        {
+                            itemBuilder.AddItem(new Row.Builder()
+                                .SetTitle(CarContext.GetString(Resource.String.car_service_no_pages))
+                                .Build());
+                        }
                     }
                 }
 
@@ -358,7 +398,7 @@ namespace BmwDeepObd
 
             public override bool ContentChanged()
             {
-                string newContent = GetContentString(out _);
+                string newContent = GetContentString();
                 if (string.Compare(_lastContent, newContent, System.StringComparison.Ordinal) == 0)
                 {
                     return false;
@@ -367,14 +407,16 @@ namespace BmwDeepObd
                 return true;
             }
 
-            private string GetContentString(out bool disconnected)
+            private string GetContentString()
             {
-                disconnected = false;
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
                     EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                     JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
+                    bool disconnected = false;
+                    List<PageInfoEntry> pageList = null;
+
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
                         disconnected = true;
@@ -382,6 +424,8 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        pageList = new List<PageInfoEntry>();
+                        int pageIndex = 0;
                         foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                         {
                             string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
@@ -391,7 +435,21 @@ namespace BmwDeepObd
                             {
                                 sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_active_page));
                             }
+
+                            pageList.Add(new PageInfoEntry(pageName, activePage));
+                            pageIndex++;
                         }
+
+                        if (pageIndex == 0)
+                        {
+                            sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_no_pages));
+                        }
+                    }
+
+                    lock (_lockObject)
+                    {
+                        _disconnected = disconnected;
+                        _pageList = pageList;
                     }
 
                     return sbContent.ToString();
@@ -443,7 +501,7 @@ namespace BmwDeepObd
             private List<ErrorMessageEntry> _errorList;
             private List<DataInfoEntry> _dataList;
 
-            public class DataInfoEntry
+            private class DataInfoEntry
             {
                 public DataInfoEntry(string title, string result)
                 {
