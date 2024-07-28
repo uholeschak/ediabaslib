@@ -596,21 +596,29 @@ namespace BmwDeepObd
                             if (!string.IsNullOrEmpty(result))
                             {
                                 row.AddText(result);
-                                row.SetOnClickListener(new ActionListener((page) =>
-                                {
-                                    try
-                                    {
-                                        ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
-                                    }
-                                    catch (Exception)
-                                    {
-                                        // ignored
-                                    }
-                                }));
                             }
+
+                            row.SetOnClickListener(new ActionListener((page) =>
+                            {
+                                try
+                                {
+                                    ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }));
 
                             itemBuilder.AddItem(row.Build());
                             lineIndex++;
+                        }
+
+                        if (lineIndex == 0)
+                        {
+                            itemBuilder.AddItem(new Row.Builder()
+                                .SetTitle(CarContext.GetString(Resource.String.car_service_no_data))
+                                .Build());
                         }
                     }
                 }
@@ -784,6 +792,7 @@ namespace BmwDeepObd
                                 }
                             }
 
+                            int lineIndex = 0;
                             List<DataInfoEntry> dataList = new List<DataInfoEntry>();
                             foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
                             {
@@ -802,6 +811,12 @@ namespace BmwDeepObd
                                 }
 
                                 dataList.Add(new DataInfoEntry(rowTitle, result));
+                                lineIndex++;
+                            }
+
+                            if (lineIndex == 0)
+                            {
+                                sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_no_data));
                             }
 
                             lock (_lockObject)
@@ -833,12 +848,17 @@ namespace BmwDeepObd
         {
             public override ITemplate OnGetTemplate()
             {
+                string itemMessage = message;
+                if (string.IsNullOrEmpty(itemMessage))
+                {
+                    itemMessage = CarContext.GetString(Resource.String.car_service_no_data);
+                }
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}'", title, message));
+                Android.Util.Log.Info(Tag, string.Format("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}'", title, itemMessage));
 #endif
                 if (CarContext.CarAppApiLevel >= 2)
                 {
-                    LongMessageTemplate longMessageTemplate = new LongMessageTemplate.Builder(message)
+                    LongMessageTemplate longMessageTemplate = new LongMessageTemplate.Builder(itemMessage)
                         .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
                         .SetTitle(title)
                         .Build();
@@ -846,7 +866,7 @@ namespace BmwDeepObd
                     return longMessageTemplate;
                 }
 
-                MessageTemplate messageTemplate = new MessageTemplate.Builder(message)
+                MessageTemplate messageTemplate = new MessageTemplate.Builder(itemMessage)
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
                     .SetTitle(title)
                     .Build();
