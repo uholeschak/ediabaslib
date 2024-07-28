@@ -437,6 +437,7 @@ namespace BmwDeepObd
             private string _lastContent = string.Empty;
             private readonly object _lockObject = new object();
             private string _pageTitle = string.Empty;
+            private bool _errorPage = false;
             private string _errorState = string.Empty;
             private List<ErrorMessageEntry> _errorList;
             private List<DataInfoEntry> _dataList;
@@ -466,6 +467,7 @@ namespace BmwDeepObd
                 string pageTitle = CarContext.GetString(Resource.String.app_name);
 
                 string pageTitleCopy;
+                bool errorPageCopy;
                 string errorStateCopy;
                 List<ErrorMessageEntry> errorListCopy;
                 List<DataInfoEntry> dataListCopy;
@@ -473,6 +475,7 @@ namespace BmwDeepObd
                 lock (_lockObject)
                 {
                     pageTitleCopy = _pageTitle;
+                    errorPageCopy = _errorPage;
                     errorStateCopy = _errorState;
                     errorListCopy = _errorList;
                     dataListCopy = _dataList;
@@ -491,7 +494,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    if (errorListCopy != null || !string.IsNullOrEmpty(errorStateCopy))
+                    if (errorPageCopy)
                     {
                         int lineIndex = 0;
                         if (errorListCopy != null)
@@ -660,6 +663,7 @@ namespace BmwDeepObd
                     EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                     JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
                     string pageTitle = CarContext.GetString(Resource.String.app_name);
+                    bool errorPage = false;
 
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
@@ -678,6 +682,7 @@ namespace BmwDeepObd
 
                         if (pageInfoActive.ErrorsInfo != null)
                         {
+                            errorPage = true;
                             List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
                             EdiabasThread.UpdateState updateState;
                             int updateProgress;
@@ -811,6 +816,7 @@ namespace BmwDeepObd
                     lock (_lockObject)
                     {
                         _pageTitle = pageTitle;
+                        _errorPage = errorPage;
                     }
 
                     sbContent.AppendLine(pageTitle);
