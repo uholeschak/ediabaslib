@@ -436,6 +436,7 @@ namespace BmwDeepObd
         {
             private string _lastContent = string.Empty;
             private object _errorLockObject = new object();
+            private string _errorState = string.Empty;
             private List<ErrorMessageEntry> _errorList;
 
             public override ITemplate OnGetTemplate()
@@ -463,9 +464,11 @@ namespace BmwDeepObd
 
                     if (pageInfoActive.ErrorsInfo != null)
                     {
-                        List<ErrorMessageEntry> _errorListCopy = null;
+                        List<ErrorMessageEntry> _errorListCopy;
+                        string _errorStateCopy;
                         lock (_errorLockObject)
                         {
+                            _errorStateCopy = _errorState;
                             _errorListCopy = _errorList;
                         }
 
@@ -537,6 +540,13 @@ namespace BmwDeepObd
                                     }
                                 }
                             }
+                        }
+                        else if (!string.IsNullOrEmpty(_errorStateCopy))
+                        {
+                            Row.Builder row = new Row.Builder()
+                                .SetTitle(_errorStateCopy);
+                            itemBuilder.AddItem(row.Build());
+                            lineIndex++;
                         }
 
                         if (lineIndex == 0)
@@ -662,29 +672,66 @@ namespace BmwDeepObd
                         if (pageInfoActive.ErrorsInfo != null)
                         {
                             List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
+                            EdiabasThread.UpdateState updateState;
+                            int updateProgress;
+
                             lock (EdiabasThread.DataLock)
                             {
                                 if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
                                 {
                                     errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
                                 }
+
+                                updateState = ActivityCommon.EdiabasThread.UpdateProgressState;
+                                updateProgress = ActivityCommon.EdiabasThread.UpdateProgress;
                             }
 
-                            if (errorReportList != null)
+                            if (errorReportList == null)
+                            {
+                                string state = string.Empty;
+                                switch (updateState)
+                                {
+                                    case EdiabasThread.UpdateState.Init:
+                                        state = CarContext.GetString(Resource.String.error_reading_state_init);
+                                        break;
+
+                                    case EdiabasThread.UpdateState.Error:
+                                        state = CarContext.GetString(Resource.String.error_reading_state_error);
+                                        break;
+
+                                    case EdiabasThread.UpdateState.DetectVehicle:
+                                        state = string.Format(CarContext.GetString(Resource.String.error_reading_state_detect), updateProgress);
+                                        break;
+
+                                    case EdiabasThread.UpdateState.ReadErrors:
+                                        state = string.Format(CarContext.GetString(Resource.String.error_reading_state_read), updateProgress);
+                                        break;
+                                }
+
+                                lock (_errorLockObject)
+                                {
+                                    _errorState = state;
+                                    _errorList = null;
+                                }
+                            }
+                            else
                             {
                                 CarServiceInst.EvaluateErrorMessages(pageInfoActive, errorReportList, null,
                                     list =>
                                     {
                                         lock (_errorLockObject)
                                         {
+                                            _errorState = string.Empty;
                                             _errorList = list;
                                         }
                                     });
                             }
 
-                            List<ErrorMessageEntry> _errorListCopy = null;
+                            List<ErrorMessageEntry> _errorListCopy;
+                            string _errorStateCopy;
                             lock (_errorLockObject)
                             {
+                                _errorStateCopy = _errorState;
                                 _errorListCopy = _errorList;
                             }
 
@@ -700,6 +747,11 @@ namespace BmwDeepObd
                                         lineIndex++;
                                     }
                                 }
+                            }
+                            else if (!string.IsNullOrEmpty(_errorStateCopy))
+                            {
+                                sbContent.AppendLine(_errorStateCopy);
+                                lineIndex++;
                             }
 
                             if (lineIndex == 0)
