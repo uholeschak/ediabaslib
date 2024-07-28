@@ -508,7 +508,7 @@ namespace BmwDeepObd
                                 {
                                     string[] messageLines = message.Split(new[] { '\r', '\n' });
 
-                                    string title = string.Empty;
+                                    string rowTitle = string.Empty;
                                     StringBuilder sbText = new StringBuilder();
                                     int lineCount = 0;
 
@@ -521,7 +521,7 @@ namespace BmwDeepObd
 
                                         if (lineCount == 0)
                                         {
-                                            title = messageLine;
+                                            rowTitle = messageLine;
                                         }
                                         else
                                         {
@@ -535,26 +535,22 @@ namespace BmwDeepObd
                                         lineCount++;
                                     }
 
-                                    if (!string.IsNullOrEmpty(title) && sbText.Length > 0)
+                                    if (!string.IsNullOrEmpty(rowTitle) && sbText.Length > 0)
                                     {
                                         Row.Builder row = new Row.Builder()
-                                            .SetTitle(title)
-                                            .AddText(sbText.ToString());
-
-                                        if (CarContext.CarAppApiLevel >= 2)
-                                        {
-                                            row.SetOnClickListener(new ActionListener((page) =>
+                                            .SetTitle(rowTitle)
+                                            .AddText(sbText.ToString())
+                                            .SetOnClickListener(new ActionListener((page) =>
                                             {
                                                 try
                                                 {
-                                                    ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, title, sbText.ToString()));
+                                                    ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString()));
                                                 }
                                                 catch (Exception)
                                                 {
                                                     // ignored
                                                 }
                                             }));
-                                        }
 
                                         itemBuilder.AddItem(row.Build());
                                         lineIndex++;
@@ -597,21 +593,17 @@ namespace BmwDeepObd
                             if (!string.IsNullOrEmpty(result))
                             {
                                 row.AddText(result);
-
-                                if (CarContext.CarAppApiLevel >= 2)
+                                row.SetOnClickListener(new ActionListener((page) =>
                                 {
-                                    row.SetOnClickListener(new ActionListener((page) =>
+                                    try
                                     {
-                                        try
-                                        {
-                                            ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
-                                        }
-                                        catch (Exception)
-                                        {
-                                            // ignored
-                                        }
-                                    }));
-                                }
+                                        ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                }));
                             }
 
                             itemBuilder.AddItem(row.Build());
@@ -837,7 +829,17 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}'", title, message));
 #endif
-                LongMessageTemplate messageTemplate = new LongMessageTemplate.Builder(message)
+                if (CarContext.CarAppApiLevel >= 2)
+                {
+                    LongMessageTemplate longMessageTemplate = new LongMessageTemplate.Builder(message)
+                        .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
+                        .SetTitle(title)
+                        .Build();
+
+                    return longMessageTemplate;
+                }
+
+                MessageTemplate messageTemplate = new MessageTemplate.Builder(message)
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
                     .SetTitle(title)
                     .Build();
