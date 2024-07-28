@@ -667,7 +667,6 @@ namespace BmwDeepObd
                         sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                         lock (_lockObject)
                         {
-                            _pageTitle = pageTitle;
                             _errorState = string.Empty;
                             _errorList = null;
                             _dataList = null;
@@ -718,7 +717,6 @@ namespace BmwDeepObd
 
                                 lock (_lockObject)
                                 {
-                                    _pageTitle = pageTitle;
                                     _errorState = state;
                                     _errorList = null;
                                     _dataList = null;
@@ -731,7 +729,6 @@ namespace BmwDeepObd
                                     {
                                         lock (_lockObject)
                                         {
-                                            _pageTitle = pageTitle;
                                             _errorState = string.Empty;
                                             _errorList = list;
                                             _dataList = null;
@@ -804,12 +801,16 @@ namespace BmwDeepObd
 
                             lock (_lockObject)
                             {
-                                _pageTitle = pageTitle;
                                 _errorState = string.Empty;
                                 _errorList = null;
                                 _dataList = dataList;
                             }
                         }
+                    }
+
+                    lock (_lockObject)
+                    {
+                        _pageTitle = pageTitle;
                     }
 
                     sbContent.AppendLine(pageTitle);
