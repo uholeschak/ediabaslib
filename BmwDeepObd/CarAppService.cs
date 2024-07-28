@@ -435,9 +435,23 @@ namespace BmwDeepObd
         public class PageScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
         {
             private string _lastContent = string.Empty;
-            private object _errorLockObject = new object();
+            private readonly object _lockObject = new object();
+            private string _pageTitle = string.Empty;
             private string _errorState = string.Empty;
             private List<ErrorMessageEntry> _errorList;
+            private List<DataInfoEntry> _dataList;
+
+            public class DataInfoEntry
+            {
+                public DataInfoEntry(string title, string result)
+                {
+                    Title = title;
+                    Result = result;
+                }
+
+                public string Title { get; }
+                public string Result { get; }
+            }
 
             public override ITemplate OnGetTemplate()
             {
@@ -446,13 +460,30 @@ namespace BmwDeepObd
 #endif
 
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
+                _lastContent = GetContentString(out bool disconnected);
 
                 ItemList.Builder itemBuilder = new ItemList.Builder();
-                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
                 string pageTitle = CarContext.GetString(Resource.String.app_name);
 
-                if (!ActivityCommon.CommActive || pageInfoActive == null)
+                string pageTitleCopy;
+                string errorStateCopy;
+                List<ErrorMessageEntry> errorListCopy;
+                List<DataInfoEntry> dataListCopy;
+
+                lock (_lockObject)
+                {
+                    pageTitleCopy = _pageTitle;
+                    errorStateCopy = _errorState;
+                    errorListCopy = _errorList;
+                    dataListCopy = _dataList;
+                }
+
+                if (!string.IsNullOrEmpty(pageTitleCopy))
+                {
+                    pageTitle = pageTitleCopy;
+                }
+
+                if (disconnected)
                 {
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
@@ -460,22 +491,12 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    pageTitle = ActivityMain.GetPageString(pageInfoActive, pageInfoActive.Name);
-
-                    if (pageInfoActive.ErrorsInfo != null)
+                    if (errorListCopy != null || !string.IsNullOrEmpty(errorStateCopy))
                     {
-                        List<ErrorMessageEntry> _errorListCopy;
-                        string _errorStateCopy;
-                        lock (_errorLockObject)
-                        {
-                            _errorStateCopy = _errorState;
-                            _errorListCopy = _errorList;
-                        }
-
                         int lineIndex = 0;
-                        if (_errorListCopy != null)
+                        if (errorListCopy != null)
                         {
-                            foreach (ErrorMessageEntry errorEntry in _errorListCopy)
+                            foreach (ErrorMessageEntry errorEntry in errorListCopy)
                             {
                                 if (lineIndex >= listLimit)
                                 {
@@ -541,10 +562,10 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        else if (!string.IsNullOrEmpty(_errorStateCopy))
+                        else if (!string.IsNullOrEmpty(errorStateCopy))
                         {
                             Row.Builder row = new Row.Builder()
-                                .SetTitle(_errorStateCopy);
+                                .SetTitle(errorStateCopy);
                             itemBuilder.AddItem(row.Build());
                             lineIndex++;
                         }
@@ -557,50 +578,39 @@ namespace BmwDeepObd
                             itemBuilder.AddItem(row.Build());
                         }
                     }
-                    else
+                    else if (dataListCopy != null)
                     {
-                        MultiMap<string, EdiabasNet.ResultData> resultDict = null;
-                        lock (EdiabasThread.DataLock)
-                        {
-                            if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
-                            {
-                                resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
-                            }
-                        }
-
                         int lineIndex = 0;
-                        foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
+                        foreach (DataInfoEntry dataEntry in dataListCopy)
                         {
                             if (lineIndex >= listLimit)
                             {
                                 break;
                             }
 
-                            string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
+                            string rowTitle = dataEntry.Title;
+                            string result = dataEntry.Result;
+
                             Row.Builder row = new Row.Builder()
                                 .SetTitle(rowTitle);
 
-                            if (ediabasThread != null && resultDict != null)
+                            if (!string.IsNullOrEmpty(result))
                             {
-                                string result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
-                                if (!string.IsNullOrEmpty(result))
-                                {
-                                    row.AddText(result);
+                                row.AddText(result);
 
-                                    if (CarContext.CarAppApiLevel >= 2)
+                                if (CarContext.CarAppApiLevel >= 2)
+                                {
+                                    row.SetOnClickListener(new ActionListener((page) =>
                                     {
-                                        row.SetOnClickListener(new ActionListener((page) =>
+                                        try
                                         {
-                                            try
-                                            {
-                                                ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
-                                            }
-                                            catch (Exception)
-                                            {
-                                                // ignored
-                                            }
-                                        }));
-                                    }
+                                            ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
+                                        }
+                                        catch (Exception)
+                                        {
+                                            // ignored
+                                        }
+                                    }));
                                 }
                             }
 
@@ -616,7 +626,6 @@ namespace BmwDeepObd
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
-                _lastContent = GetContentString(out _);
                 RequestUpdate();
 
                 return listTemplate;
@@ -664,6 +673,13 @@ namespace BmwDeepObd
                     {
                         disconnected = true;
                         sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                        lock (_lockObject)
+                        {
+                            _pageTitle = pageTitle;
+                            _errorState = string.Empty;
+                            _errorList = null;
+                            _dataList = null;
+                        }
                     }
                     else
                     {
@@ -708,10 +724,12 @@ namespace BmwDeepObd
                                         break;
                                 }
 
-                                lock (_errorLockObject)
+                                lock (_lockObject)
                                 {
+                                    _pageTitle = pageTitle;
                                     _errorState = state;
                                     _errorList = null;
+                                    _dataList = null;
                                 }
                             }
                             else
@@ -719,26 +737,28 @@ namespace BmwDeepObd
                                 CarServiceInst.EvaluateErrorMessages(pageInfoActive, errorReportList, null,
                                     list =>
                                     {
-                                        lock (_errorLockObject)
+                                        lock (_lockObject)
                                         {
+                                            _pageTitle = pageTitle;
                                             _errorState = string.Empty;
                                             _errorList = list;
+                                            _dataList = null;
                                         }
                                     });
                             }
 
-                            List<ErrorMessageEntry> _errorListCopy;
-                            string _errorStateCopy;
-                            lock (_errorLockObject)
+                            List<ErrorMessageEntry> errorListCopy;
+                            string errorStateCopy;
+                            lock (_lockObject)
                             {
-                                _errorStateCopy = _errorState;
-                                _errorListCopy = _errorList;
+                                errorStateCopy = _errorState;
+                                errorListCopy = _errorList;
                             }
 
                             int lineIndex = 0;
-                            if (_errorListCopy != null)
+                            if (errorListCopy != null)
                             {
-                                foreach (ErrorMessageEntry errorEntry in _errorListCopy)
+                                foreach (ErrorMessageEntry errorEntry in errorListCopy)
                                 {
                                     string message = errorEntry.Message;
                                     if (!string.IsNullOrEmpty(message))
@@ -748,9 +768,9 @@ namespace BmwDeepObd
                                     }
                                 }
                             }
-                            else if (!string.IsNullOrEmpty(_errorStateCopy))
+                            else if (!string.IsNullOrEmpty(errorStateCopy))
                             {
-                                sbContent.AppendLine(_errorStateCopy);
+                                sbContent.AppendLine(errorStateCopy);
                                 lineIndex++;
                             }
 
@@ -770,18 +790,32 @@ namespace BmwDeepObd
                                 }
                             }
 
+                            List<DataInfoEntry> dataList = new List<DataInfoEntry>();
                             foreach (JobReader.DisplayInfo displayInfo in pageInfoActive.DisplayList)
                             {
                                 string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
-                                sbContent.AppendLine(rowTitle);
+                                string result = string.Empty;
+
                                 if (ediabasThread != null && resultDict != null)
                                 {
-                                    string result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
-                                    if (!string.IsNullOrEmpty(result))
-                                    {
-                                        sbContent.AppendLine(result);
-                                    }
+                                    result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
                                 }
+
+                                sbContent.AppendLine(rowTitle);
+                                if (!string.IsNullOrEmpty(result))
+                                {
+                                    sbContent.AppendLine(result);
+                                }
+
+                                dataList.Add(new DataInfoEntry(rowTitle, result));
+                            }
+
+                            lock (_lockObject)
+                            {
+                                _pageTitle = pageTitle;
+                                _errorState = string.Empty;
+                                _errorList = null;
+                                _dataList = dataList;
                             }
                         }
                     }
