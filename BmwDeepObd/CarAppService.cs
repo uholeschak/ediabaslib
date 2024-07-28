@@ -271,12 +271,13 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Info(Tag, "MainScreen: OnGetTemplate");
 #endif
-                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
+                _lastContent = GetContentString(out bool disconnected);
 
+                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                 JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
-                if (!ActivityCommon.CommActive || pageInfoActive == null)
+                if (disconnected)
                 {
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
@@ -350,7 +351,6 @@ namespace BmwDeepObd
                     .SetSingleList(itemBuilder.Build())
                     .Build();
 
-                _lastContent = GetContentString(out _);
                 RequestUpdate();
 
                 return listTemplate;
@@ -436,6 +436,7 @@ namespace BmwDeepObd
         {
             private string _lastContent = string.Empty;
             private readonly object _lockObject = new object();
+            private bool _disconnected = true;
             private string _pageTitle = string.Empty;
             private bool _errorPage = false;
             private string _errorState = string.Empty;
@@ -460,12 +461,16 @@ namespace BmwDeepObd
                 Android.Util.Log.Info(Tag, "PageScreen: OnGetTemplate");
 #endif
 
-                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
-                _lastContent = GetContentString(out bool disconnected);
+                if (string.IsNullOrEmpty(_lastContent))
+                {
+                    _lastContent = GetContentString();
+                }
 
+                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 string pageTitle = CarContext.GetString(Resource.String.app_name);
 
+                bool disconnectedCopy;
                 string pageTitleCopy;
                 bool errorPageCopy;
                 string errorStateCopy;
@@ -474,6 +479,7 @@ namespace BmwDeepObd
 
                 lock (_lockObject)
                 {
+                    disconnectedCopy = _disconnected;
                     pageTitleCopy = _pageTitle;
                     errorPageCopy = _errorPage;
                     errorStateCopy = _errorState;
@@ -486,7 +492,7 @@ namespace BmwDeepObd
                     pageTitle = pageTitleCopy;
                 }
 
-                if (disconnected)
+                if (disconnectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
@@ -547,6 +553,7 @@ namespace BmwDeepObd
                                             {
                                                 try
                                                 {
+                                                    _lastContent = string.Empty;
                                                     ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString()));
                                                 }
                                                 catch (Exception)
@@ -602,6 +609,7 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
+                                    _lastContent = string.Empty;
                                     ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
                                 }
                                 catch (Exception)
@@ -636,8 +644,15 @@ namespace BmwDeepObd
 
             public override bool ContentChanged()
             {
-                string newContent = GetContentString(out bool disconnected);
-                if (disconnected)
+                string newContent = GetContentString();
+
+                bool disconnectedCopy;
+                lock (_lockObject)
+                {
+                    disconnectedCopy = _disconnected;
+                }
+
+                if (disconnectedCopy)
                 {
 #if DEBUG
                     Android.Util.Log.Info(Tag, "PageScreen: ContentChanged disconnected");
@@ -662,15 +677,15 @@ namespace BmwDeepObd
                 return true;
             }
 
-            private string GetContentString(out bool disconnected)
+            private string GetContentString()
             {
-                disconnected = false;
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
                     EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                     JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
                     string pageTitle = CarContext.GetString(Resource.String.app_name);
+                    bool disconnected = false;
                     bool errorPage = false;
 
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
@@ -830,6 +845,7 @@ namespace BmwDeepObd
 
                     lock (_lockObject)
                     {
+                        _disconnected = disconnected;
                         _pageTitle = pageTitle;
                         _errorPage = errorPage;
                     }
