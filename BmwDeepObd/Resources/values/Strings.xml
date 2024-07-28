@@ -843,5 +843,6 @@
   <string name="car_service_disconnected_hint">Connect to the vehicle in the app first.</string>
   <string name="car_service_app_displayed">The app has been displayed on the smartphone.</string>
   <string name="car_service_active_page">Active page</string>
+  <string name="car_service_no_pages">No pages</string>
   <string name="car_service_no_data">No data</string>
 </resources>
