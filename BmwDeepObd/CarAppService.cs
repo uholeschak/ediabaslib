@@ -614,17 +614,17 @@ namespace BmwDeepObd
                                             {
                                                 try
                                                 {
-                                                    if (ActivityCommon.ErrorResetActive)
-                                                    {
-                                                        CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_active, CarToast.LengthLong).Show();
-                                                        return;
-                                                    }
-
                                                     _lastContent = string.Empty;
                                                     string actionText = validResponse && !shadow ? CarContext.GetString(Resource.String.button_error_reset) : null;
                                                     ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
                                                         actionText, () =>
                                                         {
+                                                            if (ActivityCommon.ErrorResetActive)
+                                                            {
+                                                                CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_active, CarToast.LengthLong).Show();
+                                                                return;
+                                                            }
+
                                                             List<string> errorResetList = new List<string>() { ecuName };
                                                             EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                                                             if (ediabasThread != null)

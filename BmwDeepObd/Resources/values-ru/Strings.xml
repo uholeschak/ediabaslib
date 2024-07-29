@@ -868,6 +868,6 @@
   <string name="car_service_active_page">Активная страница</string>
   <string name="car_service_no_pages">Нет страниц</string>
   <string name="car_service_no_data">Нет данных</string>
-  <string name="car_service_error_reset_active">Сброс ошибки активен.</string>
+  <string name="car_service_error_reset_active">Сброс ошибки уже активен.</string>
   <string name="car_service_error_reset_started">Сброс ошибки начат.</string>
 </resources>
