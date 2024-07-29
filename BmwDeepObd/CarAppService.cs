@@ -918,7 +918,7 @@ namespace BmwDeepObd
             }
         }
 
-        public class PageDetailScreen(CarContext carContext, CarService carService, string title, string message) : BaseScreen(carContext, carService)
+        public class PageDetailScreen(CarContext carContext, CarService carService, string title, string message, string actionText = null) : BaseScreen(carContext, carService)
         {
             public override ITemplate OnGetTemplate()
             {
@@ -928,24 +928,46 @@ namespace BmwDeepObd
                     itemMessage = CarContext.GetString(Resource.String.car_service_no_data);
                 }
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}'", title, itemMessage));
+                Android.Util.Log.Info(Tag, string.Format("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}', Action='{2}'",
+                    title, itemMessage, actionText ?? string.Empty));
 #endif
                 if (CarContext.CarAppApiLevel >= 2)
                 {
-                    LongMessageTemplate longMessageTemplate = new LongMessageTemplate.Builder(itemMessage)
-                        .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                        .SetTitle(title)
-                        .Build();
+                    AndroidX.Car.App.Model.Action.Builder actionButton = null;
+                    if (!string.IsNullOrEmpty(actionText))
+                    {
+                        actionButton = new AndroidX.Car.App.Model.Action.Builder()
+                            .SetTitle(actionText)
+                            .SetOnClickListener(new ActionListener((page) =>
+                            {
+                                try
+                                {
+                                    ScreenManager.Pop();
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }));
+                    }
 
-                    return longMessageTemplate;
+                    LongMessageTemplate.Builder longMessageTemplate = new LongMessageTemplate.Builder(itemMessage)
+                        .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
+                        .SetTitle(title);
+
+                    if (actionButton != null)
+                    {
+                        longMessageTemplate.AddAction(actionButton.Build());
+                    }
+
+                    return longMessageTemplate.Build();
                 }
 
-                MessageTemplate messageTemplate = new MessageTemplate.Builder(itemMessage)
+                MessageTemplate.Builder messageTemplate = new MessageTemplate.Builder(itemMessage)
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                    .SetTitle(title)
-                    .Build();
+                    .SetTitle(title);
 
-                return messageTemplate;
+                return messageTemplate.Build();
             }
         }
 
