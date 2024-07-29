@@ -571,7 +571,8 @@ namespace BmwDeepObd
                                 }
 
                                 string message = errorEntry.Message;
-                                bool validResponse = errorEntry.ErrorReport.ErrorDict != null;
+                                string ecuName = errorEntry.ErrorReport.EcuName;
+                                bool validResponse = !string.IsNullOrEmpty(ecuName) && errorEntry.ErrorReport.ErrorDict != null;
                                 if (!string.IsNullOrEmpty(message))
                                 {
                                     string[] messageLines = message.Split(new[] { '\r', '\n' });
@@ -617,7 +618,15 @@ namespace BmwDeepObd
                                                     ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
                                                         actionText, () =>
                                                         {
-
+                                                            List<string> errorResetList = new List<string>() { ecuName };
+                                                            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                                                            if (ediabasThread != null)
+                                                            {
+                                                                lock (EdiabasThread.DataLock)
+                                                                {
+                                                                    ediabasThread.ErrorResetList = errorResetList;
+                                                                }
+                                                            }
                                                         }));
                                                 }
                                                 catch (Exception)
