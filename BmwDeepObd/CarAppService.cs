@@ -571,6 +571,8 @@ namespace BmwDeepObd
                                 }
 
                                 string message = errorEntry.Message;
+                                string ecuName = errorEntry.ErrorReport.EcuName;
+                                bool validResponse = !string.IsNullOrEmpty(ecuName) && errorEntry.ErrorReport.ErrorDict != null;
                                 if (!string.IsNullOrEmpty(message))
                                 {
                                     string[] messageLines = message.Split(new[] { '\r', '\n' });
@@ -612,11 +614,20 @@ namespace BmwDeepObd
                                                 try
                                                 {
                                                     _lastContent = string.Empty;
+                                                    string actionText = validResponse ? CarContext.GetString(Resource.String.button_error_reset) : null;
                                                     ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
-                                                    CarContext.GetString(Resource.String.button_error_reset), () =>
-                                                    {
-
-                                                    }));
+                                                        actionText, () =>
+                                                        {
+                                                            List<string> errorResetList = new List<string>() { ecuName };
+                                                            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                                                            if (ediabasThread != null)
+                                                            {
+                                                                lock (EdiabasThread.DataLock)
+                                                                {
+                                                                    ediabasThread.ErrorResetList = errorResetList;
+                                                                }
+                                                            }
+                                                        }));
                                                 }
                                                 catch (Exception)
                                                 {
