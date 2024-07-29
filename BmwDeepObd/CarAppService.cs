@@ -571,6 +571,7 @@ namespace BmwDeepObd
                                 }
 
                                 string message = errorEntry.Message;
+                                bool validResponse = errorEntry.ErrorReport.ErrorDict != null;
                                 if (!string.IsNullOrEmpty(message))
                                 {
                                     string[] messageLines = message.Split(new[] { '\r', '\n' });
@@ -612,11 +613,12 @@ namespace BmwDeepObd
                                                 try
                                                 {
                                                     _lastContent = string.Empty;
+                                                    string actionText = validResponse ? CarContext.GetString(Resource.String.button_error_reset) : null;
                                                     ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
-                                                    CarContext.GetString(Resource.String.button_error_reset), () =>
-                                                    {
+                                                        actionText, () =>
+                                                        {
 
-                                                    }));
+                                                        }));
                                                 }
                                                 catch (Exception)
                                                 {
