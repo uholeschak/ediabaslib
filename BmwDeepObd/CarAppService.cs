@@ -309,14 +309,14 @@ namespace BmwDeepObd
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
                         .AddText(CarContext.GetString(Resource.String.car_service_disconnected_hint))
-                        .SetOnClickListener(new ActionListener((page) =>
+                        .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                         {
                             _lastContent = string.Empty;
                             if (ShowApp())
                             {
                                 CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed, CarToast.LengthLong).Show();
                             }
-                        }))
+                        })))
                         .Build());
                 }
                 else
@@ -612,7 +612,11 @@ namespace BmwDeepObd
                                                 try
                                                 {
                                                     _lastContent = string.Empty;
-                                                    ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString()));
+                                                    ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
+                                                    CarContext.GetString(Resource.String.button_error_reset), () =>
+                                                    {
+
+                                                    }));
                                                 }
                                                 catch (Exception)
                                                 {
@@ -918,8 +922,11 @@ namespace BmwDeepObd
             }
         }
 
-        public class PageDetailScreen(CarContext carContext, CarService carService, string title, string message, string actionText = null) : BaseScreen(carContext, carService)
+        public class PageDetailScreen(CarContext carContext, CarService carService, string title, string message,
+            string actionText = null, PageDetailScreen.ActionDelegate actionDelegate = null) : BaseScreen(carContext, carService)
         {
+            public delegate void ActionDelegate();
+
             public override ITemplate OnGetTemplate()
             {
                 string itemMessage = message;
@@ -934,12 +941,13 @@ namespace BmwDeepObd
                 if (CarContext.CarAppApiLevel >= 2)
                 {
                     AndroidX.Car.App.Model.Action.Builder actionButton = null;
-                    if (!string.IsNullOrEmpty(actionText))
+                    if (!string.IsNullOrEmpty(actionText) && actionDelegate != null)
                     {
                         actionButton = new AndroidX.Car.App.Model.Action.Builder()
                             .SetTitle(actionText)
-                            .SetOnClickListener(new ActionListener((page) =>
+                            .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
+                                actionDelegate.Invoke();
                                 try
                                 {
                                     ScreenManager.Pop();
@@ -948,7 +956,7 @@ namespace BmwDeepObd
                                 {
                                     // ignored
                                 }
-                            }));
+                            })));
                     }
 
                     LongMessageTemplate.Builder longMessageTemplate = new LongMessageTemplate.Builder(itemMessage)
