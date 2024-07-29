@@ -610,10 +610,16 @@ namespace BmwDeepObd
                                         Row.Builder row = new Row.Builder()
                                             .SetTitle(rowTitle)
                                             .AddText(sbText.ToString())
-                                            .SetOnClickListener(new ActionListener((page) =>
+                                            .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                                             {
                                                 try
                                                 {
+                                                    if (ActivityCommon.ErrorResetActive)
+                                                    {
+                                                        CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_active, CarToast.LengthLong).Show();
+                                                        return;
+                                                    }
+
                                                     _lastContent = string.Empty;
                                                     string actionText = validResponse && !shadow ? CarContext.GetString(Resource.String.button_error_reset) : null;
                                                     ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
@@ -627,6 +633,8 @@ namespace BmwDeepObd
                                                                 {
                                                                     ediabasThread.ErrorResetList = errorResetList;
                                                                 }
+
+                                                                CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
                                                             }
                                                         }));
                                                 }
@@ -634,7 +642,7 @@ namespace BmwDeepObd
                                                 {
                                                     // ignored
                                                 }
-                                            }));
+                                            })));
 
                                         itemBuilder.AddItem(row.Build());
                                         lineIndex++;
@@ -679,7 +687,7 @@ namespace BmwDeepObd
                                 row.AddText(result);
                             }
 
-                            row.SetOnClickListener(new ActionListener((page) =>
+                            row.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
                                 try
                                 {
@@ -690,7 +698,7 @@ namespace BmwDeepObd
                                 {
                                     // ignored
                                 }
-                            }));
+                            })));
 
                             itemBuilder.AddItem(row.Build());
                             lineIndex++;
