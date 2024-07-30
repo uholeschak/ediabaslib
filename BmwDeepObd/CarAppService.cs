@@ -975,7 +975,7 @@ namespace BmwDeepObd
                 }
 #if DEBUG
                 Android.Util.Log.Info(Tag, string.Format("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}', Action='{2}'",
-                    title, itemMessage, actionText ?? string.Empty));
+                    title ?? string.Empty, itemMessage, actionText ?? string.Empty));
 #endif
                 if (CarContext.CarAppApiLevel >= 2)
                 {
@@ -1003,8 +1003,11 @@ namespace BmwDeepObd
                     }
 
                     LongMessageTemplate.Builder longMessageTemplate = new LongMessageTemplate.Builder(itemMessage)
-                        .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                        .SetTitle(title);
+                        .SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
+                    if (!string.IsNullOrEmpty(title))
+                    {
+                        longMessageTemplate.SetTitle(title);
+                    }
 
                     if (actionStripBuilder != null)
                     {
@@ -1015,8 +1018,12 @@ namespace BmwDeepObd
                 }
 
                 MessageTemplate.Builder messageTemplate = new MessageTemplate.Builder(itemMessage)
-                    .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                    .SetTitle(title);
+                    .SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
+
+                if (!string.IsNullOrEmpty(title))
+                {
+                    messageTemplate.SetTitle(title);
+                }
 
                 return messageTemplate.Build();
             }
