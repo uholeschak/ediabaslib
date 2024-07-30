@@ -435,11 +435,7 @@ namespace BmwDeepObd
             if (IsCommActive())
             {
                 _ignoreTabsChange = true;
-                lock (EdiabasThread.DataLock)
-                {
-                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                    currentPage = ediabasThread?.JobPageInfo;
-                }
+                currentPage = ActivityCommon.EdiabasThread?.JobPageInfo;
             }
             else
             {
@@ -2033,18 +2029,13 @@ namespace BmwDeepObd
                 return;
             }
 
-            lock (EdiabasThread.DataLock)
+            if (ActivityCommon.EdiabasThread == null)
             {
-                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                if (ediabasThread != null)
-                {
-                    ToggleButton button = v.FindViewById<ToggleButton>(Resource.Id.button_active);
-                    if (button != null)
-                    {
-                        ediabasThread.CommActive = button.Checked;
-                    }
-                }
+                return;
             }
+
+            ToggleButton button = v.FindViewById<ToggleButton>(Resource.Id.button_active);
+            ActivityCommon.EdiabasThread.CommActive = button.Checked;
         }
 
         [Export("onErrorResetClick")]
@@ -2401,23 +2392,21 @@ namespace BmwDeepObd
 
         private void ConnectEdiabasEvents()
         {
-            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-            if (ediabasThread != null)
+            if (ActivityCommon.EdiabasThread != null)
             {
-                ediabasThread.DataUpdated += DataUpdated;
-                ediabasThread.PageChanged += PageChanged;
-                ediabasThread.ThreadTerminated += ThreadTerminated;
+                ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
+                ActivityCommon.EdiabasThread.PageChanged += PageChanged;
+                ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
             }
         }
 
         private void DisconnectEdiabasEvents()
         {
-            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-            if (ediabasThread != null)
+            if (ActivityCommon.EdiabasThread != null)
             {
-                ediabasThread.DataUpdated -= DataUpdated;
-                ediabasThread.PageChanged -= PageChanged;
-                ediabasThread.ThreadTerminated -= ThreadTerminated;
+                ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
+                ActivityCommon.EdiabasThread.PageChanged -= PageChanged;
+                ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
             }
         }
 
