@@ -157,15 +157,18 @@ namespace BmwDeepObd
         private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<ActivityCommon.VagDtcEntry> dtcList)
         {
 
-            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-            if (ediabasThread == null)
+            lock (EdiabasThread.DataLock)
             {
-                return string.Empty;
-            }
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                if (ediabasThread == null)
+                {
+                    return string.Empty;
+                }
 
-            List<string> translationList = new List<string>();
-            return ediabasThread.GenerateErrorMessage(this, _activityCommon, pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList,
-                null, ref dtcList);
+                List<string> translationList = new List<string>();
+                return ediabasThread.GenerateErrorMessage(this, _activityCommon, pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList,
+                    null, ref dtcList);
+            }
         }
 
 
@@ -350,10 +353,13 @@ namespace BmwDeepObd
                                     }
 
                                     JobReader.PageInfo newPageInfo = ActivityCommon.JobReader.PageList[index];
-                                    EdiabasThread ediabasThreadLocal = ActivityCommon.EdiabasThread;
-                                    if (ediabasThreadLocal != null)
+                                    lock (EdiabasThread.DataLock)
                                     {
-                                        ediabasThreadLocal.JobPageInfo = newPageInfo;
+                                        EdiabasThread ediabasThreadLocal = ActivityCommon.EdiabasThread;
+                                        if (ediabasThreadLocal != null)
+                                        {
+                                            ediabasThreadLocal.JobPageInfo = newPageInfo;
+                                        }
                                     }
 
                                     try
@@ -412,8 +418,14 @@ namespace BmwDeepObd
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
-                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                    JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
+
+                    JobReader.PageInfo pageInfoActive;
+                    lock (EdiabasThread.DataLock)
+                    {
+                        EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                        pageInfoActive = ediabasThread?.JobPageInfo;
+                    }
+
                     bool disconnected = false;
                     List<PageInfoEntry> pageList = null;
 
@@ -732,16 +744,16 @@ namespace BmwDeepObd
                 Android.Util.Log.Info(Tag, string.Format("PageScreen: OnScreenResult Ecu={0}", ecuName));
 #endif
                 List<string> errorResetList = new List<string>() { ecuName };
-                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                if (ediabasThread != null)
+                lock (EdiabasThread.DataLock)
                 {
-                    lock (EdiabasThread.DataLock)
+                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                    if (ediabasThread != null)
                     {
                         ediabasThread.ErrorResetList = errorResetList;
                     }
-
-                    CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
                 }
+
+                CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
 
             }
 
