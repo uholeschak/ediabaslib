@@ -490,7 +490,7 @@ namespace BmwDeepObd
 
         }
 
-        public class PageScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
+        public class PageScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService), IOnScreenResultListener
         {
             private string _lastContent = string.Empty;
             private readonly object _lockObject = new object();
@@ -615,28 +615,17 @@ namespace BmwDeepObd
                                                 try
                                                 {
                                                     _lastContent = string.Empty;
-                                                    string actionText = validResponse && !shadow ? CarContext.GetString(Resource.String.button_error_reset) : null;
-                                                    ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
-                                                        actionText, () =>
-                                                        {
-                                                            if (ActivityCommon.ErrorResetActive)
-                                                            {
-                                                                CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_active, CarToast.LengthLong).Show();
-                                                                return;
-                                                            }
+                                                    string actionText = null;
+                                                    Java.Lang.String actionResult = null;
 
-                                                            List<string> errorResetList = new List<string>() { ecuName };
-                                                            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                                                            if (ediabasThread != null)
-                                                            {
-                                                                lock (EdiabasThread.DataLock)
-                                                                {
-                                                                    ediabasThread.ErrorResetList = errorResetList;
-                                                                }
+                                                    if (validResponse && !shadow)
+                                                    {
+                                                        actionText = CarContext.GetString(Resource.String.button_error_reset);
+                                                        actionResult = new Java.Lang.String(ecuName);
+                                                    }
 
-                                                                CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
-                                                            }
-                                                        }));
+                                                    ScreenManager.PushForResult(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
+                                                        actionText, actionResult), this);
                                                 }
                                                 catch (Exception)
                                                 {
@@ -722,6 +711,38 @@ namespace BmwDeepObd
                 RequestUpdate();
 
                 return listTemplate;
+            }
+
+            public void OnScreenResult(Java.Lang.Object p0)
+            {
+                Java.Lang.String ecuNameString = p0 as Java.Lang.String;
+                if (ecuNameString == null)
+                {
+                    return;
+                }
+
+                if (ActivityCommon.ErrorResetActive)
+                {
+                    CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_active, CarToast.LengthLong).Show();
+                    return;
+                }
+
+                string ecuName = ecuNameString.ToString();
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("PageScreen: OnScreenResult Ecu={0}", ecuName));
+#endif
+                List<string> errorResetList = new List<string>() { ecuName };
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                if (ediabasThread != null)
+                {
+                    lock (EdiabasThread.DataLock)
+                    {
+                        ediabasThread.ErrorResetList = errorResetList;
+                    }
+
+                    CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
+                }
+
             }
 
             public override bool ContentChanged()
@@ -943,10 +964,8 @@ namespace BmwDeepObd
         }
 
         public class PageDetailScreen(CarContext carContext, CarService carService, string title, string message,
-            string actionText = null, PageDetailScreen.ActionDelegate actionDelegate = null) : BaseScreen(carContext, carService)
+            string actionText = null, Java.Lang.Object actionResult = null) : BaseScreen(carContext, carService)
         {
-            public delegate void ActionDelegate();
-
             public override ITemplate OnGetTemplate()
             {
                 string itemMessage = message;
@@ -961,13 +980,14 @@ namespace BmwDeepObd
                 if (CarContext.CarAppApiLevel >= 2)
                 {
                     AndroidX.Car.App.Model.Action.Builder actionButton = null;
-                    if (!string.IsNullOrEmpty(actionText) && actionDelegate != null)
+                    if (!string.IsNullOrEmpty(actionText) && actionResult != null)
                     {
                         actionButton = new AndroidX.Car.App.Model.Action.Builder()
                             .SetTitle(actionText)
                             .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
-                                actionDelegate.Invoke();
+                                SetResult(actionResult);
+
                                 try
                                 {
                                     ScreenManager.Pop();
