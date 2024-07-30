@@ -289,10 +289,7 @@ namespace BmwDeepObd
 #if DEBUG
                 Android.Util.Log.Info(Tag, "MainScreen: OnGetTemplate");
 #endif
-                if (string.IsNullOrEmpty(_lastContent))
-                {
-                    _lastContent = GetContentString();
-                }
+                _lastContent = GetContentString();
 
                 bool disconnectedCopy;
                 List<PageInfoEntry> pageListCopy;
@@ -530,10 +527,7 @@ namespace BmwDeepObd
                 Android.Util.Log.Info(Tag, "PageScreen: OnGetTemplate");
 #endif
 
-                if (string.IsNullOrEmpty(_lastContent))
-                {
-                    _lastContent = GetContentString();
-                }
+                _lastContent = GetContentString();
 
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
