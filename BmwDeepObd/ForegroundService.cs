@@ -267,12 +267,12 @@ namespace BmwDeepObd
             NotificationManagerCompat notificationManager = NotificationManagerCompat.From(this);
             notificationManager.Cancel(ServiceRunningNotificationId);
 
-            DisconnectEdiabasEvents();
             lock (EdiabasThread.DataLock)
             {
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                 if (ediabasThread != null)
                 {
+                    DisconnectEdiabasEvents();
                     ediabasThread.ActiveContext = null;
                 }
             }
