@@ -156,7 +156,6 @@ namespace BmwDeepObd
 
         private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<ActivityCommon.VagDtcEntry> dtcList)
         {
-
             lock (EdiabasThread.DataLock)
             {
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
@@ -797,8 +796,14 @@ namespace BmwDeepObd
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
-                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                    JobReader.PageInfo pageInfoActive = ediabasThread?.JobPageInfo;
+
+                    JobReader.PageInfo pageInfoActive;
+                    lock (EdiabasThread.DataLock)
+                    {
+                        EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                        pageInfoActive = ediabasThread?.JobPageInfo;
+                    }
+
                     string pageTitle = CarContext.GetString(Resource.String.app_name);
                     bool disconnected = false;
                     bool errorPage = false;
@@ -822,18 +827,22 @@ namespace BmwDeepObd
                         {
                             errorPage = true;
                             List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
-                            EdiabasThread.UpdateState updateState;
-                            int updateProgress;
+                            EdiabasThread.UpdateState updateState = EdiabasThread.UpdateState.Init;
+                            int updateProgress = 0;
 
                             lock (EdiabasThread.DataLock)
                             {
-                                if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
+                                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                                if (ediabasThread != null)
                                 {
-                                    errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
-                                }
+                                    if (ediabasThread.ResultPageInfo == pageInfoActive)
+                                    {
+                                        errorReportList = ediabasThread.EdiabasErrorReportList;
+                                    }
 
-                                updateState = ActivityCommon.EdiabasThread.UpdateProgressState;
-                                updateProgress = ActivityCommon.EdiabasThread.UpdateProgress;
+                                    updateState = ediabasThread.UpdateProgressState;
+                                    updateProgress = ediabasThread.UpdateProgress;
+                                }
                             }
 
                             if (errorReportList == null)
@@ -916,9 +925,13 @@ namespace BmwDeepObd
                             MultiMap<string, EdiabasNet.ResultData> resultDict = null;
                             lock (EdiabasThread.DataLock)
                             {
-                                if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfoActive)
+                                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                                if (ediabasThread != null)
                                 {
-                                    resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
+                                    if (ediabasThread.ResultPageInfo == pageInfoActive)
+                                    {
+                                        resultDict = ActivityCommon.EdiabasThread.EdiabasResultDict;
+                                    }
                                 }
                             }
 
@@ -929,9 +942,13 @@ namespace BmwDeepObd
                                 string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
                                 string result = string.Empty;
 
-                                if (ediabasThread != null && resultDict != null)
+                                lock (EdiabasThread.DataLock)
                                 {
-                                    result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
+                                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                                    if (ediabasThread != null && resultDict != null)
+                                    {
+                                        result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
+                                    }
                                 }
 
                                 sbContent.AppendLine(rowTitle);
