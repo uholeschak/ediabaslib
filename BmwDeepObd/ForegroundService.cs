@@ -115,7 +115,7 @@ namespace BmwDeepObd
             _progressValue = -1;
             _updateState = EdiabasThread.UpdateState.Init;
 
-            lock (ActivityCommon.GlobalLockObject)
+            lock (EdiabasThread.DataLock)
             {
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                 if (ediabasThread != null)
@@ -268,7 +268,7 @@ namespace BmwDeepObd
             notificationManager.Cancel(ServiceRunningNotificationId);
 
             DisconnectEdiabasEvents();
-            lock (ActivityCommon.GlobalLockObject)
+            lock (EdiabasThread.DataLock)
             {
                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
                 if (ediabasThread != null)
@@ -614,7 +614,7 @@ namespace BmwDeepObd
 
         private void StopEdiabasThread(bool wait)
         {
-            lock (ActivityCommon.GlobalLockObject)
+            lock (EdiabasThread.DataLock)
             {
                 if (ActivityCommon.EdiabasThread != null)
                 {
@@ -627,7 +627,7 @@ namespace BmwDeepObd
             if (wait)
             {
                 StopService();
-                lock (ActivityCommon.GlobalLockObject)
+                lock (EdiabasThread.DataLock)
                 {
                     if (ActivityCommon.EdiabasThread != null)
                     {

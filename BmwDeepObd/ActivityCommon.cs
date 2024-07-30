@@ -1292,8 +1292,6 @@ namespace BmwDeepObd
 
         public long MtcServiceStartTime { get; private set; }
 
-        public static object GlobalLockObject => LockObject;
-
         public static object GlobalSettingLockObject => SettingsLockObject;
 
         public static bool StaticDataInitialized { get; set; }
@@ -6050,7 +6048,7 @@ namespace BmwDeepObd
                 StopEdiabasThread(true, ediabasEvent);
             }
 
-            lock (GlobalLockObject)
+            lock (EdiabasThread.DataLock)
             {
                 if (EdiabasThread == null)
                 {
@@ -6138,7 +6136,7 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    lock (GlobalLockObject)
+                    lock (EdiabasThread.DataLock)
                     {
                         if (EdiabasThread != null)
                         {
@@ -6148,7 +6146,7 @@ namespace BmwDeepObd
                     if (wait)
                     {
                         StopForegroundService(_context);
-                        lock (GlobalLockObject)
+                        lock (EdiabasThread.DataLock)
                         {
                             ediabasEvent?.Invoke(false);
                             if (EdiabasThread != null)
