@@ -359,7 +359,7 @@ namespace BmwDeepObd
 
             if (ActivityCommon.CommActive)
             {
-                lock (ActivityCommon.GlobalLockObject)
+                lock (EdiabasThread.DataLock)
                 {
                     ConnectEdiabasEvents();
                 }
@@ -733,7 +733,7 @@ namespace BmwDeepObd
                 StopEdiabasThread(true);
             }
 
-            lock (ActivityCommon.GlobalLockObject)
+            lock (EdiabasThread.DataLock)
             {
                 DisconnectEdiabasEvents();
             }
@@ -1010,7 +1010,7 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.CommActive)
                     {
-                        lock (ActivityCommon.GlobalLockObject)
+                        lock (EdiabasThread.DataLock)
                         {
                             DisconnectEdiabasEvents();
                             ConnectEdiabasEvents();
