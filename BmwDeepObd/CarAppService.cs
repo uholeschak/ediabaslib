@@ -979,10 +979,10 @@ namespace BmwDeepObd
 #endif
                 if (CarContext.CarAppApiLevel >= 2)
                 {
-                    AndroidX.Car.App.Model.Action.Builder actionButton = null;
+                    ActionStrip.Builder actionStripBuilder = null;
                     if (!string.IsNullOrEmpty(actionText) && actionResult != null)
                     {
-                        actionButton = new AndroidX.Car.App.Model.Action.Builder()
+                        AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
                             .SetTitle(actionText)
                             .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
@@ -997,15 +997,18 @@ namespace BmwDeepObd
                                     // ignored
                                 }
                             })));
+
+                        actionStripBuilder = new ActionStrip.Builder();
+                        actionStripBuilder.AddAction(actionButton.Build());
                     }
 
                     LongMessageTemplate.Builder longMessageTemplate = new LongMessageTemplate.Builder(itemMessage)
                         .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
                         .SetTitle(title);
 
-                    if (actionButton != null)
+                    if (actionStripBuilder != null)
                     {
-                        longMessageTemplate.AddAction(actionButton.Build());
+                        longMessageTemplate.SetActionStrip(actionStripBuilder.Build());
                     }
 
                     return longMessageTemplate.Build();
