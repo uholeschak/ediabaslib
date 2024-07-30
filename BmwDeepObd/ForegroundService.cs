@@ -543,19 +543,21 @@ namespace BmwDeepObd
 
         private void ConnectEdiabasEvents()
         {
-            if (ActivityCommon.EdiabasThread != null)
+            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+            if (ediabasThread != null)
             {
-                ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
-                ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
+                ediabasThread.DataUpdated += DataUpdated;
+                ediabasThread.ThreadTerminated += ThreadTerminated;
             }
         }
 
         private void DisconnectEdiabasEvents()
         {
-            if (ActivityCommon.EdiabasThread != null)
+            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+            if (ediabasThread != null)
             {
-                ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
-                ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
+                ediabasThread.DataUpdated -= DataUpdated;
+                ediabasThread.ThreadTerminated -= ThreadTerminated;
             }
         }
 
@@ -574,10 +576,14 @@ namespace BmwDeepObd
 
         private void DataUpdated(object sender, EventArgs e)
         {
-            EdiabasThread.UpdateState updateState;
+            EdiabasThread.UpdateState updateState = EdiabasThread.UpdateState.Init;
             lock (EdiabasThread.DataLock)
             {
-                updateState = ActivityCommon.EdiabasThread.UpdateProgressState;
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                if (ediabasThread != null)
+                {
+                    updateState = ediabasThread.UpdateProgressState;
+                }
             }
 
             bool changed = _updateState != updateState;
@@ -616,22 +622,25 @@ namespace BmwDeepObd
         {
             lock (EdiabasThread.DataLock)
             {
-                if (ActivityCommon.EdiabasThread != null)
+                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                if (ediabasThread != null)
                 {
-                    if (!ActivityCommon.EdiabasThread.ThreadStopping())
+                    if (!ediabasThread.ThreadStopping())
                     {
-                        ActivityCommon.EdiabasThread.StopThread(wait);
+                        ediabasThread.StopThread(wait);
                     }
                 }
             }
+
             if (wait)
             {
                 StopService();
                 lock (EdiabasThread.DataLock)
                 {
-                    if (ActivityCommon.EdiabasThread != null)
+                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                    if (ediabasThread != null)
                     {
-                        ActivityCommon.EdiabasThread.Dispose();
+                        ediabasThread.Dispose();
                         ActivityCommon.EdiabasThread = null;
                     }
                 }
@@ -1207,15 +1216,18 @@ namespace BmwDeepObd
                 {
                     return;
                 }
-                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                if (ediabasThread == null)
+
+                lock (EdiabasThread.DataLock)
                 {
-                    return;
-                }
-                if (ediabasThread.JobPageInfo != pageInfoSel)
-                {
-                    ActivityCommon.EdiabasThread.CommActive = true;
-                    ediabasThread.JobPageInfo = pageInfoSel;
+                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                    if (ediabasThread != null)
+                    {
+                        if (ediabasThread.JobPageInfo != pageInfoSel)
+                        {
+                            ediabasThread.CommActive = true;
+                            ediabasThread.JobPageInfo = pageInfoSel;
+                        }
+                    }
                 }
             }
         }
@@ -1224,17 +1236,24 @@ namespace BmwDeepObd
         {
             try
             {
-                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                // ReSharper disable once UseNullPropagation
-                if (ediabasThread == null)
+                JobReader.PageInfo pageInfo;
+                lock (EdiabasThread.DataLock)
                 {
-                    return;
+                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                    // ReSharper disable once UseNullPropagation
+                    if (ediabasThread == null)
+                    {
+                        return;
+                    }
+
+                    pageInfo = ediabasThread.JobPageInfo;
                 }
-                JobReader.PageInfo pageInfo = ediabasThread.JobPageInfo;
+
                 if (pageInfo.ClassObject == null)
                 {
                     return;
                 }
+
                 Type pageType = pageInfo.ClassObject.GetType();
                 MethodInfo broadcastReceived = pageType.GetMethod("BroadcastReceived", new[] { typeof(JobReader.PageInfo), typeof(Context), typeof(Intent) });
                 if (broadcastReceived == null)
