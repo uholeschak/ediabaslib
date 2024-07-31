@@ -617,7 +617,7 @@ namespace BmwDeepObd
 
                                                     if (validResponse && !shadow)
                                                     {
-                                                        actionText = CarContext.GetString(Resource.String.button_error_reset);
+                                                        actionText = CarContext.GetString(Resource.String.car_service_error_reset);
                                                         actionResult = new Java.Lang.String(ecuName);
                                                     }
 
