@@ -738,6 +738,8 @@ namespace BmwDeepObd
                     }
                 }
 
+                // force app screen update
+                ActivityCommon.EdiabasThread?.DataUpdatedEvent(true);
                 CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
 
             }
