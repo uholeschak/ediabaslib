@@ -156,18 +156,16 @@ namespace BmwDeepObd
 
         private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<ActivityCommon.VagDtcEntry> dtcList)
         {
-            lock (EdiabasThread.DataLock)
-            {
-                EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                if (ediabasThread == null)
-                {
-                    return string.Empty;
-                }
+            List<string> translationList = new List<string>();
+            string errorMessage = ActivityCommon.EdiabasThread?.GenerateErrorMessage(this, _activityCommon, pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList,
+                null, ref dtcList);
 
-                List<string> translationList = new List<string>();
-                return ediabasThread.GenerateErrorMessage(this, _activityCommon, pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList,
-                    null, ref dtcList);
+            if (errorMessage == null)
+            {
+                return string.Empty;
             }
+
+            return errorMessage;
         }
 
 
@@ -414,13 +412,7 @@ namespace BmwDeepObd
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
-
-                    JobReader.PageInfo pageInfoActive;
-                    lock (EdiabasThread.DataLock)
-                    {
-                        EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                        pageInfoActive = ediabasThread?.JobPageInfo;
-                    }
+                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
 
                     bool disconnected = false;
                     List<PageInfoEntry> pageList = null;
@@ -790,13 +782,7 @@ namespace BmwDeepObd
                 try
                 {
                     StringBuilder sbContent = new StringBuilder();
-
-                    JobReader.PageInfo pageInfoActive;
-                    lock (EdiabasThread.DataLock)
-                    {
-                        EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                        pageInfoActive = ediabasThread?.JobPageInfo;
-                    }
+                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
 
                     string pageTitle = CarContext.GetString(Resource.String.app_name);
                     bool disconnected = false;
@@ -936,13 +922,9 @@ namespace BmwDeepObd
                                 string rowTitle = ActivityMain.GetPageString(pageInfoActive, displayInfo.Name);
                                 string result = string.Empty;
 
-                                lock (EdiabasThread.DataLock)
+                                if (resultDict != null)
                                 {
-                                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
-                                    if (ediabasThread != null && resultDict != null)
-                                    {
-                                        result = ediabasThread.FormatResult(pageInfoActive, displayInfo, resultDict);
-                                    }
+                                    result = ActivityCommon.EdiabasThread?.FormatResult(pageInfoActive, displayInfo, resultDict);
                                 }
 
                                 sbContent.AppendLine(rowTitle);
