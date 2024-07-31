@@ -3323,14 +3323,23 @@ namespace BmwDeepObd
             _connectButtonInfo.Enabled = true;
             if (ActivityCommon.CommActive)
             {
-                if (ActivityCommon.EdiabasThread.ThreadStopping())
+                lock (EdiabasThread.DataLock)
                 {
-                    _connectButtonInfo.Enabled = false;
+                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                    if (ediabasThread != null)
+                    {
+                        if (ediabasThread.ThreadStopping())
+                        {
+                            _connectButtonInfo.Enabled = false;
+                        }
+
+                        if (ediabasThread.CommActive)
+                        {
+                            dynamicValid = true;
+                        }
+                    }
                 }
-                if (ActivityCommon.EdiabasThread.CommActive)
-                {
-                    dynamicValid = true;
-                }
+
                 _connectButtonInfo.Checked = true;
             }
             else
