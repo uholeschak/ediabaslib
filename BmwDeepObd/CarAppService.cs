@@ -58,6 +58,7 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(CarService).FullName;
 #endif
         public const int UpdateInterval = 1000;
+        public const int DefaultListItems = 6;
         private ActivityCommon _activityCommon;
         private Thread _errorEvalThread;
 
@@ -176,13 +177,16 @@ namespace BmwDeepObd
                 return new MainScreen(CarContext, carService);
             }
 
-            public static int GetContentLimit(CarContext carContext, int contentLimitType)
+            public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
             {
                 try
                 {
-                    if (carContext.GetCarService(Java.Lang.Class.FromType(typeof(ConstraintManager))) is ConstraintManager constraintManager)
+                    if (carContext.CarAppApiLevel >= 2)
                     {
-                        return constraintManager.GetContentLimit(ConstraintManager.ContentLimitTypeList);
+                        if (carContext.GetCarService(Java.Lang.Class.FromType(typeof(ConstraintManager))) is ConstraintManager constraintManager)
+                        {
+                            return constraintManager.GetContentLimit(ConstraintManager.ContentLimitTypeList);
+                        }
                     }
                 }
                 catch (Exception)
@@ -190,7 +194,7 @@ namespace BmwDeepObd
                     // ignored
                 }
 
-                return 0;
+                return defaultValue;
             }
         }
 
@@ -298,7 +302,7 @@ namespace BmwDeepObd
                     pageListCopy = _pageList;
                 }
 
-                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
+                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
 
                 if (disconnectedCopy)
@@ -521,7 +525,7 @@ namespace BmwDeepObd
 
                 _lastContent = GetContentString();
 
-                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList);
+                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 string pageTitle = CarContext.GetString(Resource.String.app_name);
 
