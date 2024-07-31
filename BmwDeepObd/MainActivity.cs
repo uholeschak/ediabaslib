@@ -2066,6 +2066,9 @@ namespace BmwDeepObd
                         let ecuName = resultItem.Tag as string
                         where ecuName != null && resultItem.CheckVisible && resultItem.Selected
                         select ecuName).ToList();
+#if DEBUG
+                Log.Info(Tag, string.Format("OnErrorResetClick: Ecus={0}", string.Join(", ", errorResetList)));
+#endif
                 lock (EdiabasThread.DataLock)
                 {
                     ActivityCommon.EdiabasThread.ErrorResetList = errorResetList;

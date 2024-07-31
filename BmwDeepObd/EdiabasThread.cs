@@ -1192,6 +1192,7 @@ namespace BmwDeepObd
                     _ediabasJobAbort = false;
                     _ediabasInitReq = false;
                 }
+
                 List<string> errorResetList;
                 string errorResetSgbdFunc;
                 lock (DataLock)
