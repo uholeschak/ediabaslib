@@ -501,7 +501,6 @@ namespace BmwDeepObd
             private bool _disconnected = true;
             private string _pageTitle = string.Empty;
             private bool _errorPage = false;
-            private string _errorState = string.Empty;
             private List<ErrorMessageEntry> _errorList;
             private List<DataInfoEntry> _dataList;
 
@@ -528,11 +527,11 @@ namespace BmwDeepObd
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 string pageTitle = CarContext.GetString(Resource.String.app_name);
+                bool loading = false;
 
                 bool disconnectedCopy;
                 string pageTitleCopy;
                 bool errorPageCopy;
-                string errorStateCopy;
                 List<ErrorMessageEntry> errorListCopy;
                 List<DataInfoEntry> dataListCopy;
 
@@ -541,7 +540,6 @@ namespace BmwDeepObd
                     disconnectedCopy = _disconnected;
                     pageTitleCopy = _pageTitle;
                     errorPageCopy = _errorPage;
-                    errorStateCopy = _errorState;
                     errorListCopy = _errorList;
                     dataListCopy = _dataList;
                 }
@@ -640,15 +638,12 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-                        else if (!string.IsNullOrEmpty(errorStateCopy))
+                        else
                         {
-                            Row.Builder row = new Row.Builder()
-                                .SetTitle(errorStateCopy);
-                            itemBuilder.AddItem(row.Build());
-                            lineIndex++;
+                            loading = true;
                         }
 
-                        if (lineIndex == 0)
+                        if (lineIndex == 0 && !loading)
                         {
                             Row.Builder row = new Row.Builder()
                                 .SetTitle(CarContext.GetString(Resource.String.error_no_error));
@@ -703,15 +698,21 @@ namespace BmwDeepObd
                     }
                 }
 
-                ListTemplate listTemplate = new ListTemplate.Builder()
+                ListTemplate.Builder listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                    .SetTitle(pageTitle)
-                    .SetSingleList(itemBuilder.Build())
-                    .Build();
+                    .SetTitle(pageTitle);
+                if (loading)
+                {
+                    listTemplate.SetLoading(true);
+                }
+                else
+                {
+                    listTemplate.SetSingleList(itemBuilder.Build());
+                }
 
                 RequestUpdate();
 
-                return listTemplate;
+                return listTemplate.Build();
             }
 
             public void OnScreenResult(Java.Lang.Object p0)
@@ -745,7 +746,6 @@ namespace BmwDeepObd
                 // force app screen update
                 ActivityCommon.EdiabasThread?.DataUpdatedEvent(true);
                 CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
-
             }
 
             public override bool ContentChanged()
@@ -800,7 +800,6 @@ namespace BmwDeepObd
                         sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                         lock (_lockObject)
                         {
-                            _errorState = string.Empty;
                             _errorList = null;
                             _dataList = null;
                         }
@@ -814,7 +813,6 @@ namespace BmwDeepObd
                             errorPage = true;
                             List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
                             EdiabasThread.UpdateState updateState = EdiabasThread.UpdateState.Init;
-                            int updateProgress = 0;
 
                             lock (EdiabasThread.DataLock)
                             {
@@ -827,35 +825,14 @@ namespace BmwDeepObd
                                     }
 
                                     updateState = ediabasThread.UpdateProgressState;
-                                    updateProgress = ediabasThread.UpdateProgress;
                                 }
                             }
 
                             if (errorReportList == null)
                             {
-                                string state = string.Empty;
-                                switch (updateState)
-                                {
-                                    case EdiabasThread.UpdateState.Init:
-                                        state = CarContext.GetString(Resource.String.error_reading_state_init);
-                                        break;
-
-                                    case EdiabasThread.UpdateState.Error:
-                                        state = CarContext.GetString(Resource.String.error_reading_state_error);
-                                        break;
-
-                                    case EdiabasThread.UpdateState.DetectVehicle:
-                                        state = string.Format(CarContext.GetString(Resource.String.error_reading_state_detect), updateProgress);
-                                        break;
-
-                                    case EdiabasThread.UpdateState.ReadErrors:
-                                        state = string.Format(CarContext.GetString(Resource.String.error_reading_state_read), updateProgress);
-                                        break;
-                                }
-
+                                bool loading = updateState != EdiabasThread.UpdateState.Connected;
                                 lock (_lockObject)
                                 {
-                                    _errorState = state;
                                     _errorList = null;
                                     _dataList = null;
                                 }
@@ -867,7 +844,6 @@ namespace BmwDeepObd
                                     {
                                         lock (_lockObject)
                                         {
-                                            _errorState = string.Empty;
                                             _errorList = list;
                                             _dataList = null;
                                         }
@@ -875,10 +851,8 @@ namespace BmwDeepObd
                             }
 
                             List<ErrorMessageEntry> errorListCopy;
-                            string errorStateCopy;
                             lock (_lockObject)
                             {
-                                errorStateCopy = _errorState;
                                 errorListCopy = _errorList;
                             }
 
@@ -895,9 +869,9 @@ namespace BmwDeepObd
                                     }
                                 }
                             }
-                            else if (!string.IsNullOrEmpty(errorStateCopy))
+                            else
                             {
-                                sbContent.AppendLine(errorStateCopy);
+                                sbContent.AppendLine("Loading");
                                 lineIndex++;
                             }
 
@@ -950,7 +924,6 @@ namespace BmwDeepObd
 
                             lock (_lockObject)
                             {
-                                _errorState = string.Empty;
                                 _errorList = null;
                                 _dataList = dataList;
                             }
