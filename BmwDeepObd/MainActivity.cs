@@ -2035,7 +2035,10 @@ namespace BmwDeepObd
             }
 
             ToggleButton button = v.FindViewById<ToggleButton>(Resource.Id.button_active);
-            ActivityCommon.EdiabasThread.CommActive = button.Checked;
+            if (button != null)
+            {
+                ActivityCommon.EdiabasThread.CommActive = button.Checked;
+            }
         }
 
         [Export("onErrorResetClick")]
