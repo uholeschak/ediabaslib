@@ -3417,7 +3417,7 @@ namespace BmwDeepObd
             }
         }
 
-        private void DataUpdatedEvent(bool forceUpdate = false)
+        public void DataUpdatedEvent(bool forceUpdate = false)
         {
             bool update = forceUpdate;
             if (Stopwatch.GetTimestamp() - _lastUpdateTime >= UpdateDataDelay * ActivityCommon.TickResolMs)
