@@ -58,6 +58,7 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(CarService).FullName;
 #endif
         public const int UpdateInterval = 1000;
+        public const int DefaultListItems = 6;
         private ActivityCommon _activityCommon;
         private Thread _errorEvalThread;
 
@@ -301,7 +302,7 @@ namespace BmwDeepObd
                     pageListCopy = _pageList;
                 }
 
-                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, 6);
+                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
 
                 if (disconnectedCopy)
@@ -524,7 +525,7 @@ namespace BmwDeepObd
 
                 _lastContent = GetContentString();
 
-                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, 6);
+                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 string pageTitle = CarContext.GetString(Resource.String.app_name);
 
