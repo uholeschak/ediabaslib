@@ -6086,7 +6086,7 @@ namespace BmwDeepObd
                 case InterfaceType.Bluetooth:
                     portName = EdBluetoothInterface.PortId + ":" + instanceData.DeviceAddress;
                     connectParameter = new EdBluetoothInterface.ConnectParameterType(NetworkData, MtcBtService, MtcBtEscapeMode,
-                        () => EdiabasThread.ActiveContext);
+                        () => EdiabasThread?.ActiveContext);
                     ConnectMtcBtDevice(instanceData.DeviceAddress);
                     break;
 
@@ -6125,7 +6125,7 @@ namespace BmwDeepObd
                     break;
             }
 
-            EdiabasThread.StartThread(portName, connectParameter, pageInfo, true, instanceData);
+            EdiabasThread?.StartThread(portName, connectParameter, pageInfo, true, instanceData);
 
             return true;
         }
