@@ -839,9 +839,12 @@
   <string name="button_can_adapter_fw_change_custom">Flash replacement firmware</string>
 
   <!-- CarService -->
-  <string name="car_service_disconnected">The vehicle is disconnected.</string>
-  <string name="car_service_disconnected_hint">Connect to the vehicle in the app first.</string>
+  <string name="car_service_connection_state">Connection state</string>
+  <string name="car_service_connected">The vehicle is connected.</string>
+  <string name="car_service_disconnected">The vehicle is disconnected.\nConnect to the vehicle in the app first.</string>
   <string name="car_service_app_displayed">The app has been displayed on the smartphone.</string>
+  <string name="car_service_page_list">Page list</string>
+  <string name="car_service_page_list_empty">No pages present.</string>
   <string name="car_service_active_page">Active page</string>
   <string name="car_service_no_pages">No pages</string>
   <string name="car_service_no_data">No data</string>

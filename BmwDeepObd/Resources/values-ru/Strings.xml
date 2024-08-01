@@ -862,9 +862,12 @@
 
   <!-- CarService -->
   <!--Translate-->
-  <string name="car_service_disconnected">Автомобиль отключен.</string>
-  <string name="car_service_disconnected_hint">Сначала подключитесь к автомобилю в приложении.</string>
+  <string name="car_service_connection_state">Состояние соединения</string>
+  <string name="car_service_connected">Автомобиль подключен.</string>
+  <string name="car_service_disconnected">Автомобиль отключен.\nСначала подключитесь к автомобилю в приложении.</string>
   <string name="car_service_app_displayed">Приложение отобразилось на смартфоне.</string>
+  <string name="car_service_page_list">Список страниц</string>
+  <string name="car_service_page_list_empty">Страниц нет.</string>
   <string name="car_service_active_page">Активная страница</string>
   <string name="car_service_no_pages">Нет страниц</string>
   <string name="car_service_no_data">Нет данных</string>
