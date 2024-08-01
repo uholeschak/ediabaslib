@@ -494,6 +494,196 @@ namespace BmwDeepObd
 
         }
 
+        public class PageListScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
+        {
+            private string _lastContent = string.Empty;
+            private readonly object _lockObject = new object();
+            private bool _disconnected = true;
+            private List<PageInfoEntry> _pageList;
+
+            private class PageInfoEntry
+            {
+                public PageInfoEntry(string name, bool activePage)
+                {
+                    Name = name;
+                    ActivePage = activePage;
+                }
+
+                public string Name { get; }
+
+                public bool ActivePage { get; }
+            }
+
+            public override ITemplate OnGetTemplate()
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "PageListScreen: OnGetTemplate");
+#endif
+                _lastContent = GetContentString();
+
+                bool disconnectedCopy;
+                List<PageInfoEntry> pageListCopy;
+
+                lock (_lockObject)
+                {
+                    disconnectedCopy = _disconnected;
+                    pageListCopy = _pageList;
+                }
+
+                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
+                ItemList.Builder itemBuilder = new ItemList.Builder();
+
+                if (disconnectedCopy)
+                {
+                    itemBuilder.AddItem(new Row.Builder()
+                        .SetTitle(CarContext.GetString(Resource.String.car_service_disconnected))
+                        .Build());
+                }
+                else
+                {
+                    int pageIndex = 0;
+                    if (pageListCopy != null)
+                    {
+                        foreach (PageInfoEntry pageInfo in pageListCopy)
+                        {
+                            if (pageIndex >= listLimit)
+                            {
+                                break;
+                            }
+
+                            string pageName = pageInfo.Name;
+                            bool activePage = pageInfo.ActivePage;
+
+                            Row.Builder row = new Row.Builder()
+                                .SetTitle(pageName)
+                                .SetBrowsable(true)
+                                .SetOnClickListener(new ActionListener((page) =>
+                                {
+                                    if (!(page is int index))
+                                    {
+                                        return;
+                                    }
+
+                                    if (index < 0 || index >= ActivityCommon.JobReader.PageList.Count)
+                                    {
+                                        return;
+                                    }
+
+                                    JobReader.PageInfo newPageInfo = ActivityCommon.JobReader.PageList[index];
+                                    lock (EdiabasThread.DataLock)
+                                    {
+                                        EdiabasThread ediabasThreadLocal = ActivityCommon.EdiabasThread;
+                                        if (ediabasThreadLocal != null)
+                                        {
+                                            ediabasThreadLocal.JobPageInfo = newPageInfo;
+                                        }
+                                    }
+
+                                    try
+                                    {
+                                        _lastContent = string.Empty;
+                                        ScreenManager.Push(new PageScreen(CarContext, CarServiceInst));
+                                    }
+                                    catch (Exception)
+                                    {
+                                        // ignored
+                                    }
+                                }, pageIndex));
+
+                            if (activePage)
+                            {
+                                row.AddText(CarContext.GetString(Resource.String.car_service_active_page));
+                            }
+
+                            itemBuilder.AddItem(row.Build());
+                            pageIndex++;
+                        }
+
+                        if (pageIndex == 0)
+                        {
+                            itemBuilder.AddItem(new Row.Builder()
+                                .SetTitle(CarContext.GetString(Resource.String.car_service_no_pages))
+                                .Build());
+                        }
+                    }
+                }
+
+                ListTemplate listTemplate = new ListTemplate.Builder()
+                    .SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon)
+                    .SetTitle(CarContext.GetString(Resource.String.app_name))
+                    .SetSingleList(itemBuilder.Build())
+                    .Build();
+
+                RequestUpdate();
+
+                return listTemplate;
+            }
+
+            public override bool ContentChanged()
+            {
+                string newContent = GetContentString();
+                if (string.Compare(_lastContent, newContent, System.StringComparison.Ordinal) == 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            private string GetContentString()
+            {
+                try
+                {
+                    StringBuilder sbContent = new StringBuilder();
+                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+
+                    bool disconnected = false;
+                    List<PageInfoEntry> pageList = null;
+
+                    if (!ActivityCommon.CommActive || pageInfoActive == null)
+                    {
+                        disconnected = true;
+                        sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                    }
+                    else
+                    {
+                        pageList = new List<PageInfoEntry>();
+                        int pageIndex = 0;
+                        foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                        {
+                            string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
+                            sbContent.AppendLine(pageName);
+                            bool activePage = pageInfo == pageInfoActive;
+                            if (activePage)
+                            {
+                                sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_active_page));
+                            }
+
+                            pageList.Add(new PageInfoEntry(pageName, activePage));
+                            pageIndex++;
+                        }
+
+                        if (pageIndex == 0)
+                        {
+                            sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_no_pages));
+                        }
+                    }
+
+                    lock (_lockObject)
+                    {
+                        _disconnected = disconnected;
+                        _pageList = pageList;
+                    }
+
+                    return sbContent.ToString();
+                }
+                catch (Exception)
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
         public class PageScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService), IOnScreenResultListener
         {
             private Tuple<string, string, JobReader.PageInfo> _lastContent = null;
