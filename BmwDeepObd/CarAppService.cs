@@ -496,7 +496,7 @@ namespace BmwDeepObd
 
         public class PageScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService), IOnScreenResultListener
         {
-            private Tuple<string, string> _lastContent = null;
+            private Tuple<string, string, JobReader.PageInfo> _lastContent = null;
             private readonly object _lockObject = new object();
             private bool _disconnected = true;
             private string _pageTitle = string.Empty;
@@ -748,7 +748,7 @@ namespace BmwDeepObd
 
             public override bool ContentChanged()
             {
-                Tuple<string, string> newContent = GetContentString();
+                Tuple<string, string, JobReader.PageInfo> newContent = GetContentString();
 
                 bool disconnectedCopy;
                 bool errorPageCopy;
@@ -775,19 +775,38 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (newContent == null)
+                string lastStructureContent = _lastContent?.Item1;
+                string lastValueContent = _lastContent?.Item2;
+                JobReader.PageInfo lastPageInfo = _lastContent?.Item3;
+                string newStructureContent = newContent?.Item1;
+                string newValueContent = newContent?.Item2;
+                JobReader.PageInfo newPageInfo = newContent?.Item3;
+
+                if (lastPageInfo != null && lastPageInfo != newPageInfo)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged page has changed");
+#endif
+                    try
+                    {
+                        ScreenManager.Pop();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
+                    return false;
+                }
+
+                if (newStructureContent == null || newValueContent == null)
                 {   // loading
                     return true;
                 }
 
-                string lastStructureContent = _lastContent?.Item1 ?? string.Empty;
-                string lastValueContent = _lastContent?.Item2 ?? string.Empty;
-                string newStructureContent = newContent.Item1 ?? string.Empty;
-                string newValueContent = newContent.Item2 ?? string.Empty;
-
                 if (errorPageCopy)
                 {
-                    if (_lastContent == null)
+                    if (lastStructureContent == null || lastValueContent == null)
                     {   // loading
                         return true;
                     }
@@ -795,7 +814,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (_lastContent != null && string.Compare(lastStructureContent, newStructureContent, StringComparison.Ordinal) != 0)
+                if (_lastContent != null && string.Compare(lastStructureContent ?? string.Empty, newStructureContent, StringComparison.Ordinal) != 0)
                 {
 #if DEBUG
                     Android.Util.Log.Info(Tag, "PageScreen: ContentChanged structure has changed");
@@ -812,7 +831,7 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (string.Compare(lastValueContent, newValueContent, StringComparison.Ordinal) != 0)
+                if (string.Compare(lastValueContent ?? string.Empty, newValueContent, StringComparison.Ordinal) != 0)
                 {
 #if DEBUG
                     Android.Util.Log.Info(Tag, "PageScreen: ContentChanged value has changed");
@@ -823,7 +842,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            private Tuple<string, string> GetContentString()
+            private Tuple<string, string, JobReader.PageInfo> GetContentString()
             {
                 try
                 {
@@ -978,10 +997,10 @@ namespace BmwDeepObd
                     sbStructureContent.AppendLine(pageTitle);
                     if (loading)
                     {
-                        return null;
+                        return new Tuple<string, string, JobReader.PageInfo>(null, null, pageInfoActive);
                     }
 
-                    return new Tuple<string, string>(sbStructureContent.ToString(), sbValueContent.ToString());
+                    return new Tuple<string, string, JobReader.PageInfo>(sbStructureContent.ToString(), sbValueContent.ToString(), pageInfoActive);
                 }
                 catch (Exception)
                 {
