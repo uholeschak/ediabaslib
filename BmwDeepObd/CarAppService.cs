@@ -496,7 +496,7 @@ namespace BmwDeepObd
 
         public class PageScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService), IOnScreenResultListener
         {
-            private string _lastContent = string.Empty;
+            private Tuple<string, string> _lastContent = null;
             private readonly object _lockObject = new object();
             private bool _disconnected = true;
             private string _pageTitle = string.Empty;
@@ -613,7 +613,6 @@ namespace BmwDeepObd
                                             {
                                                 try
                                                 {
-                                                    _lastContent = string.Empty;
                                                     string actionText = null;
                                                     Java.Lang.String actionResult = null;
 
@@ -676,7 +675,6 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    _lastContent = string.Empty;
                                     ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
                                 }
                                 catch (Exception)
@@ -750,7 +748,7 @@ namespace BmwDeepObd
 
             public override bool ContentChanged()
             {
-                string newContent = GetContentString();
+                Tuple<string, string> newContent = GetContentString();
 
                 bool disconnectedCopy;
                 lock (_lockObject)
@@ -775,29 +773,61 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (string.Compare(_lastContent, newContent, StringComparison.Ordinal) == 0)
+                if (newContent == null)
+                {   // loading
+                    return true;
+                }
+
+                string lastStructureContent = _lastContent?.Item1 ?? string.Empty;
+                string lastValueContent = _lastContent?.Item2 ?? string.Empty;
+                string newStructureContent = newContent.Item1 ?? string.Empty;
+                string newValueContent = newContent.Item2 ?? string.Empty;
+
+                if (_lastContent != null && string.Compare(lastStructureContent, newStructureContent, StringComparison.Ordinal) != 0)
                 {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged structure has changed");
+#endif
+                    try
+                    {
+                        ScreenManager.Pop();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
                     return false;
                 }
 
-                return true;
+                if (string.Compare(lastValueContent, newValueContent, StringComparison.Ordinal) != 0)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged value has changed");
+#endif
+                    return true;
+                }
+
+                return false;
             }
 
-            private string GetContentString()
+            private Tuple<string, string> GetContentString()
             {
                 try
                 {
-                    StringBuilder sbContent = new StringBuilder();
+                    StringBuilder sbStructureContent = new StringBuilder();
+                    StringBuilder sbValueContent = new StringBuilder();
                     JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
 
                     string pageTitle = CarContext.GetString(Resource.String.app_name);
                     bool disconnected = false;
                     bool errorPage = false;
+                    bool loading = false;
 
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
                         disconnected = true;
-                        sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                         lock (_lockObject)
                         {
                             _errorList = null;
@@ -812,8 +842,6 @@ namespace BmwDeepObd
                         {
                             errorPage = true;
                             List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
-                            EdiabasThread.UpdateState updateState = EdiabasThread.UpdateState.Init;
-
                             lock (EdiabasThread.DataLock)
                             {
                                 EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
@@ -823,14 +851,11 @@ namespace BmwDeepObd
                                     {
                                         errorReportList = ediabasThread.EdiabasErrorReportList;
                                     }
-
-                                    updateState = ediabasThread.UpdateProgressState;
                                 }
                             }
 
                             if (errorReportList == null)
                             {
-                                bool loading = updateState != EdiabasThread.UpdateState.Connected;
                                 lock (_lockObject)
                                 {
                                     _errorList = null;
@@ -864,20 +889,20 @@ namespace BmwDeepObd
                                     string message = errorEntry.Message;
                                     if (!string.IsNullOrEmpty(message))
                                     {
-                                        sbContent.AppendLine(message);
+                                        sbStructureContent.AppendLine(message);
+                                        sbValueContent.AppendLine(message);
                                         lineIndex++;
                                     }
                                 }
                             }
                             else
                             {
-                                sbContent.AppendLine("Loading");
-                                lineIndex++;
+                                loading = true;
                             }
 
-                            if (lineIndex == 0)
+                            if (lineIndex == 0 && !loading)
                             {
-                                sbContent.AppendLine(CarContext.GetString(Resource.String.error_no_error));
+                                sbStructureContent.AppendLine(CarContext.GetString(Resource.String.error_no_error));
                             }
                         }
                         else
@@ -907,10 +932,11 @@ namespace BmwDeepObd
                                     result = ActivityCommon.EdiabasThread?.FormatResult(pageInfoActive, displayInfo, resultDict);
                                 }
 
-                                sbContent.AppendLine(rowTitle);
+                                sbStructureContent.AppendLine(rowTitle);
+                                sbValueContent.AppendLine();
                                 if (!string.IsNullOrEmpty(result))
                                 {
-                                    sbContent.AppendLine(result);
+                                    sbValueContent.AppendLine(result);
                                 }
 
                                 dataList.Add(new DataInfoEntry(rowTitle, result));
@@ -919,7 +945,7 @@ namespace BmwDeepObd
 
                             if (lineIndex == 0)
                             {
-                                sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_no_data));
+                                sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_no_data));
                             }
 
                             lock (_lockObject)
@@ -937,12 +963,17 @@ namespace BmwDeepObd
                         _errorPage = errorPage;
                     }
 
-                    sbContent.AppendLine(pageTitle);
-                    return sbContent.ToString();
+                    sbStructureContent.AppendLine(pageTitle);
+                    if (loading)
+                    {
+                        return null;
+                    }
+
+                    return new Tuple<string, string>(sbStructureContent.ToString(), sbValueContent.ToString());
                 }
                 catch (Exception)
                 {
-                    return string.Empty;
+                    return null;
                 }
             }
         }
