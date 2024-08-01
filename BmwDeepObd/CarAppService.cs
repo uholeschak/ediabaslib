@@ -751,9 +751,11 @@ namespace BmwDeepObd
                 Tuple<string, string> newContent = GetContentString();
 
                 bool disconnectedCopy;
+                bool errorPageCopy;
                 lock (_lockObject)
                 {
                     disconnectedCopy = _disconnected;
+                    errorPageCopy = _errorPage;
                 }
 
                 if (disconnectedCopy)
@@ -782,6 +784,16 @@ namespace BmwDeepObd
                 string lastValueContent = _lastContent?.Item2 ?? string.Empty;
                 string newStructureContent = newContent.Item1 ?? string.Empty;
                 string newValueContent = newContent.Item2 ?? string.Empty;
+
+                if (errorPageCopy)
+                {
+                    if (_lastContent == null)
+                    {   // loading
+                        return true;
+                    }
+
+                    return false;
+                }
 
                 if (_lastContent != null && string.Compare(lastStructureContent, newStructureContent, StringComparison.Ordinal) != 0)
                 {
