@@ -355,6 +355,9 @@ namespace BmwDeepObd
 
                 if (newStructureContent == null || newValueContent == null)
                 {   // loading
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "MainScreen: ContentChanged loading");
+#endif
                     return true;
                 }
 
@@ -611,6 +614,9 @@ namespace BmwDeepObd
 
                 if (newStructureContent == null || newValueContent == null)
                 {   // loading
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "PageListScreen: ContentChanged loading");
+#endif
                     return true;
                 }
 
@@ -1018,16 +1024,14 @@ namespace BmwDeepObd
 
                 if (newStructureContent == null || newValueContent == null)
                 {   // loading
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged loading");
+#endif
                     return true;
                 }
 
                 if (errorPageCopy)
-                {
-                    if (lastStructureContent == null || lastValueContent == null)
-                    {   // loading
-                        return true;
-                    }
-
+                {   // no error page update
                     return false;
                 }
 
