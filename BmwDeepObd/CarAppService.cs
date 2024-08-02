@@ -1054,7 +1054,12 @@ namespace BmwDeepObd
                 }
 
                 if (errorPageCopy)
-                {   // no error page update
+                {
+                    if (lastStructureContent == null || lastValueContent == null)
+                    {   // loading
+                        return true;
+                    }
+
                     return false;
                 }
 
