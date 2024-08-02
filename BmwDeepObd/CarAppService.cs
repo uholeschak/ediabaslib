@@ -528,7 +528,7 @@ namespace BmwDeepObd
                 }
 
                 ListTemplate listTemplate = new ListTemplate.Builder()
-                    .SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon)
+                    .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
                     .SetTitle(CarContext.GetString(Resource.String.car_service_page_list))
                     .SetSingleList(itemBuilder.Build())
                     .Build();
@@ -877,6 +877,14 @@ namespace BmwDeepObd
                 // force app screen update
                 ActivityCommon.EdiabasThread?.DataUpdatedEvent(true);
                 CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
+                try
+                {
+                    ScreenManager.Pop();
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
 
             public override bool ContentChanged()
