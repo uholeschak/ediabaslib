@@ -3082,9 +3082,10 @@ namespace BmwDeepObd
             }
 
             long responseCount = 0;
-            if (ActivityCommon.EdiabasThread != null)
+            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+            if (ediabasThread != null)
             {
-                responseCount = ActivityCommon.EdiabasThread.GetResponseCount();
+                responseCount = ediabasThread.GetResponseCount();
             }
 
             StopEdiabasThread(true);
@@ -3535,17 +3536,22 @@ namespace BmwDeepObd
                     if (pageInfo.ErrorsInfo != null)
                     {   // read errors
                         List<EdiabasThread.EdiabasErrorReport> errorReportList = null;
-                        EdiabasThread.UpdateState updateState;
-                        int updateProgress;
+                        EdiabasThread.UpdateState updateState = EdiabasThread.UpdateState.Init;
+                        int updateProgress = 0;
+
                         lock (EdiabasThread.DataLock)
                         {
-                            if (ActivityCommon.EdiabasThread.ResultPageInfo == pageInfo)
+                            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                            if (ediabasThread != null)
                             {
-                                errorReportList = ActivityCommon.EdiabasThread.EdiabasErrorReportList;
-                            }
+                                if (ediabasThread.ResultPageInfo == pageInfo)
+                                {
+                                    errorReportList = ediabasThread.EdiabasErrorReportList;
+                                }
 
-                            updateState = ActivityCommon.EdiabasThread.UpdateProgressState;
-                            updateProgress = ActivityCommon.EdiabasThread.UpdateProgress;
+                                updateState = ediabasThread.UpdateProgressState;
+                                updateProgress = ediabasThread.UpdateProgress;
+                            }
                         }
 
                         if (errorReportList == null)
