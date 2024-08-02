@@ -318,6 +318,14 @@ namespace BmwDeepObd
                 if (disconnectedCopy)
                 {
                     rowPageList.AddText(CarContext.GetString(Resource.String.car_service_page_list_empty));
+                    rowPageList.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
+                    {
+                        if (ShowApp())
+                        {
+                            CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
+                                CarToast.LengthLong).Show();
+                        }
+                    })));
                 }
                 else
                 {
@@ -847,7 +855,7 @@ namespace BmwDeepObd
                                         Row.Builder row = new Row.Builder()
                                             .SetTitle(rowTitle)
                                             .AddText(sbText.ToString())
-                                            .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
+                                            .SetOnClickListener(new ActionListener((page) =>
                                             {
                                                 try
                                                 {
@@ -867,7 +875,7 @@ namespace BmwDeepObd
                                                 {
                                                     // ignored
                                                 }
-                                            })));
+                                            }));
 
                                         itemBuilder.AddItem(row.Build());
                                         lineIndex++;
@@ -909,7 +917,7 @@ namespace BmwDeepObd
                                 row.AddText(result);
                             }
 
-                            row.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
+                            row.SetOnClickListener(new ActionListener((page) =>
                             {
                                 try
                                 {
@@ -919,7 +927,7 @@ namespace BmwDeepObd
                                 {
                                     // ignored
                                 }
-                            })));
+                            }));
 
                             itemBuilder.AddItem(row.Build());
                             lineIndex++;
@@ -1282,7 +1290,7 @@ namespace BmwDeepObd
                     {
                         AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
                             .SetTitle(actionText)
-                            .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
+                            .SetOnClickListener(new ActionListener((page) =>
                             {
                                 SetResult(actionResult);
 
@@ -1294,7 +1302,7 @@ namespace BmwDeepObd
                                 {
                                     // ignored
                                 }
-                            })));
+                            }));
 
                         actionStripBuilder = new ActionStrip.Builder();
                         actionStripBuilder.AddAction(actionButton.Build());
