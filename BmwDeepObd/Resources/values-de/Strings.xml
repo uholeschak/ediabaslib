@@ -869,6 +869,7 @@
   <string name="car_service_app_displayed">Die App wird auf dem Smartphone angezeigt.</string>
   <string name="car_service_page_list">Seitenliste</string>
   <string name="car_service_page_list_empty">Keine Seiten vorhanden.</string>
+  <string name="car_service_page_list_show">Seitenliste anzeigen.</string>
   <string name="car_service_active_page">Aktive Seite</string>
   <string name="car_service_no_pages">Keine Seiten</string>
   <string name="car_service_no_data">Keine Daten</string>

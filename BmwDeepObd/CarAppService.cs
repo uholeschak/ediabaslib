@@ -317,6 +317,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
+                    rowPageList.AddText(CarContext.GetString(Resource.String.car_service_page_list_show));
                     rowPageList.SetBrowsable(true);
                     rowPageList.SetOnClickListener(new ActionListener((page) =>
                     {
@@ -411,7 +412,6 @@ namespace BmwDeepObd
                 }
                 return false;
             }
-
         }
 
         public class PageListScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
