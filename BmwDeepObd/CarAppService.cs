@@ -268,7 +268,7 @@ namespace BmwDeepObd
 
         public class MainScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
         {
-            private string _lastContent = string.Empty;
+            private Tuple<string, string> _lastContent = null;
             private readonly object _lockObject = new object();
             private bool _disconnected = true;
 
@@ -346,30 +346,68 @@ namespace BmwDeepObd
 
             public override bool ContentChanged()
             {
-                string newContent = GetContentString();
-                if (string.Compare(_lastContent, newContent, System.StringComparison.Ordinal) == 0)
+                Tuple<string, string> newContent = GetContentString();
+
+                string lastStructureContent = _lastContent?.Item1;
+                string lastValueContent = _lastContent?.Item2;
+                string newStructureContent = newContent?.Item1;
+                string newValueContent = newContent?.Item2;
+
+                if (newStructureContent == null || newValueContent == null)
+                {   // loading
+                    return true;
+                }
+
+                if (_lastContent != null && string.Compare(lastStructureContent ?? string.Empty, newStructureContent, StringComparison.Ordinal) != 0)
                 {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "MainScreen: ContentChanged structure has changed");
+#endif
                     return false;
                 }
 
-                return true;
+                if (string.Compare(lastValueContent ?? string.Empty, newValueContent, StringComparison.Ordinal) != 0)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "MainScreen: ContentChanged value has changed");
+#endif
+                    return true;
+                }
+
+                return false;
             }
 
-            private string GetContentString()
+            private Tuple<string, string> GetContentString()
             {
                 try
                 {
-                    StringBuilder sbContent = new StringBuilder();
+                    StringBuilder sbStructureContent = new StringBuilder();
+                    StringBuilder sbValueContent = new StringBuilder();
                     JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
 
+                    sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
                     bool disconnected = !ActivityCommon.CommActive || pageInfoActive == null;
+
+                    sbValueContent.AppendLine();
                     if (disconnected)
                     {
-                        sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                     }
                     else
                     {
-                        sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_connected));
+                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_connected));
+                    }
+
+                    sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
+
+                    sbValueContent.AppendLine();
+                    if (disconnected)
+                    {
+                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list_empty));
+                    }
+                    else
+                    {
+                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list_show));
                     }
 
                     lock (_lockObject)
@@ -377,11 +415,11 @@ namespace BmwDeepObd
                         _disconnected = disconnected;
                     }
 
-                    return sbContent.ToString();
+                    return new Tuple<string, string>(sbStructureContent.ToString(), sbValueContent.ToString());
                 }
                 catch (Exception)
                 {
-                    return string.Empty;
+                    return null;
                 }
             }
 
@@ -619,6 +657,7 @@ namespace BmwDeepObd
                     {
                         disconnected = true;
                         sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
+
                         sbValueContent.AppendLine();
                         sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                     }
@@ -631,9 +670,10 @@ namespace BmwDeepObd
                             string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
                             sbStructureContent.AppendLine(pageName);
                             bool activePage = pageInfo == pageInfoActive;
+
+                            sbValueContent.AppendLine();
                             if (activePage)
                             {
-                                sbValueContent.AppendLine();
                                 sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_active_page));
                             }
 
@@ -1099,6 +1139,8 @@ namespace BmwDeepObd
                                     if (!string.IsNullOrEmpty(message))
                                     {
                                         sbStructureContent.AppendLine(message);
+
+                                        sbValueContent.AppendLine();
                                         sbValueContent.AppendLine(message);
                                         lineIndex++;
                                     }
