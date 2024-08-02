@@ -416,7 +416,7 @@ namespace BmwDeepObd
 
         public class PageListScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
         {
-            private string _lastContent = string.Empty;
+            private Tuple<string, string, JobReader.PageInfo> _lastContent = null;
             private readonly object _lockObject = new object();
             private bool _disconnected = true;
             private List<PageInfoEntry> _pageList;
@@ -541,7 +541,7 @@ namespace BmwDeepObd
 
             public override bool ContentChanged()
             {
-                string newContent = GetContentString();
+                Tuple<string, string, JobReader.PageInfo> newContent = GetContentString();
 
                 bool disconnectedCopy;
                 lock (_lockObject)
@@ -566,19 +566,50 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (string.Compare(_lastContent, newContent, StringComparison.Ordinal) == 0)
+                string lastStructureContent = _lastContent?.Item1;
+                string lastValueContent = _lastContent?.Item2;
+                string newStructureContent = newContent?.Item1;
+                string newValueContent = newContent?.Item2;
+
+                if (newStructureContent == null || newValueContent == null)
+                {   // loading
+                    return true;
+                }
+
+                if (_lastContent != null && string.Compare(lastStructureContent ?? string.Empty, newStructureContent, StringComparison.Ordinal) != 0)
                 {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "PageListScreen: ContentChanged structure has changed");
+#endif
+                    try
+                    {
+                        ScreenManager.Pop();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
                     return false;
                 }
 
-                return true;
+                if (string.Compare(lastValueContent ?? string.Empty, newValueContent, StringComparison.Ordinal) != 0)
+                {
+#if DEBUG
+                    Android.Util.Log.Info(Tag, "PageListScreen: ContentChanged value has changed");
+#endif
+                    return true;
+                }
+
+                return false;
             }
 
-            private string GetContentString()
+            private Tuple<string, string, JobReader.PageInfo> GetContentString()
             {
                 try
                 {
-                    StringBuilder sbContent = new StringBuilder();
+                    StringBuilder sbStructureContent = new StringBuilder();
+                    StringBuilder sbValueContent = new StringBuilder();
                     JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
 
                     bool disconnected = false;
@@ -587,8 +618,9 @@ namespace BmwDeepObd
                     if (!ActivityCommon.CommActive || pageInfoActive == null)
                     {
                         disconnected = true;
-                        sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
-                        sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
+                        sbValueContent.AppendLine();
+                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                     }
                     else
                     {
@@ -597,11 +629,12 @@ namespace BmwDeepObd
                         foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
                         {
                             string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
-                            sbContent.AppendLine(pageName);
+                            sbStructureContent.AppendLine(pageName);
                             bool activePage = pageInfo == pageInfoActive;
                             if (activePage)
                             {
-                                sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_active_page));
+                                sbValueContent.AppendLine();
+                                sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_active_page));
                             }
 
                             pageList.Add(new PageInfoEntry(pageName, activePage));
@@ -610,7 +643,7 @@ namespace BmwDeepObd
 
                         if (pageIndex == 0)
                         {
-                            sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_no_pages));
+                            sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_no_pages));
                         }
                     }
 
@@ -620,11 +653,11 @@ namespace BmwDeepObd
                         _pageList = pageList;
                     }
 
-                    return sbContent.ToString();
+                    return new Tuple<string, string, JobReader.PageInfo>(sbStructureContent.ToString(), sbValueContent.ToString(), pageInfoActive);
                 }
                 catch (Exception)
                 {
-                    return string.Empty;
+                    return null;
                 }
             }
         }
