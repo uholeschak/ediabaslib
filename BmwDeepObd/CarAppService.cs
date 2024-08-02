@@ -279,6 +279,10 @@ namespace BmwDeepObd
 #endif
                 _lastContent = GetContentString();
 
+                string lastStructureContent = _lastContent?.Item1;
+                string lastValueContent = _lastContent?.Item2;
+                bool loading = lastStructureContent == null || lastValueContent == null;
+
                 bool disconnectedCopy;
 
                 lock (_lockObject)
@@ -333,15 +337,21 @@ namespace BmwDeepObd
                 }
                 itemBuilder.AddItem(rowPageList.Build());
 
-                ListTemplate listTemplate = new ListTemplate.Builder()
+                ListTemplate.Builder listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon)
-                    .SetTitle(CarContext.GetString(Resource.String.app_name))
-                    .SetSingleList(itemBuilder.Build())
-                    .Build();
+                    .SetTitle(CarContext.GetString(Resource.String.app_name));
+                if (loading)
+                {
+                    listTemplate.SetLoading(true);
+                }
+                else
+                {
+                    listTemplate.SetSingleList(itemBuilder.Build());
+                }
 
                 RequestUpdate();
 
-                return listTemplate;
+                return listTemplate.Build();
             }
 
             public override bool ContentChanged()
@@ -482,6 +492,10 @@ namespace BmwDeepObd
 #endif
                 _lastContent = GetContentString();
 
+                string lastStructureContent = _lastContent?.Item1;
+                string lastValueContent = _lastContent?.Item2;
+                bool loading = lastStructureContent == null || lastValueContent == null;
+
                 bool disconnectedCopy;
                 List<PageInfoEntry> pageListCopy;
 
@@ -569,15 +583,21 @@ namespace BmwDeepObd
                     }
                 }
 
-                ListTemplate listTemplate = new ListTemplate.Builder()
+                ListTemplate.Builder listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                    .SetTitle(CarContext.GetString(Resource.String.car_service_page_list))
-                    .SetSingleList(itemBuilder.Build())
-                    .Build();
+                    .SetTitle(CarContext.GetString(Resource.String.car_service_page_list));
+                if (loading)
+                {
+                    listTemplate.SetLoading(true);
+                }
+                else
+                {
+                    listTemplate.SetSingleList(itemBuilder.Build());
+                }
 
                 RequestUpdate();
 
-                return listTemplate;
+                return listTemplate.Build();
             }
 
             public override bool ContentChanged()
@@ -738,10 +758,13 @@ namespace BmwDeepObd
 
                 _lastContent = GetContentString();
 
+                string lastStructureContent = _lastContent?.Item1;
+                string lastValueContent = _lastContent?.Item2;
+                bool loading = lastStructureContent == null || lastValueContent == null;
+
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 string pageTitle = CarContext.GetString(Resource.String.app_name);
-                bool loading = false;
 
                 bool disconnectedCopy;
                 string pageTitleCopy;
