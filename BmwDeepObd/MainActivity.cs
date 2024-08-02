@@ -2091,7 +2091,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            string sgbdFunctional = ActivityCommon.EdiabasThread.JobPageInfo?.ErrorsInfo?.SgbdFunctional;
+            string sgbdFunctional = ActivityCommon.EdiabasThread?.JobPageInfo?.ErrorsInfo?.SgbdFunctional;
             if (!string.IsNullOrEmpty(sgbdFunctional))
             {
                 View parent = v.Parent as View;
@@ -2398,21 +2398,23 @@ namespace BmwDeepObd
 
         private void ConnectEdiabasEvents()
         {
-            if (ActivityCommon.EdiabasThread != null)
+            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+            if (ediabasThread != null)
             {
-                ActivityCommon.EdiabasThread.DataUpdated += DataUpdated;
-                ActivityCommon.EdiabasThread.PageChanged += PageChanged;
-                ActivityCommon.EdiabasThread.ThreadTerminated += ThreadTerminated;
+                ediabasThread.DataUpdated += DataUpdated;
+                ediabasThread.PageChanged += PageChanged;
+                ediabasThread.ThreadTerminated += ThreadTerminated;
             }
         }
 
         private void DisconnectEdiabasEvents()
         {
-            if (ActivityCommon.EdiabasThread != null)
+            EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+            if (ediabasThread != null)
             {
-                ActivityCommon.EdiabasThread.DataUpdated -= DataUpdated;
-                ActivityCommon.EdiabasThread.PageChanged -= PageChanged;
-                ActivityCommon.EdiabasThread.ThreadTerminated -= ThreadTerminated;
+                ediabasThread.DataUpdated -= DataUpdated;
+                ediabasThread.PageChanged -= PageChanged;
+                ediabasThread.ThreadTerminated -= ThreadTerminated;
             }
         }
 
@@ -2538,7 +2540,7 @@ namespace BmwDeepObd
                 case ActivityCommon.AutoConnectType.StartBoot:
                     if (!disable && ActivityCommon.CommActive)
                     {
-                        JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread.JobPageInfo;
+                        JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread?.JobPageInfo;
                         if (pageInfo != null)
                         {
                             selectedJobIndex = ActivityCommon.JobReader.PageList.IndexOf(pageInfo);
@@ -3387,12 +3389,16 @@ namespace BmwDeepObd
             }
             if (dynamicValid && !_instanceData.BatteryWarningShown)
             {
-                double? batteryVoltage;
-                byte[] adapterSerial;
+                double? batteryVoltage = null;
+                byte[] adapterSerial = null;
                 lock (EdiabasThread.DataLock)
                 {
-                    batteryVoltage = ActivityCommon.EdiabasThread.BatteryVoltage;
-                    adapterSerial = ActivityCommon.EdiabasThread.AdapterSerial;
+                    EdiabasThread ediabasThread = ActivityCommon.EdiabasThread;
+                    if (ediabasThread != null)
+                    {
+                        batteryVoltage = ediabasThread.BatteryVoltage;
+                        adapterSerial = ediabasThread.AdapterSerial;
+                    }
                 }
 
                 if (_activityCommon.ShowBatteryWarning(batteryVoltage, adapterSerial))
