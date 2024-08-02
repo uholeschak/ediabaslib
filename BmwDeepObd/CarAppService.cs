@@ -457,6 +457,7 @@ namespace BmwDeepObd
                 {
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
+                        .AddText(CarContext.GetString(Resource.String.car_service_disconnected))
                         .Build());
                 }
                 else
@@ -587,6 +588,7 @@ namespace BmwDeepObd
                     {
                         disconnected = true;
                         sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
+                        sbContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                     }
                     else
                     {
@@ -686,6 +688,7 @@ namespace BmwDeepObd
                 {
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
+                        .AddText(CarContext.GetString(Resource.String.car_service_disconnected))
                         .Build());
                 }
                 else
@@ -1000,6 +1003,7 @@ namespace BmwDeepObd
                     {
                         disconnected = true;
                         sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
+                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                         lock (_lockObject)
                         {
                             _errorList = null;
