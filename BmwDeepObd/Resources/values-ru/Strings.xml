@@ -868,6 +868,7 @@
   <string name="car_service_app_displayed">Приложение отобразилось на смартфоне.</string>
   <string name="car_service_page_list">Список страниц</string>
   <string name="car_service_page_list_empty">Страниц нет.</string>
+  <string name="car_service_page_list_show">Показать список страниц.</string>
   <string name="car_service_active_page">Активная страница</string>
   <string name="car_service_no_pages">Нет страниц</string>
   <string name="car_service_no_data">Нет данных</string>
