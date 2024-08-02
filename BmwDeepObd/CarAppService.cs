@@ -416,7 +416,7 @@ namespace BmwDeepObd
 
         public class PageListScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
         {
-            private Tuple<string, string, JobReader.PageInfo> _lastContent = null;
+            private Tuple<string, string> _lastContent = null;
             private readonly object _lockObject = new object();
             private bool _disconnected = true;
             private List<PageInfoEntry> _pageList;
@@ -541,7 +541,7 @@ namespace BmwDeepObd
 
             public override bool ContentChanged()
             {
-                Tuple<string, string, JobReader.PageInfo> newContent = GetContentString();
+                Tuple<string, string> newContent = GetContentString();
 
                 bool disconnectedCopy;
                 lock (_lockObject)
@@ -604,7 +604,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            private Tuple<string, string, JobReader.PageInfo> GetContentString()
+            private Tuple<string, string> GetContentString()
             {
                 try
                 {
@@ -653,7 +653,7 @@ namespace BmwDeepObd
                         _pageList = pageList;
                     }
 
-                    return new Tuple<string, string, JobReader.PageInfo>(sbStructureContent.ToString(), sbValueContent.ToString(), pageInfoActive);
+                    return new Tuple<string, string>(sbStructureContent.ToString(), sbValueContent.ToString());
                 }
                 catch (Exception)
                 {
