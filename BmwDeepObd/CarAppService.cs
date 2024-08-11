@@ -170,11 +170,18 @@ namespace BmwDeepObd
         }
 
 
-        public class CarSession(CarService carService) : Session
+        public class CarSession(CarService carService) : Session, ILifecycleEventObserver
         {
             public override Screen OnCreateScreen(Intent intent)
             {
                 return new MainScreen(CarContext, carService);
+            }
+
+            public void OnStateChanged(ILifecycleOwner source, Lifecycle.Event e)
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("CarSession: OnStateChanged State={0}", e));
+#endif
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
