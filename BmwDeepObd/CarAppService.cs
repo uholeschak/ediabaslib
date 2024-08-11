@@ -57,6 +57,7 @@ namespace BmwDeepObd
 #if DEBUG
         private static readonly string Tag = typeof(CarService).FullName;
 #endif
+        private const string LogPrefix = "CarService: ";
         public const int UpdateInterval = 1000;
         public const int DefaultListItems = 6;
         private ActivityCommon _activityCommon;
@@ -203,12 +204,8 @@ namespace BmwDeepObd
 #endif
                 try
                 {
-                    EdiabasNet ediabasNet = ActivityCommon.EdiabasThread?.Ediabas;
-                    if (ediabasNet != null)
-                    {
-                        string formatPrefix = "CarService: " + format;
-                        ediabasNet.LogFormat(EdiabasNet.EdLogLevel.Ifh, formatPrefix, args);
-                    }
+                    string formatPrefix = LogPrefix + format;
+                    ActivityCommon.EdiabasThread?.LogFormat(formatPrefix, args);
                 }
                 catch (Exception)
                 {
@@ -225,12 +222,8 @@ namespace BmwDeepObd
 #endif
                 try
                 {
-                    EdiabasNet ediabasNet = ActivityCommon.EdiabasThread?.Ediabas;
-                    if (ediabasNet != null)
-                    {
-                        string infoPrefix = "CarService: " + info;
-                        ediabasNet.LogString(EdiabasNet.EdLogLevel.Ifh, infoPrefix);
-                    }
+                    string infoPrefix = LogPrefix + info;
+                    ActivityCommon.EdiabasThread?.LogString(infoPrefix);
                 }
                 catch (Exception)
                 {
