@@ -3,6 +3,7 @@ using Android.OS;
 using AndroidX.Car.App;
 using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
+using AndroidX.Car.App.Serialization;
 using AndroidX.Car.App.Validation;
 using AndroidX.Lifecycle;
 using EdiabasLib;
@@ -205,7 +206,7 @@ namespace BmwDeepObd
             }
         }
 
-        public class BaseScreen : Screen, ILifecycleEventObserver
+        public class BaseScreen : Screen, ILifecycleEventObserver, IOnDoneCallback
         {
             private CarService _carServiceInst;
             private readonly Handler _updateHandler;
@@ -237,6 +238,26 @@ namespace BmwDeepObd
                 {
                     RequestUpdate(true);
                 }
+            }
+
+            public void OnSuccess(Bundleable response)
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format("BaseScreen: OnSuccess Class={0}", GetType().FullName));
+#endif
+            }
+
+            public void OnFailure(Bundleable response)
+            {
+                FailureResponse failureResponse = response.Get() as FailureResponse;
+                int errorType = -1;
+                if (failureResponse != null)
+                {
+                    errorType = failureResponse.ErrorType;
+                }
+#if DEBUG
+                Android.Util.Log.Error(Tag, string.Format("BaseScreen: OnFailure Class={0}, Type={1}", GetType().FullName, errorType));
+#endif
             }
 
             public override ITemplate OnGetTemplate()
