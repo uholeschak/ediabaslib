@@ -3418,6 +3418,40 @@ namespace BmwDeepObd
             }
         }
 
+        public bool LogFormat(string format, params object[] args)
+        {
+            try
+            {
+                lock (DataLock)
+                {
+                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, format, args);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool LogString(string info)
+        {
+            try
+            {
+                lock (DataLock)
+                {
+                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, info);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public void DataUpdatedEvent(bool forceUpdate = false)
         {
             bool update = forceUpdate;
