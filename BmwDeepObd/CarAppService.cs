@@ -3,7 +3,6 @@ using Android.OS;
 using AndroidX.Car.App;
 using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
-using AndroidX.Car.App.Serialization;
 using AndroidX.Car.App.Validation;
 using AndroidX.Lifecycle;
 using EdiabasLib;
