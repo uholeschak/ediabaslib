@@ -171,18 +171,14 @@ namespace BmwDeepObd
         }
 
 
-        public class CarSession(CarService carService) : Session, ILifecycleEventObserver
+        public class CarSession(CarService carService) : Session
         {
             public override Screen OnCreateScreen(Intent intent)
             {
-                return new MainScreen(CarContext, carService);
-            }
-
-            public void OnStateChanged(ILifecycleOwner source, Lifecycle.Event e)
-            {
 #if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("CarSession: OnStateChanged State={0}", e));
+                Android.Util.Log.Info(Tag, "CarSession: OnCreateScreen");
 #endif
+                return new MainScreen(CarContext, carService);
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
@@ -204,9 +200,27 @@ namespace BmwDeepObd
 
                 return defaultValue;
             }
+
+            public static bool LogFormat(string format, params object[] args)
+            {
+                try
+                {
+                    EdiabasNet ediabasNet = ActivityCommon.EdiabasThread?.Ediabas;
+                    if (ediabasNet != null)
+                    {
+                        ediabasNet.LogFormat(EdiabasNet.EdLogLevel.Ifh, format, args);
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
 
-        public class BaseScreen : Screen, ILifecycleEventObserver, IOnDoneCallback
+        public class BaseScreen : Screen, ILifecycleEventObserver
         {
             private CarService _carServiceInst;
             private readonly Handler _updateHandler;
@@ -238,26 +252,6 @@ namespace BmwDeepObd
                 {
                     RequestUpdate(true);
                 }
-            }
-
-            public void OnSuccess(Bundleable response)
-            {
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("BaseScreen: OnSuccess Class={0}", GetType().FullName));
-#endif
-            }
-
-            public void OnFailure(Bundleable response)
-            {
-                FailureResponse failureResponse = response.Get() as FailureResponse;
-                int errorType = -1;
-                if (failureResponse != null)
-                {
-                    errorType = failureResponse.ErrorType;
-                }
-#if DEBUG
-                Android.Util.Log.Error(Tag, string.Format("BaseScreen: OnFailure Class={0}, Type={1}", GetType().FullName, errorType));
-#endif
             }
 
             public override ITemplate OnGetTemplate()
