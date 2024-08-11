@@ -3,6 +3,7 @@ using Android.OS;
 using AndroidX.Car.App;
 using AndroidX.Car.App.Constraints;
 using AndroidX.Car.App.Model;
+using AndroidX.Car.App.Serialization;
 using AndroidX.Car.App.Validation;
 using AndroidX.Lifecycle;
 using EdiabasLib;
@@ -115,9 +116,7 @@ namespace BmwDeepObd
         {
             if (IsErrorEvalJobRunning())
             {
-#if DEBUG
-                Android.Util.Log.Info(Tag, "EvaluateErrorMessages: Thread still active");
-#endif
+                CarSession.LogFormat("EvaluateErrorMessages: Thread still active");
                 return false;
             }
 
@@ -170,18 +169,12 @@ namespace BmwDeepObd
         }
 
 
-        public class CarSession(CarService carService) : Session, ILifecycleEventObserver
+        public class CarSession(CarService carService) : Session
         {
             public override Screen OnCreateScreen(Intent intent)
             {
+                LogString("CarSession: OnCreateScreen");
                 return new MainScreen(CarContext, carService);
-            }
-
-            public void OnStateChanged(ILifecycleOwner source, Lifecycle.Event e)
-            {
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("CarSession: OnStateChanged State={0}", e));
-#endif
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
@@ -203,6 +196,50 @@ namespace BmwDeepObd
 
                 return defaultValue;
             }
+
+            public static bool LogFormat(string format, params object[] args)
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, string.Format(format, args));
+#endif
+                try
+                {
+                    EdiabasNet ediabasNet = ActivityCommon.EdiabasThread?.Ediabas;
+                    if (ediabasNet != null)
+                    {
+                        string formatPrefix = "CarService: " + format;
+                        ediabasNet.LogFormat(EdiabasNet.EdLogLevel.Ifh, formatPrefix, args);
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public static bool LogString(string info)
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, info);
+#endif
+                try
+                {
+                    EdiabasNet ediabasNet = ActivityCommon.EdiabasThread?.Ediabas;
+                    if (ediabasNet != null)
+                    {
+                        string infoPrefix = "CarService: " + info;
+                        ediabasNet.LogString(EdiabasNet.EdLogLevel.Ifh, infoPrefix);
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         public class BaseScreen : Screen, ILifecycleEventObserver
@@ -215,9 +252,8 @@ namespace BmwDeepObd
 
             public BaseScreen(CarContext carContext, CarService carService) : base(carContext)
             {
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("BaseScreen: Class={0}", GetType().FullName));
-#endif
+                CarSession.LogFormat("BaseScreen: Class={0}", GetType().FullName);
+
                 _carServiceInst = carService;
                 _updateHandler = new Handler(Looper.MainLooper);
                 _updateScreenRunnable = new UpdateScreenRunnable(this);
@@ -226,9 +262,8 @@ namespace BmwDeepObd
 
             public void OnStateChanged(ILifecycleOwner source, Lifecycle.Event e)
             {
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("BaseScreen: OnStateChanged Class={0}, State={1}", GetType().FullName, e));
-#endif
+                CarSession.LogFormat("BaseScreen: OnStateChanged Class={0}, State={1}", GetType().FullName, e);
+
                 if (e == Lifecycle.Event.OnStart)
                 {
                     RequestUpdate();
@@ -248,22 +283,17 @@ namespace BmwDeepObd
             {
                 Lifecycle.State currentState = Lifecycle.CurrentState;
                 bool isValid = currentState == Lifecycle.State.Started || currentState == Lifecycle.State.Resumed;
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("RequestUpdate: State={0}, Valid={1}, Stop={2}, Class={3}", currentState, isValid, stop, GetType().FullName));
-#endif
+                CarSession.LogFormat("RequestUpdate: State={0}, Valid={1}, Stop={2}, Class={3}", currentState, isValid, stop, GetType().FullName);
+
                 _updateHandler.RemoveCallbacks(_updateScreenRunnable);
                 if (isValid && !stop)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("RequestUpdate: PostDelayed Class={0}", GetType().FullName));
-#endif
+                    CarSession.LogFormat("RequestUpdate: PostDelayed Class={0}", GetType().FullName);
                     _updateHandler.PostDelayed(_updateScreenRunnable, UpdateInterval);
                 }
                 else
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, string.Format("RequestUpdate: Stopped Class={0}", GetType().FullName));
-#endif
+                    CarSession.LogFormat("RequestUpdate: Stopped Class={0}", GetType().FullName);
                 }
             }
 
@@ -281,9 +311,8 @@ namespace BmwDeepObd
 
             public override ITemplate OnGetTemplate()
             {
-#if DEBUG
-                Android.Util.Log.Info(Tag, "MainScreen: OnGetTemplate");
-#endif
+                CarSession.LogString("MainScreen: OnGetTemplate");
+
                 _lastContent = GetContentString();
 
                 string lastStructureContent = _lastContent?.Item1;
@@ -380,25 +409,19 @@ namespace BmwDeepObd
 
                 if (newStructureContent == null || newValueContent == null)
                 {   // loading
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "MainScreen: ContentChanged loading");
-#endif
+                    CarSession.LogString("MainScreen: ContentChanged loading");
                     return true;
                 }
 
                 if (_lastContent != null && string.Compare(lastStructureContent ?? string.Empty, newStructureContent, StringComparison.Ordinal) != 0)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "MainScreen: ContentChanged structure has changed");
-#endif
+                    CarSession.LogString("MainScreen: ContentChanged structure has changed");
                     return false;
                 }
 
                 if (string.Compare(lastValueContent ?? string.Empty, newValueContent, StringComparison.Ordinal) != 0)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "MainScreen: ContentChanged value has changed");
-#endif
+                    CarSession.LogString("MainScreen: ContentChanged value has changed");
                     return true;
                 }
 
@@ -502,9 +525,8 @@ namespace BmwDeepObd
 
             public override ITemplate OnGetTemplate()
             {
-#if DEBUG
-                Android.Util.Log.Info(Tag, "PageListScreen: OnGetTemplate");
-#endif
+                CarSession.LogString("PageListScreen: OnGetTemplate");
+
                 _lastContent = GetContentString();
 
                 string lastStructureContent = _lastContent?.Item1;
@@ -627,9 +649,8 @@ namespace BmwDeepObd
 
                 if (disconnectedCopy)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "PageListScreen: ContentChanged disconnected");
-#endif
+                    CarSession.LogString("PageListScreen: ContentChanged disconnected");
+
                     try
                     {
                         ScreenManager.PopToRoot();
@@ -649,17 +670,15 @@ namespace BmwDeepObd
 
                 if (newStructureContent == null || newValueContent == null)
                 {   // loading
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "PageListScreen: ContentChanged loading");
-#endif
+                    CarSession.LogString("PageListScreen: ContentChanged loading");
+
                     return true;
                 }
 
                 if (_lastContent != null && string.Compare(lastStructureContent ?? string.Empty, newStructureContent, StringComparison.Ordinal) != 0)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "PageListScreen: ContentChanged structure has changed");
-#endif
+                    CarSession.LogString("PageListScreen: ContentChanged structure has changed");
+
                     try
                     {
                         ScreenManager.Pop();
@@ -674,9 +693,7 @@ namespace BmwDeepObd
 
                 if (string.Compare(lastValueContent ?? string.Empty, newValueContent, StringComparison.Ordinal) != 0)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "PageListScreen: ContentChanged value has changed");
-#endif
+                    CarSession.LogString("PageListScreen: ContentChanged value has changed");
                     return true;
                 }
 
@@ -767,9 +784,7 @@ namespace BmwDeepObd
 
             public override ITemplate OnGetTemplate()
             {
-#if DEBUG
-                Android.Util.Log.Info(Tag, "PageScreen: OnGetTemplate");
-#endif
+                CarSession.LogString("PageScreen: OnGetTemplate");
 
                 _lastContent = GetContentString();
 
@@ -981,9 +996,8 @@ namespace BmwDeepObd
                 }
 
                 string ecuName = ecuNameString.ToString();
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("PageScreen: OnScreenResult Ecu={0}", ecuName));
-#endif
+                CarSession.LogFormat("PageScreen: OnScreenResult Ecu={0}", ecuName);
+
                 List<string> errorResetList = new List<string>() { ecuName };
                 lock (EdiabasThread.DataLock)
                 {
@@ -1021,9 +1035,8 @@ namespace BmwDeepObd
 
                 if (disconnectedCopy)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged disconnected");
-#endif
+                    CarSession.LogString("PageScreen: ContentChanged disconnected");
+
                     try
                     {
                         ScreenManager.PopToRoot();
@@ -1045,9 +1058,8 @@ namespace BmwDeepObd
 
                 if (lastPageInfo != null && lastPageInfo != newPageInfo)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged page has changed");
-#endif
+                    CarSession.LogString("PageScreen: ContentChanged page has changed");
+
                     try
                     {
                         ScreenManager.Pop();
@@ -1062,9 +1074,7 @@ namespace BmwDeepObd
 
                 if (newStructureContent == null || newValueContent == null)
                 {   // loading
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged loading");
-#endif
+                    CarSession.LogString("PageScreen: ContentChanged loading");
                     return true;
                 }
 
@@ -1080,9 +1090,8 @@ namespace BmwDeepObd
 
                 if (_lastContent != null && string.Compare(lastStructureContent ?? string.Empty, newStructureContent, StringComparison.Ordinal) != 0)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged structure has changed");
-#endif
+                    CarSession.LogString("PageScreen: ContentChanged structure has changed");
+
                     try
                     {
                         ScreenManager.Pop();
@@ -1097,9 +1106,7 @@ namespace BmwDeepObd
 
                 if (string.Compare(lastValueContent ?? string.Empty, newValueContent, StringComparison.Ordinal) != 0)
                 {
-#if DEBUG
-                    Android.Util.Log.Info(Tag, "PageScreen: ContentChanged value has changed");
-#endif
+                    CarSession.LogString("PageScreen: ContentChanged value has changed");
                     return true;
                 }
 
@@ -1286,10 +1293,10 @@ namespace BmwDeepObd
                 {
                     itemMessage = CarContext.GetString(Resource.String.car_service_no_data);
                 }
-#if DEBUG
-                Android.Util.Log.Info(Tag, string.Format("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}', Action='{2}'",
-                    title ?? string.Empty, itemMessage, actionText ?? string.Empty));
-#endif
+
+                CarSession.LogFormat("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}', Action='{2}'",
+                    title ?? string.Empty, itemMessage, actionText ?? string.Empty);
+
                 if (CarContext.CarAppApiLevel >= 2)
                 {
                     ActionStrip.Builder actionStripBuilder = null;
@@ -1361,9 +1368,8 @@ namespace BmwDeepObd
                     if (screen != null)
                     {
                         bool invalidate = screen.ContentChanged();
-#if DEBUG
-                        Android.Util.Log.Info(Tag, string.Format("UpdateScreenRunnable: Invalidate={0}, Class={1}", invalidate, screen.GetType().FullName));
-#endif
+                        CarSession.LogFormat("UpdateScreenRunnable: Invalidate={0}, Class={1}", invalidate, screen.GetType().FullName);
+
                         if (invalidate)
                         {
                             screen.Invalidate();
