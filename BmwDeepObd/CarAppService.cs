@@ -1007,7 +1007,7 @@ namespace BmwDeepObd
                 }
 
                 // force app screen update
-                ActivityCommon.EdiabasThread?.DataUpdatedEvent(true);
+                ActivityCommon.EdiabasThread?.TriggerDisplayUpdate();
                 CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
                 try
                 {
