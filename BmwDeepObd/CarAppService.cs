@@ -376,9 +376,9 @@ namespace BmwDeepObd
                         {
                             ScreenManager.Push(new PageListScreen(CarContext, CarServiceInst));
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            CarSession.LogFormat("MainScreen: Push Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                         }
                     }));
                 }
@@ -471,8 +471,9 @@ namespace BmwDeepObd
 
                     return new Tuple<string, string>(sbStructureContent.ToString(), sbValueContent.ToString());
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    CarSession.LogFormat("MainScreen: GetContentString Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                     return null;
                 }
             }
@@ -599,9 +600,9 @@ namespace BmwDeepObd
                                     {
                                         ScreenManager.Push(new PageScreen(CarContext, CarServiceInst));
                                     }
-                                    catch (Exception)
+                                    catch (Exception ex)
                                     {
-                                        // ignored
+                                        CarSession.LogFormat("PageListScreen: Push Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                                     }
                                 }, pageIndex));
 
@@ -658,9 +659,9 @@ namespace BmwDeepObd
                     {
                         ScreenManager.PopToRoot();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // ignored
+                        CarSession.LogFormat("PageListScreen: Push Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                     }
 
                     return false;
@@ -686,9 +687,9 @@ namespace BmwDeepObd
                     {
                         ScreenManager.Pop();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // ignored
+                        CarSession.LogFormat("PageListScreen: Pop Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                     }
 
                     return false;
@@ -896,9 +897,9 @@ namespace BmwDeepObd
                                                     ScreenManager.PushForResult(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
                                                         actionText, actionResult), this);
                                                 }
-                                                catch (Exception)
+                                                catch (Exception ex)
                                                 {
-                                                    // ignored
+                                                    CarSession.LogFormat("PageScreen: PushForResult Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                                                 }
                                             }));
 
@@ -948,9 +949,9 @@ namespace BmwDeepObd
                                 {
                                     ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
                                 }
-                                catch (Exception)
+                                catch (Exception ex)
                                 {
-                                    // ignored
+                                    CarSession.LogFormat("PageScreen: Push Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                                 }
                             }));
 
@@ -1018,9 +1019,9 @@ namespace BmwDeepObd
                 {
                     ScreenManager.Pop();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // ignored
+                    CarSession.LogFormat("PageScreen: Pop Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                 }
             }
 
@@ -1044,9 +1045,9 @@ namespace BmwDeepObd
                     {
                         ScreenManager.PopToRoot();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // ignored
+                        CarSession.LogFormat("PageScreen: PopToRoot Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                     }
 
                     return false;
@@ -1067,9 +1068,9 @@ namespace BmwDeepObd
                     {
                         ScreenManager.Pop();
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        // ignored
+                        CarSession.LogFormat("PageScreen: Pop Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                     }
 
                     return false;
