@@ -436,6 +436,8 @@ namespace BmwDeepObd
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    ProcessLogQueue();
+
                     _detectVehicleBmw = null;
                     // Dispose managed resources.
                     Ediabas.Dispose();
@@ -1170,6 +1172,8 @@ namespace BmwDeepObd
                 {
                     break;
                 }
+
+                ProcessLogQueue();
                 DataUpdatedEvent();
             }
             _threadRunning = false;
@@ -3458,6 +3462,37 @@ namespace BmwDeepObd
             }
 
             return true;
+        }
+
+        private void ProcessLogQueue()
+        {
+            for (;;)
+            {
+                LogInfo logInfo = null;
+
+                lock (_logQueueLock)
+                {
+                    if (_logQueue.Count > 0)
+                    {
+                        logInfo = _logQueue.Dequeue();
+                    }
+                }
+
+                if (logInfo == null || Ediabas == null)
+                {
+                    break;
+                }
+
+                if (!string.IsNullOrEmpty(logInfo.Info))
+                {
+                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, logInfo.Info);
+                }
+
+                if (!string.IsNullOrEmpty(logInfo.Format))
+                {
+                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, logInfo.Format, logInfo.Args);
+                }
+            }
         }
 
         public void DataUpdatedEvent(bool forceUpdate = false)

@@ -205,7 +205,10 @@ namespace BmwDeepObd
                 try
                 {
                     string formatPrefix = LogPrefix + format;
-                    ActivityCommon.EdiabasThread?.LogFormat(formatPrefix, args);
+                    lock (EdiabasThread.DataLock)
+                    {
+                        ActivityCommon.EdiabasThread?.LogFormat(formatPrefix, args);
+                    }
                 }
                 catch (Exception)
                 {
@@ -223,7 +226,10 @@ namespace BmwDeepObd
                 try
                 {
                     string infoPrefix = LogPrefix + info;
-                    ActivityCommon.EdiabasThread?.LogString(infoPrefix);
+                    lock (EdiabasThread.DataLock)
+                    {
+                        ActivityCommon.EdiabasThread?.LogString(infoPrefix);
+                    }
                 }
                 catch (Exception)
                 {
