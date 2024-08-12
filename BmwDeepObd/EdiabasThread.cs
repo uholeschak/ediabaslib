@@ -135,6 +135,26 @@ namespace BmwDeepObd
             public double? ResultValue { get; }
         }
 
+        public class LogInfo
+        {
+            public LogInfo(string format, params object[] args)
+            {
+                Format = format;
+                Args = args;
+            }
+
+            public LogInfo(string info)
+            {
+                Info = info;
+            }
+
+            public string Format { get; }
+
+            public object[] Args { get; }
+
+            public string Info { get; }
+        }
+
         [DataContract]
         private class BroadcastItem
         {
