@@ -135,26 +135,6 @@ namespace BmwDeepObd
             public double? ResultValue { get; }
         }
 
-        public class LogInfo
-        {
-            public LogInfo(string format, params object[] args)
-            {
-                Format = format;
-                Args = args;
-            }
-
-            public LogInfo(string info)
-            {
-                Info = info;
-            }
-
-            public string Format { get; }
-
-            public object[] Args { get; }
-
-            public string Info { get; }
-        }
-
         [DataContract]
         private class BroadcastItem
         {
@@ -222,6 +202,26 @@ namespace BmwDeepObd
             public List<string> ValueList { get; }
 
             public int? Index { get; set; }
+        }
+
+        private class LogInfo
+        {
+            public LogInfo(string info)
+            {
+                Info = info;
+            }
+
+            public LogInfo(string format, params object[] args)
+            {
+                Format = format;
+                Args = args;
+            }
+
+            public string Info { get; }
+
+            public string Format { get; }
+
+            public object[] Args { get; }
         }
 
         public delegate void DataUpdatedEventHandler(object sender, EventArgs e);
@@ -385,6 +385,7 @@ namespace BmwDeepObd
         private Thread _workerThread;
         private DetectVehicleBmw _detectVehicleBmw;
         private RuleEvalBmw _ruleEvalBmw;
+        private Queue<LogInfo> _logQueue;
         private bool _ediabasInitReq;
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
@@ -404,6 +405,7 @@ namespace BmwDeepObd
             _threadRunning = false;
             _workerThread = null;
             _ruleEvalBmw = new RuleEvalBmw();
+            _logQueue = new Queue<LogInfo>();
             Ediabas = new EdiabasNet
             {
                 EdInterfaceClass = activityCommon.GetEdiabasInterfaceClass(),
