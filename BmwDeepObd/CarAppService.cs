@@ -8,6 +8,7 @@ using AndroidX.Lifecycle;
 using EdiabasLib;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -57,7 +58,6 @@ namespace BmwDeepObd
 #if DEBUG
         private static readonly string Tag = typeof(CarService).FullName;
 #endif
-        private const string LogPrefix = "CarService: ";
         public const int UpdateInterval = 1000;
         public const int DefaultListItems = 6;
         private ActivityCommon _activityCommon;
@@ -204,7 +204,7 @@ namespace BmwDeepObd
 #endif
                 try
                 {
-                    string formatPrefix = LogPrefix + format;
+                    string formatPrefix = GetLogPrefix() + format;
                     lock (EdiabasThread.DataLock)
                     {
                         ActivityCommon.EdiabasThread?.LogFormat(formatPrefix, args);
@@ -225,7 +225,7 @@ namespace BmwDeepObd
 #endif
                 try
                 {
-                    string infoPrefix = LogPrefix + info;
+                    string infoPrefix = GetLogPrefix() + info;
                     lock (EdiabasThread.DataLock)
                     {
                         ActivityCommon.EdiabasThread?.LogString(infoPrefix);
@@ -237,6 +237,11 @@ namespace BmwDeepObd
                 }
 
                 return true;
+            }
+
+            private static string GetLogPrefix()
+            {
+                return string.Format(CultureInfo.InvariantCulture, "CarService [{0}]: ", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture));
             }
         }
 
