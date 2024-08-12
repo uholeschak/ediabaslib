@@ -385,7 +385,8 @@ namespace BmwDeepObd
         private Thread _workerThread;
         private DetectVehicleBmw _detectVehicleBmw;
         private RuleEvalBmw _ruleEvalBmw;
-        private Queue<LogInfo> _logQueue;
+        private Queue<LogInfo> _logQueue = new Queue<LogInfo>();
+        private object _logQueueLock = new object();
         private bool _ediabasInitReq;
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
@@ -405,7 +406,6 @@ namespace BmwDeepObd
             _threadRunning = false;
             _workerThread = null;
             _ruleEvalBmw = new RuleEvalBmw();
-            _logQueue = new Queue<LogInfo>();
             Ediabas = new EdiabasNet
             {
                 EdInterfaceClass = activityCommon.GetEdiabasInterfaceClass(),
@@ -3442,16 +3442,9 @@ namespace BmwDeepObd
 
         public bool LogFormat(string format, params object[] args)
         {
-            try
+            lock (_logQueueLock)
             {
-                lock (DataLock)
-                {
-                    Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, format, args);
-                }
-            }
-            catch (Exception)
-            {
-                return false;
+                _logQueue.Enqueue(new LogInfo(format, args));
             }
 
             return true;
@@ -3459,16 +3452,9 @@ namespace BmwDeepObd
 
         public bool LogString(string info)
         {
-            try
+            lock (_logQueueLock)
             {
-                lock (DataLock)
-                {
-                    Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, info);
-                }
-            }
-            catch (Exception)
-            {
-                return false;
+                _logQueue.Enqueue(new LogInfo(info));
             }
 
             return true;
