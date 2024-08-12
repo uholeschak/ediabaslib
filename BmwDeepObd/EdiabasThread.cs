@@ -1173,7 +1173,6 @@ namespace BmwDeepObd
                     break;
                 }
 
-                ProcessLogQueue();
                 DataUpdatedEvent();
             }
             _threadRunning = false;
@@ -3495,8 +3494,24 @@ namespace BmwDeepObd
             }
         }
 
-        public void DataUpdatedEvent(bool forceUpdate = false)
+        public bool TriggerDisplayUpdate()
         {
+            try
+            {
+                DataUpdated?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private void DataUpdatedEvent(bool forceUpdate = false)
+        {
+            ProcessLogQueue();
+
             bool update = forceUpdate;
             if (Stopwatch.GetTimestamp() - _lastUpdateTime >= UpdateDataDelay * ActivityCommon.TickResolMs)
             {
