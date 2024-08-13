@@ -1483,10 +1483,17 @@ namespace BmwDeepObd
                                 string errorShadowJob = "FS_LESEN_SHADOW";
                                 if (Ediabas.IsJobExisting(errorShadowJob))
                                 {
-                                    Ediabas.ArgString = string.Empty;
-                                    Ediabas.ArgBinaryStd = null;
-                                    Ediabas.ResultsRequests = string.Empty;
-                                    Ediabas.ExecuteJob(errorShadowJob);
+                                    try
+                                    {
+                                        Ediabas.ArgString = string.Empty;
+                                        Ediabas.ArgBinaryStd = null;
+                                        Ediabas.ResultsRequests = string.Empty;
+                                        Ediabas.ExecuteJob(errorShadowJob);
+                                    }
+                                    finally
+                                    {
+                                        ProcessLogQueue();
+                                    }
 
                                     List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
 
@@ -1789,10 +1796,17 @@ namespace BmwDeepObd
                     return EdiabasErrorReportReset.ErrorRestState.Undefined;
                 }
 
-                Ediabas.ArgString = string.Empty;
-                Ediabas.ArgBinaryStd = null;
-                Ediabas.ResultsRequests = string.Empty;
-                Ediabas.ExecuteJob(resetJob);
+                try
+                {
+                    Ediabas.ArgString = string.Empty;
+                    Ediabas.ArgBinaryStd = null;
+                    Ediabas.ResultsRequests = string.Empty;
+                    Ediabas.ExecuteJob(resetJob);
+                }
+                finally
+                {
+                    ProcessLogQueue();
+                }
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                 if (resultSets.Count > 1)
@@ -1849,10 +1863,17 @@ namespace BmwDeepObd
                     return EdiabasErrorReportReset.ErrorRestState.Undefined;
                 }
 
-                Ediabas.ArgString = string.Empty;
-                Ediabas.ArgBinaryStd = null;
-                Ediabas.ResultsRequests = string.Empty;
-                Ediabas.ExecuteJob(resetJob);
+                try
+                {
+                    Ediabas.ArgString = string.Empty;
+                    Ediabas.ArgBinaryStd = null;
+                    Ediabas.ResultsRequests = string.Empty;
+                    Ediabas.ExecuteJob(resetJob);
+                }
+                finally
+                {
+                    ProcessLogQueue();
+                }
 
                 List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                 if (resultSets.Count > 1)
@@ -1901,6 +1922,10 @@ namespace BmwDeepObd
                         {
                             // ignored
                         }
+                        finally
+                        {
+                            ProcessLogQueue();
+                        }
                     }
                 }
 
@@ -1941,10 +1966,17 @@ namespace BmwDeepObd
                 return false;
             }
 
-            Ediabas.ArgString = argString;
-            Ediabas.ArgBinaryStd = null;
-            Ediabas.ResultsRequests = string.Empty;
-            Ediabas.ExecuteJob(errorJob);
+            try
+            {
+                Ediabas.ArgString = argString;
+                Ediabas.ArgBinaryStd = null;
+                Ediabas.ResultsRequests = string.Empty;
+                Ediabas.ExecuteJob(errorJob);
+            }
+            finally
+            {
+                ProcessLogQueue();
+            }
 
             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
 
@@ -1973,10 +2005,18 @@ namespace BmwDeepObd
                 {
                     if (Ediabas.IsJobExisting("FehlerspeicherSAE_abfragen"))
                     {
-                        Ediabas.ArgString = "MW_LESEN";
-                        Ediabas.ArgBinaryStd = null;
-                        Ediabas.ResultsRequests = string.Empty;
-                        Ediabas.ExecuteJob("FehlerspeicherSAE_abfragen");
+                        try
+                        {
+                            Ediabas.ArgString = "MW_LESEN";
+                            Ediabas.ArgBinaryStd = null;
+                            Ediabas.ResultsRequests = string.Empty;
+                            Ediabas.ExecuteJob("FehlerspeicherSAE_abfragen");
+                        }
+                        finally
+                        {
+                            ProcessLogQueue();
+                        }
+
                         resultSets = new List<Dictionary<string, EdiabasNet.ResultData>>(Ediabas.ResultSets);
                         if (resultSets.Count > 0)
                         {
@@ -2082,6 +2122,10 @@ namespace BmwDeepObd
                                 {
                                     // no details
                                     details = false;
+                                }
+                                finally
+                                {
+                                    ProcessLogQueue();
                                 }
                             }
 
@@ -3465,32 +3509,39 @@ namespace BmwDeepObd
 
         private void ProcessLogQueue()
         {
-            for (;;)
+            try
             {
-                LogInfo logInfo = null;
-
-                lock (_logQueueLock)
+                for (; ; )
                 {
-                    if (_logQueue.Count > 0)
+                    LogInfo logInfo = null;
+
+                    lock (_logQueueLock)
                     {
-                        logInfo = _logQueue.Dequeue();
+                        if (_logQueue.Count > 0)
+                        {
+                            logInfo = _logQueue.Dequeue();
+                        }
+                    }
+
+                    if (logInfo == null || Ediabas == null)
+                    {
+                        break;
+                    }
+
+                    if (!string.IsNullOrEmpty(logInfo.Info))
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, logInfo.Info);
+                    }
+
+                    if (!string.IsNullOrEmpty(logInfo.Format))
+                    {
+                        Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, logInfo.Format, logInfo.Args);
                     }
                 }
-
-                if (logInfo == null || Ediabas == null)
-                {
-                    break;
-                }
-
-                if (!string.IsNullOrEmpty(logInfo.Info))
-                {
-                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, logInfo.Info);
-                }
-
-                if (!string.IsNullOrEmpty(logInfo.Format))
-                {
-                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, logInfo.Format, logInfo.Args);
-                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
