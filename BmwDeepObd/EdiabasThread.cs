@@ -2273,10 +2273,18 @@ namespace BmwDeepObd
 
             foreach (string edArg in edArgList)
             {
-                Ediabas.ArgString = edArg;
-                Ediabas.ArgBinaryStd = null;
-                Ediabas.ResultsRequests = jobInfo.Results;
-                Ediabas.ExecuteJob(jobInfo.Name);
+                try
+                {
+                    Ediabas.ArgString = edArg;
+                    Ediabas.ArgBinaryStd = null;
+                    Ediabas.ResultsRequests = jobInfo.Results;
+                    Ediabas.ExecuteJob(jobInfo.Name);
+                }
+                finally
+                {
+                    ProcessLogQueue();
+                }
+
                 if (!string.IsNullOrWhiteSpace(jobInfo.RawTelegrams))
                 {
                     string[] rawTelegrams = jobInfo.RawTelegrams.Split(';');
