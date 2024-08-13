@@ -1519,6 +1519,10 @@ namespace BmwDeepObd
                             {
                                 // ignored
                             }
+                            finally
+                            {
+                                ProcessLogQueue();
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -1822,6 +1826,10 @@ namespace BmwDeepObd
             {
                 return EdiabasErrorReportReset.ErrorRestState.Failed;
             }
+            finally
+            {
+                ProcessLogQueue();
+            }
         }
 
         public EdiabasErrorReportReset.ErrorRestState ResetError(bool resetIs)
@@ -1901,6 +1909,10 @@ namespace BmwDeepObd
                         {
                             // ignored
                         }
+                        finally
+                        {
+                            ProcessLogQueue();
+                        }
                     }
                 }
 
@@ -1909,6 +1921,10 @@ namespace BmwDeepObd
             catch (Exception)
             {
                 return EdiabasErrorReportReset.ErrorRestState.Failed;
+            }
+            finally
+            {
+                ProcessLogQueue();
             }
         }
 
@@ -3465,32 +3481,39 @@ namespace BmwDeepObd
 
         private void ProcessLogQueue()
         {
-            for (;;)
+            try
             {
-                LogInfo logInfo = null;
-
-                lock (_logQueueLock)
+                for (; ; )
                 {
-                    if (_logQueue.Count > 0)
+                    LogInfo logInfo = null;
+
+                    lock (_logQueueLock)
                     {
-                        logInfo = _logQueue.Dequeue();
+                        if (_logQueue.Count > 0)
+                        {
+                            logInfo = _logQueue.Dequeue();
+                        }
+                    }
+
+                    if (logInfo == null || Ediabas == null)
+                    {
+                        break;
+                    }
+
+                    if (!string.IsNullOrEmpty(logInfo.Info))
+                    {
+                        Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, logInfo.Info);
+                    }
+
+                    if (!string.IsNullOrEmpty(logInfo.Format))
+                    {
+                        Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, logInfo.Format, logInfo.Args);
                     }
                 }
-
-                if (logInfo == null || Ediabas == null)
-                {
-                    break;
-                }
-
-                if (!string.IsNullOrEmpty(logInfo.Info))
-                {
-                    Ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, logInfo.Info);
-                }
-
-                if (!string.IsNullOrEmpty(logInfo.Format))
-                {
-                    Ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, logInfo.Format, logInfo.Args);
-                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
