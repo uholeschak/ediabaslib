@@ -70,6 +70,13 @@ namespace BmwDeepObd
             base.OnCreate();
 
             _activityCommon = new ActivityCommon(this);
+            ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
+            if (!_activityCommon.GetSettings(instanceData, ActivityCommon.SettingsMode.All, true))
+            {
+#if DEBUG
+                Android.Util.Log.Info(Tag, "OnCreate: GetSettings failed");
+#endif
+            }
         }
 
         public override void OnDestroy()
@@ -304,13 +311,25 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
+            public virtual bool GetConnected()
+            {
+                JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                return ActivityCommon.CommActive && pageInfoActive != null;
+            }
+
+            public virtual bool GetFgServiceActive()
+            {
+                return ActivityCommon.LockTypeLogging != ActivityCommon.LockType.None &&
+                       ActivityCommon.LockTypeCommunication != ActivityCommon.LockType.None;
+            }
         }
 
         public class MainScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
         {
             private Tuple<string, string> _lastContent = null;
             private readonly object _lockObject = new object();
-            private bool _disconnected = true;
+            private bool _connected = false;
             private bool _useService = false;
 
             public override ITemplate OnGetTemplate()
@@ -323,12 +342,12 @@ namespace BmwDeepObd
                 string lastValueContent = _lastContent?.Item2;
                 bool loading = lastStructureContent == null || lastValueContent == null;
 
-                bool disconnectedCopy;
+                bool connectedCopy;
                 bool useServiceCopy;
 
                 lock (_lockObject)
                 {
-                    disconnectedCopy = _disconnected;
+                    connectedCopy = _connected;
                     useServiceCopy = _useService;
                 }
 
@@ -345,13 +364,13 @@ namespace BmwDeepObd
                         }
                     })));
 
-                if (useServiceCopy)
+                if (!useServiceCopy)
                 {
                     rowState.AddText(CarContext.GetString(Resource.String.car_service_fg_service_disabled));
                 }
                 else
                 {
-                    if (disconnectedCopy)
+                    if (!connectedCopy)
                     {
                         rowState.AddText(CarContext.GetString(Resource.String.car_service_disconnected));
                     }
@@ -365,7 +384,7 @@ namespace BmwDeepObd
 
                 Row.Builder rowPageList = new Row.Builder()
                     .SetTitle(CarContext.GetString(Resource.String.car_service_page_list));
-                if (!useServiceCopy || disconnectedCopy)
+                if (!(useServiceCopy && connectedCopy))
                 {
                     rowPageList.AddText(CarContext.GetString(Resource.String.car_service_page_list_empty));
                     rowPageList.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
@@ -448,11 +467,10 @@ namespace BmwDeepObd
                 {
                     StringBuilder sbStructureContent = new StringBuilder();
                     StringBuilder sbValueContent = new StringBuilder();
-                    JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
-                    bool useService = ActivityCommon.LockTypeLogging != ActivityCommon.LockType.None && ActivityCommon.LockTypeCommunication != ActivityCommon.LockType.None;
+                    bool connected = GetConnected();
+                    bool useService = GetFgServiceActive();
 
                     sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
-                    bool disconnected = !ActivityCommon.CommActive || pageInfoActive == null;
 
                     sbValueContent.AppendLine();
                     if (!useService)
@@ -461,7 +479,7 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        if (disconnected)
+                        if (!connected)
                         {
                             sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                         }
@@ -474,7 +492,7 @@ namespace BmwDeepObd
                     sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
 
                     sbValueContent.AppendLine();
-                    if (disconnected)
+                    if (!connected)
                     {
                         sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list_empty));
                     }
@@ -485,7 +503,7 @@ namespace BmwDeepObd
 
                     lock (_lockObject)
                     {
-                        _disconnected = disconnected;
+                        _connected = connected;
                         _useService = useService;
                     }
 
