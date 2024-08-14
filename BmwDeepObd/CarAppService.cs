@@ -311,6 +311,7 @@ namespace BmwDeepObd
             private Tuple<string, string> _lastContent = null;
             private readonly object _lockObject = new object();
             private bool _disconnected = true;
+            private bool _useService = false;
 
             public override ITemplate OnGetTemplate()
             {
@@ -323,10 +324,12 @@ namespace BmwDeepObd
                 bool loading = lastStructureContent == null || lastValueContent == null;
 
                 bool disconnectedCopy;
+                bool useServiceCopy;
 
                 lock (_lockObject)
                 {
                     disconnectedCopy = _disconnected;
+                    useServiceCopy = _useService;
                 }
 
                 ItemList.Builder itemBuilder = new ItemList.Builder();
@@ -342,14 +345,22 @@ namespace BmwDeepObd
                         }
                     })));
 
-                if (disconnectedCopy)
+                if (useServiceCopy)
                 {
-                    rowState.AddText(CarContext.GetString(Resource.String.car_service_disconnected));
+                    rowState.AddText(CarContext.GetString(Resource.String.car_service_fg_service_disabled));
                 }
                 else
                 {
-                    rowState.AddText(CarContext.GetString(Resource.String.car_service_connected));
+                    if (disconnectedCopy)
+                    {
+                        rowState.AddText(CarContext.GetString(Resource.String.car_service_disconnected));
+                    }
+                    else
+                    {
+                        rowState.AddText(CarContext.GetString(Resource.String.car_service_connected));
+                    }
                 }
+
                 itemBuilder.AddItem(rowState.Build());
 
                 Row.Builder rowPageList = new Row.Builder()
@@ -438,18 +449,26 @@ namespace BmwDeepObd
                     StringBuilder sbStructureContent = new StringBuilder();
                     StringBuilder sbValueContent = new StringBuilder();
                     JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
+                    bool useService = ActivityCommon.LockTypeLogging != ActivityCommon.LockType.None && ActivityCommon.LockTypeCommunication != ActivityCommon.LockType.None;
 
                     sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
                     bool disconnected = !ActivityCommon.CommActive || pageInfoActive == null;
 
                     sbValueContent.AppendLine();
-                    if (disconnected)
+                    if (!useService)
                     {
-                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_fg_service_disabled));
                     }
                     else
                     {
-                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_connected));
+                        if (disconnected)
+                        {
+                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                        }
+                        else
+                        {
+                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_connected));
+                        }
                     }
 
                     sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
@@ -467,6 +486,7 @@ namespace BmwDeepObd
                     lock (_lockObject)
                     {
                         _disconnected = disconnected;
+                        _useService = useService;
                     }
 
                     return new Tuple<string, string>(sbStructureContent.ToString(), sbValueContent.ToString());

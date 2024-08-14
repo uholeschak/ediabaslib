@@ -864,6 +864,7 @@
   <!--Translate-->
   <string name="car_service_connection_state">Состояние соединения</string>
   <string name="car_service_connected">Автомобиль подключен.</string>
+  <string name="car_service_fg_service_disabled">Функция отключена.\nНе включайте режим энергосбережения в глобальных настройках.</string>
   <string name="car_service_disconnected">Автомобиль отключен.\nСначала подключитесь к автомобилю в приложении.</string>
   <string name="car_service_app_displayed">Приложение отобразилось на смартфоне.</string>
   <string name="car_service_page_list">Список страниц</string>
