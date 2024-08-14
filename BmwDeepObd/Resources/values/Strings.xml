@@ -841,6 +841,7 @@
   <!-- CarService -->
   <string name="car_service_connection_state">Connection state</string>
   <string name="car_service_connected">The vehicle is connected.</string>
+  <string name="car_service_fg_service_disabled">The function is disabled.\nDo not the energy saving mode in the global settings.</string>
   <string name="car_service_disconnected">The vehicle is disconnected.\nConnect to the vehicle in the app first.</string>
   <string name="car_service_app_displayed">The app has been displayed on the smartphone.</string>
   <string name="car_service_page_list">Page list</string>
