@@ -365,7 +365,7 @@ namespace BmwDeepObd
 
                 Row.Builder rowPageList = new Row.Builder()
                     .SetTitle(CarContext.GetString(Resource.String.car_service_page_list));
-                if (disconnectedCopy)
+                if (!useServiceCopy || disconnectedCopy)
                 {
                     rowPageList.AddText(CarContext.GetString(Resource.String.car_service_page_list_empty));
                     rowPageList.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
