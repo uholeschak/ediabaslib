@@ -415,7 +415,26 @@ namespace BmwDeepObd
                 itemBuilder.AddItem(rowPageList.Build());
 
                 ActionStrip.Builder actionStripBuilder = null;
-                if (!connectedCopy)
+                if (connectedCopy)
+                {
+                    AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
+                        .SetTitle(CarContext.GetString(Resource.String.car_service_button_disconnect))
+                        .SetOnClickListener(new ActionListener((page) =>
+                        {
+                            try
+                            {
+                                //ActivityCommon.StopForegroundService(CarContext);
+                            }
+                            catch (Exception ex)
+                            {
+                                CarSession.LogFormat("MainScreen: StopForegroundService Exception '{0}'", EdiabasNet.GetExceptionText(ex));
+                            }
+                        }));
+
+                    actionStripBuilder = new ActionStrip.Builder();
+                    actionStripBuilder.AddAction(actionButton.Build());
+                }
+                else
                 {
                     AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_button_connect))
