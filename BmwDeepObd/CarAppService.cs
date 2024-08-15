@@ -549,7 +549,7 @@ namespace BmwDeepObd
         {
             private Tuple<string, string> _lastContent = null;
             private readonly object _lockObject = new object();
-            private bool _disconnected = true;
+            private bool _connected = true;
             private List<PageInfoEntry> _pageList;
 
             private class PageInfoEntry
@@ -575,19 +575,19 @@ namespace BmwDeepObd
                 string lastValueContent = _lastContent?.Item2;
                 bool loading = lastStructureContent == null || lastValueContent == null;
 
-                bool disconnectedCopy;
+                bool connectedCopy;
                 List<PageInfoEntry> pageListCopy;
 
                 lock (_lockObject)
                 {
-                    disconnectedCopy = _disconnected;
+                    connectedCopy = _connected;
                     pageListCopy = _pageList;
                 }
 
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
 
-                if (disconnectedCopy)
+                if (!connectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
@@ -683,13 +683,13 @@ namespace BmwDeepObd
             {
                 Tuple<string, string> newContent = GetContentString();
 
-                bool disconnectedCopy;
+                bool connectedCopy;
                 lock (_lockObject)
                 {
-                    disconnectedCopy = _disconnected;
+                    connectedCopy = _connected;
                 }
 
-                if (disconnectedCopy)
+                if (!connectedCopy)
                 {
                     CarSession.LogString("PageListScreen: ContentChanged disconnected");
 
@@ -750,12 +750,11 @@ namespace BmwDeepObd
                     StringBuilder sbValueContent = new StringBuilder();
                     JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
 
-                    bool disconnected = false;
+                    bool connected = GetConnected();
                     List<PageInfoEntry> pageList = null;
 
-                    if (!ActivityCommon.CommActive || pageInfoActive == null)
+                    if (!connected)
                     {
-                        disconnected = true;
                         sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
 
                         sbValueContent.AppendLine();
@@ -789,7 +788,7 @@ namespace BmwDeepObd
 
                     lock (_lockObject)
                     {
-                        _disconnected = disconnected;
+                        _connected = connected;
                         _pageList = pageList;
                     }
 
