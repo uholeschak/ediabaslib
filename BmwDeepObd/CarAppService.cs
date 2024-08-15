@@ -414,9 +414,28 @@ namespace BmwDeepObd
                 }
                 itemBuilder.AddItem(rowPageList.Build());
 
+                ActionStrip.Builder actionStripBuilder = null;
+                if (!connectedCopy)
+                {
+                    AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
+                        .SetTitle(CarContext.GetString(Resource.String.car_service_button_connect))
+                        .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
+                        {
+                            if (ShowApp())
+                            {
+                                CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
+                                    CarToast.LengthLong).Show();
+                            }
+                        })));
+
+                    actionStripBuilder = new ActionStrip.Builder();
+                    actionStripBuilder.AddAction(actionButton.Build());
+                }
+
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon)
                     .SetTitle(CarContext.GetString(Resource.String.app_name));
+
                 if (loading)
                 {
                     listTemplate.SetLoading(true);
@@ -424,6 +443,10 @@ namespace BmwDeepObd
                 else
                 {
                     listTemplate.SetSingleList(itemBuilder.Build());
+                    if (actionStripBuilder != null)
+                    {
+                        listTemplate.SetActionStrip(actionStripBuilder.Build());
+                    }
                 }
 
                 RequestUpdate();

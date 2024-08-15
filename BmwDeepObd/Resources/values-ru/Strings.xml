@@ -862,6 +862,7 @@
 
   <!-- CarService -->
   <!--Translate-->
+  <string name="car_service_button_connect">Соединять</string>
   <string name="car_service_connection_state">Состояние соединения</string>
   <string name="car_service_connected">Автомобиль подключен.</string>
   <string name="car_service_fg_service_disabled">Конфигурация недействительна.\nНе используйте режим энергосбережения в глобальных настройках.</string>

@@ -863,6 +863,7 @@
   <string name="button_can_adapter_fw_change_custom">Ersatzfirmware flashen</string>
 
   <!-- CarService -->
+  <string name="car_service_button_connect">Verbinden</string>
   <string name="car_service_connection_state">Verbindungszustand</string>
   <string name="car_service_connected">Das Fahrzeug ist verbunden.</string>
   <string name="car_service_fg_service_disabled">Die Konfiguration is ungültig.\nVerwenden sie keinen Energiesparmodus den globalen Einstellungen.</string>
