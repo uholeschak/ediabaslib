@@ -549,7 +549,7 @@ namespace BmwDeepObd
         {
             private Tuple<string, string> _lastContent = null;
             private readonly object _lockObject = new object();
-            private bool _connected = true;
+            private bool _connected = false;
             private List<PageInfoEntry> _pageList;
 
             private class PageInfoEntry
@@ -753,7 +753,7 @@ namespace BmwDeepObd
                     bool connected = GetConnected();
                     List<PageInfoEntry> pageList = null;
 
-                    if (!connected)
+                    if (!connected || pageInfoActive == null)
                     {
                         sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
 
@@ -806,7 +806,7 @@ namespace BmwDeepObd
         {
             private Tuple<string, string, JobReader.PageInfo> _lastContent = null;
             private readonly object _lockObject = new object();
-            private bool _disconnected = true;
+            private bool _connected = false;
             private string _pageTitle = string.Empty;
             private bool _errorPage = false;
             private List<ErrorMessageEntry> _errorList;
@@ -838,7 +838,7 @@ namespace BmwDeepObd
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 string pageTitle = CarContext.GetString(Resource.String.app_name);
 
-                bool disconnectedCopy;
+                bool connectedCopy;
                 string pageTitleCopy;
                 bool errorPageCopy;
                 List<ErrorMessageEntry> errorListCopy;
@@ -846,7 +846,7 @@ namespace BmwDeepObd
 
                 lock (_lockObject)
                 {
-                    disconnectedCopy = _disconnected;
+                    connectedCopy = _connected;
                     pageTitleCopy = _pageTitle;
                     errorPageCopy = _errorPage;
                     errorListCopy = _errorList;
@@ -858,7 +858,7 @@ namespace BmwDeepObd
                     pageTitle = pageTitleCopy;
                 }
 
-                if (disconnectedCopy)
+                if (!connectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
@@ -1067,15 +1067,15 @@ namespace BmwDeepObd
             {
                 Tuple<string, string, JobReader.PageInfo> newContent = GetContentString();
 
-                bool disconnectedCopy;
+                bool connectedCopy;
                 bool errorPageCopy;
                 lock (_lockObject)
                 {
-                    disconnectedCopy = _disconnected;
+                    connectedCopy = _connected;
                     errorPageCopy = _errorPage;
                 }
 
-                if (disconnectedCopy)
+                if (!connectedCopy)
                 {
                     CarSession.LogString("PageScreen: ContentChanged disconnected");
 
@@ -1164,13 +1164,12 @@ namespace BmwDeepObd
                     JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
 
                     string pageTitle = CarContext.GetString(Resource.String.app_name);
-                    bool disconnected = false;
+                    bool connected = GetConnected();
                     bool errorPage = false;
                     bool loading = false;
 
-                    if (!ActivityCommon.CommActive || pageInfoActive == null)
+                    if (!connected || pageInfoActive == null)
                     {
-                        disconnected = true;
                         sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
                         sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                         lock (_lockObject)
@@ -1305,7 +1304,7 @@ namespace BmwDeepObd
 
                     lock (_lockObject)
                     {
-                        _disconnected = disconnected;
+                        _connected = connected;
                         _pageTitle = pageTitle;
                         _errorPage = errorPage;
                     }
