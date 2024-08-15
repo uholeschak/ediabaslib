@@ -839,6 +839,7 @@
   <string name="button_can_adapter_fw_change_custom">Flash replacement firmware</string>
 
   <!-- CarService -->
+  <string name="car_service_button_connect">Connect</string>
   <string name="car_service_connection_state">Connection state</string>
   <string name="car_service_connected">The vehicle is connected.</string>
   <string name="car_service_fg_service_disabled">The configuration is invalid.\nDo not use the energy saving mode in the global settings.</string>
