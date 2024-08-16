@@ -138,12 +138,21 @@ namespace BmwDeepObd
 
         public class InstanceData : ActivityCommon.InstanceDataCommon
         {
+            public enum CommRequest
+            {
+                None,
+                Connect,
+                Disconnect
+            }
+
             public InstanceData()
             {
+                CommOptionRequest = CommRequest.None;
             }
 
             public bool MtcBtDisconnectWarnShown { get; set; }
             public bool AutoConnectExecuted { get; set; }
+            public CommRequest CommOptionRequest { get; set; }
         }
 
 #if DEBUG
@@ -2214,6 +2223,23 @@ namespace BmwDeepObd
                 if (noAutoConnect)
                 {
                     _instanceData.AutoConnectExecuted = false;
+                }
+
+                string commOption = intent.GetStringExtra(ExtraCommOption);
+                if (!string.IsNullOrEmpty(commOption))
+                {
+                    if (string.Compare(commOption, CommOptionConnect, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        _instanceData.CommOptionRequest = InstanceData.CommRequest.Connect;
+                    }
+                    else if (string.Compare(commOption, CommOptionDisconnect, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        _instanceData.CommOptionRequest = InstanceData.CommRequest.Disconnect;
+                    }
+                    else
+                    {
+                        _instanceData.CommOptionRequest = InstanceData.CommRequest.None;
+                    }
                 }
             }
         }
