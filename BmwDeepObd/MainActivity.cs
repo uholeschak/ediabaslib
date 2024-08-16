@@ -168,6 +168,9 @@ namespace BmwDeepObd
         };
 
         public const string ExtraShowTitle = "show_title";
+        public const string ExtraCommOption = "comm_option";
+        public const string CommOptionConnect = "connect";
+        public const string CommOptionDisconnect = "disconnect";
         public static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();

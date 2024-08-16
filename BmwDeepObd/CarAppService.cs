@@ -419,17 +419,21 @@ namespace BmwDeepObd
                 {
                     AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
                         .SetTitle(CarContext.GetString(Resource.String.car_service_button_disconnect))
-                        .SetOnClickListener(new ActionListener((page) =>
+                        .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                         {
                             try
                             {
-                                //ActivityCommon.StopForegroundService(CarContext);
+                                if (ShowMainActivity(ActivityMain.CommOptionDisconnect))
+                                {
+                                    CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
+                                        CarToast.LengthLong).Show();
+                                }
                             }
                             catch (Exception ex)
                             {
                                 CarSession.LogFormat("MainScreen: StopForegroundService Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                             }
-                        }));
+                        })));
 
                     actionStripBuilder = new ActionStrip.Builder();
                     actionStripBuilder.AddAction(actionButton.Build());
@@ -440,7 +444,7 @@ namespace BmwDeepObd
                         .SetTitle(CarContext.GetString(Resource.String.car_service_button_connect))
                         .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                         {
-                            if (ShowMainActivity())
+                            if (ShowMainActivity(ActivityMain.CommOptionConnect))
                             {
                                 CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
                                     CarToast.LengthLong).Show();
@@ -558,7 +562,7 @@ namespace BmwDeepObd
                 }
             }
 
-            private bool ShowMainActivity()
+            private bool ShowMainActivity(string commOption = null)
             {
                 try
                 {
@@ -567,6 +571,10 @@ namespace BmwDeepObd
                     //intent.AddCategory(Intent.CategoryLauncher);
                     intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
                     intent.PutExtra(ActivityMain.ExtraShowTitle, true);
+                    if (!string.IsNullOrEmpty(commOption))
+                    {
+                        intent.PutExtra(ActivityMain.ExtraCommOption, commOption);
+                    }
                     CarContext.StartActivity(intent);
                     return true;
                 }
