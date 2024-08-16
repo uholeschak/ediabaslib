@@ -135,8 +135,7 @@ namespace BmwDeepObd
 
                     if (_touchShowTitle && !SupportActionBar.IsShowing)
                     {
-                        SupportActionBar.Show();
-                        _instanceDataBase.ActionBarVisible = true;
+                        ShowActionBar();
                     }
                 });
 
@@ -157,11 +156,11 @@ namespace BmwDeepObd
                 {
                     if (_instanceDataBase.ActionBarVisible)
                     {
-                        SupportActionBar.Show();
+                        SupportActionBar?.Show();
                     }
                     else
                     {
-                        SupportActionBar.Hide();
+                        SupportActionBar?.Hide();
                     }
                 }
             }
@@ -203,10 +202,9 @@ namespace BmwDeepObd
                 _instanceDataBase.ActionBarVisible = true;
                 if (ActivityCommon.SuppressTitleBar)
                 {
-                    if (SupportActionBar.CustomView == null && _allowTitleHiding)
+                    if (SupportActionBar?.CustomView == null && _allowTitleHiding)
                     {
-                        SupportActionBar.Hide();
-                        _instanceDataBase.ActionBarVisible = false;
+                        ShowActionBar(false);
                     }
                 }
             }
@@ -217,8 +215,7 @@ namespace BmwDeepObd
             base.OnResume();
             if (!ActivityCommon.AutoHideTitleBar && !ActivityCommon.SuppressTitleBar)
             {
-                SupportActionBar.Show();
-                _instanceDataBase.ActionBarVisible = true;
+                ShowActionBar();
             }
 
             if (_memoryCheckTimer == null)
@@ -393,7 +390,7 @@ namespace BmwDeepObd
                     {
                         _baseUpdateHandler.PostDelayed(_longPressRunnable, LongPressTimeout);
 
-                        if (_touchShowTitle && !SupportActionBar.IsShowing)
+                        if (_touchShowTitle && (SupportActionBar == null || !SupportActionBar.IsShowing))
                         {
                             if (!_instanceDataBase.LongClickShown)
                             {
@@ -526,6 +523,20 @@ namespace BmwDeepObd
             }
 
             return false;
+        }
+
+        public virtual void ShowActionBar(bool show = true)
+        {
+            if (show)
+            {
+                SupportActionBar?.Show();
+                _instanceDataBase.ActionBarVisible = true;
+            }
+            else
+            {
+                SupportActionBar?.Hide();
+                _instanceDataBase.ActionBarVisible = false;
+            }
         }
 
         public static void ClearActivityStack()
@@ -870,13 +881,11 @@ namespace BmwDeepObd
                             {
                                 if (diffY > 0)
                                 {
-                                    _activity.SupportActionBar.Show();
-                                    _activity._instanceDataBase.ActionBarVisible = true;
+                                    _activity.ShowActionBar();
                                 }
                                 else
                                 {
-                                    _activity.SupportActionBar.Hide();
-                                    _activity._instanceDataBase.ActionBarVisible = false;
+                                    _activity.ShowActionBar(false);
                                 }
                             }
                         }
