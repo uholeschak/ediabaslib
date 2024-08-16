@@ -571,6 +571,7 @@ namespace BmwDeepObd
                     //intent.AddCategory(Intent.CategoryLauncher);
                     intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
                     intent.PutExtra(ActivityMain.ExtraShowTitle, true);
+                    intent.PutExtra(ActivityMain.ExtraNoAutoconnect, true);
                     if (!string.IsNullOrEmpty(commOption))
                     {
                         intent.PutExtra(ActivityMain.ExtraCommOption, commOption);
