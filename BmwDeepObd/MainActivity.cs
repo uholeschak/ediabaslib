@@ -168,6 +168,7 @@ namespace BmwDeepObd
         };
 
         public const string ExtraShowTitle = "show_title";
+        public const string ExtraNoAutoconnect = "no_autoconnect";
         public const string ExtraCommOption = "comm_option";
         public const string CommOptionConnect = "connect";
         public const string CommOptionDisconnect = "disconnect";
