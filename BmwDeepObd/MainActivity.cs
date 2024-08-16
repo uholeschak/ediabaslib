@@ -351,11 +351,7 @@ namespace BmwDeepObd
                 });
             }
 
-            bool showTitleRequest = Intent.GetBooleanExtra(ExtraShowTitle, false);
-            if (showTitleRequest)
-            {
-                _instanceDataBase.ActionBarVisible = true;
-            }
+            HandleIntent(Intent);
 
             if (ActivityCommon.CommActive)
             {
@@ -829,14 +825,7 @@ namespace BmwDeepObd
         {
             base.OnNewIntent(intent);
 
-            if (intent != null)
-            {
-                bool showTitleRequest = intent.GetBooleanExtra(ExtraShowTitle, false);
-                if (showTitleRequest)
-                {
-                    SupportActionBar.Show();
-                }
-            }
+            HandleIntent(intent);
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -2204,6 +2193,18 @@ namespace BmwDeepObd
                     }
                 }
                 _activityCommon.SetClipboardText(sr.ToString());
+            }
+        }
+
+        private void HandleIntent(Intent intent)
+        {
+            if (intent != null)
+            {
+                bool showTitleRequest = intent.GetBooleanExtra(ExtraShowTitle, false);
+                if (showTitleRequest)
+                {
+                    ShowActionBar();
+                }
             }
         }
 
