@@ -528,7 +528,7 @@ namespace BmwDeepObd
                 if (ActivityCommon.JobReader.PageList.Count > 0 &&
                     !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
                 {
-                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(true));
+                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Auto));
                     if (UseCommService() && ActivityCommon.CommActive &&
                         ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.ConnectClose)
                     {
@@ -547,7 +547,18 @@ namespace BmwDeepObd
 
         private void HandleConnectOption()
         {
+            InstanceData.CommRequest commRequest = _instanceData.CommOptionRequest;
+            _instanceData.CommOptionRequest = InstanceData.CommRequest.None;
+            switch (commRequest)
+            {
+                case InstanceData.CommRequest.Connect:
+                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Connect));
+                    break;
 
+                case InstanceData.CommRequest.Disconnect:
+                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Disconnect));
+                    break;
+            }
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -1882,7 +1893,12 @@ namespace BmwDeepObd
             bool autoConnect = false;
             if (e is EventArgsConnect eventArgsConnect)
             {
-                autoConnect = eventArgsConnect.AutoConnect;
+                switch (eventArgsConnect.Mode)
+                {
+                    case EventArgsConnect.ConnectMode.Auto:
+                        autoConnect = true;
+                        break;
+                }
             }
 
             if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
@@ -7403,11 +7419,19 @@ namespace BmwDeepObd
 
         private class EventArgsConnect : EventArgs
         {
-            public bool AutoConnect { get; set; }
-
-            public EventArgsConnect(bool autoConnect)
+            public enum ConnectMode
             {
-                AutoConnect = autoConnect;
+                None,
+                Auto,
+                Connect,
+                Disconnect,
+            }
+
+            public ConnectMode Mode { get; set; }
+
+            public EventArgsConnect(ConnectMode connectMode)
+            {
+                Mode = connectMode;
             }
         }
 
