@@ -2209,6 +2209,12 @@ namespace BmwDeepObd
                 {
                     ShowActionBar();
                 }
+
+                bool noAutoConnect = intent.GetBooleanExtra(ExtraNoAutoconnect, false);
+                if (noAutoConnect)
+                {
+                    _instanceData.AutoConnectExecuted = false;
+                }
             }
         }
 
