@@ -357,7 +357,7 @@ namespace BmwDeepObd
                     .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
                     .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                     {
-                        if (ShowApp())
+                        if (ShowMainActivity())
                         {
                             CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
                                 CarToast.LengthLong).Show();
@@ -389,7 +389,7 @@ namespace BmwDeepObd
                     rowPageList.AddText(CarContext.GetString(Resource.String.car_service_page_list_empty));
                     rowPageList.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                     {
-                        if (ShowApp())
+                        if (ShowMainActivity())
                         {
                             CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
                                 CarToast.LengthLong).Show();
@@ -440,7 +440,7 @@ namespace BmwDeepObd
                         .SetTitle(CarContext.GetString(Resource.String.car_service_button_connect))
                         .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                         {
-                            if (ShowApp())
+                            if (ShowMainActivity())
                             {
                                 CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
                                     CarToast.LengthLong).Show();
@@ -558,33 +558,24 @@ namespace BmwDeepObd
                 }
             }
 
-            public bool ShowApp()
+            private bool ShowMainActivity()
             {
                 try
                 {
-                    string packageName = CarContext.PackageName;
-                    if (string.IsNullOrEmpty(packageName))
-                    {
-                        return false;
-                    }
-
-                    Intent intent = CarContext.PackageManager?.GetLaunchIntentForPackage(packageName);
-                    if (intent == null)
-                    {
-                        return false;
-                    }
-
-                    intent.AddCategory(Intent.CategoryLauncher);
-                    intent.SetFlags(ActivityFlags.NewTask);
+                    Intent intent = new Intent(CarContext, typeof(ActivityMain));
+                    //intent.SetAction(Intent.ActionMain);
+                    //intent.AddCategory(Intent.CategoryLauncher);
+                    intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
+                    intent.PutExtra(ActivityMain.ExtraShowTitle, true);
                     CarContext.StartActivity(intent);
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    CarSession.LogFormat("GetContentLimit: ShowApp Exception '{0}'", EdiabasNet.GetExceptionText(ex));
+                    return false;
                 }
-                return false;
             }
+
         }
 
         public class PageListScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
