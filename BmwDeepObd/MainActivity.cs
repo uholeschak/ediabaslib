@@ -211,6 +211,7 @@ namespace BmwDeepObd
         private Timer _autoHideTimer;
         private Handler _updateHandler;
         private Java.Lang.Runnable _createActionBarRunnable;
+        private Java.Lang.Runnable _handleConnectOptionRunnable;
         private Java.Lang.Runnable _compileCodeRunnable;
         private Java.Lang.Runnable _updateDisplayRunnable;
         private Java.Lang.Runnable _updateDisplayForceRunnable;
@@ -336,6 +337,7 @@ namespace BmwDeepObd
 
             _updateHandler = new Handler(Looper.MainLooper);
             _createActionBarRunnable = new Java.Lang.Runnable(CreateActionBarTabs);
+            _handleConnectOptionRunnable = new Java.Lang.Runnable(HandleConnectOption);
             _compileCodeRunnable = new Java.Lang.Runnable(CompileCode);
             _updateDisplayRunnable = new Java.Lang.Runnable(() =>
             {
@@ -541,6 +543,11 @@ namespace BmwDeepObd
             }
 
             _instanceData.AutoConnectExecuted = true;
+        }
+
+        private void HandleConnectOption()
+        {
+
         }
 
         protected override void OnSaveInstanceState(Bundle outState)
@@ -2228,17 +2235,23 @@ namespace BmwDeepObd
                 string commOption = intent.GetStringExtra(ExtraCommOption);
                 if (!string.IsNullOrEmpty(commOption))
                 {
+                    InstanceData.CommRequest commRequest = InstanceData.CommRequest.None;
                     if (string.Compare(commOption, CommOptionConnect, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        _instanceData.CommOptionRequest = InstanceData.CommRequest.Connect;
+                        commRequest = InstanceData.CommRequest.Connect;
                     }
                     else if (string.Compare(commOption, CommOptionDisconnect, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        _instanceData.CommOptionRequest = InstanceData.CommRequest.Disconnect;
+                        commRequest = InstanceData.CommRequest.Disconnect;
                     }
-                    else
+
+                    _instanceData.CommOptionRequest = commRequest;
+                    if (commRequest != InstanceData.CommRequest.None)
                     {
-                        _instanceData.CommOptionRequest = InstanceData.CommRequest.None;
+                        if (!_updateHandler.HasCallbacks(_handleConnectOptionRunnable))
+                        {
+                            _updateHandler.Post(_handleConnectOptionRunnable);
+                        }
                     }
                 }
             }
