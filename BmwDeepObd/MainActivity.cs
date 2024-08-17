@@ -1890,15 +1890,10 @@ namespace BmwDeepObd
                 return;
             }
 
-            bool autoConnect = false;
+            EventArgsConnect.ConnectMode connectMode = EventArgsConnect.ConnectMode.None;
             if (e is EventArgsConnect eventArgsConnect)
             {
-                switch (eventArgsConnect.Mode)
-                {
-                    case EventArgsConnect.ConnectMode.Auto:
-                        autoConnect = true;
-                        break;
-                }
+                connectMode = eventArgsConnect.Mode;
             }
 
             if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
@@ -1918,7 +1913,7 @@ namespace BmwDeepObd
                 }
             }
 
-            if (!ActivityCommon.CommActive && !autoConnect)
+            if (!ActivityCommon.CommActive && connectMode == EventArgsConnect.ConnectMode.None)
             {
                 if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
                 {
