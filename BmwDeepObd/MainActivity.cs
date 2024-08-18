@@ -1997,7 +1997,25 @@ namespace BmwDeepObd
                 }
             }
 
-            if (ActivityCommon.CommActive)
+            bool commActive = ActivityCommon.CommActive;
+            switch (connectMode)
+            {
+                case EventArgsConnect.ConnectMode.Connect:
+                    if (commActive)
+                    {
+                        return;
+                    }
+                    break;
+
+                case EventArgsConnect.ConnectMode.Disconnect:
+                    if (!commActive)
+                    {
+                        return;
+                    }
+                    break;
+            }
+
+            if (commActive)
             {
                 StopEdiabasThread(false);
                 StoreActiveJobIndex(true);
