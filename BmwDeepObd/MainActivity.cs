@@ -467,15 +467,21 @@ namespace BmwDeepObd
                 }
             }
 
-            switch (_instanceData.CommOptionRequest)
+            InstanceData.CommRequest commRequest = _instanceData.CommOptionRequest;
+            if (commRequest != InstanceData.CommRequest.None)
             {
-                case InstanceData.CommRequest.Connect:
-                    connectMode = EventArgsConnect.ConnectMode.Connect;
-                    break;
+                _instanceData.CommOptionRequest = InstanceData.CommRequest.None;
 
-                case InstanceData.CommRequest.Disconnect:
-                    connectMode = EventArgsConnect.ConnectMode.Disconnect;
-                    break;
+                switch (commRequest)
+                {
+                    case InstanceData.CommRequest.Connect:
+                        connectMode = EventArgsConnect.ConnectMode.Connect;
+                        break;
+
+                    case InstanceData.CommRequest.Disconnect:
+                        connectMode = EventArgsConnect.ConnectMode.Disconnect;
+                        break;
+                }
             }
 
             int pageIndex = 0;
@@ -561,6 +567,11 @@ namespace BmwDeepObd
         private void HandleConnectOption()
         {
             InstanceData.CommRequest commRequest = _instanceData.CommOptionRequest;
+            if (commRequest == InstanceData.CommRequest.None)
+            {
+                return;
+            }
+
             _instanceData.CommOptionRequest = InstanceData.CommRequest.None;
             if (!_connectButtonInfo.Enabled)
             {
@@ -575,7 +586,10 @@ namespace BmwDeepObd
                         break;
                     }
 
-                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Connect));
+                    if (ActivityCommon.JobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable())
+                    {
+                        ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Connect));
+                    }
                     break;
 
                 case InstanceData.CommRequest.Disconnect:
@@ -687,8 +701,11 @@ namespace BmwDeepObd
 
             if (_createTabsPending)
             {
+                // this also handles connect option
                 PostCreateActionBarTabs();
             }
+
+            HandleConnectOption();
 
             if (_startAlertDialog == null)
             {
