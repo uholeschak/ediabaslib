@@ -540,7 +540,9 @@ namespace BmwDeepObd
                     !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
                 {
                     ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(connectMode));
-                    if (UseCommService() && ActivityCommon.CommActive &&
+
+                    if (connectMode == EventArgsConnect.ConnectMode.Auto &&
+                        UseCommService() && ActivityCommon.CommActive &&
                         ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.ConnectClose)
                     {
                         _instanceData.AutoConnectExecuted = true;
