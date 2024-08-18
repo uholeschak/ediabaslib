@@ -566,6 +566,11 @@ namespace BmwDeepObd
 
         private void HandleConnectOption()
         {
+            if (!_activityActive)
+            {
+                return;
+            }
+
             InstanceData.CommRequest commRequest = _instanceData.CommOptionRequest;
             if (commRequest == InstanceData.CommRequest.None)
             {
@@ -573,6 +578,7 @@ namespace BmwDeepObd
             }
 
             _instanceData.CommOptionRequest = InstanceData.CommRequest.None;
+            UpdateDisplay();
             if (!_connectButtonInfo.Enabled)
             {
                 return;
@@ -704,8 +710,10 @@ namespace BmwDeepObd
                 // this also handles connect option
                 PostCreateActionBarTabs();
             }
-
-            HandleConnectOption();
+            else
+            {
+                HandleConnectOption();
+            }
 
             if (_startAlertDialog == null)
             {
