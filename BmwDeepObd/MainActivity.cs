@@ -440,7 +440,7 @@ namespace BmwDeepObd
             }
             _createTabsPending = false;
 
-            bool autoConnect = false;
+            EventArgsConnect.ConnectMode connectMode = EventArgsConnect.ConnectMode.None;
             // get last active tab
             JobReader.PageInfo currentPage = null;
             if (IsCommActive())
@@ -456,7 +456,7 @@ namespace BmwDeepObd
                     {
                         case ActivityCommon.AutoConnectType.Connect:
                         case ActivityCommon.AutoConnectType.ConnectClose:
-                            autoConnect = true;
+                            connectMode = EventArgsConnect.ConnectMode.Auto;
                             break;
                     }
                 }
@@ -467,8 +467,19 @@ namespace BmwDeepObd
                 }
             }
 
+            switch (_instanceData.CommOptionRequest)
+            {
+                case InstanceData.CommRequest.Connect:
+                    connectMode = EventArgsConnect.ConnectMode.Connect;
+                    break;
+
+                case InstanceData.CommRequest.Disconnect:
+                    connectMode = EventArgsConnect.ConnectMode.Disconnect;
+                    break;
+            }
+
             int pageIndex = 0;
-            if (autoConnect)
+            if (connectMode == EventArgsConnect.ConnectMode.Auto)
             {
                 pageIndex = _instanceData.LastSelectedJobIndex;
             }
@@ -523,12 +534,12 @@ namespace BmwDeepObd
             UpdateDisplay();
             StoreLastAppState(ActivityCommon.LastAppState.TabsCreated);
 
-            if (autoConnect)
+            if (connectMode != EventArgsConnect.ConnectMode.None)
             {
                 if (ActivityCommon.JobReader.PageList.Count > 0 &&
                     !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
                 {
-                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Auto));
+                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(connectMode));
                     if (UseCommService() && ActivityCommon.CommActive &&
                         ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.ConnectClose)
                     {
