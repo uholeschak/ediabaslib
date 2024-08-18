@@ -2292,9 +2292,12 @@ namespace BmwDeepObd
                     _instanceData.CommOptionRequest = commRequest;
                     if (commRequest != InstanceData.CommRequest.None)
                     {
-                        if (!_updateHandler.HasCallbacks(_handleConnectOptionRunnable))
+                        if (_activityActive)
                         {
-                            _updateHandler.Post(_handleConnectOptionRunnable);
+                            if (!_updateHandler.HasCallbacks(_handleConnectOptionRunnable))
+                            {
+                                _updateHandler.Post(_handleConnectOptionRunnable);
+                            }
                         }
                     }
                 }
