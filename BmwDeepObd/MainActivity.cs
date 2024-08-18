@@ -549,13 +549,28 @@ namespace BmwDeepObd
         {
             InstanceData.CommRequest commRequest = _instanceData.CommOptionRequest;
             _instanceData.CommOptionRequest = InstanceData.CommRequest.None;
+            if (!_connectButtonInfo.Enabled)
+            {
+                return;
+            }
+
             switch (commRequest)
             {
                 case InstanceData.CommRequest.Connect:
+                    if (_connectButtonInfo.Checked)
+                    {
+                        break;
+                    }
+
                     ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Connect));
                     break;
 
                 case InstanceData.CommRequest.Disconnect:
+                    if (!_connectButtonInfo.Checked)
+                    {
+                        break;
+                    }
+
                     ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Disconnect));
                     break;
             }
