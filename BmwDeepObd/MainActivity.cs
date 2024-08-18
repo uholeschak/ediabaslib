@@ -3503,6 +3503,11 @@ namespace BmwDeepObd
                     buttonEnabled = false;
                 }
 
+                if (_downloadProgress != null || _downloadEcuAlertDialog != null)
+                {
+                    buttonEnabled = false;
+                }
+
                 _connectButtonInfo.Enabled = buttonEnabled;
                 _connectButtonInfo.Checked = false;
             }
