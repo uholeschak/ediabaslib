@@ -181,7 +181,6 @@ namespace BmwDeepObd
         {
             public const string CarSessionBroadcastAction = ActivityCommon.AppNameSpace + ".CarSession.Action";
             public const string ExtraConnectStarted = "ConnectStarted";
-            public const string ExtraDisconnectStarted = "DisconnectStarted";
             public const string ExtraActivityStopped = "ActivityStopped";
 
             private readonly CarService _carService;
@@ -213,7 +212,7 @@ namespace BmwDeepObd
             public override Screen OnCreateScreen(Intent intent)
             {
                 LogString("CarSession: OnCreateScreen");
-                return new MainScreen(CarContext, _carService);
+                return new MainScreen(CarContext, _carService, this);
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
@@ -297,7 +296,6 @@ namespace BmwDeepObd
                     {
                         case CarSessionBroadcastAction:
                             bool connectStarted = intent.GetBooleanExtra(ExtraConnectStarted, false);
-                            bool disconnectStarted = intent.GetBooleanExtra(ExtraDisconnectStarted, false);
                             bool activityStopped = intent.GetBooleanExtra(ExtraActivityStopped, false);
                             if (activityStopped)
                             {
@@ -305,7 +303,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                carSession.IsConnecting = connectStarted | disconnectStarted;
+                                carSession.IsConnecting = connectStarted;
                             }
                             break;
                     }
@@ -315,17 +313,20 @@ namespace BmwDeepObd
 
         public class BaseScreen : Screen, ILifecycleEventObserver
         {
-            private CarService _carServiceInst;
+            private readonly CarService _carServiceInst;
+            private readonly CarSession _carSessionInst;
             private readonly Handler _updateHandler;
             private readonly UpdateScreenRunnable _updateScreenRunnable;
 
             public CarService CarServiceInst => _carServiceInst;
+            public CarSession CarSessionInst => _carSessionInst;
 
-            public BaseScreen(CarContext carContext, CarService carService) : base(carContext)
+            public BaseScreen(CarContext carContext, CarService carService, CarSession carSession) : base(carContext)
             {
                 CarSession.LogFormat("BaseScreen: Class={0}", GetType().FullName);
 
                 _carServiceInst = carService;
+                _carSessionInst = carSession;
                 _updateHandler = new Handler(Looper.MainLooper);
                 _updateScreenRunnable = new UpdateScreenRunnable(this);
                 Lifecycle.AddObserver(this);
@@ -384,13 +385,19 @@ namespace BmwDeepObd
                 return ActivityCommon.LockTypeLogging != ActivityCommon.LockType.None &&
                        ActivityCommon.LockTypeCommunication != ActivityCommon.LockType.None;
             }
+
+            public virtual bool GetIsConnecting()
+            {
+                return CarSessionInst.IsConnecting;
+            }
         }
 
-        public class MainScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
+        public class MainScreen(CarContext carContext, CarService carService, CarSession carSession) : BaseScreen(carContext, carService, carSession)
         {
             private Tuple<string, string> _lastContent = null;
             private readonly object _lockObject = new object();
             private bool _connected = false;
+            private bool _isConnecting = false;
             private bool _useService = false;
 
             public override ITemplate OnGetTemplate()
@@ -404,11 +411,13 @@ namespace BmwDeepObd
                 bool loading = lastStructureContent == null || lastValueContent == null;
 
                 bool connectedCopy;
+                bool isConnectingCopy;
                 bool useServiceCopy;
 
                 lock (_lockObject)
                 {
                     connectedCopy = _connected;
+                    isConnectingCopy = _isConnecting;
                     useServiceCopy = _useService;
                 }
 
@@ -465,7 +474,7 @@ namespace BmwDeepObd
                     {
                         try
                         {
-                            ScreenManager.Push(new PageListScreen(CarContext, CarServiceInst));
+                            ScreenManager.Push(new PageListScreen(CarContext, CarServiceInst, CarSessionInst));
                         }
                         catch (Exception ex)
                         {
@@ -476,44 +485,47 @@ namespace BmwDeepObd
                 itemBuilder.AddItem(rowPageList.Build());
 
                 ActionStrip.Builder actionStripBuilder = null;
-                if (connectedCopy)
+                if (!isConnectingCopy)
                 {
-                    AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
-                        .SetTitle(CarContext.GetString(Resource.String.car_service_button_disconnect))
-                        .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
-                        {
-                            try
+                    if (connectedCopy)
+                    {
+                        AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
+                            .SetTitle(CarContext.GetString(Resource.String.car_service_button_disconnect))
+                            .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
-                                if (ShowMainActivity(ActivityMain.CommOptionDisconnect))
+                                try
+                                {
+                                    if (ShowMainActivity(ActivityMain.CommOptionDisconnect))
+                                    {
+                                        CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
+                                            CarToast.LengthLong).Show();
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    CarSession.LogFormat("MainScreen: StopForegroundService Exception '{0}'", EdiabasNet.GetExceptionText(ex));
+                                }
+                            })));
+
+                        actionStripBuilder = new ActionStrip.Builder();
+                        actionStripBuilder.AddAction(actionButton.Build());
+                    }
+                    else
+                    {
+                        AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
+                            .SetTitle(CarContext.GetString(Resource.String.car_service_button_connect))
+                            .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
+                            {
+                                if (ShowMainActivity(ActivityMain.CommOptionConnect))
                                 {
                                     CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
                                         CarToast.LengthLong).Show();
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                CarSession.LogFormat("MainScreen: StopForegroundService Exception '{0}'", EdiabasNet.GetExceptionText(ex));
-                            }
-                        })));
+                            })));
 
-                    actionStripBuilder = new ActionStrip.Builder();
-                    actionStripBuilder.AddAction(actionButton.Build());
-                }
-                else
-                {
-                    AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
-                        .SetTitle(CarContext.GetString(Resource.String.car_service_button_connect))
-                        .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
-                        {
-                            if (ShowMainActivity(ActivityMain.CommOptionConnect))
-                            {
-                                CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
-                                    CarToast.LengthLong).Show();
-                            }
-                        })));
-
-                    actionStripBuilder = new ActionStrip.Builder();
-                    actionStripBuilder.AddAction(actionButton.Build());
+                        actionStripBuilder = new ActionStrip.Builder();
+                        actionStripBuilder.AddAction(actionButton.Build());
+                    }
                 }
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
@@ -575,6 +587,7 @@ namespace BmwDeepObd
                     StringBuilder sbStructureContent = new StringBuilder();
                     StringBuilder sbValueContent = new StringBuilder();
                     bool connected = GetConnected();
+                    bool isConnecting = GetIsConnecting();
                     bool useService = GetFgServiceActive();
 
                     sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
@@ -608,9 +621,22 @@ namespace BmwDeepObd
                         sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list_show));
                     }
 
+                    if (!isConnecting)
+                    {
+                        if (connected)
+                        {
+                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_button_disconnect));
+                        }
+                        else
+                        {
+                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_button_connect));
+                        }
+                    }
+
                     lock (_lockObject)
                     {
                         _connected = connected;
+                        _isConnecting = isConnecting;
                         _useService = useService;
                     }
 
@@ -648,7 +674,7 @@ namespace BmwDeepObd
 
         }
 
-        public class PageListScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService)
+        public class PageListScreen(CarContext carContext, CarService carService, CarSession carSession) : BaseScreen(carContext, carService, carSession)
         {
             private Tuple<string, string> _lastContent = null;
             private readonly object _lockObject = new object();
@@ -739,7 +765,7 @@ namespace BmwDeepObd
 
                                     try
                                     {
-                                        ScreenManager.Push(new PageScreen(CarContext, CarServiceInst));
+                                        ScreenManager.Push(new PageScreen(CarContext, CarServiceInst, CarSessionInst));
                                     }
                                     catch (Exception ex)
                                     {
@@ -905,7 +931,7 @@ namespace BmwDeepObd
             }
         }
 
-        public class PageScreen(CarContext carContext, CarService carService) : BaseScreen(carContext, carService), IOnScreenResultListener
+        public class PageScreen(CarContext carContext, CarService carService, CarSession carSession) : BaseScreen(carContext, carService, carSession), IOnScreenResultListener
         {
             private Tuple<string, string, JobReader.PageInfo> _lastContent = null;
             private readonly object _lockObject = new object();
@@ -1035,7 +1061,7 @@ namespace BmwDeepObd
                                                         actionResult = new Java.Lang.String(ecuName);
                                                     }
 
-                                                    ScreenManager.PushForResult(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, sbText.ToString(),
+                                                    ScreenManager.PushForResult(new PageDetailScreen(CarContext, CarServiceInst, CarSessionInst, rowTitle, sbText.ToString(),
                                                         actionText, actionResult), this);
                                                 }
                                                 catch (Exception ex)
@@ -1088,7 +1114,7 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, rowTitle, result));
+                                    ScreenManager.Push(new PageDetailScreen(CarContext, CarServiceInst, CarSessionInst, rowTitle, result));
                                 }
                                 catch (Exception ex)
                                 {
@@ -1428,8 +1454,8 @@ namespace BmwDeepObd
             }
         }
 
-        public class PageDetailScreen(CarContext carContext, CarService carService, string title, string message,
-            string actionText = null, Java.Lang.Object actionResult = null) : BaseScreen(carContext, carService)
+        public class PageDetailScreen(CarContext carContext, CarService carService, CarSession carSession, string title, string message,
+            string actionText = null, Java.Lang.Object actionResult = null) : BaseScreen(carContext, carService, carSession)
         {
             public override ITemplate OnGetTemplate()
             {
