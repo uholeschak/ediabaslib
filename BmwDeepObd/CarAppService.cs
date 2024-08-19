@@ -182,6 +182,8 @@ namespace BmwDeepObd
             public const string ExtraDisconnectStarted = "DisconnectStarted";
             public const string ExtraActivityStopped = "ActivityStopped";
 
+            public bool ConnectionProcessing { get; protected set; }
+
             public override Screen OnCreateScreen(Intent intent)
             {
                 LogString("CarSession: OnCreateScreen");
@@ -201,6 +203,15 @@ namespace BmwDeepObd
                 bool connectStarted = intent.GetBooleanExtra(ExtraConnectStarted, false);
                 bool disconnectStarted = intent.GetBooleanExtra(ExtraDisconnectStarted, false);
                 bool activityStopped = intent.GetBooleanExtra(ExtraActivityStopped, false);
+
+                if (activityStopped)
+                {
+                    ConnectionProcessing = false;
+                }
+                else
+                {
+                    ConnectionProcessing = connectStarted || disconnectStarted;
+                }
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
