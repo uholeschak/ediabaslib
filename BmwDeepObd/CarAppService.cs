@@ -60,13 +60,7 @@ namespace BmwDeepObd
 #endif
         public const int UpdateInterval = 1000;
         public const int DefaultListItems = 6;
-        public const string CarServiceBroadcastAction = ActivityCommon.AppNameSpace + ".CarService.Action";
-        public const string ExtraConnectStarted = "ConnectStarted";
-        public const string ExtraDisconnectStarted = "DisconnectStarted";
-        public const string ExtraActivityStopped = "ActivityStopped";
-
         private ActivityCommon _activityCommon;
-        private Receiver _bcReceiver;
         private Thread _errorEvalThread;
 
         public ActivityCommon ActivityCommon => _activityCommon;
@@ -76,8 +70,6 @@ namespace BmwDeepObd
             base.OnCreate();
 
             _activityCommon = new ActivityCommon(this);
-            _bcReceiver = new Receiver(this);
-            InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).RegisterReceiver(_bcReceiver, new IntentFilter(CarServiceBroadcastAction));
 
             ActivityCommon.InstanceDataCommon instanceData = new ActivityCommon.InstanceDataCommon();
             if (!_activityCommon.GetSettings(instanceData, ActivityCommon.SettingsMode.All, true))
@@ -91,8 +83,6 @@ namespace BmwDeepObd
         public override void OnDestroy()
         {
             base.OnDestroy();
-
-            InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).UnregisterReceiver(_bcReceiver);
 
             if (IsErrorEvalJobRunning())
             {
@@ -187,12 +177,43 @@ namespace BmwDeepObd
         }
 
 
-        public class CarSession(CarService carService) : Session
+        public sealed class CarSession : Session, ILifecycleEventObserver
         {
+            public const string CarSessionBroadcastAction = ActivityCommon.AppNameSpace + ".CarSession.Action";
+            public const string ExtraConnectStarted = "ConnectStarted";
+            public const string ExtraDisconnectStarted = "DisconnectStarted";
+            public const string ExtraActivityStopped = "ActivityStopped";
+
+            private readonly CarService _carService;
+            private readonly Receiver _bcReceiver;
+
+            public bool IsConnecting { set; get; }
+
+            public CarSession(CarService carService)
+            {
+                _carService = carService;
+                _bcReceiver = new Receiver(this);
+                Lifecycle.AddObserver(this);
+            }
+
+            public void OnStateChanged(ILifecycleOwner source, Lifecycle.Event e)
+            {
+                LogFormat("CarSession: OnStateChanged State={0}", e);
+
+                if (e == Lifecycle.Event.OnCreate)
+                {
+                    InternalBroadcastManager.InternalBroadcastManager.GetInstance(CarContext).RegisterReceiver(_bcReceiver, new IntentFilter(CarSessionBroadcastAction));
+                }
+                else if (e == Lifecycle.Event.OnDestroy)
+                {
+                    InternalBroadcastManager.InternalBroadcastManager.GetInstance(CarContext).UnregisterReceiver(_bcReceiver);
+                }
+            }
+
             public override Screen OnCreateScreen(Intent intent)
             {
                 LogString("CarSession: OnCreateScreen");
-                return new MainScreen(CarContext, carService);
+                return new MainScreen(CarContext, _carService);
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
@@ -260,6 +281,35 @@ namespace BmwDeepObd
             private static string GetLogPrefix()
             {
                 return string.Format(CultureInfo.InvariantCulture, "CarService [{0}]: ", DateTime.Now.ToString("HH:mm:ss.fff", CultureInfo.InvariantCulture));
+            }
+
+            public class Receiver(CarSession carSession) : BroadcastReceiver
+            {
+                public override void OnReceive(Context context, Intent intent)
+                {
+                    if (intent == null)
+                    {
+                        return;
+                    }
+
+                    string action = intent.Action;
+                    switch (action)
+                    {
+                        case CarSessionBroadcastAction:
+                            bool connectStarted = intent.GetBooleanExtra(ExtraConnectStarted, false);
+                            bool disconnectStarted = intent.GetBooleanExtra(ExtraDisconnectStarted, false);
+                            bool activityStopped = intent.GetBooleanExtra(ExtraActivityStopped, false);
+                            if (activityStopped)
+                            {
+                                carSession.IsConnecting = false;
+                            }
+                            else
+                            {
+                                carSession.IsConnecting = connectStarted | disconnectStarted;
+                            }
+                            break;
+                    }
+                }
             }
         }
 
@@ -1476,34 +1526,6 @@ namespace BmwDeepObd
                 catch (Exception ex)
                 {
                     CarSession.LogFormat("UpdateScreenRunnable: Exception '{0}'", EdiabasNet.GetExceptionText(ex));
-                }
-            }
-        }
-
-        public class Receiver : BroadcastReceiver
-        {
-            readonly CarService _carService;
-
-            public Receiver(CarService carService)
-            {
-                _carService = carService;
-            }
-
-            public override void OnReceive(Context context, Intent intent)
-            {
-                if (intent == null)
-                {
-                    return;
-                }
-
-                string action = intent.Action;
-                switch (action)
-                {
-                    case CarServiceBroadcastAction:
-                        bool connectStarted = intent.GetBooleanExtra(ExtraConnectStarted, false);
-                        bool disconnectStarted = intent.GetBooleanExtra(ExtraDisconnectStarted, false);
-                        bool activityStopped = intent.GetBooleanExtra(ExtraActivityStopped, false);
-                        break;
                 }
             }
         }
