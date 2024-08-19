@@ -178,10 +178,36 @@ namespace BmwDeepObd
 
         public class CarSession(CarService carService) : Session
         {
+            public const string ExtraConnectStarted = "ConnectStarted";
+            public const string ExtraDisconnectStarted = "DisconnectStarted";
+            public const string ExtraActivityStopped = "ActivityStopped";
+
+            public bool ConnectionProcessing { get; protected set; }
+
             public override Screen OnCreateScreen(Intent intent)
             {
                 LogString("CarSession: OnCreateScreen");
                 return new MainScreen(CarContext, carService);
+            }
+
+            public override void OnNewIntent(Intent intent)
+            {
+                LogString("CarSession: OnNewIntent");
+
+                bool connectStarted = intent.GetBooleanExtra(ExtraConnectStarted, false);
+                bool disconnectStarted = intent.GetBooleanExtra(ExtraDisconnectStarted, false);
+                bool activityStopped = intent.GetBooleanExtra(ExtraActivityStopped, false);
+
+                if (activityStopped)
+                {
+                    ConnectionProcessing = false;
+                }
+                else
+                {
+                    ConnectionProcessing = connectStarted || disconnectStarted;
+                }
+
+                base.OnNewIntent(intent);
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
