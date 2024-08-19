@@ -2035,16 +2035,16 @@ namespace BmwDeepObd
                 {
                     if (_activityCommon == null)
                     {
-                        SendCarSessionConnectBroadcast(false);
                         return;
                     }
+
+                    SendCarSessionConnectBroadcast(false);
                     if (result)
                     {
                         ButtonConnectClick(sender, e);
                     }
                     else
                     {
-                        SendCarSessionConnectBroadcast(false);
                         VerifyEcuMd5();
                     }
                 }))
@@ -2072,6 +2072,7 @@ namespace BmwDeepObd
                     break;
             }
 
+            SendCarSessionConnectBroadcast(false);
             if (commActive)
             {
                 StopEdiabasThread(false);
