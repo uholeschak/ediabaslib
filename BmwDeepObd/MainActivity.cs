@@ -571,6 +571,11 @@ namespace BmwDeepObd
                 return;
             }
 
+            if (_tabLayout.Visibility == ViewStates.Gone)
+            {
+                return;
+            }
+
             InstanceData.CommRequest commRequest = _instanceData.CommOptionRequest;
             if (commRequest == InstanceData.CommRequest.None)
             {
