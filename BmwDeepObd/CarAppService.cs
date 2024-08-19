@@ -193,12 +193,6 @@ namespace BmwDeepObd
             public override void OnNewIntent(Intent intent)
             {
                 LogString("CarSession: OnNewIntent");
-                base.OnNewIntent(intent);
-
-                if (intent == null)
-                {
-                    return;
-                }
 
                 bool connectStarted = intent.GetBooleanExtra(ExtraConnectStarted, false);
                 bool disconnectStarted = intent.GetBooleanExtra(ExtraDisconnectStarted, false);
@@ -212,6 +206,8 @@ namespace BmwDeepObd
                 {
                     ConnectionProcessing = connectStarted || disconnectStarted;
                 }
+
+                base.OnNewIntent(intent);
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
