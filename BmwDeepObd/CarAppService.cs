@@ -181,7 +181,6 @@ namespace BmwDeepObd
         {
             public const string CarSessionBroadcastAction = ActivityCommon.AppNameSpace + ".CarSession.Action";
             public const string ExtraConnectStarted = "ConnectStarted";
-            public const string ExtraDisconnectStarted = "DisconnectStarted";
             public const string ExtraActivityStopped = "ActivityStopped";
 
             private readonly CarService _carService;
@@ -297,7 +296,6 @@ namespace BmwDeepObd
                     {
                         case CarSessionBroadcastAction:
                             bool connectStarted = intent.GetBooleanExtra(ExtraConnectStarted, false);
-                            bool disconnectStarted = intent.GetBooleanExtra(ExtraDisconnectStarted, false);
                             bool activityStopped = intent.GetBooleanExtra(ExtraActivityStopped, false);
                             if (activityStopped)
                             {
@@ -305,7 +303,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                carSession.IsConnecting = connectStarted | disconnectStarted;
+                                carSession.IsConnecting = connectStarted;
                             }
                             break;
                     }

@@ -653,6 +653,7 @@ namespace BmwDeepObd
 
             _activityCommon?.StopMtcService();
             StoreLastAppState(ActivityCommon.LastAppState.Stopped);
+            SendCarSessionConnectBroadcast(false, true);
 #if false
             try
             {
@@ -2034,6 +2035,7 @@ namespace BmwDeepObd
                 {
                     if (_activityCommon == null)
                     {
+                        SendCarSessionConnectBroadcast(false);
                         return;
                     }
                     if (result)
@@ -2042,10 +2044,12 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        SendCarSessionConnectBroadcast(false);
                         VerifyEcuMd5();
                     }
                 }))
                 {
+                    SendCarSessionConnectBroadcast(true);
                     return;
                 }
             }
@@ -2482,6 +2486,14 @@ namespace BmwDeepObd
 
             }
             return useService;
+        }
+
+        private void SendCarSessionConnectBroadcast(bool started, bool activityStopped = false)
+        {
+            Intent broadcastIntent = new Intent(CarService.CarSession.CarSessionBroadcastAction);
+            broadcastIntent.PutExtra(CarService.CarSession.ExtraConnectStarted, started);
+            broadcastIntent.PutExtra(CarService.CarSession.ExtraActivityStopped, activityStopped);
+            InternalBroadcastManager.InternalBroadcastManager.GetInstance(this).SendBroadcast(broadcastIntent);
         }
 
         private bool StartEdiabasThread()
