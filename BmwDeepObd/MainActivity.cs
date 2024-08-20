@@ -540,25 +540,34 @@ namespace BmwDeepObd
             UpdateDisplay();
             StoreLastAppState(ActivityCommon.LastAppState.TabsCreated);
 
-            if (connectMode != EventArgsConnect.ConnectMode.None)
+            bool connectStarted = false;
+            try
             {
-                if (ActivityCommon.JobReader.PageList.Count > 0 &&
-                    !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
+                if (connectMode != EventArgsConnect.ConnectMode.None)
                 {
-                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(connectMode));
-
-                    if (connectMode == EventArgsConnect.ConnectMode.Auto &&
-                        UseCommService() && ActivityCommon.CommActive &&
-                        ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.ConnectClose)
+                    if (ActivityCommon.JobReader.PageList.Count > 0 &&
+                        !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
                     {
-                        _instanceData.AutoConnectExecuted = true;
-                        Finish();
+                        ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(connectMode));
+                        connectStarted = true;
+
+                        if (connectMode == EventArgsConnect.ConnectMode.Auto &&
+                            UseCommService() && ActivityCommon.CommActive &&
+                            ActivityCommon.AutoConnectHandling == ActivityCommon.AutoConnectType.ConnectClose)
+                        {
+                            _instanceData.AutoConnectExecuted = true;
+                            Finish();
+                        }
                     }
                 }
+                else
+                {
+                    StoreActiveJobIndex();
+                }
             }
-            else
+            finally
             {
-                StoreActiveJobIndex();
+                SendCarSessionConnectBroadcast(connectStarted);
             }
 
             _instanceData.AutoConnectExecuted = true;
@@ -584,33 +593,44 @@ namespace BmwDeepObd
 
             _instanceData.CommOptionRequest = InstanceData.CommRequest.None;
             UpdateDisplay();
-            if (!_connectButtonInfo.Enabled)
+
+            bool connectStarted = false;
+            try
             {
-                return;
+                if (!_connectButtonInfo.Enabled)
+                {
+                    return;
+                }
+
+                switch (commRequest)
+                {
+                    case InstanceData.CommRequest.Connect:
+                        if (_connectButtonInfo.Checked)
+                        {
+                            break;
+                        }
+
+                        if (ActivityCommon.JobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable())
+                        {
+                            ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Connect));
+                            connectStarted = true;
+                        }
+                        break;
+
+                    case InstanceData.CommRequest.Disconnect:
+                        if (!_connectButtonInfo.Checked)
+                        {
+                            break;
+                        }
+
+                        ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Disconnect));
+                        connectStarted = true;
+                        break;
+                }
             }
-
-            switch (commRequest)
+            finally
             {
-                case InstanceData.CommRequest.Connect:
-                    if (_connectButtonInfo.Checked)
-                    {
-                        break;
-                    }
-
-                    if (ActivityCommon.JobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable())
-                    {
-                        ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Connect));
-                    }
-                    break;
-
-                case InstanceData.CommRequest.Disconnect:
-                    if (!_connectButtonInfo.Checked)
-                    {
-                        break;
-                    }
-
-                    ButtonConnectClick(_connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Disconnect));
-                    break;
+                SendCarSessionConnectBroadcast(connectStarted);
             }
         }
 
@@ -1941,23 +1961,26 @@ namespace BmwDeepObd
 
         protected void ButtonConnectClick(object sender, EventArgs e)
         {
-            _instanceData.AutoStart = false;
-            if (!CheckForEcuFiles())
-            {
-                UpdateOptionsMenu();
-                UpdateDisplay();
-                return;
-            }
-
             EventArgsConnect.ConnectMode connectMode = EventArgsConnect.ConnectMode.None;
             if (e is EventArgsConnect eventArgsConnect)
             {
                 connectMode = eventArgsConnect.Mode;
             }
 
-            if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
+            bool connectStarted = false;
+            try
             {
-                if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _instanceData.AppDataPath, (s, args) =>
+                _instanceData.AutoStart = false;
+                if (!CheckForEcuFiles())
+                {
+                    UpdateOptionsMenu();
+                    UpdateDisplay();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
+                {
+                    if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _instanceData.AppDataPath, (s, args) =>
                     {
                         if (_activityCommon == null)
                         {
@@ -1965,160 +1988,165 @@ namespace BmwDeepObd
                         }
                         _instanceData.AutoStart = true;
                     }))
-                {
-                    UpdateOptionsMenu();
-                    UpdateDisplay();
-                    return;
+                    {
+                        UpdateOptionsMenu();
+                        UpdateDisplay();
+                        return;
+                    }
                 }
-            }
 
-            if (!ActivityCommon.CommActive && connectMode == EventArgsConnect.ConnectMode.None)
-            {
-                if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
+                if (!ActivityCommon.CommActive && connectMode == EventArgsConnect.ConnectMode.None)
                 {
-                    if (RequestLocationPermissions())
+                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
+                    {
+                        if (RequestLocationPermissions())
+                        {
+                            return;
+                        }
+                    }
+
+                    if (_activityCommon.ShowConnectWarning(action =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+
+                        switch (action)
+                        {
+                            case ActivityCommon.SsidWarnAction.Continue:
+                                ButtonConnectClick(sender, e);
+                                break;
+
+                            case ActivityCommon.SsidWarnAction.EditIp:
+                                AdapterIpConfig();
+                                break;
+                        }
+                    }))
+                    {
+                        UpdateOptionsMenu();
+                        UpdateDisplay();
+                        return;
+                    }
+                }
+
+                if (UseCommService())
+                {
+                    if (RequestOverlayPermissions((o, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        ButtonConnectClick(sender, e);
+                        connectStarted = connectMode != EventArgsConnect.ConnectMode.None;
+                    }))
+                    {
+                        return;
+                    }
+
+                    if (RequestNotificationPermissions((o, args) =>
+                    {
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
+                        ButtonConnectClick(sender, e);
+                        connectStarted = connectMode != EventArgsConnect.ConnectMode.None;
+                    }))
                     {
                         return;
                     }
                 }
 
-                if (_activityCommon.ShowConnectWarning(action =>
+                if (!IsCommActive())
                 {
-                    if (_activityCommon == null)
+                    if (_activityCommon.InitReaderThread(_instanceData.BmwPath, _instanceData.VagPath, result =>
                     {
-                        return;
-                    }
+                        if (_activityCommon == null)
+                        {
+                            return;
+                        }
 
-                    switch (action)
-                    {
-                        case ActivityCommon.SsidWarnAction.Continue:
+                        if (result)
+                        {
                             ButtonConnectClick(sender, e);
-                            break;
-
-                        case ActivityCommon.SsidWarnAction.EditIp:
-                            AdapterIpConfig();
-                            break;
-                    }
-                }))
-                {
-                    UpdateOptionsMenu();
-                    UpdateDisplay();
-                    return;
-                }
-            }
-
-            if (UseCommService())
-            {
-                if (RequestOverlayPermissions((o, args) =>
+                            connectStarted = connectMode != EventArgsConnect.ConnectMode.None;
+                        }
+                        else
+                        {
+                            VerifyEcuMd5();
+                        }
+                    }))
                     {
-                        if (_activityCommon == null)
+                        return;
+                    }
+                }
+
+                bool commActive = ActivityCommon.CommActive;
+                switch (connectMode)
+                {
+                    case EventArgsConnect.ConnectMode.Connect:
+                        if (commActive)
                         {
                             return;
                         }
-                        ButtonConnectClick(sender, e);
-                    }))
-                {
-                    return;
-                }
+                        break;
 
-                if (RequestNotificationPermissions((o, args) =>
-                    {
-                        if (_activityCommon == null)
+                    case EventArgsConnect.ConnectMode.Disconnect:
+                        if (!commActive)
                         {
                             return;
                         }
-                        ButtonConnectClick(sender, e);
-                    }))
-                {
-                    return;
+                        break;
                 }
-            }
 
-            if (!IsCommActive())
-            {
-                if (_activityCommon.InitReaderThread(_instanceData.BmwPath, _instanceData.VagPath, result =>
+                if (commActive)
                 {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    SendCarSessionConnectBroadcast(false);
-                    if (result)
-                    {
-                        ButtonConnectClick(sender, e);
-                    }
-                    else
-                    {
-                        VerifyEcuMd5();
-                    }
-                }))
-                {
-                    SendCarSessionConnectBroadcast(true);
-                    return;
+                    StopEdiabasThread(false);
+                    StoreActiveJobIndex(true);
                 }
-            }
-
-            bool commActive = ActivityCommon.CommActive;
-            switch (connectMode)
-            {
-                case EventArgsConnect.ConnectMode.Connect:
-                    if (commActive)
-                    {
-                        return;
-                    }
-                    break;
-
-                case EventArgsConnect.ConnectMode.Disconnect:
-                    if (!commActive)
-                    {
-                        return;
-                    }
-                    break;
-            }
-
-            SendCarSessionConnectBroadcast(false);
-            if (commActive)
-            {
-                StopEdiabasThread(false);
-                StoreActiveJobIndex(true);
-            }
-            else
-            {
-                if (!_instanceData.AdapterCheckOk && _activityCommon.AdapterCheckRequired)
+                else
                 {
-                    if (_checkAdapter.StartCheckAdapter(_instanceData.AppDataPath,
-                            _activityCommon.SelectedInterface, _instanceData.DeviceAddress,
-                            checkError =>
-                            {
-                                RunOnUiThread(() =>
+                    if (!_instanceData.AdapterCheckOk && _activityCommon.AdapterCheckRequired)
+                    {
+                        if (_checkAdapter.StartCheckAdapter(_instanceData.AppDataPath,
+                                _activityCommon.SelectedInterface, _instanceData.DeviceAddress,
+                                checkError =>
                                 {
-                                    if (!checkError)
+                                    RunOnUiThread(() =>
                                     {
-                                        _instanceData.AdapterCheckOk = true;
-                                        if (StartEdiabasThread())
+                                        if (!checkError)
                                         {
-                                            UpdateSelectedPage();
+                                            _instanceData.AdapterCheckOk = true;
+                                            if (StartEdiabasThread())
+                                            {
+                                                UpdateSelectedPage();
+                                            }
                                         }
-                                    }
 
-                                    UpdateOptionsMenu();
-                                    UpdateDisplay();
-                                });
-                            }))
+                                        UpdateOptionsMenu();
+                                        UpdateDisplay();
+                                    });
+                                }))
+                        {
+                            return;
+                        }
+                    }
+
+                    if (StartEdiabasThread())
                     {
-                        return;
+                        UpdateSelectedPage();
                     }
                 }
 
-                if (StartEdiabasThread())
-                {
-                    UpdateSelectedPage();
-                }
+                UpdateOptionsMenu();
+                UpdateDisplay();
             }
-
-            UpdateOptionsMenu();
-            UpdateDisplay();
+            finally
+            {
+                SendCarSessionConnectBroadcast(connectStarted);
+            }
         }
 
         [Export("onActiveClick")]
