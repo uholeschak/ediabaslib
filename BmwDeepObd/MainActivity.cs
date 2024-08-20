@@ -567,7 +567,10 @@ namespace BmwDeepObd
             }
             finally
             {
-                SendCarSessionConnectBroadcast(connectStarted);
+                if (!connectStarted)
+                {
+                    SendCarSessionConnectBroadcast(false);
+                }
             }
 
             _instanceData.AutoConnectExecuted = true;
@@ -630,7 +633,10 @@ namespace BmwDeepObd
             }
             finally
             {
-                SendCarSessionConnectBroadcast(connectStarted);
+                if (!connectStarted)
+                {
+                    SendCarSessionConnectBroadcast(false);
+                }
             }
         }
 
@@ -2079,6 +2085,7 @@ namespace BmwDeepObd
                         }
                     }))
                     {
+                        connectStarted = connectMode != EventArgsConnect.ConnectMode.None;
                         return;
                     }
                 }
@@ -2145,7 +2152,10 @@ namespace BmwDeepObd
             }
             finally
             {
-                SendCarSessionConnectBroadcast(connectStarted);
+                if (!connectStarted)
+                {
+                    SendCarSessionConnectBroadcast(false);
+                }
             }
         }
 
