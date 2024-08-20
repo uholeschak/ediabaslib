@@ -433,40 +433,19 @@ namespace BmwDeepObd
 
                 ItemList.Builder itemBuilder = new ItemList.Builder();
 
-                Row.Builder rowState = new Row.Builder()
-                    .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
-                    .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
-                    {
-                        if (ShowMainActivity())
-                        {
-                            CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
-                                CarToast.LengthLong).Show();
-                        }
-                    })));
-
-                if (!useServiceCopy)
-                {
-                    rowState.AddText(CarContext.GetString(Resource.String.car_service_fg_service_disabled));
-                }
-                else
-                {
-                    if (!connectedCopy)
-                    {
-                        rowState.AddText(CarContext.GetString(Resource.String.car_service_disconnected));
-                    }
-                    else
-                    {
-                        rowState.AddText(CarContext.GetString(Resource.String.car_service_connected));
-                    }
-                }
-
-                itemBuilder.AddItem(rowState.Build());
-
                 Row.Builder rowPageList = new Row.Builder()
                     .SetTitle(CarContext.GetString(Resource.String.car_service_page_list));
                 if (!(useServiceCopy && connectedCopy))
                 {
-                    rowPageList.AddText(CarContext.GetString(Resource.String.car_service_page_list_empty));
+                    if (!useServiceCopy)
+                    {
+                        rowPageList.AddText(CarContext.GetString(Resource.String.car_service_fg_service_disabled));
+                    }
+                    else
+                    {
+                        rowPageList.AddText(CarContext.GetString(Resource.String.car_service_disconnected));
+                    }
+
                     rowPageList.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                     {
                         if (ShowMainActivity())
@@ -600,31 +579,19 @@ namespace BmwDeepObd
                     bool isConnecting = GetIsConnecting();
                     bool useService = GetFgServiceActive();
 
-                    sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
-
-                    sbValueContent.AppendLine();
-                    if (!useService)
-                    {
-                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_fg_service_disabled));
-                    }
-                    else
-                    {
-                        if (!connected)
-                        {
-                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
-                        }
-                        else
-                        {
-                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_connected));
-                        }
-                    }
-
                     sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
 
                     sbValueContent.AppendLine();
-                    if (!connected)
+                    if (!(connected && useService))
                     {
-                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list_empty));
+                        if (!useService)
+                        {
+                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_fg_service_disabled));
+                        }
+                        else
+                        {
+                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                        }
                     }
                     else
                     {
@@ -729,7 +696,7 @@ namespace BmwDeepObd
                 if (!connectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
+                        .SetTitle(CarContext.GetString(Resource.String.car_service_page_list))
                         .AddText(CarContext.GetString(Resource.String.car_service_disconnected))
                         .Build());
                 }
@@ -894,7 +861,7 @@ namespace BmwDeepObd
 
                     if (!connected || pageInfoActive == null)
                     {
-                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
+                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
 
                         sbValueContent.AppendLine();
                         sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
@@ -1000,7 +967,7 @@ namespace BmwDeepObd
                 if (!connectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
+                        .SetTitle(CarContext.GetString(Resource.String.car_service_page_list))
                         .AddText(CarContext.GetString(Resource.String.car_service_disconnected))
                         .Build());
                 }
@@ -1309,7 +1276,7 @@ namespace BmwDeepObd
 
                     if (!connected || pageInfoActive == null)
                     {
-                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
+                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
                         sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                         lock (_lockObject)
                         {
