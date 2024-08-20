@@ -270,6 +270,16 @@ namespace BmwDeepObd
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
 
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.OMr1)
+            {
+                SetShowWhenLocked(true);
+                SetTurnScreenOn(true);
+            }
+            else
+            {
+                Window?.AddFlags(WindowManagerFlags.DismissKeyguard | WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
+            }
+
             _allowTitleHiding = false;
             _touchShowTitle = true;
             if (savedInstanceState != null)
