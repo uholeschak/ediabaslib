@@ -571,7 +571,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_tabLayout.Visibility == ViewStates.Gone)
+            if (!_tabsCreated)
             {
                 return;
             }
@@ -2340,6 +2340,7 @@ namespace BmwDeepObd
                     _instanceData.CommOptionRequest = commRequest;
                     if (commRequest != InstanceData.CommRequest.None)
                     {
+                        SendCarSessionConnectBroadcast(true);
                         if (_activityActive)
                         {
                             if (!_updateHandler.HasCallbacks(_handleConnectOptionRunnable))
