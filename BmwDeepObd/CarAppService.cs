@@ -696,7 +696,7 @@ namespace BmwDeepObd
                 if (!connectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
+                        .SetTitle(CarContext.GetString(Resource.String.car_service_page_list))
                         .AddText(CarContext.GetString(Resource.String.car_service_disconnected))
                         .Build());
                 }
@@ -861,7 +861,7 @@ namespace BmwDeepObd
 
                     if (!connected || pageInfoActive == null)
                     {
-                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
+                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
 
                         sbValueContent.AppendLine();
                         sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
@@ -967,7 +967,7 @@ namespace BmwDeepObd
                 if (!connectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle(CarContext.GetString(Resource.String.car_service_connection_state))
+                        .SetTitle(CarContext.GetString(Resource.String.car_service_page_list))
                         .AddText(CarContext.GetString(Resource.String.car_service_disconnected))
                         .Build());
                 }
@@ -1276,7 +1276,7 @@ namespace BmwDeepObd
 
                     if (!connected || pageInfoActive == null)
                     {
-                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_connection_state));
+                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
                         sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
                         lock (_lockObject)
                         {
