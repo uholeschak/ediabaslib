@@ -270,14 +270,26 @@ namespace BmwDeepObd
             SetTheme(ActivityCommon.SelectedThemeId);
             base.OnCreate(savedInstanceState);
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.OMr1)
+            try
             {
-                SetShowWhenLocked(true);
-                SetTurnScreenOn(true);
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.OMr1)
+                {
+                    SetShowWhenLocked(true);
+                    SetTurnScreenOn(true);
+
+                    if (GetSystemService(KeyguardService) is Android.App.KeyguardManager keyguardManager)
+                    {
+                        keyguardManager.RequestDismissKeyguard(this, null);
+                    }
+                }
+                else
+                {
+                    Window?.AddFlags(WindowManagerFlags.DismissKeyguard | WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
+                }
             }
-            else
+            catch (Exception)
             {
-                Window?.AddFlags(WindowManagerFlags.DismissKeyguard | WindowManagerFlags.ShowWhenLocked | WindowManagerFlags.TurnScreenOn);
+                // ignored
             }
 
             _allowTitleHiding = false;
