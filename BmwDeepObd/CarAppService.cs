@@ -186,6 +186,8 @@ namespace BmwDeepObd
             private readonly CarService _carService;
             private readonly Receiver _bcReceiver;
 
+            public MainScreen MainScreenInst { set; get; }
+
             public bool IsConnecting { set; get; }
 
             public CarSession(CarService carService)
@@ -212,7 +214,8 @@ namespace BmwDeepObd
             public override Screen OnCreateScreen(Intent intent)
             {
                 LogString("CarSession: OnCreateScreen");
-                return new MainScreen(CarContext, _carService, this);
+                MainScreenInst = new MainScreen(CarContext, _carService, this);
+                return MainScreenInst;
             }
 
             public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
@@ -295,17 +298,24 @@ namespace BmwDeepObd
                     switch (action)
                     {
                         case CarSessionBroadcastAction:
+                        {
                             bool connectStarted = intent.GetBooleanExtra(ExtraConnectStarted, false);
                             bool activityStopped = intent.GetBooleanExtra(ExtraActivityStopped, false);
+
+                            bool isConnecting = connectStarted;
                             if (activityStopped)
                             {
-                                carSession.IsConnecting = false;
+                                isConnecting = false;
                             }
-                            else
+
+                            bool connectingChanged = isConnecting != carSession.IsConnecting;
+                            carSession.IsConnecting = isConnecting;
+                            if (connectingChanged)
                             {
-                                carSession.IsConnecting = connectStarted;
+                                carSession.MainScreenInst?.RequestUpdate(false, 0);
                             }
                             break;
+                        }
                     }
                 }
             }
@@ -351,7 +361,7 @@ namespace BmwDeepObd
                 return null!;
             }
 
-            public virtual void RequestUpdate(bool stop = false)
+            public virtual void RequestUpdate(bool stop = false, int updateInterval = UpdateInterval)
             {
                 Lifecycle.State currentState = Lifecycle.CurrentState;
                 bool isValid = currentState == Lifecycle.State.Started || currentState == Lifecycle.State.Resumed;
@@ -361,7 +371,7 @@ namespace BmwDeepObd
                 if (isValid && !stop)
                 {
                     CarSession.LogFormat("RequestUpdate: PostDelayed Class={0}", GetType().FullName);
-                    _updateHandler.PostDelayed(_updateScreenRunnable, UpdateInterval);
+                    _updateHandler.PostDelayed(_updateScreenRunnable, updateInterval);
                 }
                 else
                 {
