@@ -407,6 +407,11 @@ namespace BmwDeepObd
             {
                 return CarSessionInst.IsConnecting;
             }
+
+            public virtual string GetLocaleSetting()
+            {
+                return ActivityCommon.GetLocaleSetting() ?? string.Empty;
+            }
         }
 
         public class MainScreen(CarContext carContext, CarService carService, CarSession carSession) : BaseScreen(carContext, carService, carSession)
@@ -602,6 +607,7 @@ namespace BmwDeepObd
                     bool isConnecting = GetIsConnecting();
                     bool useService = GetFgServiceActive();
 
+                    sbStructureContent.AppendLine(GetLocaleSetting());
                     sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list));
 
                     sbValueContent.AppendLine();
@@ -888,6 +894,8 @@ namespace BmwDeepObd
 
                     bool connected = GetConnected();
                     List<PageInfoEntry> pageList = null;
+
+                    sbStructureContent.AppendLine(GetLocaleSetting());
 
                     if (!connected || pageInfoActive == null)
                     {
