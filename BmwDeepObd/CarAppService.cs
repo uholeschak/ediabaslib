@@ -564,7 +564,15 @@ namespace BmwDeepObd
                 if (_lastContent != null && string.Compare(lastStructureContent ?? string.Empty, newStructureContent, StringComparison.Ordinal) != 0)
                 {
                     CarSession.LogString("MainScreen: ContentChanged structure has changed");
-                    CarContext.FinishCarApp();
+                    try
+                    {
+                        CarContext.FinishCarApp();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+
                     return false;
                 }
 
