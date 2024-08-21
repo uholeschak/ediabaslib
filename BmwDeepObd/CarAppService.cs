@@ -188,10 +188,13 @@ namespace BmwDeepObd
 
             public MainScreen MainScreenInst { set; get; }
 
+            public Context ResourceContext { set; get; }
+
             public bool IsConnecting { set; get; }
 
             public CarSession(CarService carService)
             {
+                ResourceContext = CarContext;
                 _carService = carService;
                 _bcReceiver = new Receiver(this);
                 Lifecycle.AddObserver(this);
@@ -203,6 +206,7 @@ namespace BmwDeepObd
 
                 if (e == Lifecycle.Event.OnCreate)
                 {
+                    ResourceContext = BaseActivity.SetLocale(CarContext, ActivityCommon.GetLocaleSetting());
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(CarContext).RegisterReceiver(_bcReceiver, new IntentFilter(CarSessionBroadcastAction));
                 }
                 else if (e == Lifecycle.Event.OnDestroy)
@@ -325,11 +329,13 @@ namespace BmwDeepObd
         {
             private readonly CarService _carServiceInst;
             private readonly CarSession _carSessionInst;
+            private readonly Context _resourceContext;
             private readonly Handler _updateHandler;
             private readonly UpdateScreenRunnable _updateScreenRunnable;
 
             public CarService CarServiceInst => _carServiceInst;
             public CarSession CarSessionInst => _carSessionInst;
+            public Context ResourceContext => _resourceContext;
 
             public BaseScreen(CarContext carContext, CarService carService, CarSession carSession) : base(carContext)
             {
@@ -337,6 +343,7 @@ namespace BmwDeepObd
 
                 _carServiceInst = carService;
                 _carSessionInst = carSession;
+                _resourceContext = carSession.ResourceContext;
                 _updateHandler = new Handler(Looper.MainLooper);
                 _updateScreenRunnable = new UpdateScreenRunnable(this);
                 Lifecycle.AddObserver(this);
@@ -434,22 +441,22 @@ namespace BmwDeepObd
                 ItemList.Builder itemBuilder = new ItemList.Builder();
 
                 Row.Builder rowPageList = new Row.Builder()
-                    .SetTitle(CarContext.GetString(Resource.String.car_service_page_list));
+                    .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
                 if (!(useServiceCopy && connectedCopy))
                 {
                     if (isConnectingCopy)
                     {
-                        rowPageList.AddText(CarContext.GetString(Resource.String.car_service_app_processing));
+                        rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_app_processing));
                     }
                     else
                     {
                         if (!useServiceCopy)
                         {
-                            rowPageList.AddText(CarContext.GetString(Resource.String.car_service_fg_service_disabled));
+                            rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_fg_service_disabled));
                         }
                         else
                         {
-                            rowPageList.AddText(CarContext.GetString(Resource.String.car_service_disconnected));
+                            rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_disconnected));
                         }
                     }
 
@@ -464,7 +471,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    rowPageList.AddText(CarContext.GetString(Resource.String.car_service_page_list_show));
+                    rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_page_list_show));
                     rowPageList.SetBrowsable(true);
                     rowPageList.SetOnClickListener(new ActionListener((page) =>
                     {
@@ -486,7 +493,7 @@ namespace BmwDeepObd
                     if (connectedCopy)
                     {
                         AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
-                            .SetTitle(CarContext.GetString(Resource.String.car_service_button_disconnect))
+                            .SetTitle(ResourceContext.GetString(Resource.String.car_service_button_disconnect))
                             .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
                                 try
@@ -509,7 +516,7 @@ namespace BmwDeepObd
                     else
                     {
                         AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
-                            .SetTitle(CarContext.GetString(Resource.String.car_service_button_connect))
+                            .SetTitle(ResourceContext.GetString(Resource.String.car_service_button_connect))
                             .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
                                 if (ShowMainActivity(ActivityMain.CommOptionConnect))
@@ -526,7 +533,7 @@ namespace BmwDeepObd
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon)
-                    .SetTitle(CarContext.GetString(Resource.String.app_name));
+                    .SetTitle(ResourceContext.GetString(Resource.String.app_name));
 
                 if (loading)
                 {
@@ -595,41 +602,41 @@ namespace BmwDeepObd
                     bool isConnecting = GetIsConnecting();
                     bool useService = GetFgServiceActive();
 
-                    sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
+                    sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list));
 
                     sbValueContent.AppendLine();
                     if (!(connected && useService))
                     {
                         if (isConnecting)
                         {
-                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_app_processing));
+                            sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_app_processing));
                         }
                         else
                         {
                             if (!useService)
                             {
-                                sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_fg_service_disabled));
+                                sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_fg_service_disabled));
                             }
                             else
                             {
-                                sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                                sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_disconnected));
                             }
                         }
                     }
                     else
                     {
-                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list_show));
+                        sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list_show));
                     }
 
                     if (!isConnecting)
                     {
                         if (connected)
                         {
-                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_button_disconnect));
+                            sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_button_disconnect));
                         }
                         else
                         {
-                            sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_button_connect));
+                            sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_button_connect));
                         }
                     }
 
@@ -719,8 +726,8 @@ namespace BmwDeepObd
                 if (!connectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle(CarContext.GetString(Resource.String.car_service_page_list))
-                        .AddText(CarContext.GetString(Resource.String.car_service_disconnected))
+                        .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list))
+                        .AddText(ResourceContext.GetString(Resource.String.car_service_disconnected))
                         .Build());
                 }
                 else
@@ -775,7 +782,7 @@ namespace BmwDeepObd
 
                             if (activePage)
                             {
-                                row.AddText(CarContext.GetString(Resource.String.car_service_active_page));
+                                row.AddText(ResourceContext.GetString(Resource.String.car_service_active_page));
                             }
 
                             itemBuilder.AddItem(row.Build());
@@ -785,7 +792,7 @@ namespace BmwDeepObd
                         if (pageIndex == 0)
                         {
                             itemBuilder.AddItem(new Row.Builder()
-                                .SetTitle(CarContext.GetString(Resource.String.car_service_no_pages))
+                                .SetTitle(ResourceContext.GetString(Resource.String.car_service_no_pages))
                                 .Build());
                         }
                     }
@@ -793,7 +800,7 @@ namespace BmwDeepObd
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                    .SetTitle(CarContext.GetString(Resource.String.car_service_page_list));
+                    .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
                 if (loading)
                 {
                     listTemplate.SetLoading(true);
@@ -884,10 +891,10 @@ namespace BmwDeepObd
 
                     if (!connected || pageInfoActive == null)
                     {
-                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
+                        sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list));
 
                         sbValueContent.AppendLine();
-                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                        sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_disconnected));
                     }
                     else
                     {
@@ -902,7 +909,7 @@ namespace BmwDeepObd
                             sbValueContent.AppendLine();
                             if (activePage)
                             {
-                                sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_active_page));
+                                sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_active_page));
                             }
 
                             pageList.Add(new PageInfoEntry(pageName, activePage));
@@ -911,7 +918,7 @@ namespace BmwDeepObd
 
                         if (pageIndex == 0)
                         {
-                            sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_no_pages));
+                            sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_no_pages));
                         }
                     }
 
@@ -965,7 +972,7 @@ namespace BmwDeepObd
 
                 int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
-                string pageTitle = CarContext.GetString(Resource.String.app_name);
+                string pageTitle = ResourceContext.GetString(Resource.String.app_name);
 
                 bool connectedCopy;
                 string pageTitleCopy;
@@ -990,8 +997,8 @@ namespace BmwDeepObd
                 if (!connectedCopy)
                 {
                     itemBuilder.AddItem(new Row.Builder()
-                        .SetTitle(CarContext.GetString(Resource.String.car_service_page_list))
-                        .AddText(CarContext.GetString(Resource.String.car_service_disconnected))
+                        .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list))
+                        .AddText(ResourceContext.GetString(Resource.String.car_service_disconnected))
                         .Build());
                 }
                 else
@@ -1057,7 +1064,7 @@ namespace BmwDeepObd
 
                                                     if (validResponse && !shadow)
                                                     {
-                                                        actionText = CarContext.GetString(Resource.String.car_service_error_reset);
+                                                        actionText = ResourceContext.GetString(Resource.String.car_service_error_reset);
                                                         actionResult = new Java.Lang.String(ecuName);
                                                     }
 
@@ -1084,7 +1091,7 @@ namespace BmwDeepObd
                         if (lineIndex == 0 && !loading)
                         {
                             Row.Builder row = new Row.Builder()
-                                .SetTitle(CarContext.GetString(Resource.String.error_no_error));
+                                .SetTitle(ResourceContext.GetString(Resource.String.error_no_error));
 
                             itemBuilder.AddItem(row.Build());
                         }
@@ -1129,7 +1136,7 @@ namespace BmwDeepObd
                         if (lineIndex == 0)
                         {
                             itemBuilder.AddItem(new Row.Builder()
-                                .SetTitle(CarContext.GetString(Resource.String.car_service_no_data))
+                                .SetTitle(ResourceContext.GetString(Resource.String.car_service_no_data))
                                 .Build());
                         }
                     }
@@ -1292,15 +1299,15 @@ namespace BmwDeepObd
                     StringBuilder sbValueContent = new StringBuilder();
                     JobReader.PageInfo pageInfoActive = ActivityCommon.EdiabasThread?.JobPageInfo;
 
-                    string pageTitle = CarContext.GetString(Resource.String.app_name);
+                    string pageTitle = ResourceContext.GetString(Resource.String.app_name);
                     bool connected = GetConnected();
                     bool errorPage = false;
                     bool loading = false;
 
                     if (!connected || pageInfoActive == null)
                     {
-                        sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_page_list));
-                        sbValueContent.AppendLine(CarContext.GetString(Resource.String.car_service_disconnected));
+                        sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list));
+                        sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_disconnected));
                         lock (_lockObject)
                         {
                             _errorList = null;
@@ -1377,7 +1384,7 @@ namespace BmwDeepObd
 
                             if (lineIndex == 0 && !loading)
                             {
-                                sbStructureContent.AppendLine(CarContext.GetString(Resource.String.error_no_error));
+                                sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.error_no_error));
                             }
                         }
                         else
@@ -1420,7 +1427,7 @@ namespace BmwDeepObd
 
                             if (lineIndex == 0)
                             {
-                                sbStructureContent.AppendLine(CarContext.GetString(Resource.String.car_service_no_data));
+                                sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_no_data));
                             }
 
                             lock (_lockObject)
@@ -1462,7 +1469,7 @@ namespace BmwDeepObd
                 string itemMessage = message;
                 if (string.IsNullOrEmpty(itemMessage))
                 {
-                    itemMessage = CarContext.GetString(Resource.String.car_service_no_data);
+                    itemMessage = ResourceContext.GetString(Resource.String.car_service_no_data);
                 }
 
                 CarSession.LogFormat("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}', Action='{2}'",
