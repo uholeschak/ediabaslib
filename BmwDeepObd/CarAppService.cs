@@ -464,7 +464,7 @@ namespace BmwDeepObd
                     {
                         if (ShowMainActivity())
                         {
-                            CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
+                            CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_app_displayed),
                                 CarToast.LengthLong).Show();
                         }
                     })));
@@ -500,7 +500,7 @@ namespace BmwDeepObd
                                 {
                                     if (ShowMainActivity(ActivityMain.CommOptionDisconnect))
                                     {
-                                        CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
+                                        CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_app_displayed),
                                             CarToast.LengthLong).Show();
                                     }
                                 }
@@ -521,7 +521,7 @@ namespace BmwDeepObd
                             {
                                 if (ShowMainActivity(ActivityMain.CommOptionConnect))
                                 {
-                                    CarToast.MakeText(CarContext, Resource.String.car_service_app_displayed,
+                                    CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_app_displayed),
                                         CarToast.LengthLong).Show();
                                 }
                             })));
@@ -1169,7 +1169,7 @@ namespace BmwDeepObd
 
                 if (ActivityCommon.ErrorResetActive)
                 {
-                    CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_active, CarToast.LengthLong).Show();
+                    CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_error_reset_active), CarToast.LengthLong).Show();
                     return;
                 }
 
@@ -1188,7 +1188,7 @@ namespace BmwDeepObd
 
                 // force app screen update
                 ActivityCommon.EdiabasThread?.TriggerDisplayUpdate();
-                CarToast.MakeText(CarContext, Resource.String.car_service_error_reset_started, CarToast.LengthLong).Show();
+                CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_error_reset_started), CarToast.LengthLong).Show();
                 try
                 {
                     ScreenManager.Pop();
