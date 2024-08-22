@@ -813,7 +813,8 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    listTemplate.SetSingleList(itemBuilder.Build());
+                    listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilder.Build(),
+                        ResourceContext.GetString(Resource.String.car_service_section_pages)));
                 }
 
                 RequestUpdate();

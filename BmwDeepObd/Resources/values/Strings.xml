@@ -846,6 +846,7 @@
   <string name="car_service_disconnected">The vehicle is disconnected.\nConnect to the vehicle in the app first.</string>
   <string name="car_service_app_processing">The operation is executed in the app on the smartphone.</string>
   <string name="car_service_app_displayed">The app has been displayed on the smartphone.</string>
+  <string name="car_service_section_pages">Vehicle data</string>
   <string name="car_service_page_list">Page list</string>
   <string name="car_service_page_list_show">Show page list.</string>
   <string name="car_service_active_page">Active page</string>
