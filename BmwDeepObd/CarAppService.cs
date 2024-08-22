@@ -895,8 +895,6 @@ namespace BmwDeepObd
                     bool connected = GetConnected();
                     List<PageInfoEntry> pageList = null;
 
-                    sbStructureContent.AppendLine(GetLocaleSetting());
-
                     if (!connected || pageInfoActive == null)
                     {
                         sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list));
