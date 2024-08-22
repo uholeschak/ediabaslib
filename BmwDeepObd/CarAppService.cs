@@ -536,6 +536,36 @@ namespace BmwDeepObd
                     }
                 }
 
+                ItemList.Builder itemBuilderCommLock = new ItemList.Builder();
+
+                itemBuilderCommLock.AddItem(new Row.Builder()
+                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
+                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    {
+                    }, ActivityCommon.LockType.None)).SetChecked(false).Build())
+                    .Build());
+
+                itemBuilderCommLock.AddItem(new Row.Builder()
+                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
+                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    {
+                    }, ActivityCommon.LockType.Cpu))
+                        .SetChecked(true).Build()).Build());
+
+                itemBuilderCommLock.AddItem(new Row.Builder()
+                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
+                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    {
+                    }, ActivityCommon.LockType.ScreenDim)).SetChecked(false).Build())
+                    .Build());
+
+                itemBuilderCommLock.AddItem(new Row.Builder()
+                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
+                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    {
+                    }, ActivityCommon.LockType.ScreenBright)).SetChecked(false).Build())
+                    .Build());
+
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon)
                     .SetTitle(ResourceContext.GetString(Resource.String.app_name));
@@ -548,6 +578,10 @@ namespace BmwDeepObd
                 {
                     listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilderPages.Build(),
                         ResourceContext.GetString(Resource.String.car_service_section_pages)));
+
+                    listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilderCommLock.Build(),
+                        ResourceContext.GetString(Resource.String.settings_caption_lock_communication)));
+
                     if (actionStripBuilder != null)
                     {
                         listTemplate.SetActionStrip(actionStripBuilder.Build());
@@ -1539,6 +1573,16 @@ namespace BmwDeepObd
             public delegate void ClickDelegate(object parameter);
 
             public void OnClick()
+            {
+                handler?.Invoke(parameter);
+            }
+        }
+
+        public class CheckListener(ActionListener.ClickDelegate handler, object parameter = null) : Java.Lang.Object, Toggle.IOnCheckedChangeListener
+        {
+            public delegate void ClickDelegate(object parameter);
+
+            public void OnCheckedChange(bool p0)
             {
                 handler?.Invoke(parameter);
             }
