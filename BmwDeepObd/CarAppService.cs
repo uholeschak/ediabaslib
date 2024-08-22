@@ -443,7 +443,7 @@ namespace BmwDeepObd
                     useServiceCopy = _useService;
                 }
 
-                ItemList.Builder itemBuilder = new ItemList.Builder();
+                ItemList.Builder itemBuilderPages = new ItemList.Builder();
 
                 Row.Builder rowPageList = new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
@@ -490,7 +490,7 @@ namespace BmwDeepObd
                         }
                     }));
                 }
-                itemBuilder.AddItem(rowPageList.Build());
+                itemBuilderPages.AddItem(rowPageList.Build());
 
                 ActionStrip.Builder actionStripBuilder = null;
                 if (!isConnectingCopy)
@@ -546,7 +546,8 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    listTemplate.SetSingleList(itemBuilder.Build());
+                    listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilderPages.Build(),
+                        ResourceContext.GetString(Resource.String.car_service_section_pages)));
                     if (actionStripBuilder != null)
                     {
                         listTemplate.SetActionStrip(actionStripBuilder.Build());
@@ -813,8 +814,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilder.Build(),
-                        ResourceContext.GetString(Resource.String.car_service_section_pages)));
+                    listTemplate.SetSingleList(itemBuilder.Build());
                 }
 
                 RequestUpdate();
