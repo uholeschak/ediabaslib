@@ -421,6 +421,8 @@ namespace BmwDeepObd
             private bool _connected = false;
             private bool _isConnecting = false;
             private bool _useService = false;
+            private ActivityCommon.LockType _lockTypeComm = ActivityCommon.LockType.None;
+            private ActivityCommon.LockType _lockTypeLogging = ActivityCommon.LockType.None;
 
             public override ITemplate OnGetTemplate()
             {
@@ -435,12 +437,16 @@ namespace BmwDeepObd
                 bool connectedCopy;
                 bool isConnectingCopy;
                 bool useServiceCopy;
+                ActivityCommon.LockType lockTypeCommCopy;
+                ActivityCommon.LockType lockTypeLoggingCopy;
 
                 lock (_lockObject)
                 {
                     connectedCopy = _connected;
                     isConnectingCopy = _isConnecting;
                     useServiceCopy = _useService;
+                    lockTypeCommCopy = _lockTypeComm;
+                    lockTypeLoggingCopy = _lockTypeLogging;
                 }
 
                 ItemList.Builder itemBuilderPages = new ItemList.Builder();
@@ -542,28 +548,58 @@ namespace BmwDeepObd
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
                     .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
                     {
-                    }, ActivityCommon.LockType.None)).SetChecked(false).Build())
+                    }, ActivityCommon.LockType.None)).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.None).Build())
                     .Build());
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
                     .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
                     {
-                    }, ActivityCommon.LockType.Cpu))
-                        .SetChecked(true).Build()).Build());
+                    }, ActivityCommon.LockType.Cpu)).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.Cpu).Build())
+                    .Build());
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
                     .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
                     {
-                    }, ActivityCommon.LockType.ScreenDim)).SetChecked(false).Build())
+                    }, ActivityCommon.LockType.ScreenDim)).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenDim).Build())
                     .Build());
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
                     .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
                     {
-                    }, ActivityCommon.LockType.ScreenBright)).SetChecked(false).Build())
+                    }, ActivityCommon.LockType.ScreenBright)).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenBright).Build())
+                    .Build());
+
+                ItemList.Builder itemBuilderLoggingLock = new ItemList.Builder();
+
+                itemBuilderLoggingLock.AddItem(new Row.Builder()
+                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
+                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    {
+                    }, ActivityCommon.LockType.None)).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.None).Build())
+                    .Build());
+
+                itemBuilderLoggingLock.AddItem(new Row.Builder()
+                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
+                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    {
+                    }, ActivityCommon.LockType.Cpu)).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.Cpu).Build())
+                    .Build());
+
+                itemBuilderLoggingLock.AddItem(new Row.Builder()
+                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
+                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    {
+                    }, ActivityCommon.LockType.ScreenDim)).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenDim).Build())
+                    .Build());
+
+                itemBuilderLoggingLock.AddItem(new Row.Builder()
+                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
+                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    {
+                    }, ActivityCommon.LockType.ScreenBright)).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenBright).Build())
                     .Build());
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
@@ -581,6 +617,9 @@ namespace BmwDeepObd
 
                     listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilderCommLock.Build(),
                         ResourceContext.GetString(Resource.String.settings_caption_lock_communication)));
+
+                    listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilderLoggingLock.Build(),
+                        ResourceContext.GetString(Resource.String.settings_caption_lock_logging)));
 
                     if (actionStripBuilder != null)
                     {
@@ -641,6 +680,8 @@ namespace BmwDeepObd
                     bool connected = GetConnected();
                     bool isConnecting = GetIsConnecting();
                     bool useService = GetFgServiceActive();
+                    ActivityCommon.LockType lockTypeComm = ActivityCommon.LockTypeCommunication;
+                    ActivityCommon.LockType lockTypeLogging = ActivityCommon.LockTypeLogging;
 
                     sbStructureContent.AppendLine(GetLocaleSetting());
                     sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list));
@@ -681,11 +722,19 @@ namespace BmwDeepObd
                         }
                     }
 
+                    sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.settings_caption_lock_communication));
+                    sbValueContent.AppendLine(lockTypeComm.ToString());
+
+                    sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.settings_caption_lock_logging));
+                    sbValueContent.AppendLine(lockTypeLogging.ToString());
+
                     lock (_lockObject)
                     {
                         _connected = connected;
                         _isConnecting = isConnecting;
                         _useService = useService;
+                        _lockTypeComm = lockTypeComm;
+                        _lockTypeLogging = lockTypeLogging;
                     }
 
                     return new Tuple<string, string>(sbStructureContent.ToString(), sbValueContent.ToString());
