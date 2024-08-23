@@ -331,10 +331,12 @@ namespace BmwDeepObd
             private readonly Context _resourceContext;
             private readonly Handler _updateHandler;
             private readonly UpdateScreenRunnable _updateScreenRunnable;
+            private readonly int _carAppApiLevel;
 
             public CarService CarServiceInst => _carServiceInst;
             public CarSession CarSessionInst => _carSessionInst;
             public Context ResourceContext => _resourceContext;
+            public int CarAppApiLevel => _carAppApiLevel;
 
             public BaseScreen(CarContext carContext, CarService carService, CarSession carSession) : base(carContext)
             {
@@ -345,6 +347,8 @@ namespace BmwDeepObd
                 _resourceContext = carSession.ResourceContext;
                 _updateHandler = new Handler(Looper.MainLooper);
                 _updateScreenRunnable = new UpdateScreenRunnable(this);
+                _carAppApiLevel = carContext.CarAppApiLevel;
+
                 Lifecycle.AddObserver(this);
             }
 
@@ -557,7 +561,7 @@ namespace BmwDeepObd
                             SetLockType(lockType);
                         }))
                         .SetChecked(lockTypeCommCopy == lockType);
-                    if (CarContext.CarAppApiLevel >= 5)
+                    if (CarAppApiLevel >= 5)
                     {
                         if (disableLock || lockTypeCommCopy == lockType)
                         {
@@ -586,7 +590,7 @@ namespace BmwDeepObd
                             SetLockType(lockType, true);
                         }))
                         .SetChecked(lockTypeLoggingCopy == lockType);
-                    if (CarContext.CarAppApiLevel >= 5)
+                    if (CarAppApiLevel >= 5)
                     {
                         if (disableLock || lockTypeCommCopy == lockType)
                         {
@@ -927,7 +931,7 @@ namespace BmwDeepObd
                             if (errorResetActive)
                             {
                                 row.AddText(ResourceContext.GetString(Resource.String.car_service_error_reset_active));
-                                if (CarContext.CarAppApiLevel >= 5)
+                                if (CarAppApiLevel >= 5)
                                 {
                                     row.SetEnabled(false);
                                 }
@@ -1641,7 +1645,7 @@ namespace BmwDeepObd
                 CarSession.LogFormat("PageDetailScreen: OnGetTemplate, Title='{0}', Message='{1}', Action='{2}'",
                     title ?? string.Empty, itemMessage, actionText ?? string.Empty);
 
-                if (CarContext.CarAppApiLevel >= 2)
+                if (CarAppApiLevel >= 2)
                 {
                     ActionStrip.Builder actionStripBuilder = null;
                     if (!string.IsNullOrEmpty(actionText) && actionResult != null)
