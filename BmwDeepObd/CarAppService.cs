@@ -176,7 +176,6 @@ namespace BmwDeepObd
             return errorMessage;
         }
 
-
         public sealed class CarSession : Session, ILifecycleEventObserver
         {
             public const string CarSessionBroadcastAction = ActivityCommon.AppNameSpace + ".CarSession.Action";
@@ -546,60 +545,68 @@ namespace BmwDeepObd
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
-                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
-                    }, ActivityCommon.LockType.None)).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.None).Build())
+                        SetLockType(ActivityCommon.LockType.None, isChecked);
+                    })).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.None).Build())
                     .Build());
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
-                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
-                    }, ActivityCommon.LockType.Cpu)).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.Cpu).Build())
+                        SetLockType(ActivityCommon.LockType.Cpu, isChecked);
+                    })).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.Cpu).Build())
                     .Build());
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
-                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
-                    }, ActivityCommon.LockType.ScreenDim)).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenDim).Build())
+                        SetLockType(ActivityCommon.LockType.ScreenDim, isChecked);
+                    })).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenDim).Build())
                     .Build());
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
-                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
-                    }, ActivityCommon.LockType.ScreenBright)).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenBright).Build())
+                        SetLockType(ActivityCommon.LockType.ScreenBright, isChecked);
+                    })).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenBright).Build())
                     .Build());
 
                 ItemList.Builder itemBuilderLoggingLock = new ItemList.Builder();
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
-                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
-                    }, ActivityCommon.LockType.None)).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.None).Build())
+                        SetLockType(ActivityCommon.LockType.None, isChecked, true);
+                    })).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.None).Build())
                     .Build());
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
-                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
-                    }, ActivityCommon.LockType.Cpu)).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.Cpu).Build())
+                        SetLockType(ActivityCommon.LockType.Cpu, isChecked, true);
+                    })).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.Cpu).Build())
                     .Build());
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
-                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
-                    }, ActivityCommon.LockType.ScreenDim)).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenDim).Build())
+                        SetLockType(ActivityCommon.LockType.ScreenDim, isChecked, true);
+                    })).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenDim).Build())
                     .Build());
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
-                    .SetToggle(new Toggle.Builder(new CheckListener(parameter =>
+                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
-                    }, ActivityCommon.LockType.ScreenBright)).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenBright).Build())
+                        SetLockType(ActivityCommon.LockType.ScreenBright, isChecked, true);
+                    })).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenBright).Build())
                     .Build());
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
@@ -743,6 +750,38 @@ namespace BmwDeepObd
                 {
                     CarSession.LogFormat("MainScreen: GetContentString Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                     return null;
+                }
+            }
+
+            private void SetLockType(ActivityCommon.LockType lockType, bool isChecked, bool typeLogging = false)
+            {
+                if (!isChecked)
+                {
+                    Invalidate();
+                    return;
+                }
+
+                bool changed = false;
+                if (typeLogging)
+                {
+                    if (ActivityCommon.LockTypeLogging != lockType)
+                    {
+                        changed = true;
+                        ActivityCommon.LockTypeLogging = lockType;
+                    }
+                }
+                else
+                {
+                    if (ActivityCommon.LockTypeCommunication != lockType)
+                    {
+                        changed = true;
+                        ActivityCommon.LockTypeCommunication = lockType;
+                    }
+                }
+
+                if (changed)
+                {
+                    RequestUpdate(false, 0);
                 }
             }
 
@@ -1627,13 +1666,13 @@ namespace BmwDeepObd
             }
         }
 
-        public class CheckListener(ActionListener.ClickDelegate handler, object parameter = null) : Java.Lang.Object, Toggle.IOnCheckedChangeListener
+        public class CheckListener(CheckListener.CheckDelegate handler) : Java.Lang.Object, Toggle.IOnCheckedChangeListener
         {
-            public delegate void ClickDelegate(object parameter);
+            public delegate void CheckDelegate(bool isChecked);
 
             public void OnCheckedChange(bool p0)
             {
-                handler?.Invoke(parameter);
+                handler?.Invoke(p0);
             }
         }
 
