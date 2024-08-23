@@ -221,26 +221,6 @@ namespace BmwDeepObd
                 return MainScreenInst;
             }
 
-            public static int GetContentLimit(CarContext carContext, int contentLimitType, int defaultValue)
-            {
-                try
-                {
-                    if (carContext.CarAppApiLevel >= 2)
-                    {
-                        if (carContext.GetCarService(Java.Lang.Class.FromType(typeof(ConstraintManager))) is ConstraintManager constraintManager)
-                        {
-                            return constraintManager.GetContentLimit(ConstraintManager.ContentLimitTypeList);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LogFormat("GetContentLimit: Exception '{0}'", EdiabasNet.GetExceptionText(ex));
-                }
-
-                return defaultValue;
-            }
-
             public static bool LogFormat(string format, params object[] args)
             {
 #if DEBUG
@@ -332,11 +312,14 @@ namespace BmwDeepObd
             private readonly Handler _updateHandler;
             private readonly UpdateScreenRunnable _updateScreenRunnable;
             private readonly int _carAppApiLevel;
+            private readonly int _listLimit;
 
             public CarService CarServiceInst => _carServiceInst;
             public CarSession CarSessionInst => _carSessionInst;
             public Context ResourceContext => _resourceContext;
             public int CarAppApiLevel => _carAppApiLevel;
+            public int ListLimit => _listLimit;
+
 
             public BaseScreen(CarContext carContext, CarService carService, CarSession carSession) : base(carContext)
             {
@@ -348,6 +331,7 @@ namespace BmwDeepObd
                 _updateHandler = new Handler(Looper.MainLooper);
                 _updateScreenRunnable = new UpdateScreenRunnable(this);
                 _carAppApiLevel = carContext.CarAppApiLevel;
+                _listLimit = GetContentLimit(ConstraintManager.ContentLimitTypeList, DefaultListItems);
 
                 Lifecycle.AddObserver(this);
             }
@@ -414,6 +398,26 @@ namespace BmwDeepObd
             public virtual string GetLocaleSetting()
             {
                 return ActivityCommon.GetLocaleSetting() ?? string.Empty;
+            }
+
+            public int GetContentLimit(int contentLimitType, int defaultValue)
+            {
+                try
+                {
+                    if (CarAppApiLevel >= 2)
+                    {
+                        if (CarContext.GetCarService(Java.Lang.Class.FromType(typeof(ConstraintManager))) is ConstraintManager constraintManager)
+                        {
+                            return constraintManager.GetContentLimit(ConstraintManager.ContentLimitTypeList);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    CarSession.LogFormat("GetContentLimit: Exception '{0}'", EdiabasNet.GetExceptionText(ex));
+                }
+
+                return defaultValue;
             }
         }
 
@@ -861,7 +865,6 @@ namespace BmwDeepObd
                     pageListCopy = _pageList;
                 }
 
-                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
 
                 if (!connectedCopy)
@@ -878,7 +881,7 @@ namespace BmwDeepObd
                     {
                         foreach (PageInfoEntry pageInfo in pageListCopy)
                         {
-                            if (pageIndex >= listLimit)
+                            if (pageIndex >= ListLimit)
                             {
                                 break;
                             }
@@ -1140,7 +1143,6 @@ namespace BmwDeepObd
                 string lastValueContent = _lastContent?.Item2;
                 bool loading = lastStructureContent == null || lastValueContent == null;
 
-                int listLimit = CarSession.GetContentLimit(CarContext, ConstraintManager.ContentLimitTypeList, DefaultListItems);
                 ItemList.Builder itemBuilder = new ItemList.Builder();
                 string pageTitle = ResourceContext.GetString(Resource.String.app_name);
 
@@ -1180,7 +1182,7 @@ namespace BmwDeepObd
                         {
                             foreach (ErrorMessageEntry errorEntry in errorListCopy)
                             {
-                                if (lineIndex >= listLimit)
+                                if (lineIndex >= ListLimit)
                                 {
                                     break;
                                 }
@@ -1271,7 +1273,7 @@ namespace BmwDeepObd
                         int lineIndex = 0;
                         foreach (DataInfoEntry dataEntry in dataListCopy)
                         {
-                            if (lineIndex >= listLimit)
+                            if (lineIndex >= ListLimit)
                             {
                                 break;
                             }
