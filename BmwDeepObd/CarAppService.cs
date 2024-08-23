@@ -545,76 +545,93 @@ namespace BmwDeepObd
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
-                    .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.None)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.None, isChecked);
-                    })).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.None).Build())
+                    }))
+                        .SetChecked(lockTypeCommCopy == ActivityCommon.LockType.None)
+                        .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.None)
+                        .Build())
                     .Build());
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
-                    .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.Cpu)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.Cpu, isChecked);
-                    })).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.Cpu).Build())
+                    }))
+                        .SetChecked(lockTypeCommCopy == ActivityCommon.LockType.Cpu)
+                        .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.Cpu)
+                        .Build())
                     .Build());
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
-                    .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.ScreenDim)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.ScreenDim, isChecked);
-                    })).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenDim).Build())
+                    }))
+                        .SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenDim)
+                        .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.ScreenDim)
+                        .Build())
                     .Build());
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
-                    .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.ScreenBright)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.ScreenBright, isChecked);
-                    })).SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenBright).Build())
+                    }))
+                        .SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenBright)
+                        .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.ScreenBright)
+                        .Build())
                     .Build());
 
                 ItemList.Builder itemBuilderLoggingLock = new ItemList.Builder();
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
-                    .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.None)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.None, isChecked, true);
-                    })).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.None).Build())
+                    }))
+                        .SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.None)
+                        .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.None)
+                        .Build())
                     .Build());
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
-                    .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.Cpu)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.Cpu, isChecked, true);
-                    })).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.Cpu).Build())
+                    }))
+                        .SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.Cpu)
+                        .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.Cpu)
+                        .Build())
+
                     .Build());
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
-                    .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.ScreenDim)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.ScreenDim, isChecked, true);
-                    })).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenDim).Build())
+                    }))
+                        .SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenDim)
+                        .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.ScreenDim)
+                        .Build())
                     .Build());
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
-                    .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.ScreenBright)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.ScreenBright, isChecked, true);
-                    })).SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenBright).Build())
+                    }))
+                        .SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenBright)
+                        .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.ScreenBright)
+                        .Build())
                     .Build());
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
