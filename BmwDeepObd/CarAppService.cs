@@ -543,96 +543,43 @@ namespace BmwDeepObd
 
                 ItemList.Builder itemBuilderCommLock = new ItemList.Builder();
 
-                itemBuilderCommLock.AddItem(new Row.Builder()
-                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
-                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
+                foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
+                {
+                    Toggle.Builder toggle = new Toggle.Builder(new CheckListener(isChecked =>
+                        {
+                            SetLockType(lockType, isChecked);
+                        }))
+                        .SetChecked(lockTypeCommCopy == lockType);
+                    if (CarContext.CarAppApiLevel >= 5)
                     {
-                        SetLockType(ActivityCommon.LockType.None, isChecked);
-                    }))
-                        .SetChecked(lockTypeCommCopy == ActivityCommon.LockType.None)
-                        .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.None)
-                        .Build())
-                    .Build());
+                        toggle.SetEnabled(lockTypeCommCopy != lockType);
+                    }
 
-                itemBuilderCommLock.AddItem(new Row.Builder()
-                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
-                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
-                    {
-                        SetLockType(ActivityCommon.LockType.Cpu, isChecked);
-                    }))
-                        .SetChecked(lockTypeCommCopy == ActivityCommon.LockType.Cpu)
-                        .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.Cpu)
-                        .Build())
-                    .Build());
-
-                itemBuilderCommLock.AddItem(new Row.Builder()
-                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
-                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
-                    {
-                        SetLockType(ActivityCommon.LockType.ScreenDim, isChecked);
-                    }))
-                        .SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenDim)
-                        .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.ScreenDim)
-                        .Build())
-                    .Build());
-
-                itemBuilderCommLock.AddItem(new Row.Builder()
-                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
-                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
-                    {
-                        SetLockType(ActivityCommon.LockType.ScreenBright, isChecked);
-                    }))
-                        .SetChecked(lockTypeCommCopy == ActivityCommon.LockType.ScreenBright)
-                        .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.ScreenBright)
-                        .Build())
-                    .Build());
+                    itemBuilderCommLock.AddItem(new Row.Builder()
+                        .SetTitle(lockType.ToString())
+                        .SetToggle(toggle.Build())
+                        .Build());
+                }
 
                 ItemList.Builder itemBuilderLoggingLock = new ItemList.Builder();
 
-                itemBuilderLoggingLock.AddItem(new Row.Builder()
-                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
-                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
+                foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
+                {
+                    Toggle.Builder toggle = new Toggle.Builder(new CheckListener(isChecked =>
+                        {
+                            SetLockType(lockType, isChecked, true);
+                        }))
+                        .SetChecked(lockTypeLoggingCopy == lockType);
+                    if (CarContext.CarAppApiLevel >= 5)
                     {
-                        SetLockType(ActivityCommon.LockType.None, isChecked, true);
-                    }))
-                        .SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.None)
-                        .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.None)
-                        .Build())
-                    .Build());
+                        toggle.SetEnabled(lockTypeLoggingCopy != lockType);
+                    }
 
-                itemBuilderLoggingLock.AddItem(new Row.Builder()
-                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
-                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
-                    {
-                        SetLockType(ActivityCommon.LockType.Cpu, isChecked, true);
-                    }))
-                        .SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.Cpu)
-                        .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.Cpu)
-                        .Build())
-
-                    .Build());
-
-                itemBuilderLoggingLock.AddItem(new Row.Builder()
-                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
-                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
-                    {
-                        SetLockType(ActivityCommon.LockType.ScreenDim, isChecked, true);
-                    }))
-                        .SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenDim)
-                        .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.ScreenDim)
-                        .Build())
-                    .Build());
-
-                itemBuilderLoggingLock.AddItem(new Row.Builder()
-                    .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
-                    .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
-                    {
-                        SetLockType(ActivityCommon.LockType.ScreenBright, isChecked, true);
-                    }))
-                        .SetChecked(lockTypeLoggingCopy == ActivityCommon.LockType.ScreenBright)
-                        .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.ScreenBright)
-                        .Build())
-                    .Build());
+                    itemBuilderLoggingLock.AddItem(new Row.Builder()
+                        .SetTitle(lockType.ToString())
+                        .SetToggle(toggle.Build())
+                        .Build());
+                }
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
                     .SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon)
