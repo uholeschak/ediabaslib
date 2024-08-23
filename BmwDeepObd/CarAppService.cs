@@ -791,15 +791,18 @@ namespace BmwDeepObd
 
             private class PageInfoEntry
             {
-                public PageInfoEntry(string name, bool activePage)
+                public PageInfoEntry(string name, bool activePage, bool errorResetActive = false)
                 {
                     Name = name;
                     ActivePage = activePage;
+                    ErrorResetActive = errorResetActive;
                 }
 
                 public string Name { get; }
 
                 public bool ActivePage { get; }
+
+                public bool ErrorResetActive { get; }
             }
 
             public override ITemplate OnGetTemplate()
@@ -845,6 +848,7 @@ namespace BmwDeepObd
 
                             string pageName = pageInfo.Name;
                             bool activePage = pageInfo.ActivePage;
+                            bool errorResetActive = pageInfo.ErrorResetActive;
 
                             Row.Builder row = new Row.Builder()
                                 .SetTitle(pageName)
@@ -858,6 +862,12 @@ namespace BmwDeepObd
 
                                     if (index < 0 || index >= ActivityCommon.JobReader.PageList.Count)
                                     {
+                                        return;
+                                    }
+
+                                    if (errorResetActive)
+                                    {
+                                        CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_error_reset_active), CarToast.LengthLong).Show();
                                         return;
                                     }
 
@@ -881,7 +891,15 @@ namespace BmwDeepObd
                                     }
                                 }, pageIndex));
 
-                            if (activePage)
+                            if (errorResetActive)
+                            {
+                                row.AddText(ResourceContext.GetString(Resource.String.car_service_error_reset_active));
+                                if (CarContext.CarAppApiLevel >= 5)
+                                {
+                                    row.SetEnabled(false);
+                                }
+                            }
+                            else if (activePage)
                             {
                                 row.AddText(ResourceContext.GetString(Resource.String.car_service_active_page));
                             }
@@ -1008,12 +1026,26 @@ namespace BmwDeepObd
                             bool activePage = pageInfo == pageInfoActive;
 
                             sbValueContent.AppendLine();
-                            if (activePage)
+
+                            bool errorResetActive = false;
+                            if (pageInfo.ErrorsInfo != null)
+                            {
+                                if (ActivityCommon.ErrorResetActive)
+                                {
+                                    errorResetActive = true;
+                                }
+                            }
+
+                            if (errorResetActive)
+                            {
+                                sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_error_reset_active));
+                            }
+                            else if (activePage)
                             {
                                 sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_active_page));
                             }
 
-                            pageList.Add(new PageInfoEntry(pageName, activePage));
+                            pageList.Add(new PageInfoEntry(pageName, activePage, errorResetActive));
                             pageIndex++;
                         }
 
