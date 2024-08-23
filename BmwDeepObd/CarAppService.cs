@@ -543,16 +543,26 @@ namespace BmwDeepObd
 
                 ItemList.Builder itemBuilderCommLock = new ItemList.Builder();
 
+                bool disableLock = connectedCopy || isConnectingCopy;
                 foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
                 {
                     Toggle.Builder toggle = new Toggle.Builder(new CheckListener(isChecked =>
                         {
-                            SetLockType(lockType, isChecked);
+                            if (disableLock || !isChecked)
+                            {
+                                Invalidate();
+                                return;
+                            }
+
+                            SetLockType(lockType);
                         }))
                         .SetChecked(lockTypeCommCopy == lockType);
                     if (CarContext.CarAppApiLevel >= 5)
                     {
-                        toggle.SetEnabled(lockTypeCommCopy != lockType);
+                        if (disableLock || lockTypeCommCopy == lockType)
+                        {
+                            toggle.SetEnabled(false);
+                        }
                     }
 
                     itemBuilderCommLock.AddItem(new Row.Builder()
@@ -567,12 +577,21 @@ namespace BmwDeepObd
                 {
                     Toggle.Builder toggle = new Toggle.Builder(new CheckListener(isChecked =>
                         {
-                            SetLockType(lockType, isChecked, true);
+                            if (disableLock || !isChecked)
+                            {
+                                Invalidate();
+                                return;
+                            }
+
+                            SetLockType(lockType, true);
                         }))
                         .SetChecked(lockTypeLoggingCopy == lockType);
                     if (CarContext.CarAppApiLevel >= 5)
                     {
-                        toggle.SetEnabled(lockTypeLoggingCopy != lockType);
+                        if (disableLock || lockTypeCommCopy == lockType)
+                        {
+                            toggle.SetEnabled(false);
+                        }
                     }
 
                     itemBuilderLoggingLock.AddItem(new Row.Builder()
@@ -745,14 +764,8 @@ namespace BmwDeepObd
                 return ResourceContext.GetString(Resource.String.settings_lock_none); ;
             }
 
-            private void SetLockType(ActivityCommon.LockType lockType, bool isChecked, bool typeLogging = false)
+            private void SetLockType(ActivityCommon.LockType lockType, bool typeLogging = false)
             {
-                if (!isChecked)
-                {
-                    Invalidate();
-                    return;
-                }
-
                 bool changed = false;
                 if (typeLogging)
                 {
