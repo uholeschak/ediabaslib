@@ -556,7 +556,7 @@ namespace BmwDeepObd
                     }
 
                     itemBuilderCommLock.AddItem(new Row.Builder()
-                        .SetTitle(lockType.ToString())
+                        .SetTitle(GetLockTypeString(lockType))
                         .SetToggle(toggle.Build())
                         .Build());
                 }
@@ -576,7 +576,7 @@ namespace BmwDeepObd
                     }
 
                     itemBuilderLoggingLock.AddItem(new Row.Builder()
-                        .SetTitle(lockType.ToString())
+                        .SetTitle(GetLockTypeString(lockType))
                         .SetToggle(toggle.Build())
                         .Build());
                 }
@@ -723,6 +723,26 @@ namespace BmwDeepObd
                     CarSession.LogFormat("MainScreen: GetContentString Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                     return null;
                 }
+            }
+
+            private string GetLockTypeString(ActivityCommon.LockType lockType)
+            {
+                switch (lockType)
+                {
+                    case ActivityCommon.LockType.None:
+                        return ResourceContext.GetString(Resource.String.settings_lock_none);
+
+                    case ActivityCommon.LockType.Cpu:
+                        return ResourceContext.GetString(Resource.String.settings_lock_cpu);
+
+                    case ActivityCommon.LockType.ScreenDim:
+                        return ResourceContext.GetString(Resource.String.settings_lock_dim);
+
+                    case ActivityCommon.LockType.ScreenBright:
+                        return ResourceContext.GetString(Resource.String.settings_lock_bright);
+                }
+
+                return ResourceContext.GetString(Resource.String.settings_lock_none); ;
             }
 
             private void SetLockType(ActivityCommon.LockType lockType, bool isChecked, bool typeLogging = false)
