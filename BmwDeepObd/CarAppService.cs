@@ -545,6 +545,7 @@ namespace BmwDeepObd
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
+                    .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.None)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.None, isChecked);
@@ -553,6 +554,7 @@ namespace BmwDeepObd
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
+                    .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.Cpu)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.Cpu, isChecked);
@@ -561,6 +563,7 @@ namespace BmwDeepObd
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
+                    .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.ScreenDim)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.ScreenDim, isChecked);
@@ -569,6 +572,7 @@ namespace BmwDeepObd
 
                 itemBuilderCommLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
+                    .SetEnabled(lockTypeCommCopy != ActivityCommon.LockType.ScreenBright)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.ScreenBright, isChecked);
@@ -579,6 +583,7 @@ namespace BmwDeepObd
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_none))
+                    .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.None)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.None, isChecked, true);
@@ -587,6 +592,7 @@ namespace BmwDeepObd
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_cpu))
+                    .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.Cpu)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.Cpu, isChecked, true);
@@ -595,6 +601,7 @@ namespace BmwDeepObd
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_dim))
+                    .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.ScreenDim)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.ScreenDim, isChecked, true);
@@ -603,6 +610,7 @@ namespace BmwDeepObd
 
                 itemBuilderLoggingLock.AddItem(new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.settings_lock_bright))
+                    .SetEnabled(lockTypeLoggingCopy != ActivityCommon.LockType.ScreenBright)
                     .SetToggle(new Toggle.Builder(new CheckListener(isChecked =>
                     {
                         SetLockType(ActivityCommon.LockType.ScreenBright, isChecked, true);
