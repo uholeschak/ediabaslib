@@ -870,6 +870,7 @@
   <string name="car_service_disconnected">Das Fahrzeug ist nicht verbunden.\nDie Kommuniation muss zuerst in der App gestartet werden.</string>
   <string name="car_service_app_processing">Der Vorgang wird in App auf dem Smartphone ausgeführt.</string>
   <string name="car_service_app_displayed">Die App wird auf dem Smartphone angezeigt.</string>
+  <string name="car_service_app_store_settings">Die App auf dem Smartphone speichert die Einstellungen.</string>
   <string name="car_service_section_pages">Fahrzeugdaten</string>
   <string name="car_service_page_list">Seitenliste</string>
   <string name="car_service_page_list_show">Seitenliste anzeigen.</string>

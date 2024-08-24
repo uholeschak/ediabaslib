@@ -869,6 +869,7 @@
   <string name="car_service_disconnected">Автомобиль отключен.\nСначала подключитесь к автомобилю в приложении.</string>
   <string name="car_service_app_processing">Операция выполняется в приложении на смартфоне.</string>
   <string name="car_service_app_displayed">Приложение отобразилось на смартфоне.</string>
+  <string name="car_service_app_store_settings">Приложение на смартфоне сохраняет настройки.</string>
   <string name="car_service_section_pages">Данные о транспортном средстве</string>
   <string name="car_service_page_list">Список страниц</string>
   <string name="car_service_page_list_show">Показать список страниц.</string>
