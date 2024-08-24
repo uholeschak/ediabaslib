@@ -179,8 +179,10 @@ namespace BmwDeepObd
         public const string ExtraShowTitle = "show_title";
         public const string ExtraNoAutoconnect = "no_autoconnect";
         public const string ExtraCommOption = "comm_option";
+        public const string ExtraStoreOption = "store_option";
         public const string CommOptionConnect = "connect";
         public const string CommOptionDisconnect = "disconnect";
+        public const string StoreOptionSettings = "store_settings";
         public static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();
@@ -2408,6 +2410,15 @@ namespace BmwDeepObd
                                 _updateHandler.Post(_handleConnectOptionRunnable);
                             }
                         }
+                    }
+                }
+
+                string storeOption = intent.GetStringExtra(ExtraStoreOption);
+                if (!string.IsNullOrEmpty(storeOption))
+                {
+                    if (string.Compare(storeOption, StoreOptionSettings, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        StoreSettings();
                     }
                 }
             }

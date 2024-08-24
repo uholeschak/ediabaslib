@@ -36,7 +36,7 @@ namespace BmwDeepObd
     // Start Android Auto Emulation Server on the smartphone
     // Select once: Connect vehicle
     // adb forward tcp:5277 tcp:5277
-    // cd C:\Users\Ulrich\AppData\Local\Android\android-sdk\extras\google\auto
+    // cd /d C:\Users\Ulrich\AppData\Local\Android\android-sdk\extras\google\auto
     // desktop-head-unit.exe
 
     public class CarService : CarAppService
@@ -514,17 +514,10 @@ namespace BmwDeepObd
                             .SetTitle(ResourceContext.GetString(Resource.String.car_service_button_disconnect))
                             .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
-                                try
+                                if (ShowMainActivity(ActivityMain.CommOptionDisconnect))
                                 {
-                                    if (ShowMainActivity(ActivityMain.CommOptionDisconnect))
-                                    {
-                                        CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_app_displayed),
-                                            CarToast.LengthLong).Show();
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    CarSession.LogFormat("MainScreen: StopForegroundService Exception '{0}'", EdiabasNet.GetExceptionText(ex));
+                                    CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_app_displayed),
+                                        CarToast.LengthLong).Show();
                                 }
                             })));
 
@@ -795,10 +788,16 @@ namespace BmwDeepObd
                 if (changed)
                 {
                     RequestUpdate(false, 0);
+
+                    if (ShowMainActivity(null, ActivityMain.StoreOptionSettings))
+                    {
+                        CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_app_store_settings),
+                            CarToast.LengthLong).Show();
+                    }
                 }
             }
 
-            private bool ShowMainActivity(string commOption = null)
+            private bool ShowMainActivity(string commOption = null, string storeOption = null)
             {
                 try
                 {
@@ -812,6 +811,12 @@ namespace BmwDeepObd
                     {
                         intent.PutExtra(ActivityMain.ExtraCommOption, commOption);
                     }
+
+                    if (!string.IsNullOrEmpty(storeOption))
+                    {
+                        intent.PutExtra(ActivityMain.ExtraStoreOption, storeOption);
+                    }
+
                     CarContext.StartActivity(intent);
                     return true;
                 }
@@ -820,7 +825,6 @@ namespace BmwDeepObd
                     return false;
                 }
             }
-
         }
 
         public class PageListScreen(CarContext carContext, CarService carService, CarSession carSession) : BaseScreen(carContext, carService, carSession)
