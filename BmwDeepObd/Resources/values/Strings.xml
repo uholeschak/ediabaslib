@@ -849,7 +849,9 @@
   <string name="car_service_app_store_settings">The app on the smartphone is storing the settings.</string>
   <string name="car_service_section_pages">Vehicle data</string>
   <string name="car_service_page_list">Page list</string>
-  <string name="car_service_page_list_show">Show page list.</string>
+  <string name="car_service_page_list_show">Show page list</string>
+  <string name="car_service_settings_lock_none">Energy saving mode</string>
+  <string name="car_service_settings_invalid_mode">Invalid for Android Auto</string>
   <string name="car_service_active_page">Active page</string>
   <string name="car_service_no_pages">No pages</string>
   <string name="car_service_no_data">No data</string>
