@@ -1,4 +1,4 @@
-﻿#if Android
+﻿#if ANDROID
 #define COMPRESS_TRACE
 #endif
 using System;
@@ -30,7 +30,7 @@ namespace EdiabasLib
 
     public partial class EdiabasNet : IDisposable
     {
-#if Android && DEBUG
+#if ANDROID && DEBUG
         private static readonly string Tag = typeof(EdiabasNet).FullName;
 #endif
         private delegate void OperationDelegate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1);
@@ -2227,7 +2227,7 @@ namespace EdiabasLib
         private static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         private static readonly byte[] ByteArray0 = new byte[0];
         private static Dictionary<ErrorCodes, UInt32> _trapBitDict;
-#if !Android
+#if !ANDROID
         private static List<Assembly> _resourceAssemblies = new List<Assembly>();
 #endif
         private static bool _firstLog = true;
@@ -2823,7 +2823,7 @@ namespace EdiabasLib
             }
         }
 
-#if !Android
+#if !ANDROID
         static EdiabasNet()
         {
             LoadAllResourceAssemblies();
@@ -3185,7 +3185,7 @@ namespace EdiabasLib
         {
             if (_disposed)
             {
-#if Android && DEBUG
+#if ANDROID && DEBUG
                 Android.Util.Log.Debug(Tag, "GetConfigProperty: Ediabas disposed");
 #endif
                 return null;
@@ -3207,7 +3207,7 @@ namespace EdiabasLib
         {
             if (_disposed)
             {
-#if Android && DEBUG
+#if ANDROID && DEBUG
                 Android.Util.Log.Debug(Tag, "SetConfigProperty: Ediabas disposed");
 #endif
                 return;
@@ -3361,7 +3361,7 @@ namespace EdiabasLib
             }
         }
 
-#if !Android
+#if !ANDROID
         public static bool LoadAllResourceAssemblies()
         {
             if (_resourceAssemblies.Count > 0)
@@ -5781,7 +5781,7 @@ namespace EdiabasLib
                 {
                     if (_disposed || _logMutex == null)
                     {
-#if Android && DEBUG
+#if ANDROID && DEBUG
                         Android.Util.Log.Debug(Tag, "AcquireLogMutex: Mutex deleted");
 #endif
                         return false;
@@ -5810,7 +5810,7 @@ namespace EdiabasLib
                 {
                     if (_disposed || _logMutex == null)
                     {
-#if Android && DEBUG
+#if ANDROID && DEBUG
                         Android.Util.Log.Debug(Tag, "ReleaseLogMutex: Mutex deleted");
 #endif
                         return;
@@ -5829,7 +5829,7 @@ namespace EdiabasLib
         {
             if (_disposed)
             {
-#if Android && DEBUG
+#if ANDROID && DEBUG
                 Android.Util.Log.Debug(Tag, "LogFormat: Ediabas disposed");
 #endif
                 return;
@@ -5876,7 +5876,7 @@ namespace EdiabasLib
         {
             if (_disposed)
             {
-#if Android && DEBUG
+#if ANDROID && DEBUG
                 Android.Util.Log.Debug(Tag, "LogString: Ediabas disposed");
 #endif
                 return;
@@ -6012,7 +6012,7 @@ namespace EdiabasLib
 #pragma warning restore CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
                                         {
                                             createBom = false;
-#if Android && DEBUG
+#if ANDROID && DEBUG
                                             Android.Util.Log.Debug(Tag, string.Format("LogString Exception: {0}", GetExceptionText(ex)));
 #endif
                                         }
@@ -6088,7 +6088,7 @@ namespace EdiabasLib
                             {
                                 _swLog.WriteLine(logInfo);
                             }
-#if Android
+#if ANDROID
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android version: {0}", (long)Android.OS.Build.VERSION.SdkInt));
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Android fingerprint: {0}", Android.OS.Build.Fingerprint));
 #endif
@@ -6161,7 +6161,7 @@ namespace EdiabasLib
 #pragma warning restore CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
                     {
                         // ignored
-#if Android && DEBUG
+#if ANDROID && DEBUG
                         Android.Util.Log.Debug(Tag, string.Format("CloseLog swLog Exception: {0}", GetExceptionText(ex)));
 #endif
                     }
@@ -6183,7 +6183,7 @@ namespace EdiabasLib
 #pragma warning restore CS0168 // Variable ist deklariert, wird jedoch niemals verwendet
                     {
                         // ignored
-#if Android && DEBUG
+#if ANDROID && DEBUG
                         Android.Util.Log.Debug(Tag, string.Format("CloseLog zipStream Exception: {0}", GetExceptionText(ex)));
 #endif
                     }

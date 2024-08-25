@@ -24,7 +24,7 @@ namespace EdiabasLib
         private TcpClient _connection;
         public static readonly long TickResolMs = System.Diagnostics.Stopwatch.Frequency / 1000;
 
-#if __ANDROID__
+#if ANDROID
         public class NetworkData
         {
             public NetworkData(Android.Net.ConnectivityManager connectivityManager)
@@ -125,7 +125,7 @@ namespace EdiabasLib
 
         public static void ExecuteNetworkCommand(ExecuteNetworkDelegate command, IPAddress ipAddr, object networkDataObject)
         {
-#if __ANDROID__
+#if ANDROID
             if (Android.OS.Build.VERSION.SdkInt < Android.OS.BuildVersionCodes.Lollipop)
             {
                 command();
@@ -232,7 +232,7 @@ namespace EdiabasLib
 #endif
         }
 
-#if __ANDROID__
+#if ANDROID
         public static string ConvertIpAddress(int ipAddress)
         {
             int ipValue = ipAddress;
