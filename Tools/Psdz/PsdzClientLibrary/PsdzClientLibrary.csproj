@@ -711,7 +711,6 @@
     <EmbeddedResource Include="..\..\..\EdiabasLib\BmwFileReader\VehicleSeries.zip">
       <Link>Resources\VehicleSeries.zip</Link>
     </EmbeddedResource>
-    <None Include="app.config" />
     <None Include="PsdzClientLibrary.snk" />
   </ItemGroup>
   <ItemGroup>
@@ -747,7 +746,7 @@
       <Version>2.0.17</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite.Core">
-      <Version>8.0.7</Version>
+      <Version>8.0.8</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
@@ -756,7 +755,7 @@
       <Version>1.4.2</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc">
-      <Version>2.1.8</Version>
+      <Version>2.1.9</Version>
     </PackageReference>
     <PackageReference Include="System.Memory">
       <Version>4.5.5</Version>
