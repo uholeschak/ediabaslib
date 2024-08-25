@@ -865,7 +865,7 @@
   <string name="car_service_button_connect">Соединять</string>
   <string name="car_service_button_disconnect">Отключить</string>
   <string name="car_service_connected">Автомобиль подключен.</string>
-  <string name="car_service_fg_service_disabled">Конфигурация недействительна.\nНе используйте режим энергосбережения в глобальных настройках.</string>
+  <string name="car_service_fg_service_disabled">Конфигурация недействительна.\nНе используйте режим энергосбережения в настройках.</string>
   <string name="car_service_disconnected">Автомобиль отключен.\nСначала подключитесь к автомобилю в приложении.</string>
   <string name="car_service_app_processing">Операция выполняется в приложении на смартфоне.</string>
   <string name="car_service_app_displayed">Приложение отобразилось на смартфоне.</string>
