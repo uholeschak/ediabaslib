@@ -874,6 +874,7 @@
   <string name="car_service_page_list">Список страниц</string>
   <string name="car_service_page_list_show">Показать список страниц</string>
   <string name="car_service_settings_lock_none">Режим энергосбережения</string>
+  <string name="car_service_settings_invalid_mode">Недействительно для Android Auto</string>
   <string name="car_service_active_page">Активная страница</string>
   <string name="car_service_no_pages">Нет страниц</string>
   <string name="car_service_no_data">Нет данных</string>

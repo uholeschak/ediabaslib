@@ -875,6 +875,7 @@
   <string name="car_service_page_list">Seitenliste</string>
   <string name="car_service_page_list_show">Seitenliste anzeigen</string>
   <string name="car_service_settings_lock_none">Energiesparmodus</string>
+  <string name="car_service_settings_invalid_mode">Für Android Auto ungültig</string>
   <string name="car_service_active_page">Aktive Seite</string>
   <string name="car_service_no_pages">Keine Seiten</string>
   <string name="car_service_no_data">Keine Daten</string>

@@ -547,6 +547,14 @@ namespace BmwDeepObd
                 bool disableLock = connectedCopy || isConnectingCopy;
                 foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
                 {
+                    string itemTitle = GetLockTypeTitle(lockType);
+                    string itemText = GetLockTypeText(lockType);
+
+                    if (string.IsNullOrEmpty(itemTitle))
+                    {
+                        continue;
+                    }
+
                     Toggle.Builder toggle = new Toggle.Builder(new CheckListener(isChecked =>
                         {
                             if (disableLock || !isChecked)
@@ -566,16 +574,30 @@ namespace BmwDeepObd
                         }
                     }
 
-                    itemBuilderCommLock.AddItem(new Row.Builder()
-                        .SetTitle(GetLockTypeString(lockType))
-                        .SetToggle(toggle.Build())
-                        .Build());
+                    Row.Builder itemRow = new Row.Builder()
+                        .SetTitle(itemTitle)
+                        .SetToggle(toggle.Build());
+
+                    if (!string.IsNullOrEmpty(itemText))
+                    {
+                        itemRow.AddText(itemText);
+                    }
+
+                    itemBuilderCommLock.AddItem(itemRow.Build());
                 }
 
                 ItemList.Builder itemBuilderLoggingLock = new ItemList.Builder();
 
                 foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
                 {
+                    string itemTitle = GetLockTypeTitle(lockType);
+                    string itemText = GetLockTypeText(lockType);
+
+                    if (string.IsNullOrEmpty(itemTitle))
+                    {
+                        continue;
+                    }
+
                     Toggle.Builder toggle = new Toggle.Builder(new CheckListener(isChecked =>
                         {
                             if (disableLock || !isChecked)
@@ -595,10 +617,16 @@ namespace BmwDeepObd
                         }
                     }
 
-                    itemBuilderLoggingLock.AddItem(new Row.Builder()
-                        .SetTitle(GetLockTypeString(lockType))
-                        .SetToggle(toggle.Build())
-                        .Build());
+                    Row.Builder itemRow = new Row.Builder()
+                        .SetTitle(itemTitle)
+                        .SetToggle(toggle.Build());
+
+                    if (!string.IsNullOrEmpty(itemText))
+                    {
+                        itemRow.AddText(itemText);
+                    }
+
+                    itemBuilderLoggingLock.AddItem(itemRow.Build());
                 }
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder()
@@ -745,12 +773,11 @@ namespace BmwDeepObd
                 }
             }
 
-            private string GetLockTypeString(ActivityCommon.LockType lockType)
+            private string GetLockTypeTitle(ActivityCommon.LockType lockType)
             {
                 switch (lockType)
                 {
                     case ActivityCommon.LockType.None:
-                    default:
                         return ResourceContext.GetString(Resource.String.car_service_settings_lock_none);
 
                     case ActivityCommon.LockType.Cpu:
@@ -762,6 +789,19 @@ namespace BmwDeepObd
                     case ActivityCommon.LockType.ScreenBright:
                         return ResourceContext.GetString(Resource.String.settings_lock_bright);
                 }
+
+                return string.Empty;
+            }
+
+            private string GetLockTypeText(ActivityCommon.LockType lockType)
+            {
+                switch (lockType)
+                {
+                    case ActivityCommon.LockType.None:
+                        return ResourceContext.GetString(Resource.String.car_service_settings_invalid_mode);
+                }
+
+                return string.Empty;
             }
 
             private void SetLockType(ActivityCommon.LockType lockType, bool typeLogging = false)
