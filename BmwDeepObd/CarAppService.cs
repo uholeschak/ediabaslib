@@ -15,6 +15,7 @@ using System.Threading;
 
 namespace BmwDeepObd
 {
+#if ANDROID_AUTO
     [Android.App.Service(
         Label = "@string/app_name",
         Icon = "@drawable/icon",
@@ -30,6 +31,7 @@ namespace BmwDeepObd
             "androidx.car.app.category.IOT"
         })
     ]
+#endif
 
     // Testing with Desktop Head Unit (DHU)
     // https://developer.android.com/training/cars/testing/dhu
