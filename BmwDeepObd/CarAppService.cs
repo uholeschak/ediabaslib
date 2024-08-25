@@ -1479,8 +1479,6 @@ namespace BmwDeepObd
                     {   // loading
                         return true;
                     }
-
-                    return false;
                 }
 
                 if (_lastContent != null && string.Compare(lastStructureContent ?? string.Empty, newStructureContent, StringComparison.Ordinal) != 0)
