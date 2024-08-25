@@ -611,7 +611,7 @@ namespace BmwDeepObd
                         .SetChecked(lockTypeLoggingCopy == lockType);
                     if (CarAppApiLevel >= 5)
                     {
-                        if (disableLock || lockTypeCommCopy == lockType)
+                        if (disableLock || lockTypeLoggingCopy == lockType)
                         {
                             toggle.SetEnabled(false);
                         }
