@@ -750,7 +750,8 @@ namespace BmwDeepObd
                 switch (lockType)
                 {
                     case ActivityCommon.LockType.None:
-                        return ResourceContext.GetString(Resource.String.settings_lock_none);
+                    default:
+                        return ResourceContext.GetString(Resource.String.car_service_settings_lock_none);
 
                     case ActivityCommon.LockType.Cpu:
                         return ResourceContext.GetString(Resource.String.settings_lock_cpu);
@@ -761,8 +762,6 @@ namespace BmwDeepObd
                     case ActivityCommon.LockType.ScreenBright:
                         return ResourceContext.GetString(Resource.String.settings_lock_bright);
                 }
-
-                return ResourceContext.GetString(Resource.String.settings_lock_none); ;
             }
 
             private void SetLockType(ActivityCommon.LockType lockType, bool typeLogging = false)
