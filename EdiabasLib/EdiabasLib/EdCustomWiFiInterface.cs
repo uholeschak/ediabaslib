@@ -1,4 +1,4 @@
-﻿#if DEBUG && Android
+﻿#if DEBUG && ANDROID
 #define DEBUG_ANDROID
 #endif
 using System;
@@ -14,7 +14,7 @@ namespace EdiabasLib
 {
     public class EdCustomWiFiInterface
     {
-#if Android
+#if ANDROID
         public class ConnectParameterType
         {
             public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, Android.Net.Wifi.WifiManager wifiManager)
@@ -107,7 +107,7 @@ namespace EdiabasLib
                 {
                     WriteEscapeRequired = false;
                 }
-#if Android
+#if ANDROID
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
                     NetworkData = connectParameter.NetworkData;
@@ -163,7 +163,7 @@ namespace EdiabasLib
                         }
                     }
                 }
-#if Android
+#if ANDROID
                 if (!ipSpecified && WifiManager is Android.Net.Wifi.WifiManager wifiManager)
                 {
                     string serverIp = null;
@@ -784,7 +784,7 @@ namespace EdiabasLib
             return true;
         }
 
-#if Android
+#if ANDROID
         private static bool IsWifiApMode()
         {
             try

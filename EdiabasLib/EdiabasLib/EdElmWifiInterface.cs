@@ -8,7 +8,7 @@ namespace EdiabasLib
 {
     public class EdElmWifiInterface
     {
-#if Android
+#if ANDROID
         public class ConnectParameterType
         {
             public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData)
@@ -89,7 +89,7 @@ namespace EdiabasLib
                         }
                     }
                 }
-#if Android
+#if ANDROID
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
                     NetworkData = connectParameter.NetworkData;

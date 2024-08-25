@@ -28,7 +28,7 @@ namespace EdiabasLib
             {
                 return escapeStream.IsDataAvailable();
             }
-#if Android
+#if ANDROID
             return inStream.IsDataAvailable();
 #else
             return inStream.Length > 0;
@@ -82,7 +82,7 @@ namespace EdiabasLib
                 return escapeStream.Read(buffer, offset, count);
             }
 
-#if !Android
+#if !ANDROID
             if (inStream is NetworkStream)
             {
                 // Cancel event is not supported on Windows

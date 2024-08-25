@@ -46,7 +46,7 @@ namespace EdiabasLib
             public int Timeout { get; }
         }
 
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
         private static readonly string Tag = typeof(EdElmInterface).FullName;
 #endif
         public const string Elm327CarlyIdentifier = "CARLY-UNIVERSAL";
@@ -940,7 +940,7 @@ namespace EdiabasLib
                 FlushReceiveBuffer();
                 byte[] sendData = Encoding.UTF8.GetBytes(command + "\r");
                 _outStream.Write(sendData, 0, sendData.Length);
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
                 Android.Util.Log.Info(Tag, string.Format("ELM CMD send: {0}", command));
 #endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CMD send: {0}", command);
@@ -950,7 +950,7 @@ namespace EdiabasLib
                     // check for OK
                     if (!answer.Contains("OK\r"))
                     {
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
                         Android.Util.Log.Info(Tag, string.Format("ELM invalid response: {0}", answer));
 #endif
                         Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM invalid response: {0}", answer);
@@ -960,7 +960,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
                 Android.Util.Log.Info(Tag, string.Format("ELM stream failure: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure: {0}", EdiabasNet.GetExceptionText(ex));
@@ -1018,7 +1018,7 @@ namespace EdiabasLib
                 {
                     stringBuilder.Append((string.Format("{0:X02}", data)));
                 }
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
                 Android.Util.Log.Info(Tag, string.Format("ELM CAN send: {0}", stringBuilder));
 #endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN send: {0}", stringBuilder.ToString());
@@ -1029,7 +1029,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
                 Android.Util.Log.Info(Tag, string.Format("ELM stream failure: {0}", EdiabasNet.GetExceptionText(ex)));
 #endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** ELM stream failure: {0}", EdiabasNet.GetExceptionText(ex));
@@ -1223,7 +1223,7 @@ namespace EdiabasLib
                             if (data == '\r')
                             {
                                 string answer = stringBuilder.ToString();
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
                                 Android.Util.Log.Info(Tag, string.Format("ELM CMD rec: {0}", answer));
 #endif
                                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CAN rec: {0}", answer);
@@ -1240,14 +1240,14 @@ namespace EdiabasLib
                             _elm327DataMode = false;
                             if (canData)
                             {
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
                                 Android.Util.Log.Info(Tag, "ELM Data mode aborted");
 #endif
                                 Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM Data mode aborted");
                                 return string.Empty;
                             }
                             string answer = stringBuilder.ToString();
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
                             Android.Util.Log.Info(Tag, string.Format("ELM CMD rec: {0}", answer));
 #endif
                             Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ELM CMD rec: {0}", answer);
@@ -1258,7 +1258,7 @@ namespace EdiabasLib
 
                 if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
                 {
-#if __ANDROID__ && DEBUG
+#if ANDROID && DEBUG
                     Android.Util.Log.Info(Tag, "ELM rec timeout");
 #endif
                     Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "ELM rec timeout");
@@ -1540,7 +1540,7 @@ namespace EdiabasLib
 
         private bool DataAvailable()
         {
-#if Android
+#if ANDROID
             return _inStream.HasData();
 #else
             if (!(_inStream is System.Net.Sockets.NetworkStream networkStream))

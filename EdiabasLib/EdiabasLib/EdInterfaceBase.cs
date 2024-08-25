@@ -126,7 +126,7 @@ namespace EdiabasLib
                         {
                             // ignored
                         }
-#if Android
+#if ANDROID
                         InterfaceMutex = new Mutex(false);
 #else
                         InterfaceMutex = new Mutex(false, InterfaceMutexName);

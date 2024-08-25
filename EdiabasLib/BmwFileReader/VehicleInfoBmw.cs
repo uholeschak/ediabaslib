@@ -150,7 +150,7 @@ namespace BmwFileReader
             }
         }
 
-#if Android
+#if ANDROID
         public class TypeKeyInfo
         {
             public TypeKeyInfo(List<string> itemNames, Dictionary<string, List<string>> typeKeyDict)
@@ -600,7 +600,7 @@ namespace BmwFileReader
             return -1;
         }
 
-#if Android
+#if ANDROID
         public static TypeKeyInfo GetTypeKeyInfo(EdiabasNet ediabas, string databaseDir)
         {
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Extract type key info");
@@ -917,7 +917,7 @@ namespace BmwFileReader
             {
                 return null;
             }
-#if Android
+#if ANDROID
             if (brName.EndsWith("_", StringComparison.Ordinal))
             {
                 string vehicleType = brName.TrimEnd('_');
@@ -959,7 +959,7 @@ namespace BmwFileReader
         public static string GetVehicleTypeFromStdFa(string standardFa, EdiabasNet ediabas)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleTypeFromStdFa: {0}", standardFa ?? "No FA");
-#if Android
+#if ANDROID
             if (!string.IsNullOrEmpty(standardFa))
             {
                 Match match = Regex.Match(standardFa, "\\*(?<TYPE>\\w{4})");
@@ -1332,7 +1332,7 @@ namespace BmwFileReader
             }
         }
 
-#if Android
+#if ANDROID
         public static List<VehicleStructsBmw.ServiceDataItem> GetServiceDataItems(string databaseDir, RuleEvalBmw ruleEvalBmw = null)
         {
             VehicleStructsBmw.ServiceData serviceData = ReadServiceData(databaseDir);

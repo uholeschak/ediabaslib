@@ -1,4 +1,4 @@
-﻿#if !Android
+﻿#if !ANDROID
 #define USE_SERIAL_PORT
 #endif
 
@@ -1192,7 +1192,7 @@ namespace EdiabasLib
 
         static EdInterfaceObd()
         {
-#if Android
+#if ANDROID
             _interfaceMutex = new Mutex(false);
 #else
             _interfaceMutex = new Mutex(false, MutexName);

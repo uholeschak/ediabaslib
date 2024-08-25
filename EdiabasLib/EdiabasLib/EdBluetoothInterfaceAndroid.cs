@@ -1,4 +1,4 @@
-﻿#if DEBUG && Android
+﻿#if DEBUG && ANDROID
 #define DEBUG_ANDROID
 #endif
 using System;

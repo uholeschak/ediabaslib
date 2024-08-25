@@ -34,7 +34,7 @@ namespace EdiabasLib
             Rejected
         }
 
-#if Android
+#if ANDROID
         public class ConnectParameterType
         {
             public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData)
@@ -550,7 +550,7 @@ namespace EdiabasLib
                 {
                     AddRecTimeoutIcom = (int)EdiabasNet.StringToValue(prop);
                 }
-#if Android
+#if ANDROID
                 IcomAllocate = true;
 #else
                 IcomAllocate = false;
@@ -862,7 +862,7 @@ namespace EdiabasLib
 
         static EdInterfaceEnet()
         {
-#if Android
+#if ANDROID
             _interfaceMutex = new Mutex(false);
 #else
             _interfaceMutex = new Mutex(false, MutexName);
@@ -917,7 +917,7 @@ namespace EdiabasLib
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}", RemoteHostProtected);
                 SharedDataActive.NetworkData = null;
                 SharedDataActive.TransmitCancelEvent.Reset();
-#if Android
+#if ANDROID
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
                     SharedDataActive.NetworkData = connectParameter.NetworkData;
@@ -1549,7 +1549,7 @@ namespace EdiabasLib
                     {
                         string adapterName = configData.StartsWith(AutoIpAll, StringComparison.OrdinalIgnoreCase) ? string.Empty : configData.Remove(0, 1);
 
-#if Android
+#if ANDROID
                         Java.Util.IEnumeration networkInterfaces = Java.Net.NetworkInterface.NetworkInterfaces;
                         while (networkInterfaces != null && networkInterfaces.HasMoreElements)
                         {
@@ -3524,7 +3524,7 @@ namespace EdiabasLib
                 catch (Exception ex)
 #pragma warning restore CS0168 // Variable is declared but never used
                 {
-#if !Android
+#if !ANDROID
                     Debug.WriteLine("WriteNetworkStream exception: {0}", EdiabasNet.GetExceptionText(ex));
 #endif
                     throw;
