@@ -1455,6 +1455,8 @@ namespace BmwDeepObd
 
                     try
                     {
+                        CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_active_page_change),
+                            CarToast.LengthLong).Show();
                         ScreenManager.Pop();
                     }
                     catch (Exception ex)
@@ -1487,6 +1489,8 @@ namespace BmwDeepObd
 
                     try
                     {
+                        CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_active_data_amount_change),
+                            CarToast.LengthLong).Show();
                         ScreenManager.Pop();
                     }
                     catch (Exception ex)

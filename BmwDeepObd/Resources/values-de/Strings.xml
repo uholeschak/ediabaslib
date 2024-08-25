@@ -879,6 +879,8 @@
   <string name="car_service_active_page">Aktive Seite</string>
   <string name="car_service_no_pages">Keine Seiten</string>
   <string name="car_service_no_data">Keine Daten</string>
+  <string name="car_service_active_page_change">Die aktive Seite hat sich geändert.</string>
+  <string name="car_service_active_data_amount_change">Die Anzahl der Daten hat sich verändert.</string>
   <string name="car_service_error_reset">Zurücksetzen</string>
   <string name="car_service_error_reset_active">Der Fehlerreset ist aktiv.</string>
   <string name="car_service_error_reset_started">Der Fehlerreset wurde gestartet.</string>

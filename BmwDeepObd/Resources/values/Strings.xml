@@ -855,6 +855,8 @@
   <string name="car_service_active_page">Active page</string>
   <string name="car_service_no_pages">No pages</string>
   <string name="car_service_no_data">No data</string>
+  <string name="car_service_active_page_change">The active page has changed.</string>
+  <string name="car_service_active_data_amount_change">The data amount has changed.</string>
   <string name="car_service_error_reset">Reset</string>
   <string name="car_service_error_reset_active">The error reset is active.</string>
   <string name="car_service_error_reset_started">The error reset has been started.</string>
