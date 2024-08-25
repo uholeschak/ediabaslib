@@ -148,7 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="InTheHand.Net.Bluetooth">
-      <Version>4.1.43</Version>
+      <Version>4.1.44</Version>
     </PackageReference>
     <PackageReference Include="SimpleWifi">
       <Version>1.0.0</Version>
