@@ -988,7 +988,7 @@ namespace BmwDeepObd
                         {
                             if (_instanceData.AutoStart)
                             {
-                                ConnectAction(_connectButtonInfo.Button);
+                                ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectMode.ActivityResult));
                                 break;
                             }
                         }
@@ -1008,7 +1008,7 @@ namespace BmwDeepObd
                         _overlayPermissionGranted = Android.Provider.Settings.CanDrawOverlays(this);
                         if (_overlayPermissionGranted && _instanceData.AutoStart)
                         {
-                            ConnectAction(_connectButtonInfo.Button);
+                            ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectMode.ActivityResult));
                             break;
                         }
                     }
@@ -1019,7 +1019,7 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestNotificationSettingsApp:
                     if (_activityCommon.NotificationsEnabled() && _instanceData.AutoStart)
                     {
-                        ConnectAction(_connectButtonInfo.Button);
+                        ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectMode.ActivityResult));
                         break;
                     }
 
@@ -1030,7 +1030,7 @@ namespace BmwDeepObd
                     UpdateOptionsMenu();
                     if (_activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication) && _instanceData.AutoStart)
                     {
-                        ConnectAction(_connectButtonInfo.Button);
+                        ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectMode.ActivityResult));
                         break;
                     }
 
@@ -1053,7 +1053,7 @@ namespace BmwDeepObd
                         }
                         else if (_instanceData.AutoStart)
                         {
-                            ConnectAction(_connectButtonInfo.Button);
+                            ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectMode.ActivityResult));
                         }
                     }
                     _instanceData.AutoStart = false;
@@ -1970,7 +1970,7 @@ namespace BmwDeepObd
 
                                 if (_instanceData.AutoStart)
                                 {
-                                    ConnectAction(sender);
+                                    ConnectAction(sender, new ConnectActionArgs(ConnectActionArgs.ConnectMode.ActivityResult));
                                 }
                             }))
                         {
@@ -1980,7 +1980,7 @@ namespace BmwDeepObd
 
                     if (_instanceData.AutoStart)
                     {
-                        ConnectAction(_connectButtonInfo.Button);
+                        ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectMode.ActivityResult));
                         break;
                     }
 
@@ -1989,7 +1989,7 @@ namespace BmwDeepObd
             }
         }
 
-        protected void ConnectAction(object sender, ConnectActionArgs connectActionArgs = null)
+        protected void ConnectAction(object sender, ConnectActionArgs connectActionArgs)
         {
             ConnectActionArgs.ConnectMode connectMode = ConnectActionArgs.ConnectMode.None;
             if (connectActionArgs != null)
@@ -7590,6 +7590,7 @@ namespace BmwDeepObd
             {
                 None,
                 Manual,
+                ActivityResult,
                 Auto,
                 Connect,
                 Disconnect,
