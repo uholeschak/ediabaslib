@@ -1989,7 +1989,7 @@ namespace BmwDeepObd
             }
         }
 
-        protected void ConnectAction(object sender, ConnectActionArgs connectActionArgs)
+        protected void ConnectAction(object sender, ConnectActionArgs connectActionArgs, int recursionLevel = 0)
         {
             ConnectActionArgs.ConnectMode connectMode = ConnectActionArgs.ConnectMode.None;
             if (connectActionArgs != null)
@@ -2045,7 +2045,7 @@ namespace BmwDeepObd
                         switch (action)
                         {
                             case ActivityCommon.SsidWarnAction.Continue:
-                                ConnectAction(sender, connectActionArgs);
+                                ConnectAction(sender, connectActionArgs, recursionLevel++);
                                 break;
 
                             case ActivityCommon.SsidWarnAction.EditIp:
@@ -2068,7 +2068,7 @@ namespace BmwDeepObd
                         {
                             return;
                         }
-                        ConnectAction(sender, connectActionArgs);
+                        ConnectAction(sender, connectActionArgs, recursionLevel++);
                         connectStarted = connectMode != ConnectActionArgs.ConnectMode.None;
                     }))
                     {
@@ -2081,7 +2081,7 @@ namespace BmwDeepObd
                         {
                             return;
                         }
-                        ConnectAction(sender, connectActionArgs);
+                        ConnectAction(sender, connectActionArgs, recursionLevel++);
                         connectStarted = connectMode != ConnectActionArgs.ConnectMode.None;
                     }))
                     {
@@ -2100,7 +2100,7 @@ namespace BmwDeepObd
 
                         if (result)
                         {
-                            ConnectAction(sender, connectActionArgs);
+                            ConnectAction(sender, connectActionArgs, recursionLevel++);
                             connectStarted = connectMode != ConnectActionArgs.ConnectMode.None;
                         }
                         else
