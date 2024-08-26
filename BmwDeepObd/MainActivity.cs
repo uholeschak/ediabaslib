@@ -988,7 +988,7 @@ namespace BmwDeepObd
                         {
                             if (_instanceData.AutoStart)
                             {
-                                ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                                ButtonConnectClick(_connectButtonInfo.Button);
                                 break;
                             }
                         }
@@ -1008,7 +1008,7 @@ namespace BmwDeepObd
                         _overlayPermissionGranted = Android.Provider.Settings.CanDrawOverlays(this);
                         if (_overlayPermissionGranted && _instanceData.AutoStart)
                         {
-                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                            ButtonConnectClick(_connectButtonInfo.Button);
                             break;
                         }
                     }
@@ -1019,7 +1019,7 @@ namespace BmwDeepObd
                 case ActivityRequest.RequestNotificationSettingsApp:
                     if (_activityCommon.NotificationsEnabled() && _instanceData.AutoStart)
                     {
-                        ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                        ButtonConnectClick(_connectButtonInfo.Button);
                         break;
                     }
 
@@ -1030,7 +1030,7 @@ namespace BmwDeepObd
                     UpdateOptionsMenu();
                     if (_activityCommon.NotificationsEnabled(ActivityCommon.NotificationChannelCommunication) && _instanceData.AutoStart)
                     {
-                        ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                        ButtonConnectClick(_connectButtonInfo.Button);
                         break;
                     }
 
@@ -1053,7 +1053,7 @@ namespace BmwDeepObd
                         }
                         else if (_instanceData.AutoStart)
                         {
-                            ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                            ButtonConnectClick(_connectButtonInfo.Button);
                         }
                     }
                     _instanceData.AutoStart = false;
@@ -1970,7 +1970,7 @@ namespace BmwDeepObd
 
                                 if (_instanceData.AutoStart)
                                 {
-                                    ButtonConnectClick(sender, args);
+                                    ButtonConnectClick(sender);
                                 }
                             }))
                         {
@@ -1980,7 +1980,7 @@ namespace BmwDeepObd
 
                     if (_instanceData.AutoStart)
                     {
-                        ButtonConnectClick(_connectButtonInfo.Button, EventArgs.Empty);
+                        ButtonConnectClick(_connectButtonInfo.Button);
                         break;
                     }
 
@@ -1989,10 +1989,10 @@ namespace BmwDeepObd
             }
         }
 
-        protected void ButtonConnectClick(object sender, EventArgs e)
+        protected void ButtonConnectClick(object sender, EventArgsConnect eventArgsConnect = null)
         {
             EventArgsConnect.ConnectMode connectMode = EventArgsConnect.ConnectMode.None;
-            if (e is EventArgsConnect eventArgsConnect)
+            if (eventArgsConnect != null)
             {
                 connectMode = eventArgsConnect.Mode;
             }
@@ -2045,7 +2045,7 @@ namespace BmwDeepObd
                         switch (action)
                         {
                             case ActivityCommon.SsidWarnAction.Continue:
-                                ButtonConnectClick(sender, e);
+                                ButtonConnectClick(sender, eventArgsConnect);
                                 break;
 
                             case ActivityCommon.SsidWarnAction.EditIp:
@@ -2068,7 +2068,7 @@ namespace BmwDeepObd
                         {
                             return;
                         }
-                        ButtonConnectClick(sender, e);
+                        ButtonConnectClick(sender, eventArgsConnect);
                         connectStarted = connectMode != EventArgsConnect.ConnectMode.None;
                     }))
                     {
@@ -2081,7 +2081,7 @@ namespace BmwDeepObd
                         {
                             return;
                         }
-                        ButtonConnectClick(sender, e);
+                        ButtonConnectClick(sender, eventArgsConnect);
                         connectStarted = connectMode != EventArgsConnect.ConnectMode.None;
                     }))
                     {
@@ -2100,7 +2100,7 @@ namespace BmwDeepObd
 
                         if (result)
                         {
-                            ButtonConnectClick(sender, e);
+                            ButtonConnectClick(sender, eventArgsConnect);
                             connectStarted = connectMode != EventArgsConnect.ConnectMode.None;
                         }
                         else
@@ -7584,11 +7584,12 @@ namespace BmwDeepObd
             }
         }
 
-        private class EventArgsConnect : EventArgs
+        protected class EventArgsConnect
         {
             public enum ConnectMode
             {
                 None,
+                Manual,
                 Auto,
                 Connect,
                 Disconnect,
@@ -7678,7 +7679,7 @@ namespace BmwDeepObd
                 ToggleButton button = view.FindViewById<ToggleButton>(Resource.Id.buttonConnect);
                 button.Click += (sender, args) =>
                 {
-                    activityMain.ButtonConnectClick(sender, args);
+                    activityMain.ButtonConnectClick(sender, new EventArgsConnect(EventArgsConnect.ConnectMode.Manual));
                 };
                 button.Checked = activityMain._connectButtonInfo.Checked;
                 button.Enabled = activityMain._connectButtonInfo.Enabled;
@@ -7691,7 +7692,7 @@ namespace BmwDeepObd
             {
                 // This is called if the host menu item placed in the overflow menu of the
                 // action bar is clicked and the host activity did not handle the click.
-                ((ActivityMain)Context).ButtonConnectClick(((ActivityMain)Context)._connectButtonInfo.Button, EventArgs.Empty);
+                ((ActivityMain)Context).ButtonConnectClick(((ActivityMain)Context)._connectButtonInfo.Button, new EventArgsConnect(EventArgsConnect.ConnectMode.Manual));
                 return true;
             }
         }
