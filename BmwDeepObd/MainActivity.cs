@@ -2378,6 +2378,11 @@ namespace BmwDeepObd
         {
             if (intent != null)
             {
+                if ((intent.Flags & ActivityFlags.LaunchedFromHistory) != 0)
+                {   // old flags reused
+                    return;
+                }
+
                 bool showTitleRequest = intent.GetBooleanExtra(ExtraShowTitle, false);
                 if (showTitleRequest)
                 {
