@@ -2060,6 +2060,11 @@ namespace BmwDeepObd
                     }
                 }
 
+                if (recursionLevel == 0)
+                {
+                    SendCarSessionConnectBroadcast(true);
+                }
+
                 if (UseCommService())
                 {
                     if (RequestOverlayPermissions((o, args) =>
@@ -2071,7 +2076,7 @@ namespace BmwDeepObd
                         ConnectAction(sender, connectActionArgs, recursionLevel++);
                     }))
                     {
-                        connectStarted = autoConnect != ConnectActionArgs.AutoConnectMode.None;
+                        connectStarted = true;
                         return;
                     }
 
@@ -2084,7 +2089,7 @@ namespace BmwDeepObd
                         ConnectAction(sender, connectActionArgs, recursionLevel++);
                     }))
                     {
-                        connectStarted = autoConnect != ConnectActionArgs.AutoConnectMode.None;
+                        connectStarted = true;
                         return;
                     }
                 }
@@ -2092,23 +2097,23 @@ namespace BmwDeepObd
                 if (!IsCommActive())
                 {
                     if (_activityCommon.InitReaderThread(_instanceData.BmwPath, _instanceData.VagPath, result =>
-                    {
-                        if (_activityCommon == null)
                         {
-                            return;
-                        }
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
 
-                        if (result)
-                        {
-                            ConnectAction(sender, connectActionArgs, recursionLevel++);
-                        }
-                        else
-                        {
-                            VerifyEcuMd5();
-                        }
-                    }))
+                            if (result)
+                            {
+                                ConnectAction(sender, connectActionArgs, recursionLevel++);
+                            }
+                            else
+                            {
+                                VerifyEcuMd5();
+                            }
+                        }))
                     {
-                        connectStarted = autoConnect != ConnectActionArgs.AutoConnectMode.None;
+                        connectStarted = true;
                         return;
                     }
                 }
