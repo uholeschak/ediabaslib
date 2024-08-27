@@ -2109,6 +2109,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
+                                SendCarSessionConnectBroadcast(false);
                                 VerifyEcuMd5();
                             }
                         }))
@@ -2160,11 +2161,13 @@ namespace BmwDeepObd
                                             }
                                         }
 
+                                        SendCarSessionConnectBroadcast(false);
                                         UpdateOptionsMenu();
                                         UpdateDisplay();
                                     });
                                 }))
                         {
+                            connectStarted = true;
                             return;
                         }
                     }
