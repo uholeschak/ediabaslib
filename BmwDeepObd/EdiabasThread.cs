@@ -1582,6 +1582,15 @@ namespace BmwDeepObd
                     }
                     catch (Exception ex)
                     {
+                        EdInterfaceBase edInterfaceClass = Ediabas.EdInterfaceClass;
+                        if (edInterfaceClass != null)
+                        {
+                            edInterfaceClass.InterfaceDisconnect();
+                            // clear transmit cache
+                            edInterfaceClass.EnableTransmitCache = false;
+                            edInterfaceClass.EnableTransmitCache = true;
+                        }
+
                         string exText = string.Empty;
                         if (!AbortEdiabasJob())
                         {

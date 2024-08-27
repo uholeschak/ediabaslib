@@ -4860,8 +4860,6 @@ namespace EdiabasLib
                 }
                 _sgbdFileResolveLast = string.Empty;
 
-                EdInterfaceClass?.InterfaceDisconnect();
-
                 throw;
             }
         }
