@@ -2025,6 +2025,11 @@ namespace BmwDeepObd
                     }
                 }
 
+                if (recursionLevel == 0)
+                {
+                    SendCarSessionConnectBroadcast(true);
+                }
+
                 if (!ActivityCommon.CommActive && autoConnect == ConnectActionArgs.AutoConnectMode.None)
                 {
                     if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
@@ -2042,27 +2047,30 @@ namespace BmwDeepObd
                             return;
                         }
 
+                        bool connectStartedLocal = false;
                         switch (action)
                         {
                             case ActivityCommon.SsidWarnAction.Continue:
                                 ConnectAction(sender, connectActionArgs, recursionLevel++);
+                                connectStartedLocal = true;
                                 break;
 
                             case ActivityCommon.SsidWarnAction.EditIp:
                                 AdapterIpConfig();
                                 break;
                         }
+
+                        if (!connectStartedLocal)
+                        {
+                            SendCarSessionConnectBroadcast(false);
+                        }
                     }))
                     {
                         UpdateOptionsMenu();
                         UpdateDisplay();
+                        connectStarted = true;
                         return;
                     }
-                }
-
-                if (recursionLevel == 0)
-                {
-                    SendCarSessionConnectBroadcast(true);
                 }
 
                 if (UseCommService())
