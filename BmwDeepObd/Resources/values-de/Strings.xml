@@ -82,7 +82,7 @@
 \nSie können gerne mitwirken oder Probleme melden.
 \nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.</string>
   <string name="version_last_changes_header">Änderungen in dieser Version:</string>
-  <string name="version_last_changes">- Start beim Booten Option.\n- ELM327 Firmware Aktualisierung.\n - EDIABAS 7.6.0 mit DoIP Support.- BMW Datenbank korrigiert.\n- Yandex Cloud Support.\n- Android 14 Support.\n- Anzeigereihenfolge der Zeilen kann im Menü geändert werden.\n- Konfigurationsgenerator: Langklick um ECU Reihenfolge zu ändern.\n- Kleinere Probleme behoben</string>
+  <string name="version_last_changes">- Start beim Booten Option.\n- ELM327 Firmware Aktualisierung.\n - EDIABAS 7.6.0 mit DoIP Support.\n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">Der VAG Modus ist noch experimentell und nur für Fahrzeuge bis {0}.\nEs wird ein &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD Adapter&lt;/a&gt; mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.\nFür den neuen VAG Modus müssen die Konfiguration neu generiert werden.\nEs ist möglich den alten VAG Modus wieder in den globalen Einstellungen wählen.</string>
 
@@ -884,5 +884,5 @@
   <string name="car_service_error_reset">Zurücksetzen</string>
   <string name="car_service_error_reset_active">Der Fehlerreset ist aktiv.</string>
   <string name="car_service_error_reset_started">Der Fehlerreset wurde gestartet.</string>
-  <string name="car_service_test_info">Es ist eine interne Testversion für Android Auto verfügbar.\nWenn Sie diese testen möchten, kontaktieren Sie den Entwickler über die Webseite.</string>
+  <string name="car_service_test_info">- Android Auto Testversion verfügbar.\n Kontaktieren Sie den Entwickler über die Webseite.</string>
 </resources>
