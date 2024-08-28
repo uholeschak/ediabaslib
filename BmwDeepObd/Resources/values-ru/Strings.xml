@@ -883,4 +883,5 @@
   <string name="car_service_error_reset">Перезагрузить</string>
   <string name="car_service_error_reset_active">Сброс ошибки активен.</string>
   <string name="car_service_error_reset_started">Сброс ошибки начат.</string>
+  <string name="car_service_test_info">Доступна внутренняя тестовая версия для Android Auto.\nЕсли вы хотите протестировать ее, свяжитесь с разработчиком через веб-сайт.</string>
 </resources>
