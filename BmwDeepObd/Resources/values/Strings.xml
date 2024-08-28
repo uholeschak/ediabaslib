@@ -844,6 +844,7 @@
   <string name="car_service_connected">The vehicle is connected.</string>
   <string name="car_service_fg_service_disabled">The configuration is invalid.\nDo not use the energy saving mode in the settings.</string>
   <string name="car_service_disconnected">The vehicle is disconnected.\nConnect to the vehicle in the app first.</string>
+  <string name="car_service_no_config">No configuration loaded.</string>
   <string name="car_service_app_processing">Connection establishment active in the app on the smartphone.</string>
   <string name="car_service_app_displayed">The app has been displayed on the smartphone.</string>
   <string name="car_service_app_store_settings">The app on the smartphone is storing the settings.</string>

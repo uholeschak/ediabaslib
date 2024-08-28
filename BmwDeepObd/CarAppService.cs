@@ -430,6 +430,7 @@ namespace BmwDeepObd
             private bool _connected = false;
             private bool _isConnecting = false;
             private bool _useService = false;
+            private bool _configFileValid = false;
             private ActivityCommon.LockType _lockTypeComm = ActivityCommon.LockType.None;
             private ActivityCommon.LockType _lockTypeLogging = ActivityCommon.LockType.None;
 
@@ -709,6 +710,8 @@ namespace BmwDeepObd
                     bool connected = GetConnected();
                     bool isConnecting = GetIsConnecting();
                     bool useService = GetFgServiceActive();
+                    string configFileName = ActivityCommon.JobReader.XmlFileName;
+                    bool configFileValid = !string.IsNullOrEmpty(configFileName);
                     ActivityCommon.LockType lockTypeComm = ActivityCommon.LockTypeCommunication;
                     ActivityCommon.LockType lockTypeLogging = ActivityCommon.LockTypeLogging;
 
@@ -730,7 +733,14 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_disconnected));
+                                if (configFileValid)
+                                {
+                                    sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_disconnected));
+                                }
+                                else
+                                {
+                                    sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_no_config));
+                                }
                             }
                         }
                     }
@@ -762,8 +772,10 @@ namespace BmwDeepObd
                         _connected = connected;
                         _isConnecting = isConnecting;
                         _useService = useService;
+                        _configFileValid = configFileValid;
                         _lockTypeComm = lockTypeComm;
                         _lockTypeLogging = lockTypeLogging;
+
                     }
 
                     return new Tuple<string, string>(sbStructureContent.ToString(), sbValueContent.ToString());
