@@ -3019,8 +3019,16 @@ namespace BmwDeepObd
             if (_startAlertDialog == null && !_instanceData.VersionInfoShown && _activityCommon.VersionCode != _instanceData.LastVersionCode)
             {
                 _instanceData.VersionInfoShown = true;
-                string message = (GetString(Resource.String.version_change_info_message) +
-                                 GetString(Resource.String.version_last_changes)).Replace("\n", "<br>");
+
+                StringBuilder sbMessage = new StringBuilder();
+                sbMessage.AppendLine(GetString(Resource.String.version_change_info_message));
+                sbMessage.AppendLine();
+                sbMessage.AppendLine();
+                sbMessage.AppendLine(GetString(Resource.String.version_last_changes_header));
+                sbMessage.AppendLine();
+                sbMessage.AppendLine(GetString(Resource.String.version_last_changes));
+
+                string message = sbMessage.ToString().Replace("\n", "<br>");
                 _startAlertDialog = new AlertDialog.Builder(this)
                     .SetNeutralButton(Resource.String.button_donate, (sender, args) =>
                     {

@@ -79,8 +79,8 @@
   <string formatted="false" name="version_change_info_message">This open source project is hosted at:
 \n&lt;a href=\'https://github.com/uholeschak/ediabaslib\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;
 \nFeel free to contribute or to report problems.
-\nA detailed documentation could also be found on this web site.
-\n\nChanges in this version:\n</string>
+\nA detailed documentation could also be found on this website.</string>
+  <string name="version_last_changes_header">Changes in this version:</string>
   <string name="version_last_changes">- Start at boot option.\n - ELM327 firmware update.\n- EDIABAS 7.6.0 with DoIP support.\n- BMW database corrected.\n- Yandex Cloud support.\n- Android 14 support.\n- Allow to change lines display order from menu.\n- Configuration generator: Long click to change ECU order.\n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">The VAG mode ist still experimental and only for vehicles until {0}.\nA &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD adapter&lt;/a&gt; with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.\nConfigurations have to regenerated for the new VAG mode\n.It\'s possible to select the old VAG mode again in the settings dialog.</string>
@@ -822,7 +822,7 @@
   <string name="can_adapter_fw_update_conn_failed">Unable to connect to adapter</string>
   <string name="can_adapter_fw_update_failed">Firmware update failed.\nIf all adapter LEDs are active, the adapter is in bootloader mode and has to be flashed again for normal usage.</string>
   <string name="can_adapter_fw_update_ok">Firmware update successful</string>
-  <string name="can_adapter_fw_update_ok_detect">The firmware update was successful.\nYou should restart the adapter, afterwards you have to detect it again.</string>
+  <string name="can_adapter_fw_update_ok_detect">The firmware update was successful.\nYou should restart the adapter, afterward you have to detect it again.</string>
   <string name="can_adapter_fw_invalid">The firmware file is faulty.</string>
   <string name="can_adapter_bt_not_reliable">Your Android device is known to have an unreliable Bluetooth connection.\nPlease use a different device.</string>
   <string name="can_adapter_select_fw_file">Select firmware</string>
@@ -860,4 +860,5 @@
   <string name="car_service_error_reset">Reset</string>
   <string name="car_service_error_reset_active">The error reset is active.</string>
   <string name="car_service_error_reset_started">The error reset has been started.</string>
+  <string name="car_service_test_info">There is an internal test version for Android Auto available.\nIf you want to test it, contact the developer via website.</string>
 </resources>
