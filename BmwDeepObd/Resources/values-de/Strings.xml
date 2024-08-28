@@ -868,6 +868,7 @@
   <string name="car_service_connected">Das Fahrzeug ist verbunden.</string>
   <string name="car_service_fg_service_disabled">Die Konfiguration is ungültig.\nVerwenden sie keinen Energiesparmodus in den Einstellungen.</string>
   <string name="car_service_disconnected">Das Fahrzeug ist nicht verbunden.\nDie Kommuniation muss zuerst in der App gestartet werden.</string>
+  <string name="car_service_no_config">Keine Konfiguration geladen.</string>
   <string name="car_service_app_processing">Verbindungsaufbau in der App auf dem Smartphone aktiv.</string>
   <string name="car_service_app_displayed">Die App wird auf dem Smartphone angezeigt.</string>
   <string name="car_service_app_store_settings">Die App auf dem Smartphone speichert die Einstellungen.</string>
