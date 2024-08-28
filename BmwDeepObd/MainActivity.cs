@@ -3016,6 +3016,7 @@ namespace BmwDeepObd
             UpdateDirectories();
             _activityCommon.RequestUsbPermission(null);
             ReadConfigFile();
+
             if (_startAlertDialog == null && !_instanceData.VersionInfoShown && _activityCommon.VersionCode != _instanceData.LastVersionCode)
             {
                 _instanceData.VersionInfoShown = true;
@@ -3023,9 +3024,10 @@ namespace BmwDeepObd
                 StringBuilder sbMessage = new StringBuilder();
                 sbMessage.AppendLine(GetString(Resource.String.version_change_info_message));
                 sbMessage.AppendLine();
-                sbMessage.AppendLine();
                 sbMessage.AppendLine(GetString(Resource.String.version_last_changes_header));
-                sbMessage.AppendLine();
+#if !ANDROID_AUTO
+                sbMessage.AppendLine(GetString(Resource.String.car_service_test_info));
+#endif
                 sbMessage.AppendLine(GetString(Resource.String.version_last_changes));
 
                 string message = sbMessage.ToString().Replace("\n", "<br>");
