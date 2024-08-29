@@ -1659,7 +1659,7 @@ namespace BmwDeepObd
 
         static ActivityCommon()
         {
-            JobReader = new JobReader();
+            JobReader = new JobReader(false);
             _recentConfigList = new List<string>();
             _serialInfoList = new List<SerialInfoEntry>();
             AssetFileName = string.Empty;
