@@ -447,6 +447,7 @@ namespace BmwDeepObd
                 bool connectedCopy;
                 bool isConnectingCopy;
                 bool useServiceCopy;
+                bool configFileValidCopy;
                 ActivityCommon.LockType lockTypeCommCopy;
                 ActivityCommon.LockType lockTypeLoggingCopy;
 
@@ -455,6 +456,7 @@ namespace BmwDeepObd
                     connectedCopy = _connected;
                     isConnectingCopy = _isConnecting;
                     useServiceCopy = _useService;
+                    configFileValidCopy = _configFileValid;
                     lockTypeCommCopy = _lockTypeComm;
                     lockTypeLoggingCopy = _lockTypeLogging;
                 }
@@ -477,7 +479,14 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_disconnected));
+                            if (configFileValidCopy)
+                            {
+                                rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_disconnected));
+                            }
+                            else
+                            {
+                                rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_no_config));
+                            }
                         }
                     }
 
