@@ -518,7 +518,7 @@ namespace BmwDeepObd
                 itemBuilderPages.AddItem(rowPageList.Build());
 
                 ActionStrip.Builder actionStripBuilder = null;
-                if (!isConnectingCopy)
+                if (!isConnectingCopy && configFileValidCopy)
                 {
                     if (connectedCopy)
                     {
@@ -764,7 +764,7 @@ namespace BmwDeepObd
                         sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list_show));
                     }
 
-                    if (!isConnecting)
+                    if (!isConnecting && configFileValid)
                     {
                         if (connected)
                         {
