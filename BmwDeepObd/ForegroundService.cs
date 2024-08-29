@@ -806,18 +806,21 @@ namespace BmwDeepObd
         {
             try
             {
-                if (!ActivityCommon.JobReader.ReadXml(_instanceData.ConfigFileName, out string _))
+                JobReader jobReader = new JobReader();
+                jobReader.ReadXml(_instanceData.ConfigFileName, out string _);
+                if (!jobReader.ReadXml(_instanceData.ConfigFileName, out string _))
                 {
                     return false;
                 }
 
-                if (ActivityCommon.JobReader.PageList.Count < 1)
+                ActivityCommon.JobReader = jobReader;
+                if (jobReader.PageList.Count < 1)
                 {
                     return false;
                 }
 
-                ActivityCommon.SelectedManufacturer = ActivityCommon.JobReader.Manufacturer;
-                ActivityCommon.SelectedInterface = ActivityCommon.JobReader.Interface;
+                ActivityCommon.SelectedManufacturer = jobReader.Manufacturer;
+                ActivityCommon.SelectedInterface = jobReader.Interface;
 
                 return true;
             }
@@ -853,7 +856,8 @@ namespace BmwDeepObd
         {
             try
             {
-                int compileCount = ActivityCommon.JobReader.PageList.Count(pageInfo => pageInfo.ClassCode != null);
+                JobReader jobReader = ActivityCommon.JobReader;
+                int compileCount = jobReader.PageList.Count(pageInfo => pageInfo.ClassCode != null);
                 if (compileCount == 0)
                 {
 #if DEBUG
@@ -872,7 +876,7 @@ namespace BmwDeepObd
                 }
 
                 int compileIndex = 0;
-                foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
                 {
                     if (pageInfo.ClassCode == null)
                     {
