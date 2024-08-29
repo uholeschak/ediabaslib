@@ -518,7 +518,7 @@ namespace BmwDeepObd
                 itemBuilderPages.AddItem(rowPageList.Build());
 
                 ActionStrip.Builder actionStripBuilder = null;
-                if (!isConnectingCopy)
+                if (!isConnectingCopy && configFileValidCopy)
                 {
                     if (connectedCopy)
                     {
@@ -721,7 +721,12 @@ namespace BmwDeepObd
                     bool useService = GetFgServiceActive();
                     JobReader jobReader = ActivityCommon.JobReader;
                     string configFileName = jobReader.XmlFileName;
-                    bool configFileValid = !string.IsNullOrEmpty(configFileName);
+
+                    bool configFileValid = true;
+                    if (jobReader.Configured)
+                    {
+                        configFileValid = !string.IsNullOrEmpty(configFileName);
+                    }
                     ActivityCommon.LockType lockTypeComm = ActivityCommon.LockTypeCommunication;
                     ActivityCommon.LockType lockTypeLogging = ActivityCommon.LockTypeLogging;
 
@@ -759,7 +764,7 @@ namespace BmwDeepObd
                         sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list_show));
                     }
 
-                    if (!isConnecting)
+                    if (!isConnecting && configFileValid)
                     {
                         if (connected)
                         {

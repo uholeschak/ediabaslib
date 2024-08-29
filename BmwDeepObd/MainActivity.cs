@@ -508,6 +508,7 @@ namespace BmwDeepObd
                 }
             }
 
+            JobReader jobReader = ActivityCommon.JobReader;
             int pageIndex = 0;
             if (autoConnect == ConnectActionArgs.AutoConnectMode.Auto)
             {
@@ -518,7 +519,7 @@ namespace BmwDeepObd
                 if (currentPage != null)
                 {
                     int i = 0;
-                    foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                    foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
                     {
                         if (pageInfo == currentPage)
                         {
@@ -533,7 +534,7 @@ namespace BmwDeepObd
             _fragmentStateAdapter.ClearPages();
             _tabLayout.Visibility = ViewStates.Gone;
 
-            foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+            foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
             {
                 int resourceId = Resource.Layout.tab_list;
                 if (pageInfo.ErrorsInfo != null)
@@ -547,7 +548,7 @@ namespace BmwDeepObd
 
                 _fragmentStateAdapter.AddPage(pageInfo, resourceId, GetPageString(pageInfo, pageInfo.Name));
             }
-            _tabLayout.Visibility = (ActivityCommon.JobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
+            _tabLayout.Visibility = (jobReader.PageList.Count > 0) ? ViewStates.Visible : ViewStates.Gone;
             _fragmentStateAdapter.NotifyDataSetChanged();
             if (_tabLayout.TabCount > 0)
             {
@@ -569,7 +570,7 @@ namespace BmwDeepObd
             {
                 if (autoConnect != ConnectActionArgs.AutoConnectMode.None)
                 {
-                    if (ActivityCommon.JobReader.PageList.Count > 0 &&
+                    if (jobReader.PageList.Count > 0 &&
                         !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
                     {
                         ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto, autoConnect));
@@ -629,6 +630,7 @@ namespace BmwDeepObd
                     return;
                 }
 
+                JobReader jobReader = ActivityCommon.JobReader;
                 switch (commRequest)
                 {
                     case InstanceData.CommRequest.Connect:
@@ -637,7 +639,7 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        if (ActivityCommon.JobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable())
+                        if (jobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable())
                         {
                             ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto, ConnectActionArgs.AutoConnectMode.Connect));
                             connectStarted = true;
@@ -1252,6 +1254,7 @@ namespace BmwDeepObd
             bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(true);
             bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
+            JobReader jobReader = ActivityCommon.JobReader;
             JobReader.PageInfo currentPage = GetSelectedPage();
             bool enableSelectedPageEdit = !string.IsNullOrEmpty(currentPage?.XmlFileName);
 
@@ -1422,7 +1425,7 @@ namespace BmwDeepObd
             cfgEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
 
             IMenuItem cfgPagesEditMenu = menu.FindItem(Resource.Id.menu_cfg_pages_edit);
-            cfgPagesEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName) && !string.IsNullOrEmpty(ActivityCommon.JobReader.XmlFileNamePages));
+            cfgPagesEditMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName) && !string.IsNullOrEmpty(jobReader.XmlFileNamePages));
 
             IMenuItem cfgPageMenu = menu.FindItem(Resource.Id.menu_cfg_page_menu);
             cfgPageMenu?.SetEnabled(!commActive && enableSelectedPageEdit);
@@ -1599,6 +1602,7 @@ namespace BmwDeepObd
                 }
             }
 
+            JobReader jobReader = ActivityCommon.JobReader;
             JobReader.PageInfo currentPage = GetSelectedPage();
             switch (item.ItemId)
             {
@@ -1666,7 +1670,7 @@ namespace BmwDeepObd
                     return true;
 
                 case Resource.Id.menu_cfg_pages_edit:
-                    StartEditXml(ActivityCommon.JobReader.XmlFileNamePages);
+                    StartEditXml(jobReader.XmlFileNamePages);
                     return true;
 
                 case Resource.Id.menu_cfg_page_edit:
@@ -1715,7 +1719,7 @@ namespace BmwDeepObd
                 case Resource.Id.menu_bmw_coding:
                 {
                     bool allowBmwCoding = false;
-                    string vehicleSeries = ActivityCommon.JobReader.VehicleSeries;
+                    string vehicleSeries = jobReader.VehicleSeries;
 
                     if (!string.IsNullOrEmpty(vehicleSeries) && vehicleSeries.Length > 0)
                     {
@@ -1726,8 +1730,8 @@ namespace BmwDeepObd
                     }
                     else
                     {
-                        string sgbdFunctional = ActivityCommon.JobReader.SgbdFunctional;
-                        JobReader.PageInfo errorPage = ActivityCommon.JobReader.ErrorPage;
+                        string sgbdFunctional = jobReader.SgbdFunctional;
+                        JobReader.PageInfo errorPage = jobReader.ErrorPage;
 
                         if (errorPage == null || !string.IsNullOrEmpty(sgbdFunctional))
                         {
@@ -2774,12 +2778,13 @@ namespace BmwDeepObd
 
         private void StoreActiveJobIndex(bool disable = false)
         {
+            JobReader jobReader = ActivityCommon.JobReader;
             int selectedJobIndex = -1;
             switch (ActivityCommon.AutoConnectHandling)
             {
                 case ActivityCommon.AutoConnectType.Connect:
                 case ActivityCommon.AutoConnectType.ConnectClose:
-                    if (ActivityCommon.JobReader.PageList.Count > 0)
+                    if (jobReader.PageList.Count > 0)
                     {
                         selectedJobIndex = _tabLayout.SelectedTabPosition;
                     }
@@ -2791,7 +2796,7 @@ namespace BmwDeepObd
                         JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread?.JobPageInfo;
                         if (pageInfo != null)
                         {
-                            selectedJobIndex = ActivityCommon.JobReader.PageList.IndexOf(pageInfo);
+                            selectedJobIndex = jobReader.PageList.IndexOf(pageInfo);
                         }
                     }
                     break;
@@ -3431,11 +3436,12 @@ namespace BmwDeepObd
 
         private JobReader.PageInfo GetSelectedPage()
         {
+            JobReader jobReader = ActivityCommon.JobReader;
             JobReader.PageInfo pageInfo = null;
             int index = _tabLayout.SelectedTabPosition;
-            if (index >= 0 && index < (ActivityCommon.JobReader.PageList.Count))
+            if (index >= 0 && index < (jobReader.PageList.Count))
             {
-                pageInfo = ActivityCommon.JobReader.PageList[index];
+                pageInfo = jobReader.PageList[index];
             }
             return pageInfo;
         }
