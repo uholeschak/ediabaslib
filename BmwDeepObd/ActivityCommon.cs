@@ -1041,6 +1041,7 @@ namespace BmwDeepObd
         private bool? _mtcBtManager;
         private static string _mtcBtModuleName;
         private static readonly object LockObject = new object();
+        private static readonly object JobReaderLockObject = new object();
         private static readonly object SettingsLockObject = new object();
         private static readonly object RecentConfigLockObject = new object();
         private static readonly object LastSerialLockObject = new object();
@@ -1054,6 +1055,7 @@ namespace BmwDeepObd
         private static bool _vagUdsActive;
         private static bool _ecuFunctionActive;
         private static int _btEnableCounter;
+        private static JobReader _jobReader;
         private static string _adapterBlackList;
         private static string _lastAdapterSerial;
         private static TranslatorType _translatorType;
@@ -1488,6 +1490,24 @@ namespace BmwDeepObd
             }
         }
 
+        public static JobReader JobReader
+        {
+            get
+            {
+                lock (JobReaderLockObject)
+                {
+                    return _jobReader;
+                }
+            }
+            set
+            {
+                lock (JobReaderLockObject)
+                {
+                    _jobReader = value;
+                }
+            }
+        }
+
         public static string LastAdapterSerial
         {
             get
@@ -1506,13 +1526,13 @@ namespace BmwDeepObd
             }
         }
 
+
+
         public static string EmailAddress { get; set; }
 
         public static string TraceInfo { get; set; }
 
         public static EdiabasThread EdiabasThread { get; set; }
-
-        public static JobReader JobReader { get; }
 
         public static int SelectedThemeId
         {
