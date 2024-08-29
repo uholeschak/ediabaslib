@@ -331,6 +331,7 @@ namespace BmwDeepObd
         public const string DisplayNodeOrder = "display-order";
         public const int GaugesPortraitDefault = 2;
         public const int GaugesLandscapeDefault = 4;
+        private bool _configured;
         private readonly List<PageInfo> _pageList = new List<PageInfo>();
         private PageInfo _errorPage = null;
         private string _ecuPath = string.Empty;
@@ -348,6 +349,8 @@ namespace BmwDeepObd
         private string _xmlFileName = string.Empty;
         private ActivityCommon.ManufacturerType _manufacturerType = ActivityCommon.ManufacturerType.Bmw;
         private ActivityCommon.InterfaceType _interfaceType = ActivityCommon.InterfaceType.None;
+
+        public bool Configured => _configured;
 
         public List<PageInfo> PageList => _pageList;
 
@@ -406,13 +409,9 @@ namespace BmwDeepObd
             }
         }
 
-        public JobReader()
+        public JobReader(bool configured)
         {
-        }
-
-        public JobReader(string xmlName)
-        {
-            ReadXml(xmlName, out string _);
+            _configured = configured;
         }
 
         public void Clear()

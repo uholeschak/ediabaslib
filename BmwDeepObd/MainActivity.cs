@@ -4735,32 +4735,41 @@ namespace BmwDeepObd
             }
 
             bool failed = false;
-            string lastFileName = ActivityCommon.JobReader.XmlFileName ?? string.Empty;
-            ActivityCommon.JobReader.Clear();
-            if (_instanceData.LastAppState != ActivityCommon.LastAppState.Compile && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+            JobReader jobReader = ActivityCommon.JobReader;
+            string lastFileName = jobReader.XmlFileName ?? string.Empty;
+
+            jobReader = new JobReader(true);
+            try
             {
-                if (!ActivityCommon.JobReader.ReadXml(_instanceData.ConfigFileName, out string errorMessage))
+                if (_instanceData.LastAppState != ActivityCommon.LastAppState.Compile && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
-                    ActivityCommon.RecentConfigListRemove(_instanceData.ConfigFileName);
-                    failed = true;
-                    string message = GetString(Resource.String.job_reader_read_xml_failed) + "\r\n";
-                    if (!string.IsNullOrEmpty(errorMessage))
+                    if (!jobReader.ReadXml(_instanceData.ConfigFileName, out string errorMessage))
                     {
-                        message += errorMessage;
+                        ActivityCommon.RecentConfigListRemove(_instanceData.ConfigFileName);
+                        failed = true;
+                        string message = GetString(Resource.String.job_reader_read_xml_failed) + "\r\n";
+                        if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            message += errorMessage;
+                        }
+                        else
+                        {
+                            message += GetString(Resource.String.job_reader_file_name_invalid);
+                        }
+                        _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                        _tabsCreated = false;
                     }
-                    else
-                    {
-                        message += GetString(Resource.String.job_reader_file_name_invalid);
-                    }
-                    _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
+                }
+
+                string newFileName = jobReader.XmlFileName ?? string.Empty;
+                if (string.Compare(lastFileName, newFileName, StringComparison.OrdinalIgnoreCase) != 0)
+                {
                     _tabsCreated = false;
                 }
             }
-
-            string newFileName = ActivityCommon.JobReader.XmlFileName ?? string.Empty;
-            if (string.Compare(lastFileName, newFileName, StringComparison.OrdinalIgnoreCase) != 0)
+            finally
             {
-                _tabsCreated = false;
+                ActivityCommon.JobReader = jobReader;
             }
 
             UpdateJobReaderSettings();
@@ -4769,6 +4778,8 @@ namespace BmwDeepObd
 
             ReadTranslation();
             UpdateDirectories();
+            PostUpdateDisplay();
+
             if (!failed)
             {
                 RequestConfigSelect();

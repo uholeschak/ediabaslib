@@ -806,14 +806,19 @@ namespace BmwDeepObd
         {
             try
             {
-                JobReader jobReader = new JobReader();
-                jobReader.ReadXml(_instanceData.ConfigFileName, out string _);
-                if (!jobReader.ReadXml(_instanceData.ConfigFileName, out string _))
+                JobReader jobReader = new JobReader(true);
+                try
                 {
-                    return false;
+                    if (!jobReader.ReadXml(_instanceData.ConfigFileName, out string _))
+                    {
+                        return false;
+                    }
+                }
+                finally
+                {
+                    ActivityCommon.JobReader = jobReader;
                 }
 
-                ActivityCommon.JobReader = jobReader;
                 if (jobReader.PageList.Count < 1)
                 {
                     return false;
