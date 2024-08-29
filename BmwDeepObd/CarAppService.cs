@@ -719,7 +719,8 @@ namespace BmwDeepObd
                     bool connected = GetConnected();
                     bool isConnecting = GetIsConnecting();
                     bool useService = GetFgServiceActive();
-                    string configFileName = ActivityCommon.JobReader.XmlFileName;
+                    JobReader jobReader = ActivityCommon.JobReader;
+                    string configFileName = jobReader.XmlFileName;
                     bool configFileValid = !string.IsNullOrEmpty(configFileName);
                     ActivityCommon.LockType lockTypeComm = ActivityCommon.LockTypeCommunication;
                     ActivityCommon.LockType lockTypeLogging = ActivityCommon.LockTypeLogging;
@@ -945,6 +946,8 @@ namespace BmwDeepObd
                     int pageIndex = 0;
                     if (pageListCopy != null)
                     {
+                        JobReader jobReader = ActivityCommon.JobReader;
+
                         foreach (PageInfoEntry pageInfo in pageListCopy)
                         {
                             if (pageIndex >= ListLimit)
@@ -966,7 +969,7 @@ namespace BmwDeepObd
                                         return;
                                     }
 
-                                    if (index < 0 || index >= ActivityCommon.JobReader.PageList.Count)
+                                    if (index < 0 || index >= jobReader.PageList.Count)
                                     {
                                         return;
                                     }
@@ -977,7 +980,7 @@ namespace BmwDeepObd
                                         return;
                                     }
 
-                                    JobReader.PageInfo newPageInfo = ActivityCommon.JobReader.PageList[index];
+                                    JobReader.PageInfo newPageInfo = jobReader.PageList[index];
                                     lock (EdiabasThread.DataLock)
                                     {
                                         EdiabasThread ediabasThreadLocal = ActivityCommon.EdiabasThread;
@@ -1123,9 +1126,10 @@ namespace BmwDeepObd
                     }
                     else
                     {
+                        JobReader jobReader = ActivityCommon.JobReader;
                         pageList = new List<PageInfoEntry>();
                         int pageIndex = 0;
-                        foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                        foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
                         {
                             string pageName = ActivityMain.GetPageString(pageInfo, pageInfo.Name);
                             sbStructureContent.AppendLine(pageName);
