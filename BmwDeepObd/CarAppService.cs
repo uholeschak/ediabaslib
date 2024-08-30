@@ -750,6 +750,7 @@ namespace BmwDeepObd
                     {
                         if (fgServiceStarting)
                         {
+                            sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.service_status_caption));
                             sbValueContent.AppendLine(GetForegroundServiceStatus());
                         }
                         else if (isConnecting)
@@ -780,7 +781,7 @@ namespace BmwDeepObd
                         sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list_show));
                     }
 
-                    if (!isConnecting && configFileValid)
+                    if (!isConnecting && !fgServiceStarting && configFileValid)
                     {
                         if (connected)
                         {
