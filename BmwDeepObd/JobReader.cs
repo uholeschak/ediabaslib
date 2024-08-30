@@ -414,7 +414,7 @@ namespace BmwDeepObd
             _configured = configured;
         }
 
-        public void Clear()
+        private void Clear()
         {
             _pageList.Clear();
             _errorPage = null;
