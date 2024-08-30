@@ -397,6 +397,16 @@ namespace BmwDeepObd
                 return CarSessionInst.IsConnecting;
             }
 
+            public virtual bool GetForegroundServiceStarting()
+            {
+                return ForegroundService.IsCommThreadRunning();
+            }
+
+            public virtual string GetForegroundServiceStatus()
+            {
+                return ForegroundService.GetStatusText(ResourceContext);
+            }
+
             public virtual string GetLocaleSetting()
             {
                 return ActivityCommon.GetLocaleSetting() ?? string.Empty;
@@ -429,6 +439,7 @@ namespace BmwDeepObd
             private readonly object _lockObject = new object();
             private bool _connected = false;
             private bool _isConnecting = false;
+            private bool _fgServiceStarting = false;
             private bool _useService = false;
             private bool _configFileValid = false;
             private ActivityCommon.LockType _lockTypeComm = ActivityCommon.LockType.None;
@@ -718,6 +729,7 @@ namespace BmwDeepObd
                     StringBuilder sbValueContent = new StringBuilder();
                     bool connected = GetConnected();
                     bool isConnecting = GetIsConnecting();
+                    bool fgServiceStarting = GetForegroundServiceStarting();
                     bool useService = GetFgServiceActive();
                     JobReader jobReader = ActivityCommon.JobReader;
                     string configFileName = jobReader.XmlFileName;
@@ -736,7 +748,12 @@ namespace BmwDeepObd
                     sbValueContent.AppendLine();
                     if (!(connected && useService))
                     {
-                        if (isConnecting)
+                        if (fgServiceStarting)
+                        {
+                            sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.service_status_caption));
+                            sbValueContent.AppendLine(GetForegroundServiceStatus());
+                        }
+                        else if (isConnecting)
                         {
                             sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_app_processing));
                         }
@@ -764,7 +781,7 @@ namespace BmwDeepObd
                         sbValueContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list_show));
                     }
 
-                    if (!isConnecting && configFileValid)
+                    if (!isConnecting && !fgServiceStarting && configFileValid)
                     {
                         if (connected)
                         {
@@ -786,11 +803,11 @@ namespace BmwDeepObd
                     {
                         _connected = connected;
                         _isConnecting = isConnecting;
+                        _fgServiceStarting = fgServiceStarting;
                         _useService = useService;
                         _configFileValid = configFileValid;
                         _lockTypeComm = lockTypeComm;
                         _lockTypeLogging = lockTypeLogging;
-
                     }
 
                     return new Tuple<string, string>(sbStructureContent.ToString(), sbValueContent.ToString());
