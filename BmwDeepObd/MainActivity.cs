@@ -4913,6 +4913,7 @@ namespace BmwDeepObd
 #if DEBUG
             Log.Info(Tag, string.Format("CompileCode accepted: {0}", this));
 #endif
+            JobReader jobReader = ActivityCommon.JobReader;
             _compileCodePending = false;
             if (!ActivityCommon.IsCpuStatisticsSupported() || !ActivityCommon.CheckCpuUsage)
             {
@@ -4922,7 +4923,7 @@ namespace BmwDeepObd
             {
                 _instanceData.VerifyEcuFiles = false;
             }
-            if (ActivityCommon.JobReader.PageList.Count == 0 && !_instanceData.CheckCpuUsage)
+            if (jobReader.PageList.Count == 0 && !_instanceData.CheckCpuUsage)
             {
                 PostCreateActionBarTabs();
                 return;
@@ -5064,7 +5065,7 @@ namespace BmwDeepObd
                         StoreLastAppState(ActivityCommon.LastAppState.Compile);
                     });
 
-                    if (ActivityCommon.JobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
+                    if (jobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
                     {
                         if (!_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir))
                         {
@@ -5098,7 +5099,7 @@ namespace BmwDeepObd
                         bool progressUpdated = false;
                         List<string> compileResultList = new List<string>();
                         List<Thread> threadList = new List<Thread>();
-                        foreach (JobReader.PageInfo pageInfo in ActivityCommon.JobReader.PageList)
+                        foreach (JobReader.PageInfo pageInfo in jobReader.PageList)
                         {
                             if (pageInfo.ClassCode == null)
                             {
@@ -5197,7 +5198,7 @@ namespace BmwDeepObd
                         }
                         else
                         {
-                            if (ActivityCommon.JobReader.CompatIdsUsed)
+                            if (jobReader.CompatIdsUsed)
                             {
                                 ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn));
                             }
