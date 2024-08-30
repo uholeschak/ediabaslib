@@ -559,7 +559,8 @@ namespace BmwDeepObd
                     string fileName = Path.Combine(_logDir, logFileName);
                     if (File.Exists(fileName))
                     {
-                        fileMode = (_appendLog || ActivityCommon.JobReader.AppendLog) ? FileMode.Append : FileMode.Create;
+                        JobReader jobReader = ActivityCommon.JobReader;
+                        fileMode = (_appendLog || jobReader.AppendLog) ? FileMode.Append : FileMode.Create;
                     }
                     else
                     {
@@ -1265,7 +1266,8 @@ namespace BmwDeepObd
                 {
                     try
                     {
-                        string xmlFileName = ActivityCommon.JobReader.XmlFileName;
+                        JobReader jobReader = ActivityCommon.JobReader;
+                        string xmlFileName = jobReader.XmlFileName;
                         string xmlDir = null;
                         if (!string.IsNullOrEmpty(xmlFileName))
                         {
@@ -1295,7 +1297,7 @@ namespace BmwDeepObd
                             {
                                 if (!detectVehicleBmw.LoadDataFromFile(vehicleDataFile, xmlTimeStamp))
                                 {
-                                    bool detectMotorbike = ActivityCommon.JobReader.IsMotorbike;
+                                    bool detectMotorbike = jobReader.IsMotorbike;
                                     if (!string.IsNullOrEmpty(pageInfo.ErrorsInfo.SgbdFunctional))
                                     {
                                         detectVehicleBmw.DetectVehicleBmwFast(detectMotorbike);
