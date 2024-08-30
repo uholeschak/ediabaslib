@@ -6369,7 +6369,9 @@ namespace BmwDeepObd
                 }
                 return;
             }
-            if (ActivityCommon.JobReader.PageList.Count > 0)
+
+            JobReader jobReader = ActivityCommon.JobReader;
+            if (jobReader.PageList.Count > 0)
             {
                 return;
             }
@@ -6409,7 +6411,7 @@ namespace BmwDeepObd
         private void ClearConfiguration()
         {
             StoreTranslation();
-            ActivityCommon.JobReader.Clear();
+            ActivityCommon.JobReader = new JobReader(true);
             _instanceData.ConfigFileName = string.Empty;
             StoreActiveJobIndex();
             StoreSettings();
@@ -6457,6 +6459,7 @@ namespace BmwDeepObd
                     return;
                 }
 
+                JobReader jobReader = ActivityCommon.JobReader;
                 for (int i = 0; i < sparseArray.Size(); i++)
                 {
                     bool value = sparseArray.ValueAt(i);
@@ -6471,7 +6474,7 @@ namespace BmwDeepObd
                             break;
 
                         case 2:
-                            if (value && !ActivityCommon.JobReader.LogTagsPresent)
+                            if (value && !jobReader.LogTagsPresent)
                             {
                                 _activityCommon.ShowAlert(GetString(Resource.String.datalog_no_tags), Resource.String.alert_title_warning);
                             }
@@ -6763,6 +6766,8 @@ namespace BmwDeepObd
                     return;
                 }
 
+                JobReader jobReader = ActivityCommon.JobReader;
+
                 Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
                 serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _instanceData.EcuPath);
                 serverIntent.PutExtra(XmlToolActivity.ExtraVagDir, _instanceData.VagPath);
@@ -6781,7 +6786,7 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolActivity.ExtraElmWifiIp, _activityCommon.SelectedElmWifiIp);
                 serverIntent.PutExtra(XmlToolActivity.ExtraDeepObdWifiIp, _activityCommon.SelectedDeepObdWifiIp);
                 serverIntent.PutExtra(XmlToolActivity.ExtraFileName, _instanceData.ConfigFileName);
-                serverIntent.PutExtra(XmlToolActivity.ExtraMotorbikes, ActivityCommon.JobReader.IsMotorbike);
+                serverIntent.PutExtra(XmlToolActivity.ExtraMotorbikes, jobReader.IsMotorbike);
                 StartActivityForResult(serverIntent, (int)ActivityRequest.RequestXmlTool);
             }
             catch (Exception)
@@ -7565,9 +7570,10 @@ namespace BmwDeepObd
                 View view = inflater.Inflate(_resourceId, null);
                 if (Activity is ActivityMain activityMain)
                 {
-                    if (_pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
+                    JobReader jobReader = ActivityCommon.JobReader;
+                    if (_pageInfoIndex >= 0 && _pageInfoIndex < jobReader.PageList.Count)
                     {
-                        JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[_pageInfoIndex];
+                        JobReader.PageInfo pageInfo = jobReader.PageList[_pageInfoIndex];
                         if (pageInfo.ClassObject != null && view != null)
                         {
                             try
@@ -7609,9 +7615,10 @@ namespace BmwDeepObd
 #if DEBUG
                 Log.Info(Tag, string.Format("TabContentFragment OnDestroyView: {0}", _pageInfoIndex));
 #endif
-                if (_pageInfoIndex >= 0 && _pageInfoIndex < ActivityCommon.JobReader.PageList.Count)
+                JobReader jobReader = ActivityCommon.JobReader;
+                if (_pageInfoIndex >= 0 && _pageInfoIndex < jobReader.PageList.Count)
                 {
-                    JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[_pageInfoIndex];
+                    JobReader.PageInfo pageInfo = jobReader.PageList[_pageInfoIndex];
                     if (pageInfo.ClassObject != null)
                     {
                         try
@@ -7716,9 +7723,10 @@ namespace BmwDeepObd
 
             public void OnConfigureTab(TabLayout.Tab tab, int index)
             {
-                if (index >= 0 && index < (ActivityCommon.JobReader.PageList.Count))
+                JobReader jobReader = ActivityCommon.JobReader;
+                if (index >= 0 && index < (jobReader.PageList.Count))
                 {
-                    JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[index];
+                    JobReader.PageInfo pageInfo = jobReader.PageList[index];
                     tab.SetText(GetPageString(pageInfo, pageInfo.Name));
                 }
             }
