@@ -3315,10 +3315,11 @@ namespace BmwDeepObd
                 {
                     StoreActiveJobIndex();
 
+                    JobReader jobReader = ActivityCommon.JobReader;
                     JobReader.PageInfo pageInfo = ActivityCommon.EdiabasThread?.JobPageInfo;
                     if (pageInfo != null)
                     {
-                        int pageIndex = ActivityCommon.JobReader.PageList.IndexOf(pageInfo);
+                        int pageIndex = jobReader.PageList.IndexOf(pageInfo);
                         if (pageIndex >= 0 && pageIndex < _tabLayout.TabCount && _tabLayout.SelectedTabPosition != pageIndex)
                         {
                             _tabLayout.GetTabAt(pageIndex)?.Select();
@@ -3471,9 +3472,10 @@ namespace BmwDeepObd
 
         private void ClearPage(int index)
         {
-            if (index >= 0 && index < (ActivityCommon.JobReader.PageList.Count))
+            JobReader jobReader = ActivityCommon.JobReader;
+            if (index >= 0 && index < (jobReader.PageList.Count))
             {
-                JobReader.PageInfo pageInfo = ActivityCommon.JobReader.PageList[index];
+                JobReader.PageInfo pageInfo = jobReader.PageList[index];
                 Fragment dynamicFragment = (Fragment)pageInfo.InfoObject;
                 if (dynamicFragment?.View != null)
                 {
@@ -3587,6 +3589,7 @@ namespace BmwDeepObd
                 return;
             }
 
+            JobReader jobReader = ActivityCommon.JobReader;
             long startTime = Stopwatch.GetTimestamp();
             bool dynamicValid = false;
 
@@ -3617,7 +3620,7 @@ namespace BmwDeepObd
                 // ReSharper disable once ReplaceWithSingleAssignment.True
                 bool buttonEnabled = true;
 
-                if (ActivityCommon.JobReader.PageList.Count == 0)
+                if (jobReader.PageList.Count == 0)
                 {
                     buttonEnabled = false;
                 }
@@ -4849,10 +4852,11 @@ namespace BmwDeepObd
         private void UpdateJobReaderSettings()
         {
             _instanceData.AdapterCheckOk = false;
-            if (ActivityCommon.JobReader.PageList.Count > 0)
+            JobReader jobReader = ActivityCommon.JobReader;
+            if (jobReader.PageList.Count > 0)
             {
-                ActivityCommon.SelectedManufacturer = ActivityCommon.JobReader.Manufacturer;
-                _activityCommon.SelectedInterface = ActivityCommon.JobReader.Interface;
+                ActivityCommon.SelectedManufacturer = jobReader.Manufacturer;
+                _activityCommon.SelectedInterface = jobReader.Interface;
             }
             else
             {
