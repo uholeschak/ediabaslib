@@ -6068,20 +6068,21 @@ namespace BmwDeepObd
                 StopEdiabasThread(true, ediabasEvent);
             }
 
+            JobReader jobReader = JobReader;
             lock (EdiabasThread.DataLock)
             {
                 if (EdiabasThread == null)
                 {
-                    string ecuPath = string.IsNullOrEmpty(JobReader.EcuPath) ? instanceData.EcuPath : JobReader.EcuPath;
+                    string ecuPath = string.IsNullOrEmpty(jobReader.EcuPath) ? instanceData.EcuPath : jobReader.EcuPath;
                     EdiabasThread = new EdiabasThread(ecuPath, this, _context);
                     ediabasEvent?.Invoke(true);
                 }
             }
 
             string logDir = string.Empty;
-            if (instanceData.DataLogActive && !string.IsNullOrEmpty(JobReader.LogPath))
+            if (instanceData.DataLogActive && !string.IsNullOrEmpty(jobReader.LogPath))
             {
-                logDir = Path.IsPathRooted(JobReader.LogPath) ? JobReader.LogPath : Path.Combine(instanceData.AppDataPath, JobReader.LogPath);
+                logDir = Path.IsPathRooted(jobReader.LogPath) ? jobReader.LogPath : Path.Combine(instanceData.AppDataPath, jobReader.LogPath);
                 try
                 {
                     Directory.CreateDirectory(logDir);
