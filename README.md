@@ -46,6 +46,9 @@ More details could be found here: [Supported adapter types](docs/AdapterTypes.md
 ![ENET adapter](docs/README_EnetAdapterClosedSmall.png)  
 ![BMW deep OBD and VAG](docs/README_AppMotorSmall.png) ![BMW deep OBD and VAG](docs/README_AppMotorGraphSmall.png)
 
+### Android Auto
+There is an [Android Auto](docs/Deep_OBD_for_BMW_and_VAG.md#android-auto) test version of the app available. Please contact the developer, if you want to test it.
+
 # Hints
 At the moment most BEST/1 commands are implemented, but a few are still missing, which seem to be not required in the current ECU files.  
 The implemented commands are automatically tested and compared with EDIABAS output.  
