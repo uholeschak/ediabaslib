@@ -457,6 +457,7 @@ namespace BmwDeepObd
 
                 bool connectedCopy;
                 bool isConnectingCopy;
+                bool fgServiceStartingCopy;
                 bool useServiceCopy;
                 bool configFileValidCopy;
                 ActivityCommon.LockType lockTypeCommCopy;
@@ -466,6 +467,7 @@ namespace BmwDeepObd
                 {
                     connectedCopy = _connected;
                     isConnectingCopy = _isConnecting;
+                    fgServiceStartingCopy = _fgServiceStarting;
                     useServiceCopy = _useService;
                     configFileValidCopy = _configFileValid;
                     lockTypeCommCopy = _lockTypeComm;
@@ -478,7 +480,12 @@ namespace BmwDeepObd
                     .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
                 if (!(useServiceCopy && connectedCopy))
                 {
-                    if (isConnectingCopy)
+                    if (fgServiceStartingCopy)
+                    {
+                        rowPageList.AddText(ResourceContext.GetString(Resource.String.service_status_caption));
+                        rowPageList.AddText(GetForegroundServiceStatus());
+                    }
+                    else if (isConnectingCopy)
                     {
                         rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_app_processing));
                     }
@@ -529,7 +536,7 @@ namespace BmwDeepObd
                 itemBuilderPages.AddItem(rowPageList.Build());
 
                 ActionStrip.Builder actionStripBuilder = null;
-                if (!isConnectingCopy && configFileValidCopy)
+                if (!isConnectingCopy && !fgServiceStartingCopy && configFileValidCopy)
                 {
                     if (connectedCopy)
                     {
