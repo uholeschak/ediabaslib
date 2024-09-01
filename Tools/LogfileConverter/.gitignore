@@ -4,3 +4,4 @@
 *.suo
 *.user
 /.vs/
+/artifacts/
