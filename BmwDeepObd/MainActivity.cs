@@ -570,8 +570,7 @@ namespace BmwDeepObd
             {
                 if (autoConnect != ConnectActionArgs.AutoConnectMode.None)
                 {
-                    if (jobReader.PageList.Count > 0 &&
-                        !ActivityCommon.CommActive && _activityCommon.IsInterfaceAvailable())
+                    if (jobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable())
                     {
                         ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto, autoConnect));
                         connectStarted = true;
