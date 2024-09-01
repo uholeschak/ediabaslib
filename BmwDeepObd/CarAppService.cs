@@ -484,6 +484,10 @@ namespace BmwDeepObd
                     {
                         rowPageList.AddText(ResourceContext.GetString(Resource.String.service_status_caption));
                         rowPageList.AddText(GetForegroundServiceStatus());
+                        if (CarAppApiLevel >= 5)
+                        {
+                            rowPageList.SetEnabled(false);
+                        }
                     }
                     else if (isConnectingCopy)
                     {
@@ -510,6 +514,11 @@ namespace BmwDeepObd
 
                     rowPageList.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                     {
+                        if (fgServiceStartingCopy)
+                        {
+                            return;
+                        }
+
                         if (ShowMainActivity())
                         {
                             CarToast.MakeText(CarContext, ResourceContext.GetString(Resource.String.car_service_app_displayed),
