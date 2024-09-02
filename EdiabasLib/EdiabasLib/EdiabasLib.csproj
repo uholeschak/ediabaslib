@@ -66,6 +66,7 @@
     <Compile Include="EdInterfaceObd.cs" />
     <Compile Include="EdiabasNet.cs" />
     <Compile Include="EdOperations.cs" />
+    <Compile Include="EdSimFile.cs" />
     <Compile Include="EscapeStreamReader.cs" />
     <Compile Include="EscapeStreamWriter.cs" />
     <Compile Include="Ftd2xx.cs" />
