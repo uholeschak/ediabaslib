@@ -11,7 +11,6 @@ namespace LogfileConverter
     class Program
     {
         private static bool _responseFile;
-        private static bool _simFile;
         private static bool _cFormat;
         private static bool _ignoreCrcErrors = false;
         private static bool _ds2Mode;
@@ -25,6 +24,7 @@ namespace LogfileConverter
         static int Main(string[] args)
         {
             bool sortFile = false;
+            bool simFile = false;
             bool showHelp = false;
             List<string> inputFiles = new List<string>();
             List<string> mergeFiles = new List<string>();
@@ -43,7 +43,7 @@ namespace LogfileConverter
                 { "r|response", "create response file", 
                   v => _responseFile = v != null },
                 { "s|sim", "create EDIABAS simulation file",
-                    v => _simFile = v != null },
+                    v => simFile = v != null },
                 { "s|sort", "sort response file", 
                   v => sortFile = v != null },
                 { "e|errors", "ignore CRC errors",
@@ -111,12 +111,21 @@ namespace LogfileConverter
                 return 1;
             }
 
-            if (sortFile && _responseFile)
+            if ((sortFile || simFile) && _responseFile)
             {
                 if (!SortLines(outputFile))
                 {
                     Console.WriteLine("Sorting failed");
                     return 1;
+                }
+
+                if (simFile)
+                {
+                    if (!CreateSimFile(outputFile))
+                    {
+                        Console.WriteLine("Create sim file failed");
+                        return 1;
+                    }
                 }
             }
 
@@ -1064,6 +1073,28 @@ namespace LogfileConverter
                             streamWriter.WriteLine(line);
                         }
                         lastLine = line;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private static bool CreateSimFile(string fileName)
+        {
+            try
+            {
+                string simFile = Path.ChangeExtension(fileName, ".sim");
+                string[] lines = File.ReadAllLines(fileName);
+                Array.Sort(lines, LineComparer);
+                using (StreamWriter streamWriter = new StreamWriter(simFile))
+                {
+                    foreach (string line in lines)
+                    {
+                        streamWriter.WriteLine(line);
                     }
                 }
             }
