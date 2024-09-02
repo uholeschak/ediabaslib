@@ -11,6 +11,7 @@ namespace LogfileConverter
     class Program
     {
         private static bool _responseFile;
+        private static bool _simFile;
         private static bool _cFormat;
         private static bool _ignoreCrcErrors = false;
         private static bool _ds2Mode;
@@ -37,11 +38,13 @@ namespace LogfileConverter
                     v => mergeFiles.Add(v) },
                 { "o|output=", "output file (if omitted '.conv' is appended to input file).",
                   v => outputFile = v },
-                { "c|cformat", "c format for hex values", 
+                { "c|cformat", "c++ style format for hex values", 
                   v => _cFormat = v != null },
-                { "r|response", "create reponse file", 
+                { "r|response", "create response file", 
                   v => _responseFile = v != null },
-                { "s|sort", "sort reponse file", 
+                { "s|sim", "create EDIABAS simulation file",
+                    v => _simFile = v != null },
+                { "s|sort", "sort response file", 
                   v => sortFile = v != null },
                 { "e|errors", "ignore CRC errors",
                   v => _ignoreCrcErrors = v != null },
