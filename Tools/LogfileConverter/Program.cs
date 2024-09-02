@@ -1104,20 +1104,35 @@ namespace LogfileConverter
                 foreach (string line in lines)
                 {
                     string[] lineParts = line.Split(':');
-                    if (lineParts.Length == 2)
+                    if (lineParts.Length != 2)
                     {
-                        string key = lineParts[0].Trim();
-                        key = key.Replace(" ", "");
+                        continue;
+                    }
 
-                        string request = lineParts[0].Trim();
-                        request = request.Replace(" ", ",");
-                        string response = lineParts[1].Trim();
-                        response = response.Replace(" ", ",");
+                    string key = lineParts[0].Trim();
+                    key = key.Replace(" ", "");
+                    if (string.IsNullOrWhiteSpace(key))
+                    {
+                        continue;
+                    }
 
-                        if (!simLines.ContainsKey(key))
-                        {
-                            simLines.Add(key, new Tuple<string, string>(request, response));
-                        }
+                    string request = lineParts[0].Trim();
+                    request = request.Replace(" ", ",");
+                    if (string.IsNullOrWhiteSpace(request))
+                    {
+                        continue;
+                    }
+
+                    string response = lineParts[1].Trim();
+                    response = response.Replace(" ", ",");
+                    if (string.IsNullOrWhiteSpace(response))
+                    {
+                        response = "_";
+                    }
+
+                    if (!simLines.ContainsKey(key))
+                    {
+                        simLines.Add(key, new Tuple<string, string>(request, response));
                     }
                 }
 
