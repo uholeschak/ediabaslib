@@ -1129,11 +1129,15 @@ namespace LogfileConverter
 
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("[POWERSUPPLY]");
-                    streamWriter.WriteLine("UBatt = 12000");
+                    streamWriter.WriteLine("UBatt = 12500");
+                    streamWriter.WriteLine("UBATTCURRENT = 1");
+                    streamWriter.WriteLine("UBATTHISTORY = 1");
 
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("[IGNITION]");
-                    streamWriter.WriteLine("Ignition = 12000");
+                    streamWriter.WriteLine("Ignition = 12500");
+                    streamWriter.WriteLine("IGNITIONCURRENT = 1");
+                    streamWriter.WriteLine("IGNITIONHISTORY = 1");
 
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("[REQUEST]");
