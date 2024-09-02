@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 
 namespace EdiabasLib
 {
@@ -54,16 +55,16 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    List<byte> requestBytes = ParseHexString(requestValue);
+                    List<byte> requestBytes = ParseHexString(requestValue, true);
                     if (requestBytes == null)
                     {
-                        return false;
+                        continue;
                     }
 
-                    List<byte> responseBytes = ParseHexString(responseValue);
+                    List<byte> responseBytes = ParseHexString(responseValue, false);
                     if (responseBytes == null)
                     {
-                        return false;
+                        continue;
                     }
 
                     _responseInfos.Add(new ResponseInfo(requestBytes, responseBytes));
@@ -72,7 +73,7 @@ namespace EdiabasLib
             return true;
         }
 
-        private List<byte> ParseHexString(string text)
+        private List<byte> ParseHexString(string text, bool request)
         {
             if (string.IsNullOrWhiteSpace(text))
             {
@@ -81,6 +82,11 @@ namespace EdiabasLib
 
             if (string.Compare(text, "_", StringComparison.OrdinalIgnoreCase) == 0)
             {
+                if (request)
+                {
+                    return null;
+                }
+
                 return new List<byte>();
             }
 
@@ -99,7 +105,36 @@ namespace EdiabasLib
                     return null;
                 }
 
-                if (!UInt32.TryParse(partTrim, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out UInt32 value))
+                StringBuilder sbValue = new StringBuilder();
+                byte mask = 0xFF;
+                if (!request)
+                {
+                    if (partTrim[0] == 'X')
+                    {
+                        mask &= 0x0F;
+                        sbValue.Append('0');
+                    }
+                    else
+                    {
+                        sbValue.Append(partTrim[0]);
+                    }
+
+                    if (partTrim[1] == 'X')
+                    {
+                        mask &= 0xF0;
+                        sbValue.Append('0');
+                    }
+                    else
+                    {
+                        sbValue.Append(partTrim[1]);
+                    }
+                }
+                else
+                {
+                    sbValue.Append(partTrim);
+                }
+
+                if (!UInt32.TryParse(sbValue.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out UInt32 value))
                 {
                     return null;
                 }
