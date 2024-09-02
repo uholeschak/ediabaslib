@@ -1089,12 +1089,36 @@ namespace LogfileConverter
             {
                 string simFile = Path.ChangeExtension(fileName, ".sim");
                 string[] lines = File.ReadAllLines(fileName);
-                Array.Sort(lines, LineComparer);
+                Dictionary<string, Tuple<string, string>> simLines = new Dictionary<string, Tuple<string, string>>();
+                foreach (string line in lines)
+                {
+                    string[] lineParts = line.Split(':');
+                    if (lineParts.Length == 2)
+                    {
+                        string key = lineParts[0];
+                        key = key.Replace(" ", "");
+                        key = key.Replace(",", "");
+
+                        if (!simLines.ContainsKey(key))
+                        {
+                            simLines.Add(key, new Tuple<string, string>(lineParts[0], lineParts[1]));
+                        }
+                    }
+                }
+
                 using (StreamWriter streamWriter = new StreamWriter(simFile))
                 {
-                    foreach (string line in lines)
+                    streamWriter.WriteLine("[REQUEST]");
+                    foreach (KeyValuePair<string, Tuple<string, string>> simLine in simLines)
                     {
-                        streamWriter.WriteLine(line);
+                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Item1);
+                    }
+
+                    streamWriter.WriteLine();
+                    streamWriter.WriteLine("[RESPONSE]");
+                    foreach (KeyValuePair<string, Tuple<string, string>> simLine in simLines)
+                    {
+                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Item2);
                     }
                 }
             }
