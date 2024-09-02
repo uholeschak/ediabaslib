@@ -1112,6 +1112,19 @@ namespace LogfileConverter
 
                 using (StreamWriter streamWriter = new StreamWriter(simFile))
                 {
+                    streamWriter.WriteLine(";********************************************");
+                    streamWriter.WriteLine(";******** OBD / ENET simulation file ********");
+                    streamWriter.WriteLine(";********************************************");
+
+                    streamWriter.WriteLine();
+                    streamWriter.WriteLine("[POWERSUPPLY]");
+                    streamWriter.WriteLine("UBatt = 12000");
+
+                    streamWriter.WriteLine();
+                    streamWriter.WriteLine("[IGNITION]");
+                    streamWriter.WriteLine("Ignition = 12000");
+
+                    streamWriter.WriteLine();
                     streamWriter.WriteLine("[REQUEST]");
                     foreach (KeyValuePair<string, Tuple<string, string>> simLine in simLines)
                     {
