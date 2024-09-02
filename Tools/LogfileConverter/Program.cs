@@ -42,7 +42,7 @@ namespace LogfileConverter
                   v => _cFormat = v != null },
                 { "r|response", "create response file", 
                   v => _responseFile = v != null },
-                { "s|sim", "create EDIABAS simulation file",
+                { "sim", "create EDIABAS simulation file",
                     v => simFile = v != null },
                 { "s|sort", "sort response file", 
                   v => sortFile = v != null },
@@ -111,7 +111,7 @@ namespace LogfileConverter
                 return 1;
             }
 
-            if ((sortFile || simFile) && _responseFile)
+            if ((sortFile || simFile) && _responseFile && !_cFormat)
             {
                 if (!SortLines(outputFile))
                 {
@@ -1095,13 +1095,17 @@ namespace LogfileConverter
                     string[] lineParts = line.Split(':');
                     if (lineParts.Length == 2)
                     {
-                        string key = lineParts[0];
+                        string key = lineParts[0].Trim();
                         key = key.Replace(" ", "");
-                        key = key.Replace(",", "");
+
+                        string request = lineParts[0].Trim();
+                        request = request.Replace(" ", ",");
+                        string response = lineParts[1].Trim();
+                        response = response.Replace(" ", ",");
 
                         if (!simLines.ContainsKey(key))
                         {
-                            simLines.Add(key, new Tuple<string, string>(lineParts[0], lineParts[1]));
+                            simLines.Add(key, new Tuple<string, string>(request, response));
                         }
                     }
                 }
