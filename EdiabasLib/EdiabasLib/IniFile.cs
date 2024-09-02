@@ -356,7 +356,24 @@ namespace EdiabasLib
             }
         }
 
-        // *** Read a value from local cache ***
+        // *** Read section list from local cache ***
+        public List<string> GetSections()
+        {
+            // *** Lazy loading ***
+            if (_mLazy)
+            {
+                _mLazy = false;
+                Refresh();
+            }
+
+            lock (_mLock)
+            {
+                // *** Return the key list ***
+                return _mSections.Keys.ToList();
+            }
+        }
+
+        // *** Read key list from local cache ***
         public List<string> GetKeys(string sectionName)
         {
             // *** Lazy loading ***
