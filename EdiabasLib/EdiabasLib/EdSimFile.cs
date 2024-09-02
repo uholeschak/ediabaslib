@@ -55,13 +55,15 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    List<byte> requestBytes = ParseHexString(requestValue, true);
+                    List<byte> maskList = new List<byte>();
+                    List<byte> requestBytes = ParseHexString(requestValue, ref maskList);
                     if (requestBytes == null)
                     {
                         continue;
                     }
 
-                    List<byte> responseBytes = ParseHexString(responseValue, false);
+                    List<byte> dummyList = null;
+                    List<byte> responseBytes = ParseHexString(responseValue, ref dummyList);
                     if (responseBytes == null)
                     {
                         continue;
@@ -73,7 +75,7 @@ namespace EdiabasLib
             return true;
         }
 
-        private List<byte> ParseHexString(string text, bool request)
+        private List<byte> ParseHexString(string text, ref List<byte> maskList)
         {
             if (string.IsNullOrWhiteSpace(text))
             {
@@ -82,8 +84,8 @@ namespace EdiabasLib
 
             if (string.Compare(text, "_", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                if (request)
-                {
+                if (maskList != null)
+                {   // request
                     return null;
                 }
 
@@ -107,7 +109,7 @@ namespace EdiabasLib
 
                 StringBuilder sbValue = new StringBuilder();
                 byte mask = 0xFF;
-                if (!request)
+                if (maskList != null)
                 {
                     if (partTrim[0] == 'X')
                     {
@@ -145,6 +147,11 @@ namespace EdiabasLib
                 }
 
                 result.Add((byte)value);
+
+                if (maskList != null)
+                {
+                    maskList.Add(mask);
+                }
             }
 
             return result;
