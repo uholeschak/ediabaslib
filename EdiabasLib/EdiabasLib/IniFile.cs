@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 // ReSharper disable ConvertPropertyToExpressionBody
 // ReSharper disable UseNullPropagation
@@ -178,9 +179,15 @@ namespace EdiabasLib
 
         public void PerformFlush()
         {
-            if (_mFileName == null) return;
+            if (_mFileName == null)
+            {
+                return;
+            }
             // *** If local cache was not modified, exit ***
-            if (!_mCacheModified) return;
+            if (!_mCacheModified)
+            {
+                return;
+            }
             _mCacheModified = false;
 
             // *** Check if original file exists ***
@@ -188,7 +195,10 @@ namespace EdiabasLib
 
             // *** Get temporary file name ***
             string tmpFileName = Path.ChangeExtension(_mFileName, "$n$");
-            if (tmpFileName == null) return;
+            if (string.IsNullOrEmpty(tmpFileName))
+            {
+                return;
+            }
 
             // *** Copy content of original file to temporary file, replace modified values ***
             StreamWriter sw = null;
@@ -339,7 +349,34 @@ namespace EdiabasLib
             finally
             {
                 // *** Cleanup: close files ***
-                if (sw != null) sw.Close();
+                if (sw != null)
+                {
+                    sw.Close();
+                }
+            }
+        }
+
+        // *** Read a value from local cache ***
+        public List<string> GetKeys(string sectionName)
+        {
+            // *** Lazy loading ***
+            if (_mLazy)
+            {
+                _mLazy = false;
+                Refresh();
+            }
+
+            lock (_mLock)
+            {
+                // *** Check if the section exists ***
+                Dictionary<string, string> section;
+                if (!_mSections.TryGetValue(sectionName, out section))
+                {
+                    return null;
+                }
+
+                // *** Return the key list ***
+                return section.Keys.ToList();
             }
         }
 
@@ -357,11 +394,17 @@ namespace EdiabasLib
             {
                 // *** Check if the section exists ***
                 Dictionary<string, string> section;
-                if (!_mSections.TryGetValue(sectionName, out section)) return defaultValue;
+                if (!_mSections.TryGetValue(sectionName, out section))
+                {
+                    return defaultValue;
+                }
 
                 // *** Check if the key exists ***
                 string value;
-                if (!section.TryGetValue(key, out value)) return defaultValue;
+                if (!section.TryGetValue(key, out value))
+                {
+                    return defaultValue;
+                }
 
                 // *** Return the found value ***
                 return value;
@@ -403,7 +446,10 @@ namespace EdiabasLib
                     _mModified.Add(sectionName, section);
                 }
 
-                if (section.ContainsKey(key)) section.Remove(key);
+                if (section.ContainsKey(key))
+                {
+                    section.Remove(key);
+                }
                 section.Add(key, value);
 
                 // *** Automatic flushing : immediately write any modification to the file ***
