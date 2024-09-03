@@ -17,9 +17,18 @@ namespace EdiabasLib
 
         public string FileName => _fileName;
 
-        public int UBatVolt { get; private set; }
+        public int UBatVolt { get; private set; } = -1;
 
-        public int IgnitionVolt { get; private set; }
+        public int UBatCurrent { get; private set; } = -1;
+
+        public int UBatHistory { get; private set; } = -1;
+
+
+        public int IgnitionVolt { get; private set; } = -1;
+
+        public int IgnitionCurrent { get; private set; } = -1;
+
+        public int IgnitionHistory { get; private set; } = -1;
 
         public class ResponseInfo
         {
@@ -42,8 +51,6 @@ namespace EdiabasLib
             _fileName = fileName;
             _iniFile = new IniFile(fileName);
 
-            UBatVolt = -1;
-            IgnitionVolt = -1;
             ParseIniFile();
         }
 
@@ -79,7 +86,12 @@ namespace EdiabasLib
         private void ParseIniFile()
         {
             UBatVolt = _iniFile.GetValue(SectionPowerSupply, "UBatt", -1);
+            UBatCurrent = _iniFile.GetValue(SectionPowerSupply, "UBATTCURRENT", -1);
+            UBatHistory = _iniFile.GetValue(SectionPowerSupply, "UBATTHISTORY", -1);
+
             IgnitionVolt = _iniFile.GetValue(SectionIgnition, "Ignition", -1);
+            IgnitionCurrent = _iniFile.GetValue(SectionIgnition, "IGNITIONCURRENT", -1);
+            IgnitionHistory = _iniFile.GetValue(SectionIgnition, "IGNITIONHISTORY", -1);
 
             _responseInfos = new List<ResponseInfo>();
             List<string> requestKeys = _iniFile.GetKeys(SectionRequest);
