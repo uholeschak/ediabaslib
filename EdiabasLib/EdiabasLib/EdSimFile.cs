@@ -7,6 +7,8 @@ namespace EdiabasLib
 {
     public class EdSimFile
     {
+        private const string SectionPowerSupply = "POWERSUPPLY";
+        private const string SectionIgnition = "IGNITION";
         private const string SectionRequest = "REQUEST";
         private const string SectionResponse = "RESPONSE";
         private readonly string _fileName;
@@ -14,6 +16,10 @@ namespace EdiabasLib
         private List<ResponseInfo> _responseInfos;
 
         public string FileName => _fileName;
+
+        public int UBatVolt { get; private set; }
+
+        public int IgnitionVolt { get; private set; }
 
         public class ResponseInfo
         {
@@ -35,6 +41,9 @@ namespace EdiabasLib
         {
             _fileName = fileName;
             _iniFile = new IniFile(fileName);
+
+            UBatVolt = -1;
+            IgnitionVolt = -1;
             ParseIniFile();
         }
 
@@ -69,6 +78,9 @@ namespace EdiabasLib
 
         private void ParseIniFile()
         {
+            UBatVolt = _iniFile.GetValue(SectionPowerSupply, "UBatt", -1);
+            IgnitionVolt = _iniFile.GetValue(SectionIgnition, "Ignition", -1);
+
             _responseInfos = new List<ResponseInfo>();
             List<string> requestKeys = _iniFile.GetKeys(SectionRequest);
             if (requestKeys != null)
