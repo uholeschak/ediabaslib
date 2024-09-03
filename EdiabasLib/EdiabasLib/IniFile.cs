@@ -42,10 +42,10 @@ namespace EdiabasLib
 
         // *** Local cache ***
         private readonly Dictionary<string, Dictionary<string, string>> _mSections =
-            new Dictionary<string, Dictionary<string, string>>();
+            new Dictionary<string, Dictionary<string, string>>(StringComparer.InvariantCultureIgnoreCase);
 
         private readonly Dictionary<string, Dictionary<string, string>> _mModified =
-            new Dictionary<string, Dictionary<string, string>>();
+            new Dictionary<string, Dictionary<string, string>>(StringComparer.InvariantCultureIgnoreCase);
 
         // *** Local cache modified flag ***
         private bool _mCacheModified;
@@ -141,7 +141,7 @@ namespace EdiabasLib
                             }
                             else
                             {
-                                currentSection = new Dictionary<string, string>();
+                                currentSection = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
                                 _mSections.Add(sectionName, currentSection);
                             }
                         }
@@ -448,7 +448,7 @@ namespace EdiabasLib
                 if (!_mSections.TryGetValue(sectionName, out section))
                 {
                     // *** If it doesn't, add it ***
-                    section = new Dictionary<string, string>();
+                    section = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
                     _mSections.Add(sectionName, section);
                 }
 
@@ -459,7 +459,7 @@ namespace EdiabasLib
                 // *** Add the modified value to local modified values cache ***
                 if (!_mModified.TryGetValue(sectionName, out section))
                 {
-                    section = new Dictionary<string, string>();
+                    section = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
                     _mModified.Add(sectionName, section);
                 }
 
