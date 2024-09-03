@@ -38,7 +38,36 @@ namespace EdiabasLib
             ParseIniFile();
         }
 
-        private bool ParseIniFile()
+        public List<byte> GetResponse(List<byte> request)
+        {
+            foreach (ResponseInfo responseInfo in _responseInfos)
+            {
+                if (request.Count != responseInfo.RequestData.Count)
+                {
+                    continue;
+                }
+
+                bool matched = true;
+                for (int i = 0; i < request.Count; ++i)
+                {
+                    byte mask = responseInfo.RequestMask[i];
+                    if ((request[i] & mask) != (responseInfo.RequestData[i] & mask))
+                    {
+                        matched = false;
+                        break;
+                    }
+                }
+
+                if (matched)
+                {
+                    return responseInfo.ResponseData;
+                }
+            }
+
+            return null;
+        }
+
+        private void ParseIniFile()
         {
             _responseInfos = new List<ResponseInfo>();
             List<string> requestKeys = _iniFile.GetKeys(SectionRequest);
@@ -75,7 +104,6 @@ namespace EdiabasLib
                     _responseInfos.Add(new ResponseInfo(requestBytes, requestMask, responseBytes));
                 }
             }
-            return true;
         }
 
         private List<byte> ParseHexString(string text, ref List<byte> maskList)
