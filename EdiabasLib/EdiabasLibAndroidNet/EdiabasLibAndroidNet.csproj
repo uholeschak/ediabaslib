@@ -28,6 +28,7 @@
     <Compile Include="..\EdiabasLib\EdInterfaceEnet.cs" Link="EdInterfaceEnet.cs" />
     <Compile Include="..\EdiabasLib\EdInterfaceObd.cs" Link="EdInterfaceObd.cs" />
     <Compile Include="..\EdiabasLib\EdOperations.cs" Link="EdOperations.cs" />
+    <Compile Include="..\EdiabasLib\EdSimFile.cs" Link="EdSimFile.cs" />
     <Compile Include="..\EdiabasLib\EscapeStreamReader.cs" Link="EscapeStreamReader.cs" />
     <Compile Include="..\EdiabasLib\EscapeStreamWriter.cs" Link="EscapeStreamWriter.cs" />
     <Compile Include="..\EdiabasLib\IniFile.cs" Link="IniFile.cs" />
