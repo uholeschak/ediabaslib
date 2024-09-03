@@ -2273,6 +2273,8 @@ namespace EdiabasLib
         private string _sgbdFileName = string.Empty;
         private string _sgbdFileResolveLast = string.Empty;
         private string _ecuPath = string.Empty;
+        private bool _simulationMode = false;
+        private string _simulationPath = string.Empty;
         private readonly string _iniFileName = string.Empty;
         private readonly string _ecuPathDefault;
         private EdInterfaceBase _edInterfaceClass;
@@ -2760,6 +2762,28 @@ namespace EdiabasLib
                 lock (_apiLock)
                 {
                     return _ecuPath;
+                }
+            }
+        }
+
+        public bool SimulationMode
+        {
+            get
+            {
+                lock (_apiLock)
+                {
+                    return _simulationMode;
+                }
+            }
+        }
+
+        public string SimulationPath
+        {
+            get
+            {
+                lock (_apiLock)
+                {
+                    return _simulationPath;
                 }
             }
         }
@@ -3285,6 +3309,52 @@ namespace EdiabasLib
                     lock (_apiLock)
                     {
                         _ecuPath = ecuPath;
+                    }
+                    _closeSgbdFs = true;
+                }
+            }
+
+            if (string.Compare(key, "Simulation", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
+                }
+
+                bool simulationMode = StringToValue(value) != 0;
+                bool changed;
+                lock (_apiLock)
+                {
+                    changed = _simulationMode != simulationMode;
+                }
+                if (changed)
+                {
+                    lock (_apiLock)
+                    {
+                        _simulationMode = simulationMode;
+                    }
+                    _closeSgbdFs = true;
+                }
+            }
+
+            if (string.Compare(key, "SimulationPath", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
+                }
+
+                string simulationPath = value;
+                bool changed;
+                lock (_apiLock)
+                {
+                    changed = string.Compare(_simulationPath, simulationPath, StringComparison.OrdinalIgnoreCase) != 0;
+                }
+                if (changed)
+                {
+                    lock (_apiLock)
+                    {
+                        _simulationPath = simulationPath;
                     }
                     _closeSgbdFs = true;
                 }
