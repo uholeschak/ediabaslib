@@ -17,13 +17,16 @@ namespace EdiabasLib
 
         public class ResponseInfo
         {
-            public ResponseInfo(List<byte> requestData, List<byte> responseData)
+            public ResponseInfo(List<byte> requestData, List<byte> requestMask, List<byte> responseData)
             {
                 RequestData = requestData;
+                RequestMask = requestMask;
                 ResponseData = responseData;
             }
 
             public List<byte> RequestData { get; private set; }
+
+            public List<byte> RequestMask { get; private set; }
 
             public List<byte> ResponseData { get; private set; }
         }
@@ -55,21 +58,21 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    List<byte> maskList = new List<byte>();
-                    List<byte> requestBytes = ParseHexString(requestValue, ref maskList);
+                    List<byte> requestMask = new List<byte>();
+                    List<byte> requestBytes = ParseHexString(requestValue, ref requestMask);
                     if (requestBytes == null)
                     {
                         continue;
                     }
 
-                    List<byte> dummyList = null;
-                    List<byte> responseBytes = ParseHexString(responseValue, ref dummyList);
+                    List<byte> nullList = null;
+                    List<byte> responseBytes = ParseHexString(responseValue, ref nullList);
                     if (responseBytes == null)
                     {
                         continue;
                     }
 
-                    _responseInfos.Add(new ResponseInfo(requestBytes, responseBytes));
+                    _responseInfos.Add(new ResponseInfo(requestBytes, requestMask, responseBytes));
                 }
             }
             return true;
@@ -84,11 +87,6 @@ namespace EdiabasLib
 
             if (string.Compare(text, "_", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                if (maskList != null)
-                {   // request
-                    return null;
-                }
-
                 return new List<byte>();
             }
 
@@ -101,7 +99,7 @@ namespace EdiabasLib
             List<byte> result = new List<byte>();
             foreach (string part in parts)
             {
-                string partTrim = part.Trim();
+                string partTrim = part.ToUpperInvariant().Trim();
                 if (partTrim.Length != 2)
                 {
                     return null;
