@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 // ReSharper disable ConvertPropertyToExpressionBody
 
@@ -44,6 +45,7 @@ namespace EdiabasLib
         private bool _disposed;
         private long _responseCounter;
         private object _responseCounterLock = new object();
+        protected EdSimFile EdSimFileInterface;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
         protected object MutexLock = new object();
@@ -147,11 +149,50 @@ namespace EdiabasLib
             CommAnswerLenProtected[0] = 0;
             CommAnswerLenProtected[1] = 0;
             ResponseCount = 0;
+            LoadInterfaceSimFile();
             return true;
         }
 
         public virtual bool InterfaceDisconnect()
         {
+            UnloadInterfaceSimFile();
+            return true;
+        }
+
+        public virtual bool LoadInterfaceSimFile()
+        {
+            UnloadInterfaceSimFile();
+
+            if (EdiabasProtected == null)
+            {
+                return false;
+            }
+
+            if (!EdiabasProtected.SimulationMode)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(EdiabasProtected.SimulationPath) ||
+                !Directory.Exists(EdiabasProtected.SimulationPath))
+            {
+                return false;
+            }
+
+            string simFileName = InterfaceType + ".sim";
+            string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
+            if (!File.Exists(simFilePath))
+            {
+                return false;
+            }
+
+            EdSimFileInterface = new EdSimFile(simFilePath);
+            return true;
+        }
+
+        public virtual bool UnloadInterfaceSimFile()
+        {
+            EdSimFileInterface = null;
             return true;
         }
 
