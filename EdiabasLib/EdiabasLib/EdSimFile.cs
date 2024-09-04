@@ -136,6 +136,7 @@ namespace EdiabasLib
                 }
             }
 
+            _keyBytes = null;
             List<string> keyBytesKeys = _iniFile.GetKeys(SectionKeybytes);
             if (keyBytesKeys != null)
             {
