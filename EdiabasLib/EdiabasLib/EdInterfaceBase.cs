@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 // ReSharper disable ConvertPropertyToExpressionBody
 
@@ -237,6 +238,37 @@ namespace EdiabasLib
             EdSimFileSgbd = null;
             return true;
         }
+
+        public bool TransmitSimulationData(byte[] sendData, out byte[] receiveData)
+        {
+            receiveData = null;
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
+            if (EdSimFileSgbd != null)
+            {
+                List<byte> response = EdSimFileSgbd.GetResponse(sendData.ToList());
+                if (response != null)
+                {
+                    receiveData = response.ToArray();
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Rec sim SGBD");
+                    return true;
+                }
+            }
+
+            if (EdSimFileInterface != null)
+            {
+                List<byte> response = EdSimFileInterface.GetResponse(sendData.ToList());
+                if (response != null)
+                {
+                    receiveData = response.ToArray();
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Rec sim interface");
+                    return true;
+                }
+            }
+
+            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No simulation data");
+            return false;
+        }
+
 
         public abstract bool InterfaceReset();
 

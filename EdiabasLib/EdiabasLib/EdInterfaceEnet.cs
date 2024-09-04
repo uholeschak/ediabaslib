@@ -1333,6 +1333,17 @@ namespace EdiabasLib
                 SetDefaultCommParameter();
             }
 
+            if (IsSimulationMode())
+            {
+                if (!TransmitSimulationData(sendData, out receiveData))
+                {
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                    return false;
+                }
+
+                return true;
+            }
+
             byte[] cachedResponse;
             EdiabasNet.ErrorCodes cachedErrorCode;
             if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))

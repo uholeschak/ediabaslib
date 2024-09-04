@@ -1489,6 +1489,18 @@ namespace EdiabasLib
         public override bool TransmitData(byte[] sendData, out byte[] receiveData)
         {
             receiveData = null;
+
+            if (IsSimulationMode())
+            {
+                if (!TransmitSimulationData(sendData, out receiveData))
+                {
+                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                    return false;
+                }
+
+                return true;
+            }
+
             if (EdicSimulation)
             {
                 if (CommAnswerLenProtected[1] == 0x0084)
@@ -1497,7 +1509,7 @@ namespace EdiabasLib
                 }
                 if (SendBufferFrequentLength != 0)
                 {
-                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode active");
+                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Frequent mode active");
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                     return false;
                 }
@@ -1665,6 +1677,7 @@ namespace EdiabasLib
                     StopFrequent();
                 }
             }
+
             if (CommParameterProtected == null)
             {
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
