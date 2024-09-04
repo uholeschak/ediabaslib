@@ -1098,7 +1098,7 @@ namespace LogfileConverter
                     return false;
                 }
 
-                string simFile = Path.Combine(filePath, "OBD.sim");
+                string simFile = Path.Combine(filePath, "obd.sim");
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, Tuple<string, string>> simLines = new Dictionary<string, Tuple<string, string>>();
                 foreach (string line in lines)
