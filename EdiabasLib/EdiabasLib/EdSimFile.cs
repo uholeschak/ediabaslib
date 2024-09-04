@@ -15,7 +15,6 @@ namespace EdiabasLib
         private readonly string _fileName;
         private readonly IniFile _iniFile;
         private List<ResponseInfo> _responseInfos;
-        private List<byte> _keyBytes;
 
         public string FileName => _fileName;
 
@@ -31,6 +30,8 @@ namespace EdiabasLib
         public int IgnitionCurrent { get; private set; } = -1;
 
         public int IgnitionHistory { get; private set; } = -1;
+
+        public List<byte> KeyBytes { get; private set; }
 
         public class ResponseInfo
         {
@@ -85,11 +86,6 @@ namespace EdiabasLib
             return null;
         }
 
-        public List<byte> GetKeyBytes()
-        {
-            return _keyBytes;
-        }
-
         private void ParseIniFile()
         {
             UBatVolt = _iniFile.GetValue(SectionPowerSupply, "UBatt", -1);
@@ -136,7 +132,7 @@ namespace EdiabasLib
                 }
             }
 
-            _keyBytes = null;
+            KeyBytes = null;
             List<string> keyBytesKeys = _iniFile.GetKeys(SectionKeybytes);
             if (keyBytesKeys != null)
             {
@@ -155,7 +151,7 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    _keyBytes = keyBytesBytes;
+                    KeyBytes = keyBytesBytes;
                     break;
                 }
             }

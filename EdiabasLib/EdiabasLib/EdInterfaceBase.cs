@@ -239,7 +239,7 @@ namespace EdiabasLib
             return true;
         }
 
-        public bool TransmitSimulationData(byte[] sendData, out byte[] receiveData)
+        public virtual bool TransmitSimulationData(byte[] sendData, out byte[] receiveData)
         {
             receiveData = null;
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
@@ -269,6 +269,18 @@ namespace EdiabasLib
             return false;
         }
 
+        public virtual byte[] KeyBytesSimulation
+        {
+            get
+            {
+                if (EdSimFileSgbd != null)
+                {
+                    return EdSimFileSgbd.KeyBytes.ToArray();
+                }
+
+                return null;
+            }
+        }
 
         public abstract bool InterfaceReset();
 
