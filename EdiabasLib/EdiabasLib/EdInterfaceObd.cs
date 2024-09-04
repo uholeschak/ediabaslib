@@ -952,11 +952,25 @@ namespace EdiabasLib
             get
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read key bytes");
+
                 if (!Connected)
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return null;
                 }
+
+                if (IsSimulationMode())
+                {
+                    byte[] keyBytes = KeyBytesSimulation;
+                    if (keyBytes != null)
+                    {
+                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "KeyBytes");
+                        return keyBytes;
+                    }
+
+                    return ByteArray0;
+                }
+
                 StartCommThread();
                 if (CommParameterProtected != null && ParHasKeyBytes)
                 {
