@@ -216,6 +216,11 @@ namespace EdiabasLib
                 return false;
             }
 
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
             string simFileName = Path.ChangeExtension(fileName, ".sim");
             string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
             if (!File.Exists(simFilePath))
