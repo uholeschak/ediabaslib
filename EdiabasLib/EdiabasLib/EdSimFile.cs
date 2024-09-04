@@ -11,9 +11,11 @@ namespace EdiabasLib
         private const string SectionIgnition = "IGNITION";
         private const string SectionRequest = "REQUEST";
         private const string SectionResponse = "RESPONSE";
+        private const string SectionKeybytes = "KEYBYTES";
         private readonly string _fileName;
         private readonly IniFile _iniFile;
         private List<ResponseInfo> _responseInfos;
+        private List<byte> _keyBytes;
 
         public string FileName => _fileName;
 
@@ -83,6 +85,11 @@ namespace EdiabasLib
             return null;
         }
 
+        public List<byte> GetKeyBytes()
+        {
+            return _keyBytes;
+        }
+
         private void ParseIniFile()
         {
             UBatVolt = _iniFile.GetValue(SectionPowerSupply, "UBatt", -1);
@@ -126,6 +133,29 @@ namespace EdiabasLib
                     }
 
                     _responseInfos.Add(new ResponseInfo(requestBytes, requestMask, responseBytes));
+                }
+            }
+
+            List<string> keyBytesKeys = _iniFile.GetKeys(SectionKeybytes);
+            if (keyBytesKeys != null)
+            {
+                foreach (string keyBytesKey in keyBytesKeys)
+                {
+                    string keyBytesValue = _iniFile.GetValue(SectionKeybytes, keyBytesKey, string.Empty).Trim();
+                    if (!string.IsNullOrWhiteSpace(keyBytesValue))
+                    {
+                        continue;
+                    }
+
+                    List<byte> nullList = null;
+                    List<byte> keyBytesBytes = ParseHexString(keyBytesValue, ref nullList);
+                    if (keyBytesBytes == null)
+                    {
+                        continue;
+                    }
+
+                    _keyBytes = keyBytesBytes;
+                    break;
                 }
             }
         }
