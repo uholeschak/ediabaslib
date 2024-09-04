@@ -3553,6 +3553,15 @@ namespace EdiabasLib
             _jobInfos = ReadAllJobs(_sgbdFs);
             _tableInfos = ReadAllTables(_sgbdFs);
             _requestInit = true;
+
+            if (SimulationMode)
+            {
+                EdInterfaceBase edInterface = EdInterfaceClass;
+                if (edInterface != null)
+                {
+                    edInterface.LoadSgbdSimFile(SgbdFileName);
+                }
+            }
             return true;
         }
 
@@ -3575,6 +3584,12 @@ namespace EdiabasLib
                         _sgbdFs = null;
                     }
                 }
+            }
+
+            EdInterfaceBase edInterface = EdInterfaceClass;
+            if (edInterface != null)
+            {
+                edInterface.UnloadInterfaceSimFile();
             }
         }
 
