@@ -46,6 +46,7 @@ namespace EdiabasLib
         private long _responseCounter;
         private object _responseCounterLock = new object();
         protected EdSimFile EdSimFileInterface;
+        protected EdSimFile EdSimFileSgbd;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
         protected object MutexLock = new object();
@@ -159,10 +160,8 @@ namespace EdiabasLib
             return true;
         }
 
-        public virtual bool LoadInterfaceSimFile()
+        public virtual bool IsSimulationMode()
         {
-            UnloadInterfaceSimFile();
-
             if (EdiabasProtected == null)
             {
                 return false;
@@ -175,6 +174,18 @@ namespace EdiabasLib
 
             if (string.IsNullOrEmpty(EdiabasProtected.SimulationPath) ||
                 !Directory.Exists(EdiabasProtected.SimulationPath))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public virtual bool LoadInterfaceSimFile()
+        {
+            UnloadInterfaceSimFile();
+
+            if (!IsSimulationMode())
             {
                 return false;
             }
@@ -193,6 +204,32 @@ namespace EdiabasLib
         public virtual bool UnloadInterfaceSimFile()
         {
             EdSimFileInterface = null;
+            return true;
+        }
+
+        public virtual bool LoadSgbdSimFile(string fileName)
+        {
+            UnloadSgbdSimFile();
+
+            if (!IsSimulationMode())
+            {
+                return false;
+            }
+
+            string simFileName = Path.ChangeExtension(fileName, ".sim");
+            string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
+            if (!File.Exists(simFilePath))
+            {
+                return false;
+            }
+
+            EdSimFileSgbd = new EdSimFile(simFilePath);
+            return true;
+        }
+
+        public virtual bool UnloadSgbdSimFile()
+        {
+            EdSimFileSgbd = null;
             return true;
         }
 
