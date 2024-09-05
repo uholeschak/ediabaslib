@@ -1112,7 +1112,19 @@ namespace LogfileConverter
                 Dictionary<string, Tuple<string, string>> simLines = new Dictionary<string, Tuple<string, string>>();
                 foreach (string line in lines)
                 {
-                    string[] lineParts = line.Split(':');
+                    string lineTrim = line.Trim();
+                    int commentIndex = lineTrim.IndexOf(';');
+                    if (commentIndex >= 0)
+                    {
+                        lineTrim = lineTrim.Substring(0, commentIndex);
+                    }
+
+                    if (string.IsNullOrEmpty(lineTrim))
+                    {
+                        continue;
+                    }
+
+                    string[] lineParts = lineTrim.Split(':');
                     if (lineParts.Length != 2)
                     {
                         continue;
