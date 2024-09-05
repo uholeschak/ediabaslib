@@ -1828,12 +1828,20 @@ namespace EdiabasLib
                 receiveData = ByteArray0;
                 return true;
             }
+
+            if (IsSimulationMode())
+            {
+                receiveData = SimFrequentResponse ?? ByteArray0;
+                return true;
+            }
+
             if (EdicSimulation && SendBufferFrequentLength == 0)
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode not active");
                 receiveData = ByteArray0;
                 return true;
             }
+
             StartCommThread();
             lock (CommThreadLock)
             {
@@ -1872,6 +1880,8 @@ namespace EdiabasLib
         public override bool StopFrequent()
         {
             EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "StopFrequent");
+            SimFrequentResponse = null;
+
             if (EdicSimulation)
             {
                 StartCommThread();
