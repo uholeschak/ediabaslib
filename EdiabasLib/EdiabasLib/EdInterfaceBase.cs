@@ -191,7 +191,13 @@ namespace EdiabasLib
                 return false;
             }
 
-            string simFileName = InterfaceType + ".sim";
+            string simInterface = EdiabasProtected.GetConfigProperty("SimulationInterface");
+            if (string.IsNullOrEmpty(simInterface))
+            {
+                simInterface = InterfaceType;
+            }
+
+            string simFileName = simInterface + ".sim";
             string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
             if (!File.Exists(simFilePath))
             {
