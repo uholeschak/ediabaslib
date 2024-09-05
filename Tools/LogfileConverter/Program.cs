@@ -71,13 +71,13 @@ namespace LogfileConverter
                 return 0;
             }
 
-            if (inputFiles.Count < 1)
-            {
-                Console.WriteLine("No input files specified");
-                return 1;
-            }
             if (outputFile == null)
             {
+                if (inputFiles.Count < 1)
+                {
+                    Console.WriteLine("No input or output file specified");
+                    return 1;
+                }
                 outputFile = inputFiles[0] + ".conv";
             }
 
@@ -99,24 +99,33 @@ namespace LogfileConverter
                 }
             }
 
-            if (!ConvertLog(inputFiles, outputFile))
+            if (inputFiles.Count > 0)
             {
-                Console.WriteLine("Conversion failed");
-                return 1;
-            }
-
-            if (!AddMergeFiles(mergeFiles, outputFile))
-            {
-                Console.WriteLine("Adding merge files failed");
-                return 1;
-            }
-
-            if ((sortFile || simFile) && _responseFile && !_cFormat)
-            {
-                if (!SortLines(outputFile))
+                if (!ConvertLog(inputFiles, outputFile))
                 {
-                    Console.WriteLine("Sorting failed");
+                    Console.WriteLine("Conversion failed");
                     return 1;
+                }
+            }
+
+            if (mergeFiles.Count > 0)
+            {
+                if (!AddMergeFiles(mergeFiles, outputFile))
+                {
+                    Console.WriteLine("Adding merge files failed");
+                    return 1;
+                }
+            }
+
+            if (_responseFile && !_cFormat)
+            {
+                if (sortFile)
+                {
+                    if (!SortLines(outputFile))
+                    {
+                        Console.WriteLine("Sorting failed");
+                        return 1;
+                    }
                 }
 
                 if (simFile)
