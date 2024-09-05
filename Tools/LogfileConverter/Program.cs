@@ -24,7 +24,7 @@ namespace LogfileConverter
         static int Main(string[] args)
         {
             bool sortFile = false;
-            bool simFile = false;
+            string simFile = null;
             bool showHelp = false;
             List<string> inputFiles = new List<string>();
             List<string> mergeFiles = new List<string>();
@@ -42,8 +42,8 @@ namespace LogfileConverter
                   v => _cFormat = v != null },
                 { "r|response", "create response file", 
                   v => _responseFile = v != null },
-                { "sim", "create EDIABAS simulation file",
-                    v => simFile = v != null },
+                { "sim=", "EDIABAS simulation file",
+                    v => simFile = v },
                 { "s|sort", "sort response file", 
                   v => sortFile = v != null },
                 { "e|errors", "ignore CRC errors",
@@ -128,9 +128,9 @@ namespace LogfileConverter
                     }
                 }
 
-                if (simFile)
+                if (!string.IsNullOrEmpty(simFile))
                 {
-                    if (!CreateSimFile(outputFile))
+                    if (!CreateSimFile(outputFile, simFile))
                     {
                         Console.WriteLine("Create sim file failed");
                         return 1;
@@ -1092,7 +1092,7 @@ namespace LogfileConverter
             return true;
         }
 
-        private static bool CreateSimFile(string outputFile)
+        private static bool CreateSimFile(string outputFile, string simFile)
         {
             try
             {
@@ -1107,7 +1107,6 @@ namespace LogfileConverter
                     return false;
                 }
 
-                string simFile = Path.Combine(filePath, "obd.sim");
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, Tuple<string, string>> simLines = new Dictionary<string, Tuple<string, string>>();
                 foreach (string line in lines)
