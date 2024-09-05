@@ -49,6 +49,7 @@ namespace EdiabasLib
         public const string SimFileExtension = ".sim";
         protected EdSimFile EdSimFileInterface;
         protected EdSimFile EdSimFileSgbd;
+        protected byte[] SimFrequentResponse;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
         protected object MutexLock = new object();
@@ -219,6 +220,7 @@ namespace EdiabasLib
         public virtual bool UnloadInterfaceSimFile()
         {
             EdSimFileInterface = null;
+            SimFrequentResponse = null;
             return true;
         }
 
@@ -257,6 +259,7 @@ namespace EdiabasLib
         public virtual bool UnloadSgbdSimFile()
         {
             EdSimFileSgbd = null;
+            SimFrequentResponse = null;
             return true;
         }
 
