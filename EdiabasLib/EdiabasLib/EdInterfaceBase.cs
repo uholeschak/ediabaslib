@@ -46,6 +46,7 @@ namespace EdiabasLib
         private bool _disposed;
         private long _responseCounter;
         private object _responseCounterLock = new object();
+        public const string SimFileExtension = ".sim";
         protected EdSimFile EdSimFileInterface;
         protected EdSimFile EdSimFileSgbd;
         protected EdiabasNet EdiabasProtected;
@@ -199,7 +200,7 @@ namespace EdiabasLib
                     simInterface = InterfaceType;
                 }
 
-                string simFileName = simInterface + ".sim";
+                string simFileName = simInterface + SimFileExtension;
                 string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
                 if (!File.Exists(simFilePath))
                 {
@@ -237,7 +238,7 @@ namespace EdiabasLib
 
             try
             {
-                string simFileName = Path.ChangeExtension(fileName, ".sim");
+                string simFileName = Path.ChangeExtension(fileName, SimFileExtension);
                 string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
                 if (!File.Exists(simFilePath))
                 {
