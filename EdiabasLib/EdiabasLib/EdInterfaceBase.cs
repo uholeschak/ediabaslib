@@ -191,15 +191,28 @@ namespace EdiabasLib
                 return false;
             }
 
-            string simFileName = InterfaceType + ".sim";
-            string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
-            if (!File.Exists(simFilePath))
+            try
+            {
+                string simInterface = EdiabasProtected.GetConfigProperty("SimulationInterface");
+                if (!string.IsNullOrEmpty(simInterface))
+                {
+                    simInterface = InterfaceType;
+                }
+
+                string simFileName = simInterface + ".sim";
+                string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
+                if (!File.Exists(simFilePath))
+                {
+                    return false;
+                }
+
+                EdSimFileInterface = new EdSimFile(simFilePath);
+                return true;
+            }
+            catch (Exception)
             {
                 return false;
             }
-
-            EdSimFileInterface = new EdSimFile(simFilePath);
-            return true;
         }
 
         public virtual bool UnloadInterfaceSimFile()
@@ -222,15 +235,22 @@ namespace EdiabasLib
                 return false;
             }
 
-            string simFileName = Path.ChangeExtension(fileName, ".sim");
-            string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
-            if (!File.Exists(simFilePath))
+            try
+            {
+                string simFileName = Path.ChangeExtension(fileName, ".sim");
+                string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
+                if (!File.Exists(simFilePath))
+                {
+                    return false;
+                }
+
+                EdSimFileSgbd = new EdSimFile(simFilePath);
+                return true;
+            }
+            catch (Exception)
             {
                 return false;
             }
-
-            EdSimFileSgbd = new EdSimFile(simFilePath);
-            return true;
         }
 
         public virtual bool UnloadSgbdSimFile()
