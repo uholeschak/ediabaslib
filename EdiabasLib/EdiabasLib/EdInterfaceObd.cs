@@ -1778,6 +1778,17 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
             }
+
+            if (IsSimulationMode())
+            {
+                SimFrequentResponse = null;
+                if (TransmitSimulationData(sendData, out byte[] receiveData))
+                {
+                    SimFrequentResponse = receiveData;
+                }
+                return true;
+            }
+
             if (EdicSimulation && SendBufferFrequentLength != 0)
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Frequent mode active");
