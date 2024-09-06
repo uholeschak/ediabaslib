@@ -49,6 +49,7 @@ namespace EdiabasLib
         public const string SimFileExtension = ".sim";
         protected EdSimFile EdSimFileInterface;
         protected EdSimFile EdSimFileSgbd;
+        protected bool SimulationConnected;
         protected byte[] SimFrequentResponse;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
@@ -209,6 +210,7 @@ namespace EdiabasLib
                 }
 
                 EdSimFileInterface = new EdSimFile(simFilePath);
+                SimulationConnected = true;
                 return true;
             }
             catch (Exception)
@@ -221,6 +223,7 @@ namespace EdiabasLib
         {
             EdSimFileInterface = null;
             SimFrequentResponse = null;
+            SimulationConnected = false;
             return true;
         }
 

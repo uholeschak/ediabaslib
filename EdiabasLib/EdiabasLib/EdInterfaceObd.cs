@@ -1183,7 +1183,7 @@ namespace EdiabasLib
             {
                 if (IsSimulationMode())
                 {
-                    return true;
+                    return SimulationConnected;
                 }
 
                 if (UseExtInterfaceFunc)
@@ -1463,7 +1463,17 @@ namespace EdiabasLib
         public override bool InterfaceDisconnect()
         {
             StopCommThread();
-            base.InterfaceDisconnect();
+
+            if (!base.InterfaceDisconnect())
+            {
+                return false;
+            }
+
+            if (IsSimulationMode())
+            {
+                return true;
+            }
+
             ConnectedProtected = false;
             if (UseExtInterfaceFunc)
             {

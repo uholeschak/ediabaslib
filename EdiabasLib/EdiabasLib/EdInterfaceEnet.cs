@@ -847,8 +847,9 @@ namespace EdiabasLib
             {
                 if (IsSimulationMode())
                 {
-                    return true;
+                    return SimulationConnected;
                 }
+
                 return ((SharedDataActive.TcpDiagClient != null) && (SharedDataActive.TcpDiagStream != null)) || SharedDataActive.ReconnectRequired;
             }
         }
@@ -1220,6 +1221,16 @@ namespace EdiabasLib
 
         public override bool InterfaceDisconnect()
         {
+            if (!base.InterfaceDisconnect())
+            {
+                return false;
+            }
+
+            if (IsSimulationMode())
+            {
+                return true;
+            }
+
             return InterfaceDisconnect(false);
         }
 
