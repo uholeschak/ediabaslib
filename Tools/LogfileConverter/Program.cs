@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using NDesk.Options;
@@ -1123,28 +1124,40 @@ namespace LogfileConverter
                         continue;
                     }
 
-                    string[] lineParts = lineTrim.Split(':');
+                    string[] lineParts = lineTrim.Split(':', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
                     if (lineParts.Length != 2)
                     {
                         continue;
                     }
 
-                    string key = lineParts[0].Trim();
-                    key = key.Replace(" ", "");
+                    string[] requestParts = lineParts[0].Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    if (requestParts.Length < 1)
+                    {
+                        continue;
+                    }
+
+                    string[] responseParts = lineParts[1].Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    if (responseParts.Length < 1)
+                    {
+                        continue;
+                    }
+
+                    string[] requestData = requestParts.SkipLast(1).ToArray();
+                    string[] responseData = responseParts.SkipLast(1).ToArray();
+
+                    string key = string.Join(string.Empty, requestData);
                     if (string.IsNullOrWhiteSpace(key))
                     {
                         continue;
                     }
 
-                    string request = lineParts[0].Trim();
-                    request = request.Replace(" ", ",");
+                    string request = string.Join(",", requestData);
                     if (string.IsNullOrWhiteSpace(request))
                     {
                         continue;
                     }
 
-                    string response = lineParts[1].Trim();
-                    response = response.Replace(" ", ",");
+                    string response = string.Join(",", responseData);
                     if (string.IsNullOrWhiteSpace(response))
                     {
                         response = "_";
