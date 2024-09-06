@@ -1101,8 +1101,8 @@ namespace LogfileConverter
                     return false;
                 }
 
-                string filePath = Path.GetDirectoryName(outputFile);
-                if (string.IsNullOrEmpty(filePath))
+                string outFilePath = Path.GetDirectoryName(outputFile);
+                if (string.IsNullOrEmpty(outFilePath))
                 {
                     return false;
                 }
@@ -1156,7 +1156,14 @@ namespace LogfileConverter
                     }
                 }
 
-                using (StreamWriter streamWriter = new StreamWriter(simFile))
+                string simFileName = simFile;
+                string simFilePath = Path.GetDirectoryName(simFile);
+                if (string.IsNullOrEmpty(simFilePath))
+                {
+                    simFileName = Path.Combine(outFilePath, simFile);
+                }
+
+                using (StreamWriter streamWriter = new StreamWriter(simFileName))
                 {
                     streamWriter.WriteLine(";********************************************");
                     streamWriter.WriteLine(";******** OBD / ENET simulation file ********");
