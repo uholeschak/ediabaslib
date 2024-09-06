@@ -1130,34 +1130,81 @@ namespace LogfileConverter
                         continue;
                     }
 
-                    string[] requestParts = lineParts[0].Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    if (requestParts.Length < 1)
+                    List<byte> requestBytes = NumberString2List(lineParts[0]);
+                    if (requestBytes.Count < 1)
                     {
                         continue;
                     }
 
-                    string[] responseParts = lineParts[1].Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    if (responseParts.Length < 1)
+                    List<byte> responseBytes = NumberString2List(lineParts[1]);
+                    if (responseBytes.Count < 1)
                     {
                         continue;
                     }
 
-                    string[] requestData = requestParts.SkipLast(1).ToArray();
-                    string[] responseData = responseParts.SkipLast(1).ToArray();
+                    int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
+                    if (dataLengthReq == 0)
+                    {
+                        continue;
+                    }
 
-                    string key = string.Join(string.Empty, requestData);
+                    if (requestBytes.Count != dataLengthReq + 1)
+                    {
+                        continue;
+                    }
+
+                    List<byte> requestBare = requestBytes.GetRange(0, dataLengthReq);
+
+                    List<byte> responseBare = new List<byte>();
+                    bool invalid = false;
+                    int responseOffset = 0;
+                    for (; ; )
+                    {
+                        int dataLengthRes = TelLengthBmwFast(responseBytes, responseOffset);
+                        if (dataLengthRes == 0)
+                        {
+                            invalid = true;
+                            break;
+                        }
+
+                        if (responseBytes.Count - responseOffset < dataLengthRes + 1)
+                        {
+                            invalid = true;
+                            break;
+                        }
+
+                        responseBare.AddRange(responseBytes.GetRange(responseOffset, dataLengthRes));
+
+                        responseOffset += dataLengthRes + 1;    // checksum
+                        if (responseOffset > responseBytes.Count)
+                        {
+                            invalid = true;
+                            break;
+                        }
+                        if (responseOffset == responseBytes.Count)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (invalid)
+                    {
+                        continue;
+                    }
+
+                    string key = BitConverter.ToString(requestBare.ToArray()).Replace("-", string.Empty);
                     if (string.IsNullOrWhiteSpace(key))
                     {
                         continue;
                     }
 
-                    string request = string.Join(",", requestData);
+                    string request = BitConverter.ToString(requestBare.ToArray()).Replace("-", ",");
                     if (string.IsNullOrWhiteSpace(request))
                     {
                         continue;
                     }
 
-                    string response = string.Join(",", responseData);
+                    string response = BitConverter.ToString(responseBare.ToArray()).Replace("-", ",");
                     if (string.IsNullOrWhiteSpace(response))
                     {
                         response = "_";
@@ -1263,7 +1310,7 @@ namespace LogfileConverter
         private static List<byte> NumberString2List(string numberString)
         {
             List<byte> values = new List<byte>();
-            string[] numberArray = numberString.Split(' ');
+            string[] numberArray = numberString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             foreach (string number in numberArray)
             {
                 if (number.Length > 0)
