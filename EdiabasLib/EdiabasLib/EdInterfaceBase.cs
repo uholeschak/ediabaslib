@@ -266,7 +266,7 @@ namespace EdiabasLib
             return true;
         }
 
-        public virtual bool TransmitSimulationData(byte[] sendData, out byte[] receiveData)
+        public virtual bool TransmitSimulationData(byte[] sendData, out byte[] receiveData, bool bmwFast = false)
         {
             receiveData = null;
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
