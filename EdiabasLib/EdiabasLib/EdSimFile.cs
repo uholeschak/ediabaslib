@@ -139,7 +139,7 @@ namespace EdiabasLib
                 foreach (string keyBytesKey in keyBytesKeys)
                 {
                     string keyBytesValue = _iniFile.GetValue(SectionKeybytes, keyBytesKey, string.Empty).Trim();
-                    if (!string.IsNullOrWhiteSpace(keyBytesValue))
+                    if (string.IsNullOrWhiteSpace(keyBytesValue))
                     {
                         continue;
                     }
