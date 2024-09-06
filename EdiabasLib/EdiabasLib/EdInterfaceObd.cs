@@ -1528,7 +1528,7 @@ namespace EdiabasLib
             {
                 if (!TransmitSimulationData(sendData, out receiveData))
                 {
-                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
+                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
                     return false;
                 }
 
