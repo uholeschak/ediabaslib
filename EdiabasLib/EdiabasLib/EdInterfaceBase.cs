@@ -280,6 +280,28 @@ namespace EdiabasLib
                 return true;
             }
 
+            List<byte> recDataList = recDataInternal.ToList();
+            for (;;)
+            {
+                int telLength = TelLengthBmwFast(recDataList.ToArray());
+                if (telLength == 0)
+                {
+                    return false;
+                }
+
+                if (telLength > recDataList.Count)
+                {
+                    return false;
+                }
+
+                recDataList.RemoveRange(0, telLength);
+
+                if (recDataList.Count == 0)
+                {
+                    break;
+                }
+            }
+
             receiveData = recDataInternal;
             return true;
         }
