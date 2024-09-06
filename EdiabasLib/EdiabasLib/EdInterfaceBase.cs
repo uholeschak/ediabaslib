@@ -196,7 +196,7 @@ namespace EdiabasLib
             try
             {
                 string simInterface = EdiabasProtected.GetConfigProperty("SimulationInterface");
-                if (!string.IsNullOrEmpty(simInterface))
+                if (string.IsNullOrEmpty(simInterface))
                 {
                     simInterface = InterfaceType;
                 }
