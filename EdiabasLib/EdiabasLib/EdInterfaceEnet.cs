@@ -903,6 +903,12 @@ namespace EdiabasLib
 
         public override bool InterfaceConnect()
         {
+            if (!base.InterfaceConnect())
+            {
+                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
+                return false;
+            }
+
             return InterfaceConnect(false);
         }
 
