@@ -103,13 +103,13 @@ namespace EdiabasLib
                 foreach (string requestKey in requestKeys)
                 {
                     string requestValue = _iniFile.GetValue(SectionRequest, requestKey, string.Empty).Trim();
-                    if (!string.IsNullOrWhiteSpace(requestValue))
+                    if (string.IsNullOrWhiteSpace(requestValue))
                     {
                         continue;
                     }
 
                     string responseValue = _iniFile.GetValue(SectionResponse, requestKey, string.Empty).Trim();
-                    if (!string.IsNullOrWhiteSpace(responseValue))
+                    if (string.IsNullOrWhiteSpace(responseValue))
                     {
                         continue;
                     }
