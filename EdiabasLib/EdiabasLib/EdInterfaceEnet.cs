@@ -3488,43 +3488,6 @@ namespace EdiabasLib
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
-        // telegram length without checksum
-        private int TelLengthBmwFast(byte[] dataBuffer)
-        {
-            int telLength = dataBuffer[0] & 0x3F;
-            if (telLength == 0)
-            {   // with length byte
-                if (dataBuffer[3] == 0)
-                {
-                    telLength = ((dataBuffer[4] << 8) | dataBuffer[5]) + 6;
-                }
-                else
-                {
-                    telLength = dataBuffer[3] + 4;
-                }
-            }
-            else
-            {
-                telLength += 3;
-            }
-
-            if (telLength > dataBuffer.Length)
-            {
-                telLength = dataBuffer.Length;
-            }
-            return telLength;
-        }
-
-        private byte CalcChecksumBmwFast(byte[] data, int length)
-        {
-            byte sum = 0;
-            for (int i = 0; i < length; i++)
-            {
-                sum += data[i];
-            }
-            return sum;
-        }
-
         private void SetDefaultCommParameter()
         {
             ParTransmitFunc = TransBmwFast;
