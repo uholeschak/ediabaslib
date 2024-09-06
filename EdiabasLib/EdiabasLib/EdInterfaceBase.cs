@@ -276,7 +276,7 @@ namespace EdiabasLib
                 if (response != null)
                 {
                     receiveData = response.ToArray();
-                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Rec sim SGBD");
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "Rec sim SGBD");
                     return true;
                 }
             }
@@ -287,7 +287,7 @@ namespace EdiabasLib
                 if (response != null)
                 {
                     receiveData = response.ToArray();
-                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Rec sim interface");
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "Rec sim interface");
                     return true;
                 }
             }
