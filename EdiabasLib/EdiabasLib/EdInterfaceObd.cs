@@ -1181,6 +1181,11 @@ namespace EdiabasLib
         {
             get
             {
+                if (IsSimulationMode())
+                {
+                    return true;
+                }
+
                 if (UseExtInterfaceFunc)
                 {
                     return ConnectedProtected;
@@ -1266,6 +1271,11 @@ namespace EdiabasLib
             {
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
                 return false;
+            }
+
+            if (IsSimulationMode())
+            {
+                return true;
             }
 
             if (ComPortProtected.ToUpper(Culture).StartsWith(EdFtdiInterface.PortId))
