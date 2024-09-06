@@ -269,6 +269,24 @@ namespace EdiabasLib
         public virtual bool TransmitSimulationData(byte[] sendData, out byte[] receiveData, bool bmwFast = false)
         {
             receiveData = null;
+            if (!TransmitSimulationInternal(sendData, out byte[] recDataInternal))
+            {
+                return false;
+            }
+
+            if (!bmwFast)
+            {
+                receiveData = recDataInternal;
+                return true;
+            }
+
+            receiveData = recDataInternal;
+            return true;
+        }
+
+        protected bool TransmitSimulationInternal(byte[] sendData, out byte[] receiveData)
+        {
+            receiveData = null;
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
             if (EdSimFileSgbd != null)
             {
