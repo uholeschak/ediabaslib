@@ -1195,19 +1195,19 @@ namespace LogfileConverter
                     string key = BitConverter.ToString(requestBare.ToArray()).Replace("-", string.Empty);
                     if (string.IsNullOrWhiteSpace(key))
                     {
-                        continue;
+                        key = "_";
                     }
 
                     string request = BitConverter.ToString(requestBare.ToArray()).Replace("-", ",");
                     if (string.IsNullOrWhiteSpace(request))
                     {
-                        continue;
+                        request = "_";
                     }
 
                     string response = BitConverter.ToString(responseBare.ToArray()).Replace("-", ",");
                     if (string.IsNullOrWhiteSpace(response))
                     {
-                        response = "_";
+                        response = string.Empty;
                     }
 
                     if (!simLines.ContainsKey(key))
