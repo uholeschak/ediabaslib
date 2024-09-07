@@ -280,7 +280,36 @@ namespace EdiabasLib
                 return true;
             }
 
-            receiveData = recDataInternal;
+            Queue<byte[]> recDataQueue = new Queue<byte[]>();
+            List<byte> recDataList = recDataInternal.ToList();
+            for (;;)
+            {
+                int telLength = TelLengthBmwFast(recDataList.ToArray());
+                if (telLength == 0)
+                {
+                    return false;
+                }
+
+                if (telLength > recDataList.Count)
+                {
+                    return false;
+                }
+
+                recDataQueue.Enqueue(recDataList.GetRange(0, telLength).ToArray());
+                recDataList.RemoveRange(0, telLength);
+
+                if (recDataList.Count == 0)
+                {
+                    break;
+                }
+            }
+
+            if (recDataQueue.Count == 0)
+            {
+                return false;
+            }
+
+            receiveData = recDataQueue.Dequeue();
             return true;
         }
 
