@@ -315,6 +315,12 @@ namespace EdiabasLib
                         break;
                     }
                 }
+
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BMW FAST simulation responses queued: {0}", SimulationRecQueue.Count);
+            }
+            else
+            {
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BMW FAST simulation queue count: {0}", SimulationRecQueue.Count);
             }
 
             if (SimulationRecQueue.Count == 0)
@@ -323,6 +329,7 @@ namespace EdiabasLib
             }
 
             receiveData = SimulationRecQueue.Dequeue();
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "BMW FAST sim rec");
             return true;
         }
 
