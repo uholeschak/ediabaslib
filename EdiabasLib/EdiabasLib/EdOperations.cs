@@ -56,7 +56,7 @@ namespace EdiabasLib
                 if (!valid)
                 {
                     int compatMode = 0;
-                    string compatModeProp = ediabas.GetConfigProperty("CompatMode");
+                    string compatModeProp = ediabas.GetConfigProperty("CompatMode", CallSource.EdiabasOperation);
                     if (compatModeProp != null)
                     {
                         compatMode = (int)StringToValue(compatModeProp);
@@ -374,7 +374,7 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpCfgig: Invalid type");
             }
 
-            string value = ediabas.GetConfigProperty(arg1.GetStringData());
+            string value = ediabas.GetConfigProperty(arg1.GetStringData(), CallSource.EdiabasOperation);
             if (value != null)
             {
                 arg0.SetRawData((EdValueType)StringToValue(value));
@@ -395,7 +395,7 @@ namespace EdiabasLib
                 throw new ArgumentOutOfRangeException("arg0", "OpCfgsg: Invalid type");
             }
 
-            string value = ediabas.GetConfigProperty(arg1.GetStringData());
+            string value = ediabas.GetConfigProperty(arg1.GetStringData(), CallSource.EdiabasOperation);
             if (value != null)
             {
                 arg0.SetArrayData(Encoding.GetBytes(value));

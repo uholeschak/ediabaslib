@@ -172,7 +172,7 @@ namespace EdiabasLib
                 return false;
             }
 
-            if (!EdiabasProtected.SimulationMode && !EdiabasProtected.SimulationMode)
+            if (!EdiabasProtected.Simulation)
             {
                 return false;
             }
