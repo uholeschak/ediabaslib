@@ -172,7 +172,7 @@ namespace EdiabasLib
                 return false;
             }
 
-            if (!EdiabasProtected.SimulationMode)
+            if (!EdiabasProtected.SimulationMode && !EdiabasProtected.SimulationMode)
             {
                 return false;
             }
@@ -272,6 +272,11 @@ namespace EdiabasLib
         {
             receiveData = null;
             byte[] recDataInternal;
+
+            if (sendData.Length == 0)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Simulation request len zero");
+            }
 
             if (!bmwFast)
             {

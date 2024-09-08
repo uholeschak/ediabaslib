@@ -1523,10 +1523,6 @@ namespace EdiabasLib
         public override bool TransmitData(byte[] sendData, out byte[] receiveData)
         {
             receiveData = null;
-            if (sendData.Length == 0)
-            {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Req len zero");
-            }
 
             if (IsSimulationMode())
             {
