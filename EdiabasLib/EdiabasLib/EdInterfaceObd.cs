@@ -1530,12 +1530,14 @@ namespace EdiabasLib
 
             if (IsSimulationMode())
             {
-                if (!TransmitSimulationData(sendData, out receiveData, ParTransmitFunc == TransBmwFast))
+                byte[] simResponse;
+                if (!TransmitSimulationData(sendData, out simResponse, ParTransmitFunc == TransBmwFast))
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
                     return false;
                 }
 
+                receiveData = simResponse;
                 return true;
             }
 
