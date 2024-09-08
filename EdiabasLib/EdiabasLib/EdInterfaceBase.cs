@@ -197,12 +197,20 @@ namespace EdiabasLib
 
             try
             {
-                List<string> simInterfaceList = new List<string>() { InterfaceType };
+                List<string> simInterfaceList = new List<string>();
                 string simInterfaces = EdiabasProtected.GetConfigProperty("SimulationInterfaces");
                 if (!string.IsNullOrEmpty(simInterfaces))
                 {
                     string[] simInterfaceArray = simInterfaces.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    simInterfaceList.AddRange(simInterfaceArray);
+                    foreach (string simInterface in simInterfaceArray)
+                    {
+                        simInterfaceList.Add(simInterface.Trim().ToLowerInvariant());
+                    }
+                }
+
+                if (!simInterfaceList.Contains(InterfaceType, StringComparer.OrdinalIgnoreCase))
+                {
+                    simInterfaceList.Add(InterfaceType.ToLowerInvariant());
                 }
 
                 string simFileUse = null;
