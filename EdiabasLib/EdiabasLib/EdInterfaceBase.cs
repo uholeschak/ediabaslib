@@ -307,7 +307,10 @@ namespace EdiabasLib
                         return false;
                     }
 
-                    SimulationRecQueue.Enqueue(recDataList.GetRange(0, telLength).ToArray());
+                    List<byte> responseBytes = recDataList.GetRange(0, telLength);
+                    responseBytes.Add(CalcChecksumBmwFast(responseBytes.ToArray(), telLength - 1));
+                    SimulationRecQueue.Enqueue(responseBytes.ToArray());
+
                     recDataList.RemoveRange(0, telLength);
 
                     if (recDataList.Count == 0)
@@ -325,6 +328,7 @@ namespace EdiabasLib
 
             if (SimulationRecQueue.Count == 0)
             {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "BMW FAST simulation queue empty");
                 return false;
             }
 
