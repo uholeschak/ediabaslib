@@ -3337,6 +3337,29 @@ namespace EdiabasLib
                 }
             }
 
+            if (string.Compare(key, "SimulationMode", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                if (JobRunning)
+                {
+                    throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
+                }
+
+                bool simulationMode = StringToValue(value) != 0;
+                bool changed;
+                lock (_apiLock)
+                {
+                    changed = _simulationMode != simulationMode;
+                }
+                if (changed)
+                {
+                    lock (_apiLock)
+                    {
+                        _simulationMode = simulationMode;
+                    }
+                    _closeSgbdFs = true;
+                }
+            }
+
             if (string.Compare(key, "SimulationPath", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 if (JobRunning)
