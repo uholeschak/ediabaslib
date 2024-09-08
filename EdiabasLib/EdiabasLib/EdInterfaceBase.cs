@@ -302,16 +302,15 @@ namespace EdiabasLib
                         return false;
                     }
 
-                    if (telLength > recDataList.Count)
+                    if (telLength + 1 > recDataList.Count)
                     {
                         return false;
                     }
 
-                    List<byte> responseBytes = recDataList.GetRange(0, telLength);
-                    responseBytes.Add(CalcChecksumBmwFast(responseBytes.ToArray(), telLength - 1));
+                    List<byte> responseBytes = recDataList.GetRange(0, telLength + 1);  // including checksum
                     SimulationRecQueue.Enqueue(responseBytes.ToArray());
 
-                    recDataList.RemoveRange(0, telLength);
+                    recDataList.RemoveRange(0, telLength + 1);
 
                     if (recDataList.Count == 0)
                     {
