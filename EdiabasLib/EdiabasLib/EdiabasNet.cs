@@ -594,6 +594,12 @@ namespace EdiabasLib
         public const int EdiabasVersion = 0x760;
         public const int TraceAppendDiffHours = 1;
 
+        public enum CallSource
+        {
+            Default,
+            EdiabasOperation,
+        }
+
         public enum ErrorCodes : uint
         {
             // ReSharper disable InconsistentNaming
@@ -2274,7 +2280,7 @@ namespace EdiabasLib
         private string _sgbdFileResolveLast = string.Empty;
         private string _ecuPath = string.Empty;
         private bool _simulation = false;
-        private bool _simulationMode = false;
+        private bool _simulationTraceMode = false;
         private string _simulationPath = string.Empty;
         private readonly string _iniFileName = string.Empty;
         private readonly string _ecuPathDefault;
@@ -2778,13 +2784,13 @@ namespace EdiabasLib
             }
         }
 
-        public bool SimulationMode
+        public bool SimulationTraceMode
         {
             get
             {
                 lock (_apiLock)
                 {
-                    return _simulationMode;
+                    return _simulationTraceMode;
                 }
             }
         }
@@ -3217,6 +3223,23 @@ namespace EdiabasLib
             }
         }
 
+        public string GetConfigProperty(string name, CallSource callSource)
+        {
+            if (callSource == CallSource.EdiabasOperation)
+            {
+                if (SimulationTraceMode)
+                {
+                    if (string.Compare(name, "Simulation", StringComparison.OrdinalIgnoreCase) == 0)
+                    {   // hide simulation mode
+                        return "0";
+                    }
+                }
+                return GetConfigProperty(name);
+            }
+
+            return GetConfigProperty(name);
+        }
+
         public string GetConfigProperty(string name)
         {
             if (_disposed)
@@ -3349,24 +3372,24 @@ namespace EdiabasLib
                 }
             }
 
-            if (string.Compare(key, "SimulationMode", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Compare(key, "SimulationTraceMode", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 if (JobRunning)
                 {
                     throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
                 }
 
-                bool simulationMode = StringToValue(value) != 0;
+                bool simulationTraceMode = StringToValue(value) != 0;
                 bool changed;
                 lock (_apiLock)
                 {
-                    changed = _simulationMode != simulationMode;
+                    changed = _simulationTraceMode != simulationTraceMode;
                 }
                 if (changed)
                 {
                     lock (_apiLock)
                     {
-                        _simulationMode = simulationMode;
+                        _simulationTraceMode = simulationTraceMode;
                     }
                     _closeSgbdFs = true;
                 }
@@ -3589,7 +3612,7 @@ namespace EdiabasLib
             _tableInfos = ReadAllTables(_sgbdFs);
             _requestInit = true;
 
-            if (Simulation || SimulationMode)
+            if (Simulation)
             {
                 EdInterfaceBase edInterface = EdInterfaceClass;
                 if (edInterface != null)
