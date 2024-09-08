@@ -1137,10 +1137,6 @@ namespace LogfileConverter
                     }
 
                     List<byte> responseBytes = NumberString2List(lineParts[1]);
-                    if (responseBytes.Count < 1)
-                    {
-                        continue;
-                    }
 
                     int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
                     if (dataLengthReq == 0)
@@ -1155,43 +1151,6 @@ namespace LogfileConverter
 
                     List<byte> requestBare = requestBytes.GetRange(0, dataLengthReq);
 
-                    List<byte> responseBare = new List<byte>();
-                    bool invalid = false;
-                    int responseOffset = 0;
-                    for (; ; )
-                    {
-                        int dataLengthRes = TelLengthBmwFast(responseBytes, responseOffset);
-                        if (dataLengthRes == 0)
-                        {
-                            invalid = true;
-                            break;
-                        }
-
-                        if (responseBytes.Count - responseOffset < dataLengthRes + 1)
-                        {
-                            invalid = true;
-                            break;
-                        }
-
-                        responseBare.AddRange(responseBytes.GetRange(responseOffset, dataLengthRes));
-
-                        responseOffset += dataLengthRes + 1;    // checksum
-                        if (responseOffset > responseBytes.Count)
-                        {
-                            invalid = true;
-                            break;
-                        }
-                        if (responseOffset == responseBytes.Count)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (invalid)
-                    {
-                        continue;
-                    }
-
                     string key = BitConverter.ToString(requestBare.ToArray()).Replace("-", string.Empty);
                     if (string.IsNullOrWhiteSpace(key))
                     {
@@ -1204,7 +1163,7 @@ namespace LogfileConverter
                         request = "_";
                     }
 
-                    string response = BitConverter.ToString(responseBare.ToArray()).Replace("-", ",");
+                    string response = BitConverter.ToString(responseBytes.ToArray()).Replace("-", ",");
                     if (string.IsNullOrWhiteSpace(response))
                     {
                         response = string.Empty;
