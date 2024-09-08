@@ -2273,6 +2273,7 @@ namespace EdiabasLib
         private string _sgbdFileName = string.Empty;
         private string _sgbdFileResolveLast = string.Empty;
         private string _ecuPath = string.Empty;
+        private bool _simulation = false;
         private bool _simulationMode = false;
         private string _simulationPath = string.Empty;
         private readonly string _iniFileName = string.Empty;
@@ -2762,6 +2763,17 @@ namespace EdiabasLib
                 lock (_apiLock)
                 {
                     return _ecuPath;
+                }
+            }
+        }
+
+        public bool Simulation
+        {
+            get
+            {
+                lock (_apiLock)
+                {
+                    return _simulation;
                 }
             }
         }
@@ -3325,13 +3337,13 @@ namespace EdiabasLib
                 bool changed;
                 lock (_apiLock)
                 {
-                    changed = _simulationMode != simulationMode;
+                    changed = _simulation != simulationMode;
                 }
                 if (changed)
                 {
                     lock (_apiLock)
                     {
-                        _simulationMode = simulationMode;
+                        _simulation = simulationMode;
                     }
                     _closeSgbdFs = true;
                 }
@@ -3577,7 +3589,7 @@ namespace EdiabasLib
             _tableInfos = ReadAllTables(_sgbdFs);
             _requestInit = true;
 
-            if (SimulationMode)
+            if (Simulation || SimulationMode)
             {
                 EdInterfaceBase edInterface = EdInterfaceClass;
                 if (edInterface != null)
