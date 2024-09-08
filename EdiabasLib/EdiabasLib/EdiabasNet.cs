@@ -2280,7 +2280,6 @@ namespace EdiabasLib
         private string _sgbdFileResolveLast = string.Empty;
         private string _ecuPath = string.Empty;
         private bool _simulation = false;
-        private bool _simulationTraceMode = false;
         private string _simulationPath = string.Empty;
         private readonly string _iniFileName = string.Empty;
         private readonly string _ecuPathDefault;
@@ -2784,17 +2783,6 @@ namespace EdiabasLib
             }
         }
 
-        public bool SimulationTraceMode
-        {
-            get
-            {
-                lock (_apiLock)
-                {
-                    return _simulationTraceMode;
-                }
-            }
-        }
-
         public string SimulationPath
         {
             get
@@ -3227,11 +3215,21 @@ namespace EdiabasLib
         {
             if (callSource == CallSource.EdiabasOperation)
             {
-                if (SimulationTraceMode)
+                if (Simulation)
                 {
                     if (string.Compare(name, "Simulation", StringComparison.OrdinalIgnoreCase) == 0)
-                    {   // hide simulation mode
-                        return "0";
+                    {
+                        int compatMode = 0;
+                        string compatModeProp = GetConfigProperty("SimulationCompat");
+                        if (compatModeProp != null)
+                        {
+                            compatMode = (int)StringToValue(compatModeProp);
+                        }
+
+                        if (compatMode == 0)
+                        {   // hide simulation mode
+                            return "0";
+                        }
                     }
                 }
                 return GetConfigProperty(name);
@@ -3367,29 +3365,6 @@ namespace EdiabasLib
                     lock (_apiLock)
                     {
                         _simulation = simulationMode;
-                    }
-                    _closeSgbdFs = true;
-                }
-            }
-
-            if (string.Compare(key, "SimulationTraceMode", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                if (JobRunning)
-                {
-                    throw new ArgumentOutOfRangeException("JobRunning", "SetConfigProperty: Job is running");
-                }
-
-                bool simulationTraceMode = StringToValue(value) != 0;
-                bool changed;
-                lock (_apiLock)
-                {
-                    changed = _simulationTraceMode != simulationTraceMode;
-                }
-                if (changed)
-                {
-                    lock (_apiLock)
-                    {
-                        _simulationTraceMode = simulationTraceMode;
                     }
                     _closeSgbdFs = true;
                 }
