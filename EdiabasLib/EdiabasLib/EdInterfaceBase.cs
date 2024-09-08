@@ -50,6 +50,7 @@ namespace EdiabasLib
         protected EdSimFile EdSimFileInterface;
         protected EdSimFile EdSimFileSgbd;
         protected bool SimulationConnected;
+        protected Queue<byte[]> SimulationRecQueue = new Queue<byte[]>();
         protected byte[] SimFrequentResponse;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
@@ -224,6 +225,7 @@ namespace EdiabasLib
             EdSimFileInterface = null;
             SimFrequentResponse = null;
             SimulationConnected = false;
+            SimulationRecQueue.Clear();
             return true;
         }
 
@@ -269,47 +271,58 @@ namespace EdiabasLib
         public virtual bool TransmitSimulationData(byte[] sendData, out byte[] receiveData, bool bmwFast = false)
         {
             receiveData = null;
-            if (!TransmitSimulationInternal(sendData, out byte[] recDataInternal))
-            {
-                return false;
-            }
+            byte[] recDataInternal;
 
             if (!bmwFast)
             {
+                SimulationRecQueue.Clear();
+                if (!TransmitSimulationInternal(sendData, out recDataInternal))
+                {
+                    return false;
+                }
+
                 receiveData = recDataInternal;
                 return true;
             }
 
-            Queue<byte[]> recDataQueue = new Queue<byte[]>();
-            List<byte> recDataList = recDataInternal.ToList();
-            for (;;)
+            if (sendData.Length > 0)
             {
-                int telLength = TelLengthBmwFast(recDataList.ToArray());
-                if (telLength == 0)
+                SimulationRecQueue.Clear();
+                if (!TransmitSimulationInternal(sendData, out recDataInternal))
                 {
                     return false;
                 }
 
-                if (telLength > recDataList.Count)
+                List<byte> recDataList = recDataInternal.ToList();
+                for (; ; )
                 {
-                    return false;
-                }
+                    int telLength = TelLengthBmwFast(recDataList.ToArray());
+                    if (telLength == 0)
+                    {
+                        return false;
+                    }
 
-                recDataQueue.Enqueue(recDataList.GetRange(0, telLength).ToArray());
-                recDataList.RemoveRange(0, telLength);
+                    if (telLength > recDataList.Count)
+                    {
+                        return false;
+                    }
 
-                if (recDataList.Count == 0)
-                {
-                    break;
+                    SimulationRecQueue.Enqueue(recDataList.GetRange(0, telLength).ToArray());
+                    recDataList.RemoveRange(0, telLength);
+
+                    if (recDataList.Count == 0)
+                    {
+                        break;
+                    }
                 }
             }
 
-            if (recDataQueue.Count == 0)
+            if (SimulationRecQueue.Count == 0)
             {
                 return false;
             }
 
-            receiveData = recDataQueue.Dequeue();
+            receiveData = SimulationRecQueue.Dequeue();
             return true;
         }
 
