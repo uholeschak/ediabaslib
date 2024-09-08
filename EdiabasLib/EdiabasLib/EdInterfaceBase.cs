@@ -197,20 +197,27 @@ namespace EdiabasLib
 
             try
             {
-                string simInterface = EdiabasProtected.GetConfigProperty("SimulationInterface");
-                if (string.IsNullOrEmpty(simInterface))
+                List<string> simInterfaceList = new List<string>() { InterfaceType };
+                string simInterfaces = EdiabasProtected.GetConfigProperty("SimulationInterfaces");
+                if (!string.IsNullOrEmpty(simInterfaces))
                 {
-                    simInterface = InterfaceType;
+                    string[] simInterfaceArray = simInterfaces.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    simInterfaceList.AddRange(simInterfaceArray);
                 }
 
-                string simFileName = simInterface + SimFileExtension;
-                string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
-                if (!File.Exists(simFilePath))
+                string simFileUse = null;
+                foreach (string simInterface in simInterfaceList)
                 {
-                    return false;
+                    string simFileName = simInterface + SimFileExtension;
+                    string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
+                    if (File.Exists(simFilePath))
+                    {
+                        simFileUse = simFilePath;
+                        break;
+                    }
                 }
 
-                EdSimFileInterface = new EdSimFile(simFilePath);
+                EdSimFileInterface = new EdSimFile(simFileUse);
                 SimulationConnected = true;
                 return true;
             }
