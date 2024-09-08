@@ -1382,6 +1382,7 @@ namespace EdiabasLib
                 receiveData = cachedResponse;
                 return true;
             }
+
             if (SharedDataActive.ReconnectRequired)
             {
                 InterfaceDisconnect(true);
