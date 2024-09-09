@@ -1451,6 +1451,11 @@ namespace EdiabasLib
 
         public override bool TransmitCancel(bool cancel)
         {
+            if (IsSimulationMode())
+            {
+                return true;
+            }
+
             if (cancel)
             {
                 SharedDataActive.TransmitCancelEvent.Set();
