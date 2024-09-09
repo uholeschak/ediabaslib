@@ -7,6 +7,8 @@ namespace EdiabasLib
 {
     public class EdSimFile
     {
+        public const int DefaultBatteryVolt = 12000;
+        public const int DefaultIgnitionVolt = 12000;
         private const string SectionPowerSupply = "POWERSUPPLY";
         private const string SectionIgnition = "IGNITION";
         private const string SectionRequest = "REQUEST";
@@ -18,14 +20,14 @@ namespace EdiabasLib
 
         public string FileName => _fileName;
 
-        public int UBatVolt { get; private set; } = 12000;
+        public int UBatVolt { get; private set; } = DefaultBatteryVolt;
 
         public int UBatCurrent { get; private set; } = -1;
 
         public int UBatHistory { get; private set; } = -1;
 
 
-        public int IgnitionVolt { get; private set; } = 12000;
+        public int IgnitionVolt { get; private set; } = DefaultIgnitionVolt;
 
         public int IgnitionCurrent { get; private set; } = -1;
 

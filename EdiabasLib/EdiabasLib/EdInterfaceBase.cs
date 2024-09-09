@@ -425,7 +425,7 @@ namespace EdiabasLib
                     return EdSimFileInterface.IgnitionVolt;
                 }
 
-                return Int64.MinValue;
+                return EdSimFile.DefaultIgnitionVolt;
             }
         }
 
@@ -444,7 +444,7 @@ namespace EdiabasLib
                     return EdSimFileInterface.UBatVolt;
                 }
 
-                return Int64.MinValue;
+                return EdSimFile.DefaultBatteryVolt;
             }
         }
 
