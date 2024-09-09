@@ -1541,11 +1541,21 @@ namespace EdiabasLib
 
         public List<EnetConnection> DetectedVehicles(string remoteHostConfig, List<CommunicationMode> communicationModes = null)
         {
+            if (IsSimulationMode())
+            {
+                return null;
+            }
+
             return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries, communicationModes);
         }
 
         public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries, List<CommunicationMode> communicationModes)
         {
+            if (IsSimulationMode())
+            {
+                return null;
+            }
+
             if (!remoteHostConfig.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
             {
                 return null;
