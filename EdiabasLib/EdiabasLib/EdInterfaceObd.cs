@@ -1035,6 +1035,11 @@ namespace EdiabasLib
             get
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read battery voltage");
+                if (IsSimulationMode())
+                {
+                    return BatteryVoltageSimulation;
+                }
+
                 if (!Connected)
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
@@ -1051,6 +1056,11 @@ namespace EdiabasLib
             get
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ignition voltage");
+                if (IsSimulationMode())
+                {
+                    return IgnitionVoltageSimulation;
+                }
+
                 Int64 voltage;
                 if (!Connected)
                 {

@@ -742,6 +742,7 @@ namespace EdiabasLib
         {
             get
             {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read battery voltage");
                 if (IsSimulationMode())
                 {
                     return BatteryVoltageSimulation;
@@ -760,6 +761,7 @@ namespace EdiabasLib
         {
             get
             {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ignition voltage");
                 if (IsSimulationMode())
                 {
                     return IgnitionVoltageSimulation;
