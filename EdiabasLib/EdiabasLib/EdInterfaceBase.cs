@@ -287,6 +287,11 @@ namespace EdiabasLib
         {
             receiveData = null;
             byte[] recDataInternal;
+            if (!SimulationConnected)
+            {
+                EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                return false;
+            }
 
             if (sendData.Length == 0)
             {
@@ -390,6 +395,12 @@ namespace EdiabasLib
         {
             get
             {
+                if (!SimulationConnected)
+                {
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return null;
+                }
+
                 if (EdSimFileSgbd != null)
                 {
                     return EdSimFileSgbd.KeyBytes.ToArray();
@@ -399,29 +410,41 @@ namespace EdiabasLib
             }
         }
 
-        public virtual int IgnitionVoltageSimulation
+        public virtual Int64 IgnitionVoltageSimulation
         {
             get
             {
+                if (!SimulationConnected)
+                {
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return Int64.MinValue;
+                }
+
                 if (EdSimFileInterface != null)
                 {
                     return EdSimFileInterface.IgnitionVolt;
                 }
 
-                return -1;
+                return Int64.MinValue;
             }
         }
 
-        public virtual int BatteryVoltageSimulation
+        public virtual Int64 BatteryVoltageSimulation
         {
             get
             {
+                if (!SimulationConnected)
+                {
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return Int64.MinValue;
+                }
+
                 if (EdSimFileInterface != null)
                 {
                     return EdSimFileInterface.UBatVolt;
                 }
 
-                return -1;
+                return Int64.MinValue;
             }
         }
 
