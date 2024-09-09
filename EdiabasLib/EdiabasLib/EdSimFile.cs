@@ -18,14 +18,14 @@ namespace EdiabasLib
 
         public string FileName => _fileName;
 
-        public int UBatVolt { get; private set; } = -1;
+        public int UBatVolt { get; private set; } = 12000;
 
         public int UBatCurrent { get; private set; } = -1;
 
         public int UBatHistory { get; private set; } = -1;
 
 
-        public int IgnitionVolt { get; private set; } = -1;
+        public int IgnitionVolt { get; private set; } = 12000;
 
         public int IgnitionCurrent { get; private set; } = -1;
 

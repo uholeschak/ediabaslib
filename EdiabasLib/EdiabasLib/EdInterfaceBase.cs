@@ -338,21 +338,21 @@ namespace EdiabasLib
                     }
                 }
 
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BMW FAST simulation responses queued: {0}", SimulationRecQueue.Count);
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BMW FAST simulation responses queued: {0}", SimulationRecQueue.Count);
             }
             else
             {
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BMW FAST simulation queue count: {0}", SimulationRecQueue.Count);
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "BMW FAST simulation queue count: {0}", SimulationRecQueue.Count);
             }
 
             if (SimulationRecQueue.Count == 0)
             {
-                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "BMW FAST simulation queue empty");
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "BMW FAST simulation queue empty");
                 return false;
             }
 
             receiveData = SimulationRecQueue.Dequeue();
-            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "BMW FAST sim rec");
+            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "BMW FAST sim rec");
             return true;
         }
 
@@ -396,6 +396,32 @@ namespace EdiabasLib
                 }
 
                 return null;
+            }
+        }
+
+        public virtual int IgnitionVoltageSimulation
+        {
+            get
+            {
+                if (EdSimFileInterface != null)
+                {
+                    return EdSimFileInterface.IgnitionVolt;
+                }
+
+                return -1;
+            }
+        }
+
+        public virtual int BatteryVoltageSimulation
+        {
+            get
+            {
+                if (EdSimFileInterface != null)
+                {
+                    return EdSimFileInterface.UBatVolt;
+                }
+
+                return -1;
             }
         }
 
