@@ -742,6 +742,11 @@ namespace EdiabasLib
         {
             get
             {
+                if (IsSimulationMode())
+                {
+                    return BatteryVoltageSimulation;
+                }
+
                 if (!Connected)
                 {
                     EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
@@ -755,6 +760,11 @@ namespace EdiabasLib
         {
             get
             {
+                if (IsSimulationMode())
+                {
+                    return IgnitionVoltageSimulation;
+                }
+
                 if (SharedDataActive.ReconnectRequired)
                 {
                     InterfaceDisconnect(true);
