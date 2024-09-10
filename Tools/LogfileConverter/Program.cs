@@ -1108,69 +1108,85 @@ namespace LogfileConverter
                     return false;
                 }
 
+                bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, Tuple<string, string>> simLines = new Dictionary<string, Tuple<string, string>>();
-                foreach (string line in lines)
+                for (int cycle = 0; cycle < 2; cycle++)
                 {
-                    string lineTrim = line.Trim();
-                    int commentIndex = lineTrim.IndexOf(';');
-                    if (commentIndex >= 0)
+                    foreach (string line in lines)
                     {
-                        lineTrim = lineTrim.Substring(0, commentIndex);
-                    }
-
-                    if (string.IsNullOrEmpty(lineTrim))
-                    {
-                        continue;
-                    }
-
-                    string[] lineParts = lineTrim.Split(':', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                    if (lineParts.Length != 2)
-                    {
-                        continue;
-                    }
-
-                    List<byte> requestBytes = NumberString2List(lineParts[0]);
-                    if (requestBytes.Count < 1)
-                    {
-                        continue;
-                    }
-
-                    List<byte> responseBytes = NumberString2List(lineParts[1]);
-                    int dataLengthResp = TelLengthBmwFast(responseBytes, 0);
-
-                    List<byte> requestUse = requestBytes;
-                    int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
-                    if (dataLengthReq != 0 && dataLengthResp != 0)
-                    {
-                        if (requestBytes.Count == dataLengthReq + 1)
+                        string lineTrim = line.Trim();
+                        int commentIndex = lineTrim.IndexOf(';');
+                        if (commentIndex >= 0)
                         {
-                            // BMW fast format
+                            lineTrim = lineTrim.Substring(0, commentIndex);
+                        }
+
+                        if (string.IsNullOrEmpty(lineTrim))
+                        {
+                            continue;
+                        }
+
+                        if (lineTrim.StartsWith("CFG:"))
+                        {
+                            bmwFastFormat = false;
+                            break;
+                        }
+
+                        string[] lineParts = lineTrim.Split(':', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                        if (lineParts.Length != 2)
+                        {
+                            continue;
+                        }
+
+                        List<byte> requestBytes = NumberString2List(lineParts[0]);
+                        if (requestBytes.Count < 1)
+                        {
+                            continue;
+                        }
+
+                        List<byte> responseBytes = NumberString2List(lineParts[1]);
+                        int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
+                        int dataLengthResp = TelLengthBmwFast(responseBytes, 0);
+
+                        if (dataLengthReq == 0 || dataLengthResp == 0 || requestBytes.Count != dataLengthReq + 1)
+                        {
+                            bmwFastFormat = false;
+                        }
+
+                        if (cycle == 0)
+                        {
+                            continue;
+                        }
+
+                        List<byte> requestUse = requestBytes;
+                        if (bmwFastFormat)
+                        {
                             requestUse = requestBytes.GetRange(0, dataLengthReq);
                         }
-                    }
 
-                    string key = BitConverter.ToString(requestUse.ToArray()).Replace("-", string.Empty);
-                    if (string.IsNullOrWhiteSpace(key))
-                    {
-                        key = "_";
-                    }
+                        string key = BitConverter.ToString(requestUse.ToArray()).Replace("-", string.Empty);
+                        if (string.IsNullOrWhiteSpace(key))
+                        {
+                            key = "_";
+                        }
 
-                    string request = BitConverter.ToString(requestUse.ToArray()).Replace("-", ",");
-                    if (string.IsNullOrWhiteSpace(request))
-                    {
-                        request = "_";
-                    }
+                        string request = BitConverter.ToString(requestUse.ToArray()).Replace("-", ",");
+                        if (string.IsNullOrWhiteSpace(request))
+                        {
+                            request = "_";
+                        }
 
-                    string response = BitConverter.ToString(responseBytes.ToArray()).Replace("-", ",");
-                    if (string.IsNullOrWhiteSpace(response))
-                    {
-                        response = string.Empty;
-                    }
+                        string response = BitConverter.ToString(responseBytes.ToArray()).Replace("-", ",");
+                        if (string.IsNullOrWhiteSpace(response))
+                        {
+                            response = string.Empty;
+                        }
 
-                    if (!simLines.ContainsKey(key))
-                    {
-                        simLines.Add(key, new Tuple<string, string>(request, response));
+                        if (!simLines.ContainsKey(key))
+                        {
+                            simLines.Add(key, new Tuple<string, string>(request, response));
+                        }
                     }
                 }
 
