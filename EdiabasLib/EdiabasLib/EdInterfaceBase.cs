@@ -333,6 +333,7 @@ namespace EdiabasLib
                     }
 
                     List<byte> responseBytes = recDataList.GetRange(0, telLength + 1);  // including checksum
+                    responseBytes[responseBytes.Count -1] = CalcChecksumBmwFast(responseBytes.ToArray(), telLength);    // fix checksum
                     SimulationRecQueue.Enqueue(responseBytes.ToArray());
 
                     recDataList.RemoveRange(0, telLength + 1);
