@@ -1037,7 +1037,7 @@ namespace EdiabasLib
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read battery voltage");
                 if (IsSimulationMode())
                 {
-                    return BatteryVoltageSimulation;
+                    return UbatVoltageSimulation;
                 }
 
                 if (!Connected)

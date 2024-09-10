@@ -4283,10 +4283,25 @@ namespace EdiabasLib
             if (sysResults != 0)
             {
                 resultDictSystem.Add("JOBSTATUS", new ResultData(ResultType.TypeS, "JOBSTATUS", _resultJobStatus));
-                resultDictSystem.Add("UBATTCURRENT", new ResultData(ResultType.TypeI, "UBATTCURRENT", (Int64)(-1)));
-                resultDictSystem.Add("UBATTHISTORY", new ResultData(ResultType.TypeI, "UBATTHISTORY", (Int64)(-1)));
-                resultDictSystem.Add("IGNITIONCURRENT", new ResultData(ResultType.TypeI, "IGNITIONCURRENT", (Int64)(-1)));
-                resultDictSystem.Add("IGNITIONHISTORY", new ResultData(ResultType.TypeI, "IGNITIONHISTORY", (Int64)(-1)));
+
+                Int64 ubattCurrent = -1;
+                Int64 ubattHistory = -1;
+                Int64 ignitionCurrent = -1;
+                Int64 ignitionHistory = -1;
+                EdInterfaceBase edInterface = EdInterfaceClass;
+
+                if (edInterface != null && edInterface.IsSimulationMode())
+                {
+                    ubattCurrent = edInterface.UbatCurrentSimulation;
+                    ubattHistory = edInterface.UbatHistorySimulation;
+                    ignitionCurrent = edInterface.IgnitionCurrentSimulation;
+                    ignitionHistory = edInterface.IgnitionHistorySimulation;
+                }
+
+                resultDictSystem.Add("UBATTCURRENT", new ResultData(ResultType.TypeI, "UBATTCURRENT", ubattCurrent));
+                resultDictSystem.Add("UBATTHISTORY", new ResultData(ResultType.TypeI, "UBATTHISTORY", ubattHistory));
+                resultDictSystem.Add("IGNITIONCURRENT", new ResultData(ResultType.TypeI, "IGNITIONCURRENT", ignitionCurrent));
+                resultDictSystem.Add("IGNITIONHISTORY", new ResultData(ResultType.TypeI, "IGNITIONHISTORY", ignitionHistory));
             }
 
             foreach (string key in _resultSysDict.Keys)

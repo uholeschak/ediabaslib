@@ -430,7 +430,7 @@ namespace EdiabasLib
             }
         }
 
-        public virtual Int64 BatteryVoltageSimulation
+        public virtual Int64 UbatVoltageSimulation
         {
             get
             {
@@ -446,6 +446,58 @@ namespace EdiabasLib
                 }
 
                 return EdSimFile.DefaultBatteryVolt;
+            }
+        }
+
+        public virtual Int64 UbatCurrentSimulation
+        {
+            get
+            {
+                if (EdSimFileInterface != null)
+                {
+                    return EdSimFileInterface.UBatCurrent;
+                }
+
+                return -1;
+            }
+        }
+
+        public virtual Int64 UbatHistorySimulation
+        {
+            get
+            {
+                if (EdSimFileInterface != null)
+                {
+                    return EdSimFileInterface.UBatHistory;
+                }
+
+                return -1;
+            }
+        }
+
+        public virtual Int64 IgnitionCurrentSimulation
+        {
+            get
+            {
+                if (EdSimFileInterface != null)
+                {
+                    return EdSimFileInterface.IgnitionCurrent;
+                }
+
+                return -1;
+            }
+        }
+
+        public virtual Int64 IgnitionHistorySimulation
+        {
+            get
+            {
+                if (EdSimFileInterface != null)
+                {
+                    return EdSimFileInterface.IgnitionHistory;
+                }
+
+                return -1;
             }
         }
 
