@@ -1137,27 +1137,26 @@ namespace LogfileConverter
                     }
 
                     List<byte> responseBytes = NumberString2List(lineParts[1]);
+                    int dataLengthResp = TelLengthBmwFast(responseBytes, 0);
 
+                    List<byte> requestUse = requestBytes;
                     int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
-                    if (dataLengthReq == 0)
+                    if (dataLengthReq != 0 && dataLengthResp != 0)
                     {
-                        continue;
+                        if (requestBytes.Count == dataLengthReq + 1)
+                        {
+                            // BMW fast format
+                            requestUse = requestBytes.GetRange(0, dataLengthReq);
+                        }
                     }
 
-                    if (requestBytes.Count != dataLengthReq + 1)
-                    {
-                        continue;
-                    }
-
-                    List<byte> requestBare = requestBytes.GetRange(0, dataLengthReq);
-
-                    string key = BitConverter.ToString(requestBare.ToArray()).Replace("-", string.Empty);
+                    string key = BitConverter.ToString(requestUse.ToArray()).Replace("-", string.Empty);
                     if (string.IsNullOrWhiteSpace(key))
                     {
                         key = "_";
                     }
 
-                    string request = BitConverter.ToString(requestBare.ToArray()).Replace("-", ",");
+                    string request = BitConverter.ToString(requestUse.ToArray()).Replace("-", ",");
                     if (string.IsNullOrWhiteSpace(request))
                     {
                         request = "_";
