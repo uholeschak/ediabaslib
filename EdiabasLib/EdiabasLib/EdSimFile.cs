@@ -90,11 +90,11 @@ namespace EdiabasLib
 
         private void ParseIniFile()
         {
-            UBatVolt = _iniFile.GetValue(SectionPowerSupply, "UBatt", -1);
+            UBatVolt = _iniFile.GetValue(SectionPowerSupply, "UBatt", DefaultBatteryVolt);
             UBatCurrent = _iniFile.GetValue(SectionPowerSupply, "UBATTCURRENT", -1);
             UBatHistory = _iniFile.GetValue(SectionPowerSupply, "UBATTHISTORY", -1);
 
-            IgnitionVolt = _iniFile.GetValue(SectionIgnition, "Ignition", -1);
+            IgnitionVolt = _iniFile.GetValue(SectionIgnition, "Ignition", DefaultIgnitionVolt);
             IgnitionCurrent = _iniFile.GetValue(SectionIgnition, "IGNITIONCURRENT", -1);
             IgnitionHistory = _iniFile.GetValue(SectionIgnition, "IGNITIONHISTORY", -1);
 
