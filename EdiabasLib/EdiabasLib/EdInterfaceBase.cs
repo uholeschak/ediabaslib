@@ -225,12 +225,15 @@ namespace EdiabasLib
                     }
                 }
 
-                EdSimFileInterface = new EdSimFile(simFileUse);
-                if (!EdSimFileInterface.FileValid)
+                if (!string.IsNullOrEmpty(simFileUse))
                 {
-                    // Simulation error
-                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0026);
-                    return false;
+                    EdSimFileInterface = new EdSimFile(simFileUse);
+                    if (!EdSimFileInterface.FileValid)
+                    {
+                        // Simulation error
+                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0026);
+                        return false;
+                    }
                 }
 
                 SimulationConnected = true;
@@ -271,7 +274,14 @@ namespace EdiabasLib
                 string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
                 if (!File.Exists(simFilePath))
                 {
-                    return false;
+                    if (EdSimFileInterface == null)
+                    {
+                        // Simulation error
+                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0026);
+                        return false;
+                    }
+
+                    return true;
                 }
 
                 EdSimFileSgbd = new EdSimFile(simFilePath);
@@ -281,6 +291,7 @@ namespace EdiabasLib
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0026);
                     return false;
                 }
+
                 return true;
             }
             catch (Exception)
