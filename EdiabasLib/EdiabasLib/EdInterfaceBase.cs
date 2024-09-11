@@ -226,6 +226,13 @@ namespace EdiabasLib
                 }
 
                 EdSimFileInterface = new EdSimFile(simFileUse);
+                if (!EdSimFileInterface.FileValid)
+                {
+                    // Simulation error
+                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0026);
+                    return false;
+                }
+
                 SimulationConnected = true;
                 return true;
             }
@@ -268,6 +275,12 @@ namespace EdiabasLib
                 }
 
                 EdSimFileSgbd = new EdSimFile(simFilePath);
+                if (!EdSimFileSgbd.FileValid)
+                {
+                    // Simulation error
+                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0026);
+                    return false;
+                }
                 return true;
             }
             catch (Exception)
