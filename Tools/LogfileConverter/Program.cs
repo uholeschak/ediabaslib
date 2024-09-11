@@ -1111,7 +1111,7 @@ namespace LogfileConverter
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, Tuple<string, string>> simLines = new Dictionary<string, Tuple<string, string>>();
-                for (int cycle = 0; cycle < 2; cycle++)
+                for (int iteration = 0; iteration < 2; iteration++)
                 {
                     foreach (string line in lines)
                     {
@@ -1127,10 +1127,13 @@ namespace LogfileConverter
                             continue;
                         }
 
-                        if (lineTrim.StartsWith("CFG:"))
+                        if (iteration == 0)
                         {
-                            bmwFastFormat = false;
-                            break;
+                            if (lineTrim.StartsWith("CFG:"))
+                            {
+                                bmwFastFormat = false;
+                                break;
+                            }
                         }
 
                         string[] lineParts = lineTrim.Split(':', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -1149,12 +1152,16 @@ namespace LogfileConverter
                         int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
                         int dataLengthResp = TelLengthBmwFast(responseBytes, 0);
 
-                        if (dataLengthReq == 0 || dataLengthResp == 0 || requestBytes.Count != dataLengthReq + 1)
+                        if (iteration == 0)
                         {
-                            bmwFastFormat = false;
+                            if (dataLengthReq == 0 || dataLengthResp == 0 || requestBytes.Count != dataLengthReq + 1)
+                            {
+                                bmwFastFormat = false;
+                                break;
+                            }
                         }
 
-                        if (cycle == 0)
+                        if (iteration == 0)
                         {
                             continue;
                         }
