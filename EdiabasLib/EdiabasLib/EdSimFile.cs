@@ -15,10 +15,13 @@ namespace EdiabasLib
         private const string SectionResponse = "RESPONSE";
         private const string SectionKeybytes = "KEYBYTES";
         private readonly string _fileName;
+        private readonly bool _fileValid;
         private readonly IniFile _iniFile;
         private List<ResponseInfo> _responseInfos;
 
         public string FileName => _fileName;
+
+        public bool FileValid => _fileValid;
 
         public int UBatVolt { get; private set; } = DefaultBatteryVolt;
 
@@ -56,7 +59,7 @@ namespace EdiabasLib
             _fileName = fileName;
             _iniFile = new IniFile(fileName);
 
-            ParseIniFile();
+            _fileValid = ParseIniFile();
         }
 
         public List<byte> GetResponse(List<byte> request)
@@ -96,7 +99,7 @@ namespace EdiabasLib
             return null;
         }
 
-        private void ParseIniFile()
+        private bool ParseIniFile()
         {
             UBatVolt = _iniFile.GetValue(SectionPowerSupply, "UBatt", DefaultBatteryVolt);
             UBatCurrent = _iniFile.GetValue(SectionPowerSupply, "UBATTCURRENT", -1);
@@ -113,29 +116,29 @@ namespace EdiabasLib
                 foreach (string requestKey in requestKeys)
                 {
                     string requestValue = _iniFile.GetValue(SectionRequest, requestKey, string.Empty).Trim();
-                    if (string.IsNullOrWhiteSpace(requestValue))
+                    if (string.IsNullOrEmpty(requestValue))
                     {
-                        continue;
+                        return false;
                     }
 
                     string responseValue = _iniFile.GetValue(SectionResponse, requestKey, string.Empty).Trim();
-                    if (string.IsNullOrWhiteSpace(responseValue))
+                    if (string.IsNullOrEmpty(responseValue))
                     {
-                        continue;
+                        return false;
                     }
 
                     List<byte> requestMask = new List<byte>();
                     List<byte> requestBytes = ParseHexString(requestValue, ref requestMask);
                     if (requestBytes == null)
                     {
-                        continue;
+                        return false;
                     }
 
                     List<byte> nullList = null;
                     List<byte> responseBytes = ParseHexString(responseValue, ref nullList);
                     if (responseBytes == null)
                     {
-                        continue;
+                        return false;
                     }
 
                     _responseInfos.Add(new ResponseInfo(requestBytes, requestMask, responseBytes));
@@ -158,28 +161,36 @@ namespace EdiabasLib
                     List<byte> keyBytesBytes = ParseHexString(keyBytesValue, ref nullList);
                     if (keyBytesBytes == null)
                     {
-                        continue;
+                        return false;
                     }
 
                     KeyBytes = keyBytesBytes;
                     break;
                 }
             }
+
+            return true;
         }
 
         private List<byte> ParseHexString(string text, ref List<byte> maskList)
         {
-            if (string.IsNullOrWhiteSpace(text))
+            if (string.IsNullOrEmpty(text))
             {
                 return null;
             }
 
-            if (string.Compare(text, "_", StringComparison.OrdinalIgnoreCase) == 0)
+            string textTrim = text.Trim();
+            if (string.IsNullOrWhiteSpace(textTrim))
             {
                 return new List<byte>();
             }
 
-            string[] parts = text.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries);
+            if (string.Compare(textTrim, "_", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                return new List<byte>();
+            }
+
+            string[] parts = textTrim.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length == 0)
             {
                 return null;
