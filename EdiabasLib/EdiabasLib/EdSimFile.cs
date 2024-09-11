@@ -61,27 +61,35 @@ namespace EdiabasLib
 
         public List<byte> GetResponse(List<byte> request)
         {
-            foreach (ResponseInfo responseInfo in _responseInfos)
+            for (int iteration = 0; iteration < 2; ++iteration)
             {
-                if (request.Count != responseInfo.RequestData.Count)
+                foreach (ResponseInfo responseInfo in _responseInfos)
                 {
-                    continue;
-                }
-
-                bool matched = true;
-                for (int i = 0; i < request.Count; ++i)
-                {
-                    byte mask = responseInfo.RequestMask[i];
-                    if ((request[i] & mask) != (responseInfo.RequestData[i] & mask))
+                    if (request.Count != responseInfo.RequestData.Count)
                     {
-                        matched = false;
-                        break;
+                        continue;
                     }
-                }
 
-                if (matched)
-                {
-                    return responseInfo.ResponseData;
+                    bool matched = true;
+                    for (int i = 0; i < request.Count; ++i)
+                    {
+                        byte mask = responseInfo.RequestMask[i];
+                        if (iteration == 0 && mask !=0xFF)
+                        {   // try to match without mask first
+                            continue;
+                        }
+
+                        if ((request[i] & mask) != (responseInfo.RequestData[i] & mask))
+                        {
+                            matched = false;
+                            break;
+                        }
+                    }
+
+                    if (matched)
+                    {
+                        return responseInfo.ResponseData;
+                    }
                 }
             }
 
