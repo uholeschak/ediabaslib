@@ -1111,8 +1111,8 @@ namespace LogfileConverter
 
                 List<Tuple<int[], int[]>> addSimLines = new List<Tuple<int[], int[]>>();
                 List<Tuple<int[], int[]>> addSimCandidates = new List<Tuple<int[], int[]>>();
-                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x82, 0xF1, 0x00, 0x58, 0x00 }));
-                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x83, -1, 0xF1, 0x17, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12, 0x00 }));
+                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x82, 0xF1, 0x00, 0x58 }));
+                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x83, -1, 0xF1, 0x17, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12 }));
 
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
@@ -1237,7 +1237,7 @@ namespace LogfileConverter
                 foreach (Tuple<int[], int[]> addLine in addSimLines)
                 {
                     string genericErrorRequest = List2SimEntry(addLine.Item1.ToList());
-                    string genericErrorResponse = List2SimEntry(addLine.Item2.ToList());
+                    string genericErrorResponse = List2SimEntry(addLine.Item2.ToList(), true);
                     string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
                     if (!simLines.ContainsKey(genericErrorKey))
                     {
@@ -1397,9 +1397,10 @@ namespace LogfileConverter
             return BitConverter.ToString(dataList.ToArray()).Replace("-", string.Empty);
         }
 
-        private static string List2SimEntry(List<int> dataList)
+        private static string List2SimEntry(List<int> dataList, bool addChecksum = false)
         {
             StringBuilder sb = new StringBuilder();
+            byte checksum = 0;
             foreach (int data in dataList)
             {
                 if (sb.Length > 0)
@@ -1407,7 +1408,20 @@ namespace LogfileConverter
                     sb.Append(",");
                 }
 
-                sb.Append(data < 0 ? "XX" : string.Format(CultureInfo.InvariantCulture, "{0:X02}", data));
+                if (data < 0)
+                {
+                    sb.Append("XX");
+                }
+                else
+                {
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}", data));
+                    checksum += (byte)data;
+                }
+            }
+
+            if (addChecksum && sb.Length > 0)
+            {
+                sb.Append(string.Format(CultureInfo.InvariantCulture, ",{0:X02}", checksum));
             }
 
             return sb.ToString();
