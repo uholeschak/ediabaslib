@@ -62,8 +62,9 @@ namespace EdiabasLib
             _fileValid = ParseIniFile();
         }
 
-        public List<byte> GetResponse(List<byte> request)
+        public List<byte> GetResponse(List<byte> request, out List<byte> requestMask)
         {
+            requestMask = null;
             for (int iteration = 0; iteration < 2; ++iteration)
             {
                 foreach (ResponseInfo responseInfo in _responseInfos)
@@ -91,6 +92,7 @@ namespace EdiabasLib
 
                     if (matched)
                     {
+                        requestMask = responseInfo.RequestMask;
                         return responseInfo.ResponseData;
                     }
                 }

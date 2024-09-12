@@ -311,6 +311,7 @@ namespace EdiabasLib
         {
             receiveData = null;
             byte[] recDataInternal;
+            byte[] maskDataInternal;
             if (!SimulationConnected)
             {
                 EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
@@ -325,7 +326,7 @@ namespace EdiabasLib
             if (!bmwFast)
             {
                 SimulationRecQueue.Clear();
-                if (!TransmitSimulationInternal(sendData, out recDataInternal))
+                if (!TransmitSimulationInternal(sendData, out recDataInternal, out maskDataInternal))
                 {
                     return false;
                 }
@@ -337,7 +338,7 @@ namespace EdiabasLib
             if (sendData.Length > 0)
             {
                 SimulationRecQueue.Clear();
-                if (!TransmitSimulationInternal(sendData, out recDataInternal))
+                if (!TransmitSimulationInternal(sendData, out recDataInternal, out maskDataInternal))
                 {
                     return false;
                 }
@@ -357,6 +358,12 @@ namespace EdiabasLib
                     }
 
                     List<byte> responseBytes = recDataList.GetRange(0, telLength + 1);  // including checksum
+
+                    if (maskDataInternal != null && maskDataInternal.Length >= 3 && maskDataInternal[1] != 0xFF)
+                    {
+                        responseBytes[2] = sendData[1];     // update ECU address
+                    }
+
                     responseBytes[responseBytes.Count -1] = CalcChecksumBmwFast(responseBytes.ToArray(), telLength);    // fix checksum
                     SimulationRecQueue.Enqueue(responseBytes.ToArray());
 
@@ -386,16 +393,21 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool TransmitSimulationInternal(byte[] sendData, out byte[] receiveData)
+        protected bool TransmitSimulationInternal(byte[] sendData, out byte[] receiveData, out byte[] maskData)
         {
             receiveData = null;
+            maskData = null;
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
             if (EdSimFileSgbd != null)
             {
-                List<byte> response = EdSimFileSgbd.GetResponse(sendData.ToList());
+                List<byte> response = EdSimFileSgbd.GetResponse(sendData.ToList(), out List<byte> requestMask);
                 if (response != null)
                 {
                     receiveData = response.ToArray();
+                    if (requestMask != null)
+                    {
+                        maskData = requestMask.ToArray();
+                    }
                     EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "Rec sim SGBD");
                     return true;
                 }
@@ -403,10 +415,14 @@ namespace EdiabasLib
 
             if (EdSimFileInterface != null)
             {
-                List<byte> response = EdSimFileInterface.GetResponse(sendData.ToList());
+                List<byte> response = EdSimFileInterface.GetResponse(sendData.ToList(), out List<byte> requestMask);
                 if (response != null)
                 {
                     receiveData = response.ToArray();
+                    if (requestMask != null)
+                    {
+                        maskData = requestMask.ToArray();
+                    }
                     EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "Rec sim interface");
                     return true;
                 }
