@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -1108,6 +1109,9 @@ namespace LogfileConverter
                     return false;
                 }
 
+                int[] errorRequestBytes = new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF };
+                int[] errorResponseBytes = new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12, 0x00 };
+                bool hasErrorRequest = false;
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, Tuple<string, string>> simLines = new Dictionary<string, Tuple<string, string>>();
@@ -1170,6 +1174,28 @@ namespace LogfileConverter
                         if (bmwFastFormat)
                         {
                             requestUse = requestBytes.GetRange(0, dataLengthReq);
+                            bool errorRequestMatch = true;
+                            if (requestUse.Count == errorRequestBytes.Length)
+                            {
+                                for (int index = 0; index < requestUse.Count; index++)
+                                {
+                                    if (errorRequestBytes[index] < 0)
+                                    {
+                                        continue;
+                                    }
+
+                                    if (requestUse[index] != errorRequestBytes[index])
+                                    {
+                                        errorRequestMatch = false;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (errorRequestMatch)
+                            {
+                                hasErrorRequest = true;
+                            }
                         }
 
                         string key = BitConverter.ToString(requestUse.ToArray()).Replace("-", string.Empty);
@@ -1197,12 +1223,15 @@ namespace LogfileConverter
                     }
                 }
 
-                if (bmwFastFormat)
+                if (hasErrorRequest)
                 {
-                    string genericErrorRequest = "84,XX,F1,18,02,FF,FF";
-                    string genericErrorResponse = "83,F1,00,7F,17,12,00";
+                    string genericErrorRequest = List2SimEntry(errorRequestBytes.ToList());
+                    string genericErrorResponse = List2SimEntry(errorResponseBytes.ToList());
                     string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
-                    simLines.Add(genericErrorKey, new Tuple<string, string>(genericErrorRequest, genericErrorResponse));
+                    if (simLines.ContainsKey(genericErrorKey))
+                    {
+                        simLines.Add(genericErrorKey, new Tuple<string, string>(genericErrorRequest, genericErrorResponse));
+                    }
                 }
 
                 string simFileName = simFile;
@@ -1355,6 +1384,22 @@ namespace LogfileConverter
         private static string List2HexString(List<byte> dataList)
         {
             return BitConverter.ToString(dataList.ToArray()).Replace("-", string.Empty);
+        }
+
+        private static string List2SimEntry(List<int> dataList)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (int data in dataList)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append(",");
+                }
+
+                sb.Append(data < 0 ? "XX" : string.Format(CultureInfo.InvariantCulture, "{0:X02}", data));
+            }
+
+            return sb.ToString();
         }
 
         private static List<byte> ReadHexStreamTel(StreamReader streamReader, StreamWriter streamWriter)
