@@ -1197,6 +1197,14 @@ namespace LogfileConverter
                     }
                 }
 
+                if (bmwFastFormat)
+                {
+                    string genericErrorRequest = "84,XX,F1,18,02,FF,FF";
+                    string genericErrorResponse = "83,F1,00,7F,17,12,00";
+                    string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
+                    simLines.Add(genericErrorKey, new Tuple<string, string>(genericErrorRequest, genericErrorResponse));
+                }
+
                 string simFileName = simFile;
                 string simFilePath = Path.GetDirectoryName(simFile);
                 if (string.IsNullOrEmpty(simFilePath))
