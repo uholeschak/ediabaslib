@@ -1228,7 +1228,7 @@ namespace LogfileConverter
                     string genericErrorRequest = List2SimEntry(errorRequestBytes.ToList());
                     string genericErrorResponse = List2SimEntry(errorResponseBytes.ToList());
                     string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
-                    if (simLines.ContainsKey(genericErrorKey))
+                    if (!simLines.ContainsKey(genericErrorKey))
                     {
                         simLines.Add(genericErrorKey, new Tuple<string, string>(genericErrorRequest, genericErrorResponse));
                     }
