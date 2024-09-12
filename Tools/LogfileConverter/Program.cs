@@ -1109,9 +1109,10 @@ namespace LogfileConverter
                     return false;
                 }
 
-                int[] errorRequestBytes = new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF };
-                int[] errorResponseBytes = new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12, 0x00 };
-                bool hasErrorRequest = false;
+                List<Tuple<int[], int[]>> addSimLines = new List<Tuple<int[], int[]>>();
+                List<Tuple<int[], int[]>> addSimCandidates = new List<Tuple<int[], int[]>>();
+                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12, 0x00 }));
+
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, Tuple<string, string>> simLines = new Dictionary<string, Tuple<string, string>>();
@@ -1174,27 +1175,36 @@ namespace LogfileConverter
                         if (bmwFastFormat)
                         {
                             requestUse = requestBytes.GetRange(0, dataLengthReq);
-                            bool errorRequestMatch = true;
-                            if (requestUse.Count == errorRequestBytes.Length)
+                            foreach (Tuple<int[], int[]> addLine in addSimCandidates)
                             {
-                                for (int index = 0; index < requestUse.Count; index++)
+                                if (addSimLines.Contains(addLine))
                                 {
-                                    if (errorRequestBytes[index] < 0)
-                                    {
-                                        continue;
-                                    }
+                                    continue;
+                                }
 
-                                    if (requestUse[index] != errorRequestBytes[index])
+                                bool lineMatched = true;
+                                int[] addRequest = addLine.Item1;
+                                if (requestUse.Count == addRequest.Length)
+                                {
+                                    for (int index = 0; index < requestUse.Count; index++)
                                     {
-                                        errorRequestMatch = false;
-                                        break;
+                                        if (addRequest[index] < 0)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (requestUse[index] != addRequest[index])
+                                        {
+                                            lineMatched = false;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
 
-                            if (errorRequestMatch)
-                            {
-                                hasErrorRequest = true;
+                                if (lineMatched)
+                                {
+                                    addSimLines.Add(addLine);
+                                }
                             }
                         }
 
@@ -1223,10 +1233,10 @@ namespace LogfileConverter
                     }
                 }
 
-                if (hasErrorRequest)
+                foreach (Tuple<int[], int[]> addLine in addSimLines)
                 {
-                    string genericErrorRequest = List2SimEntry(errorRequestBytes.ToList());
-                    string genericErrorResponse = List2SimEntry(errorResponseBytes.ToList());
+                    string genericErrorRequest = List2SimEntry(addLine.Item1.ToList());
+                    string genericErrorResponse = List2SimEntry(addLine.Item2.ToList());
                     string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
                     if (!simLines.ContainsKey(genericErrorKey))
                     {
