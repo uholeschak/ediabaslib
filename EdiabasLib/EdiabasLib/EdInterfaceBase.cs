@@ -359,9 +359,17 @@ namespace EdiabasLib
 
                     List<byte> responseBytes = recDataList.GetRange(0, telLength + 1);  // including checksum
 
-                    if (maskDataInternal != null && maskDataInternal.Length >= 3 && maskDataInternal[1] != 0xFF)
+                    if (maskDataInternal != null && maskDataInternal.Length >= 3)
                     {
-                        responseBytes[2] = sendData[1];     // update ECU address
+                        if (maskDataInternal[1] != 0xFF)
+                        {
+                            responseBytes[2] = sendData[1];     // update ECU address
+                        }
+
+                        if (maskDataInternal[2] != 0xFF)
+                        {
+                            responseBytes[1] = sendData[2];     // update tester address
+                        }
                     }
 
                     responseBytes[responseBytes.Count -1] = CalcChecksumBmwFast(responseBytes.ToArray(), telLength);    // fix checksum
