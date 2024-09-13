@@ -23,6 +23,13 @@ namespace LogfileConverter
         private static int _edicCanTesterAddr;
         private static int _edicCanEcuAddr;
 
+        private class SimData(int[] request, int[] response, List<SimData> addData = null)
+        {
+            public int[] Request { get; private set; } = request;
+            public int[] Response { get; private set; } = response;
+            public List<SimData> AddData { get; private set; } = addData;
+        }
+
         static int Main(string[] args)
         {
             bool sortFile = false;
@@ -1109,14 +1116,15 @@ namespace LogfileConverter
                     return false;
                 }
 
-                List<Tuple<int[], int[]>> resetSimLines = new List<Tuple<int[], int[]>>();
-                resetSimLines.Add(new Tuple<int[], int[]>(new int[] { 0x83, -1, 0xF1, 0x14, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF }));    // clear DTC
-                resetSimLines.Add(new Tuple<int[], int[]>(new int[] { 0x84, -1, 0xF1, 0x14, -1, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF }));    // clear DTC
+                List<SimData> simErrorReset = new List<SimData>();
+                simErrorReset.Add(new SimData(new int[] { 0x83, -1, 0xF1, 0x14, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF }));    // clear DTC
+                simErrorReset.Add(new SimData(new int[] { 0x84, -1, 0xF1, 0x14, -1, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF }));    // clear DTC
 
-                List<Tuple<int[], int[], List<Tuple<int[], int[]>>>> addSimLines = new List<Tuple<int[], int[], List<Tuple<int[], int[]>>>>();
-                List<Tuple<int[], int[], List<Tuple<int[], int[]>>>> addSimCandidates = new List<Tuple<int[], int[], List<Tuple<int[], int[]>>>>();
-                addSimCandidates.Add(new Tuple<int[], int[], List<Tuple<int[], int[]>>>(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x82, 0xF1, 0x00, 0x58 }, resetSimLines));  // FS_LESEN
-                addSimCandidates.Add(new Tuple<int[], int[], List<Tuple<int[], int[]>>>(new int[] { 0x83, -1, 0xF1, 0x17, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12 }, resetSimLines));    // FS_LESEN_DETAIL
+                List<SimData> simCandidates = new List<SimData>();
+                simCandidates.Add(new SimData(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x82, 0xF1, 0x00, 0x58 }, simErrorReset));  // FS_LESEN
+                simCandidates.Add(new SimData(new int[] { 0x83, -1, 0xF1, 0x17, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12 }, simErrorReset));    // FS_LESEN_DETAIL
+
+                List<SimData> simAddData = new List<SimData>();
 
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
@@ -1180,15 +1188,15 @@ namespace LogfileConverter
                         if (bmwFastFormat)
                         {
                             requestUse = requestBytes.GetRange(0, dataLengthReq);
-                            foreach (Tuple<int[], int[], List<Tuple<int[], int[]>>> addLine in addSimCandidates)
+                            foreach (SimData simData in simCandidates)
                             {
-                                if (addSimLines.Contains(addLine))
+                                if (simAddData.Contains(simData))
                                 {
                                     continue;
                                 }
 
                                 bool lineMatched = true;
-                                int[] addRequest = addLine.Item1;
+                                int[] addRequest = simData.Request;
                                 if (requestUse.Count == addRequest.Length)
                                 {
                                     for (int index = 0; index < requestUse.Count; index++)
@@ -1212,7 +1220,7 @@ namespace LogfileConverter
 
                                 if (lineMatched)
                                 {
-                                    addSimLines.Add(addLine);
+                                    simAddData.Add(simData);
                                 }
                             }
                         }
@@ -1242,23 +1250,33 @@ namespace LogfileConverter
                     }
                 }
 
-                List< Tuple<int[], int[]>> addSimLinesAll = new List<Tuple<int[], int[]>>();
-                foreach (Tuple<int[], int[], List<Tuple<int[], int[]>>> addLine in addSimLines)
+                List<SimData> simAddAll = new List<SimData>();
+                foreach (SimData simData in simAddData)
                 {
-                    addSimLinesAll.Add(new Tuple<int[], int[]>(addLine.Item1, addLine.Item2));
-                    if (addLine.Item3 != null)
+                    if (simAddAll.Contains(simData))
                     {
-                        foreach (Tuple<int[], int[]> addSubLine in addLine.Item3)
+                        continue;
+                    }
+
+                    simAddAll.Add(simData);
+                    if (simData.AddData != null)
+                    {
+                        foreach (SimData simDataAdd in simData.AddData)
                         {
-                            addSimLinesAll.Add(new Tuple<int[], int[]>(addSubLine.Item1, addSubLine.Item2));
+                            if (simAddAll.Contains(simDataAdd))
+                            {
+                                continue;
+                            }
+
+                            simAddAll.Add(simDataAdd);
                         }
                     }
                 }
 
-                foreach (Tuple<int[], int[]> addLine in addSimLinesAll)
+                foreach (SimData simData in simAddAll)
                 {
-                    string genericErrorRequest = List2SimEntry(addLine.Item1.ToList());
-                    string genericErrorResponse = List2SimEntry(addLine.Item2.ToList(), true);
+                    string genericErrorRequest = List2SimEntry(simData.Request.ToList());
+                    string genericErrorResponse = List2SimEntry(simData.Response.ToList(), true);
                     string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
                     if (!simLines.ContainsKey(genericErrorKey))
                     {
