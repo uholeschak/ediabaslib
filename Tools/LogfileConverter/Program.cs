@@ -1117,12 +1117,13 @@ namespace LogfileConverter
                 }
 
                 List<SimData> simErrorReset = new List<SimData>();
-                simErrorReset.Add(new SimData(new int[] { 0x83, -1, 0xF1, 0x14, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF }));    // clear DTC
-                simErrorReset.Add(new SimData(new int[] { 0x84, -1, 0xF1, 0x14, -1, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF }));    // clear DTC
+                simErrorReset.Add(new SimData(new int[] { 0x83, -1, 0xF1, 0x14, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF, 0x00 }));    // clear DTC
+                simErrorReset.Add(new SimData(new int[] { 0xC3, -1, 0xF1, 0x14, -1, -1 }, new int[] { 0x83, 0xF1, 0x12, 0x54, 0xFF, 0xFF, 0x00 }));    // global clear DTC
+                simErrorReset.Add(new SimData(new int[] { 0x84, -1, 0xF1, 0x14, -1, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF, 0x00 }));    // clear DTC
 
                 List<SimData> simCandidates = new List<SimData>();
-                simCandidates.Add(new SimData(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x82, 0xF1, 0x00, 0x58 }, simErrorReset));  // FS_LESEN
-                simCandidates.Add(new SimData(new int[] { 0x83, -1, 0xF1, 0x17, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12 }, simErrorReset));    // FS_LESEN_DETAIL
+                simCandidates.Add(new SimData(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x82, 0xF1, 0x00, 0x58, 0x00 }, simErrorReset));  // FS_LESEN
+                simCandidates.Add(new SimData(new int[] { 0x83, -1, 0xF1, 0x17, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12, 0x00 }, simErrorReset));    // FS_LESEN_DETAIL
 
                 List<SimData> simAddData = new List<SimData>();
 
@@ -1276,7 +1277,7 @@ namespace LogfileConverter
                 foreach (SimData simData in simAddAll)
                 {
                     string genericErrorRequest = List2SimEntry(simData.Request.ToList());
-                    string genericErrorResponse = List2SimEntry(simData.Response.ToList(), true);
+                    string genericErrorResponse = List2SimEntry(simData.Response.ToList());
                     string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
                     if (!simLines.ContainsKey(genericErrorKey))
                     {
@@ -1436,10 +1437,9 @@ namespace LogfileConverter
             return BitConverter.ToString(dataList.ToArray()).Replace("-", string.Empty);
         }
 
-        private static string List2SimEntry(List<int> dataList, bool addChecksum = false)
+        private static string List2SimEntry(List<int> dataList)
         {
             StringBuilder sb = new StringBuilder();
-            byte checksum = 0;
             foreach (int data in dataList)
             {
                 if (sb.Length > 0)
@@ -1454,13 +1454,7 @@ namespace LogfileConverter
                 else
                 {
                     sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}", data));
-                    checksum += (byte)data;
                 }
-            }
-
-            if (addChecksum && sb.Length > 0)
-            {
-                sb.Append(string.Format(CultureInfo.InvariantCulture, ",{0:X02}", checksum));
             }
 
             return sb.ToString();
