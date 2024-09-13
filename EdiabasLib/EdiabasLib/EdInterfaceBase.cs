@@ -343,6 +343,7 @@ namespace EdiabasLib
                     return false;
                 }
 
+                bool broadcast = (sendData[0] & 0xC0) != 0x80;
                 List<byte> recDataList = recDataInternal.ToList();
                 for (; ; )
                 {
@@ -359,7 +360,7 @@ namespace EdiabasLib
 
                     List<byte> responseBytes = recDataList.GetRange(0, telLength + 1);  // including checksum
 
-                    if (maskDataInternal != null && maskDataInternal.Length >= 3)
+                    if (!broadcast && maskDataInternal != null && maskDataInternal.Length >= 3)
                     {
                         if (maskDataInternal[1] != 0xFF)
                         {
