@@ -1111,8 +1111,10 @@ namespace LogfileConverter
 
                 List<Tuple<int[], int[]>> addSimLines = new List<Tuple<int[], int[]>>();
                 List<Tuple<int[], int[]>> addSimCandidates = new List<Tuple<int[], int[]>>();
-                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x82, 0xF1, 0x00, 0x58 }));
-                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x83, -1, 0xF1, 0x17, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12 }));
+                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x82, 0xF1, 0x00, 0x58 }));  // FS_LESEN
+                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x83, -1, 0xF1, 0x17, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12 }));    // FS_LESEN_DETAIL
+                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x83, -1, 0xF1, 0x14, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF }));    // clear DTC
+                addSimCandidates.Add(new Tuple<int[], int[]>(new int[] { 0x84, -1, 0xF1, 0x14, -1, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x54, 0xFF, 0xFF }));    // clear DTC
 
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
