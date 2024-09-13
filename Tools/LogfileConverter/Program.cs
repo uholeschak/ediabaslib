@@ -1203,6 +1203,10 @@ namespace LogfileConverter
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    lineMatched = false;
+                                }
 
                                 if (lineMatched)
                                 {
