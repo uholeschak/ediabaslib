@@ -752,7 +752,7 @@ namespace EdiabasLibConfigTool
                     receiveData[i] = (byte)data;
                 }
 
-                if ((receiveData[0] & 0x80) != 0x80)
+                if ((receiveData[0] & 0xC0) != 0x80)
                 {   // 0xC0: Broadcast
                     while (_dataStream.DataAvailable)
                     {
