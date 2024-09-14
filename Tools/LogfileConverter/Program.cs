@@ -1124,6 +1124,7 @@ namespace LogfileConverter
                 List<SimData> simCandidates = new List<SimData>();
                 simCandidates.Add(new SimData(new int[] { 0x84, -1, 0xF1, 0x18, 0x02, 0xFF, 0xFF }, new int[] { 0x82, 0xF1, 0x00, 0x58, 0x00 }, simErrorReset));  // FS_LESEN
                 simCandidates.Add(new SimData(new int[] { 0x83, -1, 0xF1, 0x17, -1, -1 }, new int[] { 0x83, 0xF1, 0x00, 0x7F, 0x17, 0x12, 0x00 }, simErrorReset));    // FS_LESEN_DETAIL
+                simCandidates.Add(new SimData(new int[] { 0x82, -1, 0xF1, 0x11, 0x01 }, new int[] { 0x82, 0xF1, 0x00, 0x51, 0x01, 0x00 }));    // STEUERGERAETE_RESET
 
                 List<SimData> simAddData = new List<SimData>();
 
