@@ -105,6 +105,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:enumeration>
+      <xs:enumeration value="SIMULATION">
+        <xs:annotation>
+          <xs:documentation>
+            Simulation interface. Requires an interface or ECU simulation files.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
     </xs:restriction>
   </xs:simpleType>
 
