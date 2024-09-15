@@ -34,6 +34,7 @@ namespace BmwDeepObd
         {
             RequestAppDetailBtSettings,
             RequestSelectSgbd,
+            RequestSelectSim,
             RequestSelectDevice,
             RequestAdapterConfig,
             RequestOpenExternalFile,
@@ -483,6 +484,15 @@ namespace BmwDeepObd
                     }
                     break;
 
+                case ActivityRequest.RequestSelectSim:
+                    // When FilePickerActivity returns with a file
+                    if (data?.Extras != null && resultCode == Android.App.Result.Ok)
+                    {
+                        _instanceData.SimulationDir = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        UpdateOptionsMenu();
+                    }
+                    break;
+
                 case ActivityRequest.RequestSelectDevice:
                     // When DeviceListActivity returns with a device to connect
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
@@ -631,6 +641,14 @@ namespace BmwDeepObd
             {
                 selInterfaceMenu.SetTitle(string.Format(Culture, "{0}: {1}", GetString(Resource.String.menu_tool_sel_interface), _activityCommon.InterfaceName()));
                 selInterfaceMenu.SetEnabled(!commActive && !_instanceData.Offline && !fixedSgbd);
+            }
+
+            IMenuItem selSgbdSimDirMenu = menu.FindItem(Resource.Id.menu_sel_sim_dir);
+            if (selSgbdSimDirMenu != null)
+            {
+                bool validDir = !string.IsNullOrEmpty(_instanceData.SimulationDir) && Directory.Exists(_instanceData.SimulationDir);
+                selSgbdSimDirMenu.SetVisible(!commActive && _activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Simulation);
+                selSgbdSimDirMenu.SetChecked(validDir);
             }
 
             IMenuItem selSgbdGrpMenu = menu.FindItem(Resource.Id.menu_tool_sel_sgbd_grp);
@@ -816,6 +834,15 @@ namespace BmwDeepObd
                         }
                     }
                     SelectSgbdFile(item.ItemId == Resource.Id.menu_tool_sel_sgbd_grp);
+                    return true;
+
+                case Resource.Id.menu_sel_sim_dir:
+                    if (IsJobRunning())
+                    {
+                        return true;
+                    }
+
+                    SelectSimDir();
                     return true;
 
                 case Resource.Id.menu_scan:
@@ -1289,6 +1316,31 @@ namespace BmwDeepObd
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? ".grp" : ".prg");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
+        }
+
+        private void SelectSimDir()
+        {
+            // Launch the FilePickerActivity to select a sgbd file
+            Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
+            string initDir = _appDataDir;
+            try
+            {
+                if (!string.IsNullOrEmpty(_instanceData.SimulationDir) && Directory.Exists(_instanceData.SimulationDir))
+                {
+                    initDir = _instanceData.SimulationDir;
+                }
+            }
+            catch (Exception)
+            {
+                initDir = _appDataDir;
+            }
+
+            serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.menu_sel_sim_dir));
+            serverIntent.PutExtra(FilePickerActivity.ExtraDirSelect, true);
+            serverIntent.PutExtra(FilePickerActivity.ExtraShowCurrentDir, true);
+            serverIntent.PutExtra(FilePickerActivity.ExtraShowFiles, false);
+            serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSim);
         }
 
         private void SelectInterface()

@@ -17,6 +17,10 @@
         <item android:id="@+id/menu_tool_sel_interface"
               android:icon="@android:drawable/ic_menu_manage"
               android:title="@string/menu_tool_sel_interface" />
+        <item android:id="@+id/menu_sel_sim_dir"
+              android:icon="@android:drawable/ic_menu_manage"
+              android:title="@string/menu_sel_sim_dir"
+              android:checkable="true" />
         <item android:id="@+id/menu_tool_sel_sgbd_grp"
               android:icon="@android:drawable/ic_menu_manage"
               android:title="@string/menu_tool_sel_sgbd_grp" />
