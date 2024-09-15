@@ -9197,6 +9197,11 @@ namespace BmwDeepObd
                     case ActivityCommon.InterfaceType.Ftdi:
                         interfaceName = "FTDI";
                         break;
+
+                    case ActivityCommon.InterfaceType.Simulation:
+                        interfaceName = "SIMULATION";
+                        break;
+
                 }
                 globalNode.Add(new XAttribute("interface", interfaceName));
                 if (_instanceData.EcuSearchAbortIndex >= 0)

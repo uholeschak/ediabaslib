@@ -6158,6 +6158,9 @@ namespace BmwDeepObd
                     portName = EdFtdiInterface.PortId + "0";
                     connectParameter = new EdFtdiInterface.ConnectParameterType(UsbManager);
                     break;
+
+                case InterfaceType.Simulation:
+                    break;
             }
 
             EdiabasThread?.StartThread(portName, connectParameter, pageInfo, true, instanceData);
