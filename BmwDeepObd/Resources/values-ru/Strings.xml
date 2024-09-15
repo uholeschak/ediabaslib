@@ -406,6 +406,8 @@
   <string name="select_interface_elmwifi">ELM327 WIFI</string>
   <string name="select_interface_deepobdwifi">Deep OBD ELM WIFI</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
+  <!--Translate-->
+  <string name="select_interface_simulation">Моделирование</string>
 
   <!-- Manufacturer selection -->
   <string name="select_manufacturer">Выбрать производителя</string>
