@@ -6772,7 +6772,7 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(XmlToolActivity.ExtraVagDir, _instanceData.VagPath);
                 serverIntent.PutExtra(XmlToolActivity.ExtraBmwDir, _instanceData.BmwPath);
                 serverIntent.PutExtra(XmlToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
-                serverIntent.PutExtra(XmlToolActivity.ExtraSimulationDir, _instanceData.SimulationDir);
+                serverIntent.PutExtra(XmlToolActivity.ExtraSimulationDir, _instanceData.SimulationPath);
                 if (!string.IsNullOrEmpty(pageFileName))
                 {
                     serverIntent.PutExtra(XmlToolActivity.ExtraPageFileName, pageFileName);

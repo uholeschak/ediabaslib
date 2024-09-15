@@ -465,10 +465,10 @@ namespace BmwDeepObd
             try
             {
                 _stopThread = false;
-                string simulationDir = string.Empty;
+                string simulationPath = string.Empty;
                 if (string.Compare(portName, EdInterfaceBase.PortIdSimulation, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    simulationDir = instanceData.SimulationDir;
+                    simulationPath = instanceData.SimulationPath;
                 }
                 else if (Ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
                 {
@@ -483,7 +483,7 @@ namespace BmwDeepObd
                     }
                 }
                 Ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
-                ActivityCommon.SetEdiabasConfigProperties(Ediabas, instanceData.TraceDir, simulationDir, instanceData.TraceAppend);
+                ActivityCommon.SetEdiabasConfigProperties(Ediabas, instanceData.TraceDir, simulationPath, instanceData.TraceAppend);
                 CloseDataLog();
 
                 CommActive = commActive;

@@ -335,6 +335,7 @@ namespace BmwDeepObd
         private readonly List<PageInfo> _pageList = new List<PageInfo>();
         private PageInfo _errorPage = null;
         private string _ecuPath = string.Empty;
+        private string _simulationPath = string.Empty;
         private string _logPath = string.Empty;
         private bool _appendLog;
         private bool _logTagsPresent;
@@ -357,6 +358,8 @@ namespace BmwDeepObd
         public PageInfo ErrorPage => _errorPage;
 
         public string EcuPath => _ecuPath;
+
+        public string SimulationPath => _simulationPath;
 
         public string LogPath => _logPath;
 
@@ -419,6 +422,7 @@ namespace BmwDeepObd
             _pageList.Clear();
             _errorPage = null;
             _ecuPath = string.Empty;
+            _simulationPath = string.Empty;
             _logPath = string.Empty;
             _logTagsPresent = false;
             _compatIdsUsed = false;
@@ -477,6 +481,20 @@ namespace BmwDeepObd
                         {
                             // ReSharper disable once AssignNullToNotNullAttribute
                             _ecuPath = string.IsNullOrEmpty(xmlDir) ? attrib.Value : Path.Combine(xmlDir, attrib.Value);
+                        }
+                    }
+
+                    attrib = xnodeGlobal.Attributes["simulation_path"];
+                    if (attrib != null)
+                    {
+                        if (Path.IsPathRooted(attrib.Value))
+                        {
+                            _simulationPath = attrib.Value;
+                        }
+                        else
+                        {
+                            // ReSharper disable once AssignNullToNotNullAttribute
+                            _simulationPath = string.IsNullOrEmpty(xmlDir) ? attrib.Value : Path.Combine(xmlDir, attrib.Value);
                         }
                     }
 
