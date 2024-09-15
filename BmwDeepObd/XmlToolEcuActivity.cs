@@ -232,6 +232,7 @@ namespace BmwDeepObd
         public const string ExtraEcuDir = "ecu_dir";
         public const string ExtraVehicleSeries = "vehicle_series";
         public const string ExtraBmwServiceFunctions = "bmw_service_functions";
+        public const string ExtraSimulationDir = "simulation_dir";
         public const string ExtraTraceDir = "trace_dir";
         public const string ExtraTraceAppend = "trace_append";
         public const string ExtraInterface = "interface";
@@ -322,8 +323,8 @@ namespace BmwDeepObd
         private string _ecuDir;
         private string _vehicleSeries;
         private bool _bmwServiceFunctions;
-        private string _traceDir;
         private string _simulationDir;
+        private string _traceDir;
         private bool _traceAppend;
         private string _deviceAddress;
         private XmlToolActivity.EcuFunctionCallType _ecuFuncCall = XmlToolActivity.EcuFunctionCallType.None;
@@ -385,6 +386,7 @@ namespace BmwDeepObd
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _vehicleSeries = Intent.GetStringExtra(ExtraVehicleSeries);
             _bmwServiceFunctions = Intent.GetBooleanExtra(ExtraBmwServiceFunctions, false);
+            _simulationDir = Intent.GetStringExtra(ExtraSimulationDir);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
             _traceAppend = Intent.GetBooleanExtra(ExtraTraceAppend, true);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
@@ -2574,6 +2576,7 @@ namespace BmwDeepObd
                 Intent serverIntent = new Intent(this, typeof(BmwActuatorActivity));
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuName, _ecuInfo.Name);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraSimulationDir, _simulationDir);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceDir, _traceDir);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceAppend, _traceAppend);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);

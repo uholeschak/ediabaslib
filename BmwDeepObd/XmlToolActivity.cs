@@ -2204,6 +2204,7 @@ namespace BmwDeepObd
                     serverIntent.PutExtra(XmlToolEcuActivity.ExtraVehicleSeries, _instanceData.VehicleSeries);
                 }
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraBmwServiceFunctions, bmwServiceFunctions);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraSimulationDir, _instanceData.SimulationDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceDir, _instanceData.TraceDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceAppend, _instanceData.TraceAppend || _instanceData.ForceAppend);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
