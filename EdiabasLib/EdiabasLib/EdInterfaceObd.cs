@@ -809,6 +809,11 @@ namespace EdiabasLib
                     }
                 }
 
+                if (IsSimulationMode())
+                {
+                    return;
+                }
+
                 StartCommThread();
 
                 if (UseExtInterfaceFunc)

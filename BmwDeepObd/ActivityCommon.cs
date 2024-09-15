@@ -6335,6 +6335,7 @@ namespace BmwDeepObd
                 {
                     ediabas.SetConfigProperty("Simulation", "1");
                     ediabas.SetConfigProperty("SimulationPath", simulationPath);
+                    ediabas.SetConfigProperty("SimulationInterfaces", "OBD,ENET,EDIC");
                 }
                 else
                 {
