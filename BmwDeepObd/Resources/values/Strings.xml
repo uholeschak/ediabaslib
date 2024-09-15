@@ -313,6 +313,7 @@
   <string name="menu_connect">Connect</string>
   <string name="menu_manufacturer">Manufacturer</string>
   <string name="menu_adapter">Adapter</string>
+  <string name="menu_sel_sim_dir">Simulation directory</string>
   <string name="menu_adapter_config">Adapter configuration</string>
   <string name="menu_enet_ip">ENET IP</string>
   <string name="menu_adapter_ip">Adapter IP</string>

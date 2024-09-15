@@ -335,6 +335,8 @@
   <string name="menu_connect">Подключить</string>
   <string name="menu_manufacturer">Производитель</string>
   <string name="menu_adapter">Устройство</string>
+  <!--Translate-->
+  <string name="menu_sel_sim_dir">Каталог симуляций</string>
   <string name="menu_adapter_config">Настройки устройства</string>
   <string name="menu_adapter_ip">IP адаптера</string>
   <string name="menu_enet_ip">ENET IP</string>
