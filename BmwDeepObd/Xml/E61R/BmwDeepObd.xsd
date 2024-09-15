@@ -211,6 +211,13 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="simulation_path" type="string1-type" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Relative or absolute path of the simulation directory to use. If omitted the configuration path will be used (recommended).
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="log_path" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
