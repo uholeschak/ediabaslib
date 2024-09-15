@@ -620,6 +620,7 @@ namespace BmwDeepObd
             public string EcuPath { get; set; }
             public string VagPath { get; set; }
             public string BmwPath { get; set; }
+            public string SimulationPath { get; set; }
             public bool UserEcuFiles { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
@@ -645,7 +646,6 @@ namespace BmwDeepObd
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
             public string TraceBackupDir { get; set; }
-            public string SimulationDir { get; set; }
             public string PackageAssembliesDir { get; set; }
             public bool UpdateAvailable { get; set; }
             public int UpdateVersionCode { get; set; }
@@ -12775,6 +12775,7 @@ using System.Threading;"
             instanceData.EcuPath = string.Empty;
             instanceData.VagPath = string.Empty;
             instanceData.BmwPath = string.Empty;
+            instanceData.SimulationPath = string.Empty;
             instanceData.UserEcuFiles = false;
             if (string.IsNullOrEmpty(CustomStorageMedia))
             {
@@ -12801,6 +12802,32 @@ using System.Threading;"
             instanceData.BmwPath = Path.Combine(instanceData.AppDataPath, EcuBaseDir, BmwBaseDir);
             instanceData.TraceBackupDir = Path.Combine(instanceData.AppDataPath, TraceBackupDir);
             instanceData.PackageAssembliesDir = Path.Combine(instanceData.AppDataPath, PackageAssembliesDir);
+
+            JobReader jobReader = JobReader;
+            if (jobReader != null)
+            {
+                if (jobReader.Interface == InterfaceType.Simulation)
+                {
+                    try
+                    {
+                        string simulationPath = jobReader.SimulationPath;
+                        if (string.IsNullOrEmpty(simulationPath) || !Directory.Exists(simulationPath))
+                        {
+                            string xmlFileName = jobReader.XmlFileName;
+                            if (!string.IsNullOrEmpty(xmlFileName))
+                            {
+                                simulationPath = Path.GetDirectoryName(xmlFileName);
+                            }
+                        }
+
+                        instanceData.SimulationPath = simulationPath;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
 
             return true;
         }
