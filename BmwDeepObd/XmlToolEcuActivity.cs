@@ -2629,6 +2629,7 @@ namespace BmwDeepObd
                 serverIntent.PutExtra(VagCodingActivity.ExtraCodingMode, (int)codingMode);
                 serverIntent.PutExtra(VagCodingActivity.ExtraEcuName, _ecuInfo.Name);
                 serverIntent.PutExtra(VagCodingActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(VagCodingActivity.ExtraSimulationDir, _simulationDir);
                 serverIntent.PutExtra(VagCodingActivity.ExtraTraceDir, _traceDir);
                 serverIntent.PutExtra(VagCodingActivity.ExtraTraceAppend, _traceAppend);
                 serverIntent.PutExtra(VagCodingActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
@@ -2656,6 +2657,7 @@ namespace BmwDeepObd
                 Intent serverIntent = new Intent(this, typeof(VagAdaptionActivity));
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraEcuName, _ecuInfo.Name);
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraEcuDir, _ecuDir);
+                serverIntent.PutExtra(VagAdaptionActivity.ExtraSimulationDir, _simulationDir);
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraTraceDir, _traceDir);
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraTraceAppend, _traceAppend);
                 serverIntent.PutExtra(VagAdaptionActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
