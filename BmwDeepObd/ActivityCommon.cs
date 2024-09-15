@@ -6260,6 +6260,9 @@ namespace BmwDeepObd
                         edInterfaceObd.ComPort = EdFtdiInterface.PortId + "0";
                         connectParameter = new EdFtdiInterface.ConnectParameterType(_usbManager);
                         break;
+
+                    case InterfaceType.Simulation:
+                        break;
                 }
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
