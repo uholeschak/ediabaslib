@@ -674,6 +674,7 @@ namespace BmwDeepObd
             [XmlEnum(Name = "ElmWifi"), Description("ElmWifi")] ElmWifi,
             [XmlEnum(Name = "DeepObdWifi"), Description("DeepObdWifi")] DeepObdWifi,
             [XmlEnum(Name = "Ftdi"), Description("Ftdi")] Ftdi,
+            [XmlEnum(Name = "Simulations"), Description("Simulation")] Simulation,
         }
 
         public enum InternetConnectionType
@@ -2014,6 +2015,9 @@ namespace BmwDeepObd
 
                 case InterfaceType.Ftdi:
                     return _context.GetString(Resource.String.select_interface_ftdi);
+
+                case InterfaceType.Simulation:
+                    return _context.GetString(Resource.String.select_interface_simulation);
             }
             return string.Empty;
         }
@@ -2166,6 +2170,9 @@ namespace BmwDeepObd
 
                     case InterfaceType.Ftdi:
                         return true;
+
+                    case InterfaceType.Simulation:
+                        return true;
                 }
                 return false;
             }
@@ -2239,6 +2246,9 @@ namespace BmwDeepObd
                         }
                         return true;
                     }
+
+                    case InterfaceType.Simulation:
+                        return true;
                 }
                 return false;
             }
@@ -4782,6 +4792,10 @@ namespace BmwDeepObd
                 interfaceNames.Add(_context.GetString(Resource.String.select_interface_ftdi));
                 interfaceTypes.Add(InterfaceType.Ftdi);
             }
+
+            interfaceNames.Add(_context.GetString(Resource.String.select_interface_simulation));
+            interfaceTypes.Add(InterfaceType.Simulation);
+
             ArrayAdapter<string> adapter = new ArrayAdapter<string>(_context,
                 Android.Resource.Layout.SimpleListItemSingleChoice, interfaceNames.ToArray());
             listView.Adapter = adapter;
