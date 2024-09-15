@@ -397,6 +397,7 @@ namespace BmwDeepObd
             public string DeviceName { get; set; }
             public string DeviceAddress { get; set; }
             public string TraceDir { get; set; }
+            public string SimulationDir { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
             public string SgbdFunctional { get; set; }
@@ -2145,7 +2146,7 @@ namespace BmwDeepObd
 
             if (_ediabas != null)
             {
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
+                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.SimulationDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
             }
         }
 

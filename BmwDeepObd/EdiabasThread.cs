@@ -450,7 +450,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool StartThread(string comPort, object connectParameter, JobReader.PageInfo pageInfo, bool commActive, ActivityCommon.InstanceDataCommon instanceData)
+        public bool StartThread(string portName, object connectParameter, JobReader.PageInfo pageInfo, bool commActive, ActivityCommon.InstanceDataCommon instanceData)
         {
             if (_workerThread != null)
             {
@@ -465,20 +465,25 @@ namespace BmwDeepObd
             try
             {
                 _stopThread = false;
-                if (Ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
+                string simulationDir = string.Empty;
+                if (string.Compare(portName, EdInterfaceBase.PortIdSimulation, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    simulationDir = instanceData.SimulationDir;
+                }
+                else if (Ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
                 {
                     edInterfaceObd.UdsDtcStatusOverride = ActivityCommon.UdsDtcStatusOverride;
-                    edInterfaceObd.ComPort = comPort;
+                    edInterfaceObd.ComPort = portName;
                 }
                 else if (Ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
                 {
-                    if (!string.IsNullOrEmpty(comPort))
+                    if (!string.IsNullOrEmpty(portName))
                     {
-                        edInterfaceEnet.RemoteHost = comPort;
+                        edInterfaceEnet.RemoteHost = portName;
                     }
                 }
                 Ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
-                ActivityCommon.SetEdiabasConfigProperties(Ediabas, instanceData.TraceDir, instanceData.TraceAppend);
+                ActivityCommon.SetEdiabasConfigProperties(Ediabas, instanceData.TraceDir, simulationDir, instanceData.TraceAppend);
                 CloseDataLog();
 
                 CommActive = commActive;

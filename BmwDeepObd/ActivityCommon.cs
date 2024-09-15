@@ -645,6 +645,7 @@ namespace BmwDeepObd
             public string DataLogDir { get; set; }
             public string TraceDir { get; set; }
             public string TraceBackupDir { get; set; }
+            public string SimulationDir { get; set; }
             public string PackageAssembliesDir { get; set; }
             public bool UpdateAvailable { get; set; }
             public int UpdateVersionCode { get; set; }
@@ -6160,6 +6161,7 @@ namespace BmwDeepObd
                     break;
 
                 case InterfaceType.Simulation:
+                    portName = EdInterfaceBase.PortIdSimulation;
                     break;
             }
 
@@ -6304,7 +6306,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool SetEdiabasConfigProperties(EdiabasNet ediabas, string tracePath, bool appendTrace = false)
+        public static bool SetEdiabasConfigProperties(EdiabasNet ediabas, string tracePath, string simulationPath, bool appendTrace = false)
         {
             if (ediabas == null)
             {
@@ -6318,12 +6320,22 @@ namespace BmwDeepObd
                     ediabas.SetConfigProperty("TracePath", tracePath);
                     ediabas.SetConfigProperty("IfhTrace", string.Format("{0}", (int)EdiabasNet.EdLogLevel.Error));
                     ediabas.SetConfigProperty("AppendTrace", appendTrace ? "1" : "0");
-                    ediabas.SetConfigProperty("IfhTraceBuffering", ActivityCommon.IfhTraceBuffering ? "1" : "0");
-                    ediabas.SetConfigProperty("CompressTrace", ActivityCommon.CompressTrace ? "1" : "0");
+                    ediabas.SetConfigProperty("IfhTraceBuffering", IfhTraceBuffering ? "1" : "0");
+                    ediabas.SetConfigProperty("CompressTrace", CompressTrace ? "1" : "0");
                 }
                 else
                 {
                     ediabas.SetConfigProperty("IfhTrace", "0");
+                }
+
+                if (!string.IsNullOrEmpty(simulationPath))
+                {
+                    ediabas.SetConfigProperty("Simulation", "1");
+                    ediabas.SetConfigProperty("SimulationPath", simulationPath);
+                }
+                else
+                {
+                    ediabas.SetConfigProperty("Simulation", "0");
                 }
             }
             catch (Exception)

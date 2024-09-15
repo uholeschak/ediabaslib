@@ -323,6 +323,7 @@ namespace BmwDeepObd
         private string _vehicleSeries;
         private bool _bmwServiceFunctions;
         private string _traceDir;
+        private string _simulationDir;
         private bool _traceAppend;
         private string _deviceAddress;
         private XmlToolActivity.EcuFunctionCallType _ecuFuncCall = XmlToolActivity.EcuFunctionCallType.None;
@@ -1355,7 +1356,7 @@ namespace BmwDeepObd
                     AbortJobFunc = AbortEdiabasJob
                 };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _traceAppend);
+                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
             }
 
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);

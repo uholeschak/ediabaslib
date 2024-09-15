@@ -119,6 +119,7 @@ namespace BmwDeepObd
         private CodingMode _codingMode;
         private string _ecuDir;
         private string _traceDir;
+        private string _simulationDir;
         private bool _traceAppend;
         private string _deviceAddress;
 
@@ -414,7 +415,7 @@ namespace BmwDeepObd
                     AbortJobFunc = AbortEdiabasJob
                 };
                 _ediabas.SetConfigProperty("EcuPath", _ecuDir);
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _traceAppend);
+                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
             }
 
             _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
