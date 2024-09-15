@@ -47,6 +47,7 @@ namespace EdiabasLib
         private long _responseCounter;
         private object _responseCounterLock = new object();
         public const string SimFileExtension = ".sim";
+        public const string PortIdSimulation = "SIMULATION";
         protected EdSimFile EdSimFileInterface;
         protected EdSimFile EdSimFileSgbd;
         protected bool SimulationConnected;
