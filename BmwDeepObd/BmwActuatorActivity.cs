@@ -39,6 +39,7 @@ namespace BmwDeepObd
         // Intent extra
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
+        public const string ExtraSimulationDir = "simulation_dir";
         public const string ExtraTraceDir = "trace_dir";
         public const string ExtraTraceAppend = "trace_append";
         public const string ExtraInterface = "interface";
@@ -77,8 +78,8 @@ namespace BmwDeepObd
         private bool _activityActive;
         private bool _ediabasJobAbort;
         private string _ecuDir;
-        private string _traceDir;
         private string _simulationDir;
+        private string _traceDir;
         private bool _traceAppend;
         private string _deviceAddress;
         private List<XmlToolEcuActivity.JobInfo> _jobActuatorList;
@@ -117,6 +118,7 @@ namespace BmwDeepObd
             }, BroadcastReceived);
 
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
+            _simulationDir = Intent.GetStringExtra(ExtraSimulationDir);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
             _traceAppend = Intent.GetBooleanExtra(ExtraTraceAppend, true);
             _activityCommon.SelectedInterface = (ActivityCommon.InterfaceType)
