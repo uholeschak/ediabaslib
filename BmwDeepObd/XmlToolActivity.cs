@@ -369,8 +369,10 @@ namespace BmwDeepObd
                 AddErrorsPage = true;
                 NoErrorsPageUpdate = false;
                 EcuSearchAbortIndex = -1;
+                SimulationDir = string.Empty;
                 DeviceName = string.Empty;
                 DeviceAddress = string.Empty;
+                TraceDir = string.Empty;
                 TraceActive = true;
                 SgbdFunctional = string.Empty;
                 Vin = string.Empty;
@@ -394,10 +396,10 @@ namespace BmwDeepObd
             public bool NoErrorsPageUpdate { get; set; }
             public int ManualConfigIdx { get; set; }
             public int EcuSearchAbortIndex { get; set; }
+            public string SimulationDir { get; set; }
             public string DeviceName { get; set; }
             public string DeviceAddress { get; set; }
             public string TraceDir { get; set; }
-            public string SimulationDir { get; set; }
             public bool TraceActive { get; set; }
             public bool TraceAppend { get; set; }
             public string SgbdFunctional { get; set; }
@@ -600,6 +602,7 @@ namespace BmwDeepObd
         public const string ExtraVagDir = "vag_dir";
         public const string ExtraBmwDir = "bmw_dir";
         public const string ExtraAppDataDir = "app_data_dir";
+        public const string ExtraSimulationDir = "simulation_dir";
         public const string ExtraPageFileName = "page_file_name";
         public const string ExtraEcuFuncCall = "ecu_func_call";
         public const string ExtraEcuAutoRead = "ecu_auto_read";
@@ -897,8 +900,10 @@ namespace BmwDeepObd
             _vagDir = Intent.GetStringExtra(ExtraVagDir);
             _bmwDir = Intent.GetStringExtra(ExtraBmwDir);
             _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
+
             if (!_activityRecreated)
             {
+                _instanceData.SimulationDir = Intent.GetStringExtra(ExtraSimulationDir);
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
                 _instanceData.DeviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
                 _instanceData.DetectMotorbikes = Intent.GetBooleanExtra(ExtraMotorbikes, false);
