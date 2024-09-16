@@ -490,7 +490,25 @@ namespace BmwDeepObd
                     // When FilePickerActivity returns with a file
                     if (data?.Extras != null && resultCode == Android.App.Result.Ok)
                     {
-                        _instanceData.SimulationDir = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                        string simulationDir = string.Empty;
+                        try
+                        {
+                            string fileName = data.Extras.GetString(FilePickerActivity.ExtraFileName);
+                            if (File.Exists(fileName))
+                            {
+                                simulationDir = Path.GetDirectoryName(fileName);
+                            }
+                            else if (Directory.Exists(fileName))
+                            {
+                                simulationDir = fileName;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            simulationDir = string.Empty;
+                        }
+
+                        _instanceData.SimulationDir = simulationDir;
                         UpdateOptionsMenu();
                     }
                     break;
@@ -1338,10 +1356,8 @@ namespace BmwDeepObd
             }
 
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.menu_sel_sim_dir));
-            serverIntent.PutExtra(FilePickerActivity.ExtraDirSelect, true);
-            serverIntent.PutExtra(FilePickerActivity.ExtraShowCurrentDir, true);
-            serverIntent.PutExtra(FilePickerActivity.ExtraShowFiles, false);
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".sim");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSim);
         }
 
