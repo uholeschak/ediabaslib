@@ -1356,9 +1356,6 @@ namespace BmwDeepObd
             }
 
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.menu_sel_sim_dir));
-            serverIntent.PutExtra(FilePickerActivity.ExtraDirSelect, true);
-            serverIntent.PutExtra(FilePickerActivity.ExtraShowCurrentDir, true);
-            serverIntent.PutExtra(FilePickerActivity.ExtraShowFiles, true);
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, ".sim");
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSim);
