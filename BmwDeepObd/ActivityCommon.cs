@@ -6612,6 +6612,34 @@ namespace BmwDeepObd
             return File.Exists(traceFile);
         }
 
+        public static bool IsValidSimDir(string simulationDir)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(simulationDir))
+                {
+                    return false;
+                }
+
+                if (!Directory.Exists(simulationDir))
+                {
+                    return false;
+                }
+
+                string[] simFiles = Directory.GetFiles(simulationDir, "*.sim", SearchOption.TopDirectoryOnly);
+                if (simFiles.Length == 0)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public static PackageInfo GetPackageInfo(PackageManager packageManager, string packageName, PackageInfoFlags infoFlags = 0)
         {
             try
