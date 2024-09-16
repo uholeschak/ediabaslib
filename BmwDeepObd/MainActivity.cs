@@ -6819,6 +6819,11 @@ namespace BmwDeepObd
                 Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _instanceData.EcuPath);
                 serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _instanceData.AppDataPath);
+                if (!string.IsNullOrEmpty(_instanceData.SimulationPath))
+                {
+                    serverIntent.PutExtra(EdiabasToolActivity.ExtraSimulationDir, _instanceData.SimulationPath);
+                }
+
                 if (!string.IsNullOrEmpty(_instanceData.ConfigFileName))
                 {
                     try

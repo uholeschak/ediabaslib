@@ -161,6 +161,7 @@ namespace BmwDeepObd
         public const string ExtraInitDir = "init_dir";
         public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraConfigDir = "config_dir";
+        public const string ExtraSimulationDir = "simulation_dir";
         public const string ExtraSgbdFile = "sgbd";
         public const string ExtraJobList = "job_list";
         public const string ExtraInterface = "interface";
@@ -344,6 +345,7 @@ namespace BmwDeepObd
 
             if (!_activityRecreated)
             {
+                _instanceData.SimulationDir = Intent.GetStringExtra(ExtraSimulationDir);
                 _instanceData.DeviceName = Intent.GetStringExtra(ExtraDeviceName);
                 _instanceData.DeviceAddress = Intent.GetStringExtra(ExtraDeviceAddress);
                 if (jobListInitial != null && jobListInitial.Length > 0)
