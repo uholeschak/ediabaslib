@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -171,6 +172,7 @@ namespace BmwDeepObd
         public const string ExtraElmWifiIp = "elmwifi_ip";
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
+        public const int UpdateDataDelay = 500;
 
         private const string TranslationFileName = "TranslationEdiabas.xml";
 
@@ -2798,6 +2800,8 @@ namespace BmwDeepObd
 
             _jobThread = new Thread(() =>
             {
+                long lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDataDelay;
+
                 for (; ; )
                 {
                     List<string> messageList = new List<string>();
@@ -2920,6 +2924,16 @@ namespace BmwDeepObd
                         _runContinuous = false;
                     }
 
+                    while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDataDelay * ActivityCommon.TickResolMs)
+                    {
+                        Thread.Sleep(10);
+                        if (!_runContinuous)
+                        {
+                            break;
+                        }
+                    }
+
+                    lastUpdateTime = Stopwatch.GetTimestamp();
                     RunOnUiThread(() =>
                     {
                         if (_activityCommon == null)
@@ -2939,8 +2953,6 @@ namespace BmwDeepObd
                     {
                         break;
                     }
-
-                    Thread.Sleep(100);
                 }
 
                 RunOnUiThread(() =>
