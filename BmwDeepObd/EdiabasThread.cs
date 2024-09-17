@@ -489,7 +489,7 @@ namespace BmwDeepObd
                 CommActive = commActive;
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
-                _lastUpdateTime = Stopwatch.GetTimestamp();
+                _lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDataDelay;
                 _ecuPath = instanceData.EcuPath;
                 _vagPath = instanceData.VagPath;
                 _bmwPath = instanceData.BmwPath;
