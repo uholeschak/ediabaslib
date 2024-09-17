@@ -1374,7 +1374,7 @@ namespace BmwDeepObd
             }
 
             bool commActive = IsJobRunning();
-            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(true);
+            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(_instanceData.SimulationDir, true);
 
             IMenuItem selInterfaceMenu = menu.FindItem(Resource.Id.menu_tool_sel_interface);
             if (selInterfaceMenu != null)
@@ -1969,7 +1969,7 @@ namespace BmwDeepObd
 
             _buttonRead.Text = GetString((_instanceData.ManualConfigIdx > 0) ?
                 Resource.String.button_xml_tool_edit : Resource.String.button_xml_tool_read);
-            _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable();
+            _buttonRead.Enabled = _activityCommon.IsInterfaceAvailable(_instanceData.SimulationDir);
             int selectedCount;
             lock (_ecuListLock)
             {

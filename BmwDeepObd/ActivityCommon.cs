@@ -2183,7 +2183,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool IsInterfaceAvailable(bool ignoreIp = false)
+        public bool IsInterfaceAvailable(string simulationDir = null, bool ignoreIp = false)
         {
             try
             {
@@ -2249,7 +2249,7 @@ namespace BmwDeepObd
                     }
 
                     case InterfaceType.Simulation:
-                        return true;
+                        return IsValidSimDir(simulationDir);
                 }
                 return false;
             }

@@ -570,7 +570,7 @@ namespace BmwDeepObd
             {
                 if (autoConnect != ConnectActionArgs.AutoConnectMode.None)
                 {
-                    if (jobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable())
+                    if (jobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable(_instanceData.SimulationPath))
                     {
                         ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto, autoConnect));
                         connectStarted = true;
@@ -638,7 +638,7 @@ namespace BmwDeepObd
                             break;
                         }
 
-                        if (jobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable())
+                        if (jobReader.PageList.Count > 0 && _activityCommon.IsInterfaceAvailable(_instanceData.SimulationPath))
                         {
                             ConnectAction(_connectButtonInfo.Button, new ConnectActionArgs(ConnectActionArgs.ConnectSource.Auto, ConnectActionArgs.AutoConnectMode.Connect));
                             connectStarted = true;
@@ -1250,7 +1250,7 @@ namespace BmwDeepObd
             }
 
             bool commActive = IsCommActive();
-            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(true);
+            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(_instanceData.SimulationPath, true);
             bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
             JobReader jobReader = ActivityCommon.JobReader;
@@ -3624,7 +3624,7 @@ namespace BmwDeepObd
                     buttonEnabled = false;
                 }
 
-                if (!_activityCommon.IsInterfaceAvailable())
+                if (!_activityCommon.IsInterfaceAvailable(_instanceData.SimulationPath))
                 {
                     buttonEnabled = false;
                 }

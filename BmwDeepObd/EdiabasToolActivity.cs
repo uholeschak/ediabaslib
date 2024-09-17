@@ -646,7 +646,7 @@ namespace BmwDeepObd
             }
 
             bool commActive = IsJobRunning();
-            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(true);
+            bool interfaceAvailable = _activityCommon.IsInterfaceAvailable(_instanceData.SimulationDir, true);
             bool fixedSgbd = !string.IsNullOrEmpty(_sgbdFileNameInitial);
 
             IMenuItem offlineMenu = menu.FindItem(Resource.Id.menu_tool_offline);
@@ -1258,7 +1258,7 @@ namespace BmwDeepObd
             }
             else
             {
-                if (!_activityCommon.IsInterfaceAvailable())
+                if (!_activityCommon.IsInterfaceAvailable(_instanceData.SimulationDir))
                 {
                     buttonConnectEnable = false;
                 }
