@@ -2803,6 +2803,7 @@ namespace BmwDeepObd
                 long lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDataDelay;
                 object messageListLock = new object();
                 List<string> messageList = new List<string>();
+                List<string> messageListLast = null;
 
                 for (; ; )
                 {
@@ -2861,18 +2862,12 @@ namespace BmwDeepObd
                                 }
                                 if (messageList.Count == 0)
                                 {
-                                    lock (messageListLock)
-                                    {
-                                        messageList.Add(GetString(Resource.String.tool_no_errors));
-                                    }
+                                    messageList.Add(GetString(Resource.String.tool_no_errors));
                                 }
                             }
                             else
                             {
-                                lock (messageListLock)
-                                {
-                                    messageList.Add(GetString(Resource.String.tool_read_errors_failure));
-                                }
+                                messageList.Add(GetString(Resource.String.tool_read_errors_failure));
                             }
                         }
                         else
@@ -2925,10 +2920,7 @@ namespace BmwDeepObd
                             exceptionText = EdiabasNet.GetExceptionText(ex, false, false);
                         }
 
-                        lock (messageListLock)
-                        {
-                            messageList.Add(exceptionText);
-                        }
+                        messageList.Add(exceptionText);
 
                         if (ActivityCommon.IsCommunicationError(exceptionText))
                         {
@@ -2937,37 +2929,58 @@ namespace BmwDeepObd
                         _runContinuous = false;
                     }
 
-                    while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDataDelay * ActivityCommon.TickResolMs)
+                    bool listChanged = false;
+                    if (messageListLast == null || messageListLast.Count != messageList.Count)
                     {
-                        Thread.Sleep(10);
-                        if (!_runContinuous)
+                        listChanged = true;
+                    }
+                    else
+                    {
+                        if (!messageList.SequenceEqual(messageListLast))
                         {
-                            break;
+                            listChanged = true;
                         }
                     }
 
-                    lastUpdateTime = Stopwatch.GetTimestamp();
-                    RunOnUiThread(() =>
+                    if (listChanged)
                     {
-                        if (_activityCommon == null)
-                        {
-                            return;
-                        }
-
-                        List<string> messageListLocal = null;
                         lock (messageListLock)
                         {
-                            messageListLocal = messageList;
+                            messageListLast = new List<string>(messageList);
                         }
 
-                        _infoListAdapter.Items.Clear();
-                        foreach (string message in messageListLocal)
+                        while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDataDelay * ActivityCommon.TickResolMs)
                         {
-                            _infoListAdapter.Items.Add(new TableResultItem(message, null));
+                            Thread.Sleep(10);
+                            if (!_runContinuous)
+                            {
+                                break;
+                            }
                         }
-                        _infoListAdapter.NotifyDataSetChanged();
-                        UpdateDisplay();
-                    });
+
+                        lastUpdateTime = Stopwatch.GetTimestamp();
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            List<string> messageListLocal = null;
+                            lock (messageListLock)
+                            {
+                                messageListLocal = new List<string>(messageListLast);
+                            }
+
+                            _infoListAdapter.Items.Clear();
+                            foreach (string message in messageListLocal)
+                            {
+                                _infoListAdapter.Items.Add(new TableResultItem(message, null));
+                            }
+                            _infoListAdapter.NotifyDataSetChanged();
+                            UpdateDisplay();
+                        });
+                    }
 
                     if (!_runContinuous)
                     {
