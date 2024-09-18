@@ -172,7 +172,7 @@ namespace BmwDeepObd
         public const string ExtraElmWifiIp = "elmwifi_ip";
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
-        public const int UpdateDataDelay = 500;
+        public const int UpdateDataDelay = 200;
 
         private const string TranslationFileName = "TranslationEdiabas.xml";
 
@@ -2802,12 +2802,12 @@ namespace BmwDeepObd
             {
                 long lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDataDelay;
                 object messageListLock = new object();
-                List<string> messageList = new List<string>();
-                List<string> messageListLast = null;
+                List<string> messageListNew = new List<string>();
+                List<string> messageListCurrent = null;
 
                 for (; ; )
                 {
-                    messageList.Clear();
+                    messageListNew.Clear();
                     try
                     {
                         bool fsDetail = string.Compare(jobName, "FS_LESEN_DETAIL", StringComparison.OrdinalIgnoreCase) == 0;
@@ -2855,19 +2855,19 @@ namespace BmwDeepObd
 
                                             List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail =
                                                 new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
-                                            PrintResults(messageList, resultSetsDetail);
+                                            PrintResults(messageListNew, resultSetsDetail);
                                         }
                                     }
                                     dictIndex++;
                                 }
-                                if (messageList.Count == 0)
+                                if (messageListNew.Count == 0)
                                 {
-                                    messageList.Add(GetString(Resource.String.tool_no_errors));
+                                    messageListNew.Add(GetString(Resource.String.tool_no_errors));
                                 }
                             }
                             else
                             {
-                                messageList.Add(GetString(Resource.String.tool_read_errors_failure));
+                                messageListNew.Add(GetString(Resource.String.tool_read_errors_failure));
                             }
                         }
                         else
@@ -2909,7 +2909,7 @@ namespace BmwDeepObd
                             _ediabas.ExecuteJob(jobName);
 
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                            PrintResults(messageList, resultSets);
+                            PrintResults(messageListNew, resultSets);
                         }
                     }
                     catch (Exception ex)
@@ -2920,7 +2920,7 @@ namespace BmwDeepObd
                             exceptionText = EdiabasNet.GetExceptionText(ex, false, false);
                         }
 
-                        messageList.Add(exceptionText);
+                        messageListNew.Add(exceptionText);
 
                         if (ActivityCommon.IsCommunicationError(exceptionText))
                         {
@@ -2930,13 +2930,13 @@ namespace BmwDeepObd
                     }
 
                     bool listChanged = false;
-                    if (messageListLast == null || messageListLast.Count != messageList.Count)
+                    if (messageListCurrent == null || messageListCurrent.Count != messageListNew.Count)
                     {
                         listChanged = true;
                     }
                     else
                     {
-                        if (!messageList.SequenceEqual(messageListLast))
+                        if (!messageListNew.SequenceEqual(messageListCurrent))
                         {
                             listChanged = true;
                         }
@@ -2944,9 +2944,11 @@ namespace BmwDeepObd
 
                     if (listChanged)
                     {
+                        List<string> messageListTemp;
                         lock (messageListLock)
                         {
-                            messageListLast = new List<string>(messageList);
+                            messageListCurrent = new List<string>(messageListNew);
+                            messageListTemp = messageListCurrent;
                         }
 
                         while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDataDelay * ActivityCommon.TickResolMs)
@@ -2969,7 +2971,7 @@ namespace BmwDeepObd
                             List<string> messageListLocal = null;
                             lock (messageListLock)
                             {
-                                messageListLocal = new List<string>(messageListLast);
+                                messageListLocal = new List<string>(messageListTemp);
                             }
 
                             _infoListAdapter.Items.Clear();
@@ -2977,6 +2979,7 @@ namespace BmwDeepObd
                             {
                                 _infoListAdapter.Items.Add(new TableResultItem(message, null));
                             }
+
                             _infoListAdapter.NotifyDataSetChanged();
                             UpdateDisplay();
                         });
