@@ -172,7 +172,7 @@ namespace BmwDeepObd
         public const string ExtraElmWifiIp = "elmwifi_ip";
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
-        public const int UpdateDataDelay = 500;
+        public const int UpdateDataDelay = 200;
 
         private const string TranslationFileName = "TranslationEdiabas.xml";
 
@@ -2801,10 +2801,13 @@ namespace BmwDeepObd
             _jobThread = new Thread(() =>
             {
                 long lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDataDelay;
+                object messageListLock = new object();
+                List<string> messageListNew = new List<string>();
+                List<string> messageListCurrent = null;
 
                 for (; ; )
                 {
-                    List<string> messageList = new List<string>();
+                    messageListNew.Clear();
                     try
                     {
                         bool fsDetail = string.Compare(jobName, "FS_LESEN_DETAIL", StringComparison.OrdinalIgnoreCase) == 0;
@@ -2852,19 +2855,19 @@ namespace BmwDeepObd
 
                                             List<Dictionary<string, EdiabasNet.ResultData>> resultSetsDetail =
                                                 new List<Dictionary<string, EdiabasNet.ResultData>>(_ediabas.ResultSets);
-                                            PrintResults(messageList, resultSetsDetail);
+                                            PrintResults(messageListNew, resultSetsDetail);
                                         }
                                     }
                                     dictIndex++;
                                 }
-                                if (messageList.Count == 0)
+                                if (messageListNew.Count == 0)
                                 {
-                                    messageList.Add(GetString(Resource.String.tool_no_errors));
+                                    messageListNew.Add(GetString(Resource.String.tool_no_errors));
                                 }
                             }
                             else
                             {
-                                messageList.Add(GetString(Resource.String.tool_read_errors_failure));
+                                messageListNew.Add(GetString(Resource.String.tool_read_errors_failure));
                             }
                         }
                         else
@@ -2906,7 +2909,7 @@ namespace BmwDeepObd
                             _ediabas.ExecuteJob(jobName);
 
                             List<Dictionary<string, EdiabasNet.ResultData>> resultSets = _ediabas.ResultSets;
-                            PrintResults(messageList, resultSets);
+                            PrintResults(messageListNew, resultSets);
                         }
                     }
                     catch (Exception ex)
@@ -2916,7 +2919,9 @@ namespace BmwDeepObd
                         {
                             exceptionText = EdiabasNet.GetExceptionText(ex, false, false);
                         }
-                        messageList.Add(exceptionText);
+
+                        messageListNew.Add(exceptionText);
+
                         if (ActivityCommon.IsCommunicationError(exceptionText))
                         {
                             _instanceData.CommErrorsCount++;
@@ -2924,30 +2929,61 @@ namespace BmwDeepObd
                         _runContinuous = false;
                     }
 
-                    while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDataDelay * ActivityCommon.TickResolMs)
+                    bool listChanged = false;
+                    if (messageListCurrent == null || messageListCurrent.Count != messageListNew.Count)
                     {
-                        Thread.Sleep(10);
-                        if (!_runContinuous)
+                        listChanged = true;
+                    }
+                    else
+                    {
+                        if (!messageListNew.SequenceEqual(messageListCurrent))
                         {
-                            break;
+                            listChanged = true;
                         }
                     }
 
-                    lastUpdateTime = Stopwatch.GetTimestamp();
-                    RunOnUiThread(() =>
+                    if (listChanged)
                     {
-                        if (_activityCommon == null)
+                        List<string> messageListTemp;
+                        lock (messageListLock)
                         {
-                            return;
+                            messageListCurrent = new List<string>(messageListNew);
+                            messageListTemp = messageListCurrent;
                         }
-                        _infoListAdapter.Items.Clear();
-                        foreach (string message in messageList)
+
+                        while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDataDelay * ActivityCommon.TickResolMs)
                         {
-                            _infoListAdapter.Items.Add(new TableResultItem(message, null));
+                            Thread.Sleep(10);
+                            if (!_runContinuous)
+                            {
+                                break;
+                            }
                         }
-                        _infoListAdapter.NotifyDataSetChanged();
-                        UpdateDisplay();
-                    });
+
+                        lastUpdateTime = Stopwatch.GetTimestamp();
+                        RunOnUiThread(() =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            List<string> messageListLocal = null;
+                            lock (messageListLock)
+                            {
+                                messageListLocal = new List<string>(messageListTemp);
+                            }
+
+                            _infoListAdapter.Items.Clear();
+                            foreach (string message in messageListLocal)
+                            {
+                                _infoListAdapter.Items.Add(new TableResultItem(message, null));
+                            }
+
+                            _infoListAdapter.NotifyDataSetChanged();
+                            UpdateDisplay();
+                        });
+                    }
 
                     if (!_runContinuous)
                     {
