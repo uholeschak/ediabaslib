@@ -2801,10 +2801,12 @@ namespace BmwDeepObd
             _jobThread = new Thread(() =>
             {
                 long lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDataDelay;
+                object messageListLock = new object();
+                List<string> messageList = new List<string>();
 
                 for (; ; )
                 {
-                    List<string> messageList = new List<string>();
+                    messageList.Clear();
                     try
                     {
                         bool fsDetail = string.Compare(jobName, "FS_LESEN_DETAIL", StringComparison.OrdinalIgnoreCase) == 0;
@@ -2859,12 +2861,18 @@ namespace BmwDeepObd
                                 }
                                 if (messageList.Count == 0)
                                 {
-                                    messageList.Add(GetString(Resource.String.tool_no_errors));
+                                    lock (messageListLock)
+                                    {
+                                        messageList.Add(GetString(Resource.String.tool_no_errors));
+                                    }
                                 }
                             }
                             else
                             {
-                                messageList.Add(GetString(Resource.String.tool_read_errors_failure));
+                                lock (messageListLock)
+                                {
+                                    messageList.Add(GetString(Resource.String.tool_read_errors_failure));
+                                }
                             }
                         }
                         else
@@ -2916,7 +2924,12 @@ namespace BmwDeepObd
                         {
                             exceptionText = EdiabasNet.GetExceptionText(ex, false, false);
                         }
-                        messageList.Add(exceptionText);
+
+                        lock (messageListLock)
+                        {
+                            messageList.Add(exceptionText);
+                        }
+
                         if (ActivityCommon.IsCommunicationError(exceptionText))
                         {
                             _instanceData.CommErrorsCount++;
@@ -2940,8 +2953,15 @@ namespace BmwDeepObd
                         {
                             return;
                         }
+
+                        List<string> messageListLocal = null;
+                        lock (messageListLock)
+                        {
+                            messageListLocal = messageList;
+                        }
+
                         _infoListAdapter.Items.Clear();
-                        foreach (string message in messageList)
+                        foreach (string message in messageListLocal)
                         {
                             _infoListAdapter.Items.Add(new TableResultItem(message, null));
                         }
