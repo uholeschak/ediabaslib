@@ -390,7 +390,7 @@ namespace BmwDeepObd
         private bool _ediabasInitReq;
         private bool _ediabasJobAbort;
         private JobReader.PageInfo _lastPageInfo;
-        private long _lastUpdateTime;
+        private long? _lastUpdateTime;
         private string _ecuPath;
         private string _vagPath;
         private string _bmwPath;
@@ -489,7 +489,7 @@ namespace BmwDeepObd
                 CommActive = commActive;
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
-                _lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDisplayDelay;
+                _lastUpdateTime = null;
                 _ecuPath = instanceData.EcuPath;
                 _vagPath = instanceData.VagPath;
                 _bmwPath = instanceData.BmwPath;
@@ -3588,7 +3588,14 @@ namespace BmwDeepObd
             ProcessLogQueue();
 
             bool update = forceUpdate;
-            if (Stopwatch.GetTimestamp() - _lastUpdateTime >= UpdateDisplayDelay * ActivityCommon.TickResolMs)
+            if (_lastUpdateTime != null)
+            {
+                if (Stopwatch.GetTimestamp() - _lastUpdateTime >= UpdateDisplayDelay * ActivityCommon.TickResolMs)
+                {
+                    update = true;
+                }
+            }
+            else
             {
                 update = true;
             }
