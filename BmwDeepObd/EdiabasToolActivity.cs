@@ -2800,7 +2800,7 @@ namespace BmwDeepObd
 
             _jobThread = new Thread(() =>
             {
-                long lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDisplayDelay;
+                long? lastUpdateTime = null;
                 object messageListLock = new object();
                 List<string> messageListNew = new List<string>();
                 List<string> messageListCurrent = null;
@@ -2951,12 +2951,15 @@ namespace BmwDeepObd
                             messageListTemp = messageListCurrent;
                         }
 
-                        while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDisplayDelay * ActivityCommon.TickResolMs)
+                        if (lastUpdateTime != null)
                         {
-                            Thread.Sleep(10);
-                            if (!_runContinuous)
+                            while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDisplayDelay * ActivityCommon.TickResolMs)
                             {
-                                break;
+                                Thread.Sleep(10);
+                                if (!_runContinuous)
+                                {
+                                    break;
+                                }
                             }
                         }
 
