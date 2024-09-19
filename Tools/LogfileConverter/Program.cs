@@ -1228,6 +1228,65 @@ namespace LogfileConverter
                                     simAddData.Add(simData);
                                 }
                             }
+
+                            List<byte> responseUse = new List<byte>();
+                            int offset = 0;
+                            for (; ; )
+                            {
+                                int dataLength = TelLengthBmwFast(responseBytes, offset);
+                                if (dataLength == 0)
+                                {
+                                    responseUse.Clear();
+                                    break;
+                                }
+
+                                if (responseBytes.Count - offset < dataLength + 1)
+                                {
+                                    responseUse.Clear();
+                                    break;
+                                }
+
+                                List<byte> dataBytes = responseBytes.GetRange(offset, dataLength + 1);
+                                bool filterResponse = false;
+                                if (dataBytes.Count == 7)
+                                {
+                                    if (dataBytes[3] == 0x7F)
+                                    {
+                                        switch (dataBytes[5])
+                                        {
+                                            case 0x22:
+                                            case 0x23:
+                                            case 0x78:
+                                                filterResponse = true;
+                                                break;
+                                        }
+                                    }
+                                }
+
+                                if (!filterResponse)
+                                {
+                                    responseUse.AddRange(dataBytes);
+                                }
+
+                                offset += dataLength + 1;    // checksum
+                                if (offset > responseBytes.Count)
+                                {
+                                    responseUse.Clear();
+                                    break;
+                                }
+
+                                if (offset == responseBytes.Count)
+                                {
+                                    break;
+                                }
+                            }
+
+                            if (responseUse.Count == 0)
+                            {
+                                continue;
+                            }
+
+                            responseBytes = responseUse;
                         }
 
                         string key = BitConverter.ToString(requestUse.ToArray()).Replace("-", string.Empty);
