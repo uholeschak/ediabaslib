@@ -338,7 +338,7 @@ namespace BmwDeepObd
         public static readonly Object DataLock = new Object();
         public const int UdsFuncAddr = 0x7DF;
         private const char DataLogSeparator = '\t';
-        public const int UpdateDataDelay = 100;
+        public const int UpdateDisplayDelay = 200;
         public const string NotificationBroadcastInfo = ActivityCommon.AppNameSpace + ".Notification.Info";
         public static readonly Tuple<string, bool>[] ErrorFaultModeResultList =
         {
@@ -489,7 +489,7 @@ namespace BmwDeepObd
                 CommActive = commActive;
                 JobPageInfo = pageInfo;
                 _lastPageInfo = null;
-                _lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDataDelay;
+                _lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDisplayDelay;
                 _ecuPath = instanceData.EcuPath;
                 _vagPath = instanceData.VagPath;
                 _bmwPath = instanceData.BmwPath;
@@ -3588,7 +3588,7 @@ namespace BmwDeepObd
             ProcessLogQueue();
 
             bool update = forceUpdate;
-            if (Stopwatch.GetTimestamp() - _lastUpdateTime >= UpdateDataDelay * ActivityCommon.TickResolMs)
+            if (Stopwatch.GetTimestamp() - _lastUpdateTime >= UpdateDisplayDelay * ActivityCommon.TickResolMs)
             {
                 update = true;
             }

@@ -172,7 +172,7 @@ namespace BmwDeepObd
         public const string ExtraElmWifiIp = "elmwifi_ip";
         public const string ExtraDeepObdWifiIp = "deepobdwifi_ip";
         public static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
-        public const int UpdateDataDelay = 200;
+        public const int UpdateDisplayDelay = 200;
 
         private const string TranslationFileName = "TranslationEdiabas.xml";
 
@@ -2800,7 +2800,7 @@ namespace BmwDeepObd
 
             _jobThread = new Thread(() =>
             {
-                long lastUpdateTime = Stopwatch.GetTimestamp() - UpdateDataDelay;
+                long? lastUpdateTime = null;
                 object messageListLock = new object();
                 List<string> messageListNew = new List<string>();
                 List<string> messageListCurrent = null;
@@ -2951,12 +2951,15 @@ namespace BmwDeepObd
                             messageListTemp = messageListCurrent;
                         }
 
-                        while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDataDelay * ActivityCommon.TickResolMs)
+                        if (lastUpdateTime != null)
                         {
-                            Thread.Sleep(10);
-                            if (!_runContinuous)
+                            while (Stopwatch.GetTimestamp() - lastUpdateTime < UpdateDisplayDelay * ActivityCommon.TickResolMs)
                             {
-                                break;
+                                Thread.Sleep(10);
+                                if (!_runContinuous)
+                                {
+                                    break;
+                                }
                             }
                         }
 
