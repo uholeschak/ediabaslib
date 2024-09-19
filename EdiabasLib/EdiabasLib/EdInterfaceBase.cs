@@ -361,6 +361,27 @@ namespace EdiabasLib
 
                     List<byte> responseBytes = recDataList.GetRange(0, telLength + 1);  // including checksum
 
+                    bool filterResponse = false;
+                    if (responseBytes.Count == 7)
+                    {
+                        if (responseBytes[3] == 0x7F)
+                        {
+                            switch (responseBytes[4])
+                            {
+                                case 0x22:
+                                case 0x23:
+                                case 0x78:
+                                    filterResponse = true;
+                                    break;
+                            }
+                        }
+                    }
+
+                    if (filterResponse)
+                    {
+                        continue;
+                    }
+
                     if (!broadcast && maskDataInternal != null && maskDataInternal.Length >= 3)
                     {
                         if (maskDataInternal[1] != 0xFF)
