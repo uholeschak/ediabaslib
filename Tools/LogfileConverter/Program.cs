@@ -1308,9 +1308,15 @@ namespace LogfileConverter
                             response = string.Empty;
                         }
 
-                        if (!simLines.ContainsKey(key))
+                        // search for free key index
+                        for (int keyIndex = 0; keyIndex < 10000; keyIndex++)
                         {
-                            simLines.Add(key, new Tuple<string, string>(request, response));
+                            string subKey = key + "_" + keyIndex.ToString(CultureInfo.InvariantCulture);
+                            if (!simLines.ContainsKey(subKey))
+                            {
+                                simLines.Add(subKey, new Tuple<string, string>(request, response));
+                                break;
+                            }
                         }
                     }
                 }
