@@ -98,15 +98,14 @@ namespace EdiabasLib
                         requestMask = responseInfo.RequestMask;
 
                         int responseIndex = responseInfo.ResponseIndex;
-                        if (responseIndex >= responseInfo.ResponseDataList.Count)
-                        {
-                            responseIndex = 0;
-                        }
-
                         List<byte> response = null;
                         if (responseIndex < responseInfo.ResponseDataList.Count)
                         {
                             response = responseInfo.ResponseDataList[responseIndex++];
+                            if (responseIndex >= responseInfo.ResponseDataList.Count)
+                            {
+                                responseIndex = 0;
+                            }
                             responseInfo.ResponseIndex = responseIndex;
                         }
 
