@@ -1308,16 +1308,7 @@ namespace LogfileConverter
                             response = string.Empty;
                         }
 
-                        // search for free key index
-                        for (int keyIndex = 0; keyIndex < int.MaxValue; keyIndex++)
-                        {
-                            string subKey = key + "_" + keyIndex.ToString(CultureInfo.InvariantCulture);
-                            if (!simLines.ContainsKey(subKey))
-                            {
-                                simLines.Add(subKey, new Tuple<string, string>(request, response));
-                                break;
-                            }
-                        }
+                        AddSimLine(ref simLines, key, new Tuple<string, string>(request, response));
                     }
                 }
 
@@ -1349,10 +1340,7 @@ namespace LogfileConverter
                     string genericErrorRequest = List2SimEntry(simData.Request.ToList());
                     string genericErrorResponse = List2SimEntry(simData.Response.ToList());
                     string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
-                    if (!simLines.ContainsKey(genericErrorKey))
-                    {
-                        simLines.Add(genericErrorKey, new Tuple<string, string>(genericErrorRequest, genericErrorResponse));
-                    }
+                    AddSimLine(ref simLines, genericErrorKey, new Tuple<string, string>(genericErrorRequest, genericErrorResponse));
                 }
 
                 string simFileName = simFile;
@@ -1396,6 +1384,20 @@ namespace LogfileConverter
                 return false;
             }
             return true;
+        }
+
+        private static bool AddSimLine(ref Dictionary<string, Tuple<string, string>> simLines, string key, Tuple<string, string> simEntry)
+        {
+            for (int keyIndex = 0; keyIndex < int.MaxValue; keyIndex++)
+            {
+                string subKey = key + "_" + keyIndex.ToString(CultureInfo.InvariantCulture);
+                if (simLines.TryAdd(subKey, simEntry))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private static void StoreReadString(StreamWriter streamWriter, string readString)
