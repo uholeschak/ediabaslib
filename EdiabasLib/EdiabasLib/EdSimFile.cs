@@ -160,7 +160,41 @@ namespace EdiabasLib
                         return false;
                     }
 
-                    _responseInfos.Add(new ResponseInfo(requestBytes, requestMask, responseBytes));
+                    ResponseInfo responseInfoMatch = null;
+                    foreach (ResponseInfo responseInfo in _responseInfos)
+                    {
+                        if (requestBytes.Count != responseInfo.RequestData.Count)
+                        {
+                            continue;
+                        }
+
+                        if (!requestBytes.Equals(responseInfo.RequestData))
+                        {
+                            continue;
+                        }
+
+                        if (requestMask.Count != responseInfo.RequestMask.Count)
+                        {
+                            continue;
+                        }
+
+                        if (!requestMask.Equals(responseInfo.RequestMask))
+                        {
+                            continue;
+                        }
+
+                        responseInfoMatch = responseInfo;
+                        break;
+                    }
+
+                    if (responseInfoMatch != null)
+                    {
+                        responseInfoMatch.ResponseDataList.Add(responseBytes);
+                    }
+                    else
+                    {
+                        _responseInfos.Add(new ResponseInfo(requestBytes, requestMask, responseBytes));
+                    }
                 }
             }
 
