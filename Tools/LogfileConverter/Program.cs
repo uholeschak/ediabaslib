@@ -1309,7 +1309,7 @@ namespace LogfileConverter
                         }
 
                         // search for free key index
-                        for (int keyIndex = 0; keyIndex < 10000; keyIndex++)
+                        for (int keyIndex = 0; keyIndex < int.MaxValue; keyIndex++)
                         {
                             string subKey = key + "_" + keyIndex.ToString(CultureInfo.InvariantCulture);
                             if (!simLines.ContainsKey(subKey))
