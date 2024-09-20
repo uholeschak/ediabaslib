@@ -44,14 +44,17 @@ namespace EdiabasLib
             {
                 RequestData = requestData;
                 RequestMask = requestMask;
-                ResponseData = responseData;
+                ResponseDataList = new List<List<byte>> { responseData };
+                ResponseIndex = 0;
             }
 
             public List<byte> RequestData { get; private set; }
 
             public List<byte> RequestMask { get; private set; }
 
-            public List<byte> ResponseData { get; private set; }
+            public List<List<byte>> ResponseDataList { get; private set; }
+
+            public int ResponseIndex { get; set; }
         }
 
         public EdSimFile(string fileName)
@@ -93,7 +96,21 @@ namespace EdiabasLib
                     if (matched)
                     {
                         requestMask = responseInfo.RequestMask;
-                        return responseInfo.ResponseData;
+
+                        int responseIndex = responseInfo.ResponseIndex;
+                        if (responseIndex >= responseInfo.ResponseDataList.Count)
+                        {
+                            responseIndex = 0;
+                        }
+
+                        List<byte> response = null;
+                        if (responseIndex < responseInfo.ResponseDataList.Count)
+                        {
+                            response = responseInfo.ResponseDataList[responseIndex++];
+                            responseInfo.ResponseIndex = responseIndex;
+                        }
+
+                        return response;
                     }
                 }
             }
