@@ -23,6 +23,12 @@ namespace LogfileConverter
         private static int _edicCanTesterAddr;
         private static int _edicCanEcuAddr;
 
+        private class SimEntry(string request, string response)
+        {
+            public string Request { get; private set; } = request;
+            public string Response { get; private set; } = response;
+        }
+
         private class SimData(int[] request, int[] response, List<SimData> addData = null)
         {
             public int[] Request { get; private set; } = request;
@@ -1134,7 +1140,7 @@ namespace LogfileConverter
 
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
-                Dictionary<string, Tuple<string, string>> simLines = new Dictionary<string, Tuple<string, string>>();
+                Dictionary<string, SimEntry> simLines = new Dictionary<string, SimEntry>();
                 for (int iteration = 0; iteration < 2; iteration++)
                 {
                     foreach (string line in lines)
@@ -1308,7 +1314,7 @@ namespace LogfileConverter
                             response = string.Empty;
                         }
 
-                        AddSimLine(ref simLines, key, new Tuple<string, string>(request, response));
+                        AddSimLine(ref simLines, key, new SimEntry(request, response));
                     }
                 }
 
@@ -1340,7 +1346,7 @@ namespace LogfileConverter
                     string genericErrorRequest = List2SimEntry(simData.Request.ToList());
                     string genericErrorResponse = List2SimEntry(simData.Response.ToList());
                     string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
-                    AddSimLine(ref simLines, genericErrorKey, new Tuple<string, string>(genericErrorRequest, genericErrorResponse));
+                    AddSimLine(ref simLines, genericErrorKey, new SimEntry(genericErrorRequest, genericErrorResponse));
                 }
 
                 string simFileName = simFile;
@@ -1366,16 +1372,16 @@ namespace LogfileConverter
 
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("[REQUEST]");
-                    foreach (KeyValuePair<string, Tuple<string, string>> simLine in simLines)
+                    foreach (KeyValuePair<string, SimEntry> simLine in simLines)
                     {
-                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Item1);
+                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Request);
                     }
 
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("[RESPONSE]");
-                    foreach (KeyValuePair<string, Tuple<string, string>> simLine in simLines)
+                    foreach (KeyValuePair<string, SimEntry> simLine in simLines)
                     {
-                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Item2);
+                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Response);
                     }
                 }
             }
@@ -1386,7 +1392,7 @@ namespace LogfileConverter
             return true;
         }
 
-        private static bool AddSimLine(ref Dictionary<string, Tuple<string, string>> simLines, string key, Tuple<string, string> simEntry)
+        private static bool AddSimLine(ref Dictionary<string, SimEntry> simLines, string key, SimEntry simEntry)
         {
             for (int keyIndex = 0; keyIndex < int.MaxValue; keyIndex++)
             {
