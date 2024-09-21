@@ -36,23 +36,38 @@ namespace EdiabasLib
 
         public int IgnitionHistory { get; private set; } = -1;
 
-        public List<byte> KeyBytes { get; private set; }
+        public List<DataItem> KeyBytes { get; private set; }
+
+        public class DataItem
+        {
+            public DataItem(byte? dataValue, byte? dataMask = null, int? index = null)
+            {
+                DataValue = dataValue;
+                DataMask = dataMask;
+                Index = index;
+            }
+
+            public byte? DataValue { get; private set; }
+
+            public byte? DataMask { get; private set; }
+
+            public int? Index { get; private set; }
+        }
 
         public class ResponseInfo
         {
-            public ResponseInfo(List<byte> requestData, List<byte> requestMask, List<byte> responseData)
+            public ResponseInfo(List<DataItem> requestData, List<DataItem> responseData)
             {
                 RequestData = requestData;
-                RequestMask = requestMask;
-                ResponseDataList = new List<List<byte>> { responseData };
+                ResponseDataList = new List<List<DataItem>> { responseData };
                 ResponseIndex = 0;
             }
 
-            public List<byte> RequestData { get; private set; }
+            public List<DataItem> RequestData { get; private set; }
 
-            public List<byte> RequestMask { get; private set; }
+            public List<DataItem> RequestMask { get; private set; }
 
-            public List<List<byte>> ResponseDataList { get; private set; }
+            public List<List<DataItem>> ResponseDataList { get; private set; }
 
             public int ResponseIndex { get; set; }
         }
@@ -74,9 +89,8 @@ namespace EdiabasLib
             }
         }
 
-        public List<byte> GetResponse(List<byte> request, out List<byte> requestMask)
+        public List<DataItem> GetResponse(List<byte> request)
         {
-            requestMask = null;
             for (int iteration = 0; iteration < 2; ++iteration)
             {
                 foreach (ResponseInfo responseInfo in _responseInfos)
@@ -89,13 +103,20 @@ namespace EdiabasLib
                     bool matched = true;
                     for (int i = 0; i < request.Count; ++i)
                     {
-                        byte mask = responseInfo.RequestMask[i];
-                        if (iteration == 0 && mask !=0xFF)
+                        byte? dataMask = responseInfo.RequestData[i].DataMask;
+                        if (iteration == 0 && dataMask != null)
                         {   // try to match without mask first
                             continue;
                         }
 
-                        if ((request[i] & mask) != (responseInfo.RequestData[i] & mask))
+                        byte maskValue = 0xFF;
+                        if (dataMask != null)
+                        {
+                            maskValue = dataMask.Value;
+                        }
+
+                        byte? dataValue = responseInfo.RequestData[i].DataValue;
+                        if (dataValue != null && (request[i] & maskValue) != (dataValue & maskValue))
                         {
                             matched = false;
                             break;
@@ -104,10 +125,8 @@ namespace EdiabasLib
 
                     if (matched)
                     {
-                        requestMask = responseInfo.RequestMask;
-
                         int responseIndex = responseInfo.ResponseIndex;
-                        List<byte> response = null;
+                        List<DataItem> response = null;
                         if (responseIndex < responseInfo.ResponseDataList.Count)
                         {
                             response = responseInfo.ResponseDataList[responseIndex++];
@@ -154,15 +173,13 @@ namespace EdiabasLib
                         return false;
                     }
 
-                    List<byte> requestMask = new List<byte>();
-                    List<byte> requestBytes = ParseHexString(requestValue, ref requestMask);
+                    List<DataItem> requestBytes = ParseHexString(requestValue, true);
                     if (requestBytes == null)
                     {
                         return false;
                     }
 
-                    List<byte> nullList = null;
-                    List<byte> responseBytes = ParseHexString(responseValue, ref nullList);
+                    List<DataItem> responseBytes = ParseHexString(responseValue, false);
                     if (responseBytes == null)
                     {
                         return false;
@@ -176,17 +193,18 @@ namespace EdiabasLib
                             continue;
                         }
 
-                        if (!requestBytes.Equals(responseInfo.RequestData))
+                        bool identical = true;
+                        for (int i = 0; i < requestBytes.Count; ++i)
                         {
-                            continue;
+                            if (requestBytes[i].DataValue != responseInfo.RequestData[i].DataValue ||
+                                requestBytes[i].DataMask != responseInfo.RequestData[i].DataMask)
+                            {
+                                identical = false;
+                                break;
+                            }
                         }
 
-                        if (requestMask.Count != responseInfo.RequestMask.Count)
-                        {
-                            continue;
-                        }
-
-                        if (!requestMask.Equals(responseInfo.RequestMask))
+                        if (!identical)
                         {
                             continue;
                         }
@@ -201,7 +219,7 @@ namespace EdiabasLib
                     }
                     else
                     {
-                        _responseInfos.Add(new ResponseInfo(requestBytes, requestMask, responseBytes));
+                        _responseInfos.Add(new ResponseInfo(requestBytes, responseBytes));
                     }
                 }
             }
@@ -218,8 +236,7 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    List<byte> nullList = null;
-                    List<byte> keyBytesBytes = ParseHexString(keyBytesValue, ref nullList);
+                    List<DataItem> keyBytesBytes = ParseHexString(keyBytesValue, true);
                     if (keyBytesBytes == null)
                     {
                         return false;
@@ -233,7 +250,7 @@ namespace EdiabasLib
             return true;
         }
 
-        private List<byte> ParseHexString(string text, ref List<byte> maskList)
+        private List<DataItem> ParseHexString(string text, bool request)
         {
             if (string.IsNullOrEmpty(text))
             {
@@ -243,12 +260,12 @@ namespace EdiabasLib
             string textTrim = text.Trim();
             if (string.IsNullOrWhiteSpace(textTrim))
             {
-                return new List<byte>();
+                return new List<DataItem>();
             }
 
             if (string.Compare(textTrim, "_", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                return new List<byte>();
+                return new List<DataItem>();
             }
 
             string[] parts = textTrim.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries);
@@ -257,18 +274,18 @@ namespace EdiabasLib
                 return null;
             }
 
-            List<byte> result = new List<byte>();
+            List<DataItem> result = new List<DataItem>();
             foreach (string part in parts)
             {
                 string partTrim = part.ToUpperInvariant().Trim();
-                if (partTrim.Length != 2)
+                if (partTrim.Length < 2)
                 {
                     return null;
                 }
 
                 StringBuilder sbValue = new StringBuilder();
                 byte mask = 0xFF;
-                if (maskList != null)
+                if (request)
                 {
                     if (partTrim[0] == 'X')
                     {
@@ -305,12 +322,14 @@ namespace EdiabasLib
                     return null;
                 }
 
-                result.Add((byte)value);
-
-                if (maskList != null)
+                byte? dataValue = (byte)value;
+                byte? dataMask = null;
+                if (mask != 0xFF)
                 {
-                    maskList.Add(mask);
+                    dataMask = mask;
                 }
+
+                result.Add(new DataItem(dataValue, dataMask));
             }
 
             return result;
