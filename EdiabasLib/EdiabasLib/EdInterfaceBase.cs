@@ -320,8 +320,7 @@ namespace EdiabasLib
         public virtual bool TransmitSimulationData(byte[] sendData, out byte[] receiveData, bool bmwFast = false)
         {
             receiveData = null;
-            byte[] recDataInternal;
-            byte[] maskDataInternal;
+            List<EdSimFile.DataItem> recDataInternal;
             if (!SimulationConnected)
             {
                 EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
@@ -336,25 +335,25 @@ namespace EdiabasLib
             if (!bmwFast)
             {
                 SimulationRecQueue.Clear();
-                if (!TransmitSimulationInternal(sendData, out recDataInternal, out maskDataInternal))
+                if (!TransmitSimulationInternal(sendData, out recDataInternal))
                 {
                     return false;
                 }
 
-                receiveData = recDataInternal;
+                receiveData = ConvertDataItems2Array(recDataInternal);
                 return true;
             }
 
             if (sendData.Length > 0)
             {
                 SimulationRecQueue.Clear();
-                if (!TransmitSimulationInternal(sendData, out recDataInternal, out maskDataInternal))
+                if (!TransmitSimulationInternal(sendData, out recDataInternal))
                 {
                     return false;
                 }
 
                 bool broadcast = (sendData[0] & 0xC0) != 0x80;
-                List<byte> recDataList = recDataInternal.ToList();
+                List<byte> recDataList = ConvertDataItems2Array(recDataInternal).ToList();
                 for (; ; )
                 {
                     int telLength = TelLengthBmwFast(recDataList.ToArray());
@@ -369,15 +368,14 @@ namespace EdiabasLib
                     }
 
                     List<byte> responseBytes = recDataList.GetRange(0, telLength + 1);  // including checksum
-
-                    if (!broadcast && maskDataInternal != null && maskDataInternal.Length >= 3)
+                    if (!broadcast && recDataInternal.Count >= 3)
                     {
-                        if (maskDataInternal[1] != 0xFF)
+                        if (recDataInternal[1].DataMask != null)
                         {
                             responseBytes[2] = sendData[1];     // update ECU address
                         }
 
-                        if (maskDataInternal[2] != 0xFF)
+                        if (recDataInternal[2].DataMask != null)
                         {
                             responseBytes[1] = sendData[2];     // update tester address
                         }
@@ -406,7 +404,6 @@ namespace EdiabasLib
                     }
 
                     recDataList.RemoveRange(0, telLength + 1);
-
                     if (recDataList.Count == 0)
                     {
                         break;
@@ -431,37 +428,30 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool TransmitSimulationInternal(byte[] sendData, out byte[] receiveData, out byte[] maskData)
+        protected bool TransmitSimulationInternal(byte[] sendData, out List<EdSimFile.DataItem> receiveData)
         {
             receiveData = null;
-            maskData = null;
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
             if (EdSimFileSgbd != null)
             {
-                List<byte> response = EdSimFileSgbd.GetResponse(sendData.ToList(), out List<byte> requestMask);
+                List<EdSimFile.DataItem> response = EdSimFileSgbd.GetResponse(sendData.ToList());
                 if (response != null)
                 {
-                    receiveData = response.ToArray();
-                    if (requestMask != null)
-                    {
-                        maskData = requestMask.ToArray();
-                    }
-                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "Rec sim SGBD");
+                    receiveData = response;
+                    byte[] receiveDataArray = ConvertDataItems2Array(receiveData);
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveDataArray, 0, receiveDataArray.Length, "Rec sim SGBD");
                     return true;
                 }
             }
 
             if (EdSimFileInterface != null)
             {
-                List<byte> response = EdSimFileInterface.GetResponse(sendData.ToList(), out List<byte> requestMask);
+                List<EdSimFile.DataItem> response = EdSimFileInterface.GetResponse(sendData.ToList());
                 if (response != null)
                 {
-                    receiveData = response.ToArray();
-                    if (requestMask != null)
-                    {
-                        maskData = requestMask.ToArray();
-                    }
-                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "Rec sim interface");
+                    receiveData = response;
+                    byte[] receiveDataArray = ConvertDataItems2Array(receiveData);
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveDataArray, 0, receiveDataArray.Length, "Rec sim interface");
                     return true;
                 }
             }
@@ -482,7 +472,13 @@ namespace EdiabasLib
 
                 if (EdSimFileSgbd != null)
                 {
-                    return EdSimFileSgbd.KeyBytes.ToArray();
+                    List<EdSimFile.DataItem> keyBytes = EdSimFileSgbd.KeyBytes;
+                    if (keyBytes == null)
+                    {
+                        return null;
+                    }
+
+                    return ConvertDataItems2Array(keyBytes);
                 }
 
                 return null;
@@ -834,6 +830,27 @@ namespace EdiabasLib
                 sum += data[i];
             }
             return sum;
+        }
+
+        public static byte[] ConvertDataItems2Array(List<EdSimFile.DataItem> dataItems)
+        {
+            if (dataItems == null)
+            {
+                return null;
+            }
+
+            List<byte> keyBytesList = new List<byte>();
+            foreach (EdSimFile.DataItem dataItem in dataItems)
+            {
+                if (dataItem.DataValue == null)
+                {
+                    continue;
+                }
+
+                keyBytesList.Add(dataItem.DataValue.Value);
+            }
+
+            return keyBytesList.ToArray();
         }
 
         public void Dispose()
