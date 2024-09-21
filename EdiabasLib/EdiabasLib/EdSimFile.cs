@@ -63,6 +63,15 @@ namespace EdiabasLib
             _iniFile = new IniFile(fileName);
 
             _fileValid = ParseIniFile();
+            ResetResponses();
+        }
+
+        public void ResetResponses()
+        {
+            foreach (ResponseInfo responseInfo in _responseInfos)
+            {
+                responseInfo.ResponseIndex = 0;
+            }
         }
 
         public List<byte> GetResponse(List<byte> request, out List<byte> requestMask)

@@ -248,10 +248,14 @@ namespace EdiabasLib
 
         public virtual bool UnloadInterfaceSimFile()
         {
+            if (EdSimFileInterface != null)
+            {
+                SimulationRecQueue.Clear();
+            }
+
             EdSimFileInterface = null;
             SimFrequentResponse = null;
             SimulationConnected = false;
-            SimulationRecQueue.Clear();
             return true;
         }
 
@@ -303,6 +307,11 @@ namespace EdiabasLib
 
         public virtual bool UnloadSgbdSimFile()
         {
+            if (EdSimFileSgbd != null)
+            {
+                SimulationRecQueue.Clear();
+            }
+
             EdSimFileSgbd = null;
             SimFrequentResponse = null;
             return true;
