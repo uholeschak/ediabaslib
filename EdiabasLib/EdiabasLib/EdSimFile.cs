@@ -40,7 +40,7 @@ namespace EdiabasLib
 
         public class DataItem
         {
-            public DataItem(byte? dataValue, byte? dataMask = null, int? index = null)
+            public DataItem(byte? dataValue, byte? dataMask = null, uint? index = null)
             {
                 DataValue = dataValue;
                 DataMask = dataMask;
@@ -51,7 +51,7 @@ namespace EdiabasLib
 
             public byte? DataMask { get; private set; }
 
-            public int? Index { get; private set; }
+            public uint? Index { get; private set; }
         }
 
         public class ResponseInfo
@@ -283,6 +283,21 @@ namespace EdiabasLib
                     return null;
                 }
 
+                if (!request)
+                {
+                    if (partTrim[0] == 'I')
+                    {
+                        string indexText = partTrim.Substring(1);
+                        if (!uint.TryParse(indexText, out uint indexValue))
+                        {
+                            return null;
+                        }
+
+                        result.Add(new DataItem(null, null, indexValue));
+                        continue;
+                    }
+                }
+
                 StringBuilder sbValue = new StringBuilder();
                 byte mask = 0xFF;
                 if (request)
@@ -312,17 +327,17 @@ namespace EdiabasLib
                     sbValue.Append(partTrim);
                 }
 
-                if (!UInt32.TryParse(sbValue.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out UInt32 value))
+                if (!uint.TryParse(sbValue.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint itemValue))
                 {
                     return null;
                 }
 
-                if (value > 0xFF)
+                if (itemValue > 0xFF)
                 {
                     return null;
                 }
 
-                byte? dataValue = (byte)value;
+                byte? dataValue = (byte)itemValue;
                 byte? dataMask = null;
                 if (mask != 0xFF)
                 {

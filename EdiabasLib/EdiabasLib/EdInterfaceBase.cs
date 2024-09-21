@@ -340,7 +340,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                receiveData = ConvertDataItems2Array(recDataInternal);
+                receiveData = ConvertDataItems2Array(recDataInternal, sendData);
                 return true;
             }
 
@@ -352,8 +352,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                bool broadcast = (sendData[0] & 0xC0) != 0x80;
-                List<byte> recDataList = ConvertDataItems2Array(recDataInternal).ToList();
+                List<byte> recDataList = ConvertDataItems2Array(recDataInternal, sendData).ToList();
                 for (; ; )
                 {
                     int telLength = TelLengthBmwFast(recDataList.ToArray());
@@ -368,19 +367,6 @@ namespace EdiabasLib
                     }
 
                     List<byte> responseBytes = recDataList.GetRange(0, telLength + 1);  // including checksum
-                    if (!broadcast && recDataInternal.Count >= 3)
-                    {
-                        if (recDataInternal[1].DataMask != null)
-                        {
-                            responseBytes[2] = sendData[1];     // update ECU address
-                        }
-
-                        if (recDataInternal[2].DataMask != null)
-                        {
-                            responseBytes[1] = sendData[2];     // update tester address
-                        }
-                    }
-
                     bool filterResponse = false;
                     if (responseBytes.Count == 7)
                     {
@@ -438,7 +424,7 @@ namespace EdiabasLib
                 if (response != null)
                 {
                     receiveData = response;
-                    byte[] receiveDataArray = ConvertDataItems2Array(receiveData);
+                    byte[] receiveDataArray = ConvertDataItems2Array(receiveData, sendData);
                     EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveDataArray, 0, receiveDataArray.Length, "Rec sim SGBD");
                     return true;
                 }
@@ -450,7 +436,7 @@ namespace EdiabasLib
                 if (response != null)
                 {
                     receiveData = response;
-                    byte[] receiveDataArray = ConvertDataItems2Array(receiveData);
+                    byte[] receiveDataArray = ConvertDataItems2Array(receiveData, sendData);
                     EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveDataArray, 0, receiveDataArray.Length, "Rec sim interface");
                     return true;
                 }
@@ -832,7 +818,7 @@ namespace EdiabasLib
             return sum;
         }
 
-        public static byte[] ConvertDataItems2Array(List<EdSimFile.DataItem> dataItems)
+        public static byte[] ConvertDataItems2Array(List<EdSimFile.DataItem> dataItems, byte[] sendData = null)
         {
             if (dataItems == null)
             {
@@ -842,6 +828,17 @@ namespace EdiabasLib
             List<byte> keyBytesList = new List<byte>();
             foreach (EdSimFile.DataItem dataItem in dataItems)
             {
+                if (dataItem.Index != null)
+                {
+                    if (sendData == null || sendData.Length < dataItem.Index.Value)
+                    {
+                        continue;
+                    }
+
+                    keyBytesList.Add(sendData[dataItem.Index.Value]);
+                    continue;
+                }
+
                 if (dataItem.DataValue == null)
                 {
                     continue;
