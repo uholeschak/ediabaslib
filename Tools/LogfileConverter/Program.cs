@@ -29,10 +29,10 @@ namespace LogfileConverter
             public string Response { get; private set; } = response;
         }
 
-        private class SimData(int[] request, int[] response, List<SimData> addData = null)
+        private class SimData(string[] request, string[] response, List<SimData> addData = null)
         {
-            public int[] Request { get; private set; } = request;
-            public int[] Response { get; private set; } = response;
+            public string[] Request { get; private set; } = request;
+            public string[] Response { get; private set; } = response;
             public List<SimData> AddData { get; private set; } = addData;
         }
 
@@ -1123,32 +1123,32 @@ namespace LogfileConverter
                 }
 
                 List<SimData> simErrorAdd = new List<SimData>();
-                simErrorAdd.Add(new SimData(new int[] { 0xFF83, 0x0000, 0xFFF1, 0xFF14, 0x0000, 0x0000 },
-                    new int[] { 0x83, 0xF1, -1, 0x54, 0xFF, 0xFF, 0x00 }));    // clear DTC
-                simErrorAdd.Add(new SimData(new int[] { 0xFF84, 0x0000, 0xFFF1, 0xFF14, 0x0000, 0x0000, 0x0000 },
-                    new int[] { 0x83, 0xF1, -1, 0x54, 0xFF, 0xFF, 0x00 }));    // clear DTC
-                simErrorAdd.Add(new SimData(new int[] { 0xFFC3, 0x0000, 0xFFF1, 0xFF14, 0x0000, 0x0000 },
-                    new int[] { 0x83, 0xF1, 0x12, 0x54, 0xFF, 0xFF, 0x00 }));    // global clear DTC
-                simErrorAdd.Add(new SimData(new int[] { 0xFF84, 0x0000, 0xFFF1, 0xFF14, 0x0000, 0x0000, 0x0000 },
-                    new int[] { 0x83, 0xF1, -1, 0x54, 0xFF, 0xFF, 0x00 }));    // clear DTC
-                simErrorAdd.Add(new SimData(new int[] { 0xFF82, 0x0000, 0xFFF1, 0xFF11, 0x0000 },
-                    new int[] { 0x82, 0xF1, -1, 0x51, -4, 0x00 }));    // STEUERGERAETE_RESET
-                simErrorAdd.Add(new SimData(new int[] { 0xFF83, 0x0000, 0xFFF1, 0xFF17, 0x0000, 0x0000 },
-                    new int[] { 0x83, 0xF1, -1, 0x7F, 0x17, 0x12, 0x00 }, simErrorAdd));    // FS_LESEN_DETAIL
+                simErrorAdd.Add(new SimData(new string[] { "83", "XX", "F1", "14", "XX", "XX" },
+                    new string[] { "83", "F1", "00|1", "54", "FF", "FF", "00" }));    // clear DTC
+                simErrorAdd.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
+                    new string[] { "83", "F1", "00|1", "54", "FF", "FF", "00" }));    // clear DTC
+                simErrorAdd.Add(new SimData(new string[] { "C3", "XX", "F1", "14", "XX", "XX" },
+                    new string[] { "83", "F1", "12", "54", "FF", "FF", "00" }));    // global clear DTC
+                simErrorAdd.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
+                    new string[] { "83", "F1", "00|1", "54", "FF", "FF", "00" }));    // clear DTC
+                simErrorAdd.Add(new SimData(new string[] { "82", "XX", "F1", "11", "XX" },
+                    new string[] { "82", "F1", "00|1", "51", "00|4", "00" }));    // STEUERGERAETE_RESET
+                simErrorAdd.Add(new SimData(new string[] { "83", "XX", "F1", "17", "XX", "XX" },
+                    new string[] { "83", "F1", "00|1", "7F", "17", "12", "00" }, simErrorAdd));    // FS_LESEN_DETAIL
 
                 List<SimData> simCandidates = new List<SimData>();
-                simCandidates.Add(new SimData(new int[] { 0xFF83, 0x0000, 0xFFF1, 0xFF19, 0xFF02, 0x0000 },
-                    new int[] { 0x83, 0xF1, -1, 0x59, 0x02, 0xFF, 0x00 }, simErrorAdd));  // FS_LESEN
-                simCandidates.Add(new SimData(new int[] { 0xFF86, 0x0000, 0xFFF1, 0xFF19, 0xFF06, 0x0000, 0x0000, 0x0000, 0x0000 },
-                    new int[] { 0x83, 0xF1, -1, 0x59, 0x06, 0xFF, 0x00 }, simErrorAdd));  // Service 19 06
-                simCandidates.Add(new SimData(new int[] { 0xFF84, 0x0000, 0xFFF1, 0xFF18, 0xFF02, 0xFFFF, 0xFFFF },
-                    new int[] { 0x82, 0xF1, -1, 0x58, 0x00, 0x00 }, simErrorAdd));  // FS_LESEN
-                simCandidates.Add(new SimData(new int[] { 0xFF83, 0x0000, 0xFFF1, 0xFF22, 0x0000, 0x0000 },
-                    new int[] { 0x83, 0xF1, -1, 0x7F, 0x22, 0x31, 0x00 }));     // Service 22
+                simCandidates.Add(new SimData(new string[] { "83", "XX", "F1", "19", "02", "XX" },
+                    new string[] { "83", "F1", "00|1", "59", "02", "FF", "00" }, simErrorAdd));  // FS_LESEN
+                simCandidates.Add(new SimData(new string[] { "86", "XX", "F1", "19", "06", "XX", "XX", "XX", "XX" },
+                    new string[] { "83", "F1", "00|1", "59", "06", "FF", "00" }, simErrorAdd));  // Service 19 06
+                simCandidates.Add(new SimData(new string[] { "84", "XX", "F1", "18", "02", "FF", "FF" },
+                    new string[] { "82", "F1", "00|1", "58", "00", "00" }, simErrorAdd));  // FS_LESEN
+                simCandidates.Add(new SimData(new string[] { "83", "XX", "F1", "22", "XX", "XX" },
+                    new string[] { "83", "F1", "00|1", "7F", "22", "31", "00" }));     // Service 22
 
                 List<SimData> simAddData = new List<SimData>();
-                simAddData.Add(new SimData(new int[] { 0xF080, 0x0000, 0xFFF1, 0xFF23, 0x0000, 0x0000 },
-                    new int[] { 0x83, 0xF1, -1, 0x7F, 0x23, 0x31, 0x00 }));     // Service 23
+                simAddData.Add(new SimData(new string[] { "8X", "XX", "F1", "23", "XX", "XX" },
+                    new string[] { "83", "F1", "00|1", "7F", "23", "31", "00" }));     // Service 23
 
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
@@ -1220,17 +1220,17 @@ namespace LogfileConverter
                                 }
 
                                 bool lineMatched = true;
-                                int[] addRequest = simData.Request;
+                                string[] addRequest = simData.Request;
                                 if (requestUse.Count == addRequest.Length)
                                 {
                                     for (int index = 0; index < requestUse.Count; index++)
                                     {
-                                        if ((addRequest[index] & 0xFF00) != 0xFF00)
+                                        if (!byte.TryParse(addRequest[index], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte requestValue))
                                         {
                                             continue;
                                         }
 
-                                        if (requestUse[index] != (addRequest[index] & 0xFF))
+                                        if (requestUse[index] != requestValue)
                                         {
                                             lineMatched = false;
                                             break;
@@ -1355,8 +1355,8 @@ namespace LogfileConverter
 
                 foreach (SimData simData in simAddAll)
                 {
-                    string genericErrorRequest = List2SimEntry(simData.Request.ToList(), true);
-                    string genericErrorResponse = List2SimEntry(simData.Response.ToList(), false);
+                    string genericErrorRequest = List2SimEntry(simData.Request.ToList());
+                    string genericErrorResponse = List2SimEntry(simData.Response.ToList());
                     string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
                     AddSimLine(ref simLines, genericErrorKey, new SimEntry(genericErrorRequest, genericErrorResponse));
                 }
@@ -1527,50 +1527,17 @@ namespace LogfileConverter
             return BitConverter.ToString(dataList.ToArray()).Replace("-", string.Empty);
         }
 
-        private static string List2SimEntry(List<int> dataList, bool request)
+        private static string List2SimEntry(List<string> dataList)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (int data in dataList)
+            foreach (string data in dataList)
             {
                 if (sb.Length > 0)
                 {
                     sb.Append(",");
                 }
 
-                if (request)
-                {
-                    byte value = (byte)data;
-                    byte mask = (byte)((data >> 8) & 0xFF);
-                    if ((mask & 0xF0) != 0xF0)
-                    {
-                        sb.Append("X");
-                    }
-                    else
-                    {
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X01}", (value >> 4) & 0x0F));
-                    }
-
-                    if ((mask & 0x0F) != 0x0F)
-                    {
-                        sb.Append("X");
-                    }
-                    else
-                    {
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X01}", value & 0x0F));
-                    }
-                }
-                else
-                {
-                    if (data < 0)
-                    {
-                        sb.Append("I");
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0}", -data));
-                    }
-                    else
-                    {
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, "{0:X02}", data));
-                    }
-                }
+                sb.Append(data);
             }
 
             return sb.ToString();
