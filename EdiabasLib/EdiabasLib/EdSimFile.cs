@@ -335,7 +335,7 @@ namespace EdiabasLib
 
                 DataItem.OperatorType? operatorType = null;
                 uint? operatorIndex = null;
-                if (!request && partTrim.Length >= 5)
+                if (!request && partTrim.Length >= 4)
                 {
                     char operatorSymbol = partTrim[2];
                     switch (operatorSymbol)
