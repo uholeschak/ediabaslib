@@ -44,6 +44,7 @@ namespace EdiabasLib
             {
                 And,
                 Or,
+                Xor,
                 Plus,
                 Minus,
             }
@@ -351,6 +352,10 @@ namespace EdiabasLib
 
                         case '&':
                             operatorType = DataItem.OperatorType.And;
+                            break;
+
+                        case '^':
+                            operatorType = DataItem.OperatorType.Xor;
                             break;
 
                         case '+':

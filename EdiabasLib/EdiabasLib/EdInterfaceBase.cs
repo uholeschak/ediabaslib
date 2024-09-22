@@ -853,6 +853,10 @@ namespace EdiabasLib
                             dataValue |= operatorValue;
                             break;
 
+                        case EdSimFile.DataItem.OperatorType.Xor:
+                            dataValue ^= operatorValue;
+                            break;
+
                         case EdSimFile.DataItem.OperatorType.Plus:
                             dataValue += operatorValue;
                             break;
