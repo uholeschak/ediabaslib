@@ -51,11 +51,12 @@ namespace EdiabasLib
                 Divide,
             }
 
-            public DataItem(byte dataValue, byte? dataMask = null, OperatorType? operatorType = null, uint? operatorIndex = null)
+            public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, uint? operatorValue, uint ? operatorIndex)
             {
                 DataValue = dataValue;
                 DataMask = dataMask;
                 Operator = operatorType;
+                OperatorValue = operatorValue;
                 OperatorIndex = operatorIndex;
             }
 
@@ -64,6 +65,8 @@ namespace EdiabasLib
             public byte? DataMask { get; private set; }
 
             public OperatorType? Operator { get; private set; }
+
+            public uint? OperatorValue { get; private set; }
 
             public uint? OperatorIndex { get; private set; }
         }
@@ -336,8 +339,9 @@ namespace EdiabasLib
                 }
 
                 DataItem.OperatorType? operatorType = null;
+                uint? operatorValue = null;
                 uint? operatorIndex = null;
-                if (!request && partTrim.Length >= 4)
+                if (partTrim.Length >= 4)
                 {
                     char operatorSymbol = partTrim[2];
                     switch (operatorSymbol)
@@ -375,15 +379,29 @@ namespace EdiabasLib
                     }
 
                     string operatorString = partTrim.Substring(3);
-                    if (!uint.TryParse(operatorString, NumberStyles.Integer, CultureInfo.InvariantCulture, out uint operatorValue))
+                    bool isIndex = false;
+                    if (operatorString.StartsWith("[") && operatorString.EndsWith("]"))
+                    {
+                        isIndex = true;
+                        operatorString = operatorString.Substring(1, operatorString.Length - 2);
+                    }
+
+                    if (!uint.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint opDataValue))
                     {
                         return null;
                     }
 
-                    operatorIndex = operatorValue;
+                    if (isIndex)
+                    {
+                        operatorIndex = opDataValue;
+                    }
+                    else
+                    {
+                        operatorValue = opDataValue;
+                    }
                 }
 
-                result.Add(new DataItem(dataValue, dataMask, operatorType, operatorIndex));
+                result.Add(new DataItem(dataValue, dataMask, operatorType, operatorValue, operatorIndex));
             }
 
             return result;
