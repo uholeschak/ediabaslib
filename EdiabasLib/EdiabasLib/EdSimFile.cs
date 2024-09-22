@@ -354,8 +354,8 @@ namespace EdiabasLib
                             return null;
                     }
 
-                    string operatorString = partTrim.Substring(3, 2);
-                    if (!uint.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint operatorValue))
+                    string operatorString = partTrim.Substring(3);
+                    if (!uint.TryParse(operatorString, NumberStyles.Integer, CultureInfo.InvariantCulture, out uint operatorValue))
                     {
                         return null;
                     }
