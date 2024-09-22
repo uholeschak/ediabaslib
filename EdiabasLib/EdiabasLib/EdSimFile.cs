@@ -49,7 +49,7 @@ namespace EdiabasLib
                 Minus,
             }
 
-            public DataItem(byte? dataValue, byte? dataMask = null, OperatorType? operatorType = null, uint? operatorIndex = null)
+            public DataItem(byte dataValue, byte? dataMask = null, OperatorType? operatorType = null, uint? operatorIndex = null)
             {
                 DataValue = dataValue;
                 DataMask = dataMask;
@@ -57,7 +57,7 @@ namespace EdiabasLib
                 OperatorIndex = operatorIndex;
             }
 
-            public byte? DataValue { get; private set; }
+            public byte DataValue { get; private set; }
 
             public byte? DataMask { get; private set; }
 
@@ -322,17 +322,11 @@ namespace EdiabasLib
                     sbValue.Append(partTrim.Substring(0, 2));
                 }
 
-                if (!uint.TryParse(sbValue.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint itemValue))
+                if (!byte.TryParse(sbValue.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte dataValue))
                 {
                     return null;
                 }
 
-                if (itemValue > 0xFF)
-                {
-                    return null;
-                }
-
-                byte? dataValue = (byte)itemValue;
                 byte? dataMask = null;
                 if (mask != 0xFF)
                 {
