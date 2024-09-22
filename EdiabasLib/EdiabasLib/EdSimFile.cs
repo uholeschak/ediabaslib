@@ -47,6 +47,8 @@ namespace EdiabasLib
                 Xor,
                 Plus,
                 Minus,
+                Multiply,
+                Divide,
             }
 
             public DataItem(byte dataValue, byte? dataMask = null, OperatorType? operatorType = null, uint? operatorIndex = null)
@@ -358,6 +360,14 @@ namespace EdiabasLib
 
                         case '-':
                             operatorType = DataItem.OperatorType.Minus;
+                            break;
+
+                        case '*':
+                            operatorType = DataItem.OperatorType.Multiply;
+                            break;
+
+                        case '/':
+                            operatorType = DataItem.OperatorType.Divide;
                             break;
 
                         default:

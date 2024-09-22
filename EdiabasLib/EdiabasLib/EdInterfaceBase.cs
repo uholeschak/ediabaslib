@@ -859,6 +859,17 @@ namespace EdiabasLib
                         case EdSimFile.DataItem.OperatorType.Minus:
                             dataValue -= operatorValue;
                             break;
+
+                        case EdSimFile.DataItem.OperatorType.Multiply:
+                            dataValue *= operatorValue;
+                            break;
+
+                        case EdSimFile.DataItem.OperatorType.Divide:
+                            if (operatorValue != 0)
+                            {
+                                dataValue /= operatorValue;
+                            }
+                            break;
                     }
                 }
 
