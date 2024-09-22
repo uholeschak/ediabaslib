@@ -828,12 +828,7 @@ namespace EdiabasLib
             List<byte> dataBytesList = new List<byte>();
             foreach (EdSimFile.DataItem dataItem in dataItems)
             {
-                if (dataItem.DataValue == null)
-                {
-                    continue;
-                }
-
-                byte dataValue = dataItem.DataValue.Value;
+                byte dataValue = dataItem.DataValue;
                 if (dataItem.Operator != null && dataItem.OperatorIndex != null)
                 {
                     uint operatorIndex = dataItem.OperatorIndex.Value;
