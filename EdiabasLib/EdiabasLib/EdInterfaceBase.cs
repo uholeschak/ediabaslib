@@ -825,29 +825,40 @@ namespace EdiabasLib
                 return null;
             }
 
-            List<byte> keyBytesList = new List<byte>();
+            List<byte> dataBytesList = new List<byte>();
             foreach (EdSimFile.DataItem dataItem in dataItems)
             {
-                if (dataItem.Index != null)
-                {
-                    if (sendData == null || sendData.Length < dataItem.Index.Value)
-                    {
-                        continue;
-                    }
-
-                    keyBytesList.Add(sendData[dataItem.Index.Value]);
-                    continue;
-                }
-
                 if (dataItem.DataValue == null)
                 {
                     continue;
                 }
 
-                keyBytesList.Add(dataItem.DataValue.Value);
+                byte dataValue = dataItem.DataValue.Value;
+                if (dataItem.Operator != null && dataItem.OperatorIndex != null)
+                {
+                    uint operatorIndex = dataItem.OperatorIndex.Value;
+                    if (sendData == null || sendData.Length < operatorIndex)
+                    {
+                        continue;
+                    }
+
+                    byte operatorValue = sendData[operatorIndex];
+                    switch (dataItem.Operator)
+                    {
+                        case EdSimFile.DataItem.OperatorType.And:
+                            dataValue &= operatorValue;
+                            break;
+
+                        case EdSimFile.DataItem.OperatorType.Or:
+                            dataValue |= operatorValue;
+                            break;
+                    }
+                }
+
+                dataBytesList.Add(dataValue);
             }
 
-            return keyBytesList.ToArray();
+            return dataBytesList.ToArray();
         }
 
         public void Dispose()

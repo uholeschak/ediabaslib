@@ -40,18 +40,27 @@ namespace EdiabasLib
 
         public class DataItem
         {
-            public DataItem(byte? dataValue, byte? dataMask = null, uint? index = null)
+            public enum OperatorType
+            {
+                And,
+                Or,
+            }
+
+            public DataItem(byte? dataValue, byte? dataMask = null, OperatorType? operatorType = null, uint? operatorIndex = null)
             {
                 DataValue = dataValue;
                 DataMask = dataMask;
-                Index = index;
+                Operator = operatorType;
+                OperatorIndex = operatorIndex;
             }
 
             public byte? DataValue { get; private set; }
 
             public byte? DataMask { get; private set; }
 
-            public uint? Index { get; private set; }
+            public OperatorType? Operator { get; private set; }
+
+            public uint? OperatorIndex { get; private set; }
         }
 
         public class ResponseInfo
@@ -64,8 +73,6 @@ namespace EdiabasLib
             }
 
             public List<DataItem> RequestData { get; private set; }
-
-            public List<DataItem> RequestMask { get; private set; }
 
             public List<List<DataItem>> ResponseDataList { get; private set; }
 
@@ -283,21 +290,6 @@ namespace EdiabasLib
                     return null;
                 }
 
-                if (!request)
-                {
-                    if (partTrim[0] == 'I')
-                    {
-                        string indexText = partTrim.Substring(1);
-                        if (!uint.TryParse(indexText, out uint indexValue))
-                        {
-                            return null;
-                        }
-
-                        result.Add(new DataItem(null, null, indexValue));
-                        continue;
-                    }
-                }
-
                 StringBuilder sbValue = new StringBuilder();
                 byte mask = 0xFF;
                 if (request)
@@ -324,7 +316,7 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    sbValue.Append(partTrim);
+                    sbValue.Append(partTrim.Substring(0, 2));
                 }
 
                 if (!uint.TryParse(sbValue.ToString(), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint itemValue))
@@ -344,7 +336,34 @@ namespace EdiabasLib
                     dataMask = mask;
                 }
 
-                result.Add(new DataItem(dataValue, dataMask));
+                DataItem.OperatorType? operatorType = null;
+                uint? operatorIndex = null;
+                if (!request && partTrim.Length >= 5)
+                {
+                    char operatorSymbol = partTrim[2];
+                    switch (operatorSymbol)
+                    {
+                        case '|':
+                            operatorType = DataItem.OperatorType.Or;
+                            break;
+                        case '&':
+                            operatorType = DataItem.OperatorType.And;
+                            break;
+
+                        default:
+                            return null;
+                    }
+
+                    string operatorString = partTrim.Substring(3, 2);
+                    if (!uint.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint operatorValue))
+                    {
+                        return null;
+                    }
+
+                    operatorIndex = operatorValue;
+                }
+
+                result.Add(new DataItem(dataValue, dataMask, operatorType, operatorIndex));
             }
 
             return result;
