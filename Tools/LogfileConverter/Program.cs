@@ -1124,31 +1124,31 @@ namespace LogfileConverter
 
                 List<SimData> simErrorAdd = new List<SimData>();
                 simErrorAdd.Add(new SimData(new string[] { "83", "XX", "F1", "14", "XX", "XX" },
-                    new string[] { "83", "F1", "00|1", "54", "FF", "FF", "00" }));    // clear DTC
+                    new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00" }));    // clear DTC
                 simErrorAdd.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
-                    new string[] { "83", "F1", "00|1", "54", "FF", "FF", "00" }));    // clear DTC
+                    new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00" }));    // clear DTC
                 simErrorAdd.Add(new SimData(new string[] { "C3", "XX", "F1", "14", "XX", "XX" },
                     new string[] { "83", "F1", "12", "54", "FF", "FF", "00" }));    // global clear DTC
                 simErrorAdd.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
-                    new string[] { "83", "F1", "00|1", "54", "FF", "FF", "00" }));    // clear DTC
+                    new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00" }));    // clear DTC
                 simErrorAdd.Add(new SimData(new string[] { "82", "XX", "F1", "11", "XX" },
-                    new string[] { "82", "F1", "00|1", "51", "00|4", "00" }));    // STEUERGERAETE_RESET
+                    new string[] { "82", "F1", "00|[01]", "51", "00|[04]", "00" }));    // STEUERGERAETE_RESET
                 simErrorAdd.Add(new SimData(new string[] { "83", "XX", "F1", "17", "XX", "XX" },
-                    new string[] { "83", "F1", "00|1", "7F", "17", "12", "00" }, simErrorAdd));    // FS_LESEN_DETAIL
+                    new string[] { "83", "F1", "00|[01]", "7F", "17", "12", "00" }, simErrorAdd));    // FS_LESEN_DETAIL
 
                 List<SimData> simCandidates = new List<SimData>();
                 simCandidates.Add(new SimData(new string[] { "83", "XX", "F1", "19", "02", "XX" },
-                    new string[] { "83", "F1", "00|1", "59", "02", "FF", "00" }, simErrorAdd));  // FS_LESEN
+                    new string[] { "83", "F1", "00|[01]", "59", "02", "FF", "00" }, simErrorAdd));  // FS_LESEN
                 simCandidates.Add(new SimData(new string[] { "86", "XX", "F1", "19", "06", "XX", "XX", "XX", "XX" },
-                    new string[] { "83", "F1", "00|1", "59", "06", "FF", "00" }, simErrorAdd));  // Service 19 06
+                    new string[] { "83", "F1", "00|[01]", "59", "06", "FF", "00" }, simErrorAdd));  // Service 19 06
                 simCandidates.Add(new SimData(new string[] { "84", "XX", "F1", "18", "02", "FF", "FF" },
-                    new string[] { "82", "F1", "00|1", "58", "00", "00" }, simErrorAdd));  // FS_LESEN
+                    new string[] { "82", "F1", "00|[01]", "58", "00", "00" }, simErrorAdd));  // FS_LESEN
                 simCandidates.Add(new SimData(new string[] { "83", "XX", "F1", "22", "XX", "XX" },
-                    new string[] { "83", "F1", "00|1", "7F", "22", "31", "00" }));     // Service 22
+                    new string[] { "83", "F1", "00|[01]", "7F", "22", "31", "00" }));     // Service 22
 
                 List<SimData> simAddData = new List<SimData>();
                 simAddData.Add(new SimData(new string[] { "8X", "XX", "F1", "23", "XX", "XX" },
-                    new string[] { "83", "F1", "00|1", "7F", "23", "31", "00" }));     // Service 23
+                    new string[] { "83", "F1", "00|[01]", "7F", "23", "31", "00" }));     // Service 23
 
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
