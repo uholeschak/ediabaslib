@@ -44,6 +44,8 @@ namespace EdiabasLib
             {
                 And,
                 Or,
+                Plus,
+                Minus,
             }
 
             public DataItem(byte? dataValue, byte? dataMask = null, OperatorType? operatorType = null, uint? operatorIndex = null)
@@ -346,8 +348,17 @@ namespace EdiabasLib
                         case '|':
                             operatorType = DataItem.OperatorType.Or;
                             break;
+
                         case '&':
                             operatorType = DataItem.OperatorType.And;
+                            break;
+
+                        case '+':
+                            operatorType = DataItem.OperatorType.Plus;
+                            break;
+
+                        case '-':
+                            operatorType = DataItem.OperatorType.Minus;
                             break;
 
                         default:

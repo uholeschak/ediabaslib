@@ -852,6 +852,14 @@ namespace EdiabasLib
                         case EdSimFile.DataItem.OperatorType.Or:
                             dataValue |= operatorValue;
                             break;
+
+                        case EdSimFile.DataItem.OperatorType.Plus:
+                            dataValue += operatorValue;
+                            break;
+
+                        case EdSimFile.DataItem.OperatorType.Minus:
+                            dataValue -= operatorValue;
+                            break;
                     }
                 }
 
