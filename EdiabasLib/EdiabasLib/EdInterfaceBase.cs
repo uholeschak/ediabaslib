@@ -320,7 +320,7 @@ namespace EdiabasLib
         public virtual bool TransmitSimulationData(byte[] sendData, out byte[] receiveData, bool bmwFast = false)
         {
             receiveData = null;
-            List<EdSimFile.DataItem> recDataInternal;
+            List<byte> recDataInternal;
             if (!SimulationConnected)
             {
                 EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
@@ -340,7 +340,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                receiveData = ConvertDataItems2Array(recDataInternal, sendData);
+                receiveData = recDataInternal.ToArray();
                 return true;
             }
 
@@ -352,7 +352,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                List<byte> recDataList = ConvertDataItems2Array(recDataInternal, sendData).ToList();
+                List<byte> recDataList = recDataInternal;
                 for (; ; )
                 {
                     int telLength = TelLengthBmwFast(recDataList.ToArray());
@@ -414,30 +414,28 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool TransmitSimulationInternal(byte[] sendData, out List<EdSimFile.DataItem> receiveData)
+        protected bool TransmitSimulationInternal(byte[] sendData, out List<byte> receiveData)
         {
             receiveData = null;
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
             if (EdSimFileSgbd != null)
             {
-                List<EdSimFile.DataItem> response = EdSimFileSgbd.GetResponse(sendData.ToList());
+                List<byte> response = EdSimFileSgbd.GetResponse(sendData.ToList());
                 if (response != null)
                 {
                     receiveData = response;
-                    byte[] receiveDataArray = ConvertDataItems2Array(receiveData, sendData);
-                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveDataArray, 0, receiveDataArray.Length, "Rec sim SGBD");
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData.ToArray(), 0, receiveData.Count, "Rec sim SGBD");
                     return true;
                 }
             }
 
             if (EdSimFileInterface != null)
             {
-                List<EdSimFile.DataItem> response = EdSimFileInterface.GetResponse(sendData.ToList());
+                List<byte> response = EdSimFileInterface.GetResponse(sendData.ToList());
                 if (response != null)
                 {
                     receiveData = response;
-                    byte[] receiveDataArray = ConvertDataItems2Array(receiveData, sendData);
-                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveDataArray, 0, receiveDataArray.Length, "Rec sim interface");
+                    EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData.ToArray(), 0, receiveData.Count, "Rec sim interface");
                     return true;
                 }
             }
@@ -458,13 +456,13 @@ namespace EdiabasLib
 
                 if (EdSimFileSgbd != null)
                 {
-                    List<EdSimFile.DataItem> keyBytes = EdSimFileSgbd.KeyBytes;
+                    List<byte> keyBytes = EdSimFileSgbd.KeyBytes;
                     if (keyBytes == null)
                     {
                         return null;
                     }
 
-                    return ConvertDataItems2Array(keyBytes);
+                    return keyBytes.ToArray();
                 }
 
                 return null;
@@ -816,92 +814,6 @@ namespace EdiabasLib
                 sum += data[i];
             }
             return sum;
-        }
-
-        public static byte[] ConvertDataItems2Array(List<EdSimFile.DataItem> dataItems, byte[] sendData = null)
-        {
-            if (dataItems == null)
-            {
-                return null;
-            }
-
-            List<byte> dataBytesList = new List<byte>();
-            int index = 0;
-            foreach (EdSimFile.DataItem dataItem in dataItems)
-            {
-                byte dataValue = dataItem.DataValue;
-                if (sendData != null)
-                {
-                    if (index < sendData.Length)
-                    {
-                        dataValue = sendData[index];
-                    }
-                }
-
-                if (dataItem.Operator != null)
-                {
-                    byte operatorValue;
-                    if (dataItem.OperatorIndex != null)
-                    {
-                        uint operatorIndex = dataItem.OperatorIndex.Value;
-                        if (sendData == null || sendData.Length < operatorIndex)
-                        {
-                            return null;
-                        }
-
-                        operatorValue = sendData[operatorIndex];
-                    }
-                    else if (dataItem.OperatorValue != null)
-                    {
-                        operatorValue = dataItem.OperatorValue.Value;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-
-                    switch (dataItem.Operator)
-                    {
-                        case EdSimFile.DataItem.OperatorType.And:
-                            dataValue &= operatorValue;
-                            break;
-
-                        case EdSimFile.DataItem.OperatorType.Or:
-                            dataValue |= operatorValue;
-                            break;
-
-                        case EdSimFile.DataItem.OperatorType.Xor:
-                            dataValue ^= operatorValue;
-                            break;
-
-                        case EdSimFile.DataItem.OperatorType.Plus:
-                            dataValue += operatorValue;
-                            break;
-
-                        case EdSimFile.DataItem.OperatorType.Minus:
-                            dataValue -= operatorValue;
-                            break;
-
-                        case EdSimFile.DataItem.OperatorType.Multiply:
-                            dataValue *= operatorValue;
-                            break;
-
-                        case EdSimFile.DataItem.OperatorType.Divide:
-                            if (operatorValue == 0)
-                            {
-                                return null;
-                            }
-
-                            dataValue /= operatorValue;
-                            break;
-                    }
-                }
-
-                dataBytesList.Add(dataValue);
-                index++;
-            }
-
-            return dataBytesList.ToArray();
         }
 
         public void Dispose()
