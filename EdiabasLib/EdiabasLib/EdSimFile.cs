@@ -152,24 +152,45 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    bool matched = true;
-                    for (int i = 0; i < request.Count; ++i)
+                    if (iteration == 0)
                     {
-                        byte? dataMask = responseInfo.RequestData[i].DataMask;
-                        DataItem.OperatorType? operatorType = responseInfo.RequestData[i].Operator;
-                        if (iteration == 0 && (dataMask != null || operatorType != null))
-                        {   // try to match without mask first
+                        bool variableData = false;
+                        foreach (DataItem dataItem in responseInfo.RequestData)
+                        {
+                            if (dataItem.DataMask != null || dataItem.Operator != null)
+                            {
+                                variableData = true;
+                                break;
+                            }
+                        }
+
+                        if (variableData)
+                        {
                             continue;
                         }
+                    }
 
-                        byte maskValue = 0xFF;
-                        if (dataMask != null)
-                        {
-                            maskValue = dataMask.Value;
-                        }
+                    List<byte> requestInfoList = ConvertData(responseInfo.RequestData, null, request);
+                    if (requestInfoList == null)
+                    {
+                        continue;
+                    }
 
-                        byte dataValue = responseInfo.RequestData[i].DataValue;
-                        if ((request[i] & maskValue) != (dataValue & maskValue))
+                    List<byte> requestDataList = ConvertData(responseInfo.RequestData, request, request);
+                    if (requestDataList == null)
+                    {
+                        continue;
+                    }
+
+                    if (requestInfoList.Count != requestDataList.Count)
+                    {
+                        continue;
+                    }
+
+                    bool matched = true;
+                    for (int i = 0; i < requestDataList.Count; ++i)
+                    {
+                        if (requestInfoList[i] != (requestDataList[i]))
                         {
                             matched = false;
                             break;
@@ -196,6 +217,97 @@ namespace EdiabasLib
             }
 
             return null;
+        }
+
+        public List<byte> ConvertData(List<DataItem> dataItems, List<byte> inputData, List<byte> requestData)
+        {
+            if (dataItems == null)
+            {
+                return null;
+            }
+
+            List<byte> dataBytesList = new List<byte>();
+            int index = 0;
+            foreach (DataItem dataItem in dataItems)
+            {
+                byte dataValue = dataItem.DataValue;
+                if (inputData != null)
+                {
+                    if (index < inputData.Count)
+                    {
+                        dataValue = inputData[index];
+                    }
+                }
+
+                if (dataItem.DataMask != null)
+                {
+                    dataValue &= dataItem.DataMask.Value;
+                }
+
+                if (dataItem.Operator != null)
+                {
+                    byte operatorValue;
+                    if (dataItem.OperatorIndex != null)
+                    {
+                        uint operatorIndex = dataItem.OperatorIndex.Value;
+                        if (requestData == null || requestData.Count < operatorIndex)
+                        {
+                            return null;
+                        }
+
+                        operatorValue = requestData[(int) operatorIndex];
+                    }
+                    else if (dataItem.OperatorValue != null)
+                    {
+                        operatorValue = dataItem.OperatorValue.Value;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+
+                    switch (dataItem.Operator)
+                    {
+                        case DataItem.OperatorType.And:
+                            dataValue &= operatorValue;
+                            break;
+
+                        case DataItem.OperatorType.Or:
+                            dataValue |= operatorValue;
+                            break;
+
+                        case DataItem.OperatorType.Xor:
+                            dataValue ^= operatorValue;
+                            break;
+
+                        case DataItem.OperatorType.Plus:
+                            dataValue += operatorValue;
+                            break;
+
+                        case DataItem.OperatorType.Minus:
+                            dataValue -= operatorValue;
+                            break;
+
+                        case DataItem.OperatorType.Multiply:
+                            dataValue *= operatorValue;
+                            break;
+
+                        case DataItem.OperatorType.Divide:
+                            if (operatorValue == 0)
+                            {
+                                return null;
+                            }
+
+                            dataValue /= operatorValue;
+                            break;
+                    }
+                }
+
+                dataBytesList.Add(dataValue);
+                index++;
+            }
+
+            return dataBytesList;
         }
 
         private bool ParseIniFile()
