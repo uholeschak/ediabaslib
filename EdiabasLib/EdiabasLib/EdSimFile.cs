@@ -36,7 +36,7 @@ namespace EdiabasLib
 
         public int IgnitionHistory { get; private set; } = -1;
 
-        public List<DataItem> KeyBytes { get; private set; }
+        public List<byte> KeyBytes { get; private set; }
 
         public class DataItem : IEquatable<DataItem>
         {
@@ -141,7 +141,7 @@ namespace EdiabasLib
             }
         }
 
-        public List<DataItem> GetResponse(List<byte> request)
+        public List<byte> GetResponse(List<byte> request)
         {
             for (int iteration = 0; iteration < 2; ++iteration)
             {
@@ -211,7 +211,7 @@ namespace EdiabasLib
                             responseInfo.ResponseIndex = responseIndex;
                         }
 
-                        return response;
+                        return ConvertData(response, null, request);
                     }
                 }
             }
@@ -219,7 +219,7 @@ namespace EdiabasLib
             return null;
         }
 
-        public List<byte> ConvertData(List<DataItem> dataItems, List<byte> inputData, List<byte> requestData)
+        public static List<byte> ConvertData(List<DataItem> dataItems, List<byte> inputData, List<byte> requestData)
         {
             if (dataItems == null)
             {
@@ -405,7 +405,7 @@ namespace EdiabasLib
                         return false;
                     }
 
-                    KeyBytes = keyBytesBytes;
+                    KeyBytes = ConvertData(keyBytesBytes, null, null);
                     break;
                 }
             }
