@@ -818,7 +818,7 @@ namespace EdiabasLib
             return sum;
         }
 
-        public static byte[] ConvertDataItems2Array(List<EdSimFile.DataItem> dataItems, byte[] sendData = null)
+        public static byte[] ConvertDataItems2Array(List<EdSimFile.DataItem> dataItems, byte[] sendData = null, bool convertSendData = false)
         {
             if (dataItems == null)
             {
@@ -826,9 +826,18 @@ namespace EdiabasLib
             }
 
             List<byte> dataBytesList = new List<byte>();
+            int index = 0;
             foreach (EdSimFile.DataItem dataItem in dataItems)
             {
                 byte dataValue = dataItem.DataValue;
+                if (sendData != null)
+                {
+                    if (index < sendData.Length)
+                    {
+                        dataValue = sendData[index];
+                    }
+                }
+
                 if (dataItem.Operator != null)
                 {
                     byte operatorValue;
@@ -889,6 +898,7 @@ namespace EdiabasLib
                 }
 
                 dataBytesList.Add(dataValue);
+                index++;
             }
 
             return dataBytesList.ToArray();
