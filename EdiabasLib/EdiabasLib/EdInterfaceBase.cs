@@ -818,7 +818,7 @@ namespace EdiabasLib
             return sum;
         }
 
-        public static byte[] ConvertDataItems2Array(List<EdSimFile.DataItem> dataItems, byte[] sendData = null, bool convertSendData = false)
+        public static byte[] ConvertDataItems2Array(List<EdSimFile.DataItem> dataItems, byte[] sendData = null)
         {
             if (dataItems == null)
             {
