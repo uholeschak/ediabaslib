@@ -837,7 +837,7 @@ namespace EdiabasLib
                         uint operatorIndex = dataItem.OperatorIndex.Value;
                         if (sendData == null || sendData.Length < operatorIndex)
                         {
-                            continue;
+                            return null;
                         }
 
                         operatorValue = sendData[operatorIndex];
@@ -848,7 +848,7 @@ namespace EdiabasLib
                     }
                     else
                     {
-                        continue;
+                        return null;
                     }
 
                     switch (dataItem.Operator)
@@ -878,10 +878,12 @@ namespace EdiabasLib
                             break;
 
                         case EdSimFile.DataItem.OperatorType.Divide:
-                            if (operatorValue != 0)
+                            if (operatorValue == 0)
                             {
-                                dataValue /= operatorValue;
+                                return null;
                             }
+
+                            dataValue /= operatorValue;
                             break;
                     }
                 }
