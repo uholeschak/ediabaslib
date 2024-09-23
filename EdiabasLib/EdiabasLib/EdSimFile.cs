@@ -38,7 +38,7 @@ namespace EdiabasLib
 
         public List<DataItem> KeyBytes { get; private set; }
 
-        public class DataItem
+        public class DataItem : IEquatable<DataItem>
         {
             public enum OperatorType
             {
@@ -58,7 +58,44 @@ namespace EdiabasLib
                 Operator = operatorType;
                 OperatorValue = operatorValue;
                 OperatorIndex = operatorIndex;
+
+                _hashCode = DataValue.GetHashCode() ^ (DataMask?.GetHashCode() ?? 0) ^ (Operator?.GetHashCode() ?? 0) ^
+                            (OperatorValue?.GetHashCode() ?? 0) ^ (OperatorIndex?.GetHashCode() ?? 0);
             }
+
+            public override bool Equals(object obj)
+            {
+                DataItem dataItem = obj as DataItem;
+                if ((object)dataItem == null)
+                {
+                    return false;
+                }
+
+                return Equals(dataItem);
+            }
+
+            public bool Equals(DataItem other)
+            {
+                if (other == null)
+                {
+                    return false;
+                }
+
+                if (DataValue == other.DataValue && DataMask == other.DataMask && Operator == other.Operator &&
+                    OperatorValue == other.OperatorValue && OperatorIndex == other.OperatorIndex)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return _hashCode;
+            }
+
+            private readonly int _hashCode;
 
             public byte DataValue { get; private set; }
 
@@ -211,11 +248,9 @@ namespace EdiabasLib
                         bool identical = true;
                         for (int i = 0; i < requestBytes.Count; ++i)
                         {
-                            if (requestBytes[i].DataValue != responseInfo.RequestData[i].DataValue ||
-                                requestBytes[i].DataMask != responseInfo.RequestData[i].DataMask)
+                            if (!requestBytes[i].Equals(responseInfo.RequestData[i]))
                             {
                                 identical = false;
-                                break;
                             }
                         }
 
@@ -379,10 +414,8 @@ namespace EdiabasLib
                     }
 
                     string operatorString = partTrim.Substring(3);
-                    bool isIndex = false;
                     if (operatorString.StartsWith("[") && operatorString.EndsWith("]"))
                     {
-                        isIndex = true;
                         operatorString = operatorString.Substring(1, operatorString.Length - 2);
 
                         if (!uint.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint opDataValue))
