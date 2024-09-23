@@ -829,15 +829,28 @@ namespace EdiabasLib
             foreach (EdSimFile.DataItem dataItem in dataItems)
             {
                 byte dataValue = dataItem.DataValue;
-                if (dataItem.Operator != null && dataItem.OperatorIndex != null)
+                if (dataItem.Operator != null)
                 {
-                    uint operatorIndex = dataItem.OperatorIndex.Value;
-                    if (sendData == null || sendData.Length < operatorIndex)
+                    byte operatorValue;
+                    if (dataItem.OperatorIndex != null)
+                    {
+                        uint operatorIndex = dataItem.OperatorIndex.Value;
+                        if (sendData == null || sendData.Length < operatorIndex)
+                        {
+                            continue;
+                        }
+
+                        operatorValue = sendData[operatorIndex];
+                    }
+                    else if (dataItem.OperatorValue != null)
+                    {
+                        operatorValue = dataItem.OperatorValue.Value;
+                    }
+                    else
                     {
                         continue;
                     }
 
-                    byte operatorValue = sendData[operatorIndex];
                     switch (dataItem.Operator)
                     {
                         case EdSimFile.DataItem.OperatorType.And:

@@ -51,7 +51,7 @@ namespace EdiabasLib
                 Divide,
             }
 
-            public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, uint? operatorValue, uint ? operatorIndex)
+            public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, byte? operatorValue, uint ? operatorIndex)
             {
                 DataValue = dataValue;
                 DataMask = dataMask;
@@ -66,7 +66,7 @@ namespace EdiabasLib
 
             public OperatorType? Operator { get; private set; }
 
-            public uint? OperatorValue { get; private set; }
+            public byte? OperatorValue { get; private set; }
 
             public uint? OperatorIndex { get; private set; }
         }
@@ -339,7 +339,7 @@ namespace EdiabasLib
                 }
 
                 DataItem.OperatorType? operatorType = null;
-                uint? operatorValue = null;
+                byte? operatorValue = null;
                 uint? operatorIndex = null;
                 if (partTrim.Length >= 4)
                 {
@@ -384,19 +384,21 @@ namespace EdiabasLib
                     {
                         isIndex = true;
                         operatorString = operatorString.Substring(1, operatorString.Length - 2);
-                    }
 
-                    if (!uint.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint opDataValue))
-                    {
-                        return null;
-                    }
+                        if (!uint.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint opDataValue))
+                        {
+                            return null;
+                        }
 
-                    if (isIndex)
-                    {
                         operatorIndex = opDataValue;
                     }
                     else
                     {
+                        if (!byte.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte opDataValue))
+                        {
+                            return null;
+                        }
+
                         operatorValue = opDataValue;
                     }
                 }
