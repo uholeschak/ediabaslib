@@ -156,7 +156,8 @@ namespace EdiabasLib
                     for (int i = 0; i < request.Count; ++i)
                     {
                         byte? dataMask = responseInfo.RequestData[i].DataMask;
-                        if (iteration == 0 && dataMask != null)
+                        DataItem.OperatorType? operatorType = responseInfo.RequestData[i].Operator;
+                        if (iteration == 0 && (dataMask != null || operatorType != null))
                         {   // try to match without mask first
                             continue;
                         }
@@ -167,8 +168,8 @@ namespace EdiabasLib
                             maskValue = dataMask.Value;
                         }
 
-                        byte? dataValue = responseInfo.RequestData[i].DataValue;
-                        if (dataValue != null && (request[i] & maskValue) != (dataValue & maskValue))
+                        byte dataValue = responseInfo.RequestData[i].DataValue;
+                        if ((request[i] & maskValue) != (dataValue & maskValue))
                         {
                             matched = false;
                             break;
