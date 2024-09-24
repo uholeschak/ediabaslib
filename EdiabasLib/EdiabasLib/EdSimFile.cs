@@ -38,7 +38,7 @@ namespace EdiabasLib
 
         public List<byte> KeyBytes { get; private set; }
 
-        public class DataItem : IEquatable<DataItem>
+        private class DataItem : IEquatable<DataItem>
         {
             public enum OperatorType
             {
@@ -108,7 +108,7 @@ namespace EdiabasLib
             public uint? OperatorIndex { get; private set; }
         }
 
-        public class ResponseInfo
+        private class ResponseInfo
         {
             public ResponseInfo(List<DataItem> requestData, List<DataItem> responseData)
             {
@@ -219,7 +219,7 @@ namespace EdiabasLib
             return null;
         }
 
-        public static List<byte> ConvertData(List<DataItem> dataItems, List<byte> inputData, List<byte> requestData)
+        private static List<byte> ConvertData(List<DataItem> dataItems, List<byte> inputData, List<byte> requestData)
         {
             if (dataItems == null)
             {
