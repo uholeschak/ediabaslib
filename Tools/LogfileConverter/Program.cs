@@ -23,6 +23,13 @@ namespace LogfileConverter
         private static int _edicCanTesterAddr;
         private static int _edicCanEcuAddr;
 
+        private enum SimFormat
+        {
+            None,
+            BmwFast,
+            Ds2
+        }
+
         private class SimEntry(string request, string response)
         {
             public string Request { get; private set; } = request;
@@ -40,6 +47,7 @@ namespace LogfileConverter
         {
             bool sortFile = false;
             string simFile = null;
+            string sFormat = null;
             bool showHelp = false;
             List<string> inputFiles = new List<string>();
             List<string> mergeFiles = new List<string>();
@@ -59,6 +67,8 @@ namespace LogfileConverter
                   v => _responseFile = v != null },
                 { "sim=", "EDIABAS simulation file",
                     v => simFile = v },
+                { "sformat=", "simulation format (bmwfast, ds2)",
+                    v => sFormat = v },
                 { "s|sort", "sort response file", 
                   v => sortFile = v != null },
                 { "e|errors", "ignore CRC errors",
@@ -94,6 +104,21 @@ namespace LogfileConverter
                     return 1;
                 }
                 outputFile = inputFiles[0] + ".conv";
+            }
+
+            SimFormat simFormat = SimFormat.None;
+            if (!string.IsNullOrEmpty(sFormat))
+            {
+                switch (sFormat.Trim().ToLowerInvariant())
+                {
+                    case "bmwfast":
+                        simFormat = SimFormat.BmwFast;
+                        break;
+
+                    case "ds2":
+                        simFormat = SimFormat.Ds2;
+                        break;
+                }
             }
 
             foreach (string inputFile in inputFiles)
