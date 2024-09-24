@@ -170,7 +170,16 @@ namespace LogfileConverter
 
                 if (!string.IsNullOrEmpty(simFile))
                 {
-                    if (!CreateSimFile(outputFile, simFile))
+                    if (simFormat == SimFormat.None)
+                    {
+                        simFormat = SimFormat.BmwFast;
+                        if (_ds2Mode)
+                        {
+                            simFormat = SimFormat.Ds2;
+                        }
+                    }
+
+                    if (!CreateSimFile(outputFile, simFile, simFormat))
                     {
                         Console.WriteLine("Create sim file failed");
                         return 1;
@@ -1132,7 +1141,7 @@ namespace LogfileConverter
             return true;
         }
 
-        private static bool CreateSimFile(string outputFile, string simFile)
+        private static bool CreateSimFile(string outputFile, string simFile, SimFormat simFormat)
         {
             try
             {
