@@ -1147,7 +1147,7 @@ namespace LogfileConverter
                     new string[] { "83", "F1", "00|[01]", "7F", "22", "31", "00" }));     // Service 22
 
                 List<SimData> simAddData = new List<SimData>();
-                simAddData.Add(new SimData(new string[] { "8X", "XX", "F1", "23", "XX", "XX" },
+                simAddData.Add(new SimData(new string[] { "80&3F", "XX", "F1", "23", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "7F", "23", "31", "00" }));     // Service 23
 
                 bool bmwFastFormat = true;
@@ -1308,7 +1308,7 @@ namespace LogfileConverter
                             responseBytes = responseUse;
                         }
 
-                        string key = BitConverter.ToString(requestUse.ToArray()).Replace("-", string.Empty);
+                        string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
                         if (string.IsNullOrWhiteSpace(key))
                         {
                             key = "_";
@@ -1357,7 +1357,7 @@ namespace LogfileConverter
                 {
                     string genericErrorRequest = List2SimEntry(simData.Request.ToList());
                     string genericErrorResponse = List2SimEntry(simData.Response.ToList());
-                    string genericErrorKey = genericErrorRequest.Replace(",", string.Empty);
+                    string genericErrorKey = GenerateKey(genericErrorRequest);
                     AddSimLine(ref simLines, genericErrorKey, new SimEntry(genericErrorRequest, genericErrorResponse));
                 }
 
@@ -1402,6 +1402,11 @@ namespace LogfileConverter
                 return false;
             }
             return true;
+        }
+
+        private static string GenerateKey(string line)
+        {
+            return Regex.Replace(line, "[^A-Za-z0-9]", string.Empty);
         }
 
         private static bool AddSimLine(ref Dictionary<string, SimEntry> simLines, string key, SimEntry simEntry)
