@@ -1712,7 +1712,7 @@ namespace LogfileConverter
 
         private static List<byte> ConvertBmwTelegram(List<byte> telegram)
         {
-            List<byte> resultDs2 = ConvertDs2Telegram(telegram);
+            List<byte> resultDs2 = ConvertFromDs2Telegram(telegram);
             if (resultDs2 != null)
             {
                 _ds2Mode = true;
@@ -1809,7 +1809,7 @@ namespace LogfileConverter
             return true;
         }
 
-        private static List<byte> ConvertDs2Telegram(List<byte> telegram)
+        private static List<byte> ConvertFromDs2Telegram(List<byte> telegram)
         {
             if (!IsDs2Telegram(telegram))
             {
@@ -1835,6 +1835,43 @@ namespace LogfileConverter
             result.AddRange(telegram.GetRange(2, dataLength));
             byte checkSum = CalcChecksumBmwFast(result, 0, result.Count);
             result.Add(checkSum);
+
+            return result;
+        }
+
+        private static List<byte> ConvertToDs2Telegram(List<byte> telegram)
+        {
+            int telLength = TelLengthBmwFast(telegram, 0);
+            if (telLength == 0)
+            {
+                return null;
+            }
+
+            if (telLength + 1 != telegram.Count)
+            {
+                return null;
+            }
+
+            int dataLength = telegram[0] & 0x3F;
+            byte ecuAddr = telegram[1];
+            if (ecuAddr == 0xF1)
+            {   // for response
+                ecuAddr = telegram[2];
+            }
+            List<byte> result = new List<byte>();
+            if (dataLength == 0)
+            {   // with length byte
+                dataLength = telegram[3];
+                result.Add(ecuAddr);
+                result.Add((byte)(dataLength + 3));
+                result.AddRange(telegram.GetRange(4, dataLength));
+            }
+            else
+            {   // without length byte
+                result.Add(ecuAddr);
+                result.Add((byte)(dataLength + 3));
+                result.AddRange(telegram.GetRange(3, dataLength));
+            }
 
             return result;
         }
