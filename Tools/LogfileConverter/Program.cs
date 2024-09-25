@@ -1355,6 +1355,12 @@ namespace LogfileConverter
                             responseBytes = responseUse;
                         }
 
+                        if (simFormatUse == SimFormat.Ds2)
+                        {
+                            requestUse = ConvertToDs2Telegram(requestUse);
+                            responseBytes = ConvertToDs2Telegram(responseBytes);
+                        }
+
                         string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
                         if (string.IsNullOrWhiteSpace(key))
                         {
