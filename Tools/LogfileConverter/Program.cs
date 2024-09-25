@@ -1186,6 +1186,7 @@ namespace LogfileConverter
                 List<SimData> simAddData = new List<SimData>();
                 SimFormat simFormatUse = simFormat;
                 bool bmwFastFormat = true;
+                bool ds2Format = true;
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, SimEntry> simLines = new Dictionary<string, SimEntry>();
                 for (int iteration = 0; iteration < 2; iteration++)
@@ -1209,6 +1210,7 @@ namespace LogfileConverter
                             if (lineTrim.StartsWith("CFG:"))
                             {
                                 bmwFastFormat = false;
+                                ds2Format = false;
                                 break;
                             }
                         }
@@ -1234,7 +1236,21 @@ namespace LogfileConverter
                             if (dataLengthReq == 0 || dataLengthResp == 0 || requestBytes.Count != dataLengthReq + 1)
                             {
                                 bmwFastFormat = false;
+                                ds2Format = false;
                                 break;
+                            }
+                        }
+
+                        if (ds2Format)
+                        {
+                            if (ConvertToDs2Telegram(requestBytes) == null)
+                            {
+                                ds2Format = false;
+                            }
+
+                            if (ConvertToDs2Telegram(responseBytes) == null)
+                            {
+                                ds2Format = false;
                             }
                         }
 
@@ -1244,6 +1260,11 @@ namespace LogfileConverter
                         }
 
                         if (!bmwFastFormat && simFormatUse == SimFormat.BmwFast)
+                        {
+                            return false;
+                        }
+
+                        if (!ds2Format && simFormatUse == SimFormat.Ds2)
                         {
                             return false;
                         }
