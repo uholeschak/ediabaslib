@@ -1368,6 +1368,7 @@ namespace LogfileConverter
                             {
                                 continue;
                             }
+                            responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
                         }
 
                         string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
@@ -1883,10 +1884,15 @@ namespace LogfileConverter
                 return null;
             }
 
+            if ((telegram[0] & 0xC0) != 0x80)
+            {
+                return null;
+            }
+
             int dataLength = telegram[0] & 0x3F;
             byte ecuAddr = telegram[1];
             if (ecuAddr == 0xF1)
-            {   // for response
+            {   // test address
                 ecuAddr = telegram[2];
             }
             List<byte> result = new List<byte>();
