@@ -1269,9 +1269,16 @@ namespace LogfileConverter
                             return false;
                         }
 
-                        if (bmwFastFormat && simFormatUse == SimFormat.None)
+                        if (simFormatUse == SimFormat.None)
                         {
-                            simFormatUse = SimFormat.BmwFast;
+                            if (ds2Format)
+                            {
+                                simFormatUse = SimFormat.Ds2;
+                            }
+                            else if (bmwFastFormat)
+                            {
+                                simFormatUse = SimFormat.BmwFast;
+                            }
                         }
 
                         List<byte> requestUse = requestBytes;
