@@ -172,7 +172,6 @@ namespace LogfileConverter
                 {
                     if (simFormat == SimFormat.None)
                     {
-                        simFormat = SimFormat.BmwFast;
                         if (_ds2Mode)
                         {
                             simFormat = SimFormat.Ds2;
@@ -1156,34 +1155,36 @@ namespace LogfileConverter
                     return false;
                 }
 
-                List<SimData> simErrorAdd = new List<SimData>();
-                simErrorAdd.Add(new SimData(new string[] { "83", "XX", "F1", "14", "XX", "XX" },
+                List<SimData> simErrorAddBmwFast = new List<SimData>();
+                simErrorAddBmwFast.Add(new SimData(new string[] { "83", "XX", "F1", "14", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00" }));    // clear DTC
-                simErrorAdd.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
+                simErrorAddBmwFast.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00" }));    // clear DTC
-                simErrorAdd.Add(new SimData(new string[] { "C3", "XX", "F1", "14", "XX", "XX" },
+                simErrorAddBmwFast.Add(new SimData(new string[] { "C3", "XX", "F1", "14", "XX", "XX" },
                     new string[] { "83", "F1", "12", "54", "FF", "FF", "00" }));    // global clear DTC
-                simErrorAdd.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
+                simErrorAddBmwFast.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00" }));    // clear DTC
-                simErrorAdd.Add(new SimData(new string[] { "82", "XX", "F1", "11", "XX" },
+                simErrorAddBmwFast.Add(new SimData(new string[] { "82", "XX", "F1", "11", "XX" },
                     new string[] { "82", "F1", "00|[01]", "51", "00|[04]", "00" }));    // STEUERGERAETE_RESET
-                simErrorAdd.Add(new SimData(new string[] { "83", "XX", "F1", "17", "XX", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "7F", "17", "12", "00" }, simErrorAdd));    // FS_LESEN_DETAIL
+                simErrorAddBmwFast.Add(new SimData(new string[] { "83", "XX", "F1", "17", "XX", "XX" },
+                    new string[] { "83", "F1", "00|[01]", "7F", "17", "12", "00" }, simErrorAddBmwFast));    // FS_LESEN_DETAIL
 
-                List<SimData> simCandidates = new List<SimData>();
-                simCandidates.Add(new SimData(new string[] { "83", "XX", "F1", "19", "02", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "59", "02", "FF", "00" }, simErrorAdd));  // FS_LESEN
-                simCandidates.Add(new SimData(new string[] { "86", "XX", "F1", "19", "06", "XX", "XX", "XX", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "59", "06", "FF", "00" }, simErrorAdd));  // Service 19 06
-                simCandidates.Add(new SimData(new string[] { "84", "XX", "F1", "18", "02", "FF", "FF" },
-                    new string[] { "82", "F1", "00|[01]", "58", "00", "00" }, simErrorAdd));  // FS_LESEN
-                simCandidates.Add(new SimData(new string[] { "83", "XX", "F1", "22", "XX", "XX" },
+                List<SimData> simCandidatesBmwFast = new List<SimData>();
+                simCandidatesBmwFast.Add(new SimData(new string[] { "83", "XX", "F1", "19", "02", "XX" },
+                    new string[] { "83", "F1", "00|[01]", "59", "02", "FF", "00" }, simErrorAddBmwFast));  // FS_LESEN
+                simCandidatesBmwFast.Add(new SimData(new string[] { "86", "XX", "F1", "19", "06", "XX", "XX", "XX", "XX" },
+                    new string[] { "83", "F1", "00|[01]", "59", "06", "FF", "00" }, simErrorAddBmwFast));  // Service 19 06
+                simCandidatesBmwFast.Add(new SimData(new string[] { "84", "XX", "F1", "18", "02", "FF", "FF" },
+                    new string[] { "82", "F1", "00|[01]", "58", "00", "00" }, simErrorAddBmwFast));  // FS_LESEN
+                simCandidatesBmwFast.Add(new SimData(new string[] { "83", "XX", "F1", "22", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "7F", "22", "31", "00" }));     // Service 22
 
-                List<SimData> simAddData = new List<SimData>();
-                simAddData.Add(new SimData(new string[] { "80&3F", "XX", "F1", "23", "XX", "XX" },
+                List<SimData> simAddDataBmwFast = new List<SimData>();
+                simAddDataBmwFast.Add(new SimData(new string[] { "80&3F", "XX", "F1", "23", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "7F", "23", "31", "00" }));     // Service 23
 
+                List<SimData> simAddData = new List<SimData>();
+                SimFormat simFormatUse = simFormat;
                 bool bmwFastFormat = true;
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, SimEntry> simLines = new Dictionary<string, SimEntry>();
@@ -1242,11 +1243,23 @@ namespace LogfileConverter
                             continue;
                         }
 
-                        List<byte> requestUse = requestBytes;
-                        if (bmwFastFormat)
+                        if (!bmwFastFormat && simFormatUse == SimFormat.BmwFast)
                         {
+                            return false;
+                        }
+
+                        if (bmwFastFormat && simFormatUse == SimFormat.None)
+                        {
+                            simFormatUse = SimFormat.BmwFast;
+                        }
+
+                        List<byte> requestUse = requestBytes;
+                        if (simFormatUse == SimFormat.BmwFast)
+                        {
+                            simAddData.AddRange(simAddDataBmwFast);
+
                             requestUse = requestBytes.GetRange(0, dataLengthReq);
-                            foreach (SimData simData in simCandidates)
+                            foreach (SimData simData in simCandidatesBmwFast)
                             {
                                 if (simAddData.Contains(simData))
                                 {
@@ -1365,24 +1378,27 @@ namespace LogfileConverter
                 }
 
                 List<SimData> simAddAll = new List<SimData>();
-                foreach (SimData simData in simAddData)
+                if (simFormatUse == SimFormat.BmwFast)
                 {
-                    if (simAddAll.Contains(simData))
+                    foreach (SimData simData in simAddData)
                     {
-                        continue;
-                    }
-
-                    simAddAll.Add(simData);
-                    if (simData.AddData != null)
-                    {
-                        foreach (SimData simDataAdd in simData.AddData)
+                        if (simAddAll.Contains(simData))
                         {
-                            if (simAddAll.Contains(simDataAdd))
-                            {
-                                continue;
-                            }
+                            continue;
+                        }
 
-                            simAddAll.Add(simDataAdd);
+                        simAddAll.Add(simData);
+                        if (simData.AddData != null)
+                        {
+                            foreach (SimData simDataAdd in simData.AddData)
+                            {
+                                if (simAddAll.Contains(simDataAdd))
+                                {
+                                    continue;
+                                }
+
+                                simAddAll.Add(simDataAdd);
+                            }
                         }
                     }
                 }
