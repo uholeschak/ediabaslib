@@ -9920,7 +9920,7 @@ namespace BmwDeepObd
 
         private string ConfigFileName(string xmlFileDir)
         {
-            string interfaceType = string.Empty;
+            string interfaceType;
             switch (_activityCommon.SelectedInterface)
             {
                 case ActivityCommon.InterfaceType.Bluetooth:
@@ -9941,6 +9941,14 @@ namespace BmwDeepObd
 
                 case ActivityCommon.InterfaceType.Ftdi:
                     interfaceType = "Ftdi";
+                    break;
+
+                case ActivityCommon.InterfaceType.Simulation:
+                    interfaceType = "Sim";
+                    break;
+
+                default:
+                    interfaceType = "Undef";
                     break;
             }
 
