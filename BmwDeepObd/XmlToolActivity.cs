@@ -9227,7 +9227,15 @@ namespace BmwDeepObd
 
                 if (!string.IsNullOrEmpty(_instanceData.SimulationDir))
                 {
-                    globalNode.Add(new XAttribute("simulation_path", _instanceData.SimulationDir));
+                    try
+                    {
+                        string simulationPath = Path.GetRelativePath(xmlFileDir, _instanceData.SimulationDir);
+                        globalNode.Add(new XAttribute("simulation_path", simulationPath));
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
 
                 XAttribute logPathAttr = globalNode.Attribute("log_path");
