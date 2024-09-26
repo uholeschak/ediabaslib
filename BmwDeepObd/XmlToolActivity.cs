@@ -9230,7 +9230,10 @@ namespace BmwDeepObd
                     try
                     {
                         string simulationPath = Path.GetRelativePath(xmlFileDir, _instanceData.SimulationDir);
-                        globalNode.Add(new XAttribute("simulation_path", simulationPath));
+                        if (simulationPath != ".")
+                        {
+                            globalNode.Add(new XAttribute("simulation_path", simulationPath));
+                        }
                     }
                     catch (Exception)
                     {
