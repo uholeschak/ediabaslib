@@ -9209,6 +9209,8 @@ namespace BmwDeepObd
                 {
                     XAttribute attr = globalNode.Attribute("ecu_path");
                     attr?.Remove();
+                    attr = globalNode.Attribute("simulation_path");
+                    attr?.Remove();
                     attr = globalNode.Attribute("manufacturer");
                     attr?.Remove();
                     attr = globalNode.Attribute("interface");
@@ -9221,6 +9223,19 @@ namespace BmwDeepObd
                     attr?.Remove();
                     attr = globalNode.Attribute("brand_name");
                     attr?.Remove();
+                }
+
+                if (!string.IsNullOrEmpty(_instanceData.SimulationDir))
+                {
+                    try
+                    {
+                        string simulationPath = Path.GetRelativePath(xmlFileDir, _instanceData.SimulationDir);
+                        globalNode.Add(new XAttribute("simulation_path", simulationPath));
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
                 }
 
                 XAttribute logPathAttr = globalNode.Attribute("log_path");
