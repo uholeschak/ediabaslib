@@ -1243,12 +1243,31 @@ namespace LogfileConverter
 
                         if (ds2Format)
                         {
-                            if (ConvertToDs2Telegram(requestBytes) == null)
+                            if (IsDs2BmwFastEncoded(requestBytes, responseBytes))
                             {
-                                ds2Format = false;
-                            }
+                                if (ConvertToDs2Telegram(requestBytes) == null)
+                                {
+                                    ds2Format = false;
+                                }
 
-                            if (ConvertToDs2Telegram(responseBytes) == null)
+                                if (ConvertToDs2Telegram(responseBytes) == null)
+                                {
+                                    ds2Format = false;
+                                }
+                            }
+                            else if (IsKwp2000BmwFastEncoded(requestBytes, responseBytes))
+                            {
+                                if (ConvertToKwp2000Telegram(requestBytes) == null)
+                                {
+                                    ds2Format = false;
+                                }
+
+                                if (ConvertToKwp2000Telegram(responseBytes) == null)
+                                {
+                                    ds2Format = false;
+                                }
+                            }
+                            else
                             {
                                 ds2Format = false;
                             }
@@ -1398,8 +1417,27 @@ namespace LogfileConverter
                                 {
                                     continue;
                                 }
-                                responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
                             }
+                            else if (IsKwp2000BmwFastEncoded(requestUse, responseBytes))
+                            {
+                                requestUse = ConvertToKwp2000Telegram(requestUse);
+                                if (requestUse == null)
+                                {
+                                    continue;
+                                }
+
+                                responseBytes = ConvertToKwp2000Telegram(responseBytes);
+                                if (responseBytes == null)
+                                {
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                continue;
+                            }
+
+                            responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
                         }
 
                         string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
@@ -1982,10 +2020,6 @@ namespace LogfileConverter
 
             int dataLength = telegram[0] & 0x3F;
             byte ecuAddr = telegram[1];
-            if (ecuAddr == 0xF1)
-            {   // test address
-                ecuAddr = telegram[2];
-            }
             List<byte> result = new List<byte>();
             if (dataLength == 0)
             {   // with length byte
@@ -1997,6 +2031,45 @@ namespace LogfileConverter
             else
             {   // without length byte
                 result.Add(ecuAddr);
+                result.Add((byte)(dataLength + 3));
+                result.AddRange(telegram.GetRange(3, dataLength));
+            }
+
+            return result;
+        }
+
+        private static List<byte> ConvertToKwp2000Telegram(List<byte> telegram)
+        {
+            int telLength = TelLengthBmwFast(telegram, 0);
+            if (telLength == 0)
+            {
+                return null;
+            }
+
+            if (telLength + 1 != telegram.Count)
+            {
+                return null;
+            }
+
+            if ((telegram[0] & 0xC0) != 0x80)
+            {
+                return null;
+            }
+
+            int dataLength = telegram[0] & 0x3F;
+            List<byte> result = new List<byte>();
+            if (dataLength == 0)
+            {   // with length byte
+                dataLength = telegram[3];
+                result.Add(telegram[1]);
+                result.Add(telegram[2]);
+                result.Add((byte)(dataLength + 3));
+                result.AddRange(telegram.GetRange(4, dataLength));
+            }
+            else
+            {   // without length byte
+                result.Add(telegram[1]);
+                result.Add(telegram[2]);
                 result.Add((byte)(dataLength + 3));
                 result.AddRange(telegram.GetRange(3, dataLength));
             }
