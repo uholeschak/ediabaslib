@@ -2058,18 +2058,17 @@ namespace LogfileConverter
 
             int dataLength = telegram[0] & 0x3F;
             List<byte> result = new List<byte>();
+            result.Add(0xB8);
+            result.Add(telegram[1]);
+            result.Add(telegram[2]);
             if (dataLength == 0)
             {   // with length byte
                 dataLength = telegram[3];
-                result.Add(telegram[1]);
-                result.Add(telegram[2]);
                 result.Add((byte)(dataLength + 3));
                 result.AddRange(telegram.GetRange(4, dataLength));
             }
             else
             {   // without length byte
-                result.Add(telegram[1]);
-                result.Add(telegram[2]);
                 result.Add((byte)(dataLength + 3));
                 result.AddRange(telegram.GetRange(3, dataLength));
             }
