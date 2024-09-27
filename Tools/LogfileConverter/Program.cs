@@ -27,7 +27,7 @@ namespace LogfileConverter
         {
             None,
             BmwFast,
-            Ds2
+            Kwp2000_Ds2
         }
 
         private class SimEntry(string request, string response)
@@ -116,7 +116,7 @@ namespace LogfileConverter
                         break;
 
                     case "ds2":
-                        simFormat = SimFormat.Ds2;
+                        simFormat = SimFormat.Kwp2000_Ds2;
                         break;
                 }
             }
@@ -174,7 +174,7 @@ namespace LogfileConverter
                     {
                         if (_ds2Mode)
                         {
-                            simFormat = SimFormat.Ds2;
+                            simFormat = SimFormat.Kwp2000_Ds2;
                         }
                     }
 
@@ -1264,7 +1264,7 @@ namespace LogfileConverter
                             return false;
                         }
 
-                        if (!ds2Format && simFormatUse == SimFormat.Ds2)
+                        if (!ds2Format && simFormatUse == SimFormat.Kwp2000_Ds2)
                         {
                             return false;
                         }
@@ -1273,7 +1273,7 @@ namespace LogfileConverter
                         {
                             if (ds2Format)
                             {
-                                simFormatUse = SimFormat.Ds2;
+                                simFormatUse = SimFormat.Kwp2000_Ds2;
                             }
                             else if (bmwFastFormat)
                             {
@@ -1383,20 +1383,23 @@ namespace LogfileConverter
                             responseBytes = responseUse;
                         }
 
-                        if (simFormatUse == SimFormat.Ds2)
+                        if (simFormatUse == SimFormat.Kwp2000_Ds2)
                         {
-                            requestUse = ConvertToDs2Telegram(requestUse);
-                            if (requestUse == null)
+                            if (IsDs2BmwFastEncoded(requestUse, responseBytes))
                             {
-                                continue;
-                            }
+                                requestUse = ConvertToDs2Telegram(requestUse);
+                                if (requestUse == null)
+                                {
+                                    continue;
+                                }
 
-                            responseBytes = ConvertToDs2Telegram(responseBytes);
-                            if (responseBytes == null)
-                            {
-                                continue;
+                                responseBytes = ConvertToDs2Telegram(responseBytes);
+                                if (responseBytes == null)
+                                {
+                                    continue;
+                                }
+                                responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
                             }
-                            responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
                         }
 
                         string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
@@ -1862,6 +1865,66 @@ namespace LogfileConverter
             }
 
             if (IsBmwFastTelegram(telegram))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsDs2BmwFastEncoded(List<byte> request, List<byte> response)
+        {
+            if (TelLengthBmwFast(request, 0) == 0)
+            {
+                return false;
+            }
+
+            if (TelLengthBmwFast(response, 0) == 0)
+            {
+                return false;
+            }
+
+            if (request.Count < 3 || response.Count < 3)
+            {
+                return false;
+            }
+
+            if (request[1] != response[1])
+            {
+                return false;
+            }
+
+            if (request[2] != response[2])
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsKwp2000BmwFastEncoded(List<byte> request, List<byte> response)
+        {
+            if (TelLengthBmwFast(request, 0) == 0)
+            {
+                return false;
+            }
+
+            if (TelLengthBmwFast(response, 0) == 0)
+            {
+                return false;
+            }
+
+            if (request.Count < 3 || response.Count < 3)
+            {
+                return false;
+            }
+
+            if (request[1] != response[2])
+            {
+                return false;
+            }
+
+            if (request[2] != response[1])
             {
                 return false;
             }
