@@ -1927,12 +1927,12 @@ namespace LogfileConverter
                 return false;
             }
 
-            if (request[1] != response[1])
+            if (request[2] != 0xF1)
             {
                 return false;
             }
 
-            if (request[2] != response[2])
+            if (response[2] != 0xF1)
             {
                 return false;
             }
