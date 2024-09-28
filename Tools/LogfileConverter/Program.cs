@@ -1186,7 +1186,7 @@ namespace LogfileConverter
                 List<SimData> simAddData = new List<SimData>();
                 SimFormat simFormatUse = simFormat;
                 bool bmwFastFormat = true;
-                bool ds2Format = true;
+                bool kwp2000Ds2Format = true;
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, SimEntry> simLines = new Dictionary<string, SimEntry>();
                 for (int iteration = 0; iteration < 2; iteration++)
@@ -1210,7 +1210,7 @@ namespace LogfileConverter
                             if (lineTrim.StartsWith("CFG:"))
                             {
                                 bmwFastFormat = false;
-                                ds2Format = false;
+                                kwp2000Ds2Format = false;
                                 break;
                             }
                         }
@@ -1236,40 +1236,40 @@ namespace LogfileConverter
                             if (dataLengthReq == 0 || dataLengthResp == 0 || requestBytes.Count != dataLengthReq + 1)
                             {
                                 bmwFastFormat = false;
-                                ds2Format = false;
+                                kwp2000Ds2Format = false;
                                 break;
                             }
                         }
 
-                        if (ds2Format)
+                        if (kwp2000Ds2Format)
                         {
                             if (IsDs2BmwFastEncoded(requestBytes, responseBytes))
                             {
                                 if (ConvertToDs2Telegram(requestBytes) == null)
                                 {
-                                    ds2Format = false;
+                                    kwp2000Ds2Format = false;
                                 }
 
                                 if (ConvertToDs2Telegram(responseBytes) == null)
                                 {
-                                    ds2Format = false;
+                                    kwp2000Ds2Format = false;
                                 }
                             }
                             else if (IsKwp2000BmwFastEncoded(requestBytes, responseBytes))
                             {
                                 if (ConvertToKwp2000Telegram(requestBytes) == null)
                                 {
-                                    ds2Format = false;
+                                    kwp2000Ds2Format = false;
                                 }
 
                                 if (ConvertToKwp2000Telegram(responseBytes) == null)
                                 {
-                                    ds2Format = false;
+                                    kwp2000Ds2Format = false;
                                 }
                             }
                             else
                             {
-                                ds2Format = false;
+                                kwp2000Ds2Format = false;
                             }
                         }
 
@@ -1283,14 +1283,14 @@ namespace LogfileConverter
                             return false;
                         }
 
-                        if (!ds2Format && simFormatUse == SimFormat.Kwp2000_Ds2)
+                        if (!kwp2000Ds2Format && simFormatUse == SimFormat.Kwp2000_Ds2)
                         {
                             return false;
                         }
 
                         if (simFormatUse == SimFormat.None)
                         {
-                            if (ds2Format)
+                            if (kwp2000Ds2Format)
                             {
                                 simFormatUse = SimFormat.Kwp2000_Ds2;
                             }
