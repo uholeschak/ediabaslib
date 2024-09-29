@@ -1178,6 +1178,8 @@ namespace LogfileConverter
                     new string[] { "82", "F1", "00|[01]", "58", "00", "00" }, simErrorAddBmwFast));  // FS_LESEN
                 simCandidatesBmwFast.Add(new SimData(new string[] { "83", "XX", "F1", "22", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "7F", "22", "31", "00" }));     // Service 22
+                simCandidatesBmwFast.Add(new SimData(new string[] { "85", "XX", "F1", "31", "01", "XX", "XX", "XX" },
+                    null)); // Routine control
 
                 List<SimData> simAddDataBmwFast = new List<SimData>();
                 simAddDataBmwFast.Add(new SimData(new string[] { "80&3F", "XX", "F1", "23", "XX", "XX" },
@@ -1338,7 +1340,32 @@ namespace LogfileConverter
 
                                 if (lineMatched)
                                 {
-                                    simAddData.Add(simData);
+                                    if (simData.Response != null)
+                                    {
+                                        simAddData.Add(simData);
+                                    }
+                                    else
+                                    {
+                                        List<string> requestList = new List<string>(simData.Request);
+                                        List<string> responseList = new List<string>();
+                                        foreach (byte responseByte in responseBytes)
+                                        {
+                                            responseList.Add(string.Format(CultureInfo.InvariantCulture, "{0:X02}", responseByte));
+                                        }
+
+                                        if (responseList.Count > 2)
+                                        {
+                                            if (string.Compare(requestList[1], "XX", StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                string addressString = string.Format(CultureInfo.InvariantCulture, "{0:X02}", requestUse[1]);
+                                                requestList[1] = addressString;
+                                                responseList[2] = addressString;
+                                            }
+
+                                        }
+
+                                        simAddData.Add(new SimData(requestList.ToArray(), responseList.ToArray()));
+                                    }
                                 }
                             }
 
