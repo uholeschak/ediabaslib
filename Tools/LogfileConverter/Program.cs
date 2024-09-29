@@ -1346,6 +1346,11 @@ namespace LogfileConverter
                                     }
                                     else
                                     {
+                                        if (responseBytes.Count > 3 && responseBytes[0] == 0x83 && responseBytes[3] == 0x7F)
+                                        {   // error response
+                                            continue;
+                                        }
+
                                         List<string> requestList = new List<string>(simData.Request);
                                         List<string> responseList = new List<string>();
                                         foreach (byte responseByte in responseBytes)
