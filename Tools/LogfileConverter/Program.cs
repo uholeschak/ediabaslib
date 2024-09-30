@@ -115,7 +115,7 @@ namespace LogfileConverter
                 {
                     if (inputFiles.Count > 0)
                     {
-                        Console.WriteLine("Temporary output not available with input files");
+                        Console.WriteLine("Temporary output not available when input files are specified");
                         return 1;
                     }
 
