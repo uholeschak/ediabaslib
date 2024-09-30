@@ -46,7 +46,6 @@ namespace LogfileConverter
         static int Main(string[] args)
         {
             bool sortFile = false;
-            bool tempOutput = false;
             string simFile = null;
             string sFormat = null;
             bool showHelp = false;
@@ -72,8 +71,6 @@ namespace LogfileConverter
                     v => sFormat = v },
                 { "s|sort", "sort response file", 
                   v => sortFile = v != null },
-                { "t|temp", "temporary output file",
-                    v => tempOutput = v != null },
                 { "e|errors", "ignore CRC errors",
                   v => _ignoreCrcErrors = v != null },
                 { "h|help",  "show this message and exit", 
@@ -99,35 +96,36 @@ namespace LogfileConverter
                 return 0;
             }
 
+            bool tempOutput = false;
             try
             {
-                if (outputFile == null)
-                {
-                    if (inputFiles.Count < 1)
-                    {
-                        Console.WriteLine("No input or output file specified");
-                        return 1;
-                    }
-                    outputFile = inputFiles[0] + ".conv";
-                }
-
+                tempOutput = outputFile == null && inputFiles.Count == 0 && mergeFiles.Count > 0;
                 if (tempOutput)
                 {
-                    if (inputFiles.Count > 0)
+                    string firstMergeFile = mergeFiles[0];
+                    if (!File.Exists(firstMergeFile))
                     {
-                        Console.WriteLine("Temporary output not available when input files are specified");
-                        return 1;
-                    }
-
-                    if (!File.Exists(outputFile))
-                    {
-                        Console.WriteLine("Output file '{0}' not found", outputFile);
+                        Console.WriteLine("Merge file '{0}' not found", firstMergeFile);
                         return 1;
                     }
 
                     string tempFile = Path.GetTempFileName();
-                    File.Copy(outputFile, tempFile, true);
+                    File.Copy(firstMergeFile, tempFile, true);
                     outputFile = tempFile;
+                    mergeFiles.RemoveAt(0);
+                }
+                else
+                {
+                    if (outputFile == null)
+                    {
+                        if (inputFiles.Count < 1)
+                        {
+                            Console.WriteLine("No input or output file specified");
+                            return 1;
+                        }
+
+                        outputFile = inputFiles[0] + ".conv";
+                    }
                 }
 
                 SimFormat simFormat = SimFormat.None;
