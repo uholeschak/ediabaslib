@@ -62,8 +62,6 @@ namespace LogfileConverter
                     v => mergeFiles.Add(v) },
                 { "o|output=", "output file (if omitted '.conv' is appended to input file).",
                   v => outputFile = v },
-                { "t|temp", "temporary output file",
-                    v => tempOutput = v != null },
                 { "c|cformat", "c++ style format for hex values", 
                   v => _cFormat = v != null },
                 { "r|response", "create response file", 
@@ -101,92 +99,122 @@ namespace LogfileConverter
                 return 0;
             }
 
-            if (outputFile == null)
+            try
             {
-                if (inputFiles.Count < 1)
+                if (outputFile == null)
                 {
-                    Console.WriteLine("No input or output file specified");
-                    return 1;
-                }
-                outputFile = inputFiles[0] + ".conv";
-            }
-
-            SimFormat simFormat = SimFormat.None;
-            if (!string.IsNullOrEmpty(sFormat))
-            {
-                switch (sFormat.Trim().ToLowerInvariant())
-                {
-                    case "bmwfast":
-                        simFormat = SimFormat.BmwFast;
-                        break;
-
-                    case "ds2":
-                        simFormat = SimFormat.Kwp2000_Ds2;
-                        break;
-                }
-            }
-
-            foreach (string inputFile in inputFiles)
-            {
-                if (!File.Exists(inputFile))
-                {
-                    Console.WriteLine("Input file '{0}' not found", inputFile);
-                    return 1;
-                }
-            }
-
-            foreach (string mergeFile in mergeFiles)
-            {
-                if (!File.Exists(mergeFile))
-                {
-                    Console.WriteLine("Merge file '{0}' not found", mergeFile);
-                    return 1;
-                }
-            }
-
-            if (inputFiles.Count > 0)
-            {
-                if (!ConvertLog(inputFiles, outputFile))
-                {
-                    Console.WriteLine("Conversion failed");
-                    return 1;
-                }
-            }
-
-            if (mergeFiles.Count > 0)
-            {
-                if (!AddMergeFiles(mergeFiles, outputFile))
-                {
-                    Console.WriteLine("Adding merge files failed");
-                    return 1;
-                }
-            }
-
-            if (_responseFile && !_cFormat)
-            {
-                if (sortFile)
-                {
-                    if (!SortLines(outputFile))
+                    if (inputFiles.Count < 1)
                     {
-                        Console.WriteLine("Sorting failed");
+                        Console.WriteLine("No input or output file specified");
+                        return 1;
+                    }
+                    outputFile = inputFiles[0] + ".conv";
+                }
+
+                if (tempOutput)
+                {
+                    if (!File.Exists(outputFile))
+                    {
+                        Console.WriteLine("Output file '{0}' not found", outputFile);
+                        return 1;
+                    }
+
+                    string tempFile = Path.GetTempFileName();
+                    File.Copy(outputFile, tempFile, true);
+                    outputFile = tempFile;
+                }
+
+                SimFormat simFormat = SimFormat.None;
+                if (!string.IsNullOrEmpty(sFormat))
+                {
+                    switch (sFormat.Trim().ToLowerInvariant())
+                    {
+                        case "bmwfast":
+                            simFormat = SimFormat.BmwFast;
+                            break;
+
+                        case "ds2":
+                            simFormat = SimFormat.Kwp2000_Ds2;
+                            break;
+                    }
+                }
+
+                foreach (string inputFile in inputFiles)
+                {
+                    if (!File.Exists(inputFile))
+                    {
+                        Console.WriteLine("Input file '{0}' not found", inputFile);
                         return 1;
                     }
                 }
 
-                if (!string.IsNullOrEmpty(simFile))
+                foreach (string mergeFile in mergeFiles)
                 {
-                    if (simFormat == SimFormat.None)
+                    if (!File.Exists(mergeFile))
                     {
-                        if (_ds2Mode)
+                        Console.WriteLine("Merge file '{0}' not found", mergeFile);
+                        return 1;
+                    }
+                }
+
+                if (inputFiles.Count > 0)
+                {
+                    if (!ConvertLog(inputFiles, outputFile))
+                    {
+                        Console.WriteLine("Conversion failed");
+                        return 1;
+                    }
+                }
+
+                if (mergeFiles.Count > 0)
+                {
+                    if (!AddMergeFiles(mergeFiles, outputFile))
+                    {
+                        Console.WriteLine("Adding merge files failed");
+                        return 1;
+                    }
+                }
+
+                if (_responseFile && !_cFormat)
+                {
+                    if (sortFile)
+                    {
+                        if (!SortLines(outputFile))
                         {
-                            simFormat = SimFormat.Kwp2000_Ds2;
+                            Console.WriteLine("Sorting failed");
+                            return 1;
                         }
                     }
 
-                    if (!CreateSimFile(outputFile, simFile, simFormat))
+                    if (!string.IsNullOrEmpty(simFile))
                     {
-                        Console.WriteLine("Create sim file failed");
-                        return 1;
+                        if (simFormat == SimFormat.None)
+                        {
+                            if (_ds2Mode)
+                            {
+                                simFormat = SimFormat.Kwp2000_Ds2;
+                            }
+                        }
+
+                        if (!CreateSimFile(outputFile, simFile, simFormat))
+                        {
+                            Console.WriteLine("Create sim file failed");
+                            return 1;
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: {0}", e.Message);
+            }
+            finally
+            {
+                if (tempOutput && string.IsNullOrEmpty(outputFile))
+                {
+                    if (File.Exists(outputFile))
+                    {
+                        File.Delete(outputFile);
                     }
                 }
             }
