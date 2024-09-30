@@ -113,6 +113,12 @@ namespace LogfileConverter
 
                 if (tempOutput)
                 {
+                    if (inputFiles.Count > 0)
+                    {
+                        Console.WriteLine("Temporary output not available with input files");
+                        return 1;
+                    }
+
                     if (!File.Exists(outputFile))
                     {
                         Console.WriteLine("Output file '{0}' not found", outputFile);
