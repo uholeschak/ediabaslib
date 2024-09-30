@@ -46,6 +46,7 @@ namespace LogfileConverter
         static int Main(string[] args)
         {
             bool sortFile = false;
+            bool tempOutput = false;
             string simFile = null;
             string sFormat = null;
             bool showHelp = false;
@@ -61,6 +62,8 @@ namespace LogfileConverter
                     v => mergeFiles.Add(v) },
                 { "o|output=", "output file (if omitted '.conv' is appended to input file).",
                   v => outputFile = v },
+                { "t|temp", "temporary output file",
+                    v => tempOutput = v != null },
                 { "c|cformat", "c++ style format for hex values", 
                   v => _cFormat = v != null },
                 { "r|response", "create response file", 
@@ -71,6 +74,8 @@ namespace LogfileConverter
                     v => sFormat = v },
                 { "s|sort", "sort response file", 
                   v => sortFile = v != null },
+                { "t|temp", "temporary output file",
+                    v => tempOutput = v != null },
                 { "e|errors", "ignore CRC errors",
                   v => _ignoreCrcErrors = v != null },
                 { "h|help",  "show this message and exit", 
