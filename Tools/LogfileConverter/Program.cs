@@ -27,7 +27,11 @@ namespace LogfileConverter
         {
             None,
             BmwFast,
-            Kwp2000_Ds2
+            Kwp2000s_Ds2,
+            Kwp1281,
+            kwp2000,
+            EdicCan,
+            EdicCanIsoTp
         }
 
         private class SimEntry(string request, string response)
@@ -138,7 +142,23 @@ namespace LogfileConverter
                             break;
 
                         case "ds2":
-                            simFormat = SimFormat.Kwp2000_Ds2;
+                            simFormat = SimFormat.Kwp2000s_Ds2;
+                            break;
+
+                        case "kwp1281":
+                            simFormat = SimFormat.Kwp1281;
+                            break;
+
+                        case "kwp2000":
+                            simFormat = SimFormat.kwp2000;
+                            break;
+
+                        case "edcan":
+                            simFormat = SimFormat.EdicCan;
+                            break;
+
+                        case "isotp":
+                            simFormat = SimFormat.EdicCanIsoTp;
                             break;
                     }
                 }
@@ -196,7 +216,7 @@ namespace LogfileConverter
                         {
                             if (_ds2Mode)
                             {
-                                simFormat = SimFormat.Kwp2000_Ds2;
+                                simFormat = SimFormat.Kwp2000s_Ds2;
                             }
                         }
 
@@ -1337,7 +1357,7 @@ namespace LogfileConverter
                             return false;
                         }
 
-                        if (!kwp2000_Ds2Format && simFormatUse == SimFormat.Kwp2000_Ds2)
+                        if (!kwp2000_Ds2Format && simFormatUse == SimFormat.Kwp2000s_Ds2)
                         {
                             return false;
                         }
@@ -1346,7 +1366,7 @@ namespace LogfileConverter
                         {
                             if (kwp2000_Ds2Format)
                             {
-                                simFormatUse = SimFormat.Kwp2000_Ds2;
+                                simFormatUse = SimFormat.Kwp2000s_Ds2;
                             }
                             else if (bmwFastFormat)
                             {
@@ -1486,7 +1506,7 @@ namespace LogfileConverter
                             responseBytes = responseUse;
                         }
 
-                        if (simFormatUse == SimFormat.Kwp2000_Ds2)
+                        if (simFormatUse == SimFormat.Kwp2000s_Ds2)
                         {
                             if (IsDs2BmwFastEncoded(requestUse, responseBytes))
                             {
