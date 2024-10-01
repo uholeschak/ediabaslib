@@ -1244,9 +1244,16 @@ namespace LogfileConverter
                             continue;
                         }
 
+                        List<byte> cfgBytes = null;
+                        if (lineTrim.StartsWith("CFG:"))
+                        {
+                            string cfgLine = lineTrim.Substring(4);
+                            cfgBytes = NumberString2List(cfgLine);
+                        }
+
                         if (iteration == 0)
                         {
-                            if (lineTrim.StartsWith("CFG:"))
+                            if (cfgBytes != null)
                             {
                                 bmwFastFormat = false;
                                 kwp2000_Ds2Format = false;
