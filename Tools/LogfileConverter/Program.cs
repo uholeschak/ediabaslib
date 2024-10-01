@@ -1267,13 +1267,21 @@ namespace LogfileConverter
                             continue;
                         }
 
+
                         List<byte> requestBytes = NumberString2List(lineParts[0]);
+                        List<byte> responseBytes = NumberString2List(lineParts[1]);
+                        List<byte> keyBytesExtra = null;
                         if (requestBytes.Count < 1)
                         {
-                            continue;
+                            if (responseBytes.Count < 1)
+                            {
+                                continue;
+                            }
+
+                            keyBytesExtra = responseBytes;
+                            responseBytes = new List<byte>();
                         }
 
-                        List<byte> responseBytes = NumberString2List(lineParts[1]);
                         int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
                         int dataLengthResp = TelLengthBmwFast(responseBytes, 0);
 
