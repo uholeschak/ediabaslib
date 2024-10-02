@@ -1636,7 +1636,7 @@ namespace LogfileConverter
 
                         if (keyBytesFinal != null)
                         {
-                            key = GenerateKey("KEY", ecuAddr);
+                            key = GenerateKey(BitConverter.ToString(keyBytesFinal.ToArray()));
                             keyBytesEntry = BitConverter.ToString(keyBytesFinal.ToArray()).Replace("-", ",");
                             keyBytesFinal = null;
                         }
@@ -1647,7 +1647,7 @@ namespace LogfileConverter
                                 continue;
                             }
 
-                            key = GenerateKey(BitConverter.ToString(requestUse.ToArray()), ecuAddr);
+                            key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
                             if (string.IsNullOrWhiteSpace(key))
                             {
                                 key = "_";
@@ -1818,16 +1818,9 @@ namespace LogfileConverter
             return true;
         }
 
-        private static string GenerateKey(string line, int? ecuAddr = null)
+        private static string GenerateKey(string line)
         {
-            string key = Regex.Replace(line, "[^A-Za-z0-9]", string.Empty);
-
-            if (ecuAddr != null)
-            {
-                key = "ADR_" + string.Format(CultureInfo.InvariantCulture, "{0:X02}", ecuAddr) + "_" + key;
-            }
-
-            return key;
+            return Regex.Replace(line, "[^A-Za-z0-9]", string.Empty);
         }
 
         private static bool AddSimLine(ref Dictionary<string, SimEntry> simLines, string key, SimEntry simEntry)
