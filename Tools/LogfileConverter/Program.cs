@@ -28,10 +28,8 @@ namespace LogfileConverter
             None,
             BmwFast,
             Kwp2000s_Ds2,
-            Kwp1281,
-            kwp2000,
+            EdicKwp,
             EdicCan,
-            EdicCanIsoTp
         }
 
         [Flags]
@@ -147,7 +145,7 @@ namespace LogfileConverter
                 {
                     switch (sFormat.Trim().ToLowerInvariant())
                     {
-                        case "bmwfast":
+                        case "bmw_fast":
                             simFormat = SimFormat.BmwFast;
                             break;
 
@@ -155,20 +153,12 @@ namespace LogfileConverter
                             simFormat = SimFormat.Kwp2000s_Ds2;
                             break;
 
-                        case "kwp1281":
-                            simFormat = SimFormat.Kwp1281;
+                        case "edic_kwp":
+                            simFormat = SimFormat.EdicKwp;
                             break;
 
-                        case "kwp2000":
-                            simFormat = SimFormat.kwp2000;
-                            break;
-
-                        case "edcan":
+                        case "edic_can":
                             simFormat = SimFormat.EdicCan;
-                            break;
-
-                        case "isotp":
-                            simFormat = SimFormat.EdicCanIsoTp;
                             break;
                     }
                 }
@@ -1404,6 +1394,29 @@ namespace LogfileConverter
                             else if (bmwFastFormat)
                             {
                                 simFormatUse = SimFormat.BmwFast;
+                            }
+                            else
+                            {
+                                if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
+                                {
+                                    simFormatUse = SimFormat.EdicKwp;
+                                }
+                                else if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
+                                {
+                                    simFormatUse = SimFormat.EdicKwp;
+                                }
+                                else if ((edicTypes & EdicTypes.Tp20) != EdicTypes.None)
+                                {
+                                    simFormatUse = SimFormat.EdicCan;
+                                }
+                                else if ((edicTypes & EdicTypes.Uds) != EdicTypes.None)
+                                {
+                                    simFormatUse = SimFormat.EdicCan;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
                             }
                         }
 
