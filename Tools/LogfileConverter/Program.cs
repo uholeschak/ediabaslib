@@ -1270,6 +1270,7 @@ namespace LogfileConverter
                         {
                             string cfgLine = lineTrim.Substring(4);
                             cfgBytes = NumberString2List(cfgLine);
+                            lineTrim = string.Empty;
                         }
 
                         if (iteration == 0)
