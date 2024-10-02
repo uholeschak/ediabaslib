@@ -42,10 +42,11 @@ namespace LogfileConverter
             Uds = 0x08,
         }
 
-        private class SimEntry(string request, string response, bool keyByte = false)
+        private class SimEntry(string request, string response, int? ecuAddr = null, bool keyByte = false)
         {
             public string Request { get; private set; } = request;
             public string Response { get; private set; } = response;
+            public int? EcuAddr { get; private set; } = ecuAddr;
             public bool KeyByte { get; private set; } = keyByte;
         }
 
@@ -1667,11 +1668,11 @@ namespace LogfileConverter
 
                         if (!string.IsNullOrEmpty(keyBytesEntry))
                         {
-                            AddSimLine(ref simLines, key, new SimEntry(keyBytesEntry, string.Empty, true));
+                            AddSimLine(ref simLines, key, new SimEntry(keyBytesEntry, string.Empty, ecuAddr, true));
                         }
                         else
                         {
-                            AddSimLine(ref simLines, key, new SimEntry(request, response));
+                            AddSimLine(ref simLines, key, new SimEntry(request, response, ecuAddr));
                         }
                     }
                 }
