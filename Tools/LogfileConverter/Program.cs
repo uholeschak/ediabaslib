@@ -1300,7 +1300,7 @@ namespace LogfileConverter
                             }
                         }
 
-                        string[] lineParts = lineTrim.Split(':', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                        string[] lineParts = lineTrim.Split(':', StringSplitOptions.TrimEntries);
                         if (lineParts.Length != 2)
                         {
                             continue;
