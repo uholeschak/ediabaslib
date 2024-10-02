@@ -34,6 +34,16 @@ namespace LogfileConverter
             EdicCanIsoTp
         }
 
+        [Flags]
+        private enum EdicTypes
+        {
+            None = 0x00,
+            Kwp1281 = 0x01,
+            Kwp2000 = 0x02,
+            Tp20 = 0x04,
+            Uds = 0x08,
+        }
+
         private class SimEntry(string request, string response)
         {
             public string Request { get; private set; } = request;
@@ -1246,6 +1256,7 @@ namespace LogfileConverter
                 SimFormat simFormatUse = simFormat;
                 bool bmwFastFormat = true;
                 bool kwp2000_Ds2Format = true;
+                EdicTypes edicTypes = EdicTypes.None;
                 string[] lines = File.ReadAllLines(outputFile);
                 Dictionary<string, SimEntry> simLines = new Dictionary<string, SimEntry>();
                 for (int iteration = 0; iteration < 2; iteration++)
@@ -1277,6 +1288,23 @@ namespace LogfileConverter
                             {
                                 bmwFastFormat = false;
                                 kwp2000_Ds2Format = false;
+                                switch (cfgBytes.Count)
+                                {
+                                    case 2:
+                                        edicTypes |= EdicTypes.Tp20;
+                                        break;
+
+                                    case 3:
+                                        if ((edicTypes & EdicTypes.Kwp1281) == EdicTypes.None)
+                                        {
+                                            edicTypes |= EdicTypes.Kwp2000;
+                                        }
+                                        break;
+
+                                    case 5:
+                                        edicTypes |= EdicTypes.Uds;
+                                        break;
+                                }
                                 break;
                             }
                         }
@@ -1286,7 +1314,6 @@ namespace LogfileConverter
                         {
                             continue;
                         }
-
 
                         List<byte> requestBytes = NumberString2List(lineParts[0]);
                         List<byte> responseBytes = NumberString2List(lineParts[1]);
@@ -1300,6 +1327,12 @@ namespace LogfileConverter
 
                             keyBytesExtra = responseBytes;
                             responseBytes = new List<byte>();
+                        }
+
+                        if (keyBytesExtra != null)
+                        {
+                            edicTypes |= EdicTypes.Kwp1281;
+                            edicTypes &= ~EdicTypes.Kwp2000;
                         }
 
                         int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
