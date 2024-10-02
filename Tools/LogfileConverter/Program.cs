@@ -42,10 +42,11 @@ namespace LogfileConverter
             Uds = 0x08,
         }
 
-        private class SimEntry(string request, string response)
+        private class SimEntry(string request, string response, bool keyByte = false)
         {
             public string Request { get; private set; } = request;
             public string Response { get; private set; } = response;
+            public bool KeyByte { get; private set; } = keyByte;
         }
 
         private class SimData(string[] request, string[] response, List<SimData> addData = null)
@@ -1329,11 +1330,6 @@ namespace LogfileConverter
                         int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
                         int dataLengthResp = TelLengthBmwFast(responseBytes, 0);
 
-                        if (dataLengthReq == 0 && dataLengthResp == 0)
-                        {
-                            continue;
-                        }
-
                         if (iteration == 0)
                         {
                             if (dataLengthReq == 0 || dataLengthResp == 0 || requestBytes.Count != dataLengthReq + 1)
@@ -1596,25 +1592,50 @@ namespace LogfileConverter
                             responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
                         }
 
-                        string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()), ecuAddr);
-                        if (string.IsNullOrWhiteSpace(key))
+                        string key = string.Empty;
+                        string request = string.Empty;
+                        string response = string.Empty;
+                        string keyBytesEntry = string.Empty;
+
+                        if (keyBytesExtra != null)
                         {
-                            key = "_";
+                            key = GenerateKey(BitConverter.ToString(keyBytesExtra.ToArray()), ecuAddr);
+                            keyBytesEntry = BitConverter.ToString(keyBytesExtra.ToArray()).Replace("-", ",");
+                        }
+                        else
+                        {
+                            if (dataLengthReq == 0 && dataLengthResp == 0)
+                            {
+                                continue;
+                            }
+
+                            key = GenerateKey(BitConverter.ToString(requestUse.ToArray()), ecuAddr);
+                            if (string.IsNullOrWhiteSpace(key))
+                            {
+                                key = "_";
+                            }
+
+                            request = BitConverter.ToString(requestUse.ToArray()).Replace("-", ",");
+                            if (string.IsNullOrWhiteSpace(request))
+                            {
+                                request = "_";
+                            }
+
+                            response = BitConverter.ToString(responseBytes.ToArray()).Replace("-", ",");
+                            if (string.IsNullOrWhiteSpace(response))
+                            {
+                                response = string.Empty;
+                            }
                         }
 
-                        string request = BitConverter.ToString(requestUse.ToArray()).Replace("-", ",");
-                        if (string.IsNullOrWhiteSpace(request))
+                        if (!string.IsNullOrEmpty(keyBytesEntry))
                         {
-                            request = "_";
+                            AddSimLine(ref simLines, key, new SimEntry(keyBytesEntry, string.Empty, true));
                         }
-
-                        string response = BitConverter.ToString(responseBytes.ToArray()).Replace("-", ",");
-                        if (string.IsNullOrWhiteSpace(response))
+                        else
                         {
-                            response = string.Empty;
+                            AddSimLine(ref simLines, key, new SimEntry(request, response));
                         }
-
-                        AddSimLine(ref simLines, key, new SimEntry(request, response));
                     }
                 }
 
@@ -1674,9 +1695,26 @@ namespace LogfileConverter
                     streamWriter.WriteLine("Ignition = 12500");
 
                     streamWriter.WriteLine();
+                    streamWriter.WriteLine("[KEYBYTES]");
+                    foreach (KeyValuePair<string, SimEntry> simLine in simLines)
+                    {
+                        if (!simLine.Value.KeyByte)
+                        {
+                            continue;
+                        }
+
+                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Request);
+                    }
+
+                    streamWriter.WriteLine();
                     streamWriter.WriteLine("[REQUEST]");
                     foreach (KeyValuePair<string, SimEntry> simLine in simLines)
                     {
+                        if (simLine.Value.KeyByte)
+                        {
+                            continue;
+                        }
+
                         streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Request);
                     }
 
@@ -1684,6 +1722,11 @@ namespace LogfileConverter
                     streamWriter.WriteLine("[RESPONSE]");
                     foreach (KeyValuePair<string, SimEntry> simLine in simLines)
                     {
+                        if (simLine.Value.KeyByte)
+                        {
+                            continue;
+                        }
+
                         streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Response);
                     }
                 }
