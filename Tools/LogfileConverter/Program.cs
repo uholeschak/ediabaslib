@@ -1732,8 +1732,7 @@ namespace LogfileConverter
                     streamWriter.WriteLine("[IGNITION]");
                     streamWriter.WriteLine("Ignition = 12500");
 
-                    streamWriter.WriteLine();
-                    streamWriter.WriteLine("[KEYBYTES]");
+                    string lastSection = string.Empty;
                     foreach (KeyValuePair<string, SimEntry> simLine in simLines)
                     {
                         if (!simLine.Value.KeyByte)
@@ -1741,11 +1740,25 @@ namespace LogfileConverter
                             continue;
                         }
 
+                        string section = "KEYBYTES";
+                        if (simLine.Value.EcuAddr != null)
+                        {
+                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simLine.Value.EcuAddr) + section;
+                        }
+
+                        section = "[" + section + "]";
+
+                        if (lastSection != section)
+                        {
+                            streamWriter.WriteLine();
+                            streamWriter.WriteLine(section);
+                            lastSection = section;
+                        }
+
                         streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Request);
                     }
 
-                    streamWriter.WriteLine();
-                    streamWriter.WriteLine("[REQUEST]");
+                    lastSection = string.Empty;
                     foreach (KeyValuePair<string, SimEntry> simLine in simLines)
                     {
                         if (simLine.Value.KeyByte)
@@ -1753,16 +1766,45 @@ namespace LogfileConverter
                             continue;
                         }
 
+                        string section = "REQUEST";
+                        if (simLine.Value.EcuAddr != null)
+                        {
+                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simLine.Value.EcuAddr) + section;
+                        }
+
+                        section = "[" + section + "]";
+
+                        if (lastSection != section)
+                        {
+                            streamWriter.WriteLine();
+                            streamWriter.WriteLine(section);
+                            lastSection = section;
+                        }
+
                         streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Request);
                     }
 
-                    streamWriter.WriteLine();
-                    streamWriter.WriteLine("[RESPONSE]");
+                    lastSection = string.Empty;
                     foreach (KeyValuePair<string, SimEntry> simLine in simLines)
                     {
                         if (simLine.Value.KeyByte)
                         {
                             continue;
+                        }
+
+                        string section = "RESPONSE";
+                        if (simLine.Value.EcuAddr != null)
+                        {
+                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simLine.Value.EcuAddr) + section;
+                        }
+
+                        section = "[" + section + "]";
+
+                        if (lastSection != section)
+                        {
+                            streamWriter.WriteLine();
+                            streamWriter.WriteLine(section);
+                            lastSection = section;
                         }
 
                         streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Response);
