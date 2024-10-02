@@ -1329,6 +1329,11 @@ namespace LogfileConverter
                         int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
                         int dataLengthResp = TelLengthBmwFast(responseBytes, 0);
 
+                        if (dataLengthReq == 0 && dataLengthResp == 0)
+                        {
+                            continue;
+                        }
+
                         if (iteration == 0)
                         {
                             if (dataLengthReq == 0 || dataLengthResp == 0 || requestBytes.Count != dataLengthReq + 1)
