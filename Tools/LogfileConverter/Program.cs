@@ -1254,6 +1254,7 @@ namespace LogfileConverter
                 {
                     int? ecuAddr = null;
                     List<byte> keyBytesPrefix = null;
+                    List<byte> keyBytesFinal = null;
                     foreach (string line in lines)
                     {
                         string lineTrim = line.Trim();
@@ -1310,6 +1311,13 @@ namespace LogfileConverter
                                     int baudRate = 96000;
                                     keyBytesPrefix.Add((byte)(baudRate & 0xFF));
                                     keyBytesPrefix.Add((byte)(baudRate >> 8));
+
+                                    if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
+                                    {
+                                        keyBytesFinal = new List<byte>();
+                                        keyBytesFinal.AddRange(keyBytesPrefix);
+                                    }
+
                                     break;
                                 }
 
@@ -1337,6 +1345,15 @@ namespace LogfileConverter
                             }
 
                             keyBytesExtra = responseBytes;
+                            if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
+                            {
+                                if (keyBytesPrefix != null)
+                                {
+                                    keyBytesFinal = new List<byte>();
+                                    keyBytesFinal.AddRange(keyBytesPrefix);
+                                    keyBytesFinal.AddRange(keyBytesExtra);
+                                }
+                            }
                             responseBytes = new List<byte>();
                         }
 
@@ -1616,17 +1633,11 @@ namespace LogfileConverter
                         string response = string.Empty;
                         string keyBytesEntry = string.Empty;
 
-                        if (keyBytesExtra != null)
+                        if (keyBytesFinal != null)
                         {
                             key = GenerateKey("KEY", ecuAddr);
-                            List<byte> keyBytesList = new List<byte>();
-                            if (keyBytesPrefix != null)
-                            {
-                                keyBytesList.AddRange(keyBytesPrefix);
-                            }
-
-                            keyBytesList.AddRange(keyBytesExtra);
-                            keyBytesEntry = BitConverter.ToString(keyBytesList.ToArray()).Replace("-", ",");
+                            keyBytesEntry = BitConverter.ToString(keyBytesFinal.ToArray()).Replace("-", ",");
+                            keyBytesFinal = null;
                         }
                         else
                         {
