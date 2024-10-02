@@ -1251,6 +1251,7 @@ namespace LogfileConverter
                 Dictionary<string, SimEntry> simLines = new Dictionary<string, SimEntry>();
                 for (int iteration = 0; iteration < 2; iteration++)
                 {
+                    int? ecuAddr = null;
                     foreach (string line in lines)
                     {
                         string lineTrim = line.Trim();
@@ -1273,30 +1274,29 @@ namespace LogfileConverter
                             lineTrim = string.Empty;
                         }
 
-                        if (iteration == 0)
+                        if (cfgBytes != null)
                         {
-                            if (cfgBytes != null)
+                            bmwFastFormat = false;
+                            kwp2000_Ds2Format = false;
+                            switch (cfgBytes.Count)
                             {
-                                bmwFastFormat = false;
-                                kwp2000_Ds2Format = false;
-                                switch (cfgBytes.Count)
-                                {
-                                    case 2:
-                                        edicTypes |= EdicTypes.Tp20;
-                                        break;
+                                case 2:
+                                    edicTypes |= EdicTypes.Tp20;
+                                    ecuAddr = cfgBytes[0];
+                                    break;
 
-                                    case 3:
-                                        if ((edicTypes & EdicTypes.Kwp1281) == EdicTypes.None)
-                                        {
-                                            edicTypes |= EdicTypes.Kwp2000;
-                                        }
-                                        break;
+                                case 3:
+                                    if ((edicTypes & EdicTypes.Kwp1281) == EdicTypes.None)
+                                    {
+                                        edicTypes |= EdicTypes.Kwp2000;
+                                    }
+                                    ecuAddr = cfgBytes[0];
+                                    break;
 
-                                    case 5:
-                                        edicTypes |= EdicTypes.Uds;
-                                        break;
-                                }
-                                break;
+                                case 5:
+                                    edicTypes |= EdicTypes.Uds;
+                                    ecuAddr = cfgBytes[0];
+                                    break;
                             }
                         }
 
@@ -1591,7 +1591,7 @@ namespace LogfileConverter
                             responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
                         }
 
-                        string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
+                        string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()), ecuAddr);
                         if (string.IsNullOrWhiteSpace(key))
                         {
                             key = "_";
@@ -1690,9 +1690,16 @@ namespace LogfileConverter
             return true;
         }
 
-        private static string GenerateKey(string line)
+        private static string GenerateKey(string line, int? ecuAddr = null)
         {
-            return Regex.Replace(line, "[^A-Za-z0-9]", string.Empty);
+            string key = Regex.Replace(line, "[^A-Za-z0-9]", string.Empty);
+
+            if (ecuAddr != null)
+            {
+                key = "ADR_" + string.Format(CultureInfo.InvariantCulture, "{0:X02}", ecuAddr) + "_" + key;
+            }
+
+            return key;
         }
 
         private static bool AddSimLine(ref Dictionary<string, SimEntry> simLines, string key, SimEntry simEntry)
