@@ -1599,7 +1599,7 @@ namespace LogfileConverter
 
                         if (keyBytesExtra != null)
                         {
-                            key = GenerateKey(BitConverter.ToString(keyBytesExtra.ToArray()), ecuAddr);
+                            key = GenerateKey("KEY", ecuAddr);
                             keyBytesEntry = BitConverter.ToString(keyBytesExtra.ToArray()).Replace("-", ",");
                         }
                         else
