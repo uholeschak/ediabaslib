@@ -110,16 +110,19 @@ namespace EdiabasLib
 
         private class ResponseInfo
         {
-            public ResponseInfo(List<DataItem> requestData, List<DataItem> responseData)
+            public ResponseInfo(List<DataItem> requestData, List<DataItem> responseData, int? ecuAddr)
             {
                 RequestData = requestData;
                 ResponseDataList = new List<List<DataItem>> { responseData };
+                EcuAddr = ecuAddr;
                 ResponseIndex = 0;
             }
 
             public List<DataItem> RequestData { get; private set; }
 
             public List<List<DataItem>> ResponseDataList { get; private set; }
+
+            public int? EcuAddr { get; private set; }
 
             public int ResponseIndex { get; set; }
         }
@@ -335,7 +338,7 @@ namespace EdiabasLib
                 }
 
                 string sectionPrefix = section.Substring(0, section.Length - SectionRequest.Length);
-                byte? ecuAddr = null;
+                int? ecuAddr = null;
 
                 if (sectionPrefix.Length > 0)
                 {
@@ -375,6 +378,11 @@ namespace EdiabasLib
                         ResponseInfo responseInfoMatch = null;
                         foreach (ResponseInfo responseInfo in _responseInfos)
                         {
+                            if ((responseInfo.EcuAddr ?? -1) != (ecuAddr ?? -1))
+                            {
+                                continue;
+                            }
+
                             if (requestBytes.Count != responseInfo.RequestData.Count)
                             {
                                 continue;
@@ -404,7 +412,7 @@ namespace EdiabasLib
                         }
                         else
                         {
-                            _responseInfos.Add(new ResponseInfo(requestBytes, responseBytes));
+                            _responseInfos.Add(new ResponseInfo(requestBytes, responseBytes, ecuAddr));
                         }
                     }
                 }
@@ -419,7 +427,7 @@ namespace EdiabasLib
                 }
 
                 string sectionPrefix = section.Substring(0, section.Length - SectionRequest.Length);
-                byte? ecuAddr = null;
+                int? ecuAddr = null;
 
                 if (sectionPrefix.Length > 0)
                 {
@@ -452,12 +460,12 @@ namespace EdiabasLib
             return true;
         }
 
-        private byte? ParseSectionEcuAddr(string sectionPrefix)
+        private int? ParseSectionEcuAddr(string sectionPrefix)
         {
             if (sectionPrefix.Length > 1 && sectionPrefix.EndsWith("."))
             {
                 string sectionNumber = sectionPrefix.Substring(0, sectionPrefix.Length - 1);
-                if (!byte.TryParse(sectionNumber, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte sectionValue))
+                if (!int.TryParse(sectionNumber, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int sectionValue))
                 {
                     return null;
                 }
