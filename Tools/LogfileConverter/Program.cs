@@ -1292,27 +1292,39 @@ namespace LogfileConverter
 
                                 case 3:
                                 {
-                                    if ((edicTypes & EdicTypes.Kwp1281) == EdicTypes.None)
+                                    if (cfgBytes[2] == 0x8F)
                                     {
                                         edicTypes |= EdicTypes.Kwp2000;
+                                    }
+                                    else
+                                    {
+                                        edicTypes |= EdicTypes.Kwp1281;
                                     }
 
                                     ecuAddr = cfgBytes[0];
                                     keyBytesPrefix = new List<byte>();
-                                    keyBytesPrefix.Add(cfgBytes[1]);
-                                    keyBytesPrefix.Add(cfgBytes[2]);
-                                    if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
+                                    if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
                                     {
-                                        keyBytesPrefix.Add((byte)~ecuAddr);
+                                        const int baudRate = 9600;
+                                        keyBytesPrefix.Add(cfgBytes[1]);
+                                        keyBytesPrefix.Add(cfgBytes[2]);
+                                        keyBytesPrefix.Add(0x00);
+                                        keyBytesPrefix.Add((baudRate & 0xFF));
+                                        keyBytesPrefix.Add(((baudRate >> 8) & 0xFF));
+                                        keyBytesPrefix.Add((byte)(cfgBytes[1] & 0x7F));
+                                        keyBytesPrefix.Add((byte)(cfgBytes[2] & 0x7F));
+                                        keyBytesPrefix.Add(0x09);
+                                        keyBytesPrefix.Add(0x03);
                                     }
                                     else
                                     {
-                                        keyBytesPrefix.Add(0x00);
+                                        const int baudRate = 10400;
+                                        keyBytesPrefix.Add(cfgBytes[1]);
+                                        keyBytesPrefix.Add(cfgBytes[2]);
+                                        keyBytesPrefix.Add((byte)~ecuAddr);
+                                        keyBytesPrefix.Add((baudRate & 0xFF));
+                                        keyBytesPrefix.Add(((baudRate >> 8) & 0xFF));
                                     }
-
-                                    const int baudRate = 9600;
-                                    keyBytesPrefix.Add((baudRate & 0xFF));
-                                    keyBytesPrefix.Add(((baudRate >> 8) & 0xFF));
 
                                     if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
                                     {
