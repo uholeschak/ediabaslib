@@ -335,9 +335,24 @@ namespace EdiabasLib
                 }
 
                 string sectionPrefix = section.Substring(0, section.Length - SectionRequest.Length);
-                if (!(sectionPrefix.Length == 0 || sectionPrefix.EndsWith(".")))
+                byte? ecuAddr = null;
+
+                if (sectionPrefix.Length > 1 && sectionPrefix.EndsWith("."))
                 {
-                    continue;
+                    string sectionNumber = sectionPrefix.Substring(0, sectionPrefix.Length - 1);
+                    if (!byte.TryParse(sectionNumber, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte sectionValue))
+                    {
+                        continue;
+                    }
+
+                    ecuAddr = sectionValue;
+                }
+                else
+                {
+                    if (sectionPrefix.Length != 0)
+                    {
+                        continue;
+                    }
                 }
 
                 List<string> requestKeys = _iniFile.GetKeys(section);
@@ -417,9 +432,24 @@ namespace EdiabasLib
                 }
 
                 string sectionPrefix = section.Substring(0, section.Length - SectionRequest.Length);
-                if (!(sectionPrefix.Length == 0 || sectionPrefix.EndsWith(".")))
+                byte? ecuAddr = null;
+
+                if (sectionPrefix.Length > 1 && sectionPrefix.EndsWith("."))
                 {
-                    continue;
+                    string sectionNumber = sectionPrefix.Substring(0, sectionPrefix.Length - 1);
+                    if (!byte.TryParse(sectionNumber, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte sectionValue))
+                    {
+                        continue;
+                    }
+
+                    ecuAddr = sectionValue;
+                }
+                else
+                {
+                    if (sectionPrefix.Length != 0)
+                    {
+                        continue;
+                    }
                 }
 
                 List<string> keyBytesKeys = _iniFile.GetKeys(section);
