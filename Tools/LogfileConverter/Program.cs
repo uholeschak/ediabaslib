@@ -42,8 +42,9 @@ namespace LogfileConverter
             Uds = 0x08,
         }
 
-        private class SimEntry(string request, string response, int? ecuAddr = null, bool keyByte = false)
+        private class SimEntry(string key, string request, string response, int? ecuAddr = null, bool keyByte = false)
         {
+            public string Key { get; set; } = key;
             public string Request { get; private set; } = request;
             public string Response { get; private set; } = response;
             public int? EcuAddr { get; private set; } = ecuAddr;
@@ -1250,7 +1251,7 @@ namespace LogfileConverter
                 bool kwp2000_Ds2Format = true;
                 EdicTypes edicTypes = EdicTypes.None;
                 string[] lines = File.ReadAllLines(outputFile);
-                Dictionary<string, SimEntry> simLines = new Dictionary<string, SimEntry>();
+                List<SimEntry> simLines = new List<SimEntry>();
                 for (int iteration = 0; iteration < 2; iteration++)
                 {
                     int? ecuAddr = null;
@@ -1668,11 +1669,11 @@ namespace LogfileConverter
 
                         if (!string.IsNullOrEmpty(keyBytesEntry))
                         {
-                            AddSimLine(ref simLines, key, new SimEntry(keyBytesEntry, string.Empty, ecuAddr, true));
+                            AddSimLine(ref simLines, new SimEntry(key, keyBytesEntry, string.Empty, ecuAddr, true));
                         }
                         else
                         {
-                            AddSimLine(ref simLines, key, new SimEntry(request, response, ecuAddr));
+                            AddSimLine(ref simLines, new SimEntry(key, request, response, ecuAddr));
                         }
                     }
                 }
@@ -1708,7 +1709,7 @@ namespace LogfileConverter
                     string genericErrorRequest = List2SimEntry(simData.Request.ToList());
                     string genericErrorResponse = List2SimEntry(simData.Response.ToList());
                     string genericErrorKey = GenerateKey(genericErrorRequest);
-                    AddSimLine(ref simLines, genericErrorKey, new SimEntry(genericErrorRequest, genericErrorResponse));
+                    AddSimLine(ref simLines, new SimEntry(genericErrorKey, genericErrorRequest, genericErrorResponse));
                 }
 
                 string simFileName = simFile;
@@ -1733,17 +1734,17 @@ namespace LogfileConverter
                     streamWriter.WriteLine("Ignition = 12500");
 
                     string lastSection = string.Empty;
-                    foreach (KeyValuePair<string, SimEntry> simLine in simLines)
+                    foreach (SimEntry simEntry in simLines)
                     {
-                        if (!simLine.Value.KeyByte)
+                        if (!simEntry.KeyByte)
                         {
                             continue;
                         }
 
                         string section = "KEYBYTES";
-                        if (simLine.Value.EcuAddr != null)
+                        if (simEntry.EcuAddr != null)
                         {
-                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simLine.Value.EcuAddr) + section;
+                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simEntry.EcuAddr) + section;
                         }
 
                         section = "[" + section + "]";
@@ -1755,21 +1756,21 @@ namespace LogfileConverter
                             lastSection = section;
                         }
 
-                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Request);
+                        streamWriter.WriteLine(simEntry.Key + "=" + simEntry.Request);
                     }
 
                     lastSection = string.Empty;
-                    foreach (KeyValuePair<string, SimEntry> simLine in simLines)
+                    foreach (SimEntry simEntry in simLines)
                     {
-                        if (simLine.Value.KeyByte)
+                        if (simEntry.KeyByte)
                         {
                             continue;
                         }
 
                         string section = "REQUEST";
-                        if (simLine.Value.EcuAddr != null)
+                        if (simEntry.EcuAddr != null)
                         {
-                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simLine.Value.EcuAddr) + section;
+                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simEntry.EcuAddr) + section;
                         }
 
                         section = "[" + section + "]";
@@ -1781,21 +1782,21 @@ namespace LogfileConverter
                             lastSection = section;
                         }
 
-                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Request);
+                        streamWriter.WriteLine(simEntry.Key + "=" + simEntry.Request);
                     }
 
                     lastSection = string.Empty;
-                    foreach (KeyValuePair<string, SimEntry> simLine in simLines)
+                    foreach (SimEntry simEntry in simLines)
                     {
-                        if (simLine.Value.KeyByte)
+                        if (simEntry.KeyByte)
                         {
                             continue;
                         }
 
                         string section = "RESPONSE";
-                        if (simLine.Value.EcuAddr != null)
+                        if (simEntry.EcuAddr != null)
                         {
-                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simLine.Value.EcuAddr) + section;
+                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simEntry.EcuAddr) + section;
                         }
 
                         section = "[" + section + "]";
@@ -1807,7 +1808,7 @@ namespace LogfileConverter
                             lastSection = section;
                         }
 
-                        streamWriter.WriteLine(simLine.Key + "=" + simLine.Value.Response);
+                        streamWriter.WriteLine(simEntry.Key + "=" + simEntry.Response);
                     }
                 }
             }
@@ -1823,13 +1824,16 @@ namespace LogfileConverter
             return Regex.Replace(line, "[^A-Za-z0-9]", string.Empty);
         }
 
-        private static bool AddSimLine(ref Dictionary<string, SimEntry> simLines, string key, SimEntry simEntry)
+        private static bool AddSimLine(ref List<SimEntry> simLines, SimEntry simEntry)
         {
+            string key = simEntry.Key;
             for (int keyIndex = 0; keyIndex < int.MaxValue; keyIndex++)
             {
                 string subKey = key + "_" + keyIndex.ToString(CultureInfo.InvariantCulture);
-                if (simLines.TryAdd(subKey, simEntry))
+                if (simLines.All(x => string.Compare(x.Key, subKey, StringComparison.OrdinalIgnoreCase) != 0))
                 {
+                    simEntry.Key = subKey;
+                    simLines.Add(simEntry);
                     return true;
                 }
             }
