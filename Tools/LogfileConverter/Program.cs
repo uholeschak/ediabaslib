@@ -1301,7 +1301,7 @@ namespace LogfileConverter
                                     keyBytesPrefix = new List<byte>();
                                     keyBytesPrefix.Add(cfgBytes[1]);
                                     keyBytesPrefix.Add(cfgBytes[2]);
-                                    if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
+                                    if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
                                     {
                                         keyBytesPrefix.Add((byte)~ecuAddr);
                                     }
