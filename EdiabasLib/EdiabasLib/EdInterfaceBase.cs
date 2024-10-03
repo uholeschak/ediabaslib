@@ -456,7 +456,7 @@ namespace EdiabasLib
 
                 if (EdSimFileSgbd != null)
                 {
-                    List<byte> keyBytes = EdSimFileSgbd.KeyBytes;
+                    List<byte> keyBytes = EdSimFileSgbd.GetKeyBytes();
                     if (keyBytes == null)
                     {
                         return null;
