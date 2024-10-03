@@ -1719,6 +1719,8 @@ namespace LogfileConverter
                     simFileName = Path.Combine(outFilePath, simFile);
                 }
 
+                simLines = simLines.OrderBy(x => x.EcuAddr ?? -1).ToList();
+
                 using (StreamWriter streamWriter = new StreamWriter(simFileName))
                 {
                     streamWriter.WriteLine(";********************************************");
