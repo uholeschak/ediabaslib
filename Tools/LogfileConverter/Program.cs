@@ -1829,10 +1829,12 @@ namespace LogfileConverter
         private static bool AddSimLine(ref List<SimEntry> simLines, SimEntry simEntry)
         {
             string key = simEntry.Key;
+            int ecuAddr = simEntry.EcuAddr ?? -1;
             for (int keyIndex = 0; keyIndex < int.MaxValue; keyIndex++)
             {
                 string subKey = key + "_" + keyIndex.ToString(CultureInfo.InvariantCulture);
-                if (simLines.All(x => string.Compare(x.Key, subKey, StringComparison.OrdinalIgnoreCase) != 0))
+                if (simLines.All(x => string.Compare(x.Key, subKey, StringComparison.OrdinalIgnoreCase) != 0 ||
+                                      ecuAddr != (x.EcuAddr ?? -1)))
                 {
                     simEntry.Key = subKey;
                     simLines.Add(simEntry);
