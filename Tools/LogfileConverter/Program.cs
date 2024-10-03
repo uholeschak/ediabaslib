@@ -1310,9 +1310,9 @@ namespace LogfileConverter
                                         keyBytesPrefix.Add(0x00);
                                     }
 
-                                    int baudRate = 96000;
-                                    keyBytesPrefix.Add((byte)(baudRate & 0xFF));
-                                    keyBytesPrefix.Add((byte)(baudRate >> 8));
+                                    const int baudRate = 9600;
+                                    keyBytesPrefix.Add((baudRate & 0xFF));
+                                    keyBytesPrefix.Add(((baudRate >> 8) & 0xFF));
 
                                     if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
                                     {
