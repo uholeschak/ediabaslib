@@ -337,22 +337,9 @@ namespace EdiabasLib
                 string sectionPrefix = section.Substring(0, section.Length - SectionRequest.Length);
                 byte? ecuAddr = null;
 
-                if (sectionPrefix.Length > 1 && sectionPrefix.EndsWith("."))
+                if (sectionPrefix.Length > 0)
                 {
-                    string sectionNumber = sectionPrefix.Substring(0, sectionPrefix.Length - 1);
-                    if (!byte.TryParse(sectionNumber, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte sectionValue))
-                    {
-                        continue;
-                    }
-
-                    ecuAddr = sectionValue;
-                }
-                else
-                {
-                    if (sectionPrefix.Length != 0)
-                    {
-                        continue;
-                    }
+                    ecuAddr = ParseSectionEcuAddr(sectionPrefix);
                 }
 
                 List<string> requestKeys = _iniFile.GetKeys(section);
@@ -434,22 +421,9 @@ namespace EdiabasLib
                 string sectionPrefix = section.Substring(0, section.Length - SectionRequest.Length);
                 byte? ecuAddr = null;
 
-                if (sectionPrefix.Length > 1 && sectionPrefix.EndsWith("."))
+                if (sectionPrefix.Length > 0)
                 {
-                    string sectionNumber = sectionPrefix.Substring(0, sectionPrefix.Length - 1);
-                    if (!byte.TryParse(sectionNumber, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte sectionValue))
-                    {
-                        continue;
-                    }
-
-                    ecuAddr = sectionValue;
-                }
-                else
-                {
-                    if (sectionPrefix.Length != 0)
-                    {
-                        continue;
-                    }
+                    ecuAddr = ParseSectionEcuAddr(sectionPrefix);
                 }
 
                 List<string> keyBytesKeys = _iniFile.GetKeys(section);
@@ -476,6 +450,22 @@ namespace EdiabasLib
             }
 
             return true;
+        }
+
+        private byte? ParseSectionEcuAddr(string sectionPrefix)
+        {
+            if (sectionPrefix.Length > 1 && sectionPrefix.EndsWith("."))
+            {
+                string sectionNumber = sectionPrefix.Substring(0, sectionPrefix.Length - 1);
+                if (!byte.TryParse(sectionNumber, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte sectionValue))
+                {
+                    return null;
+                }
+
+                return sectionValue;
+            }
+
+            return null;
         }
 
         private List<DataItem> ParseHexString(string text, bool request)
