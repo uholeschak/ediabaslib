@@ -18,6 +18,7 @@ namespace EdiabasLib
         private readonly bool _fileValid;
         private readonly IniFile _iniFile;
         private List<ResponseInfo> _responseInfos;
+        private List<ResponseInfo> _keyBytesInfos;
 
         public string FileName => _fileName;
 
@@ -35,8 +36,6 @@ namespace EdiabasLib
         public int IgnitionCurrent { get; private set; } = -1;
 
         public int IgnitionHistory { get; private set; } = -1;
-
-        public List<byte> KeyBytes { get; private set; }
 
         private class DataItem : IEquatable<DataItem>
         {
@@ -144,12 +143,17 @@ namespace EdiabasLib
             }
         }
 
-        public List<byte> GetResponse(List<byte> request)
+        public List<byte> GetResponse(List<byte> request, int? ecuAddr = null)
         {
             for (int iteration = 0; iteration < 2; ++iteration)
             {
                 foreach (ResponseInfo responseInfo in _responseInfos)
                 {
+                    if ((responseInfo.EcuAddr ?? -1) != (ecuAddr ?? -1))
+                    {
+                        continue;
+                    }
+
                     if (request.Count != responseInfo.RequestData.Count)
                     {
                         continue;
@@ -217,6 +221,33 @@ namespace EdiabasLib
                         return ConvertData(response, null, request);
                     }
                 }
+            }
+
+            return null;
+        }
+
+        public List<byte> GetKeyBytes(int? ecuAddr = null)
+        {
+            foreach (ResponseInfo responseInfo in _keyBytesInfos)
+            {
+                if ((responseInfo.EcuAddr ?? -1) != (ecuAddr ?? -1))
+                {
+                    continue;
+                }
+
+                int responseIndex = responseInfo.ResponseIndex;
+                List<DataItem> response = null;
+                if (responseIndex < responseInfo.ResponseDataList.Count)
+                {
+                    response = responseInfo.ResponseDataList[responseIndex++];
+                    if (responseIndex >= responseInfo.ResponseDataList.Count)
+                    {
+                        responseIndex = 0;
+                    }
+                    responseInfo.ResponseIndex = responseIndex;
+                }
+
+                return ConvertData(response, null, null);
             }
 
             return null;
@@ -324,6 +355,7 @@ namespace EdiabasLib
             IgnitionHistory = _iniFile.GetValue(SectionIgnition, "IGNITIONHISTORY", -1);
 
             _responseInfos = new List<ResponseInfo>();
+            _keyBytesInfos = new List<ResponseInfo>();
             List<string> sections =  _iniFile.GetSections();
             if (sections == null)
             {
@@ -418,7 +450,6 @@ namespace EdiabasLib
                 }
             }
 
-            KeyBytes = null;
             foreach (string section in sections)
             {
                 if (!section.EndsWith(SectionKeybytes, StringComparison.OrdinalIgnoreCase))
@@ -451,7 +482,7 @@ namespace EdiabasLib
                             return false;
                         }
 
-                        KeyBytes = ConvertData(keyBytesBytes, null, null);
+                        _keyBytesInfos.Add(new ResponseInfo(null, keyBytesBytes, ecuAddr));
                         break;
                     }
                 }
