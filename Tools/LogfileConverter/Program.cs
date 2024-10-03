@@ -1324,10 +1324,7 @@ namespace LogfileConverter
                                         keyBytesPrefix.Add((byte)~ecuAddr);
                                         keyBytesPrefix.Add((baudRate & 0xFF));
                                         keyBytesPrefix.Add(((baudRate >> 8) & 0xFF));
-                                    }
 
-                                    if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
-                                    {
                                         keyBytesFinal = new List<byte>();
                                         keyBytesFinal.AddRange(keyBytesPrefix);
                                     }
@@ -1369,12 +1366,6 @@ namespace LogfileConverter
                                 }
                             }
                             responseBytes = new List<byte>();
-                        }
-
-                        if (keyBytesExtra != null)
-                        {
-                            edicTypes |= EdicTypes.Kwp1281;
-                            edicTypes &= ~EdicTypes.Kwp2000;
                         }
 
                         int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
