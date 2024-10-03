@@ -321,92 +321,127 @@ namespace EdiabasLib
             IgnitionHistory = _iniFile.GetValue(SectionIgnition, "IGNITIONHISTORY", -1);
 
             _responseInfos = new List<ResponseInfo>();
-            List<string> requestKeys = _iniFile.GetKeys(SectionRequest);
-            if (requestKeys != null)
+            List<string> sections =  _iniFile.GetSections();
+            if (sections == null)
             {
-                foreach (string requestKey in requestKeys)
+                return false;
+            }
+
+            foreach (string section in sections)
+            {
+                if (!section.EndsWith(SectionRequest, StringComparison.OrdinalIgnoreCase))
                 {
-                    string requestValue = _iniFile.GetValue(SectionRequest, requestKey, string.Empty).Trim();
-                    if (string.IsNullOrEmpty(requestValue))
-                    {
-                        return false;
-                    }
+                    continue;
+                }
 
-                    string responseValue = _iniFile.GetValue(SectionResponse, requestKey, string.Empty).Trim();
-                    if (string.IsNullOrEmpty(responseValue))
-                    {
-                        return false;
-                    }
+                string sectionPrefix = section.Substring(0, section.Length - SectionRequest.Length);
+                if (!(sectionPrefix.Length == 0 || sectionPrefix.EndsWith(".")))
+                {
+                    continue;
+                }
 
-                    List<DataItem> requestBytes = ParseHexString(requestValue, true);
-                    if (requestBytes == null)
+                List<string> requestKeys = _iniFile.GetKeys(section);
+                if (requestKeys != null)
+                {
+                    foreach (string requestKey in requestKeys)
                     {
-                        return false;
-                    }
-
-                    List<DataItem> responseBytes = ParseHexString(responseValue, false);
-                    if (responseBytes == null)
-                    {
-                        return false;
-                    }
-
-                    ResponseInfo responseInfoMatch = null;
-                    foreach (ResponseInfo responseInfo in _responseInfos)
-                    {
-                        if (requestBytes.Count != responseInfo.RequestData.Count)
+                        string requestValue = _iniFile.GetValue(section, requestKey, string.Empty).Trim();
+                        if (string.IsNullOrEmpty(requestValue))
                         {
-                            continue;
+                            return false;
                         }
 
-                        bool identical = true;
-                        for (int i = 0; i < requestBytes.Count; ++i)
+                        string sectionResponse = sectionPrefix + SectionResponse;
+                        string responseValue = _iniFile.GetValue(sectionResponse, requestKey, string.Empty).Trim();
+                        if (string.IsNullOrEmpty(responseValue))
                         {
-                            if (!requestBytes[i].Equals(responseInfo.RequestData[i]))
+                            return false;
+                        }
+
+                        List<DataItem> requestBytes = ParseHexString(requestValue, true);
+                        if (requestBytes == null)
+                        {
+                            return false;
+                        }
+
+                        List<DataItem> responseBytes = ParseHexString(responseValue, false);
+                        if (responseBytes == null)
+                        {
+                            return false;
+                        }
+
+                        ResponseInfo responseInfoMatch = null;
+                        foreach (ResponseInfo responseInfo in _responseInfos)
+                        {
+                            if (requestBytes.Count != responseInfo.RequestData.Count)
                             {
-                                identical = false;
+                                continue;
                             }
+
+                            bool identical = true;
+                            for (int i = 0; i < requestBytes.Count; ++i)
+                            {
+                                if (!requestBytes[i].Equals(responseInfo.RequestData[i]))
+                                {
+                                    identical = false;
+                                }
+                            }
+
+                            if (!identical)
+                            {
+                                continue;
+                            }
+
+                            responseInfoMatch = responseInfo;
+                            break;
                         }
 
-                        if (!identical)
+                        if (responseInfoMatch != null)
                         {
-                            continue;
+                            responseInfoMatch.ResponseDataList.Add(responseBytes);
                         }
-
-                        responseInfoMatch = responseInfo;
-                        break;
-                    }
-
-                    if (responseInfoMatch != null)
-                    {
-                        responseInfoMatch.ResponseDataList.Add(responseBytes);
-                    }
-                    else
-                    {
-                        _responseInfos.Add(new ResponseInfo(requestBytes, responseBytes));
+                        else
+                        {
+                            _responseInfos.Add(new ResponseInfo(requestBytes, responseBytes));
+                        }
                     }
                 }
             }
 
             KeyBytes = null;
-            List<string> keyBytesKeys = _iniFile.GetKeys(SectionKeybytes);
-            if (keyBytesKeys != null)
+            foreach (string section in sections)
             {
-                foreach (string keyBytesKey in keyBytesKeys)
+                if (!section.EndsWith(SectionKeybytes, StringComparison.OrdinalIgnoreCase))
                 {
-                    string keyBytesValue = _iniFile.GetValue(SectionKeybytes, keyBytesKey, string.Empty).Trim();
-                    if (string.IsNullOrWhiteSpace(keyBytesValue))
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    List<DataItem> keyBytesBytes = ParseHexString(keyBytesValue, true);
-                    if (keyBytesBytes == null)
-                    {
-                        return false;
-                    }
+                string sectionPrefix = section.Substring(0, section.Length - SectionRequest.Length);
+                if (!(sectionPrefix.Length == 0 || sectionPrefix.EndsWith(".")))
+                {
+                    continue;
+                }
 
-                    KeyBytes = ConvertData(keyBytesBytes, null, null);
-                    break;
+                List<string> keyBytesKeys = _iniFile.GetKeys(section);
+                if (keyBytesKeys != null)
+                {
+                    foreach (string keyBytesKey in keyBytesKeys)
+                    {
+                        string keyBytesValue = _iniFile.GetValue(section, keyBytesKey, string.Empty).Trim();
+                        if (string.IsNullOrWhiteSpace(keyBytesValue))
+                        {
+                            continue;
+                        }
+
+                        List<DataItem> keyBytesBytes = ParseHexString(keyBytesValue, true);
+                        if (keyBytesBytes == null)
+                        {
+                            return false;
+                        }
+
+                        KeyBytes = ConvertData(keyBytesBytes, null, null);
+                        break;
+                    }
                 }
             }
 
