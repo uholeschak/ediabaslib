@@ -483,7 +483,6 @@ namespace EdiabasLib
                         }
 
                         _keyBytesInfos.Add(new ResponseInfo(null, keyBytesBytes, ecuAddr));
-                        break;
                     }
                 }
             }
