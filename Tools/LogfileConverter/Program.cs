@@ -1288,6 +1288,12 @@ namespace LogfileConverter
                                 case 2:
                                     edicTypes |= EdicTypes.Tp20;
                                     ecuAddr = cfgBytes[0];
+                                    keyBytesFinal = new List<byte>();
+                                    keyBytesFinal.Add(0xDA);
+                                    keyBytesFinal.Add(0x8F);
+                                    keyBytesFinal.Add((byte) ecuAddr);
+                                    keyBytesFinal.Add(0x54);
+                                    keyBytesFinal.Add(0x50);
                                     break;
 
                                 case 3:
@@ -1302,10 +1308,10 @@ namespace LogfileConverter
                                     }
 
                                     ecuAddr = cfgBytes[0];
-                                    keyBytesPrefix = new List<byte>();
                                     if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
                                     {
                                         const int baudRate = 9600;
+                                        keyBytesPrefix = new List<byte>();
                                         keyBytesPrefix.Add(cfgBytes[1]);
                                         keyBytesPrefix.Add(cfgBytes[2]);
                                         keyBytesPrefix.Add(0x00);
@@ -1319,14 +1325,12 @@ namespace LogfileConverter
                                     else
                                     {
                                         const int baudRate = 10400;
-                                        keyBytesPrefix.Add(cfgBytes[1]);
-                                        keyBytesPrefix.Add(cfgBytes[2]);
-                                        keyBytesPrefix.Add((byte)~ecuAddr);
-                                        keyBytesPrefix.Add((baudRate & 0xFF));
-                                        keyBytesPrefix.Add(((baudRate >> 8) & 0xFF));
-
                                         keyBytesFinal = new List<byte>();
-                                        keyBytesFinal.AddRange(keyBytesPrefix);
+                                        keyBytesFinal.Add(cfgBytes[1]);
+                                        keyBytesFinal.Add(cfgBytes[2]);
+                                        keyBytesFinal.Add((byte)~ecuAddr);
+                                        keyBytesFinal.Add((baudRate & 0xFF));
+                                        keyBytesFinal.Add(((baudRate >> 8) & 0xFF));
                                     }
 
                                     break;
