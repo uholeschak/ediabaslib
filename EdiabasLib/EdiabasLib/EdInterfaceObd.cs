@@ -966,7 +966,7 @@ namespace EdiabasLib
 
                 if (IsSimulationMode())
                 {
-                    byte[] keyBytes = KeyBytesSimulation;
+                    byte[] keyBytes = GetKeyBytesSimulation();
                     if (keyBytes != null)
                     {
                         EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "KeyBytes");

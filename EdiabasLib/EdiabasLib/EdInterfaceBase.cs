@@ -454,29 +454,31 @@ namespace EdiabasLib
             return false;
         }
 
-        public virtual byte[] KeyBytesSimulation
+        public virtual byte[] GetKeyBytesSimulation(int? ecuAddr = null)
         {
-            get
+            if (!SimulationConnected)
             {
-                if (!SimulationConnected)
+                EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                return null;
+            }
+
+            if (EdSimFileSgbd != null)
+            {
+                List<byte> keyBytes = EdSimFileSgbd.GetKeyBytes();
+                if (keyBytes == null && ecuAddr != null)
                 {
-                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    keyBytes = EdSimFileSgbd.GetKeyBytes(ecuAddr);
+                }
+
+                if (keyBytes == null)
+                {
                     return null;
                 }
 
-                if (EdSimFileSgbd != null)
-                {
-                    List<byte> keyBytes = EdSimFileSgbd.GetKeyBytes();
-                    if (keyBytes == null)
-                    {
-                        return null;
-                    }
-
-                    return keyBytes.ToArray();
-                }
-
-                return null;
+                return keyBytes.ToArray();
             }
+
+            return null;
         }
 
         public virtual Int64 IgnitionVoltageSimulation
