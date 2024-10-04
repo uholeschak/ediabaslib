@@ -416,6 +416,8 @@ namespace EdiabasLib
                 BlockCounter = 0;
                 LastKwp1281Cmd = 0x00;
 
+                SimEcuAddr = null;
+
                 if (CommParameterProtected == null)
                 {   // clear parameter
                     return;
@@ -579,6 +581,7 @@ namespace EdiabasLib
                         ParSendSetDtr = true;
                         ParAllowBitBang = EnableFtdiBitBang;
                         ParHasKeyBytes = true;
+                        SimEcuAddr = ParWakeAddress;
                         break;
 
                     case 0x0003:    // Concept 3
@@ -617,6 +620,7 @@ namespace EdiabasLib
                         ParAllowBitBang = EnableFtdiBitBang;
                         ParHasKeyBytes = true;
                         ParSupportFrequent = true;
+                        SimEcuAddr = ParWakeAddress;
                         break;
 
                     case 0x0005:    // DS1
@@ -966,7 +970,7 @@ namespace EdiabasLib
 
                 if (IsSimulationMode())
                 {
-                    byte[] keyBytes = GetKeyBytesSimulation();
+                    byte[] keyBytes = GetKeyBytesSimulation(SimEcuAddr);
                     if (keyBytes != null)
                     {
                         EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "KeyBytes");
@@ -1542,7 +1546,7 @@ namespace EdiabasLib
             if (IsSimulationMode())
             {
                 byte[] simResponse;
-                if (!TransmitSimulationData(sendData, out simResponse, null, ParTransmitFunc == TransBmwFast))
+                if (!TransmitSimulationData(sendData, out simResponse, SimEcuAddr, ParTransmitFunc == TransBmwFast))
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
                     return false;
@@ -1640,6 +1644,7 @@ namespace EdiabasLib
                                     wakeAddress |= 0x80;
                                 }
                                 ParEdicWakeAddress = wakeAddress;
+                                SimEcuAddr = ParEdicWakeAddress;
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Wake: {0:X02}", ParEdicWakeAddress);
                             }
                             return true;
@@ -1819,7 +1824,7 @@ namespace EdiabasLib
             if (IsSimulationMode())
             {
                 SimFrequentResponse = null;
-                if (TransmitSimulationData(sendData, out byte[] receiveData))
+                if (TransmitSimulationData(sendData, out byte[] receiveData, SimEcuAddr))
                 {
                     SimFrequentResponse = receiveData;
                 }

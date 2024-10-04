@@ -53,6 +53,7 @@ namespace EdiabasLib
         protected bool SimulationConnected;
         protected Queue<byte[]> SimulationRecQueue = new Queue<byte[]>();
         protected byte[] SimFrequentResponse;
+        protected int? SimEcuAddr;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
         protected object MutexLock = new object();
@@ -255,6 +256,7 @@ namespace EdiabasLib
 
             EdSimFileInterface = null;
             SimFrequentResponse = null;
+            SimEcuAddr = null;
             SimulationConnected = false;
             return true;
         }
