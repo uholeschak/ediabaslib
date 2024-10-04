@@ -482,7 +482,26 @@ namespace EdiabasLib
                             return false;
                         }
 
-                        _keyBytesInfos.Add(new ResponseInfo(null, keyBytesBytes, ecuAddr));
+                        ResponseInfo keyBytesInfoMatch = null;
+                        foreach (ResponseInfo keyBytesInfo in _keyBytesInfos)
+                        {
+                            if ((keyBytesInfo.EcuAddr ?? -1) != (ecuAddr ?? -1))
+                            {
+                                continue;
+                            }
+
+                            keyBytesInfoMatch = keyBytesInfo;
+                            break;
+                        }
+
+                        if (keyBytesInfoMatch != null)
+                        {
+                            keyBytesInfoMatch.ResponseDataList.Add(keyBytesBytes);
+                        }
+                        else
+                        {
+                            _keyBytesInfos.Add(new ResponseInfo(null, keyBytesBytes, ecuAddr));
+                        }
                     }
                 }
             }

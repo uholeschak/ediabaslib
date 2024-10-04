@@ -1542,7 +1542,7 @@ namespace EdiabasLib
             if (IsSimulationMode())
             {
                 byte[] simResponse;
-                if (!TransmitSimulationData(sendData, out simResponse, ParTransmitFunc == TransBmwFast))
+                if (!TransmitSimulationData(sendData, out simResponse, null, ParTransmitFunc == TransBmwFast))
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
                     return false;
