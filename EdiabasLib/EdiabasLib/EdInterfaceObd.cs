@@ -1585,6 +1585,7 @@ namespace EdiabasLib
                             {
                                 ParEdicTesterAddress = (byte)CommParameterProtected[88];
                                 ParEdicEcuAddress = (byte)CommParameterProtected[5];
+                                SimEcuAddr = ParEdicEcuAddress;
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Tester: {0:X02}, Ecu: {1:X02}", ParEdicTesterAddress, ParEdicEcuAddress);
 
                                 ParEdicW1 = (int)(CommParameterProtected[23] + (CommParameterProtected[24] << 8));
@@ -1655,6 +1656,7 @@ namespace EdiabasLib
                                 ParEdicWakeAddress = (byte)CommParameterProtected[5];
                                 ParEdicTesterAddress = (byte) CommParameterProtected[70];
                                 ParEdicEcuAddress = (byte) CommParameterProtected[71];
+                                SimEcuAddr = ParEdicEcuAddress;
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC CAN: {0:X02}, Tester: {1:X02}, Ecu: {2:X02}", ParEdicWakeAddress, ParEdicTesterAddress, ParEdicEcuAddress);
 
                                 ParEdicAddRetries = 3;
