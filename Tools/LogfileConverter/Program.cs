@@ -1287,6 +1287,7 @@ namespace LogfileConverter
                             {
                                 case 2:
                                     edicTypes |= EdicTypes.Tp20;
+                                    ecuAddr = cfgBytes[0];
                                     keyBytesFinal = new List<byte>();
                                     keyBytesFinal.Add(0xDA);
                                     keyBytesFinal.Add(0x8F);
