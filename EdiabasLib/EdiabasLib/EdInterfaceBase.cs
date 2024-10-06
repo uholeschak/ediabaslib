@@ -218,7 +218,7 @@ namespace EdiabasLib
                 string simFileUse = null;
                 foreach (string simInterface in simInterfaceList)
                 {
-                    if (simInterface.Contains("*", StringComparison.OrdinalIgnoreCase))
+                    if (simInterface.Contains("*"))
                     {
                         try
                         {
