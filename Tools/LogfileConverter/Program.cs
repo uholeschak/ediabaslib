@@ -1737,10 +1737,30 @@ namespace LogfileConverter
 
                 simLines = simLines.OrderBy(x => x.EcuAddr ?? -1).ToList();
 
+                string protocolName = "OBD";
+                switch (simFormatUse)
+                {
+                    case SimFormat.BmwFast:
+                        protocolName = "BMW FAST";
+                        break;
+
+                    case SimFormat.Kwp2000s_Ds2:
+                        protocolName = "KWP2000 / DS2";
+                        break;
+
+                    case SimFormat.EdicKwp:
+                        protocolName = "EDIC KWP";
+                        break;
+
+                    case SimFormat.EdicCan:
+                        protocolName = "EDIC CAN";
+                        break;
+                }
+
                 using (StreamWriter streamWriter = new StreamWriter(simFileName))
                 {
                     streamWriter.WriteLine(";*************************************************");
-                    streamWriter.WriteLine(";******** OBD, EDIC, ENET simulation file ********");
+                    streamWriter.WriteLine($"; {protocolName} simulation file");
                     streamWriter.WriteLine(";*************************************************");
 
                     streamWriter.WriteLine();
