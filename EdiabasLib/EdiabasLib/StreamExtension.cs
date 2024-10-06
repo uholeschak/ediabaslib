@@ -107,7 +107,7 @@ namespace EdiabasLib
                     using (CancellationTokenSource cts = new CancellationTokenSource())
                     {
                         threadFinishEvent = new AutoResetEvent(false);
-                        Task<int> readTask = inStream.ReadAsync(buffer, recLen, count - recLen, cts.Token);
+                        Task<int> readTask = inStream.ReadAsync(buffer, recLen + offset, count - recLen, cts.Token);
                         if (cancelEvent != null)
                         {
                             WaitHandle[] waitHandles = { threadFinishEvent, cancelEvent };

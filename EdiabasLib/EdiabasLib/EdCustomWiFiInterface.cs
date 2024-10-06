@@ -582,33 +582,28 @@ namespace EdiabasLib
             buffer[offset + recLen] = (byte)data;
             recLen++;
 
-            for (; ; )
+            if (length > 1)
             {
-                if (recLen >= length)
-                {
-                    break;
-                }
                 try
                 {
-                    data = TcpStream.ReadByteAsync(TransmitCancelEvent, timeoutTelEnd);
+                    int byteCount = TcpStream.ReadBytesAsync(buffer, offset + recLen, length - recLen, TransmitCancelEvent, timeoutTelEnd);
+                    if (byteCount < 0)
+                    {
+                        ediabasLog?.LogData(EdiabasNet.EdLogLevel.Ifh, buffer, offset, recLen, "Rec ");
+                        return false;
+                    }
+
+                    recLen += byteCount;
                 }
                 catch (Exception)
                 {
-                    data = -1;
-                }
-                if (data < 0)
-                {
                     return false;
                 }
-                buffer[offset + recLen] = (byte)data;
-                recLen++;
             }
+
 #if DEBUG_ANDROID
-            if (recLen > 0)
-            {
-                List<byte> recList = buffer.ToList().GetRange(offset, recLen);
-                Android.Util.Log.Info(Tag, string.Format("Rec: {0}", BitConverter.ToString(recList.ToArray()).Replace("-", " ")));
-            }
+            List<byte> recList = buffer.ToList().GetRange(offset, recLen);
+            Android.Util.Log.Info(Tag, string.Format("Rec: {0}", BitConverter.ToString(recList.ToArray()).Replace("-", " ")));
 #endif
             if (recLen < length)
             {
