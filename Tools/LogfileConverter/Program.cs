@@ -1739,9 +1739,9 @@ namespace LogfileConverter
 
                 using (StreamWriter streamWriter = new StreamWriter(simFileName))
                 {
-                    streamWriter.WriteLine(";********************************************");
-                    streamWriter.WriteLine(";******** OBD / ENET simulation file ********");
-                    streamWriter.WriteLine(";********************************************");
+                    streamWriter.WriteLine(";*************************************************");
+                    streamWriter.WriteLine(";******** OBD, EDIC, ENET simulation file ********");
+                    streamWriter.WriteLine(";*************************************************");
 
                     streamWriter.WriteLine();
                     streamWriter.WriteLine("[POWERSUPPLY]");
