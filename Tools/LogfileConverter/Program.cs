@@ -1344,32 +1344,41 @@ namespace LogfileConverter
                         }
 
                         string[] lineParts = lineTrim.Split(':', StringSplitOptions.TrimEntries);
-                        if (lineParts.Length != 2)
+                        List<byte> requestBytes = new List<byte>();
+                        List<byte> responseBytes = new List<byte>();
+
+                        if (lineParts.Length == 2)
                         {
-                            continue;
+                            requestBytes = NumberString2List(lineParts[0]);
+                            responseBytes = NumberString2List(lineParts[1]);
+                            List<byte> keyBytesExtra = null;
+                            if (requestBytes.Count < 1)
+                            {
+                                if (responseBytes.Count < 1)
+                                {
+                                    continue;
+                                }
+
+                                keyBytesExtra = responseBytes;
+                                if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
+                                {
+                                    if (keyBytesPrefix != null)
+                                    {
+                                        keyBytesFinal = new List<byte>();
+                                        keyBytesFinal.AddRange(keyBytesPrefix);
+                                        keyBytesFinal.AddRange(keyBytesExtra);
+                                    }
+                                }
+                                responseBytes = new List<byte>();
+                            }
                         }
 
-                        List<byte> requestBytes = NumberString2List(lineParts[0]);
-                        List<byte> responseBytes = NumberString2List(lineParts[1]);
-                        List<byte> keyBytesExtra = null;
-                        if (requestBytes.Count < 1)
+                        if (keyBytesFinal == null)
                         {
-                            if (responseBytes.Count < 1)
-                            {
-                                continue;
+                            if ((edicTypes & EdicTypes.Tp20) != EdicTypes.None)
+                            {   // use ECU address only for key bytes
+                                ecuAddr = null;
                             }
-
-                            keyBytesExtra = responseBytes;
-                            if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
-                            {
-                                if (keyBytesPrefix != null)
-                                {
-                                    keyBytesFinal = new List<byte>();
-                                    keyBytesFinal.AddRange(keyBytesPrefix);
-                                    keyBytesFinal.AddRange(keyBytesExtra);
-                                }
-                            }
-                            responseBytes = new List<byte>();
                         }
 
                         int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
