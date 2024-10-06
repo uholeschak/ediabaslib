@@ -218,6 +218,33 @@ namespace EdiabasLib
                 string simFileUse = null;
                 foreach (string simInterface in simInterfaceList)
                 {
+                    if (simInterface.Contains("*", StringComparison.OrdinalIgnoreCase))
+                    {
+                        try
+                        {
+                            string[] simFiles = Directory.GetFiles(EdiabasProtected.SimulationPath, simInterface + "*" + SimFileExtension, SearchOption.TopDirectoryOnly);
+                            if (simFiles.Length == 0)
+                            {
+                                continue;
+                            }
+
+                            foreach (string simFile in simFiles)
+                            {
+                                if (File.Exists(simFile))
+                                {
+                                    simFileUse = simFile;
+                                    break;
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        continue;
+                    }
+
                     string simFileName = simInterface + SimFileExtension;
                     string simFilePath = Path.Combine(EdiabasProtected.SimulationPath, simFileName.ToLowerInvariant());
                     if (File.Exists(simFilePath))
