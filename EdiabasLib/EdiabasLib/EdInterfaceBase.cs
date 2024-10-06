@@ -222,7 +222,7 @@ namespace EdiabasLib
                     {
                         try
                         {
-                            string[] simFiles = Directory.GetFiles(EdiabasProtected.SimulationPath, simInterface + "*" + SimFileExtension, SearchOption.TopDirectoryOnly);
+                            string[] simFiles = Directory.GetFiles(EdiabasProtected.SimulationPath, simInterface + SimFileExtension, SearchOption.TopDirectoryOnly);
                             if (simFiles.Length == 0)
                             {
                                 continue;
