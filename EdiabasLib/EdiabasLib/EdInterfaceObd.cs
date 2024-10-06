@@ -362,6 +362,7 @@ namespace EdiabasLib
                 StopCommThread();
 
                 CommParameterProtected = value;
+                bool simulationMode = IsSimulationMode();
                 bool edicPar = (CommParameterProtected != null) && (CommParameterProtected.Length > 0) &&
                                (CommParameterProtected[0] == 0x0000);
                 if (EdicSimulation && CommParameterProtected != null)
@@ -485,20 +486,28 @@ namespace EdiabasLib
                             case 0xA5:      // TP2.0
                                 ParTransmitFunc = TransTp20;
                                 ParFinishFunc = FinishTp20;
-                                if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.Tp20, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
+
+                                if (!simulationMode)
                                 {
-                                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set TP2.0 protocol failed");
-                                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                    if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.Tp20, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
+                                    {
+                                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set TP2.0 protocol failed");
+                                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                    }
                                 }
                                 break;
 
                             case 0xAA:      // ISO-TP
                                 ParTransmitFunc = TransIsoTp;
                                 ParIdleFunc = IdleIsoTp;
-                                if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.IsoTp, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
+
+                                if (!simulationMode)
                                 {
-                                    EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set ISO-TP protocol failed");
-                                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                    if (!UseExtInterfaceFunc || (InterfaceSetConfigFuncUse(Protocol.IsoTp, 500000, 8, SerialParity.None, false) != InterfaceErrorResult.NoError))
+                                    {
+                                        EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Set ISO-TP protocol failed");
+                                        EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                                    }
                                 }
                                 break;
 
@@ -813,7 +822,7 @@ namespace EdiabasLib
                     }
                 }
 
-                if (IsSimulationMode())
+                if (simulationMode)
                 {
                     return;
                 }
