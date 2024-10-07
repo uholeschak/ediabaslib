@@ -1608,42 +1608,58 @@ namespace LogfileConverter
                             responseBytes = responseUse;
                         }
 
-                        if (simFormatUse == SimFormat.Kwp2000s_Ds2)
+                        switch (simFormatUse)
                         {
-                            if (IsDs2BmwFastEncoded(requestUse, responseBytes))
-                            {
-                                requestUse = ConvertToDs2Telegram(requestUse);
+                            case SimFormat.Kwp2000s_Ds2:
+                                if (IsDs2BmwFastEncoded(requestUse, responseBytes))
+                                {
+                                    requestUse = ConvertToDs2Telegram(requestUse);
+                                    if (requestUse == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    responseBytes = ConvertToDs2Telegram(responseBytes);
+                                    if (responseBytes == null)
+                                    {
+                                        continue;
+                                    }
+                                }
+                                else if (IsKwp2000BmwFastEncoded(requestUse, responseBytes))
+                                {
+                                    requestUse = ConvertToKwp2000Telegram(requestUse);
+                                    if (requestUse == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    responseBytes = ConvertToKwp2000Telegram(responseBytes);
+                                    if (responseBytes == null)
+                                    {
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+
+                                responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
+                                break;
+
+                            case SimFormat.EdicCan:
+                                requestUse = ExtractBmwFastContent(requestUse);
                                 if (requestUse == null)
                                 {
                                     continue;
                                 }
 
-                                responseBytes = ConvertToDs2Telegram(responseBytes);
+                                responseBytes = ExtractBmwFastContent(responseBytes);
                                 if (responseBytes == null)
                                 {
                                     continue;
                                 }
-                            }
-                            else if (IsKwp2000BmwFastEncoded(requestUse, responseBytes))
-                            {
-                                requestUse = ConvertToKwp2000Telegram(requestUse);
-                                if (requestUse == null)
-                                {
-                                    continue;
-                                }
-
-                                responseBytes = ConvertToKwp2000Telegram(responseBytes);
-                                if (responseBytes == null)
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                continue;
-                            }
-
-                            responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
+                                break;
                         }
 
                         string key = string.Empty;
@@ -2393,6 +2409,34 @@ namespace LogfileConverter
             else
             {   // without length byte
                 result.Add(dataLength);
+                result.AddRange(telegram.GetRange(3, dataLength));
+            }
+
+            return result;
+        }
+
+        private static List<byte> ExtractBmwFastContent(List<byte> telegram)
+        {
+            int telLength = TelLengthBmwFast(telegram, 0);
+            if (telLength == 0)
+            {
+                return null;
+            }
+
+            if (telLength + 1 != telegram.Count)
+            {
+                return null;
+            }
+
+            byte dataLength = (byte)(telegram[0] & 0x3F);
+            List<byte> result = new List<byte>();
+            if (dataLength == 0)
+            {   // with length byte
+                dataLength = telegram[3];
+                result.AddRange(telegram.GetRange(4, dataLength));
+            }
+            else
+            {   // without length byte
                 result.AddRange(telegram.GetRange(3, dataLength));
             }
 
