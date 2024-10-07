@@ -1779,13 +1779,7 @@ namespace LogfileConverter
                             continue;
                         }
 
-                        string section = "KEYBYTES";
-                        if (simEntry.EcuAddr != null)
-                        {
-                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simEntry.EcuAddr) + section;
-                        }
-
-                        section = "[" + section + "]";
+                        string section = GetSectionName("KEYBYTES", simEntry.EcuAddr);
 
                         if (lastSection != section)
                         {
@@ -1805,13 +1799,7 @@ namespace LogfileConverter
                             continue;
                         }
 
-                        string section = "REQUEST";
-                        if (simEntry.EcuAddr != null)
-                        {
-                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simEntry.EcuAddr) + section;
-                        }
-
-                        section = "[" + section + "]";
+                        string section = GetSectionName("REQUEST", simEntry.EcuAddr);
 
                         if (lastSection != section)
                         {
@@ -1831,13 +1819,7 @@ namespace LogfileConverter
                             continue;
                         }
 
-                        string section = "RESPONSE";
-                        if (simEntry.EcuAddr != null)
-                        {
-                            section = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", simEntry.EcuAddr) + section;
-                        }
-
-                        section = "[" + section + "]";
+                        string section = GetSectionName("RESPONSE", simEntry.EcuAddr);
 
                         if (lastSection != section)
                         {
@@ -1860,6 +1842,24 @@ namespace LogfileConverter
         private static string GenerateKey(string line)
         {
             return Regex.Replace(line, "[^A-Za-z0-9]", string.Empty);
+        }
+
+        private static string GetSectionName(string section, int? ecuAddr)
+        {
+            string result = section;
+            if (ecuAddr != null)
+            {
+                if (ecuAddr > 0xFF)
+                {
+                    result = string.Format(CultureInfo.InvariantCulture, "{0:X04}.", ecuAddr) + result;
+                }
+                else
+                {
+                    result = string.Format(CultureInfo.InvariantCulture, "{0:X02}.", ecuAddr) + result;
+                }
+            }
+
+            return "[" + result + "]";
         }
 
         private static bool AddSimLine(ref List<SimEntry> simLines, SimEntry simEntry)
