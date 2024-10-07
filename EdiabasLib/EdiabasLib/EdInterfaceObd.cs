@@ -1554,6 +1554,27 @@ namespace EdiabasLib
 
             if (IsSimulationMode())
             {
+                if (EdicSimulation)
+                {
+                    if (ParTransmitFunc == TransIsoTp)
+                    {
+                        if (sendData.Length == 0)
+                        {
+                            // tester present check
+                            receiveData = ByteArray0;
+                            return true;
+                        }
+                    }
+
+                    if (UdsDtcStatusOverride >= 0 &&
+                        sendData.Length == 3 && sendData[0] == 0x19 && sendData[1] == 0x02 && sendData[2] == 0x0C)
+                    {
+                        // request error memory pendingDTC and confirmedDTC
+                        sendData[2] = (byte)UdsDtcStatusOverride;
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS DTC status with {0:X02}", (byte)UdsDtcStatusOverride);
+                    }
+                }
+
                 byte[] simResponse;
                 if (!TransmitSimulationData(sendData, out simResponse, SimEcuAddr, ParTransmitFunc == TransBmwFast))
                 {
