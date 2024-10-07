@@ -1751,10 +1751,12 @@ namespace EdiabasLib
                 Array.Copy(sendData, simRequest, sendData.Length);
 
                 int? simEcuAddr = SimEcuAddr;
+                bool isIsoTp = false;
                 if (EdicSimulation)
                 {
                     if (ParTransmitFunc == TransIsoTp)
                     {
+                        isIsoTp = true;
                         if (sendData.Length == 0)
                         {
                             // tester present check
@@ -1783,6 +1785,22 @@ namespace EdiabasLib
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
                     return false;
+                }
+
+                if (isIsoTp)
+                {
+                    int dataOffset = 18;
+                    int dataLength = simResponse.Length;
+                    byte[] simResponseMod = new byte[dataLength + dataOffset];
+
+                    simResponseMod[0] = (byte)ParEdicTesterCanId;
+                    simResponseMod[1] = (byte)(ParEdicTesterCanId >> 8);
+                    simResponseMod[15] = 0x01;
+                    simResponseMod[16] = (byte)dataLength;
+                    simResponseMod[17] = (byte)(dataLength >> 8);
+                    Array.Copy(simResponse, 0, simResponseMod, dataOffset, dataLength);
+                    receiveData = simResponseMod;
+                    return true;
                 }
 
                 receiveData = simResponse;
