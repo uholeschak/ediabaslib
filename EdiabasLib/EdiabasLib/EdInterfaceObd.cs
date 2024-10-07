@@ -1677,6 +1677,7 @@ namespace EdiabasLib
                             {
                                 ParEdicTesterCanId = (ushort)(sendData[15] << 8 | sendData[14]);
                                 ParEdicEcuCanId = (ushort)(sendData[11] << 8 | sendData[10]);
+                                SimEcuAddr = ParEdicEcuCanId;
 
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC ISO-TP: Tester: {0:X03}, Ecu: {1:X03}", ParEdicTesterCanId, ParEdicEcuCanId);
 
@@ -1749,6 +1750,7 @@ namespace EdiabasLib
                 byte[] simRequest = new byte[sendData.Length];
                 Array.Copy(sendData, simRequest, sendData.Length);
 
+                int? simEcuAddr = SimEcuAddr;
                 if (EdicSimulation)
                 {
                     if (ParTransmitFunc == TransIsoTp)
@@ -1768,10 +1770,16 @@ namespace EdiabasLib
                         simRequest[2] = (byte)UdsDtcStatusOverride;
                         EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS DTC status with {0:X02}", (byte)UdsDtcStatusOverride);
                     }
+
+                    if (UdsEcuCanIdOverride >= 0)
+                    {
+                        simEcuAddr = UdsEcuCanIdOverride;
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS ECU CAN ID with {0:X04}", UdsEcuCanIdOverride);
+                    }
                 }
 
                 byte[] simResponse;
-                if (!TransmitSimulationData(simRequest, out simResponse, SimEcuAddr, ParTransmitFunc == TransBmwFast))
+                if (!TransmitSimulationData(simRequest, out simResponse, simEcuAddr, ParTransmitFunc == TransBmwFast))
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
                     return false;
