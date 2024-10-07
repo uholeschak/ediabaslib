@@ -1552,43 +1552,6 @@ namespace EdiabasLib
         {
             receiveData = null;
 
-            if (IsSimulationMode())
-            {
-                byte[] simRequest = new byte[sendData.Length];
-                Array.Copy(sendData, simRequest, sendData.Length);
-
-                if (EdicSimulation)
-                {
-                    if (ParTransmitFunc == TransIsoTp)
-                    {
-                        if (sendData.Length == 0)
-                        {
-                            // tester present check
-                            receiveData = ByteArray0;
-                            return true;
-                        }
-                    }
-
-                    if (UdsDtcStatusOverride >= 0 &&
-                        simRequest.Length == 3 && simRequest[0] == 0x19 && simRequest[1] == 0x02 && simRequest[2] == 0x0C)
-                    {
-                        // request error memory pendingDTC and confirmedDTC
-                        simRequest[2] = (byte)UdsDtcStatusOverride;
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS DTC status with {0:X02}", (byte)UdsDtcStatusOverride);
-                    }
-                }
-
-                byte[] simResponse;
-                if (!TransmitSimulationData(simRequest, out simResponse, SimEcuAddr, ParTransmitFunc == TransBmwFast))
-                {
-                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
-                    return false;
-                }
-
-                receiveData = simResponse;
-                return true;
-            }
-
             if (EdicSimulation)
             {
                 if (CommAnswerLenProtected[1] == 0x0084)
@@ -1774,11 +1737,50 @@ namespace EdiabasLib
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
                 return false;
             }
+
             if (sendData.Length > SendBuffer.Length)
             {
                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0031);
                 return false;
             }
+
+            if (IsSimulationMode())
+            {
+                byte[] simRequest = new byte[sendData.Length];
+                Array.Copy(sendData, simRequest, sendData.Length);
+
+                if (EdicSimulation)
+                {
+                    if (ParTransmitFunc == TransIsoTp)
+                    {
+                        if (sendData.Length == 0)
+                        {
+                            // tester present check
+                            receiveData = ByteArray0;
+                            return true;
+                        }
+                    }
+
+                    if (UdsDtcStatusOverride >= 0 &&
+                        simRequest.Length == 3 && simRequest[0] == 0x19 && simRequest[1] == 0x02 && simRequest[2] == 0x0C)
+                    {
+                        // request error memory pendingDTC and confirmedDTC
+                        simRequest[2] = (byte)UdsDtcStatusOverride;
+                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS DTC status with {0:X02}", (byte)UdsDtcStatusOverride);
+                    }
+                }
+
+                byte[] simResponse;
+                if (!TransmitSimulationData(simRequest, out simResponse, SimEcuAddr, ParTransmitFunc == TransBmwFast))
+                {
+                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
+                    return false;
+                }
+
+                receiveData = simResponse;
+                return true;
+            }
+
             EdiabasNet.ErrorCodes cachedErrorCode;
             byte[] cachedResponse;
             if (ReadCachedTransmission(sendData, out cachedResponse, out cachedErrorCode))
