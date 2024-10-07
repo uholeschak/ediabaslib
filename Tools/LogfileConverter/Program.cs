@@ -1338,7 +1338,7 @@ namespace LogfileConverter
 
                                 case 5:
                                     edicTypes |= EdicTypes.Uds;
-                                    //ecuAddr = cfgBytes[0];
+                                    ecuAddr = (cfgBytes[1] << 8) | cfgBytes[2];
                                     break;
                             }
                         }
