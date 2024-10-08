@@ -1764,20 +1764,20 @@ namespace EdiabasLib
                             receiveData = ByteArray0;
                             return true;
                         }
-                    }
 
-                    if (UdsDtcStatusOverride >= 0 &&
-                        simRequest.Length == 3 && simRequest[0] == 0x19 && simRequest[1] == 0x02 && simRequest[2] == 0x0C)
-                    {
-                        // request error memory pendingDTC and confirmedDTC
-                        simRequest[2] = (byte)UdsDtcStatusOverride;
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS DTC status with {0:X02}", (byte)UdsDtcStatusOverride);
-                    }
+                        if (UdsDtcStatusOverride >= 0 &&
+                            simRequest.Length == 3 && simRequest[0] == 0x19 && simRequest[1] == 0x02 && simRequest[2] == 0x0C)
+                        {
+                            // request error memory pendingDTC and confirmedDTC
+                            simRequest[2] = (byte)UdsDtcStatusOverride;
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS DTC status with {0:X02}", (byte)UdsDtcStatusOverride);
+                        }
 
-                    if (UdsEcuCanIdOverride >= 0)
-                    {
-                        simEcuAddr = UdsEcuCanIdOverride;
-                        EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS ECU CAN ID with {0:X04}", UdsEcuCanIdOverride);
+                        if (UdsEcuCanIdOverride >= 0)
+                        {
+                            simEcuAddr = UdsEcuCanIdOverride;
+                            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS ECU CAN ID with {0:X04}", UdsEcuCanIdOverride);
+                        }
                     }
                 }
 
