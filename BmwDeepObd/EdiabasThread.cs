@@ -470,7 +470,8 @@ namespace BmwDeepObd
                 {
                     simulationPath = instanceData.SimulationPath;
                 }
-                else if (Ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
+
+                if (Ediabas.EdInterfaceClass is EdInterfaceObd edInterfaceObd)
                 {
                     edInterfaceObd.UdsDtcStatusOverride = ActivityCommon.UdsDtcStatusOverride;
                     edInterfaceObd.ComPort = portName;
