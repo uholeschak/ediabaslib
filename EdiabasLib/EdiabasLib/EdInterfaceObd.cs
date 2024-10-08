@@ -103,7 +103,8 @@ namespace EdiabasLib
         private static Mutex _interfaceMutex;
         public const byte UdsNoSendData = 0x00;
         protected const string MutexName = "EdiabasLib_InterfaceObd";
-        protected const int TransBufferSize = 0x800; // transmit buffer size
+        protected const int TransBufferSize = 0x800;    // transmit buffer size
+        protected const int IsoTpResponseOffset = 18;   // data offset of ISO TP responses
         protected static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         protected static readonly byte[] ByteArray0 = new byte[0];
         protected static readonly long TickResolMs = Stopwatch.Frequency / 1000;
@@ -1789,16 +1790,15 @@ namespace EdiabasLib
 
                 if (isIsoTp)
                 {
-                    int dataOffset = 18;
                     int dataLength = simResponse.Length;
-                    byte[] simResponseMod = new byte[dataLength + dataOffset];
+                    byte[] simResponseMod = new byte[dataLength + IsoTpResponseOffset];
 
                     simResponseMod[0] = (byte)ParEdicTesterCanId;
                     simResponseMod[1] = (byte)(ParEdicTesterCanId >> 8);
                     simResponseMod[15] = 0x01;
                     simResponseMod[16] = (byte)dataLength;
                     simResponseMod[17] = (byte)(dataLength >> 8);
-                    Array.Copy(simResponse, 0, simResponseMod, dataOffset, dataLength);
+                    Array.Copy(simResponse, 0, simResponseMod, IsoTpResponseOffset, dataLength);
                     receiveData = simResponseMod;
                     return true;
                 }
@@ -4340,15 +4340,14 @@ namespace EdiabasLib
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                 }
 
-                int dataOffset = 18;
-                Array.Clear(receiveData, 0, dataOffset);
+                Array.Clear(receiveData, 0, IsoTpResponseOffset);
                 receiveData[0] = (byte)ParEdicTesterCanId;
                 receiveData[1] = (byte)(ParEdicTesterCanId >> 8);
                 receiveData[15] = 0x01;
                 receiveData[16] = (byte)dataLength;
                 receiveData[17] = (byte)(dataLength >> 8);
-                Array.Copy(tempBuffer, 3, receiveData, dataOffset, dataLength);
-                receiveLength = dataLength + dataOffset;
+                Array.Copy(tempBuffer, 3, receiveData, IsoTpResponseOffset, dataLength);
+                receiveLength = dataLength + IsoTpResponseOffset;
 
                 ValidCanResponse = true;
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Valid CAN response has been detected");
