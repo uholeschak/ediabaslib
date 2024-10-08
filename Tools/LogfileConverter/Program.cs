@@ -1245,6 +1245,10 @@ namespace LogfileConverter
                 simAddDataBmwFast.Add(new SimData(new string[] { "80&3F", "XX", "F1", "23", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "7F", "23", "31", "00" }));     // Service 23
 
+                List<SimData> simAddDataEdicCan = new List<SimData>();
+                simAddDataEdicCan.Add(new SimData(new string[] { "22", "XX", "XX" },
+                    new string[] { "7F", "22", "31" }));     // Service 22
+
                 List<SimData> simAddData = new List<SimData>();
                 SimFormat simFormatUse = simFormat;
                 bool bmwFastFormat = true;
@@ -1607,6 +1611,10 @@ namespace LogfileConverter
 
                             responseBytes = responseUse;
                         }
+                        else if (simFormatUse == SimFormat.EdicCan)
+                        {
+                            simAddData.AddRange(simAddDataEdicCan);
+                        }
 
                         switch (simFormatUse)
                         {
@@ -1711,27 +1719,24 @@ namespace LogfileConverter
                 }
 
                 List<SimData> simAddAll = new List<SimData>();
-                if (simFormatUse == SimFormat.BmwFast)
+                foreach (SimData simData in simAddData)
                 {
-                    foreach (SimData simData in simAddData)
+                    if (simAddAll.Contains(simData))
                     {
-                        if (simAddAll.Contains(simData))
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        simAddAll.Add(simData);
-                        if (simData.AddData != null)
+                    simAddAll.Add(simData);
+                    if (simData.AddData != null)
+                    {
+                        foreach (SimData simDataAdd in simData.AddData)
                         {
-                            foreach (SimData simDataAdd in simData.AddData)
+                            if (simAddAll.Contains(simDataAdd))
                             {
-                                if (simAddAll.Contains(simDataAdd))
-                                {
-                                    continue;
-                                }
-
-                                simAddAll.Add(simDataAdd);
+                                continue;
                             }
+
+                            simAddAll.Add(simDataAdd);
                         }
                     }
                 }
