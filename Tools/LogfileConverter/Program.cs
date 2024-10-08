@@ -1246,8 +1246,14 @@ namespace LogfileConverter
                     new string[] { "83", "F1", "00|[01]", "7F", "23", "31", "00" }));     // Service 23
 
                 List<SimData> simAddDataEdicCan = new List<SimData>();
+                simAddDataEdicCan.Add(new SimData(new string[] { "22", "06", "XX" },
+                    new string[] { "7F", "22", "31" }));     // Service 22 error response
+                simAddDataEdicCan.Add(new SimData(new string[] { "22", "60", "XX" },
+                    new string[] { "7F", "22", "31" }));     // Service 22 error response
+                simAddDataEdicCan.Add(new SimData(new string[] { "22", "F1", "XX" },
+                    new string[] { "7F", "22", "31" }));     // Service 22 error response
                 simAddDataEdicCan.Add(new SimData(new string[] { "22", "XX", "XX" },
-                    new string[] { "7F", "22", "31" }));     // Service 22
+                    new string[] { "62", "00|[01]", "00|[02]", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "41", "42", "43", "44", "45", "46", "47", "48", "49", "4A", "4B", "4C", "4D", "4E", "4F", "50", "51", "52", "53", "54", "56", "57", "58", "59", "5A" }));     // Service 22 simulate string response
 
                 List<SimData> simAddData = new List<SimData>();
                 SimFormat simFormatUse = simFormat;
@@ -1613,7 +1619,10 @@ namespace LogfileConverter
                         }
                         else if (simFormatUse == SimFormat.EdicCan)
                         {
-                            simAddData.AddRange(simAddDataEdicCan);
+                            if ((edicTypes & EdicTypes.Uds) != EdicTypes.None)
+                            {
+                                simAddData.AddRange(simAddDataEdicCan);
+                            }
                         }
 
                         switch (simFormatUse)
