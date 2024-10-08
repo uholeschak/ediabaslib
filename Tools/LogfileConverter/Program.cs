@@ -2422,30 +2422,61 @@ namespace LogfileConverter
 
         private static List<byte> ExtractBmwFastContent(List<byte> telegram)
         {
-            int telLength = TelLengthBmwFast(telegram, 0);
-            if (telLength == 0)
+            int offset = 0;
+            for (;;)
             {
-                return null;
+                int telLength = TelLengthBmwFast(telegram, offset);
+                if (telLength == 0)
+                {
+                    return null;
+                }
+
+                if (offset + telLength + 1 > telegram.Count)
+                {
+                    return null;
+                }
+
+                byte dataLength = (byte)(telegram[offset] & 0x3F);
+                List<byte> result = new List<byte>();
+                if (dataLength == 0)
+                {
+                    // with length byte
+                    dataLength = telegram[3 + offset];
+                    result.AddRange(telegram.GetRange(4 + offset, dataLength));
+                }
+                else
+                {
+                    // without length byte
+                    result.AddRange(telegram.GetRange(3 + offset, dataLength));
+                }
+
+                bool filterResponse = false;
+                if (result.Count == 3)
+                {
+                    if (result[0] == 0x7F)
+                    {
+                        switch (result[2])
+                        {
+                            case 0x78:
+                                filterResponse = true;
+                                break;
+                        }
+                    }
+                }
+
+                if (!filterResponse)
+                {
+                    return result;
+                }
+
+                offset += telLength + 1;    // checksum
+                if (offset == telegram.Count)
+                {
+                    break;
+                }
             }
 
-            if (telLength + 1 != telegram.Count)
-            {
-                return null;
-            }
-
-            byte dataLength = (byte)(telegram[0] & 0x3F);
-            List<byte> result = new List<byte>();
-            if (dataLength == 0)
-            {   // with length byte
-                dataLength = telegram[3];
-                result.AddRange(telegram.GetRange(4, dataLength));
-            }
-            else
-            {   // without length byte
-                result.AddRange(telegram.GetRange(3, dataLength));
-            }
-
-            return result;
+            return null;
         }
 
         // telegram length without checksum
