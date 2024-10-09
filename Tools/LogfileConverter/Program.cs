@@ -1383,14 +1383,6 @@ namespace LogfileConverter
                             }
                         }
 
-                        if (keyBytesFinal == null)
-                        {
-                            if ((edicTypes & EdicTypes.Tp20) != EdicTypes.None)
-                            {   // use ECU address only for key bytes
-                                ecuAddr = null;
-                            }
-                        }
-
                         int dataLengthReq = TelLengthBmwFast(requestBytes, 0);
                         int dataLengthResp = TelLengthBmwFast(responseBytes, 0);
 
