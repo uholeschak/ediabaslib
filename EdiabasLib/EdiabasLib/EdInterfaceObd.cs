@@ -980,6 +980,12 @@ namespace EdiabasLib
 
                 if (IsSimulationMode())
                 {
+                    if (KeyBytesProtected.Length > 0)
+                    {
+                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, KeyBytesProtected, 0, KeyBytesProtected.Length, "KeyBytes");
+                        return KeyBytesProtected;
+                    }
+
                     byte[] keyBytes = GetKeyBytesSimulation(SimEcuAddr);
                     if (keyBytes != null)
                     {
