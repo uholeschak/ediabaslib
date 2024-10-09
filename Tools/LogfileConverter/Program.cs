@@ -2317,6 +2317,11 @@ namespace LogfileConverter
 
         private static List<byte> ConvertFromDs2Telegram(List<byte> telegram)
         {
+            if (telegram == null)
+            {
+                return null;
+            }
+
             if (!IsDs2Telegram(telegram))
             {
                 return null;
@@ -2347,6 +2352,11 @@ namespace LogfileConverter
 
         private static List<byte> ConvertToDs2Telegram(List<byte> telegram)
         {
+            if (telegram == null)
+            {
+                return null;
+            }
+
             int telLength = TelLengthBmwFast(telegram, 0);
             if (telLength == 0)
             {
@@ -2385,6 +2395,11 @@ namespace LogfileConverter
 
         private static List<byte> ConvertToKwp2000Telegram(List<byte> telegram)
         {
+            if (telegram == null)
+            {
+                return null;
+            }
+
             int telLength = TelLengthBmwFast(telegram, 0);
             if (telLength == 0)
             {
@@ -2423,6 +2438,11 @@ namespace LogfileConverter
 
         private static List<byte> ExtractBmwFastContent(List<byte> telegram)
         {
+            if (telegram == null)
+            {
+                return null;
+            }
+
             int offset = 0;
             for (;;)
             {
