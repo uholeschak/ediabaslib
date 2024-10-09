@@ -4121,6 +4121,7 @@ namespace EdiabasLib
                 // replace ecu address with the CAN address
                 sendData[1] = ParEdicWakeAddress;
             }
+
             CanFlags canFlags = CanFlags.Empty;
             if (sendDataLength == 4 && sendData[0] == 0x01)
             {
