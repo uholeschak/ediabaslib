@@ -1653,7 +1653,7 @@ namespace EdiabasLib
                                 ParEdicWakeAddress = (byte)CommParameterProtected[5];
                                 ParEdicTesterAddress = (byte) CommParameterProtected[70];
                                 ParEdicEcuAddress = (byte) CommParameterProtected[71];
-                                SimEcuAddr = ParEdicEcuAddress;
+                                SimEcuAddr = ParEdicWakeAddress;
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC CAN: {0:X02}, Tester: {1:X02}, Ecu: {2:X02}", ParEdicWakeAddress, ParEdicTesterAddress, ParEdicEcuAddress);
 
                                 ParEdicAddRetries = 3;
@@ -1777,6 +1777,21 @@ namespace EdiabasLib
                         {
                             simEcuAddr = UdsEcuCanIdOverride;
                             EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS ECU CAN ID with {0:X04}", UdsEcuCanIdOverride);
+                        }
+                    }
+                    else if (ParTransmitFunc == TransTp20)
+                    {
+                        if (simRequest.Length == 0)
+                        {
+                            // tester present check
+                            receiveData = ByteArray0;
+                            return true;
+                        }
+
+                        if (simRequest.Length >= 3)
+                        {
+                            // replace ecu address with the CAN address
+                            simRequest[1] = ParEdicWakeAddress;
                         }
                     }
                 }
