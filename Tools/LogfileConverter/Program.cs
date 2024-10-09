@@ -2457,13 +2457,21 @@ namespace LogfileConverter
                     return null;
                 }
 
-                byte dataLength = (byte)(telegram[offset] & 0x3F);
+                int dataLength = (byte)(telegram[offset] & 0x3F);
                 List<byte> result = new List<byte>();
                 if (dataLength == 0)
                 {
                     // with length byte
                     dataLength = telegram[3 + offset];
-                    result.AddRange(telegram.GetRange(4 + offset, dataLength));
+                    if (dataLength == 0)
+                    {
+                        dataLength = (telegram[4 + offset] << 8) | telegram[5 + offset];
+                        result.AddRange(telegram.GetRange(6 + offset, dataLength));
+                    }
+                    else
+                    {
+                        result.AddRange(telegram.GetRange(4 + offset, dataLength));
+                    }
                 }
                 else
                 {
