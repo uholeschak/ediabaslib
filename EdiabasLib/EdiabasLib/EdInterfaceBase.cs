@@ -449,10 +449,10 @@ namespace EdiabasLib
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
             if (EdSimFileSgbd != null)
             {
-                List<byte> response = EdSimFileSgbd.GetResponse(sendData.ToList());
+                List<byte> response = EdSimFileSgbd.GetResponse(sendData.ToList(), ecuAddr);
                 if (response == null && ecuAddr != null)
-                {
-                    response = EdSimFileSgbd.GetResponse(sendData.ToList(), ecuAddr);
+                {   // try without ecu address
+                    response = EdSimFileSgbd.GetResponse(sendData.ToList());
                 }
 
                 if (response != null)
@@ -465,10 +465,10 @@ namespace EdiabasLib
 
             if (EdSimFileInterface != null)
             {
-                List<byte> response = EdSimFileInterface.GetResponse(sendData.ToList());
+                List<byte> response = EdSimFileInterface.GetResponse(sendData.ToList(), ecuAddr);
                 if (response == null && ecuAddr != null)
-                {
-                    response = EdSimFileInterface.GetResponse(sendData.ToList(), ecuAddr);
+                {   // try without ecu address
+                    response = EdSimFileInterface.GetResponse(sendData.ToList());
                 }
 
                 if (response != null)
