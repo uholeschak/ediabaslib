@@ -2379,6 +2379,11 @@ namespace LogfileConverter
             if (dataLength == 0)
             {   // with length byte
                 dataLength = telegram[3];
+                if (dataLength == 0)
+                {
+                    return null;
+                }
+
                 result.Add(ecuAddr);
                 result.Add((byte)(dataLength + 3));
                 result.AddRange(telegram.GetRange(4, dataLength));
@@ -2424,6 +2429,11 @@ namespace LogfileConverter
             if (dataLength == 0)
             {   // with length byte
                 dataLength = telegram[3];
+                if (dataLength == 0)
+                {
+                    return null;
+                }
+
                 result.Add((byte)(dataLength));
                 result.AddRange(telegram.GetRange(4, dataLength));
             }
