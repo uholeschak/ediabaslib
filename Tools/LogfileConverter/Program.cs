@@ -2457,7 +2457,7 @@ namespace LogfileConverter
                     return null;
                 }
 
-                int dataLength = (byte)(telegram[offset] & 0x3F);
+                int dataLength = telegram[offset] & 0x3F;
                 List<byte> result = new List<byte>();
                 if (dataLength == 0)
                 {
