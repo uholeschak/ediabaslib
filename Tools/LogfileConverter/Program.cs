@@ -2446,7 +2446,7 @@ namespace LogfileConverter
             return result;
         }
 
-        private static List<byte> ExtractBmwFastContent(List<byte> telegram)
+        private static List<byte> ExtractBmwFastContent(List<byte> telegram, bool includeFrame = false)
         {
             if (telegram == null)
             {
@@ -2468,6 +2468,7 @@ namespace LogfileConverter
                 }
 
                 int dataLength = telegram[offset] & 0x3F;
+                int dataOffset;
                 List<byte> result = new List<byte>();
                 if (dataLength == 0)
                 {
@@ -2476,18 +2477,20 @@ namespace LogfileConverter
                     if (dataLength == 0)
                     {
                         dataLength = (telegram[4 + offset] << 8) | telegram[5 + offset];
-                        result.AddRange(telegram.GetRange(6 + offset, dataLength));
+                        dataOffset = 6;
                     }
                     else
                     {
-                        result.AddRange(telegram.GetRange(4 + offset, dataLength));
+                        dataOffset = 4;
                     }
                 }
                 else
                 {
                     // without length byte
-                    result.AddRange(telegram.GetRange(3 + offset, dataLength));
+                    dataOffset = 3;
                 }
+
+                result.AddRange(telegram.GetRange(dataOffset + offset, dataLength));
 
                 bool filterResponse = false;
                 if (result.Count == 3)
