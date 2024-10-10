@@ -1303,7 +1303,7 @@ namespace LogfileConverter
                                     keyBytesFinal = new List<byte>();
                                     keyBytesFinal.Add(0xDA);
                                     keyBytesFinal.Add(0x8F);
-                                    keyBytesFinal.Add(cfgBytes[1]);
+                                    keyBytesFinal.Add(cfgBytes[0]);
                                     keyBytesFinal.Add(0x54);
                                     keyBytesFinal.Add(0x50);
 #endif
