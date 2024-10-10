@@ -1759,7 +1759,6 @@ namespace EdiabasLib
 
                 int? simEcuAddr = SimEcuAddr;
                 bool isIsoTp = false;
-                bool isTp20 = false;
                 if (EdicSimulation)
                 {
                     if (ParTransmitFunc == TransIsoTp)
@@ -1788,7 +1787,6 @@ namespace EdiabasLib
                     }
                     else if (ParTransmitFunc == TransTp20)
                     {
-                        isTp20 = true;
                         if (simRequest.Length == 0)
                         {
                             // tester present check
