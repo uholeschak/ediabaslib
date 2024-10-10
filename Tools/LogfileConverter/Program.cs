@@ -1264,6 +1264,7 @@ namespace LogfileConverter
                 List<SimEntry> simLines = new List<SimEntry>();
                 for (int iteration = 0; iteration < 2; iteration++)
                 {
+                    EdicTypes edicType = EdicTypes.None;
                     int? ecuAddr = null;
                     List<byte> keyBytesPrefix = null;
                     List<byte> keyBytesFinal = null;
@@ -1296,25 +1297,27 @@ namespace LogfileConverter
                             switch (cfgBytes.Count)
                             {
                                 case 2:
-                                    edicTypes |= EdicTypes.Tp20;
-                                    ecuAddr = cfgBytes[0];
+                                    edicType = EdicTypes.Tp20;
+                                    ecuAddr = cfgBytes[1];
+#if false
                                     keyBytesFinal = new List<byte>();
                                     keyBytesFinal.Add(0xDA);
                                     keyBytesFinal.Add(0x8F);
-                                    keyBytesFinal.Add(cfgBytes[0]);
+                                    keyBytesFinal.Add(cfgBytes[1]);
                                     keyBytesFinal.Add(0x54);
                                     keyBytesFinal.Add(0x50);
+#endif
                                     break;
 
                                 case 3:
                                 {
                                     if (cfgBytes[2] == 0x8F)
                                     {
-                                        edicTypes |= EdicTypes.Kwp2000;
+                                        edicType = EdicTypes.Kwp2000;
                                     }
                                     else
                                     {
-                                        edicTypes |= EdicTypes.Kwp1281;
+                                        edicType = EdicTypes.Kwp1281;
                                     }
 
                                     ecuAddr = cfgBytes[0];
@@ -1347,10 +1350,12 @@ namespace LogfileConverter
                                 }
 
                                 case 5:
-                                    edicTypes |= EdicTypes.Uds;
+                                    edicType = EdicTypes.Uds;
                                     ecuAddr = (cfgBytes[1] << 8) | cfgBytes[2];
                                     break;
                             }
+
+                            edicTypes |= edicType;
                         }
 
                         string[] lineParts = lineTrim.Split(':', StringSplitOptions.TrimEntries);
@@ -2446,7 +2451,7 @@ namespace LogfileConverter
             return result;
         }
 
-        private static List<byte> ExtractBmwFastContent(List<byte> telegram, bool includeFrame = false)
+        private static List<byte> ExtractBmwFastContent(List<byte> telegram)
         {
             if (telegram == null)
             {
