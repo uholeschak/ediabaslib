@@ -1820,39 +1820,6 @@ namespace EdiabasLib
                     return true;
                 }
 
-                if (isTp20)
-                {
-                    List<byte> simResponseList = new List<byte>();
-                    int dataLength = simResponse.Length;
-                    if (dataLength > 0x3F)
-                    {
-                        simResponseList.Add(0x80);
-                        simResponseList.Add(ParEdicTesterAddress);
-                        simResponseList.Add(ParEdicEcuAddress);
-                        if (dataLength > 0xFF)
-                        {
-                            simResponseList.Add(0x00);
-                            simResponseList.Add((byte)(dataLength >> 8));
-                            simResponseList.Add((byte)(dataLength & 0xFF));
-                        }
-                        else
-                        {
-                            simResponseList.Add((byte)dataLength);
-                        }
-                    }
-                    else
-                    {
-                        simResponseList.Add((byte) (0x80 | dataLength));
-                        simResponseList.Add(ParEdicTesterAddress);
-                        simResponseList.Add(ParEdicEcuAddress);
-                    }
-
-                    simResponseList.AddRange(simResponse);
-                    simResponseList.Add(CalcChecksumBmwFast(simResponseList.ToArray(), simResponseList.Count));
-                    receiveData = simResponseList.ToArray();
-                    return true;
-                }
-
                 receiveData = simResponse;
                 return true;
             }

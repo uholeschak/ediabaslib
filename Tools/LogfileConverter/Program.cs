@@ -1670,22 +1670,32 @@ namespace LogfileConverter
                                 }
                                 requestUse = requestContentList[0];
 
-                                List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes);
+                                bool fullFrame = edicType == EdicTypes.Tp20;
+                                List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, fullFrame);
                                 if (responseContentList == null || responseContentList.Count < 1)
                                 {
                                     continue;
                                 }
 
-                                responseBytes = responseContentList[0];
-                                if (responseContentList.Count > 1)
+                                if (!fullFrame)
                                 {
-                                    Console.WriteLine("Multiple responses for ECU {0:X02}: {1}", ecuAddr, BitConverter.ToString(requestUse.ToArray()).Replace("-", ","));
-                                    foreach (List<byte> singleResponse in responseContentList)
+                                    responseBytes = responseContentList[0];
+                                    if (responseContentList.Count > 1)
                                     {
-                                        Console.WriteLine("Response: {0}", BitConverter.ToString(singleResponse.ToArray()).Replace("-", ","));
+                                        Console.WriteLine("Multiple responses for ECU {0:X02}: {1}", ecuAddr, BitConverter.ToString(requestUse.ToArray()).Replace("-", ","));
+                                        foreach (List<byte> singleResponse in responseContentList)
+                                        {
+                                            Console.WriteLine("Response: {0}", BitConverter.ToString(singleResponse.ToArray()).Replace("-", ","));
+                                        }
                                     }
+                                    break;
                                 }
 
+                                responseBytes = new List<byte>();
+                                foreach (List<byte> responseContent in responseContentList)
+                                {
+                                    responseBytes.AddRange(responseContent);
+                                }
                                 break;
                             }
                         }
@@ -2465,7 +2475,7 @@ namespace LogfileConverter
             return result;
         }
 
-        private static List<List<byte>> ExtractBmwFastContentList(List<byte> telegram)
+        private static List<List<byte>> ExtractBmwFastContentList(List<byte> telegram, bool completeFrame = false)
         {
             if (telegram == null)
             {
@@ -2528,6 +2538,12 @@ namespace LogfileConverter
 
                 if (!filterResponse)
                 {
+                    if (completeFrame)
+                    {
+                        result = telegram.GetRange(offset, telLength);
+                        result.Add(CalcChecksumBmwFast(result, 0, result.Count));
+                    }
+
                     resultList.Add(result);
                 }
 
