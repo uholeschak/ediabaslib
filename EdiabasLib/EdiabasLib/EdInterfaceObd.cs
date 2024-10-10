@@ -1793,12 +1793,6 @@ namespace EdiabasLib
                             receiveData = ByteArray0;
                             return true;
                         }
-
-                        if (simRequest.Length >= 3)
-                        {
-                            // replace ecu address with the CAN address
-                            simRequest[1] = ParEdicWakeAddress;
-                        }
                     }
                 }
 
