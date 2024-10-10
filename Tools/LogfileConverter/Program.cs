@@ -1662,18 +1662,32 @@ namespace LogfileConverter
                                 break;
 
                             case SimFormat.EdicCan:
-                                requestUse = ExtractBmwFastContent(requestUse);
-                                if (requestUse == null)
+                            {
+                                List<List<byte>> requestContentList = ExtractBmwFastContentList(requestUse);
+                                if (requestContentList == null || requestContentList.Count < 1)
+                                {
+                                    continue;
+                                }
+                                requestUse = requestContentList[0];
+
+                                List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes);
+                                if (responseContentList == null || responseContentList.Count < 1)
                                 {
                                     continue;
                                 }
 
-                                responseBytes = ExtractBmwFastContent(responseBytes);
-                                if (responseBytes == null)
+                                responseBytes = responseContentList[0];
+                                if (responseContentList.Count > 1)
                                 {
-                                    continue;
+                                    Console.WriteLine("Multiple responses for: {0}", BitConverter.ToString(requestUse.ToArray()).Replace("-", ","));
+                                    foreach (List<byte> singleResponse in responseContentList)
+                                    {
+                                        Console.WriteLine("Response: {0}", BitConverter.ToString(singleResponse.ToArray()).Replace("-", ","));
+                                    }
                                 }
+
                                 break;
+                            }
                         }
 
                         string key = string.Empty;
@@ -2451,13 +2465,14 @@ namespace LogfileConverter
             return result;
         }
 
-        private static List<byte> ExtractBmwFastContent(List<byte> telegram)
+        private static List<List<byte>> ExtractBmwFastContentList(List<byte> telegram)
         {
             if (telegram == null)
             {
                 return null;
             }
 
+            List<List<byte>> resultList = new List<List<byte>>();
             int offset = 0;
             for (;;)
             {
@@ -2513,7 +2528,7 @@ namespace LogfileConverter
 
                 if (!filterResponse)
                 {
-                    return result;
+                    resultList.Add(result);
                 }
 
                 offset += telLength + 1;    // checksum
@@ -2523,7 +2538,7 @@ namespace LogfileConverter
                 }
             }
 
-            return null;
+            return resultList;
         }
 
         // telegram length without checksum
