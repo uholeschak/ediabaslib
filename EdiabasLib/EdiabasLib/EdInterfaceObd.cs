@@ -1848,6 +1848,7 @@ namespace EdiabasLib
                     }
 
                     simResponseList.AddRange(simResponse);
+                    simResponseList.Add(CalcChecksumBmwFast(simResponseList.ToArray(), simResponseList.Count));
                     receiveData = simResponseList.ToArray();
                     return true;
                 }
