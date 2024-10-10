@@ -1679,7 +1679,7 @@ namespace LogfileConverter
                                 responseBytes = responseContentList[0];
                                 if (responseContentList.Count > 1)
                                 {
-                                    Console.WriteLine("Multiple responses for: {0}", BitConverter.ToString(requestUse.ToArray()).Replace("-", ","));
+                                    Console.WriteLine("Multiple responses for ECU {0:X02}: {1}", ecuAddr, BitConverter.ToString(requestUse.ToArray()).Replace("-", ","));
                                     foreach (List<byte> singleResponse in responseContentList)
                                     {
                                         Console.WriteLine("Response: {0}", BitConverter.ToString(singleResponse.ToArray()).Replace("-", ","));
