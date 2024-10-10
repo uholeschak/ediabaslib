@@ -1659,7 +1659,7 @@ namespace EdiabasLib
                                 ParEdicWakeAddress = (byte)CommParameterProtected[5];
                                 ParEdicTesterAddress = (byte) CommParameterProtected[70];
                                 ParEdicEcuAddress = (byte) CommParameterProtected[71];
-                                SimEcuAddr = ParEdicWakeAddress;
+                                SimEcuAddr = ParEdicEcuAddress;
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC CAN: {0:X02}, Tester: {1:X02}, Ecu: {2:X02}", ParEdicWakeAddress, ParEdicTesterAddress, ParEdicEcuAddress);
 
                                 ParEdicAddRetries = 3;
@@ -1759,6 +1759,7 @@ namespace EdiabasLib
 
                 int? simEcuAddr = SimEcuAddr;
                 bool isIsoTp = false;
+                bool isTp20 = false;
                 if (EdicSimulation)
                 {
                     if (ParTransmitFunc == TransIsoTp)
@@ -1787,6 +1788,7 @@ namespace EdiabasLib
                     }
                     else if (ParTransmitFunc == TransTp20)
                     {
+                        isTp20 = true;
                         if (simRequest.Length == 0)
                         {
                             // tester present check
@@ -1815,6 +1817,38 @@ namespace EdiabasLib
                     simResponseMod[17] = (byte)(dataLength >> 8);
                     Array.Copy(simResponse, 0, simResponseMod, IsoTpResponseOffset, dataLength);
                     receiveData = simResponseMod;
+                    return true;
+                }
+
+                if (isTp20)
+                {
+                    List<byte> simResponseList = new List<byte>();
+                    int dataLength = simResponse.Length;
+                    if (dataLength > 0x3F)
+                    {
+                        simResponseList.Add(0x80);
+                        simResponseList.Add(ParEdicTesterAddress);
+                        simResponseList.Add(ParEdicEcuAddress);
+                        if (dataLength > 0xFF)
+                        {
+                            simResponseList.Add(0x00);
+                            simResponseList.Add((byte)(dataLength >> 8));
+                            simResponseList.Add((byte)(dataLength & 0xFF));
+                        }
+                        else
+                        {
+                            simResponseList.Add((byte)dataLength);
+                        }
+                    }
+                    else
+                    {
+                        simResponseList.Add((byte) (0x80 | dataLength));
+                        simResponseList.Add(ParEdicTesterAddress);
+                        simResponseList.Add(ParEdicEcuAddress);
+                    }
+
+                    simResponseList.AddRange(simResponse);
+                    receiveData = simResponseList.ToArray();
                     return true;
                 }
 
