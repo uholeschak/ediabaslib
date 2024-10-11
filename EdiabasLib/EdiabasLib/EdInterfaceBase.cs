@@ -499,14 +499,27 @@ namespace EdiabasLib
                     keyBytes = EdSimFileSgbd.GetKeyBytes(ecuAddr);
                 }
 
-                if (keyBytes == null)
+                if (keyBytes != null)
                 {
-                    return null;
+                    return keyBytes.ToArray();
                 }
-
-                return keyBytes.ToArray();
             }
 
+            if (EdSimFileInterface != null)
+            {
+                List<byte> keyBytes = EdSimFileInterface.GetKeyBytes();
+                if (keyBytes == null && ecuAddr != null)
+                {
+                    keyBytes = EdSimFileInterface.GetKeyBytes(ecuAddr);
+                }
+
+                if (keyBytes != null)
+                {
+                    return keyBytes.ToArray();
+                }
+            }
+
+            EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No KeyBytes simulation data");
             return null;
         }
 
