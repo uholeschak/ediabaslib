@@ -1556,13 +1556,13 @@ namespace LogfileConverter
                             }
 
                             List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, true);
-
                             List<byte> responseUse = new List<byte>();
+
                             if (responseContentList.Count > 0)
                             {
                                 foreach (List<byte> responseContent in responseContentList)
                                 {
-                                    responseBytes.AddRange(responseContent);
+                                    responseUse.AddRange(responseContent);
                                 }
                             }
 
