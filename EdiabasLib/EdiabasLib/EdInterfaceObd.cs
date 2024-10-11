@@ -1794,6 +1794,22 @@ namespace EdiabasLib
                             return true;
                         }
                     }
+                    else if (ParTransmitFunc == TransKwp2000)
+                    {
+                        if (simRequest.Length == 0)
+                        {
+                            // get ID bytes
+                            byte[] keyBytes = GetKeyBytesSimulation(simEcuAddr);
+                            if (keyBytes == null)
+                            {
+                                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
+                                return false;
+                            }
+
+                            receiveData = keyBytes;
+                            return true;
+                        }
+                    }
                 }
 
                 byte[] simResponse;
