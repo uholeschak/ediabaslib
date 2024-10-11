@@ -1366,7 +1366,7 @@ namespace LogfileConverter
                         {
                             requestBytes = NumberString2List(lineParts[0]);
                             responseBytes = NumberString2List(lineParts[1]);
-                            List<byte> keyBytesExtra = null;
+
                             if (requestBytes.Count < 1)
                             {
                                 if (responseBytes.Count < 1)
@@ -1374,14 +1374,13 @@ namespace LogfileConverter
                                     continue;
                                 }
 
-                                keyBytesExtra = responseBytes;
                                 if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
                                 {
                                     if (keyBytesPrefix != null)
                                     {
                                         keyBytesFinal = new List<byte>();
                                         keyBytesFinal.AddRange(keyBytesPrefix);
-                                        keyBytesFinal.AddRange(keyBytesExtra);
+                                        keyBytesFinal.AddRange(responseBytes);
                                     }
                                 }
                                 responseBytes = new List<byte>();
