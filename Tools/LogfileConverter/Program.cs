@@ -1710,6 +1710,7 @@ namespace LogfileConverter
                                     sbResponse[3] = '0';
                                     sbResponse[4] = '1';
                                     sbResponse.Insert(5, "+[01]");
+                                    sbResponse.Append(",03");
                                     response = sbResponse.ToString();
                                 }
                             }
