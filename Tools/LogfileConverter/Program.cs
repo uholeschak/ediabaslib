@@ -1693,6 +1693,26 @@ namespace LogfileConverter
                             {
                                 response = string.Empty;
                             }
+
+                            if (edicType == EdicTypes.Kwp1281)
+                            {
+                                if (request.Length >= 5)
+                                {
+                                    StringBuilder sbRequest = new StringBuilder(request);
+                                    sbRequest[3] = 'X';
+                                    sbRequest[4] = 'X';
+                                    request = sbRequest.ToString();
+                                }
+
+                                if (response.Length >= 5)
+                                {
+                                    StringBuilder sbResponse = new StringBuilder(response);
+                                    sbResponse[3] = '0';
+                                    sbResponse[4] = '1';
+                                    sbResponse.Insert(5, "+[01]");
+                                    response = sbResponse.ToString();
+                                }
+                            }
                         }
 
                         if (!string.IsNullOrEmpty(keyBytesEntry))
