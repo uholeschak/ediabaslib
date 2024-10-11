@@ -980,11 +980,14 @@ namespace EdiabasLib
 
                 if (IsSimulationMode())
                 {
-                    byte[] keyBytes = GetKeyBytesSimulation(SimEcuAddr);
-                    if (keyBytes != null)
+                    if (ParTransmitFunc != null)
                     {
-                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "KeyBytes");
-                        return keyBytes;
+                        byte[] keyBytes = GetKeyBytesSimulation(SimEcuAddr);
+                        if (keyBytes != null)
+                        {
+                            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "KeyBytes");
+                            return keyBytes;
+                        }
                     }
 
                     if (KeyBytesProtected.Length > 0)
@@ -1791,6 +1794,23 @@ namespace EdiabasLib
                         {
                             // tester present check
                             receiveData = ByteArray0;
+                            return true;
+                        }
+                    }
+                    else if (ParTransmitFunc == TransKwp2000)
+                    {
+                        if (simRequest.Length == 0)
+                        {
+                            // get ID bytes
+                            byte[] keyBytes = GetKeyBytesSimulation(simEcuAddr);
+                            if (keyBytes == null)
+                            {
+                                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
+                                return false;
+                            }
+
+                            KeyBytesProtected = keyBytes;
+                            receiveData = keyBytes;
                             return true;
                         }
                     }
