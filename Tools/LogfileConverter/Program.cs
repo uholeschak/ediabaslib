@@ -1576,6 +1576,11 @@ namespace LogfileConverter
                             }
                         }
 
+                        if (responseBytes.Count == 0)
+                        {
+                            continue;
+                        }
+
                         switch (simFormatUse)
                         {
                             case SimFormat.Kwp2000s_Ds2:
