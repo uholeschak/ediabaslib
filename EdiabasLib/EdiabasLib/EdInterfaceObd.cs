@@ -980,7 +980,7 @@ namespace EdiabasLib
 
                 if (IsSimulationMode())
                 {
-                    if (ParTransmitFunc != null)
+                    if (CommParameterProtected != null && ParHasKeyBytes)
                     {
                         byte[] keyBytes = GetKeyBytesSimulation(SimEcuAddr);
                         if (keyBytes != null)
@@ -988,12 +988,12 @@ namespace EdiabasLib
                             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "KeyBytes");
                             return keyBytes;
                         }
-                    }
 
-                    if (KeyBytesProtected.Length > 0)
-                    {
-                        EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, KeyBytesProtected, 0, KeyBytesProtected.Length, "KeyBytes");
-                        return KeyBytesProtected;
+                        if (KeyBytesProtected.Length > 0)
+                        {
+                            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, KeyBytesProtected, 0, KeyBytesProtected.Length, "KeyBytes");
+                            return KeyBytesProtected;
+                        }
                     }
 
                     return ByteArray0;
@@ -1801,16 +1801,7 @@ namespace EdiabasLib
                     {
                         if (simRequest.Length == 0)
                         {
-                            // get ID bytes
-                            byte[] keyBytes = GetKeyBytesSimulation(simEcuAddr);
-                            if (keyBytes == null)
-                            {
-                                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
-                                return false;
-                            }
-
-                            KeyBytesProtected = keyBytes;
-                            receiveData = keyBytes;
+                            receiveData = ByteArray0;
                             return true;
                         }
                     }
