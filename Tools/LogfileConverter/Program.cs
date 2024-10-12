@@ -1258,6 +1258,8 @@ namespace LogfileConverter
                 List<SimData> simAddDataEdicKwp1281 = new List<SimData>();
                 simAddDataEdicKwp1281.Add(new SimData(new string[] { "03", "XX", "09" },
                     new string[] { "03", "01+[01]", "09", "03" }));     // ACK
+                simAddDataEdicKwp1281.Add(new SimData(new string[] { "03", "XX", "0A" },
+                    new string[] { "03", "01+[01]", "09", "03" }));     // NACK
 
                 List<SimData> simAddData = new List<SimData>();
                 SimFormat simFormatUse = simFormat;
