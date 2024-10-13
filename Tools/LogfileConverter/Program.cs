@@ -1687,6 +1687,33 @@ namespace LogfileConverter
                                 }
                                 break;
                             }
+
+                            case SimFormat.EdicKwp:
+                            {
+                                if ((edicType & EdicTypes.Kwp2000) != EdicTypes.None)
+                                {
+                                    List<List<byte>> requestContentList = ExtractBmwFastContentList(requestUse);
+                                    if (requestContentList == null || requestContentList.Count < 1)
+                                    {
+                                        continue;
+                                    }
+                                    requestUse = requestContentList[0];
+
+                                    List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, true);
+                                    if (responseContentList == null || responseContentList.Count < 1)
+                                    {
+                                        continue;
+                                    }
+
+                                    responseBytes = new List<byte>();
+                                    foreach (List<byte> responseContent in responseContentList)
+                                    {
+                                        responseBytes.AddRange(responseContent);
+                                    }
+                                }
+
+                                break;
+                            }
                         }
 
                         string key = string.Empty;
