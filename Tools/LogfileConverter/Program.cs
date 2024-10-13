@@ -1588,11 +1588,6 @@ namespace LogfileConverter
                             }
                         }
 
-                        if (responseBytes.Count == 0)
-                        {
-                            continue;
-                        }
-
                         switch (simFormatUse)
                         {
                             case SimFormat.Kwp2000s_Ds2:
@@ -1685,6 +1680,11 @@ namespace LogfileConverter
                         else
                         {
                             if (dataLengthReq == 0 && dataLengthResp == 0)
+                            {
+                                continue;
+                            }
+
+                            if (responseBytes.Count == 0)
                             {
                                 continue;
                             }
