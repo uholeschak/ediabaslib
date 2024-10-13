@@ -1386,7 +1386,7 @@ namespace BmwDeepObd
             IMenuItem selSgbdSimDirMenu = menu.FindItem(Resource.Id.menu_sel_sim_dir);
             if (selSgbdSimDirMenu != null)
             {
-                bool validDir = ActivityCommon.IsValidSimDir(_instanceData.SimulationDir);
+                bool validDir = ActivityCommon.IsValidSimDir(GetSimulationDir());
                 selSgbdSimDirMenu.SetVisible(!commActive && _activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Simulation);
                 selSgbdSimDirMenu.SetChecked(validDir);
             }
@@ -2196,7 +2196,7 @@ namespace BmwDeepObd
 
             if (_ediabas != null)
             {
-                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, _instanceData.SimulationDir, _instanceData.TraceAppend || _instanceData.ForceAppend);
+                ActivityCommon.SetEdiabasConfigProperties(_ediabas, _instanceData.TraceDir, GetSimulationDir(), _instanceData.TraceAppend || _instanceData.ForceAppend);
             }
         }
 
@@ -2272,7 +2272,7 @@ namespace BmwDeepObd
                     serverIntent.PutExtra(XmlToolEcuActivity.ExtraVehicleSeries, _instanceData.VehicleSeries);
                 }
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraBmwServiceFunctions, bmwServiceFunctions);
-                serverIntent.PutExtra(XmlToolEcuActivity.ExtraSimulationDir, _instanceData.SimulationDir);
+                serverIntent.PutExtra(XmlToolEcuActivity.ExtraSimulationDir, GetSimulationDir());
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceDir, _instanceData.TraceDir);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraTraceAppend, _instanceData.TraceAppend || _instanceData.ForceAppend);
                 serverIntent.PutExtra(XmlToolEcuActivity.ExtraInterface, (int)_activityCommon.SelectedInterface);
@@ -2387,9 +2387,11 @@ namespace BmwDeepObd
             Intent serverIntent = new Intent(this, typeof(EdiabasToolActivity));
             serverIntent.PutExtra(EdiabasToolActivity.ExtraInitDir, _ecuDir);
             serverIntent.PutExtra(EdiabasToolActivity.ExtraAppDataDir, _appDataDir);
-            if (!string.IsNullOrEmpty(_instanceData.SimulationDir))
+
+            string simulationDir = GetSimulationDir();
+            if (!string.IsNullOrEmpty(simulationDir))
             {
-                serverIntent.PutExtra(EdiabasToolActivity.ExtraSimulationDir, _instanceData.SimulationDir);
+                serverIntent.PutExtra(EdiabasToolActivity.ExtraSimulationDir, simulationDir);
             }
 
             string xmlFileDir = XmlFileDir();
@@ -4870,6 +4872,17 @@ namespace BmwDeepObd
                 .OrderByDescending(x => x.Count())
                 .FirstOrDefault();
             return vinInfo != null ? vinInfo.Key : string.Empty;
+        }
+
+        private string GetSimulationDir()
+        {
+            switch (_activityCommon.SelectedInterface)
+            {
+                case ActivityCommon.InterfaceType.Simulation:
+                    return _instanceData.SimulationDir;
+            }
+
+            return null;
         }
 
         private bool ReadVagMotInfo(CustomProgressDialog progress = null)
@@ -9225,11 +9238,12 @@ namespace BmwDeepObd
                     attr?.Remove();
                 }
 
-                if (!string.IsNullOrEmpty(_instanceData.SimulationDir))
+                string simulationDir = GetSimulationDir();
+                if (!string.IsNullOrEmpty(simulationDir))
                 {
                     try
                     {
-                        string simulationPath = Path.GetRelativePath(xmlFileDir, _instanceData.SimulationDir);
+                        string simulationPath = Path.GetRelativePath(xmlFileDir, simulationDir);
                         if (!string.IsNullOrWhiteSpace(simulationPath) && string.Compare(simulationPath.Trim(), ".", StringComparison.OrdinalIgnoreCase) != 0)
                         {
                             globalNode.Add(new XAttribute("simulation_path", simulationPath));
