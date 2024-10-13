@@ -1274,6 +1274,7 @@ namespace LogfileConverter
                     int? ecuAddr = null;
                     List<byte> keyBytesPrefix = null;
                     List<byte> keyBytesFinal = null;
+
                     foreach (string line in lines)
                     {
                         string lineTrim = line.Trim();
@@ -1329,17 +1330,13 @@ namespace LogfileConverter
                                     ecuAddr = cfgBytes[0];
                                     if ((edicType & EdicTypes.Kwp1281) != EdicTypes.None)
                                     {
-                                        const int baudRate = 9600;
+                                        const int baudRate = 10400;
                                         keyBytesPrefix = new List<byte>();
                                         keyBytesPrefix.Add(cfgBytes[1]);
                                         keyBytesPrefix.Add(cfgBytes[2]);
                                         keyBytesPrefix.Add(0x00);
                                         keyBytesPrefix.Add((baudRate & 0xFF));
                                         keyBytesPrefix.Add(((baudRate >> 8) & 0xFF));
-                                        keyBytesPrefix.Add((byte)(cfgBytes[1] & 0x7F));
-                                        keyBytesPrefix.Add((byte)(cfgBytes[2] & 0x7F));
-                                        keyBytesPrefix.Add(0x09);
-                                        keyBytesPrefix.Add(0x03);
                                     }
                                     else
                                     {
@@ -1387,6 +1384,11 @@ namespace LogfileConverter
                                         keyBytesFinal = new List<byte>();
                                         keyBytesFinal.AddRange(keyBytesPrefix);
                                         keyBytesFinal.AddRange(responseBytes);
+
+                                        keyBytesFinal.Add(0x03);
+                                        keyBytesFinal.Add(0x00);
+                                        keyBytesFinal.Add(0x09);
+                                        keyBytesFinal.Add(0x03);
                                     }
                                 }
                                 responseBytes = new List<byte>();
