@@ -446,6 +446,11 @@ namespace EdiabasLib
         protected bool TransmitSimulationInternal(byte[] sendData, out List<byte> receiveData, int? ecuAddr)
         {
             receiveData = null;
+            if (ecuAddr != null)
+            {
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Transmit sim ECU: {0}", ecuAddr);
+            }
+
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
             if (EdSimFileSgbd != null)
             {
@@ -489,6 +494,11 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                 return null;
+            }
+
+            if (ecuAddr != null)
+            {
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "KeyBytes sim ECU: {0}", ecuAddr);
             }
 
             if (EdSimFileSgbd != null)
