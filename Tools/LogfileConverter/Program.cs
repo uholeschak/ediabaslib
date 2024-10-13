@@ -1385,6 +1385,7 @@ namespace LogfileConverter
                                         keyBytesFinal.AddRange(keyBytesPrefix);
 
                                         int blockEnd = -1;
+                                        int blockCount = 0;
                                         int index = 0;
                                         foreach (byte keyByte in responseBytes)
                                         {
@@ -1397,6 +1398,7 @@ namespace LogfileConverter
                                             if (blockEnd < 0)
                                             {
                                                 blockEnd = index + keyByte;
+                                                blockCount++;
                                             }
 
                                             keyBytesFinal.Add(keyByte);
@@ -1405,7 +1407,7 @@ namespace LogfileConverter
 
                                         keyBytesFinal.Add(0x03);
                                         keyBytesFinal.Add(0x03);
-                                        keyBytesFinal.Add(0x00);
+                                        keyBytesFinal.Add((byte) ((blockCount * 2) + 1));
                                         keyBytesFinal.Add(0x09);
                                         keyBytesFinal.Add(0x03);
                                     }
