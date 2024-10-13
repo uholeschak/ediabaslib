@@ -1383,8 +1383,27 @@ namespace LogfileConverter
                                     {
                                         keyBytesFinal = new List<byte>();
                                         keyBytesFinal.AddRange(keyBytesPrefix);
-                                        keyBytesFinal.AddRange(responseBytes);
 
+                                        int blockEnd = -1;
+                                        int index = 0;
+                                        foreach (byte keyByte in responseBytes)
+                                        {
+                                            if (index == blockEnd)
+                                            {
+                                                keyBytesFinal.Add(0x03);
+                                                blockEnd = -1;
+                                            }
+
+                                            if (blockEnd < 0)
+                                            {
+                                                blockEnd = index + keyByte;
+                                            }
+
+                                            keyBytesFinal.Add(keyByte);
+                                            index++;
+                                        }
+
+                                        keyBytesFinal.Add(0x03);
                                         keyBytesFinal.Add(0x03);
                                         keyBytesFinal.Add(0x00);
                                         keyBytesFinal.Add(0x09);
