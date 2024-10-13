@@ -457,7 +457,7 @@ namespace EdiabasLib
                     continue;
                 }
 
-                string sectionPrefix = section.Substring(0, section.Length - SectionRequest.Length);
+                string sectionPrefix = section.Substring(0, section.Length - SectionKeybytes.Length);
                 int? ecuAddr = null;
 
                 if (sectionPrefix.Length > 0)
