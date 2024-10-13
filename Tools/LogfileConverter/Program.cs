@@ -1327,7 +1327,7 @@ namespace LogfileConverter
                                     }
 
                                     ecuAddr = cfgBytes[0];
-                                    if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
+                                    if ((edicType & EdicTypes.Kwp1281) != EdicTypes.None)
                                     {
                                         const int baudRate = 9600;
                                         keyBytesPrefix = new List<byte>();
