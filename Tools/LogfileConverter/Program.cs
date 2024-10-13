@@ -1611,86 +1611,48 @@ namespace LogfileConverter
                             }
                         }
 
-                        switch (simFormatUse)
+                        if (keyBytesFinal == null)
                         {
-                            case SimFormat.Kwp2000s_Ds2:
-                                if (IsDs2BmwFastEncoded(requestUse, responseBytes))
-                                {
-                                    requestUse = ConvertToDs2Telegram(requestUse);
-                                    if (requestUse == null)
-                                    {
-                                        continue;
-                                    }
-
-                                    responseBytes = ConvertToDs2Telegram(responseBytes);
-                                    if (responseBytes == null)
-                                    {
-                                        continue;
-                                    }
-                                }
-                                else if (IsKwp2000BmwFastEncoded(requestUse, responseBytes))
-                                {
-                                    requestUse = ConvertToKwp2000Telegram(requestUse);
-                                    if (requestUse == null)
-                                    {
-                                        continue;
-                                    }
-
-                                    responseBytes = ConvertToKwp2000Telegram(responseBytes);
-                                    if (responseBytes == null)
-                                    {
-                                        continue;
-                                    }
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-
-                                responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
-                                break;
-
-                            case SimFormat.EdicCan:
+                            switch (simFormatUse)
                             {
-                                List<List<byte>> requestContentList = ExtractBmwFastContentList(requestUse);
-                                if (requestContentList == null || requestContentList.Count < 1)
-                                {
-                                    continue;
-                                }
-                                requestUse = requestContentList[0];
-
-                                bool fullFrame = edicType == EdicTypes.Tp20;
-                                List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, fullFrame);
-                                if (responseContentList == null || responseContentList.Count < 1)
-                                {
-                                    continue;
-                                }
-
-                                if (!fullFrame)
-                                {
-                                    responseBytes = responseContentList[0];
-                                    if (responseContentList.Count > 1)
+                                case SimFormat.Kwp2000s_Ds2:
+                                    if (IsDs2BmwFastEncoded(requestUse, responseBytes))
                                     {
-                                        Console.WriteLine("Multiple responses for ECU {0:X02}: {1}", ecuAddr, BitConverter.ToString(requestUse.ToArray()).Replace("-", ","));
-                                        foreach (List<byte> singleResponse in responseContentList)
+                                        requestUse = ConvertToDs2Telegram(requestUse);
+                                        if (requestUse == null)
                                         {
-                                            Console.WriteLine("Response: {0}", BitConverter.ToString(singleResponse.ToArray()).Replace("-", ","));
+                                            continue;
+                                        }
+
+                                        responseBytes = ConvertToDs2Telegram(responseBytes);
+                                        if (responseBytes == null)
+                                        {
+                                            continue;
                                         }
                                     }
+                                    else if (IsKwp2000BmwFastEncoded(requestUse, responseBytes))
+                                    {
+                                        requestUse = ConvertToKwp2000Telegram(requestUse);
+                                        if (requestUse == null)
+                                        {
+                                            continue;
+                                        }
+
+                                        responseBytes = ConvertToKwp2000Telegram(responseBytes);
+                                        if (responseBytes == null)
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        continue;
+                                    }
+
+                                    responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
                                     break;
-                                }
 
-                                responseBytes = new List<byte>();
-                                foreach (List<byte> responseContent in responseContentList)
-                                {
-                                    responseBytes.AddRange(responseContent);
-                                }
-                                break;
-                            }
-
-                            case SimFormat.EdicKwp:
-                            {
-                                if ((edicType & EdicTypes.Kwp2000) != EdicTypes.None)
+                                case SimFormat.EdicCan:
                                 {
                                     List<List<byte>> requestContentList = ExtractBmwFastContentList(requestUse);
                                     if (requestContentList == null || requestContentList.Count < 1)
@@ -1699,10 +1661,25 @@ namespace LogfileConverter
                                     }
                                     requestUse = requestContentList[0];
 
-                                    List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, true);
+                                    bool fullFrame = edicType == EdicTypes.Tp20;
+                                    List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, fullFrame);
                                     if (responseContentList == null || responseContentList.Count < 1)
                                     {
                                         continue;
+                                    }
+
+                                    if (!fullFrame)
+                                    {
+                                        responseBytes = responseContentList[0];
+                                        if (responseContentList.Count > 1)
+                                        {
+                                            Console.WriteLine("Multiple responses for ECU {0:X02}: {1}", ecuAddr, BitConverter.ToString(requestUse.ToArray()).Replace("-", ","));
+                                            foreach (List<byte> singleResponse in responseContentList)
+                                            {
+                                                Console.WriteLine("Response: {0}", BitConverter.ToString(singleResponse.ToArray()).Replace("-", ","));
+                                            }
+                                        }
+                                        break;
                                     }
 
                                     responseBytes = new List<byte>();
@@ -1710,9 +1687,34 @@ namespace LogfileConverter
                                     {
                                         responseBytes.AddRange(responseContent);
                                     }
+                                    break;
                                 }
 
-                                break;
+                                case SimFormat.EdicKwp:
+                                {
+                                    if ((edicType & EdicTypes.Kwp2000) != EdicTypes.None)
+                                    {
+                                        List<List<byte>> requestContentList = ExtractBmwFastContentList(requestUse);
+                                        if (requestContentList == null || requestContentList.Count < 1)
+                                        {
+                                            continue;
+                                        }
+                                        requestUse = requestContentList[0];
+
+                                        List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, true);
+                                        if (responseContentList == null || responseContentList.Count < 1)
+                                        {
+                                            continue;
+                                        }
+
+                                        responseBytes = new List<byte>();
+                                        foreach (List<byte> responseContent in responseContentList)
+                                        {
+                                            responseBytes.AddRange(responseContent);
+                                        }
+                                    }
+                                    break;
+                                }
                             }
                         }
 
