@@ -56,17 +56,17 @@ namespace EdiabasLib
                 EcuAddr,
             }
 
-            public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, byte? operatorValue, uint? operatorIndex, OperatorDataType? operatorDataType)
+            public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, OperatorDataType? operatorDataType, byte? operatorValue, uint? operatorIndex)
             {
                 DataValue = dataValue;
                 DataMask = dataMask;
                 Operator = operatorType;
+                OperatorData = operatorDataType;
                 OperatorValue = operatorValue;
                 OperatorIndex = operatorIndex;
-                OperatorData = operatorDataType;
 
                 _hashCode = DataValue.GetHashCode() ^ (DataMask?.GetHashCode() ?? 0) ^ (Operator?.GetHashCode() ?? 0) ^
-                            (OperatorValue?.GetHashCode() ?? 0) ^ (OperatorIndex?.GetHashCode() ?? 0);
+                            (OperatorData?.GetHashCode() ?? 0) ^ (OperatorValue?.GetHashCode() ?? 0) ^ (OperatorIndex?.GetHashCode() ?? 0);
             }
 
             public override bool Equals(object obj)
@@ -109,11 +109,11 @@ namespace EdiabasLib
 
             public OperatorType? Operator { get; private set; }
 
+            public OperatorDataType? OperatorData { get; private set; }
+
             public byte? OperatorValue { get; private set; }
 
             public uint? OperatorIndex { get; private set; }
-
-            public OperatorDataType? OperatorData { get; private set; }
         }
 
         private class ResponseInfo
@@ -716,7 +716,7 @@ namespace EdiabasLib
                     }
                 }
 
-                result.Add(new DataItem(dataValue, dataMask, operatorType, operatorValue, operatorIndex, operatorDataType));
+                result.Add(new DataItem(dataValue, dataMask, operatorType, operatorDataType, operatorValue, operatorIndex));
             }
 
             return result;
