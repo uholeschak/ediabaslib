@@ -1646,7 +1646,7 @@ namespace LogfileConverter
                                     }
                                     requestUse = requestContentList[0];
 
-                                    bool fullFrame = (edicType & EdicTypes.Tp20) != EdicTypes.None || (edicType & EdicTypes.Kwp2000) != EdicTypes.None;
+                                    bool fullFrame = (edicType & (EdicTypes.Tp20 | EdicTypes.Kwp2000)) != EdicTypes.None;
                                     List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, fullFrame);
                                     if (responseContentList == null || responseContentList.Count < 1)
                                     {
