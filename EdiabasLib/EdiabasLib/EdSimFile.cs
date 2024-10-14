@@ -52,8 +52,8 @@ namespace EdiabasLib
 
             public enum OperatorDataType
             {
-                EcuAddrL,
-                EcuAddrH,
+                RequestIdx,
+                EcuAddr,
             }
 
             public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, byte? operatorValue, uint? operatorIndex, OperatorDataType? operatorDataType)
@@ -292,34 +292,41 @@ namespace EdiabasLib
                     byte operatorValue;
                     if (dataItem.OperatorIndex != null)
                     {
-                        uint operatorIndex = dataItem.OperatorIndex.Value;
-                        if (requestData == null || requestData.Count < operatorIndex)
+                        if (dataItem.OperatorData == null)
                         {
                             return null;
                         }
 
-                        operatorValue = requestData[(int) operatorIndex];
-                    }
-                    else if (dataItem.OperatorData != null)
-                    {
-                        switch (dataItem.OperatorData.Value)
+                        uint operatorIndex = dataItem.OperatorIndex.Value;
+                        switch (dataItem.OperatorData)
                         {
-                            case DataItem.OperatorDataType.EcuAddrL:
-                                if (ecuAddr == null)
+                            case DataItem.OperatorDataType.RequestIdx:
+                                if (requestData == null || requestData.Count < operatorIndex)
                                 {
                                     return null;
                                 }
 
-                                operatorValue = (byte) ecuAddr.Value;
+                                operatorValue = requestData[(int)operatorIndex];
                                 break;
 
-                            case DataItem.OperatorDataType.EcuAddrH:
+                            case DataItem.OperatorDataType.EcuAddr:
                                 if (ecuAddr == null)
                                 {
                                     return null;
                                 }
 
-                                operatorValue = (byte)(ecuAddr.Value >> 8);
+                                if (operatorIndex == 0)
+                                {
+                                    operatorValue = (byte)(ecuAddr.Value & 0xFF);
+                                }
+                                else if (operatorIndex == 1)
+                                {
+                                    operatorValue = (byte)((ecuAddr.Value >> 8) & 0xFF);
+                                }
+                                else
+                                {
+                                    return null;
+                                }
                                 break;
 
                             default:
@@ -684,23 +691,19 @@ namespace EdiabasLib
                             return null;
                         }
 
+                        operatorDataType = DataItem.OperatorDataType.RequestIdx;
                         operatorIndex = opDataValue;
                     }
                     else if (operatorString.StartsWith("#"))
                     {
                         operatorString = operatorString.Substring(1, operatorString.Length - 1);
-                        if (string.Compare(operatorString, "L", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            operatorDataType = DataItem.OperatorDataType.EcuAddrH;
-                        }
-                        else if (string.Compare(operatorString, "H", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            operatorDataType = DataItem.OperatorDataType.EcuAddrH;
-                        }
-                        else
+                        if (!uint.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint opDataValue))
                         {
                             return null;
                         }
+
+                        operatorDataType = DataItem.OperatorDataType.EcuAddr;
+                        operatorIndex = opDataValue;
                     }
                     else
                     {
