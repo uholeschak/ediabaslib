@@ -28,8 +28,7 @@ namespace LogfileConverter
             None,
             BmwFast,
             Kwp2000s_Ds2,
-            EdicKwp,
-            EdicCan,
+            Edic,
         }
 
         [Flags]
@@ -156,12 +155,8 @@ namespace LogfileConverter
                             simFormat = SimFormat.Kwp2000s_Ds2;
                             break;
 
-                        case "edic_kwp":
-                            simFormat = SimFormat.EdicKwp;
-                            break;
-
-                        case "edic_can":
-                            simFormat = SimFormat.EdicCan;
+                        case "edic":
+                            simFormat = SimFormat.Edic;
                             break;
                     }
                 }
@@ -1488,21 +1483,9 @@ namespace LogfileConverter
                             }
                             else
                             {
-                                if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
+                                if (edicTypes != EdicTypes.None)
                                 {
-                                    simFormatUse = SimFormat.EdicKwp;
-                                }
-                                else if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
-                                {
-                                    simFormatUse = SimFormat.EdicKwp;
-                                }
-                                else if ((edicTypes & EdicTypes.Tp20) != EdicTypes.None)
-                                {
-                                    simFormatUse = SimFormat.EdicCan;
-                                }
-                                else if ((edicTypes & EdicTypes.Uds) != EdicTypes.None)
-                                {
-                                    simFormatUse = SimFormat.EdicCan;
+                                    simFormatUse = SimFormat.Edic;
                                 }
                                 else
                                 {
@@ -1596,15 +1579,12 @@ namespace LogfileConverter
 
                             responseBytes = responseUse;
                         }
-                        else if (simFormatUse == SimFormat.EdicCan)
+                        else if (simFormatUse == SimFormat.Edic)
                         {
                             if ((edicTypes & EdicTypes.Uds) != EdicTypes.None)
                             {
                                 simAddData.AddRange(simAddDataEdicUds);
                             }
-                        }
-                        else if (simFormatUse == SimFormat.EdicKwp)
-                        {
                             if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
                             {
                                 simAddData.AddRange(simAddDataEdicKwp1281);
@@ -1652,8 +1632,13 @@ namespace LogfileConverter
                                     responseBytes.Add(CalcChecksumXor(responseBytes, 0, responseBytes.Count));
                                     break;
 
-                                case SimFormat.EdicCan:
+                                case SimFormat.Edic:
                                 {
+                                    if ((edicType & EdicTypes.Kwp1281) != EdicTypes.None)
+                                    {
+                                        break;
+                                    }
+
                                     List<List<byte>> requestContentList = ExtractBmwFastContentList(requestUse);
                                     if (requestContentList == null || requestContentList.Count < 1)
                                     {
@@ -1661,7 +1646,7 @@ namespace LogfileConverter
                                     }
                                     requestUse = requestContentList[0];
 
-                                    bool fullFrame = edicType == EdicTypes.Tp20;
+                                    bool fullFrame = (edicType & EdicTypes.Tp20) != EdicTypes.None || (edicType & EdicTypes.Kwp2000) != EdicTypes.None;
                                     List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, fullFrame);
                                     if (responseContentList == null || responseContentList.Count < 1)
                                     {
@@ -1686,32 +1671,6 @@ namespace LogfileConverter
                                     foreach (List<byte> responseContent in responseContentList)
                                     {
                                         responseBytes.AddRange(responseContent);
-                                    }
-                                    break;
-                                }
-
-                                case SimFormat.EdicKwp:
-                                {
-                                    if ((edicType & EdicTypes.Kwp2000) != EdicTypes.None)
-                                    {
-                                        List<List<byte>> requestContentList = ExtractBmwFastContentList(requestUse);
-                                        if (requestContentList == null || requestContentList.Count < 1)
-                                        {
-                                            continue;
-                                        }
-                                        requestUse = requestContentList[0];
-
-                                        List<List<byte>> responseContentList = ExtractBmwFastContentList(responseBytes, true);
-                                        if (responseContentList == null || responseContentList.Count < 1)
-                                        {
-                                            continue;
-                                        }
-
-                                        responseBytes = new List<byte>();
-                                        foreach (List<byte> responseContent in responseContentList)
-                                        {
-                                            responseBytes.AddRange(responseContent);
-                                        }
                                     }
                                     break;
                                 }
@@ -1843,12 +1802,8 @@ namespace LogfileConverter
                         protocolName = "KWP2000 / DS2";
                         break;
 
-                    case SimFormat.EdicKwp:
-                        protocolName = "EDIC KWP";
-                        break;
-
-                    case SimFormat.EdicCan:
-                        protocolName = "EDIC CAN";
+                    case SimFormat.Edic:
+                        protocolName = "EDIC";
                         break;
                 }
 
