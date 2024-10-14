@@ -50,13 +50,20 @@ namespace EdiabasLib
                 Divide,
             }
 
-            public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, byte? operatorValue, uint ? operatorIndex)
+            public enum OperatorDataType
+            {
+                EcuAddrL,
+                EcuAddrH,
+            }
+
+            public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, byte? operatorValue, uint? operatorIndex, OperatorDataType? operatorDataType)
             {
                 DataValue = dataValue;
                 DataMask = dataMask;
                 Operator = operatorType;
                 OperatorValue = operatorValue;
                 OperatorIndex = operatorIndex;
+                OperatorData = operatorDataType;
 
                 _hashCode = DataValue.GetHashCode() ^ (DataMask?.GetHashCode() ?? 0) ^ (Operator?.GetHashCode() ?? 0) ^
                             (OperatorValue?.GetHashCode() ?? 0) ^ (OperatorIndex?.GetHashCode() ?? 0);
@@ -105,6 +112,8 @@ namespace EdiabasLib
             public byte? OperatorValue { get; private set; }
 
             public uint? OperatorIndex { get; private set; }
+
+            public OperatorDataType? OperatorData { get; private set; }
         }
 
         private class ResponseInfo
@@ -177,13 +186,13 @@ namespace EdiabasLib
                         }
                     }
 
-                    List<byte> requestInfoList = ConvertData(responseInfo.RequestData, null, request);
+                    List<byte> requestInfoList = ConvertData(responseInfo.RequestData, null, request, ecuAddr);
                     if (requestInfoList == null)
                     {
                         continue;
                     }
 
-                    List<byte> requestDataList = ConvertData(responseInfo.RequestData, request, request);
+                    List<byte> requestDataList = ConvertData(responseInfo.RequestData, request, request, ecuAddr);
                     if (requestDataList == null)
                     {
                         continue;
@@ -218,7 +227,7 @@ namespace EdiabasLib
                             responseInfo.ResponseIndex = responseIndex;
                         }
 
-                        return ConvertData(response, null, request);
+                        return ConvertData(response, null, request, ecuAddr);
                     }
                 }
             }
@@ -247,13 +256,13 @@ namespace EdiabasLib
                     responseInfo.ResponseIndex = responseIndex;
                 }
 
-                return ConvertData(response, null, null);
+                return ConvertData(response, null, null, ecuAddr);
             }
 
             return null;
         }
 
-        private static List<byte> ConvertData(List<DataItem> dataItems, List<byte> inputData, List<byte> requestData)
+        private static List<byte> ConvertData(List<DataItem> dataItems, List<byte> inputData, List<byte> requestData, int? ecuAddr)
         {
             if (dataItems == null)
             {
@@ -290,6 +299,32 @@ namespace EdiabasLib
                         }
 
                         operatorValue = requestData[(int) operatorIndex];
+                    }
+                    else if (dataItem.OperatorData != null)
+                    {
+                        switch (dataItem.OperatorData.Value)
+                        {
+                            case DataItem.OperatorDataType.EcuAddrL:
+                                if (ecuAddr == null)
+                                {
+                                    return null;
+                                }
+
+                                operatorValue = (byte) ecuAddr.Value;
+                                break;
+
+                            case DataItem.OperatorDataType.EcuAddrH:
+                                if (ecuAddr == null)
+                                {
+                                    return null;
+                                }
+
+                                operatorValue = (byte)(ecuAddr.Value >> 8);
+                                break;
+
+                            default:
+                                return null;
+                        }
                     }
                     else if (dataItem.OperatorValue != null)
                     {
@@ -599,6 +634,7 @@ namespace EdiabasLib
                 }
 
                 DataItem.OperatorType? operatorType = null;
+                DataItem.OperatorDataType? operatorDataType = null;
                 byte? operatorValue = null;
                 uint? operatorIndex = null;
                 if (partTrim.Length >= 4)
@@ -650,6 +686,22 @@ namespace EdiabasLib
 
                         operatorIndex = opDataValue;
                     }
+                    else if (operatorString.StartsWith("#"))
+                    {
+                        operatorString = operatorString.Substring(1, operatorString.Length - 1);
+                        if (string.Compare(operatorString, "L", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            operatorDataType = DataItem.OperatorDataType.EcuAddrH;
+                        }
+                        else if (string.Compare(operatorString, "H", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            operatorDataType = DataItem.OperatorDataType.EcuAddrH;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
                     else
                     {
                         if (!byte.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out byte opDataValue))
@@ -661,7 +713,7 @@ namespace EdiabasLib
                     }
                 }
 
-                result.Add(new DataItem(dataValue, dataMask, operatorType, operatorValue, operatorIndex));
+                result.Add(new DataItem(dataValue, dataMask, operatorType, operatorValue, operatorIndex, operatorDataType));
             }
 
             return result;
