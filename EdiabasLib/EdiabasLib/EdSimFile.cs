@@ -64,6 +64,7 @@ namespace EdiabasLib
                 OperatorData = operatorDataType;
                 OperatorValue = operatorValue;
                 OperatorIndex = operatorIndex;
+                VarLength = false;
 
                 _hashCode = DataValue.GetHashCode() ^ (DataMask?.GetHashCode() ?? 0) ^ (Operator?.GetHashCode() ?? 0) ^
                             (OperatorData?.GetHashCode() ?? 0) ^ (OperatorValue?.GetHashCode() ?? 0) ^ (OperatorIndex?.GetHashCode() ?? 0);
@@ -114,6 +115,8 @@ namespace EdiabasLib
             public byte? OperatorValue { get; private set; }
 
             public uint? OperatorIndex { get; private set; }
+
+            public bool VarLength { get; set; }
         }
 
         private class ResponseInfo
@@ -591,6 +594,7 @@ namespace EdiabasLib
                 return null;
             }
 
+            bool varLength = false;
             List<DataItem> result = new List<DataItem>();
             foreach (string part in parts)
             {
@@ -604,6 +608,12 @@ namespace EdiabasLib
                 byte mask = 0xFF;
                 if (request)
                 {
+                    if (partTrim[0] == '.' && partTrim[1] == '.')
+                    {
+                        varLength = true;
+                        break;
+                    }
+
                     if (partTrim[0] == 'X')
                     {
                         mask &= 0x0F;
@@ -717,6 +727,16 @@ namespace EdiabasLib
                 }
 
                 result.Add(new DataItem(dataValue, dataMask, operatorType, operatorDataType, operatorValue, operatorIndex));
+            }
+
+            if (varLength)
+            {
+                if (result.Count == 0)
+                {
+                    return null;
+                }
+
+                result[0].VarLength = true;
             }
 
             return result;
