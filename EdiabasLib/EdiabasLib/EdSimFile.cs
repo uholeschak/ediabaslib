@@ -171,7 +171,7 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    bool varLength = responseInfo.RequestData.Count > 0 && !responseInfo.RequestData[0].VarLength;
+                    bool varLength = responseInfo.RequestData.Count > 0 && responseInfo.RequestData[0].VarLength;
                     if (request.Count != responseInfo.RequestData.Count)
                     {
                         if (!varLength)
@@ -745,10 +745,12 @@ namespace EdiabasLib
 
             if (varLength)
             {
-                foreach (DataItem dataItem in result)
+                if (result.Count == 0)
                 {
-                    dataItem.VarLength = true;
+                    return null;
                 }
+
+                result[0].VarLength = true;
             }
 
             return result;
