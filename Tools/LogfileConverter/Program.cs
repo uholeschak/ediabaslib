@@ -1253,6 +1253,8 @@ namespace LogfileConverter
                 List<SimData> simAddDataEdicKwp2000 = new List<SimData>();
                 simAddDataEdicKwp2000.Add(new SimData(new string[] { "21", "XX" },
                     new string[] { "9A", "F1", "00|#00", "61", "00|[01]", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "00" }));     // read wmblock
+                simAddDataEdicKwp2000.Add(new SimData(new string[] { "22", "XX", "XX" },
+                    new string[] { "83", "F1", "00|[01]", "7F", "22", "31" }));     // Service 22 error response
 
                 List<SimData> simAddDataEdicKwp1281 = new List<SimData>();
                 simAddDataEdicKwp1281.Add(new SimData(new string[] { "03", "XX", "09" },
