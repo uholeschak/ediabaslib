@@ -166,13 +166,27 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    if (request.Count != responseInfo.RequestData.Count)
+                    if (request.Count < responseInfo.RequestData.Count)
                     {
                         continue;
                     }
 
+                    bool varLength = responseInfo.RequestData.Count > 0 && !responseInfo.RequestData[0].VarLength;
+                    if (request.Count != responseInfo.RequestData.Count)
+                    {
+                        if (!varLength)
+                        {
+                            continue;
+                        }
+                    }
+
                     if (iteration == 0)
                     {
+                        if (varLength)
+                        {
+                            continue;
+                        }
+
                         bool variableData = false;
                         foreach (DataItem dataItem in responseInfo.RequestData)
                         {
@@ -731,12 +745,10 @@ namespace EdiabasLib
 
             if (varLength)
             {
-                if (result.Count == 0)
+                foreach (DataItem dataItem in result)
                 {
-                    return null;
+                    dataItem.VarLength = true;
                 }
-
-                result[0].VarLength = true;
             }
 
             return result;
