@@ -1250,6 +1250,10 @@ namespace LogfileConverter
                 simAddDataEdicUds.Add(new SimData(new string[] { "22", "XX", "XX" },
                     new string[] { "62", "00|[01]", "00|[02]", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "41", "42", "43", "44", "45", "46", "47", "48", "49", "4A", "4B", "4C", "4D", "4E", "4F", "50", "51", "52", "53", "54", "56", "57", "58", "59", "5A" }));     // Service 22 simulate string response
 
+                List<SimData> simAddDataEdicKwp2000 = new List<SimData>();
+                simAddDataEdicKwp2000.Add(new SimData(new string[] { "21", "XX" },
+                    new string[] { "9A", "F1", "00|#00", "61", "00|[01]", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "00" }));     // read wmblock
+
                 List<SimData> simAddDataEdicKwp1281 = new List<SimData>();
                 simAddDataEdicKwp1281.Add(new SimData(new string[] { "03", "XX", "09" },
                     new string[] { "03", "01+[01]", "09", "03" }));     // ACK
@@ -1584,6 +1588,10 @@ namespace LogfileConverter
                             if ((edicTypes & EdicTypes.Uds) != EdicTypes.None)
                             {
                                 simAddData.AddRange(simAddDataEdicUds);
+                            }
+                            if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
+                            {
+                                simAddData.AddRange(simAddDataEdicKwp2000);
                             }
                             if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
                             {
