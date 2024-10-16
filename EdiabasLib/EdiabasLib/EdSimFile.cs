@@ -166,20 +166,32 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    if (request.Count != responseInfo.RequestData.Count)
+                    if (request.Count < responseInfo.RequestData.Count)
                     {
                         continue;
                     }
 
+                    bool varLength = responseInfo.RequestData.Count > 0 && responseInfo.RequestData[0].VarLength;
+                    if (request.Count != responseInfo.RequestData.Count)
+                    {
+                        if (!varLength)
+                        {
+                            continue;
+                        }
+                    }
+
                     if (iteration == 0)
                     {
-                        bool variableData = false;
-                        foreach (DataItem dataItem in responseInfo.RequestData)
+                        bool variableData = varLength;
+                        if (!variableData)
                         {
-                            if (dataItem.DataMask != null || dataItem.Operator != null)
+                            foreach (DataItem dataItem in responseInfo.RequestData)
                             {
-                                variableData = true;
-                                break;
+                                if (dataItem.DataMask != null || dataItem.Operator != null)
+                                {
+                                    variableData = true;
+                                    break;
+                                }
                             }
                         }
 
