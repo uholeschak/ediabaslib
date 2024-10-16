@@ -182,18 +182,16 @@ namespace EdiabasLib
 
                     if (iteration == 0)
                     {
-                        if (varLength)
+                        bool variableData = varLength;
+                        if (!variableData)
                         {
-                            continue;
-                        }
-
-                        bool variableData = false;
-                        foreach (DataItem dataItem in responseInfo.RequestData)
-                        {
-                            if (dataItem.DataMask != null || dataItem.Operator != null)
+                            foreach (DataItem dataItem in responseInfo.RequestData)
                             {
-                                variableData = true;
-                                break;
+                                if (dataItem.DataMask != null || dataItem.Operator != null)
+                                {
+                                    variableData = true;
+                                    break;
+                                }
                             }
                         }
 
