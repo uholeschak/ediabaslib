@@ -1251,6 +1251,8 @@ namespace LogfileConverter
                     new string[] { "62", "00|[01]", "00|[02]", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "41", "42", "43", "44", "45", "46", "47", "48", "49", "4A", "4B", "4C", "4D", "4E", "4F", "50", "51", "52", "53", "54", "56", "57", "58", "59", "5A" }));    // Service 22 simulate string response
                 simAddDataEdicUds.Add(new SimData(new string[] { "1A", "XX" },
                     new string[] { "7F", "1A", "11" }));     // Service 1A error response, not supported
+                simAddDataEdicUds.Add(new SimData(new string[] { "31", "XX", ".." },
+                    new string[] { "7F", "31", "11" }));     // Service 31 error response, not supported
                 simAddDataEdicUds.Add(new SimData(new string[] { "2E", "XX", "XX", ".." },
                     new string[] { "6E", "00|[01]", "00|[02]" }));            // Service 2E pos ACK
 
