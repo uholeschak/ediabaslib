@@ -448,7 +448,7 @@ namespace EdiabasLib
             receiveData = null;
             if (ecuAddr != null)
             {
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Transmit sim ECU: {0}", ecuAddr);
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Transmit sim ECU: {0:X02}", ecuAddr);
             }
 
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
