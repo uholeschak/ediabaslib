@@ -1770,6 +1770,24 @@ namespace EdiabasLib
                         if (sendData.Length == 0)
                         {
                             // tester present check
+                            if (ParEdicTesterPresentTelLen > 0)
+                            {
+                                simRequest = new byte[ParEdicTesterPresentTelLen];
+                                Array.Copy(ParEdicTesterPresentTel, simRequest, ParEdicTesterPresentTelLen);
+
+                                if (TransmitSimulationData(simRequest, out byte[] testerResponse, simEcuAddr))
+                                {
+                                    if (testerResponse.Length == 2 && testerResponse[0] == 0x7E && testerResponse[1] == 0xF1)
+                                    {
+                                        receiveData = ByteArray0;
+                                        return true;
+                                    }
+                                }
+
+                                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
+                                return false;
+                            }
+
                             receiveData = ByteArray0;
                             return true;
                         }
