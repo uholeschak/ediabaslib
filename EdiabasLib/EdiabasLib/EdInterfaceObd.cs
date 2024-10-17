@@ -2070,11 +2070,6 @@ namespace EdiabasLib
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send Raw");
             receiveData = ByteArray0;
 
-            if (IsSimulationMode())
-            {
-                return false;
-            }
-
             if (EdicSimulation)
             {
                 // bit0 = 0 = HISTORY KL30 ON, bit4 = 0 = KL30 ON, bit5 = 0 = KL15 ON, bit6 = 0 = KL15 DISCONNECTED
