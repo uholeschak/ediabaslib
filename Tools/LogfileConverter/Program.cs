@@ -1253,6 +1253,8 @@ namespace LogfileConverter
                     new string[] { "7F", "31", "11" }));     // Service 31 error response, not supported
                 simAddDataEdicUds.Add(new SimData(new string[] { "2E", "XX", "XX", ".." },
                     new string[] { "6E", "00|[01]", "00|[02]" }));          // Service 2E pos ACK
+                simAddDataEdicUds.Add(new SimData(new string[] { "3E" },
+                    new string[] { "7E" }));                                // Service 3E tester present short
                 simAddDataEdicUds.Add(new SimData(new string[] { "3E", "80" },
                     new string[] { "7E", "F1" }));                          // Service 3E tester present long
 

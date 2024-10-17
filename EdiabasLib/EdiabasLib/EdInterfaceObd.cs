@@ -1777,8 +1777,14 @@ namespace EdiabasLib
 
                                 if (TransmitSimulationData(simRequest, out byte[] testerResponse, simEcuAddr))
                                 {
+                                    if (testerResponse.Length == 1 && testerResponse[0] == 0x7E)
+                                    {   // short request
+                                        receiveData = ByteArray0;
+                                        return true;
+                                    }
+
                                     if (testerResponse.Length == 2 && testerResponse[0] == 0x7E && testerResponse[1] == 0xF1)
-                                    {
+                                    {   // long request
                                         receiveData = ByteArray0;
                                         return true;
                                     }
