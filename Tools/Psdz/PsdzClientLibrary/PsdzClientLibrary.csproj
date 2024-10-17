@@ -746,7 +746,7 @@
       <Version>3.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite.Core">
-      <Version>8.0.8</Version>
+      <Version>8.0.10</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>

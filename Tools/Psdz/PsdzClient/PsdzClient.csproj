@@ -156,7 +156,7 @@
       <Version>3.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Data.Sqlite.Core">
-      <Version>8.0.8</Version>
+      <Version>8.0.10</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc">
       <Version>2.1.10</Version>
