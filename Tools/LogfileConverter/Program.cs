@@ -1254,6 +1254,10 @@ namespace LogfileConverter
                 simAddDataEdicUds.Add(new SimData(new string[] { "2E", "XX", "XX", ".." },
                     new string[] { "6E", "00|[01]", "00|[02]" }));            // Service 2E pos ACK
 
+                List<SimData> simAddDataEdicTp20 = new List<SimData>();
+                simAddDataEdicTp20.Add(new SimData(new string[] { "3E" },
+                    new string[] { "83", "F1", "00|#00", "7E", "00" }));              // Service 3E tester present
+
                 List<SimData> simAddDataEdicKwp2000 = new List<SimData>();
                 simAddDataEdicKwp2000.Add(new SimData(new string[] { "21", "XX" },
                     new string[] { "9A", "F1", "00|#00", "61", "00|[01]", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "00" }));     // read wmblock
@@ -1594,6 +1598,10 @@ namespace LogfileConverter
                             if ((edicTypes & EdicTypes.Uds) != EdicTypes.None)
                             {
                                 simAddData.AddRange(simAddDataEdicUds);
+                            }
+                            if ((edicTypes & EdicTypes.Tp20) != EdicTypes.None)
+                            {
+                                simAddData.AddRange(simAddDataEdicTp20);
                             }
                             if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
                             {

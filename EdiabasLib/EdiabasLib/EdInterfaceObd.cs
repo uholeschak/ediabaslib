@@ -1793,6 +1793,12 @@ namespace EdiabasLib
                         if (simRequest.Length == 0)
                         {
                             // tester present check
+                            if (!TransmitSimulationData(new byte[] { 0x3E }, out byte[] testerResponse, simEcuAddr))
+                            {
+                                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
+                                return false;
+                            }
+
                             receiveData = ByteArray0;
                             return true;
                         }
@@ -1807,8 +1813,7 @@ namespace EdiabasLib
                     }
                 }
 
-                byte[] simResponse;
-                if (!TransmitSimulationData(simRequest, out simResponse, simEcuAddr, ParTransmitFunc == TransBmwFast))
+                if (!TransmitSimulationData(simRequest, out byte[] simResponse, simEcuAddr, ParTransmitFunc == TransBmwFast))
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
                     return false;
