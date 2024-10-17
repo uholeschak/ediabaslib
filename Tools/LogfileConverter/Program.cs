@@ -1252,11 +1252,13 @@ namespace LogfileConverter
                 simAddDataEdicUds.Add(new SimData(new string[] { "31", "XX", ".." },
                     new string[] { "7F", "31", "11" }));     // Service 31 error response, not supported
                 simAddDataEdicUds.Add(new SimData(new string[] { "2E", "XX", "XX", ".." },
-                    new string[] { "6E", "00|[01]", "00|[02]" }));            // Service 2E pos ACK
+                    new string[] { "6E", "00|[01]", "00|[02]" }));          // Service 2E pos ACK
+                simAddDataEdicUds.Add(new SimData(new string[] { "3E", "80" },
+                    new string[] { "7E", "F1" }));                          // Service 3E tester present long
 
                 List<SimData> simAddDataEdicTp20 = new List<SimData>();
                 simAddDataEdicTp20.Add(new SimData(new string[] { "3E" },
-                    new string[] { "83", "F1", "00|#00", "7E", "00" }));              // Service 3E tester present
+                    new string[] { "81", "F1", "00|#00", "7E", "00" }));            // Service 3E tester present short
 
                 List<SimData> simAddDataEdicKwp2000 = new List<SimData>();
                 simAddDataEdicKwp2000.Add(new SimData(new string[] { "21", "XX" },
