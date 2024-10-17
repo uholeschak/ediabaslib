@@ -1811,14 +1811,18 @@ namespace EdiabasLib
                         if (simRequest.Length == 0)
                         {
                             // tester present check
-                            if (!TransmitSimulationData(new byte[] { 0x3E }, out byte[] testerResponse, simEcuAddr))
+                            simRequest = new byte[] { 0x3E };
+                            if (TransmitSimulationData(simRequest, out byte[] testerResponse, simEcuAddr))
                             {
-                                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
-                                return false;
+                                if (testerResponse.Length == 5 && testerResponse[0] == 0x81 && testerResponse[1] == 0xF1 && testerResponse[3] == 0x7E)
+                                {
+                                    receiveData = ByteArray0;
+                                    return true;
+                                }
                             }
 
-                            receiveData = ByteArray0;
-                            return true;
+                            EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
+                            return false;
                         }
                     }
                     else if (ParTransmitFunc == TransKwp2000)
