@@ -5522,7 +5522,7 @@ namespace CarSimulator
                 _receiveData[3] == 0x3E)
             {   // tester present
                 int i = 0;
-                _sendData[i++] = 0x83;
+                _sendData[i++] = 0x81;
                 _sendData[i++] = 0xF1;
                 _sendData[i++] = _receiveData[1];
                 _sendData[i++] = 0x7E;
