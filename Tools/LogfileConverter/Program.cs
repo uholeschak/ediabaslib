@@ -1671,28 +1671,28 @@ namespace LogfileConverter
                         }
                         else if (simFormatUse == SimFormat.Edic)
                         {
-                            if ((edicTypes & EdicTypes.Uds) != EdicTypes.None)
+                            if ((edicType & EdicTypes.Uds) != EdicTypes.None)
                             {
                                 foreach (SimData simData in simAddDataEdicUds)
                                 {
                                     simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
                                 }
                             }
-                            if ((edicTypes & EdicTypes.Tp20) != EdicTypes.None)
+                            if ((edicType & EdicTypes.Tp20) != EdicTypes.None)
                             {
                                 foreach (SimData simData in simAddDataEdicTp20)
                                 {
                                     simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
                                 }
                             }
-                            if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
+                            if ((edicType & EdicTypes.Kwp2000) != EdicTypes.None)
                             {
                                 foreach (SimData simData in simAddDataEdicKwp2000)
                                 {
                                     simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
                                 }
                             }
-                            if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
+                            if ((edicType & EdicTypes.Kwp1281) != EdicTypes.None)
                             {
                                 foreach (SimData simData in simAddDataEdicKwp1281)
                                 {
