@@ -50,11 +50,83 @@ namespace LogfileConverter
             public bool KeyByte { get; private set; } = keyByte;
         }
 
-        private class SimData(string[] request, string[] response, List<SimData> addData = null)
+        private class SimData(string[] request, string[] response, List<SimData> addData = null, int? ecuAddr = null) : IEquatable<SimData>
         {
             public string[] Request { get; private set; } = request;
             public string[] Response { get; private set; } = response;
             public List<SimData> AddData { get; private set; } = addData;
+            public int? EcuAddr { get; private set; } = ecuAddr;
+
+            private int? hashCode;
+
+            public override bool Equals(object obj)
+            {
+                SimData simData = obj as SimData;
+                if ((object)simData == null)
+                {
+                    return false;
+                }
+
+                return Equals(simData);
+            }
+
+            public bool Equals(SimData simData)
+            {
+                if (Request == null || Response == null || (object)simData == null || simData.Request == null || simData.Response == null)
+                {
+                    return false;
+                }
+
+                if (!Request.SequenceEqual(simData.Request))
+                {
+                    return false;
+                }
+
+                if (!Response.SequenceEqual(simData.Response))
+                {
+                    return false;
+                }
+
+                if ((EcuAddr ?? -1) != (simData.EcuAddr ?? -1))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            public override int GetHashCode()
+            {
+                // ReSharper disable NonReadonlyMemberInGetHashCode
+                if (!hashCode.HasValue)
+                {
+                    int ecuAddr = EcuAddr ?? -1;
+                    hashCode = Request.GetHashCode() ^ Response.GetHashCode() ^ ecuAddr.GetHashCode();
+                }
+
+                return hashCode.Value;
+                // ReSharper restore NonReadonlyMemberInGetHashCode
+            }
+
+            public static bool operator ==(SimData lhs, SimData rhs)
+            {
+                if ((object)lhs == null || (object)rhs == null)
+                {
+                    return Object.Equals(lhs, rhs);
+                }
+
+                return lhs.Equals(rhs);
+            }
+
+            public static bool operator !=(SimData lhs, SimData rhs)
+            {
+                if ((object)lhs == null || (object)rhs == null)
+                {
+                    return !Object.Equals(lhs, rhs);
+                }
+
+                return !(lhs == rhs);
+            }
         }
 
         static int Main(string[] args)
@@ -1601,19 +1673,31 @@ namespace LogfileConverter
                         {
                             if ((edicTypes & EdicTypes.Uds) != EdicTypes.None)
                             {
-                                simAddData.AddRange(simAddDataEdicUds);
+                                foreach (SimData simData in simAddDataEdicUds)
+                                {
+                                    simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
+                                }
                             }
                             if ((edicTypes & EdicTypes.Tp20) != EdicTypes.None)
                             {
-                                simAddData.AddRange(simAddDataEdicTp20);
+                                foreach (SimData simData in simAddDataEdicTp20)
+                                {
+                                    simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
+                                }
                             }
                             if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
                             {
-                                simAddData.AddRange(simAddDataEdicKwp2000);
+                                foreach (SimData simData in simAddDataEdicKwp2000)
+                                {
+                                    simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
+                                }
                             }
                             if ((edicTypes & EdicTypes.Kwp1281) != EdicTypes.None)
                             {
-                                simAddData.AddRange(simAddDataEdicKwp1281);
+                                foreach (SimData simData in simAddDataEdicKwp1281)
+                                {
+                                    simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
+                                }
                             }
                         }
 
@@ -1805,7 +1889,7 @@ namespace LogfileConverter
                     string genericErrorRequest = List2SimEntry(simData.Request.ToList());
                     string genericErrorResponse = List2SimEntry(simData.Response.ToList());
                     string genericErrorKey = GenerateKey(genericErrorRequest);
-                    AddSimLine(ref simLines, new SimEntry(genericErrorKey, genericErrorRequest, genericErrorResponse));
+                    AddSimLine(ref simLines, new SimEntry(genericErrorKey, genericErrorRequest, genericErrorResponse, simData.EcuAddr));
                 }
 
                 string simFileName = simFile;
