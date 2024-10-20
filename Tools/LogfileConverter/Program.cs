@@ -72,7 +72,7 @@ namespace LogfileConverter
 
             public bool Equals(SimData simData)
             {
-                if (Request == null || Response == null || (object)simData == null || simData.Request == null || simData.Response == null)
+                if (Request == null || (object)simData == null || simData.Request == null)
                 {
                     return false;
                 }
@@ -82,12 +82,19 @@ namespace LogfileConverter
                     return false;
                 }
 
-                if (!Response.SequenceEqual(simData.Response))
+                if (Response != null && simData.Response != null)
+                {
+                    if (!Response.SequenceEqual(simData.Response))
+                    {
+                        return false;
+                    }
+                }
+                else if (Response != null || simData.Response != null)
                 {
                     return false;
                 }
 
-                if ((EcuAddr ?? -1) != (simData.EcuAddr ?? -1))
+                if (EcuAddr != simData.EcuAddr)
                 {
                     return false;
                 }
