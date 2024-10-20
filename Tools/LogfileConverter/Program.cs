@@ -1687,31 +1687,19 @@ namespace LogfileConverter
                         {
                             if ((edicType & EdicTypes.Uds) != EdicTypes.None)
                             {
-                                foreach (SimData simData in simAddDataEdicUds)
-                                {
-                                    simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
-                                }
+                                AddSimDataEntries(ref simAddData, simAddDataEdicUds, ecuAddr);
                             }
                             if ((edicType & EdicTypes.Tp20) != EdicTypes.None)
                             {
-                                foreach (SimData simData in simAddDataEdicTp20)
-                                {
-                                    simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
-                                }
+                                AddSimDataEntries(ref simAddData, simAddDataEdicTp20, ecuAddr);
                             }
                             if ((edicType & EdicTypes.Kwp2000) != EdicTypes.None)
                             {
-                                foreach (SimData simData in simAddDataEdicKwp2000)
-                                {
-                                    simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
-                                }
+                                AddSimDataEntries(ref simAddData, simAddDataEdicKwp2000, ecuAddr);
                             }
                             if ((edicType & EdicTypes.Kwp1281) != EdicTypes.None)
                             {
-                                foreach (SimData simData in simAddDataEdicKwp1281)
-                                {
-                                    simAddData.Add(new SimData(simData.Request, simData.Response, null, ecuAddr));
-                                }
+                                AddSimDataEntries(ref simAddData, simAddDataEdicKwp1281, ecuAddr);
                             }
                         }
 
@@ -2053,6 +2041,18 @@ namespace LogfileConverter
             }
 
             return false;
+        }
+
+        private static void AddSimDataEntries(ref List<SimData> simDataList, List<SimData> simDataAddList, int? ecuAddr)
+        {
+            foreach (SimData simData in simDataAddList)
+            {
+                SimData simDataAdd = new SimData(simData.Request, simData.Response, simData.AddData, ecuAddr);
+                if (!simDataList.Contains(simDataAdd))
+                {
+                    simDataList.Add(simDataAdd);
+                }
+            }
         }
 
         private static void StoreReadString(StreamWriter streamWriter, string readString)
