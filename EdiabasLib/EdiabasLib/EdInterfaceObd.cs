@@ -1836,6 +1836,13 @@ namespace EdiabasLib
                         if (simRequest.Length == 0)
                         {
                             // tester present check
+                            byte[] keyBytesSim = GetKeyBytesSimulation(simEcuAddr);
+                            if (keyBytesSim == null)
+                            {
+                                EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
+                                return false;
+                            }
+
                             receiveData = ByteArray0;
                             return true;
                         }
