@@ -3166,6 +3166,7 @@ namespace EdiabasLib
             string value = ediabasIni.GetValue("Configuration", property, string.Empty);
             if (!string.IsNullOrEmpty(value))
             {
+                LogFormat(EdLogLevel.Info, "SetConfigPropertyFromIni: Property={0}, Value={1}", property, value);
                 SetConfigProperty(property, value);
             }
         }
@@ -3193,6 +3194,7 @@ namespace EdiabasLib
                                     {
                                         string key = attribKey.Value;
                                         string value = attribValue.Value;
+                                        LogFormat(EdLogLevel.Info, "ReadAllSettingsProperties: Property={0}, Value={1}", key, value);
                                         SetConfigProperty(key, value);
                                     }
                                 }
