@@ -107,8 +107,15 @@ namespace LogfileConverter
                 // ReSharper disable NonReadonlyMemberInGetHashCode
                 if (!hashCode.HasValue)
                 {
-                    int ecuAddr = EcuAddr ?? -1;
-                    hashCode = Request.GetHashCode() ^ Response.GetHashCode() ^ ecuAddr.GetHashCode();
+                    hashCode = Request.GetHashCode();
+                    if (Response != null)
+                    {
+                        hashCode ^= Response.GetHashCode();
+                    }
+                    if (EcuAddr.HasValue)
+                    {
+                        hashCode ^= EcuAddr.Value;
+                    }
                 }
 
                 return hashCode.Value;
