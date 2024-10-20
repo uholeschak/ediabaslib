@@ -1835,6 +1835,7 @@ namespace EdiabasLib
                     {
                         if (simRequest.Length == 0)
                         {
+                            // tester present check
                             receiveData = ByteArray0;
                             return true;
                         }
