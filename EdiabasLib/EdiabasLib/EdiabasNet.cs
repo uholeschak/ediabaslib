@@ -3013,10 +3013,11 @@ namespace EdiabasLib
                 configFile = config.Substring(1);
             }
 
+            List<string> logList = new List<string>();
             if (File.Exists(iniFile))
             {
                 _iniFileName = iniFile;
-                ReadIniSettings(iniFile);
+                ReadIniSettings(iniFile, ref logList);
             }
 
             if (File.Exists(configFile))
@@ -3029,7 +3030,7 @@ namespace EdiabasLib
                         xdocConfig.Load(fs);
                     }
                     SetConfigProperty("EdiabasIniPath", Path.GetDirectoryName(configFile));
-                    ReadAllSettingsProperties(xdocConfig);
+                    ReadAllSettingsProperties(xdocConfig, ref logList);
                 }
                 catch
                 {
@@ -3066,6 +3067,11 @@ namespace EdiabasLib
             if (!string.IsNullOrEmpty(_iniFileName))
             {
                 LogFormat(EdLogLevel.Ifh, "EDIABAS ini file: {0}", _iniFileName);
+            }
+
+            foreach (string logEntry in logList)
+            {
+                LogString(EdLogLevel.Ifh, logEntry);
             }
         }
 
@@ -3143,16 +3149,16 @@ namespace EdiabasLib
             }
         }
 
-        public bool ReadIniSettings(string iniFile)
+        public bool ReadIniSettings(string iniFile, ref List<string> logList)
         {
             try
             {
                 IniFile ediabasIni = new IniFile(iniFile);
-                SetConfigPropertyFromIni(ediabasIni, "Interface");
-                SetConfigPropertyFromIni(ediabasIni, "EcuPath");
-                SetConfigPropertyFromIni(ediabasIni, "ApiTrace");
-                SetConfigPropertyFromIni(ediabasIni, "IfhTrace");
-                SetConfigPropertyFromIni(ediabasIni, "TraceBuffering");
+                SetConfigPropertyFromIni(ediabasIni, "Interface", ref logList);
+                SetConfigPropertyFromIni(ediabasIni, "EcuPath", ref logList);
+                SetConfigPropertyFromIni(ediabasIni, "ApiTrace", ref logList);
+                SetConfigPropertyFromIni(ediabasIni, "IfhTrace", ref logList);
+                SetConfigPropertyFromIni(ediabasIni, "TraceBuffering", ref logList);
             }
             catch (Exception)
             {
@@ -3161,17 +3167,17 @@ namespace EdiabasLib
             return true;
         }
 
-        private void SetConfigPropertyFromIni(IniFile ediabasIni, string property)
+        private void SetConfigPropertyFromIni(IniFile ediabasIni, string property, ref List<string> logList)
         {
             string value = ediabasIni.GetValue("Configuration", property, string.Empty);
             if (!string.IsNullOrEmpty(value))
             {
-                LogFormat(EdLogLevel.Info, "SetConfigPropertyFromIni: Property={0}, Value={1}", property, value);
+                logList?.Add(string.Format("SetConfigPropertyFromIni: Property={0}, Value={1}", property, value));
                 SetConfigProperty(property, value);
             }
         }
 
-        public void ReadAllSettingsProperties(XmlDocument xdocConfig)
+        public void ReadAllSettingsProperties(XmlDocument xdocConfig, ref List<string> logList)
         {
             try
             {
@@ -3194,7 +3200,7 @@ namespace EdiabasLib
                                     {
                                         string key = attribKey.Value;
                                         string value = attribValue.Value;
-                                        LogFormat(EdLogLevel.Info, "ReadAllSettingsProperties: Property={0}, Value={1}", key, value);
+                                        logList?.Add(string.Format("ReadAllSettingsProperties: Property={0}, Value={1}", key, value));
                                         SetConfigProperty(key, value);
                                     }
                                 }
