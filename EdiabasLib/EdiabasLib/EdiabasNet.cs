@@ -3069,6 +3069,11 @@ namespace EdiabasLib
                 LogFormat(EdLogLevel.Ifh, "EDIABAS ini file: {0}", _iniFileName);
             }
 
+            if (!string.IsNullOrEmpty(configFile))
+            {
+                LogFormat(EdLogLevel.Ifh, "EDIABAS config file: {0}", configFile);
+            }
+
             foreach (string logEntry in logList)
             {
                 LogString(EdLogLevel.Ifh, logEntry);
