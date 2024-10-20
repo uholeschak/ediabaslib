@@ -2004,7 +2004,7 @@ namespace LogfileConverter
         private static string GenerateKey(string line)
         {
             line = line.Replace(".", "_");
-            return Regex.Replace(line, "[^A-Za-z0-9]", string.Empty);
+            return Regex.Replace(line, "[^A-Za-z0-9_]", string.Empty);
         }
 
         private static string GetSectionName(string section, int? ecuAddr)
