@@ -16,11 +16,13 @@ if NOT EXIST "!CONVERTER_EXE!" (
 
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\AudiA6_1999.txt" -r --sim "!RESPONSE_PATH!VW\edic_AudiA6_1999.sim" || exit /b 1
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\AudiA6_2007.txt" -r --sim "!RESPONSE_PATH!VW\edic_AudiA6_2007.sim" || exit /b 1
+"!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\Golf3.txt" -r --sim "!RESPONSE_PATH!VW\edic_Golf3.sim" || exit /b 1
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\GolfFullUds.txt" -r --sim "!RESPONSE_PATH!VW\edic_GolfFullUds.sim" || exit /b 1
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\LeonUDS.txt" -r --sim "!RESPONSE_PATH!VW\edic_LeonUDS.sim" || exit /b 1
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\touareg1.txt" -r --sim "!RESPONSE_PATH!VW\edic_touareg1.sim" || exit /b 1
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\Touran2010.txt" -r --sim "!RESPONSE_PATH!VW\edic_Touran2010.sim" || exit /b 1
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!g31_coding.txt" -m "!RESPONSE_PATH!g31_coding_sim.txt" -r --sim "!RESPONSE_PATH!G31\enet.sim" || exit /b 1
+"!CONVERTER_EXE!" -m "!RESPONSE_PATH!e61.txt" -m "!RESPONSE_PATH!e61_sim.txt" -r --sim "!RESPONSE_PATH!E61\obd.sim" || exit /b 1
 
 echo Sim files successfully created
 exit /b 0
