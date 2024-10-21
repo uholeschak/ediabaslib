@@ -54,6 +54,7 @@ namespace EdiabasLib
             {
                 RequestIdx,
                 EcuAddr,
+                Checksum,
             }
 
             public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, OperatorDataType? operatorDataType, byte? operatorValue, uint? operatorIndex)
@@ -304,7 +305,8 @@ namespace EdiabasLib
 
                 if (dataItem.Operator != null)
                 {
-                    byte operatorValue;
+                    byte operatorValue = 0;
+                    DataItem.OperatorType? operatorType = dataItem.Operator.Value;
                     if (dataItem.OperatorIndex != null)
                     {
                         if (dataItem.OperatorData == null)
@@ -344,6 +346,46 @@ namespace EdiabasLib
                                 }
                                 break;
 
+                            case DataItem.OperatorDataType.Checksum:
+                            {
+                                int byteIndex = 0;
+
+                                switch (operatorType.Value)
+                                {
+                                    case DataItem.OperatorType.Xor:
+                                        foreach (byte dataByte in dataBytesList)
+                                        {
+                                            if (operatorIndex > 0 && byteIndex >= operatorIndex)
+                                            {
+                                                break;
+                                            }
+
+                                            dataValue ^= dataByte;
+                                            byteIndex++;
+                                        }
+                                        break;
+
+                                    case DataItem.OperatorType.Plus:
+                                        foreach (byte dataByte in dataBytesList)
+                                        {
+                                            if (operatorIndex > 0 && byteIndex >= operatorIndex)
+                                            {
+                                                break;
+                                            }
+
+                                            dataValue += dataByte;
+                                            byteIndex++;
+                                        }
+                                        break;
+
+                                    default:
+                                        return null;
+                                }
+
+                                operatorType = null;
+                                break;
+                            }
+
                             default:
                                 return null;
                         }
@@ -357,40 +399,43 @@ namespace EdiabasLib
                         return null;
                     }
 
-                    switch (dataItem.Operator)
+                    if (operatorType != null)
                     {
-                        case DataItem.OperatorType.And:
-                            dataValue &= operatorValue;
-                            break;
+                        switch (operatorType.Value)
+                        {
+                            case DataItem.OperatorType.And:
+                                dataValue &= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Or:
-                            dataValue |= operatorValue;
-                            break;
+                            case DataItem.OperatorType.Or:
+                                dataValue |= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Xor:
-                            dataValue ^= operatorValue;
-                            break;
+                            case DataItem.OperatorType.Xor:
+                                dataValue ^= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Plus:
-                            dataValue += operatorValue;
-                            break;
+                            case DataItem.OperatorType.Plus:
+                                dataValue += operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Minus:
-                            dataValue -= operatorValue;
-                            break;
+                            case DataItem.OperatorType.Minus:
+                                dataValue -= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Multiply:
-                            dataValue *= operatorValue;
-                            break;
+                            case DataItem.OperatorType.Multiply:
+                                dataValue *= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Divide:
-                            if (operatorValue == 0)
-                            {
-                                return null;
-                            }
+                            case DataItem.OperatorType.Divide:
+                                if (operatorValue == 0)
+                                {
+                                    return null;
+                                }
 
-                            dataValue /= operatorValue;
-                            break;
+                                dataValue /= operatorValue;
+                                break;
+                        }
                     }
                 }
 
@@ -725,6 +770,17 @@ namespace EdiabasLib
                         }
 
                         operatorDataType = DataItem.OperatorDataType.EcuAddr;
+                        operatorIndex = opDataValue;
+                    }
+                    else if (operatorString.StartsWith("$"))
+                    {
+                        operatorString = operatorString.Substring(1, operatorString.Length - 1);
+                        if (!uint.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint opDataValue))
+                        {
+                            return null;
+                        }
+
+                        operatorDataType = DataItem.OperatorDataType.Checksum;
                         operatorIndex = opDataValue;
                     }
                     else
