@@ -305,7 +305,8 @@ namespace EdiabasLib
 
                 if (dataItem.Operator != null)
                 {
-                    byte operatorValue;
+                    byte operatorValue = 0;
+                    DataItem.OperatorType? operatorType = dataItem.Operator.Value;
                     if (dataItem.OperatorIndex != null)
                     {
                         if (dataItem.OperatorData == null)
@@ -345,6 +346,46 @@ namespace EdiabasLib
                                 }
                                 break;
 
+                            case DataItem.OperatorDataType.Checksum:
+                            {
+                                int byteIndex = 0;
+
+                                switch (operatorType.Value)
+                                {
+                                    case DataItem.OperatorType.Xor:
+                                        foreach (byte dataByte in dataBytesList)
+                                        {
+                                            if (operatorIndex > 0 && byteIndex >= operatorIndex)
+                                            {
+                                                break;
+                                            }
+
+                                            dataValue ^= dataByte;
+                                            byteIndex++;
+                                        }
+                                        break;
+
+                                    case DataItem.OperatorType.Plus:
+                                        foreach (byte dataByte in dataBytesList)
+                                        {
+                                            if (operatorIndex > 0 && byteIndex >= operatorIndex)
+                                            {
+                                                break;
+                                            }
+
+                                            dataValue += dataByte;
+                                            byteIndex++;
+                                        }
+                                        break;
+
+                                    default:
+                                        return null;
+                                }
+
+                                operatorType = null;
+                                break;
+                            }
+
                             default:
                                 return null;
                         }
@@ -358,40 +399,43 @@ namespace EdiabasLib
                         return null;
                     }
 
-                    switch (dataItem.Operator)
+                    if (operatorType != null)
                     {
-                        case DataItem.OperatorType.And:
-                            dataValue &= operatorValue;
-                            break;
+                        switch (operatorType.Value)
+                        {
+                            case DataItem.OperatorType.And:
+                                dataValue &= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Or:
-                            dataValue |= operatorValue;
-                            break;
+                            case DataItem.OperatorType.Or:
+                                dataValue |= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Xor:
-                            dataValue ^= operatorValue;
-                            break;
+                            case DataItem.OperatorType.Xor:
+                                dataValue ^= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Plus:
-                            dataValue += operatorValue;
-                            break;
+                            case DataItem.OperatorType.Plus:
+                                dataValue += operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Minus:
-                            dataValue -= operatorValue;
-                            break;
+                            case DataItem.OperatorType.Minus:
+                                dataValue -= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Multiply:
-                            dataValue *= operatorValue;
-                            break;
+                            case DataItem.OperatorType.Multiply:
+                                dataValue *= operatorValue;
+                                break;
 
-                        case DataItem.OperatorType.Divide:
-                            if (operatorValue == 0)
-                            {
-                                return null;
-                            }
+                            case DataItem.OperatorType.Divide:
+                                if (operatorValue == 0)
+                                {
+                                    return null;
+                                }
 
-                            dataValue /= operatorValue;
-                            break;
+                                dataValue /= operatorValue;
+                                break;
+                        }
                     }
                 }
 
