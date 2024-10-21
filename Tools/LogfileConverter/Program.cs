@@ -1298,33 +1298,33 @@ namespace LogfileConverter
 
                 List<SimData> simErrorAddBmwFast = new List<SimData>();
                 simErrorAddBmwFast.Add(new SimData(new string[] { "83", "XX", "F1", "14", "XX", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00" }));    // clear DTC
+                    new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00^$00" }));    // clear DTC
                 simErrorAddBmwFast.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00" }));    // clear DTC
+                    new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00^$00" }));    // clear DTC
                 simErrorAddBmwFast.Add(new SimData(new string[] { "C3", "XX", "F1", "14", "XX", "XX" },
-                    new string[] { "83", "F1", "12", "54", "FF", "FF", "00" }));    // global clear DTC
+                    new string[] { "83", "F1", "12", "54", "FF", "FF", "00^$00" }));    // global clear DTC
                 simErrorAddBmwFast.Add(new SimData(new string[] { "84", "XX", "F1", "14", "XX", "XX", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00" }));    // clear DTC
+                    new string[] { "83", "F1", "00|[01]", "54", "FF", "FF", "00^$00" }));    // clear DTC
                 simErrorAddBmwFast.Add(new SimData(new string[] { "82", "XX", "F1", "11", "XX" },
-                    new string[] { "82", "F1", "00|[01]", "51", "00|[04]", "00" }));    // STEUERGERAETE_RESET
+                    new string[] { "82", "F1", "00|[01]", "51", "00|[04]", "00^$00" }));    // STEUERGERAETE_RESET
                 simErrorAddBmwFast.Add(new SimData(new string[] { "83", "XX", "F1", "17", "XX", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "7F", "17", "12", "00" }, simErrorAddBmwFast));    // FS_LESEN_DETAIL
+                    new string[] { "83", "F1", "00|[01]", "7F", "17", "12", "00^$00" }, simErrorAddBmwFast));    // FS_LESEN_DETAIL
 
                 List<SimData> simCandidatesBmwFast = new List<SimData>();
                 simCandidatesBmwFast.Add(new SimData(new string[] { "83", "XX", "F1", "19", "02", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "59", "02", "FF", "00" }, simErrorAddBmwFast));  // FS_LESEN
+                    new string[] { "83", "F1", "00|[01]", "59", "02", "FF", "00^$00" }, simErrorAddBmwFast));  // FS_LESEN
                 simCandidatesBmwFast.Add(new SimData(new string[] { "86", "XX", "F1", "19", "06", "XX", "XX", "XX", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "59", "06", "FF", "00" }, simErrorAddBmwFast));  // Service 19 06
+                    new string[] { "83", "F1", "00|[01]", "59", "06", "FF", "00^$00" }, simErrorAddBmwFast));  // Service 19 06
                 simCandidatesBmwFast.Add(new SimData(new string[] { "84", "XX", "F1", "18", "02", "FF", "FF" },
-                    new string[] { "82", "F1", "00|[01]", "58", "00", "00" }, simErrorAddBmwFast));  // FS_LESEN
+                    new string[] { "82", "F1", "00|[01]", "58", "00", "00^$00" }, simErrorAddBmwFast));  // FS_LESEN
                 simCandidatesBmwFast.Add(new SimData(new string[] { "83", "XX", "F1", "22", "XX", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "7F", "22", "31", "00" }));     // Service 22
+                    new string[] { "83", "F1", "00|[01]", "7F", "22", "31", "00^$00" }));     // Service 22
                 simCandidatesBmwFast.Add(new SimData(new string[] { "85", "XX", "F1", "31", "01", "XX", "XX", "XX" },
                     null)); // Routine control
 
                 List<SimData> simAddDataBmwFast = new List<SimData>();
                 simAddDataBmwFast.Add(new SimData(new string[] { "80&3F", "XX", "F1", "23", "XX", "XX" },
-                    new string[] { "83", "F1", "00|[01]", "7F", "23", "31", "00" }));     // Service 23
+                    new string[] { "83", "F1", "00|[01]", "7F", "23", "31", "00^$00" }));     // Service 23
 
                 List<SimData> simAddDataEdicUds = new List<SimData>();
                 simAddDataEdicUds.Add(new SimData(new string[] { "22", "06", "XX" },
@@ -1350,9 +1350,9 @@ namespace LogfileConverter
 
                 List<SimData> simAddDataEdicKwp2000 = new List<SimData>();
                 simAddDataEdicKwp2000.Add(new SimData(new string[] { "21", "XX" },
-                    new string[] { "9A", "F1", "00|#00", "61", "00|[01]", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "00" }));     // read wmblock
+                    new string[] { "9A", "F1", "00|#00", "61", "00|[01]", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "25", "00", "00", "00^$00" }));     // read wmblock
                 simAddDataEdicKwp2000.Add(new SimData(new string[] { "22", "XX", "XX" },
-                    new string[] { "83", "F1", "00|#00", "7F", "22", "31", "00" }));              // Service 22 error response
+                    new string[] { "83", "F1", "00|#00", "7F", "22", "31", "00^$00" }));              // Service 22 error response
 
                 List<SimData> simAddDataEdicKwp1281 = new List<SimData>();
                 simAddDataEdicKwp1281.Add(new SimData(new string[] { "03", "XX", "09" },
