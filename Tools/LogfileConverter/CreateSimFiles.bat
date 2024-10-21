@@ -23,6 +23,7 @@ if NOT EXIST "!CONVERTER_EXE!" (
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\Touran2010.txt" -r --sim "!RESPONSE_PATH!VW\edic_Touran2010.sim" || exit /b 1
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!g31_coding.txt" -m "!RESPONSE_PATH!g31_coding_sim.txt" -r --sim "!RESPONSE_PATH!G31\enet.sim" || exit /b 1
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!e61.txt" -m "!RESPONSE_PATH!e61_sim.txt" -r --sim "!RESPONSE_PATH!E61\obd.sim" || exit /b 1
+"!CONVERTER_EXE!" -m "!RESPONSE_PATH!e90.txt" -m "!RESPONSE_PATH!e90_sim.txt" -r --sim "!RESPONSE_PATH!E90\obd.sim" || exit /b 1
 
 echo Sim files successfully created
 exit /b 0
