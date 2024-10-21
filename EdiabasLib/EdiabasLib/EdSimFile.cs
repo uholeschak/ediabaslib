@@ -54,6 +54,7 @@ namespace EdiabasLib
             {
                 RequestIdx,
                 EcuAddr,
+                Checksum,
             }
 
             public DataItem(byte dataValue, byte? dataMask, OperatorType? operatorType, OperatorDataType? operatorDataType, byte? operatorValue, uint? operatorIndex)
@@ -725,6 +726,17 @@ namespace EdiabasLib
                         }
 
                         operatorDataType = DataItem.OperatorDataType.EcuAddr;
+                        operatorIndex = opDataValue;
+                    }
+                    else if (operatorString.StartsWith("$"))
+                    {
+                        operatorString = operatorString.Substring(1, operatorString.Length - 1);
+                        if (!uint.TryParse(operatorString, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint opDataValue))
+                        {
+                            return null;
+                        }
+
+                        operatorDataType = DataItem.OperatorDataType.Checksum;
                         operatorIndex = opDataValue;
                     }
                     else
