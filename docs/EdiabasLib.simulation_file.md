@@ -62,6 +62,10 @@ The request values could be matched by a mask and the and operator.
 The syntax is `<two digit hex value>&<two digit hex mask>`.  
 Example: The two highes bits have to be hex `80`: `80&3F`
 
+### Variable request length
+If the request length is variable, `..` could be appended to the base request telegram.  
+Example: Request with minimum 2 bytes: `key1=31,XX,..`
+
 ### Response value calculation
 If the request has variables values (when using wildcards), the response has sometimes variable values using data from the request.  
 For this a constant values could be combined via an operator with a variable value.  
