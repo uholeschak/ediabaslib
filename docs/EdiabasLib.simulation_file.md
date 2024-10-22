@@ -13,15 +13,15 @@ The Deep OBD app default is: `OBD,ENET,EDIC,OBD_*,ENET_*,EDIC_*`.
 
 ## Standard syntax
 Section `[REQUEST]`:
-Key value pair with request bytes separated by comma. For wildcards the symbol `X` could be used.  
+Key value pair with request two digit hex bytes separated by comma. For wildcards the symbol `X` could be used.  
 An empty line has the value `_`.
 
 Section `[RESPONSE]`:
-Key value pair with request bytes separated by comma. No wildcards or empty lines are allowed.  
+Key value pair with request two digit hex bytes separated by comma. No wildcards or empty lines are allowed.  
 The key must match the request key.
 
 Section `[KEYBYTES]`:
-Key value pair with request bytes separated by comma. No wildcards or empty lines are allowed.
+Key value pair with request two digit hex bytes separated by comma. No wildcards or empty lines are allowed.
 
 Sample BMW-FAST:
 ```ini
@@ -49,10 +49,28 @@ key2=06,01,FC,FF,FF,88,03
 ```
 
 ## Extended syntax
-The standard syntax is not very flexible when using wildcards and multiple responses.  
+The standard syntax is not very flexible when using wildcards and dynamic responses for variable requests.  
 If one simulation file should be used for multiple ECUs the ECU address has to be configured additionally.  
-With the extended syntax the ECU address could be specified in every secion the request section as prefix.  
-This is either the 8 bit ECU address or the 16 bit CAN address in case of the UDS protocol as hex value.
+
+### ECU address
+With the extended syntax the ECU address could be specified in every section entry.  
+Intis case section name has to be prefixed by the ecu address in hex:`[<ECU addr>.<section name>]`.  
+The address is either the 8 bit ECU address or the 16 bit CAN address in case of the UDS protocol.
+
+### Response value calculation
+If the request has variables values (when using wildcards), the response has sometimes variable values using data from the request.  
+For this a constant values could be combined via an operator with a variable value.  
+Valid operators are `&`, `|`, `^`, `+`, `-`, `*`, `/`.
+
+Using a value from the request: `<two digit hex constant><operator>[<request index in hex>]`.  
+Example: Adding 1 to the request byte with index 2: 01+[02]
+
+Using the ecu address: `<two digit hex constant><operator>#<ECU address nibble index in hex>`.  
+Example: Adding 3 to the the ECU address low nibble: 03+#00
+
+Calculating a checksum: `<two digit hex constant><operator>$<length in hex>`. If the length is 00 the complete length is used.  
+In this case the valid operator are only: `^`, `+`.
+Example: Calculate xor checksum of the complete telegram with start value 1: 01^$00
 
 Sample ISO 9141:
 ```ini
