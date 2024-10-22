@@ -56,6 +56,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\Deep_OBD_for_BMW_and_VAG_AppSelectBluetoothSmall.png = ..\docs\Deep_OBD_for_BMW_and_VAG_AppSelectBluetoothSmall.png
 		..\docs\Documentation.md = ..\docs\Documentation.md
 		..\docs\EdiabasLib.config_file.md = ..\docs\EdiabasLib.config_file.md
+		..\docs\EdiabasLib.simulation_file.md = ..\docs\EdiabasLib.simulation_file.md
 		..\docs\EdiabasTest_parameters.md = ..\docs\EdiabasTest_parameters.md
 		..\docs\EdiabasTool.md = ..\docs\EdiabasTool.md
 		..\docs\EdiabasTool_AppToolInfosSmall.png = ..\docs\EdiabasTool_AppToolInfosSmall.png
