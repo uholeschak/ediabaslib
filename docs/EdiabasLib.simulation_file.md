@@ -1,5 +1,5 @@
-# EdiabasLib simuklation file
-EdiabasLib is supporting simulation files lie teh standard EDIABAS, but with some additional features.  
+# EdiabasLib simulation file
+EdiabasLib is supporting simulation files like the standard EDIABAS, but with some additional features.  
 Simulation files are `.ini` files with the `.sim` file extension.  
 The simulation file name is either the lower case interface name (e.g. `enet.sim`, `obd.sim`, `edic.sim`) or the lower case SGBD (`.prg`) file name with `.sim` extension.  
 Basically the simukation files contain sections for request, response and key bytes.
