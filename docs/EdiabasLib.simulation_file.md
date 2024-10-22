@@ -57,20 +57,25 @@ With the extended syntax the ECU address could be specified in every section ent
 Intis case section name has to be prefixed by the ecu address in hex:`[<ECU addr>.<section name>]`.  
 The address is either the 8 bit ECU address or the 16 bit CAN address in case of the UDS protocol.
 
+### Request value matching
+The request values could be matched by a mask and the and operator.  
+The syntax is `<two digit hex value>&<two digit hex mask>`.  
+Example: The two highes bits have to be hex `80`: `80&3F`
+
 ### Response value calculation
 If the request has variables values (when using wildcards), the response has sometimes variable values using data from the request.  
 For this a constant values could be combined via an operator with a variable value.  
 Valid operators are `&`, `|`, `^`, `+`, `-`, `*`, `/`.
 
 Using a value from the request: `<two digit hex constant><operator>[<request index in hex>]`.  
-Example: Adding 1 to the request byte with index 2: 01+[02]
+Example: Adding 1 to the request byte with index 2: `01+[02]`
 
 Using the ecu address: `<two digit hex constant><operator>#<ECU address nibble index in hex>`.  
-Example: Adding 3 to the the ECU address low nibble: 03+#00
+Example: Adding 3 to the the ECU address low nibble: `03+#00`
 
 Calculating a checksum: `<two digit hex constant><operator>$<length in hex>`. If the length is 00 the complete length is used.  
 In this case the valid operator are only: `^`, `+`.
-Example: Calculate xor checksum of the complete telegram with start value 1: 01^$00
+Example: Calculate xor checksum of the complete telegram with start value 1: `01^$00`
 
 Sample ISO 9141:
 ```ini
