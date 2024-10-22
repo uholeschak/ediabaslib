@@ -2,13 +2,13 @@
 EdiabasLib is supporting simulation files like the standard EDIABAS, but with some additional features.  
 Simulation files are `.ini` files with the `.sim` file extension.  
 The simulation file name is either the lower case interface name (e.g. `enet.sim`, `obd.sim`, `edic.sim`) or the lower case SGBD (`.prg`) file name with `.sim` extension.  
-Basically the simukation files contain sections for request, response and key bytes.
+Basically the simulation files contains sections for request, response and key bytes.
 
 ## Configuration properties
 EdiabasLib has the following properties to configure the simulation mode:
-* `Simulation`: `1`=Enable simulation mode
+* `Simulation`: 1=Enable simulation mode, default is 0.
 * `SimulationPath`: Path to the simulation directory containing the interface or SGBD simulation files.
-* `SimulationInterfaces`: (Non standard) Comma separated list of interface names to check for corresponding interface `.sim` file names. This could contain wildcards.  
+* `SimulationInterfaces`: (Non standard) Comma separated list of interface names to check for corresponding lower case interface `.sim` file names. These names could contain wildcards.  
 The Deep OBD app default is: `OBD,ENET,EDIC,OBD_*,ENET_*,EDIC_*`.
 
 ## Standard syntax
@@ -23,7 +23,7 @@ The key must match the request key.
 Section `[KEYBYTES]`:
 Key value pair with request two digit hex bytes separated by comma. No wildcards or empty lines are allowed.
 
-Sample BMW-FAST:
+Sample with BMW-FAST telegrams:
 ```ini
 [REQUEST]
 key1=83,01,F1,19,02,0C
@@ -81,7 +81,7 @@ Calculating a checksum: `<two digit hex constant><operator>$<length in hex>`. If
 In this case the valid operator are only: `^`, `+`.
 Example: Calculate xor checksum of the complete telegram with start value 1: `01^$00`
 
-Sample ISO 9141:
+Sample with ISO 9141 telegrams:
 ```ini
 [01.KEYBYTES]
 key1=01,8A,00,A0,28,0F,01,F6,34,42,30,39,32,37,31,35,36,42,41,20,03,0F,03,F6,41,47,35,20,30,31,4C,20,34,2E,32,6C,03,0F,05,F6,35,56,20,20,52,64,57,20,31,32,31,34,03,08,07,F6,00,00,02,09,15,03,03,09,09,03
