@@ -14,3 +14,4 @@
 * [Build a Bluetooth D-CAN/K-Line adapter](Build_Bluetooth_D-CAN_adapter.md)
 * [Command line parameters for EdiabasTest](EdiabasTest_parameters.md)
 * [Properties of the EdiabasLib.config file](EdiabasLib.config_file.md)
+* [EdiabasLib simulation file](EdiabasLib.simulation_file.md)
