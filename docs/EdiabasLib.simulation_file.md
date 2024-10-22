@@ -1,8 +1,15 @@
 # EdiabasLib simuklation file
 EdiabasLib is supporting simulation files lie teh standard EDIABAS, but with some additional features.  
 Simulation files are `.ini` files with the `.sim` file extension.  
-The simulation file name is either the interface name (e.g. `enet.sim`, `obd.sim`, `edic.sim`) or the `.prg` file name with `.sim` extension.  
-Basically there are section for request, response and key bytes.
+The simulation file name is either the lower case interface name (e.g. `enet.sim`, `obd.sim`, `edic.sim`) or the lower case SGBD (`.prg`) file name with `.sim` extension.  
+Basically the simukation files contain sections for request, response and key bytes.
+
+## Configuration properties
+EdiabasLib has the following properties to configure the simulation mode:
+* `Simulation`: `1`=Enable simulation mode
+* `SimulationPath`: Path to the simulation directory containing the interface or SGBD simulation files.
+* `SimulationInterfaces`: (Non standard) Comma separated list of interface names to check for corresponding interface `.sim` file names. This could contain wildcards.  
+The Deep OBD app default is `OBD,ENET,EDIC,OBD_*,ENET_*,EDIC_*`.
 
 ## Standard syntax
 Section `[REQUEST]`:
