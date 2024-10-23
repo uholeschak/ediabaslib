@@ -1334,7 +1334,7 @@ namespace LogfileConverter
                     null)); // Routine control
 
                 List<SimData> simAddDataBmwFast = new List<SimData>();
-                simAddDataBmwFast.Add(new SimData(new string[] { "80&3F", "XX", "F1", "23", "XX", "XX" },
+                simAddDataBmwFast.Add(new SimData(new string[] { "80&C0", "XX", "F1", "23", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "7F", "23", "31", "00^$00" }));     // Service 23
 
                 List<SimData> simAddDataEdicUds = new List<SimData>();
