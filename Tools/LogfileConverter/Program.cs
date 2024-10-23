@@ -1336,6 +1336,8 @@ namespace LogfileConverter
                 List<SimData> simAddDataBmwFast = new List<SimData>();
                 simAddDataBmwFast.Add(new SimData(new string[] { "80&C0", "XX", "F1", "23", "XX", "XX" },
                     new string[] { "83", "F1", "00|[01]", "7F", "23", "31", "00^$00" }));     // Service 23
+                simAddDataBmwFast.Add(new SimData(new string[] { "80&C0", "XX", "F1", "30", "XX", "XX", ".." },
+                    new string[] { "83", "F1", "00|[01]", "70", "00|[04]", "00|[05]", "00^$00" }));     // Service 30
 
                 List<SimData> simAddDataEdicUds = new List<SimData>();
                 simAddDataEdicUds.Add(new SimData(new string[] { "22", "06", "XX" },
