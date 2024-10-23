@@ -6,7 +6,7 @@ For conversion of trace files to CarSimulator response files or EdiabasLib simul
 * `-c or --cformat`: Output in C style format (0x prefix), not recommended.
 * `-e or --errors`: Ignore CRC errors in input files, not recommended.
 * `-r or --response`: Output in CarSimulator response format, recommended.
-* `-s or --sort`: Sort response file. Only useful with response output format, recommended.
+* `-s or --sort`: Sort response file. Only useful with response output format and for BMW-FAST or DS2 files, recommended if possible.
 * `--sformat`: Simulation file format. Possible values are: `bmw_fast`, `ds2`, `edic`). If ommited the format is auto detected (recommended).
 
 Example convert trace files to CarSimulator response file and merge old files:  
