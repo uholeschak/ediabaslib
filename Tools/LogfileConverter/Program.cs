@@ -228,6 +228,12 @@ namespace LogfileConverter
                     }
                 }
 
+                if (!string.IsNullOrEmpty(simFile))
+                {   // force response file format
+                    _responseFile = true;
+                    _cFormat = false;
+                }
+
                 SimFormat simFormat = SimFormat.None;
                 if (!string.IsNullOrEmpty(sFormat))
                 {
