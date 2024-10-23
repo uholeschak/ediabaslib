@@ -285,7 +285,7 @@ namespace LogfileConverter
 
                 if (_responseFile && !_cFormat)
                 {
-                    if (sortFile)
+                    if (sortFile && string.IsNullOrEmpty(simFile))
                     {
                         if (!SortLines(outputFile))
                         {
@@ -1249,10 +1249,15 @@ namespace LogfileConverter
 
         private static int LineComparer(string x, string y)
         {
+            if (x.Length < 3 || y.Length < 3)
+            {
+                return 0;
+            }
+
             string lineX = x.Substring(3);
             string lineY = y.Substring(3);
 
-            return String.Compare(lineX, lineY, StringComparison.Ordinal);
+            return string.Compare(lineX, lineY, StringComparison.Ordinal);
         }
 
         private static bool SortLines(string fileName)
