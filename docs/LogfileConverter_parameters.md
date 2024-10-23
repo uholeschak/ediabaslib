@@ -13,4 +13,4 @@ Example convert trace files to CarSimulator response file and merge old files:
 `-i "trace1.trc" -i "trace2.trc" -m "response_old.txt" -o "response.txt"`
 
 Example convert CarSimulator response files to simulation files:  
-`-m "response1.txt" -m "response2.txt" -sim="obd.sim"`
+`-m "response1.txt" -m "response2.txt" -r -sim="obd.sim"`
