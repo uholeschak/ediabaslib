@@ -64,7 +64,7 @@ Example: The two highes bits have to be hex `80`: `80&3F`
 
 ### Variable request length
 If the request length is variable, `..` could be appended to the base request telegram.  
-Example: Request with minimum 2 bytes: `key1=31,XX,..`
+Example: Request with fixed byte 1, variable byte 2 and optional more bytes: `key1=31,XX,..`
 
 ### Response value calculation
 If the request has variables values (when using wildcards), the response has sometimes variable values using data from the request.  
@@ -74,12 +74,12 @@ Valid operators are `&`, `|`, `^`, `+`, `-`, `*`, `/`.
 Using a value from the request: `<two digit hex constant><operator>[<request index in hex>]`.  
 Example: Adding 1 to the request byte with index 2: `01+[02]`
 
-Using the ecu address: `<two digit hex constant><operator>#<ECU address nibble index in hex>`.  
-Example: Adding 3 to the the ECU address low nibble: `03+#00`
+Using the ecu address: `<two digit hex constant><operator>#<ECU address byte index in hex>`.  
+Example: Adding 3 to the the ECU address low byte: `03+#00`
 
-Calculating a checksum: `<two digit hex constant><operator>$<length in hex>`. If the length is 00 the complete length is used.  
+Calculating a checksum: `<two digit hex constant><operator>$<length in hex>`. If the length is `00` the complete length is used.  
 In this case the valid operator are only: `^`, `+`.
-Example: Calculate xor checksum of the complete telegram with start value 1: `01^$00`
+Example: Calculate XOR checksum of the complete telegram with XOR start value 1: `01^$00`
 
 Sample with ISO 9141 telegrams:
 ```ini
