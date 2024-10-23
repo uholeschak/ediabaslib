@@ -80,6 +80,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{7B9636BF-0
 		..\docs\GlobalSettings.md = ..\docs\GlobalSettings.md
 		..\docs\GlobalSettings_AppGlobalSettingsSmall.png = ..\docs\GlobalSettings_AppGlobalSettingsSmall.png
 		..\docs\hc04-pinout.jpg = ..\docs\hc04-pinout.jpg
+		..\docs\LogfileConverter_parameters.md = ..\docs\LogfileConverter_parameters.md
 		..\docs\MT7620A_1.png = ..\docs\MT7620A_1.png
 		..\docs\MT7620A_2.png = ..\docs\MT7620A_2.png
 		..\docs\Page_specification.md = ..\docs\Page_specification.md
