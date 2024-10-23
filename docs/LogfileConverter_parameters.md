@@ -1,5 +1,6 @@
 # LogfileConverter command line parameters
-For conversion of trace files to CarSimulator response files or EdiabasLib simulation files there is a console application `LogfileConverter.exe` which accepts command line parameters. The following parameters are supported:
+For conversion of trace files to CarSimulator response files or response files to [EdiabasLib simulation files](EdiabasLib.simulation_file.md) there is a console application `LogfileConverter.exe` with command line parameters.  
+The following command line parameters are supported:
 * `-i or --input=`: EdiabasLib input trace file (`.trc` extension). Multiple files are allowed
 * `-o or --output=`: Output file in the specifed format.
 * `--sim=`: Output simulation file name (`.sim` extension).
@@ -9,8 +10,10 @@ For conversion of trace files to CarSimulator response files or EdiabasLib simul
 * `-s or --sort`: Sort response file. Only useful with response output format and for BMW-FAST or DS2 files, recommended if possible.
 * `--sformat`: Simulation file format. Possible values are: `bmw_fast`, `ds2`, `edic`). If ommited the format is auto detected (recommended).
 
-Example convert trace files to CarSimulator response file and merge old files:  
-`-i "trace1.trc" -i "trace2.trc" -m "response_old.txt" -o "response.txt"`
+It's recommended to convert trace files to CarSimulator response files first and then convert them in the next step to simulation files.  
 
-Example convert CarSimulator response files to simulation files:  
-`-m "response1.txt" -m "response2.txt" -r -sim="obd.sim"`
+Example: Convert trace files, merge old response files and convert all to sorted CarSimulator response file.  
+`-i "trace1.trc" -i "trace2.trc" -m "response_old.txt" -o "response.txt" -r -s`
+
+Example: Convert CarSimulator response files to simulation file.  
+`-m "response1.txt" -m "response2.txt" --sim="obd.sim"`
