@@ -167,7 +167,7 @@ namespace LogfileConverter
                   v => _responseFile = v != null },
                 { "sim=", "EDIABAS simulation file",
                     v => simFile = v },
-                { "sformat=", "simulation format (bmwfast, ds2)",
+                { "sformat=", "simulation format (bmw_fast, ds2, edic)",
                     v => sFormat = v },
                 { "s|sort", "sort response file", 
                   v => sortFile = v != null },
