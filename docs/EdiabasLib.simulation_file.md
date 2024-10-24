@@ -97,3 +97,16 @@ key2=03,XX,05
 key1=06,01+[01],FC,FF,FF,88,03
 key2=06,01+[01],FC,FF,FF,88,03
 ```
+
+Sample with UDS telegrams with ECU address 0700:
+```ini
+[0700.REQUEST]
+key1=22,06,XX
+key2=31,XX,..
+key3=2E,XX,XX,..
+
+[0700.RESPONSE]
+key1=7F,22,31
+key2=7F,31,11
+key3=6E,00|[01],00|[02]
+```
