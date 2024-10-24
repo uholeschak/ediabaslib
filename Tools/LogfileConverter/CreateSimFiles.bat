@@ -16,14 +16,18 @@ if NOT EXIST "!XML_PATH!" (
 )
 
 set "CONVERTER_EXE=!BATPATH!artifacts\bin\LogfileConverter\release\LogfileConverter.exe"
+set "CONVERTER_TYPE=Release"
 if NOT EXIST "!CONVERTER_EXE!" (
     set CONVERTER_EXE="!BATPATH!artifacts\bin\LogfileConverter\debug\LogfileConverter.exe"
+    set "CONVERTER_TYPE=Debug"
 )
 
 if NOT EXIST "!CONVERTER_EXE!" (
     echo !CONVERTER_EXE! not found
     exit /b 1
 )
+
+echo Using Converter build type: !CONVERTER_TYPE!
 
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\AudiA6_1999.txt" --sim "!RESPONSE_PATH!VW\edic_AudiA6_1999.sim" || exit /b 1
 "!CONVERTER_EXE!" -m "!RESPONSE_PATH!VW\AudiA6_2007.txt" --sim "!RESPONSE_PATH!VW\edic_AudiA6_2007.sim" || exit /b 1
