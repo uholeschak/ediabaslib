@@ -60,7 +60,7 @@ Intis case section name has to be prefixed by the ecu address in hex:`[<ECU addr
 The address is either the 8 bit ECU address or the 16 bit CAN address in case of the UDS protocol.
 
 ### Request value matching
-The request values could be matched by a mask and the and operator.  
+The request values could be matched by a mask combined with an operator.  
 The syntax is `<two digit hex value><operator><two digit hex mask>`.  
 Valid operators are `&`, `|`.
 Example: The two highes bits have to be hex `80` and the 6 lower bits are ignored: `80&C0` or `80|3F`
