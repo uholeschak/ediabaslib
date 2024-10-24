@@ -4,6 +4,8 @@ Simulation files are `.ini` files with the `.sim` file extension.
 The simulation file name is either the lower case interface name (e.g. `enet.sim`, `obd.sim`, `edic.sim`) or the lower case SGBD (`.prg`) file name with `.sim` extension.  
 Basically the simulation files contains sections for request, response and key bytes.
 
+Simulation files could be auto generated from trace files by the [LogfileConverter](LogfileConverter_parameters.md).
+
 ## Configuration properties
 EdiabasLib has the following properties to configure the simulation mode:
 * `Simulation`: 1=Enable simulation mode, default is 0.
@@ -59,8 +61,9 @@ The address is either the 8 bit ECU address or the 16 bit CAN address in case of
 
 ### Request value matching
 The request values could be matched by a mask and the and operator.  
-The syntax is `<two digit hex value>&<two digit hex mask>`.  
-Example: The two highes bits have to be hex `80` and the 6 lower bits are ignored: `80&C0`
+The syntax is `<two digit hex value><operator><two digit hex mask>`.  
+Valid operators are `&`, `|`.
+Example: The two highes bits have to be hex `80` and the 6 lower bits are ignored: `80&C0` or `80|3F`
 
 ### Variable request length
 If the request length is variable, `..` could be appended to the base request telegram.  
