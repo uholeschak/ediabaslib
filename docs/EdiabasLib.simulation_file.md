@@ -25,7 +25,7 @@ The key must match the request key.
 Section `[KEYBYTES]`:
 Key value pair with request two digit hex bytes separated by comma. No wildcards or empty lines are allowed.
 
-Sample with BMW-FAST telegrams:
+Sample with BMW-FAST (OBD or ENET interface) telegrams:
 ```ini
 [REQUEST]
 key1=83,01,F1,19,02,0C
@@ -84,7 +84,7 @@ Calculating a checksum: `<two digit hex constant><operator>$<length in hex>`. If
 In this case the valid operator are only: `^`, `+`.
 Example: Calculate XOR checksum of the complete telegram with XOR start value 1: `01^$00`
 
-Sample with ISO 9141 telegrams with ECU address 01:
+Sample with ISO 9141 (EDIC interface) telegrams with ECU address 01:
 ```ini
 [01.KEYBYTES]
 key1=01,8A,00,A0,28,0F,01,F6,34,42,30,39,32,37,31,35,36,42,41,20,03,0F,03,F6,41,47,35,20,30,31,4C,20,34,2E,32,6C,03,0F,05,F6,35,56,20,20,52,64,57,20,31,32,31,34,03,08,07,F6,00,00,02,09,15,03,03,09,09,03
@@ -98,7 +98,7 @@ key1=06,01+[01],FC,FF,FF,88,03
 key2=06,01+[01],FC,FF,FF,88,03
 ```
 
-Sample with UDS ISO 14229 telegrams with ECU address 0700:
+Sample with UDS ISO 14229 telegrams (EDIC interface) with ECU address 0700:
 ```ini
 [0700.REQUEST]
 key1=22,06,XX
