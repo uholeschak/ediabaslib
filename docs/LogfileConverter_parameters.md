@@ -12,8 +12,8 @@ The following command line parameters are supported:
 
 It's recommended to convert trace files to CarSimulator response files first and then convert them in the next step to simulation files.  
 
-Example: Convert trace files, merge old response files and convert all to sorted CarSimulator response file.  
+Example arguments: Convert trace files, merge old response files and output to sorted CarSimulator response file.  
 `-i "trace1.trc" -i "trace2.trc" -m "response_old.txt" -o "response.txt" -r -s`
 
-Example: Convert CarSimulator response files to simulation file.  
+Example arguments: Convert CarSimulator response files to simulation file.  
 `-m "response1.txt" -m "response2.txt" --sim="obd.sim"`

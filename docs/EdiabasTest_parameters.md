@@ -11,8 +11,8 @@ The following command line parameters are supported:
 * `-j or --job=<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>`: Execute a job with `<job name>`, `<job parameters>` and `<result requests>`. For binary job parameters prepend the hex string with `|` (e.g. `|A3C2`)
 * `-h or --help=`: Displays the help page.
 
-Example:  
+Example arguments:  
 `-p "COM4" --cfg="IfhTrace=2" -s "Ecu\d_motor.grp" -l "ediabas.log" -j "FS_LESEN" -j "FS_LESEN_DETAIL#0x4232#F_ART_ANZ;F_UW_ANZ" -j "STATUS_RAILDRUCK_IST##STAT_RAILDRUCK_IST_WERT" -j "STATUS_MOTORTEMPERATUR##STAT_MOTORTEMPERATUR_WERT" -j "STATUS_LMM_MASSE##STAT_LMM_MASSE_WERT" -j "STATUS_MOTORDREHZAHL" -j "STATUS_SYSTEMCHECK_PM_INFO_1" -j "STATUS_SYSTEMCHECK_PM_INFO_2"`
 
-Example with binary data:  
+Example arguments with binary data:  
 `-p "COM4" -s "binary_test.prg" -l "ediabas.log" -j "BINARY_TEST#|23ABC3"`
