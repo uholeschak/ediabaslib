@@ -57,7 +57,7 @@ If one simulation file should be used for multiple ECUs the ECU address has to b
 ### ECU address
 With the extended syntax the ECU address could be specified in every section entry.  
 Intis case section name has to be prefixed by the ecu address in hex:`[<ECU addr>.<section name>]`.  
-The address is either the 8 bit ECU address or the 16 bit CAN address in case of the UDS protocol.
+The address is either the 8 bit ECU address or the 16 bit CAN address in case of the UDS ISO 14229 protocol.
 
 ### Request value matching
 The request values could be matched by a mask combined with an operator.  
@@ -98,7 +98,7 @@ key1=06,01+[01],FC,FF,FF,88,03
 key2=06,01+[01],FC,FF,FF,88,03
 ```
 
-Sample with UDS telegrams with ECU address 0700:
+Sample with UDS ISO 14229 telegrams with ECU address 0700:
 ```ini
 [0700.REQUEST]
 key1=22,06,XX
