@@ -98,6 +98,51 @@ Calculating a checksum: `<two digit hex constant><operator>$<length in hex>`. If
 In this case the valid operator are only: `^`, `+`.
 Example: Calculate XOR checksum of the complete telegram with XOR start value 1: `01^$00`
 
+Sample with UDS ISO 14229 telegrams (EDIC interface) with ECU address 0700:
+The request and the response is the bare frame without ECU address and checksum.
+```ini
+[0700.REQUEST]
+key1=22,06,XX
+key2=31,XX,..
+key3=2E,XX,XX,..
+
+[0700.RESPONSE]
+key1=7F,22,31
+key2=7F,31,11
+key3=6E,00|[01],00|[02]
+```
+
+Sample with TP2.0 telegrams (EDIC interface) with ECU address 10:
+The request is the bare frame without ECU address and checksum.  
+The response is the full frame including ECU address and checksum (in BMW-FAST format).
+```ini
+[10.REQUEST]
+key1=10,89
+key2=1A,9A
+
+[10.RESPONSE]
+key1=82,F1,10,50,89,5C
+key2=83,F1,10,7F,1A,11,2E
+```
+
+It's valid to use UDS and TP2.0 ECUs in the same simulation file. The ECU address has a different format.
+
+Sample with KWP 2000 telegrams (EDIC interface) with ECU address 01:
+The request is the bare frame without ECU address and checksum.  
+The response is the full frame including ECU address and checksum (in BMW-FAST format).
+```ini
+[01.KEYBYTES]
+key1=EF,8F,FE,A0,28
+
+[01.REQUEST]
+key1=1A,9B
+key2=1A,91
+
+[01.RESPONSE]
+key1=B0,F1,10,5A,9B,37,4C,30,39,30,37,34,30,31,20,20,20,30,31,31,30,03,00,2E,03,00,00,00,00,18,B5,33,2E,30,4C,20,56,36,54,44,49,20,20,47,30,30,30,41,47,20,20,FA
+key2=91,F1,10,5A,91,0E,38,45,30,39,30,37,34,30,31,41,42,20,20,FF,2F
+```
+
 Sample with ISO 9141 (EDIC interface) telegrams with ECU address 01:
 The request and the response is the bare frame without ECU address and checksum.
 ```ini
@@ -113,34 +158,4 @@ key1=06,01+[01],FC,FF,FF,88,03
 key2=06,01+[01],FC,FF,FF,88,03
 ```
 
-Sample with UDS ISO 14229 telegrams (EDIC interface) with ECU address 0700:
-The request and the response is the bare frame without ECU address and checksum.
-```ini
-[0700.REQUEST]
-key1=22,06,XX
-key2=31,XX,..
-key3=2E,XX,XX,..
-
-[0700.RESPONSE]
-key1=7F,22,31
-key2=7F,31,11
-key3=6E,00|[01],00|[02]
-```
-
-Sample with KWP 2000 telegrams (EDIC interface) with ECU address 01:
-The request is the bare frame without ECU address and checksum.  
-The response is the full frame including ECU address and checksum (in BMW-FAST format).
-```ini
-[01.KEYBYTES]
-```ini
-[01.KEYBYTES]
-key1=EF,8F,FE,A0,28
-
-[01.REQUEST]
-key1=1A,9B
-key2=1A,91
-
-[01.RESPONSE]
-key1=B0,F1,10,5A,9B,37,4C,30,39,30,37,34,30,31,20,20,20,30,31,31,30,03,00,2E,03,00,00,00,00,18,B5,33,2E,30,4C,20,56,36,54,44,49,20,20,47,30,30,30,41,47,20,20,FA
-key1=91,F1,10,5A,91,0E,38,45,30,39,30,37,34,30,31,41,42,20,20,FF,2F
-```
+It's valid to use ISO 9141 and KWP 2000 ECUs in the same simulation file. The ECU address is identical.
