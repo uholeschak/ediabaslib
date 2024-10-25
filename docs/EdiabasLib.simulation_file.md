@@ -37,6 +37,18 @@ key1=83,F1,01,59,02,7F,4F
 key2=93,F1,01,62,20,00,01,00,12,28,80,32,80,28,80,31,80,28,01,00,20,28,3E
 ```
 
+Sample with DS2 (OBD interface) telegrams:
+The request and the response is the full frame including ECU address in request and response and checksum only in the response.
+```ini
+[REQUEST]
+key1=00,04,00
+key2=00,05,08,00
+
+[RESPONSE]
+key1=00,10,A0,88,36,94,83,14,03,02,00,09,96,02,13,82
+key2=00,07,A0,00,05,95,37
+```
+
 Sample ISO 9141 telegrams (EDIC interface, only valid in SGBD simulation file, because of missing ECU address):
 The request and the response is the bare frame without ECU address.
 ```ini
