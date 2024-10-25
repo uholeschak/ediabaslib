@@ -26,6 +26,7 @@ Section `[KEYBYTES]`:
 Key value pair with request two digit hex bytes separated by comma. No wildcards or empty lines are allowed.
 
 Sample with BMW-FAST (OBD or ENET interface) telegrams:
+The request and the response is the full frame including ECU address and checksum.
 ```ini
 [REQUEST]
 key1=83,01,F1,19,02,0C
@@ -36,7 +37,8 @@ key1=83,F1,01,59,02,7F,4F
 key2=93,F1,01,62,20,00,01,00,12,28,80,32,80,28,80,31,80,28,01,00,20,28,3E
 ```
 
-Sample ISO 9141 telegrams (only valid in SGBD simulation file):
+Sample ISO 9141 telegrams (EDIC interface, only valid in SGBD simulation file, because of missing ECU address):
+The request and the response is the bare frame without ECU address.
 ```ini
 [KEYBYTES]
 key1=01,8A,00,A0,28,0F,01,F6,34,42,30,39,32,37,31,35,36,42,41,20,03,0F,03,F6,41,47,35,20,30,31,4C,20,34,2E,32,6C,03,0F,05,F6,35,56,20,20,52,64,57,20,31,32,31,34,03,08,07,F6,00,00,02,09,15,03,03,09,09,03
@@ -85,6 +87,7 @@ In this case the valid operator are only: `^`, `+`.
 Example: Calculate XOR checksum of the complete telegram with XOR start value 1: `01^$00`
 
 Sample with ISO 9141 (EDIC interface) telegrams with ECU address 01:
+The request and the response is the bare frame without ECU address.
 ```ini
 [01.KEYBYTES]
 key1=01,8A,00,A0,28,0F,01,F6,34,42,30,39,32,37,31,35,36,42,41,20,03,0F,03,F6,41,47,35,20,30,31,4C,20,34,2E,32,6C,03,0F,05,F6,35,56,20,20,52,64,57,20,31,32,31,34,03,08,07,F6,00,00,02,09,15,03,03,09,09,03
@@ -99,6 +102,7 @@ key2=06,01+[01],FC,FF,FF,88,03
 ```
 
 Sample with UDS ISO 14229 telegrams (EDIC interface) with ECU address 0700:
+The request and the response is the bare frame without ECU address and checksum.
 ```ini
 [0700.REQUEST]
 key1=22,06,XX
