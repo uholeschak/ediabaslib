@@ -9165,8 +9165,9 @@ namespace BmwDeepObd
             }
         }
 
-        private void ReadConfigXml(XDocument document)
+        private void ReadConfigXml(string xmlConfigFile)
         {
+            XDocument document = XDocument.Load(xmlConfigFile);
             _instanceData.EcuSearchAbortIndex = -1;
             if (document.Root == null)
             {
@@ -9179,6 +9180,7 @@ namespace BmwDeepObd
             {
                 return;
             }
+
             XAttribute abortAttrib = globalNode.Attribute("search_abort_index");
             if (abortAttrib != null)
             {
@@ -9189,6 +9191,28 @@ namespace BmwDeepObd
                 catch (Exception)
                 {
                     _instanceData.EcuSearchAbortIndex = -1;
+                }
+            }
+
+            XAttribute simPathAttrib = globalNode.Attribute("simulation_path");
+            if (simPathAttrib != null)
+            {
+                try
+                {
+                    string simulationDir = simPathAttrib.Value;
+                    if (Path.IsPathRooted(simulationDir))
+                    {
+                        _instanceData.SimulationDir = simulationDir;
+                    }
+                    else
+                    {
+                        string xmlDir = Path.GetDirectoryName(xmlConfigFile);
+                        _instanceData.SimulationDir = string.IsNullOrEmpty(xmlDir) ? simulationDir : Path.Combine(xmlDir, simulationDir);
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             }
         }
@@ -9391,8 +9415,7 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    XDocument documentPages = XDocument.Load(xmlConfigFile);
-                    ReadConfigXml(documentPages);
+                    ReadConfigXml(xmlConfigFile);
                 }
                 catch (Exception)
                 {
