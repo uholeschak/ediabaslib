@@ -26,7 +26,7 @@ Section `[KEYBYTES]`:
 Key value pair with request two digit hex bytes separated by comma. No wildcards or empty lines are allowed.
 
 Sample with BMW-FAST (OBD or ENET interface) telegrams:
-The request and the response is the full frame including ECU address and checksum.
+The request and the response is the full frame including ECU address and checksum (XOR over all bytes).
 ```ini
 [REQUEST]
 key1=83,01,F1,19,02,0C
@@ -38,7 +38,7 @@ key2=93,F1,01,62,20,00,01,00,12,28,80,32,80,28,80,31,80,28,01,00,20,28,3E
 ```
 
 Sample with DS2 (OBD interface) telegrams:
-The request and the response is the full frame including ECU address in request and response and checksum only in the response.
+The request and the response is the full frame including ECU address in request and response and checksum (sum over all bytes) only in the response.
 ```ini
 [REQUEST]
 key1=00,04,00
