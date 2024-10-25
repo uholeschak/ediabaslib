@@ -50,7 +50,7 @@ key2=00,07,A0,00,05,95,37
 ```
 
 Sample ISO 9141 telegrams (EDIC interface, only valid in SGBD simulation file, because of missing ECU address):
-The request and the response is the bare frame without ECU address.
+The request and the response is the bare frame without ECU address and checksum.
 ```ini
 [KEYBYTES]
 key1=01,8A,00,A0,28,0F,01,F6,34,42,30,39,32,37,31,35,36,42,41,20,03,0F,03,F6,41,47,35,20,30,31,4C,20,34,2E,32,6C,03,0F,05,F6,35,56,20,20,52,64,57,20,31,32,31,34,03,08,07,F6,00,00,02,09,15,03,03,09,09,03
@@ -99,7 +99,7 @@ In this case the valid operator are only: `^`, `+`.
 Example: Calculate XOR checksum of the complete telegram with XOR start value 1: `01^$00`
 
 Sample with ISO 9141 (EDIC interface) telegrams with ECU address 01:
-The request and the response is the bare frame without ECU address.
+The request and the response is the bare frame without ECU address and checksum.
 ```ini
 [01.KEYBYTES]
 key1=01,8A,00,A0,28,0F,01,F6,34,42,30,39,32,37,31,35,36,42,41,20,03,0F,03,F6,41,47,35,20,30,31,4C,20,34,2E,32,6C,03,0F,05,F6,35,56,20,20,52,64,57,20,31,32,31,34,03,08,07,F6,00,00,02,09,15,03,03,09,09,03
@@ -125,4 +125,22 @@ key3=2E,XX,XX,..
 key1=7F,22,31
 key2=7F,31,11
 key3=6E,00|[01],00|[02]
+```
+
+Sample with KWP 2000 telegrams (EDIC interface) with ECU address 01:
+The request is the bare frame without ECU address and checksum.  
+The response is the full frame including ECU address and checksum (in BMW-FAST format).
+```ini
+[01.KEYBYTES]
+```ini
+[01.KEYBYTES]
+key1=EF,8F,FE,A0,28
+
+[01.REQUEST]
+key1=1A,9B
+key2=1A,91
+
+[01.RESPONSE]
+key1=B0,F1,10,5A,9B,37,4C,30,39,30,37,34,30,31,20,20,20,30,31,31,30,03,00,2E,03,00,00,00,00,18,B5,33,2E,30,4C,20,56,36,54,44,49,20,20,47,30,30,30,41,47,20,20,FA
+key1=91,F1,10,5A,91,0E,38,45,30,39,30,37,34,30,31,41,42,20,20,FF,2F
 ```
