@@ -1439,9 +1439,9 @@ namespace LogfileConverter
                                         edicType = EdicTypes.Kwp1281;
                                     }
 
-                                    ecuAddr = cfgBytes[0];
                                     if ((edicType & EdicTypes.Kwp1281) != EdicTypes.None)
                                     {
+                                        ecuAddr = cfgBytes[0];
                                         const int baudRate = 10400;
                                         keyBytesPrefix = new List<byte>();
                                         keyBytesPrefix.Add(cfgBytes[1]);
@@ -1452,13 +1452,14 @@ namespace LogfileConverter
                                     }
                                     else
                                     {
+                                        ecuAddr = null; // get address from first request
                                         const int baudRate = 10400;
-                                        keyBytesFinal = new List<byte>();
-                                        keyBytesFinal.Add(cfgBytes[1]);
-                                        keyBytesFinal.Add(cfgBytes[2]);
-                                        keyBytesFinal.Add((byte)~ecuAddr);
-                                        keyBytesFinal.Add((baudRate & 0xFF));
-                                        keyBytesFinal.Add(((baudRate >> 8) & 0xFF));
+                                        keyBytesPrefix = new List<byte>();
+                                        keyBytesPrefix.Add(cfgBytes[1]);
+                                        keyBytesPrefix.Add(cfgBytes[2]);
+                                        keyBytesPrefix.Add((byte)~cfgBytes[0]);
+                                        keyBytesPrefix.Add((baudRate & 0xFF));
+                                        keyBytesPrefix.Add(((baudRate >> 8) & 0xFF));
                                     }
 
                                     break;
@@ -1481,6 +1482,24 @@ namespace LogfileConverter
                         {
                             requestBytes = NumberString2List(lineParts[0]);
                             responseBytes = NumberString2List(lineParts[1]);
+
+                            if (requestBytes.Count >= 3 && responseBytes.Count >= 3)
+                            {
+                                if ((edicTypes & EdicTypes.Kwp2000) != EdicTypes.None)
+                                {
+                                    if (ecuAddr == null)
+                                    {
+                                        ecuAddr = requestBytes[1];
+                                    }
+
+                                    if (keyBytesPrefix != null)
+                                    {
+                                        keyBytesFinal = new List<byte>();
+                                        keyBytesFinal.AddRange(keyBytesPrefix);
+                                        keyBytesPrefix = null;
+                                    }
+                                }
+                            }
 
                             if (requestBytes.Count < 1)
                             {
