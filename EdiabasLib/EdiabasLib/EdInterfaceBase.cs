@@ -189,12 +189,6 @@ namespace EdiabasLib
             return true;
         }
 
-        public virtual int? GetSimAddr()
-        {
-            int? simAddr = SimWakeAddr ?? SimEcuAddr;
-            return simAddr;
-        }
-
         public virtual bool LoadInterfaceSimFile()
         {
             UnloadInterfaceSimFile();
@@ -353,7 +347,7 @@ namespace EdiabasLib
             return true;
         }
 
-        public virtual bool TransmitSimulationData(byte[] sendData, out byte[] receiveData, int? simAddr = null, bool bmwFast = false)
+        public virtual bool TransmitSimulationData(byte[] sendData, out byte[] receiveData, int? simEcuAddr = null, int? simWakeAddr = null, bool bmwFast = false)
         {
             receiveData = null;
             List<byte> recDataInternal;
@@ -371,7 +365,7 @@ namespace EdiabasLib
             if (!bmwFast)
             {
                 SimulationRecQueue.Clear();
-                if (!TransmitSimulationInternal(sendData, out recDataInternal, simAddr))
+                if (!TransmitSimulationInternal(sendData, out recDataInternal, simEcuAddr, simWakeAddr))
                 {
                     return false;
                 }
@@ -383,7 +377,7 @@ namespace EdiabasLib
             if (sendData.Length > 0)
             {
                 SimulationRecQueue.Clear();
-                if (!TransmitSimulationInternal(sendData, out recDataInternal, simAddr))
+                if (!TransmitSimulationInternal(sendData, out recDataInternal, simEcuAddr, simWakeAddr))
                 {
                     return false;
                 }
@@ -450,9 +444,10 @@ namespace EdiabasLib
             return true;
         }
 
-        protected bool TransmitSimulationInternal(byte[] sendData, out List<byte> receiveData, int? simAddr)
+        protected bool TransmitSimulationInternal(byte[] sendData, out List<byte> receiveData, int? simEcuAddr = null, int? simWakeAddr = null)
         {
             receiveData = null;
+            int? simAddr = simWakeAddr ?? simEcuAddr;
             if (simAddr != null)
             {
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Transmit sim addr: {0:X02}", simAddr);
@@ -495,7 +490,7 @@ namespace EdiabasLib
             return false;
         }
 
-        public virtual byte[] GetKeyBytesSimulation(int? simAddr = null)
+        public virtual byte[] GetKeyBytesSimulation(int? simEcuAddr = null, int? simWakeAddr = null)
         {
             if (!SimulationConnected)
             {
@@ -503,6 +498,7 @@ namespace EdiabasLib
                 return null;
             }
 
+            int? simAddr = simWakeAddr ?? simEcuAddr;
             if (simAddr != null)
             {
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "KeyBytes sim addr: {0:X02}", simAddr);
