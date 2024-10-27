@@ -1738,7 +1738,7 @@ namespace LogfileConverter
                             }
                         }
 
-                        if (keyBytesFinal == null)
+                        if (dataLengthReq > 0 && dataLengthResp > 0)
                         {
                             switch (simFormatUse)
                             {
@@ -1824,42 +1824,34 @@ namespace LogfileConverter
                             }
                         }
 
-                        string key = string.Empty;
-                        string request = string.Empty;
-                        string response = string.Empty;
-                        string keyBytesEntry = string.Empty;
-
                         if (keyBytesFinal != null)
                         {
-                            key = GenerateKey(BitConverter.ToString(keyBytesFinal.ToArray()));
-                            keyBytesEntry = BitConverter.ToString(keyBytesFinal.ToArray()).Replace("-", ",");
+                            string key = GenerateKey(BitConverter.ToString(keyBytesFinal.ToArray()));
+                            string keyBytesEntry = BitConverter.ToString(keyBytesFinal.ToArray()).Replace("-", ",");
                             keyBytesFinal = null;
+                            AddSimLine(ref simLines, new SimEntry(key, keyBytesEntry, string.Empty, ecuAddr, true));
                         }
-                        else
-                        {
-                            if (dataLengthReq == 0 && dataLengthResp == 0)
-                            {
-                                continue;
-                            }
 
+                        if (dataLengthReq > 0 && dataLengthResp > 0)
+                        {
                             if (responseBytes.Count == 0)
                             {
                                 continue;
                             }
 
-                            key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
+                            string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
                             if (string.IsNullOrWhiteSpace(key))
                             {
                                 key = "_";
                             }
 
-                            request = BitConverter.ToString(requestUse.ToArray()).Replace("-", ",");
+                            string request = BitConverter.ToString(requestUse.ToArray()).Replace("-", ",");
                             if (string.IsNullOrWhiteSpace(request))
                             {
                                 request = "_";
                             }
 
-                            response = BitConverter.ToString(responseBytes.ToArray()).Replace("-", ",");
+                            string response = BitConverter.ToString(responseBytes.ToArray()).Replace("-", ",");
                             if (string.IsNullOrWhiteSpace(response))
                             {
                                 response = string.Empty;
@@ -1885,14 +1877,6 @@ namespace LogfileConverter
                                     response = sbResponse.ToString();
                                 }
                             }
-                        }
-
-                        if (!string.IsNullOrEmpty(keyBytesEntry))
-                        {
-                            AddSimLine(ref simLines, new SimEntry(key, keyBytesEntry, string.Empty, ecuAddr, true));
-                        }
-                        else
-                        {
                             AddSimLine(ref simLines, new SimEntry(key, request, response, ecuAddr));
                         }
                     }
