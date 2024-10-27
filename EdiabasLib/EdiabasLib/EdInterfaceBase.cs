@@ -54,6 +54,7 @@ namespace EdiabasLib
         protected Queue<byte[]> SimulationRecQueue = new Queue<byte[]>();
         protected byte[] SimFrequentResponse;
         protected int? SimEcuAddr;
+        protected int? SimWakeAddr;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
         protected object MutexLock = new object();
@@ -186,6 +187,12 @@ namespace EdiabasLib
             }
 
             return true;
+        }
+
+        public virtual int? GetSimAddr()
+        {
+            int? simAddr = SimWakeAddr ?? SimEcuAddr;
+            return simAddr;
         }
 
         public virtual bool LoadInterfaceSimFile()
