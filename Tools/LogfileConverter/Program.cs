@@ -1832,13 +1832,8 @@ namespace LogfileConverter
                             AddSimLine(ref simLines, new SimEntry(key, keyBytesEntry, string.Empty, ecuAddr, true));
                         }
 
-                        if (dataLengthReq > 0 && dataLengthResp > 0)
+                        if (responseBytes.Count > 0)
                         {
-                            if (responseBytes.Count == 0)
-                            {
-                                continue;
-                            }
-
                             string key = GenerateKey(BitConverter.ToString(requestUse.ToArray()));
                             if (string.IsNullOrWhiteSpace(key))
                             {
