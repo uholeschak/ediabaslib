@@ -419,6 +419,7 @@ namespace EdiabasLib
                 LastKwp1281Cmd = 0x00;
 
                 SimEcuAddr = null;
+                SimWakeAddr = null;
 
                 if (CommParameterProtected == null)
                 {   // clear parameter
@@ -591,7 +592,7 @@ namespace EdiabasLib
                         ParSendSetDtr = true;
                         ParAllowBitBang = EnableFtdiBitBang;
                         ParHasKeyBytes = true;
-                        SimEcuAddr = ParWakeAddress;
+                        SimWakeAddr = ParWakeAddress;
                         break;
 
                     case 0x0003:    // Concept 3
@@ -630,7 +631,7 @@ namespace EdiabasLib
                         ParAllowBitBang = EnableFtdiBitBang;
                         ParHasKeyBytes = true;
                         ParSupportFrequent = true;
-                        SimEcuAddr = ParWakeAddress;
+                        SimWakeAddr = ParWakeAddress;
                         break;
 
                     case 0x0005:    // DS1
@@ -982,7 +983,8 @@ namespace EdiabasLib
                 {
                     if (CommParameterProtected != null && ParHasKeyBytes)
                     {
-                        byte[] keyBytes = GetKeyBytesSimulation(SimEcuAddr);
+                        int? simAddr = GetSimAddr();
+                        byte[] keyBytes = GetKeyBytesSimulation(simAddr);
                         if (keyBytes != null)
                         {
                             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "KeyBytes");
@@ -1651,8 +1653,8 @@ namespace EdiabasLib
                                     wakeAddress |= 0x80;
                                 }
                                 ParEdicWakeAddress = wakeAddress;
-                                SimEcuAddr = ParEdicEcuAddress;
-                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Wake: {0:X02}, Tester: {1:X02}, Ecu: {2:X02}", ParEdicWakeAddress, ParEdicTesterAddress, ParEdicEcuAddress);
+                                SimWakeAddr = ParEdicEcuAddress;
+                                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Wake: {0:X02}", ParEdicWakeAddress);
                             }
                             return true;
 
@@ -1760,7 +1762,7 @@ namespace EdiabasLib
                 byte[] simRequest = new byte[sendData.Length];
                 Array.Copy(sendData, simRequest, sendData.Length);
 
-                int? simEcuAddr = SimEcuAddr;
+                int? simAddr = GetSimAddr();
                 bool isIsoTp = false;
                 if (EdicSimulation)
                 {
@@ -1775,7 +1777,7 @@ namespace EdiabasLib
                                 simRequest = new byte[ParEdicTesterPresentTelLen];
                                 Array.Copy(ParEdicTesterPresentTel, simRequest, ParEdicTesterPresentTelLen);
 
-                                if (TransmitSimulationData(simRequest, out byte[] testerResponse, simEcuAddr))
+                                if (TransmitSimulationData(simRequest, out byte[] testerResponse, simAddr))
                                 {
                                     if (testerResponse.Length == 1 && testerResponse[0] == 0x7E)
                                     {   // short request
@@ -1808,7 +1810,7 @@ namespace EdiabasLib
 
                         if (UdsEcuCanIdOverride >= 0)
                         {
-                            simEcuAddr = UdsEcuCanIdOverride;
+                            simAddr = UdsEcuCanIdOverride;
                             EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS ECU CAN ID with {0:X04}", UdsEcuCanIdOverride);
                         }
                     }
@@ -1818,7 +1820,7 @@ namespace EdiabasLib
                         {
                             // tester present check
                             simRequest = new byte[] { 0x3E };
-                            if (TransmitSimulationData(simRequest, out byte[] testerResponse, simEcuAddr))
+                            if (TransmitSimulationData(simRequest, out byte[] testerResponse, simAddr))
                             {
                                 if (testerResponse.Length == 5 && testerResponse[0] == 0x81 && testerResponse[1] == 0xF1 && testerResponse[3] == 0x7E)
                                 {
@@ -1836,7 +1838,7 @@ namespace EdiabasLib
                         if (simRequest.Length == 0)
                         {
                             // tester present check
-                            byte[] keyBytesSim = GetKeyBytesSimulation(simEcuAddr);
+                            byte[] keyBytesSim = GetKeyBytesSimulation(simAddr);
                             if (keyBytesSim == null)
                             {
                                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
@@ -1849,7 +1851,7 @@ namespace EdiabasLib
                     }
                 }
 
-                if (!TransmitSimulationData(simRequest, out byte[] simResponse, simEcuAddr, ParTransmitFunc == TransBmwFast))
+                if (!TransmitSimulationData(simRequest, out byte[] simResponse, simAddr, ParTransmitFunc == TransBmwFast))
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
                     return false;
@@ -1954,7 +1956,8 @@ namespace EdiabasLib
             if (IsSimulationMode())
             {
                 SimFrequentResponse = null;
-                if (TransmitSimulationData(sendData, out byte[] receiveData, SimEcuAddr))
+                int? simAddr = GetSimAddr();
+                if (TransmitSimulationData(sendData, out byte[] receiveData, simAddr))
                 {
                     SimFrequentResponse = receiveData;
                 }
