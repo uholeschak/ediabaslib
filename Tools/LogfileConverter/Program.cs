@@ -1727,7 +1727,10 @@ namespace LogfileConverter
                             }
                             if ((edicType & EdicTypes.Kwp2000) != EdicTypes.None)
                             {
-                                AddSimDataEntries(ref simAddData, simAddDataEdicKwp2000, ecuAddr);
+                                if (ecuAddr != null)
+                                {
+                                    AddSimDataEntries(ref simAddData, simAddDataEdicKwp2000, ecuAddr);
+                                }
                             }
                             if ((edicType & EdicTypes.Kwp1281) != EdicTypes.None)
                             {
