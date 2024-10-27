@@ -71,10 +71,12 @@ If one simulation file should be used for multiple ECUs the ECU address has to b
 ### ECU (wake) address
 With the extended syntax the ECU (wake) address could be specified in every section entry.  
 The address is defined as follows for the different protocols:
-  * UDS ISO 14229: The address is the 16 bit CAN address.
-  * TP2.0: The address is the 8 bit ECU address.
-  * KWP 2000, ISO 9141: The address is the 8 bit ECU wake address and not the ECU address.
-The section name has to be prefixed by the ecu address in hex:`[<addr>.<section name>]`.  
+* UDS ISO 14229: The address is the 16 bit CAN address.
+* TP2.0: The address is the 8 bit ECU address.
+* KWP 2000, ISO 9141: The address is the 8 bit ECU wake address.
+* Other: The adress is encoded in the request telegram and not required in the section entry.  
+
+The section name has to be prefixed by the address in hex:`[<addr>.<section name>]`.  
 
 ### Request value matching
 The request values could be matched by a mask combined with an operator.  
