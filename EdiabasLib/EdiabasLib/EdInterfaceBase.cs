@@ -447,14 +447,13 @@ namespace EdiabasLib
         protected bool TransmitSimulationInternal(byte[] sendData, out List<byte> receiveData, int? simEcuAddr = null, int? simWakeAddr = null)
         {
             receiveData = null;
-            int? simAddr = simWakeAddr ?? simEcuAddr;
             EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Transmit sim ECU={0:X02}, Wake={0:X02}", simEcuAddr ?? 0, simWakeAddr ?? 0);
-
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
+
             if (EdSimFileSgbd != null)
             {
-                List<byte> response = EdSimFileSgbd.GetResponse(sendData.ToList(), simAddr);
-                if (response == null && simAddr != null)
+                List<byte> response = EdSimFileSgbd.GetResponse(sendData.ToList(), simEcuAddr, simWakeAddr);
+                if (response == null && (simEcuAddr != null || simWakeAddr != null))
                 {   // try without ecu address
                     response = EdSimFileSgbd.GetResponse(sendData.ToList());
                 }
@@ -469,8 +468,8 @@ namespace EdiabasLib
 
             if (EdSimFileInterface != null)
             {
-                List<byte> response = EdSimFileInterface.GetResponse(sendData.ToList(), simAddr);
-                if (response == null && simAddr != null)
+                List<byte> response = EdSimFileInterface.GetResponse(sendData.ToList(), simEcuAddr, simWakeAddr);
+                if (response == null && (simEcuAddr != null || simWakeAddr != null))
                 {   // try without ecu address
                     response = EdSimFileInterface.GetResponse(sendData.ToList());
                 }
@@ -495,15 +494,14 @@ namespace EdiabasLib
                 return null;
             }
 
-            int? simAddr = simWakeAddr ?? simEcuAddr;
             EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "KeyBytes sim ECU={0:X02}, Wake={0:X02}", simEcuAddr ?? 0, simWakeAddr ?? 0);
 
             if (EdSimFileSgbd != null)
             {
                 List<byte> keyBytes = EdSimFileSgbd.GetKeyBytes();
-                if (keyBytes == null && simAddr != null)
+                if (keyBytes == null && (simEcuAddr != null || simWakeAddr != null))
                 {
-                    keyBytes = EdSimFileSgbd.GetKeyBytes(simAddr);
+                    keyBytes = EdSimFileSgbd.GetKeyBytes(simEcuAddr, simWakeAddr);
                 }
 
                 if (keyBytes != null)
@@ -515,9 +513,9 @@ namespace EdiabasLib
             if (EdSimFileInterface != null)
             {
                 List<byte> keyBytes = EdSimFileInterface.GetKeyBytes();
-                if (keyBytes == null && simAddr != null)
+                if (keyBytes == null && (simEcuAddr != null || simWakeAddr != null))
                 {
-                    keyBytes = EdSimFileInterface.GetKeyBytes(simAddr);
+                    keyBytes = EdSimFileInterface.GetKeyBytes(simEcuAddr, simWakeAddr);
                 }
 
                 if (keyBytes != null)

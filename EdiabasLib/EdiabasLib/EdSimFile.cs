@@ -156,8 +156,9 @@ namespace EdiabasLib
             }
         }
 
-        public List<byte> GetResponse(List<byte> request, int? ecuAddr = null)
+        public List<byte> GetResponse(List<byte> request, int? simEcuAddr = null, int? simWakeAddr = null)
         {
+            int? ecuAddr = simWakeAddr ?? simEcuAddr;
             for (int iteration = 0; iteration < 2; ++iteration)
             {
                 foreach (ResponseInfo responseInfo in _responseInfos)
@@ -202,13 +203,13 @@ namespace EdiabasLib
                         }
                     }
 
-                    List<byte> requestInfoList = ConvertData(responseInfo.RequestData, null, request, ecuAddr);
+                    List<byte> requestInfoList = ConvertData(responseInfo.RequestData, null, request, simEcuAddr, simWakeAddr);
                     if (requestInfoList == null)
                     {
                         continue;
                     }
 
-                    List<byte> requestDataList = ConvertData(responseInfo.RequestData, request, request, ecuAddr);
+                    List<byte> requestDataList = ConvertData(responseInfo.RequestData, request, request, simEcuAddr, simWakeAddr);
                     if (requestDataList == null)
                     {
                         continue;
@@ -243,7 +244,7 @@ namespace EdiabasLib
                             responseInfo.ResponseIndex = responseIndex;
                         }
 
-                        return ConvertData(response, null, request, ecuAddr);
+                        return ConvertData(response, null, request, simEcuAddr, simWakeAddr);
                     }
                 }
             }
@@ -251,8 +252,9 @@ namespace EdiabasLib
             return null;
         }
 
-        public List<byte> GetKeyBytes(int? ecuAddr = null)
+        public List<byte> GetKeyBytes(int? simEcuAddr = null, int? simWakeAddr = null)
         {
+            int? ecuAddr = simWakeAddr ?? simEcuAddr;
             foreach (ResponseInfo responseInfo in _keyBytesInfos)
             {
                 if ((responseInfo.EcuAddr ?? -1) != (ecuAddr ?? -1))
@@ -272,13 +274,13 @@ namespace EdiabasLib
                     responseInfo.ResponseIndex = responseIndex;
                 }
 
-                return ConvertData(response, null, null, ecuAddr);
+                return ConvertData(response, null, null, simEcuAddr, simWakeAddr);
             }
 
             return null;
         }
 
-        private static List<byte> ConvertData(List<DataItem> dataItems, List<byte> inputData, List<byte> requestData, int? ecuAddr)
+        private static List<byte> ConvertData(List<DataItem> dataItems, List<byte> inputData, List<byte> requestData, int? simEcuAddr, int? simWakeAddr)
         {
             if (dataItems == null)
             {
@@ -327,18 +329,18 @@ namespace EdiabasLib
                                 break;
 
                             case DataItem.OperatorDataType.EcuAddr:
-                                if (ecuAddr == null)
+                                if (simEcuAddr == null)
                                 {
                                     return null;
                                 }
 
                                 if (operatorIndex == 0)
                                 {
-                                    operatorValue = (byte)(ecuAddr.Value & 0xFF);
+                                    operatorValue = (byte)(simEcuAddr.Value & 0xFF);
                                 }
                                 else if (operatorIndex == 1)
                                 {
-                                    operatorValue = (byte)((ecuAddr.Value >> 8) & 0xFF);
+                                    operatorValue = (byte)((simEcuAddr.Value >> 8) & 0xFF);
                                 }
                                 else
                                 {
