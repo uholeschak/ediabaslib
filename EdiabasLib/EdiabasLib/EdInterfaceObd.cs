@@ -1653,7 +1653,8 @@ namespace EdiabasLib
                                     wakeAddress |= 0x80;
                                 }
                                 ParEdicWakeAddress = wakeAddress;
-                                SimWakeAddr = ParEdicEcuAddress;
+                                SimEcuAddr = ParEdicEcuAddress;
+                                SimWakeAddr = ParEdicWakeAddress;
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC Wake: {0:X02}", ParEdicWakeAddress);
                             }
                             return true;
@@ -1665,6 +1666,7 @@ namespace EdiabasLib
                                 ParEdicTesterAddress = (byte) CommParameterProtected[70];
                                 ParEdicEcuAddress = (byte) CommParameterProtected[71];
                                 SimEcuAddr = ParEdicEcuAddress;
+                                SimWakeAddr = ParEdicWakeAddress;
                                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "EDIC CAN: {0:X02}, Tester: {1:X02}, Ecu: {2:X02}", ParEdicWakeAddress, ParEdicTesterAddress, ParEdicEcuAddress);
 
                                 ParEdicAddRetries = 3;
