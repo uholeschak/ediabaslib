@@ -983,8 +983,7 @@ namespace EdiabasLib
                 {
                     if (CommParameterProtected != null && ParHasKeyBytes)
                     {
-                        int? simAddr = GetSimAddr();
-                        byte[] keyBytes = GetKeyBytesSimulation(simAddr);
+                        byte[] keyBytes = GetKeyBytesSimulation(SimEcuAddr, SimWakeAddr);
                         if (keyBytes != null)
                         {
                             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "KeyBytes");
@@ -1764,7 +1763,8 @@ namespace EdiabasLib
                 byte[] simRequest = new byte[sendData.Length];
                 Array.Copy(sendData, simRequest, sendData.Length);
 
-                int? simAddr = GetSimAddr();
+                int? simEcuAddr = SimEcuAddr;
+                int? simWakeAddr = SimWakeAddr;
                 bool isIsoTp = false;
                 if (EdicSimulation)
                 {
@@ -1779,7 +1779,7 @@ namespace EdiabasLib
                                 simRequest = new byte[ParEdicTesterPresentTelLen];
                                 Array.Copy(ParEdicTesterPresentTel, simRequest, ParEdicTesterPresentTelLen);
 
-                                if (TransmitSimulationData(simRequest, out byte[] testerResponse, simAddr))
+                                if (TransmitSimulationData(simRequest, out byte[] testerResponse, simEcuAddr, simWakeAddr))
                                 {
                                     if (testerResponse.Length == 1 && testerResponse[0] == 0x7E)
                                     {   // short request
@@ -1812,7 +1812,7 @@ namespace EdiabasLib
 
                         if (UdsEcuCanIdOverride >= 0)
                         {
-                            simAddr = UdsEcuCanIdOverride;
+                            simEcuAddr = UdsEcuCanIdOverride;
                             EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Overriding UDS ECU CAN ID with {0:X04}", UdsEcuCanIdOverride);
                         }
                     }
@@ -1822,7 +1822,7 @@ namespace EdiabasLib
                         {
                             // tester present check
                             simRequest = new byte[] { 0x3E };
-                            if (TransmitSimulationData(simRequest, out byte[] testerResponse, simAddr))
+                            if (TransmitSimulationData(simRequest, out byte[] testerResponse, simEcuAddr, simWakeAddr))
                             {
                                 if (testerResponse.Length == 5 && testerResponse[0] == 0x81 && testerResponse[1] == 0xF1 && testerResponse[3] == 0x7E)
                                 {
@@ -1840,7 +1840,7 @@ namespace EdiabasLib
                         if (simRequest.Length == 0)
                         {
                             // tester present check
-                            byte[] keyBytesSim = GetKeyBytesSimulation(simAddr);
+                            byte[] keyBytesSim = GetKeyBytesSimulation(simEcuAddr, simWakeAddr);
                             if (keyBytesSim == null)
                             {
                                 EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
@@ -1853,7 +1853,7 @@ namespace EdiabasLib
                     }
                 }
 
-                if (!TransmitSimulationData(simRequest, out byte[] simResponse, simAddr, ParTransmitFunc == TransBmwFast))
+                if (!TransmitSimulationData(simRequest, out byte[] simResponse, simEcuAddr, simWakeAddr, ParTransmitFunc == TransBmwFast))
                 {
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0009);
                     return false;
@@ -1958,8 +1958,7 @@ namespace EdiabasLib
             if (IsSimulationMode())
             {
                 SimFrequentResponse = null;
-                int? simAddr = GetSimAddr();
-                if (TransmitSimulationData(sendData, out byte[] receiveData, simAddr))
+                if (TransmitSimulationData(sendData, out byte[] receiveData, SimEcuAddr, SimWakeAddr))
                 {
                     SimFrequentResponse = receiveData;
                 }
