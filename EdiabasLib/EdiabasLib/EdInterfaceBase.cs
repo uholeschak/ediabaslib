@@ -448,10 +448,7 @@ namespace EdiabasLib
         {
             receiveData = null;
             int? simAddr = simWakeAddr ?? simEcuAddr;
-            if (simAddr != null)
-            {
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Transmit sim addr: {0:X02}", simAddr);
-            }
+            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Transmit sim ECU={0:X02}, Wake={0:X02}", simEcuAddr ?? 0, simWakeAddr ?? 0);
 
             EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send sim");
             if (EdSimFileSgbd != null)
@@ -499,10 +496,7 @@ namespace EdiabasLib
             }
 
             int? simAddr = simWakeAddr ?? simEcuAddr;
-            if (simAddr != null)
-            {
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "KeyBytes sim addr: {0:X02}", simAddr);
-            }
+            EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "KeyBytes sim ECU={0:X02}, Wake={0:X02}", simEcuAddr ?? 0, simWakeAddr ?? 0);
 
             if (EdSimFileSgbd != null)
             {
