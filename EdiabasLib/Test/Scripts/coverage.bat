@@ -3,6 +3,7 @@ SETLOCAL EnableDelayedExpansion
 
 rem Start CarSimulator with e61.txt config first
 rem For EDIABAS set the COM port in obd.ini (max COM9)
+rem Compile solution EdiabasLib as Debug first.
 rem Arguments: <test type:lib|apilib|ediabas> <interface: ENET|STD:OBD> <port: COM4>
 
 set BATPATH=%~dp0
