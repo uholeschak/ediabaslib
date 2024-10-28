@@ -8,6 +8,7 @@ echo !DATESTR!
 set PACKAGEPATH="!BATPATH!Package\"
 set EDIABASTESTPATH="!PACKAGEPATH!EdiabasTest\"
 set TOOLPATH="!PACKAGEPATH!EdiabasLibConfigTool\"
+set LOGCONVPATH="!PACKAGEPATH!LogfileConverter\"
 set APINET32PATH="!PACKAGEPATH!ApiNet32\"
 set CANADAPTERPATH="!PACKAGEPATH!CanAdapter\"
 set CANADAPTERELMPATH="!PACKAGEPATH!CanAdapterElm\"
@@ -36,6 +37,9 @@ copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\ru\*.dll" "!TOOLPATH!ru" || 
 
 mkdir "!TOOLPATH!Api32" || EXIT /b 1
 copy "!BATPATH!EdiabasLibConfigTool\bin\x86\Release\Api32\*.*" "!TOOLPATH!Api32" || EXIT /b 1
+
+mkdir "!LOGCONVPATH!" || EXIT /b 1
+copy "!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\*.*" "!LOGCONVPATH!" || EXIT /b 1
 
 mkdir "!APINET32PATH!" || EXIT /b 1
 copy "!BATPATH!apiNET32\bin\Release\*.dll" "!APINET32PATH!" || EXIT /b 1
