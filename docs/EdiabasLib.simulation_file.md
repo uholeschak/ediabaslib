@@ -10,7 +10,9 @@ Simulation files could be auto generated from trace files by the [LogfileConvert
 EdiabasLib has the following properties to configure the simulation mode:
 * `Simulation`: 1=Enable simulation mode, default is 0.
 * `SimulationPath`: Path to the simulation directory containing the interface or SGBD simulation files.
-* `SimulationCompat`: 1=Enable simulation compatibility mode, default is 0. If disabled, the property `Simulation` is hidden from the SGBD file and always 0.
+* `SimulationCompat`: 1=Enable simulation compatibility mode, default is 0. If disabled, the property `Simulation` is hidden from the SGBD file and always 0.  
+With enabled `Simulation` property the SGDB will read only the first response for BMW-FAST telegrams with functional addressing.  
+The extended simulation file syntax allows multiple responses for one request in BMW-FAST mode.
 * `SimulationInterfaces`: (Non standard) Comma separated list of interface names to check for corresponding lower case interface `.sim` file names. These names could contain wildcards.  
 The Deep OBD app default is: `OBD,ENET,EDIC,OBD_*,ENET_*,EDIC_*`.
 
