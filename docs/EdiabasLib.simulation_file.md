@@ -167,3 +167,13 @@ key2=06,01+[01],FC,FF,FF,88,03
 ```
 
 It's valid to use ISO 9141 and KWP 2000 ECUs in the same simulation file. The ECU address is identical.
+
+Sample with BMW-FAST (OBD or ENET interface) telegrams:  
+Functional request (`CX` header with bit 6-7 set) and multiple responses. Each response is a full frame including ECU address and checksum.
+```ini
+[REQUEST]
+key1=C4,DF,F1,31,01,0F,06
+
+[RESPONSE]
+key1=84,F1,08,71,01,0F,06,04,84,F1,2C,71,01,0F,06,28,84,F1,18,71,01,0F,06,14,84,F1,0B,71,01,0F,06,07,84,F1,5E,71,01,0F,06,5A,84,F1,61,71,01,0F,06,5D,84,F1,30,71,01,0F,06,2C,84,F1,63,71,01,0F,06,5F,84,F1,56,71,01,0F,06,52,84,F1,0D,71,01,0F,06,09,84,F1,43,71,01,0F,06,3F,84,F1,44,71,01,0F,06,40,84,F1,10,71,01,0F,06,0C,84,F1,67,71,01,0F,06,63,84,F1,40,71,01,0F,06,3C,84,F1,5D,71,01,0F,06,59,84,F1,76,71,01,0F,06,72,84,F1,78,71,01,0F,06,74,84,F1,01,71,01,0F,06,FD,84,F1,60,71,01,0F,06,5C,84,F1,21,71,01,0F,06,1D,84,F1,29,71,01,0F,06,25,84,F1,22,71,01,0F,06,1E
+```
