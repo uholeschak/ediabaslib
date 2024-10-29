@@ -761,7 +761,7 @@ namespace EdiabasLibConfigTool
 
                 string configFile = Path.Combine(dirName, ConfigFileName);
                 string iniFile = null;
-                if (registryViewIsta != null)
+                if (patchType == PatchType.Istad && registryViewIsta != null)
                 {
                     iniFile = Path.Combine(dirName, IniFileName);
                 }
