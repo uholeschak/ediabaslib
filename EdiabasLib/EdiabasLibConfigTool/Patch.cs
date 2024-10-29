@@ -9,6 +9,7 @@ using System.Text;
 using System.Xml.Linq;
 using EdiabasLib;
 using InTheHand.Net.Sockets;
+using Microsoft.Win32;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
 
@@ -29,27 +30,37 @@ namespace EdiabasLibConfigTool
         public const string ApiDirName = @"Api32";
         public const string Api32DllName = @"api32.dll";
         public const string Api64DllName = @"api64.dll";
-        private const string Api32DllBackupName = @"api32.backup.dll";
-        private const string Api64DllBackupName = @"api64.backup.dll";
-        private const string ConfigFileName = @"EdiabasLib.config";
+        public const string Api32DllBackupName = @"api32.backup.dll";
+        public const string Api64DllBackupName = @"api64.backup.dll";
+        public const string ConfigFileName = @"EdiabasLib.config";
+        public const string IniFileName = @"EDIABAS.INI";
+        public const string SectionConfig = @"Configuration";
+        public const string KeyInterface = @"Interface";
+        public const string IstaDefaultPath = @"BMW\ISPI\TRIC\ISTA";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
         static class NativeMethods
         {
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
             public static extern int LoadLibrary(string dllToLoad);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
             public static extern IntPtr GetProcAddress(int hModule, string procedureName);
 
             [DllImport("kernel32.dll")]
             public static extern bool FreeLibrary(int hModule);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern bool SetDllDirectory(string lpPathName);
 
             [DllImport("kernel32.dll")]
             public static extern ErrorModes SetErrorMode(ErrorModes uMode);
+
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+            public static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
+
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+            public static extern int GetPrivateProfileString(string Section, string Key, string Default, StringBuilder RetVal, int Size, string FilePath);
 
             [Flags]
             // ReSharper disable UnusedMember.Local
@@ -87,6 +98,49 @@ namespace EdiabasLibConfigTool
                 string path = Uri.UnescapeDataString(uri.Path);
                 return Path.GetDirectoryName(path);
             }
+        }
+
+        public static string NormalizePath(string path)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    return null;
+                }
+
+                return Path.GetFullPath(new Uri(path).LocalPath)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    .ToUpperInvariant();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static bool PathStartWith(string fullPath, string subPath)
+        {
+            try
+            {
+                string fullPathNorm = NormalizePath(fullPath);
+                string subPathNorm = NormalizePath(subPath);
+                if (string.IsNullOrEmpty(fullPathNorm) || string.IsNullOrEmpty(subPathNorm))
+                {
+                    return false;
+                }
+
+                if (fullPathNorm.IndexOf(subPathNorm, StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         public static bool IsOriginalDll(string fileName)
@@ -259,18 +313,51 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        public static bool UpdateConfigFile(string fileName, int adapterType, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
+        public static void UpdateIniFile(string fileName, string section, string key, string value, bool onlyExisting = false)
         {
             try
             {
-                XDocument xDocument = XDocument.Load(fileName);
+                if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(section) || string.IsNullOrEmpty(key))
+                {
+                    return;
+                }
+
+                if (onlyExisting)
+                {
+                    if (!File.Exists(fileName))
+                    {
+                        return;
+                    }
+
+                    StringBuilder sb = new StringBuilder(1000);
+                    int result = NativeMethods.GetPrivateProfileString(section, key, null, sb, sb.Capacity, fileName);
+                    if (result == 0)
+                    {
+                        return;
+                    }
+                }
+
+                NativeMethods.WritePrivateProfileString(section, key, value, fileName);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        public static bool UpdateConfigFile(string configFile, string iniFile, int adapterType, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
+        {
+            try
+            {
+                XDocument xDocument = XDocument.Load(configFile);
                 XElement settingsNode = xDocument.Root?.Element("appSettings");
                 if (settingsNode == null)
                 {
                     return false;
                 }
+
                 string interfaceValue = @"STD:OBD";
-                if (fileName.ToLowerInvariant().Contains(@"\SIDIS\home\DBaseSys2\".ToLowerInvariant()))
+                if (configFile.ToLowerInvariant().Contains(@"\SIDIS\home\DBaseSys2\".ToLowerInvariant()))
                 {   // VAS-PC instalation
                     interfaceValue = @"EDIC";
                 }
@@ -286,12 +373,14 @@ namespace EdiabasLibConfigTool
                     {
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
-                        UpdateConfigNode(settingsNode, @"Interface", @"ENET");
+                        UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
+                        UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
                     }
                     else
                     {
                         UpdateConfigNode(settingsNode, @"ObdComPort", "DEEPOBDWIFI");
-                        UpdateConfigNode(settingsNode, @"Interface", interfaceValue);
+                        UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
+                        UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
                     }
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
@@ -300,7 +389,8 @@ namespace EdiabasLibConfigTool
                     string portValue = string.Format("BLUETOOTH:{0}#{1}", devInfo.DeviceAddress, pin);
 
                     UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
-                    UpdateConfigNode(settingsNode, @"Interface", interfaceValue);
+                    UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
+                    UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
 
                     string keepConnectionValue;
                     switch (adapterType)
@@ -323,14 +413,15 @@ namespace EdiabasLibConfigTool
                     string vehicleProtocol = enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.DirectDoIp ?
                         EdInterfaceEnet.ProtocolDoIp : EdInterfaceEnet.ProtocolHsfz;
                     UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
-                    UpdateConfigNode(settingsNode, @"Interface", @"ENET");
+                    UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
+                    UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else
                 {
                     return false;
                 }
-                xDocument.Save(fileName);
+                xDocument.Save(configFile);
             }
             catch (Exception)
             {
@@ -647,8 +738,35 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
+                RegistryView? registryViewIsta = null;
+                string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
+                if (!string.IsNullOrEmpty(programFiles))
+                {
+                    string istaPath = Path.Combine(programFiles, IstaDefaultPath);
+                    if (PathStartWith(dirName, istaPath))
+                    {
+                        registryViewIsta = RegistryView.Registry64;
+                    }
+                }
+
+                string programFilesX86 = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%");
+                if (!string.IsNullOrEmpty(programFilesX86))
+                {
+                    string istaPath = Path.Combine(programFilesX86, IstaDefaultPath);
+                    if (PathStartWith(dirName, istaPath))
+                    {
+                        registryViewIsta = RegistryView.Registry32;
+                    }
+                }
+
                 string configFile = Path.Combine(dirName, ConfigFileName);
-                if (!UpdateConfigFile(configFile, adapterType, devInfo, wlanIface, enetConnection, pin))
+                string iniFile = null;
+                if (registryViewIsta != null)
+                {
+                    iniFile = Path.Combine(dirName, IniFileName);
+                }
+
+                if (!UpdateConfigFile(configFile, iniFile, adapterType, devInfo, wlanIface, enetConnection, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
