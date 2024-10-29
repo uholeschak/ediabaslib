@@ -36,21 +36,26 @@ namespace EdiabasLibConfigTool
 
         static class NativeMethods
         {
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
             public static extern int LoadLibrary(string dllToLoad);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
             public static extern IntPtr GetProcAddress(int hModule, string procedureName);
 
             [DllImport("kernel32.dll")]
             public static extern bool FreeLibrary(int hModule);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern bool SetDllDirectory(string lpPathName);
 
             [DllImport("kernel32.dll")]
             public static extern ErrorModes SetErrorMode(ErrorModes uMode);
 
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+            static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
+
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+            static extern int GetPrivateProfileString(string Section, string Key, string Default, StringBuilder RetVal, int Size, string FilePath);
             [Flags]
             // ReSharper disable UnusedMember.Local
             // ReSharper disable InconsistentNaming
