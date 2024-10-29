@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name="tab_errors" fontsize="small" no_update="true">
+    <strings>
+      <string name="tab_errors">Errors</string>
+
+      <string name="ACSM">ACSM Crash security module</string>
+      <string name="AHM">AHM Trailer module</string>
+      <string name="CAS">CAS Car access system</string>
+      <string name="CCCA">CCC-A Applications</string>
+      <string name="CCCANT">CCC-ANT Antenna tuner</string>
+      <string name="CCCASK">CCC-ASK Audio system controller</string>
+      <string name="CCCBO">CCC-BO Front panel</string>
+      <string name="CCCGW">CCC-GW Gateway</string>
+      <string name="CDC">CDC CD disk charger</string>
+      <string name="CID">CID Central information display</string>
+      <string name="CON">CON Controller</string>
+      <string name="DDE">DDE Diesel elektronic</string>
+      <string name="DSC">DSC Dynamic stability control</string>
+      <string name="EHC">EHC Level control</string>
+      <string name="EKPS">EKPS Fuel pump control</string>
+      <string name="IHK">IHK Integrated heating climate automatic</string>
+      <string name="KBM">KBM Chassis basic module</string>
+      <string name="KGM">KGM Chassis gateway module</string>
+      <string name="KOMBI">KOMBI Combination instrument</string>
+      <string name="LM">LM Light module</string>
+      <string name="PDC">PDC Park distance control</string>
+      <string name="RLS">RLS Rain main beam sensor</string>
+      <string name="SZL">SZL Gearshift unit steering column</string>
+      <string name="SZM">SZM Gearshift unit center console</string>
+      <string name="TCU">TCU Telematic control unit</string>
+
+      <string name="uw_rpm">RPM</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_errors">Fehler</string>
+
+      <string name="ACSM">ACSM Crash-Sicherheits-Modul</string>
+      <string name="AHM">AHM Anhängermodul</string>
+      <string name="CAS">CAS Car Access System</string>
+      <string name="CCCA">CCC-A Anwendungen</string>
+      <string name="CCCANT">CCC-ANT Antennentuner</string>
+      <string name="CCCASK">CCC-ASK Audiosystem-Kontroller</string>
+      <string name="CCCBO">CCC-BO Bedienoberfläche</string>
+      <string name="CCCGW">CCC-GW Gateway</string>
+      <string name="CDC">CDC CD-Wechsler</string>
+      <string name="CID">CID Central Information Display</string>
+      <string name="CON">CON Controller</string>
+      <string name="DDE">DDE Diesel Elektronik</string>
+      <string name="DSC">DSC Dynamische Stabilitätskontrolle</string>
+      <string name="EHC">EHC Höhenstands Control</string>
+      <string name="EKPS">EKPS Kraftstoffpumpensteuerung</string>
+      <string name="IHK">IHK Integrierte Heiz-Klima-Automatik</string>
+      <string name="KBM">KBM Karosserie-Basismodul</string>
+      <string name="KGM">KGM Karosserie-Gateway-Modul</string>
+      <string name="KOMBI">KOMBI Instrumentenkombination</string>
+      <string name="LM">LM Lichtmodul</string>
+      <string name="PDC">PDC Park-Distance-Control</string>
+      <string name="RLS">RLS Regen-Fahrlicht-Sensor</string>
+      <string name="SZL">SZL Schaltzentrum Lenksäule</string>
+      <string name="SZM">SZM Schaltzentrum Mittelkonsole</string>
+      <string name="TCU">TCU Telematic Control Unit</string>
+
+      <string name="uw_rpm">Drehzahl</string>
+    </strings>
+    <read_errors sgbd_functional="e60.prg" vehicle_series="E61" >
+      <ecu name="CAS" sgbd="d_cas" />
+      <ecu name="DDE" sgbd="d_motor" results="F_UW_KM;F_UW_ANZ" />
+      <ecu name="EKPS" sgbd="d_ekp" />
+      <ecu name="EHC" sgbd="d_ehc" />
+      <ecu name="DSC" sgbd="d_dsc" />
+      <ecu name="ACSM" sgbd="d_sim" />
+      <ecu name="AHM" sgbd="d_ahm" />
+      <ecu name="CCCBO" sgbd="d_mmi" />
+      <ecu name="CCCGW" sgbd="d_mostgw" />
+      <ecu name="CCCA" sgbd="d_ccc" />
+      <ecu name="CCCANT" sgbd="d_anttu" />
+      <ecu name="CCCASK" sgbd="d_ask" />
+      <ecu name="CDC" sgbd="d_cdc" />
+      <ecu name="CID" sgbd="d_cid" />
+      <ecu name="CON" sgbd="d_ec" />
+      <ecu name="IHK" sgbd="d_klima" />
+      <ecu name="KBM" sgbd="d_kbm" />
+      <ecu name="KGM" sgbd="d_zgm" />
+      <ecu name="KOMBI" sgbd="d_kombi" />
+      <ecu name="LM" sgbd="d_lm" />
+      <ecu name="PDC" sgbd="d_pdc" />
+      <!-- d_rls is too slow -->
+      <ecu name="RLS" sgbd="rlss70" />
+      <ecu name="SZL" sgbd="d_szl" />
+      <ecu name="SZM" sgbd="d_bzm" />
+      <ecu name="TCU" sgbd="d_tel" />
+    </read_errors>
+    <code show_warnings="true">
+      <![CDATA[
+    class PageClass
+    {
+        public string FormatErrorResult(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, string defaultMessage)
+        {
+            string message = defaultMessage;
+            switch (errorReport.EcuName)
+            {
+                case "DDE":
+                {
+                    string detailText = string.Empty;
+                    foreach (Dictionary<string, EdiabasNet.ResultData> errorDetail in errorReport.ErrorDetailSet)
+                    {
+                        string rpmText = ActivityMain.FormatResultDouble(errorDetail, "F_UW1_WERT", "{0,6:0.0}");
+                        if (rpmText.Length > 0)
+                        {
+                            if (detailText.Length > 0)
+                            {
+                                detailText += " | ";
+                            }
+                            detailText += rpmText + " 1/min";
+                        }
+                    }
+                    if (detailText.Length > 0)
+                    {
+                        message += "\r\n- " + ActivityMain.GetPageString(pageInfo, "uw_rpm") + ": " + detailText;
+                    }
+                    break;
+                }
+            }
+            return message;
+        }
+    }
+      ]]>
+  </code>
+</page>
+</fragment>
