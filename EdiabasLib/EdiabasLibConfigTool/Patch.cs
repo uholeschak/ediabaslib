@@ -9,6 +9,7 @@ using System.Text;
 using System.Xml.Linq;
 using EdiabasLib;
 using InTheHand.Net.Sockets;
+using Microsoft.Win32;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
 
@@ -35,6 +36,7 @@ namespace EdiabasLibConfigTool
         public const string IniFileName = @"EDIABAS.INI";
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
+        public const string IstaDefaultPath = @"BMW\ISPI\TRIC\ISTA";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
         static class NativeMethods
@@ -96,6 +98,49 @@ namespace EdiabasLibConfigTool
                 string path = Uri.UnescapeDataString(uri.Path);
                 return Path.GetDirectoryName(path);
             }
+        }
+
+        public static string NormalizePath(string path)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    return null;
+                }
+
+                return Path.GetFullPath(new Uri(path).LocalPath)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    .ToUpperInvariant();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static bool PathStartWith(string fullPath, string subPath)
+        {
+            try
+            {
+                string fullPathNorm = NormalizePath(fullPath);
+                string subPathNorm = NormalizePath(subPath);
+                if (string.IsNullOrEmpty(fullPathNorm) || string.IsNullOrEmpty(subPathNorm))
+                {
+                    return false;
+                }
+
+                if (fullPathNorm.IndexOf(subPathNorm, StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
 
         public static bool IsOriginalDll(string fileName)
@@ -693,9 +738,30 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
+                RegistryView? registryViewIsta = null;
+                string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
+                if (!string.IsNullOrEmpty(programFiles))
+                {
+                    string istaPath = Path.Combine(programFiles, IstaDefaultPath);
+                    if (PathStartWith(dirName, istaPath))
+                    {
+                        registryViewIsta = RegistryView.Registry64;
+                    }
+                }
+
+                string programFilesX86 = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%");
+                if (!string.IsNullOrEmpty(programFilesX86))
+                {
+                    string istaPath = Path.Combine(programFilesX86, IstaDefaultPath);
+                    if (PathStartWith(dirName, istaPath))
+                    {
+                        registryViewIsta = RegistryView.Registry32;
+                    }
+                }
+
                 string configFile = Path.Combine(dirName, ConfigFileName);
                 string iniFile = null;
-                if (patchType == PatchType.Istad)
+                if (registryViewIsta != null)
                 {
                     iniFile = Path.Combine(dirName, IniFileName);
                 }
