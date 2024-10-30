@@ -382,13 +382,15 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
                         UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
-                        iniUpdated |= UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
+                        if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true))
+                        { iniUpdated = true; }
                     }
                     else
                     {
                         UpdateConfigNode(settingsNode, @"ObdComPort", "DEEPOBDWIFI");
                         UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
-                        iniUpdated |= UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
+                        if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true))
+                        {iniUpdated = true;}
                     }
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
@@ -398,7 +400,8 @@ namespace EdiabasLibConfigTool
 
                     UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
                     UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
-                    iniUpdated |= UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
+                    if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true))
+                    { iniUpdated = true; }
 
                     string keepConnectionValue;
                     switch (adapterType)
@@ -422,7 +425,8 @@ namespace EdiabasLibConfigTool
                         EdInterfaceEnet.ProtocolDoIp : EdInterfaceEnet.ProtocolHsfz;
                     UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
                     UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
-                    iniUpdated |= UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
+                    if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true))
+                    { iniUpdated = true; }
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else
