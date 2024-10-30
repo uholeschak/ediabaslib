@@ -333,7 +333,11 @@ namespace EdiabasLibConfigTool
                 {
                     if (result == 0)
                     {
-                        return false;
+                        result = NativeMethods.GetPrivateProfileString(section, key, "-", sb, sb.Capacity, fileName);
+                        if (result == 1)
+                        {
+                            return false;
+                        }
                     }
                 }
 
