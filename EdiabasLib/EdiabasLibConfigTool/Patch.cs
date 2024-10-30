@@ -823,7 +823,7 @@ namespace EdiabasLibConfigTool
             {
                 using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryViewIsta.Value))
                 {
-                    using (RegistryKey key = localMachine.OpenSubKey(@"BMW\ISPI\TRIC\ISTALauncher", true))
+                    using (RegistryKey key = localMachine.OpenSubKey(@"SOFTWARE\BMW\ISPI\TRIC\ISTALauncher", true))
                     {
                         if (key != null)
                         {
