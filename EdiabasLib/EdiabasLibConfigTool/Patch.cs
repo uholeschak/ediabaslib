@@ -313,36 +313,43 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        public static void UpdateIniFile(string fileName, string section, string key, string value, bool onlyExisting = false)
+        public static bool UpdateIniFile(string fileName, string section, string key, string value, bool onlyExisting = false)
         {
             try
             {
                 if (string.IsNullOrEmpty(fileName) || string.IsNullOrEmpty(section) || string.IsNullOrEmpty(key))
                 {
-                    return;
+                    return false;
                 }
 
+                if (!File.Exists(fileName))
+                {
+                    return false;
+                }
+
+                StringBuilder sb = new StringBuilder(1000);
+                int result = NativeMethods.GetPrivateProfileString(section, key, null, sb, sb.Capacity, fileName);
                 if (onlyExisting)
                 {
-                    if (!File.Exists(fileName))
-                    {
-                        return;
-                    }
-
-                    StringBuilder sb = new StringBuilder(1000);
-                    int result = NativeMethods.GetPrivateProfileString(section, key, null, sb, sb.Capacity, fileName);
                     if (result == 0)
                     {
-                        return;
+                        return false;
                     }
+                }
+
+                if (string.Compare(sb.ToString(), key, StringComparison.Ordinal) == 0)
+                {
+                    return false;
                 }
 
                 NativeMethods.WritePrivateProfileString(section, key, value, fileName);
+                return true;
             }
             catch (Exception)
             {
                 // ignored
             }
+            return false;
         }
 
         public static bool UpdateConfigFile(string configFile, string iniFile, int adapterType, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
