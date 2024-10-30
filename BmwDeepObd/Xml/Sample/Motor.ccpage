@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name="tab_motor" fontsize="small" logfile="motor-{D}.log">
+    <strings>
+      <string name="notification_title_battery">Battery</string>
+      <string name="notification_voltage_low">Voltage too low!</string>
+      <string name="tab_motor">Motor</string>
+      <string name="label_motor_air_mass">Air mass [kg/h]:</string>
+      <string name="label_motor_air_mass_act">Air mass act [mg/pass]:</string>
+      <string name="label_motor_air_mass_set">Air mass set [mg/pass]:</string>
+      <string name="label_motor_ambient_press">Ambient pressure [mbar]:</string>
+      <string name="label_motor_ambient_temp">Ambient temp. [°C]:</string>
+      <string name="label_motor_bat_voltage">Battery voltage [V]:</string>
+      <string name="label_motor_boost_press_act">Boost pressure act [mbar]:</string>
+      <string name="label_motor_boost_press_set">Boost pressure set [mbar]:</string>
+      <string name="label_motor_exhaust_press">Exhaust back pressure [mbar]:</string>
+      <string name="label_motor_fuel_temp">Fuel temp. [°C]:</string>
+      <string name="label_motor_intake_air_temp">Intake air temp. [°C]:</string>
+      <string name="label_motor_part_filt_dist_since_regen">Part. filter dist. since regen. [km]:</string>
+      <string name="label_motor_part_filt_request">Part. filter regeneration request:</string>
+      <string name="label_motor_part_filt_status">Part. filter regeneration:</string>
+      <string name="label_motor_part_filt_unblocked">Part. filter unblock regeneration:</string>
+      <string name="label_motor_oil_press_switch">Oil pressure switch:</string>
+      <string name="label_motor_rail_press_act">Rail pressure act [bar]:</string>
+      <string name="label_motor_rail_press_set">Rail pressure set [bar]:</string>
+      <string name="label_motor_temp">Motor temperature [°C]:</string>
+      <string name="label_motor_temp_before_cat">Temp. before catalyst [°C]:</string>
+      <string name="label_motor_temp_before_filter">Temp. before part. filter [°C]:</string>
+      <string name="label_motor_break_light">Break light:</string>
+      <string name="label_motor_pedal_value">Pedal value [%]:</string>
+      <string name="label_motor_speed">Speed [km/h]:</string>
+      <string name="label_motor_accel">Acceleration [m/s^2]:</string>
+      <string name="label_motor_oil_temp">Oil temperature: [°C]:</string>
+    </strings>
+    <strings lang="de">
+      <string name="notification_title_battery">Batterie</string>
+      <string name="notification_voltage_low">Spannung zu niedrig!</string>
+      <string name="tab_motor">Motor</string>
+      <string name="label_motor_air_mass">Luftmasse [kg/h]:</string>
+      <string name="label_motor_air_mass_act">Luftmasse ist [mg/Hub]:</string>
+      <string name="label_motor_air_mass_set">Luftmasse soll [mg/Hub]:</string>
+      <string name="label_motor_ambient_press">Umgebungsdruck [mbar]:</string>
+      <string name="label_motor_ambient_temp">Umgebungstemperatur [°C]:</string>
+      <string name="label_motor_bat_voltage">Batteriespannung [V]:</string>
+      <string name="label_motor_boost_press_act">Ladedruck ist [mbar]:</string>
+      <string name="label_motor_boost_press_set">Ladedruck soll [mbar]:</string>
+      <string name="label_motor_exhaust_press">Abgasgegendruck [mbar]:</string>
+      <string name="label_motor_fuel_temp">Treibstofftemperatur [°C]:</string>
+      <string name="label_motor_intake_air_temp">Ansauglufttemp. [°C]:</string>
+      <string name="label_motor_part_filt_dist_since_regen">Partikelfilter Strecke seit Regen. [km]:</string>
+      <string name="label_motor_part_filt_request">Partikelfilter Anforderung Regen.:</string>
+      <string name="label_motor_part_filt_status">Partikelfilter Regeneration:</string>
+      <string name="label_motor_part_filt_unblocked">Partikelfilter Freigabe Regen.:</string>
+      <string name="label_motor_oil_press_switch">Öldruckschalter:</string>
+      <string name="label_motor_rail_press_act">Raildruck ist [bar]:</string>
+      <string name="label_motor_rail_press_set">Raildruck soll [bar]:</string>
+      <string name="label_motor_temp">Motortemperatur [°C]:</string>
+      <string name="label_motor_temp_before_cat">Temp. vor Katalysator [°C]:</string>
+      <string name="label_motor_temp_before_filter">Temp. vor Partikelfilter [°C]:</string>
+      <string name="label_motor_break_light">Bremslicht:</string>
+      <string name="label_motor_pedal_value">Pedalwert [%]:</string>
+      <string name="label_motor_speed">Geschwindigkeit [km/h]:</string>
+      <string name="label_motor_accel">Beschleunigung [m/s^2]:</string>
+      <string name="label_motor_oil_temp">Öltemperatur [°C]:</string>
+    </strings>
+    <jobs sgbd="d_motor">
+      <job name="STATUS_MESSWERTBLOCK_LESEN"
+           args_first="JA;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED;ISBLS;IFPWG;IVKMH;IAFZG"
+           args="NEIN;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED;ISBLS;IFPWG;IVKMH;IAFZG">
+        <display name="label_motor_bat_voltage" result="STAT_UBATT_WERT" format="6.2R" display-order="0" />
+        <display name="label_motor_temp" result="STAT_CTSCD_tClntLin_WERT" format="6.2R" display-order="1" />
+        <display name="label_motor_air_mass" result="STAT_LUFTMASSE_WERT" format="7.2R" display-order="2" />
+        <display name="label_motor_intake_air_temp" result="STAT_LADELUFTTEMPERATUR_WERT" format="6.2R" display-order="3" />
+        <display name="label_motor_ambient_temp" result="STAT_UMGEBUNGSTEMPERATUR_WERT" format="6.2R" display-order="4" />
+        <display name="label_motor_boost_press_set" result="STAT_LADEDRUCK_SOLL_WERT" format="6.2R" display-order="5" />
+        <display name="label_motor_boost_press_act" result="STAT_LADEDRUCK_WERT" format="6.2R" display-order="6" />
+        <display name="label_motor_rail_press_set" result="STAT_RAILDRUCK_SOLL_WERT" format="6.2R" display-order="7" />
+        <display name="label_motor_rail_press_act" result="STAT_RAILDRUCK_WERT" format="6.2R" display-order="8" />
+        <display name="label_motor_air_mass_set" result="STAT_LUFTMASSE_SOLL_WERT" format="6.2R" display-order="9" />
+        <display name="label_motor_air_mass_act" result="STAT_LUFTMASSE_PRO_HUB_WERT" format="6.2R" display-order="10" />
+        <display name="label_motor_ambient_press" result="STAT_UMGEBUNGSDRUCK_WERT" format="6.2R" display-order="11" />
+        <display name="label_motor_fuel_temp" result="STAT_KRAFTSTOFFTEMPERATURK_WERT" format="6.2R" display-order="12" />
+        <display name="label_motor_temp_before_filter" result="STAT_ABGASTEMPERATUR_VOR_PARTIKELFILTER_1_WERT" format="6.2R" display-order="13" />
+        <display name="label_motor_temp_before_cat" result="STAT_ABGASTEMPERATUR_VOR_KATALYSATOR_WERT" format="6.2R" display-order="14" />
+        <display name="label_motor_part_filt_dist_since_regen" result="STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT" format="6.2R" log_tag="part_filt_dist" display-order="15" />
+        <display name="label_motor_exhaust_press" result="STAT_DIFFERENZDRUCK_UEBER_PARTIKELFILTER_WERT" format="6.2R" display-order="16" />
+        <display name="label_motor_oil_press_switch" result="STAT_OELDRUCKSCHALTER_EIN_WERT" format="6.2R" display-order="17" />
+        <display name="label_motor_part_filt_request" result="STAT_REGENERATIONSANFORDERUNG_WERT" log_tag="part_filt_requ" display-order="18" />
+        <display name="label_motor_part_filt_status" result="STAT_EGT_st_WERT" format="6.2R" log_tag="part_filt_status" display-order="19" />
+        <display name="label_motor_part_filt_unblocked" result="STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT" format="6.2R" log_tag="part_filt_unblocked" display-order="20" />
+        <display name="label_motor_break_light" result="STAT_BREMSLICHTSCHALTER_EIN_WERT" display-order="21" />
+        <display name="label_motor_pedal_value" result="STAT_FAHRERWUNSCH_PEDAL_WERT" format="6.2R" display-order="22" />
+        <display name="label_motor_speed" result="STAT_GESCHWINDIGKEIT_WERT" format="6.2R" display-order="23" />
+        <display name="label_motor_accel" result="STAT_FAHRZEUGBESCHLEUNIGUNG_WERT" format="6.2R" display-order="24" />
+      </job>
+        <job name="OELSENSOR_LESEN">
+            <display name="label_motor_oil_temp" result="OEL_TEMP_WERT" format="" display-order="25" />
+        </job>
+    </jobs>
+    <code show_warnings="true">
+      <![CDATA[
+    class PageClass
+    {
+        public void ProcessResults(Context context, JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict)
+        {
+            double value;
+            bool found;
+
+            value = ActivityMain.GetResultDouble(resultDict, "STATUS_MESSWERTBLOCK_LESEN#STAT_UBATT_WERT", 0, out found);
+            if (found && value < 11.5)
+            {
+                ActivityMain.ShowNotification(context, 0, 2,
+                  ActivityMain.GetPageString(pageInfo, "notification_title_battery"),
+                  ActivityMain.GetPageString(pageInfo, "notification_voltage_low"));
+            }
+            else
+            {
+                ActivityMain.HideNotification(context, 0);
+            }
+        }
+
+        public bool FormatResult(EdiabasNet ediabas, JobReader.PageInfo pageInfo, MultiMap<string, EdiabasNet.ResultData> resultDict, string resultName, ref string result, ref Android.Graphics.Color? textColor, ref double? dataValue)
+        {
+            bool valid = false;
+            double value;
+            bool found;
+
+            //ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ResultName='{0}', ResultValue='{1}'", resultName, result);
+
+            switch (resultName)
+            {
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_UBATT_WERT":
+                    value = ActivityMain.GetResultDouble(resultDict, resultName, 0, out found);
+                    result = string.Format(ActivityMain.Culture, "{0,7:0.00}", value);
+                    if (found && value < 11.0)
+                    {
+                        textColor = Android.Graphics.Color.Red;
+                    }
+                    if (!found) result = string.Empty;
+                    valid = true;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_STRECKE_SEIT_ERFOLGREICHER_REGENERATION_WERT":
+                    result = string.Format(ActivityMain.Culture, "{0,6:0.0}", ActivityMain.GetResultDouble(resultDict, resultName, 0, out found) / 1000.0);
+                    if (!found) result = string.Empty;
+                    valid = true;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_OELDRUCKSCHALTER_EIN_WERT":
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "1" : "0";
+                    if (found && result == "1")
+                    {
+                        textColor = Android.Graphics.Color.Red;
+                    }
+                    if (!found) result = string.Empty;
+                    valid = true;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_REGENERATIONSANFORDERUNG_WERT":
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) < 0.5) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    valid = true;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_EGT_st_WERT":
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 1.5) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    valid = true;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_REGENERATION_BLOCKIERUNG_UND_FREIGABE_WERT":
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) < 0.5) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    valid = true;
+                    break;
+
+                case "STATUS_MESSWERTBLOCK_LESEN#STAT_BREMSLICHTSCHALTER_EIN_WERT":
+                    result = ((ActivityMain.GetResultDouble (resultDict, resultName, 0, out found) > 0.5) && found) ? "1" : "0";
+                    if (!found) result = string.Empty;
+                    valid = true;
+                    break;
+            }
+            return valid;
+        }
+    }
+      ]]>
+    </code>
+  </page>
+</fragment>
