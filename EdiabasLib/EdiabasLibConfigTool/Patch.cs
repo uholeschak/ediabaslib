@@ -739,29 +739,32 @@ namespace EdiabasLibConfigTool
                 }
 
                 RegistryView? registryViewIsta = null;
-                string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
-                if (!string.IsNullOrEmpty(programFiles))
+                if (patchType == PatchType.Istad)
                 {
-                    string istaPath = Path.Combine(programFiles, IstaDefaultPath);
-                    if (PathStartWith(dirName, istaPath))
+                    string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
+                    if (!string.IsNullOrEmpty(programFiles))
                     {
-                        registryViewIsta = RegistryView.Registry64;
+                        string istaPath = Path.Combine(programFiles, IstaDefaultPath);
+                        if (PathStartWith(dirName, istaPath))
+                        {
+                            registryViewIsta = RegistryView.Registry64;
+                        }
                     }
-                }
 
-                string programFilesX86 = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%");
-                if (!string.IsNullOrEmpty(programFilesX86))
-                {
-                    string istaPath = Path.Combine(programFilesX86, IstaDefaultPath);
-                    if (PathStartWith(dirName, istaPath))
+                    string programFilesX86 = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%");
+                    if (!string.IsNullOrEmpty(programFilesX86))
                     {
-                        registryViewIsta = RegistryView.Registry32;
+                        string istaPath = Path.Combine(programFilesX86, IstaDefaultPath);
+                        if (PathStartWith(dirName, istaPath))
+                        {
+                            registryViewIsta = RegistryView.Registry32;
+                        }
                     }
                 }
 
                 string configFile = Path.Combine(dirName, ConfigFileName);
                 string iniFile = null;
-                if (patchType == PatchType.Istad && registryViewIsta != null)
+                if (registryViewIsta != null)
                 {
                     iniFile = Path.Combine(dirName, IniFileName);
                 }
@@ -772,6 +775,8 @@ namespace EdiabasLibConfigTool
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                     return false;
                 }
+
+                PatchIstaReg(registryViewIsta);
 
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.PatchConfigUpdateOk);
@@ -805,6 +810,35 @@ namespace EdiabasLibConfigTool
                 return false;
             }
             return true;
+        }
+
+        public static bool PatchIstaReg(RegistryView? registryViewIsta)
+        {
+            if (registryViewIsta == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryViewIsta.Value))
+                {
+                    using (RegistryKey key = localMachine.OpenSubKey(@"BMW\ISPI\TRIC\ISTALauncher", true))
+                    {
+                        if (key != null)
+                        {
+                            key.SetValue(@"BMW.TricTools.IstaLauncher.MD5CheckEnabled", "False");
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
         }
     }
 }
