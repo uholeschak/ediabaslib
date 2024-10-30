@@ -382,13 +382,13 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
                         UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
-                        iniUpdated = UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
+                        iniUpdated |= UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
                     }
                     else
                     {
                         UpdateConfigNode(settingsNode, @"ObdComPort", "DEEPOBDWIFI");
                         UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
-                        iniUpdated = UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
+                        iniUpdated |= UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
                     }
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
@@ -398,7 +398,7 @@ namespace EdiabasLibConfigTool
 
                     UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
                     UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
-                    iniUpdated = UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
+                    iniUpdated |= UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
 
                     string keepConnectionValue;
                     switch (adapterType)
@@ -422,7 +422,7 @@ namespace EdiabasLibConfigTool
                         EdInterfaceEnet.ProtocolDoIp : EdInterfaceEnet.ProtocolHsfz;
                     UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
                     UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
-                    iniUpdated = UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
+                    iniUpdated |= UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else
@@ -751,9 +751,14 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
+                string configFile = Path.Combine(dirName, ConfigFileName);
+                string iniFile = null;
+
                 RegistryView? registryViewIsta = null;
                 if (patchType == PatchType.Istad)
                 {
+                    iniFile = Path.Combine(dirName, IniFileName);
+
                     string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
                     if (!string.IsNullOrEmpty(programFiles))
                     {
@@ -773,13 +778,6 @@ namespace EdiabasLibConfigTool
                             registryViewIsta = RegistryView.Registry32;
                         }
                     }
-                }
-
-                string configFile = Path.Combine(dirName, ConfigFileName);
-                string iniFile = null;
-                if (registryViewIsta != null)
-                {
-                    iniFile = Path.Combine(dirName, IniFileName);
                 }
 
                 if (!UpdateConfigFile(configFile, iniFile, registryViewIsta, adapterType, devInfo, wlanIface, enetConnection, pin))
