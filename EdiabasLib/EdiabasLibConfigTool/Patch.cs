@@ -337,7 +337,7 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                if (string.Compare(sb.ToString(), value, StringComparison.Ordinal) == 0)
+                if (string.Compare(sb.ToString().Trim(), value.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     return false;
                 }
@@ -383,14 +383,18 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
                         UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                         if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true))
-                        { iniUpdated = true; }
+                        {
+                            iniUpdated = true;
+                        }
                     }
                     else
                     {
                         UpdateConfigNode(settingsNode, @"ObdComPort", "DEEPOBDWIFI");
                         UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
                         if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true))
-                        {iniUpdated = true;}
+                        {
+                            iniUpdated = true;
+                        }
                     }
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
@@ -401,7 +405,9 @@ namespace EdiabasLibConfigTool
                     UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
                     UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
                     if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true))
-                    { iniUpdated = true; }
+                    {
+                        iniUpdated = true; 
+                    }
 
                     string keepConnectionValue;
                     switch (adapterType)
@@ -426,7 +432,9 @@ namespace EdiabasLibConfigTool
                     UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
                     UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                     if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true))
-                    { iniUpdated = true; }
+                    {
+                        iniUpdated = true;
+                    }
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else
