@@ -1254,6 +1254,7 @@ namespace BmwDeepObd
             bool pageSgbd = !string.IsNullOrEmpty(GetSelectedPageSgbd());
             bool selectedPageFuncAvail = SelectedPageFunctionsAvailable();
             JobReader jobReader = ActivityCommon.JobReader;
+            bool manualEdit = jobReader != null && jobReader.ManualEdit;
             JobReader.PageInfo currentPage = GetSelectedPage();
             bool enableSelectedPageEdit = !string.IsNullOrEmpty(currentPage?.XmlFileName);
 
@@ -1464,7 +1465,7 @@ namespace BmwDeepObd
             cfgCloseMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
 
             IMenuItem xmlToolMenu = menu.FindItem(Resource.Id.menu_xml_tool);
-            xmlToolMenu?.SetEnabled(!commActive);
+            xmlToolMenu?.SetEnabled(!commActive && !manualEdit);
 
             IMenuItem ediabasToolMenu = menu.FindItem(Resource.Id.menu_ediabas_tool);
             ediabasToolMenu?.SetEnabled(!commActive);
