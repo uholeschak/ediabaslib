@@ -38,6 +38,7 @@
   <ItemGroup>
     <None Remove="Resources\layout\service_busy.xml" />
     <None Remove="Resources\xml\automotive_app_desc.xml" />
+    <None Remove="Sample\Sample.zip" />
     <None Remove="Xml\BmwDeepObd.xsd" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +65,7 @@
     <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreReader.cs" Link="AssemblyStoreReader.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Sample\Sample.zip" />
     <EmbeddedResource Include="Xml\BmwDeepObd.xsd" />
   </ItemGroup>
   <ItemGroup>
