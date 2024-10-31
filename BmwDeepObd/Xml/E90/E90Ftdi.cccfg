@@ -2,6 +2,6 @@
 <configuration xmlns="http://www.holeschak.de/BmwDeepObd"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
-  <global log_path="Log" append_log="true" manufacturer="BMW" interface="FTDI" />
+  <global log_path="Log" append_log="true" manual_edit="true" manufacturer="BMW" interface="FTDI" />
   <include filename="E90.ccpages"/>
 </configuration>

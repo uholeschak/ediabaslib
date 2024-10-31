@@ -338,6 +338,7 @@ namespace BmwDeepObd
         private string _simulationPath = string.Empty;
         private string _logPath = string.Empty;
         private bool _appendLog;
+        private bool _manualEdit;
         private bool _logTagsPresent;
         private bool _compatIdsUsed;
         private string _sgbdFunctional = string.Empty;
@@ -364,6 +365,8 @@ namespace BmwDeepObd
         public string LogPath => _logPath;
 
         public bool AppendLog => _appendLog;
+
+        public bool ManualEdit => _manualEdit;
 
         public bool LogTagsPresent => _logTagsPresent;
 
@@ -508,6 +511,12 @@ namespace BmwDeepObd
                     if (attrib != null)
                     {
                         _appendLog = XmlConvert.ToBoolean(attrib.Value);
+                    }
+
+                    attrib = xnodeGlobal.Attributes["manual_edit"];
+                    if (attrib != null)
+                    {
+                        _manualEdit = XmlConvert.ToBoolean(attrib.Value);
                     }
 
                     attrib = xnodeGlobal.Attributes["manufacturer"];

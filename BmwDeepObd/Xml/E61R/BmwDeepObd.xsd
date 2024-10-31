@@ -232,6 +232,13 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="manual_edit" type="xs:boolean" default="false" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          Only manual editing allowed (no configuration generator).
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attribute name="manufacturer" type="manufacturer-type" default="BMW" use="optional">
       <xs:annotation>
         <xs:documentation>
