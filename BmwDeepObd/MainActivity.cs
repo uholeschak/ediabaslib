@@ -6308,7 +6308,7 @@ namespace BmwDeepObd
 
                 string sampleDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.ConfigBaseSubDir, ActivityCommon.ConfigSampleSubDir);
                 string sampleInfoFile = Path.Combine(sampleDir, SampleInfoFileName);
-                if (File.Exists(sampleInfoFile))
+                if (!force && File.Exists(sampleInfoFile))
                 {
                     bool validInfoData = true;
 
@@ -6347,7 +6347,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    if (validInfoData && !force)
+                    if (validInfoData)
                     {
                         return true;
                     }
