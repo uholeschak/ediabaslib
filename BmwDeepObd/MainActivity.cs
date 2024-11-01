@@ -4916,15 +4916,19 @@ namespace BmwDeepObd
 #endif
             JobReader jobReader = ActivityCommon.JobReader;
             _compileCodePending = false;
+
             if (!ActivityCommon.IsCpuStatisticsSupported() || !ActivityCommon.CheckCpuUsage)
             {
                 _instanceData.CheckCpuUsage = false;
             }
+
             if (!ActivityCommon.CheckEcuFiles)
             {
                 _instanceData.VerifyEcuFiles = false;
             }
-            if (jobReader.PageList.Count == 0 && !_instanceData.CheckCpuUsage)
+
+            if (jobReader.PageList.Count == 0 && !_instanceData.CheckCpuUsage && !_instanceData.ExtractSampleFiles &&
+                !_instanceData.VerifyEcuFiles && !_instanceData.VerifyEcuMd5)
             {
                 PostCreateActionBarTabs();
                 return;
@@ -5002,6 +5006,14 @@ namespace BmwDeepObd
                         });
                     }
 
+                    if (_instanceData.ExtractSampleFiles)
+                    {
+                        if (ExtractSampleFiles())
+                        {
+                            _instanceData.ExtractSampleFiles = false;
+                        }
+                    }
+
                     if (_instanceData.VerifyEcuFiles || _instanceData.VerifyEcuMd5)
                     {
                         bool checkMd5 = _instanceData.VerifyEcuMd5;
@@ -5047,8 +5059,6 @@ namespace BmwDeepObd
                                 }
                             }
                         }
-
-                        ExtractSampleFiles();
                     }
 
                     RunOnUiThread(() =>

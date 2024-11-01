@@ -306,67 +306,67 @@ namespace BmwDeepObd
 
             public void InitCommonData()
             {
-                LastAppState = LastAppState.Init;
-                SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
-                SelectedTheme = ActivityCommon.SelectedTheme ?? ThemeDefault;
-                DeviceName = string.Empty;
-                DeviceAddress = string.Empty;
-                ConfigFileName = string.Empty;
-                UpdateCheckTime = DateTime.MinValue.Ticks;
-                UpdateSkipVersion = -1;
-                LastVersionCode = -1;
-                StorageRequirementsAccepted = false;
-                XmlEditorPackageName = string.Empty;
-                XmlEditorClassName = string.Empty;
+                this.LastAppState = LastAppState.Init;
+                this.SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
+                this.SelectedTheme = ActivityCommon.SelectedTheme ?? ThemeDefault;
+                this.DeviceName = string.Empty;
+                this.DeviceAddress = string.Empty;
+                this.ConfigFileName = string.Empty;
+                this.UpdateCheckTime = DateTime.MinValue.Ticks;
+                this.UpdateSkipVersion = -1;
+                this.LastVersionCode = -1;
+                this.StorageRequirementsAccepted = false;
+                this.XmlEditorPackageName = string.Empty;
+                this.XmlEditorClassName = string.Empty;
 
-                RecentConfigFiles = new List<string>();
-                CustomStorageMedia = ActivityCommon.CustomStorageMedia;
-                CopyToAppSrc = ActivityCommon.CopyToAppSrc;
-                CopyToAppDst = ActivityCommon.CopyToAppDst;
-                CopyFromAppSrc = ActivityCommon.CopyFromAppSrc;
-                CopyFromAppDst = ActivityCommon.CopyFromAppDst;
-                UsbFirmwareFileName = ActivityCommon.UsbFirmwareFileName;
-                EnableTranslation = ActivityCommon.EnableTranslation;
-                YandexApiKey = ActivityCommon.YandexApiKey;
-                IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
-                IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
-                DeeplApiKey = ActivityCommon.DeeplApiKey;
-                YandexCloudApiKey = ActivityCommon.YandexCloudApiKey;
-                YandexCloudFolderId = ActivityCommon.YandexCloudFolderId;
-                Translator = SelectedTranslator;
-                ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
-                BatteryWarnings = ActivityCommon.BatteryWarnings;
-                BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
-                SerialInfo = new List<SerialInfoEntry>();
-                AdapterBlacklist = ActivityCommon.AdapterBlacklist;
-                LastAdapterSerial = ActivityCommon.LastAdapterSerial;
-                EmailAddress = ActivityCommon.EmailAddress;
-                TraceInfo = ActivityCommon.TraceInfo;
-                AppId = ActivityCommon.AppId;
-                AutoHideTitleBar = ActivityCommon.AutoHideTitleBar;
-                SuppressTitleBar = ActivityCommon.SuppressTitleBar;
-                FullScreenMode = ActivityCommon.FullScreenMode;
-                SwapMultiWindowOrientation = ActivityCommon.SwapMultiWindowOrientation;
-                SelectedInternetConnection = ActivityCommon.SelectedInternetConnection;
-                SelectedManufacturer = ActivityCommon.SelectedManufacturer;
-                BtEnbaleHandling = ActivityCommon.BtEnbaleHandling;
-                BtDisableHandling = ActivityCommon.BtDisableHandling;
-                LockTypeCommunication = ActivityCommon.LockTypeCommunication;
-                LockTypeLogging = ActivityCommon.LockTypeLogging;
-                StoreDataLogSettings = ActivityCommon.StoreDataLogSettings;
-                AutoConnectHandling = ActivityCommon.AutoConnectHandling;
-                UpdateCheckDelay = ActivityCommon.UpdateCheckDelay;
-                DoubleClickForAppExit = ActivityCommon.DoubleClickForAppExit;
-                SendDataBroadcast = ActivityCommon.SendDataBroadcast;
-                CheckCpuUsage = ActivityCommon.CheckCpuUsage;
-                CheckEcuFiles = ActivityCommon.CheckEcuFiles;
-                OldVagMode = ActivityCommon.OldVagMode;
-                UseBmwDatabase = ActivityCommon.UseBmwDatabase;
-                ShowOnlyRelevantErrors = ActivityCommon.ShowOnlyRelevantErrors;
-                ScanAllEcus = ActivityCommon.ScanAllEcus;
-                CollectDebugInfo = ActivityCommon.CollectDebugInfo;
-                CompressTrace = ActivityCommon.CompressTrace;
-                DisableNetworkCheck = ActivityCommon.DisableNetworkCheck;
+                this.RecentConfigFiles = new List<string>();
+                this.CustomStorageMedia = ActivityCommon.CustomStorageMedia;
+                this.CopyToAppSrc = ActivityCommon.CopyToAppSrc;
+                this.CopyToAppDst = ActivityCommon.CopyToAppDst;
+                this.CopyFromAppSrc = ActivityCommon.CopyFromAppSrc;
+                this.CopyFromAppDst = ActivityCommon.CopyFromAppDst;
+                this.UsbFirmwareFileName = ActivityCommon.UsbFirmwareFileName;
+                this.EnableTranslation = ActivityCommon.EnableTranslation;
+                this.YandexApiKey = ActivityCommon.YandexApiKey;
+                this.IbmTranslatorApiKey = ActivityCommon.IbmTranslatorApiKey;
+                this.IbmTranslatorUrl = ActivityCommon.IbmTranslatorUrl;
+                this.DeeplApiKey = ActivityCommon.DeeplApiKey;
+                this.YandexCloudApiKey = ActivityCommon.YandexCloudApiKey;
+                this.YandexCloudFolderId = ActivityCommon.YandexCloudFolderId;
+                this.Translator = ActivityCommon.SelectedTranslator;
+                this.ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
+                this.BatteryWarnings = ActivityCommon.BatteryWarnings;
+                this.BatteryWarningVoltage = ActivityCommon.BatteryWarningVoltage;
+                this.SerialInfo = new List<SerialInfoEntry>();
+                this.AdapterBlacklist = ActivityCommon.AdapterBlacklist;
+                this.LastAdapterSerial = ActivityCommon.LastAdapterSerial;
+                this.EmailAddress = ActivityCommon.EmailAddress;
+                this.TraceInfo = ActivityCommon.TraceInfo;
+                this.AppId = ActivityCommon.AppId;
+                this.AutoHideTitleBar = ActivityCommon.AutoHideTitleBar;
+                this.SuppressTitleBar = ActivityCommon.SuppressTitleBar;
+                this.FullScreenMode = ActivityCommon.FullScreenMode;
+                this.SwapMultiWindowOrientation = ActivityCommon.SwapMultiWindowOrientation;
+                this.SelectedInternetConnection = ActivityCommon.SelectedInternetConnection;
+                this.SelectedManufacturer = ActivityCommon.SelectedManufacturer;
+                this.BtEnbaleHandling = ActivityCommon.BtEnbaleHandling;
+                this.BtDisableHandling = ActivityCommon.BtDisableHandling;
+                this.LockTypeCommunication = ActivityCommon.LockTypeCommunication;
+                this.LockTypeLogging = ActivityCommon.LockTypeLogging;
+                this.StoreDataLogSettings = ActivityCommon.StoreDataLogSettings;
+                this.AutoConnectHandling = ActivityCommon.AutoConnectHandling;
+                this.UpdateCheckDelay = ActivityCommon.UpdateCheckDelay;
+                this.DoubleClickForAppExit = ActivityCommon.DoubleClickForAppExit;
+                this.SendDataBroadcast = ActivityCommon.SendDataBroadcast;
+                this.CheckCpuUsage = ActivityCommon.CheckCpuUsage;
+                this.CheckEcuFiles = ActivityCommon.CheckEcuFiles;
+                this.OldVagMode = ActivityCommon.OldVagMode;
+                this.UseBmwDatabase = ActivityCommon.UseBmwDatabase;
+                this.ShowOnlyRelevantErrors = ActivityCommon.ShowOnlyRelevantErrors;
+                this.ScanAllEcus = ActivityCommon.ScanAllEcus;
+                this.CollectDebugInfo = ActivityCommon.CollectDebugInfo;
+                this.CompressTrace = ActivityCommon.CompressTrace;
+                this.DisableNetworkCheck = ActivityCommon.DisableNetworkCheck;
             }
 
             public void InitData(InstanceDataCommon instanceData, ActivityCommon activityCommon, bool storage = false)
@@ -376,27 +376,27 @@ namespace BmwDeepObd
                     return;
                 }
 
-                LastAppState = instanceData.LastAppState;
-                LastSelectedJobIndex = instanceData.LastSelectedJobIndex;
-                SelectedEnetIp = activityCommon.SelectedEnetIp;
-                SelectedElmWifiIp = activityCommon.SelectedElmWifiIp;
-                SelectedDeepObdWifiIp = activityCommon.SelectedDeepObdWifiIp;
-                MtcBtDisconnectWarnShown = activityCommon.MtcBtDisconnectWarnShown;
-                DeviceName = instanceData.DeviceName;
-                DeviceAddress = instanceData.DeviceAddress;
-                ConfigFileName = instanceData.ConfigFileName;
-                UpdateCheckTime = instanceData.UpdateCheckTime;
-                UpdateSkipVersion = instanceData.UpdateSkipVersion;
-                LastVersionCode = activityCommon.VersionCode;
-                StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
-                XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
-                XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
-                DataLogActive = instanceData.DataLogActive;
-                DataLogAppend = instanceData.DataLogAppend;
+                this.LastAppState = instanceData.LastAppState;
+                this.LastSelectedJobIndex = instanceData.LastSelectedJobIndex;
+                this.SelectedEnetIp = activityCommon.SelectedEnetIp;
+                this.SelectedElmWifiIp = activityCommon.SelectedElmWifiIp;
+                this.SelectedDeepObdWifiIp = activityCommon.SelectedDeepObdWifiIp;
+                this.MtcBtDisconnectWarnShown = activityCommon.MtcBtDisconnectWarnShown;
+                this.DeviceName = instanceData.DeviceName;
+                this.DeviceAddress = instanceData.DeviceAddress;
+                this.ConfigFileName = instanceData.ConfigFileName;
+                this.UpdateCheckTime = instanceData.UpdateCheckTime;
+                this.UpdateSkipVersion = instanceData.UpdateSkipVersion;
+                this.LastVersionCode = activityCommon.VersionCode;
+                this.StorageRequirementsAccepted = instanceData.StorageRequirementsAccepted;
+                this.XmlEditorPackageName = instanceData.XmlEditorPackageName ?? string.Empty;
+                this.XmlEditorClassName = instanceData.XmlEditorClassName ?? string.Empty;
+                this.DataLogActive = instanceData.DataLogActive;
+                this.DataLogAppend = instanceData.DataLogAppend;
                 if (storage)
                 {
-                    RecentConfigFiles = GetRecentConfigList();
-                    SerialInfo = GetSerialInfoList();
+                    this.RecentConfigFiles = GetRecentConfigList();
+                    this.SerialInfo = GetSerialInfoList();
                 }
             }
 
@@ -592,22 +592,23 @@ namespace BmwDeepObd
         {
             public InstanceDataCommon()
             {
-                LastLocale = string.Empty;
-                LastAppState = LastAppState.Init;
-                LastSelectedJobIndex = -1;
-                LastSettingsHash = string.Empty;
-                AppDataPath = string.Empty;
-                EcuPath = string.Empty;
-                VagPath = string.Empty;
-                TraceActive = true;
-                DeviceName = string.Empty;
-                DeviceAddress = string.Empty;
-                ConfigFileName = string.Empty;
-                CheckCpuUsage = true;
-                VerifyEcuFiles = true;
-                SelectedEnetIp = string.Empty;
-                SelectedElmWifiIp = string.Empty;
-                SelectedDeepObdWifiIp = string.Empty;
+                this.LastLocale = string.Empty;
+                this.LastAppState = LastAppState.Init;
+                this.LastSelectedJobIndex = -1;
+                this.LastSettingsHash = string.Empty;
+                this.AppDataPath = string.Empty;
+                this.EcuPath = string.Empty;
+                this.VagPath = string.Empty;
+                this.TraceActive = true;
+                this.DeviceName = string.Empty;
+                this.DeviceAddress = string.Empty;
+                this.ConfigFileName = string.Empty;
+                this.CheckCpuUsage = true;
+                this.ExtractSampleFiles = true;
+                this.VerifyEcuFiles = true;
+                this.SelectedEnetIp = string.Empty;
+                this.SelectedElmWifiIp = string.Empty;
+                this.SelectedDeepObdWifiIp = string.Empty;
             }
 
             public string LastLocale { get; set; }
@@ -637,6 +638,7 @@ namespace BmwDeepObd
             public bool ConfigMatchVehicleShown { get; set; }
             public bool DataLogTemporaryShown { get; set; }
             public bool CheckCpuUsage { get; set; }
+            public bool ExtractSampleFiles { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool VerifyEcuMd5 { get; set; }
             public int CommErrorsCount { get; set; }
