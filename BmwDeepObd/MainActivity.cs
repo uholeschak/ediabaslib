@@ -5046,6 +5046,8 @@ namespace BmwDeepObd
                                 }
                             }
                         }
+
+                        ExtractSampleFiles(false);
                     }
 
                     RunOnUiThread(() =>
@@ -5890,6 +5892,8 @@ namespace BmwDeepObd
                     {
                         extractFailed = true;
                     }
+
+                    ExtractSampleFiles(true);
 
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (!extractFailed)
