@@ -161,6 +161,7 @@ namespace BmwDeepObd
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
         private const long EcuExtractSize = 2600000000;         // extracted ecu files size
         private const string InfoXmlName = "ObbInfo.xml";
+        private const string SampleInfoFileName = "SampleInfo.xml";
         private const string ContentFileName = "Content.xml";
         private const string TranslationFileNameMain = "TranslationMain.xml";
         private const int MenuGroupRecentId = 1;
@@ -5047,7 +5048,7 @@ namespace BmwDeepObd
                             }
                         }
 
-                        ExtractSampleFiles(false);
+                        ExtractSampleFiles();
                     }
 
                     RunOnUiThread(() =>
@@ -6294,6 +6295,11 @@ namespace BmwDeepObd
         {
             try
             {
+                if (_activityCommon == null)
+                {
+                    return false;
+                }
+
                 string resourceName = VehicleInfoBmw.FindResourceName("Sample.zip");
                 if (string.IsNullOrEmpty(resourceName))
                 {
@@ -6301,13 +6307,17 @@ namespace BmwDeepObd
                 }
 
                 string sampleDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.ConfigBaseSubDir, ActivityCommon.ConfigSampleSubDir);
-                if (Directory.Exists(sampleDir))
+                string sampleInfoFile = Path.Combine(sampleDir, SampleInfoFileName);
+                if (File.Exists(sampleInfoFile))
                 {
                     if (!force)
                     {
                         return true;
                     }
+                }
 
+                if (Directory.Exists(sampleDir))
+                {
                     try
                     {
                         Directory.Delete(sampleDir, true);
@@ -6320,6 +6330,11 @@ namespace BmwDeepObd
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 ActivityCommon.ExtractZipFile(null, assembly, resourceName, sampleDir, null, null, null);
+
+                XElement xmlInfo = new XElement("Info");
+                xmlInfo.Add(new XAttribute("Name", resourceName));
+                xmlInfo.Add(new XAttribute("AppVer", _activityCommon.VersionCode));
+                xmlInfo.Save(sampleInfoFile);
 
                 return true;
             }
