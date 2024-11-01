@@ -9907,7 +9907,7 @@ namespace BmwDeepObd
                 }
             }
 
-            string configBaseDir = Path.Combine(_appDataDir, "Configurations");
+            string configBaseDir = Path.Combine(_appDataDir, ActivityCommon.ConfigBaseSubDir);
             switch (ActivityCommon.SelectedManufacturer)
             {
                 case ActivityCommon.ManufacturerType.Audi:
