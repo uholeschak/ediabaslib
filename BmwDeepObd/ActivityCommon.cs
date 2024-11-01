@@ -10795,7 +10795,7 @@ namespace BmwDeepObd
             string lastFileName = string.Empty;
             Android.Util.Log.Info(Tag, string.Format("ExtractZipFile Archive: '{0}', Folder: '{1}'", archiveFilenameIn, outFolder));
 #endif
-            FileStream fs = null;
+            Stream fs = null;
             ZipFile zf = null;
             string tempFile = Path.Combine(outFolder, "temp.zip");
             try
@@ -10905,7 +10905,14 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    fs = File.OpenRead(archiveFilenameIn);
+                    if (resourceAssembly != null)
+                    {
+                        fs = resourceAssembly.GetManifestResourceStream(archiveFilenameIn);
+                    }
+                    else
+                    {
+                        fs = File.OpenRead(archiveFilenameIn);
+                    }
                 }
 
                 zf = new ZipFile(fs);
