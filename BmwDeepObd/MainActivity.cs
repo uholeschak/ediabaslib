@@ -6721,6 +6721,14 @@ namespace BmwDeepObd
                 {
                     initDir = Path.GetDirectoryName(_instanceData.ConfigFileName);
                 }
+                else
+                {
+                    string sampleDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.ConfigBaseSubDir, ActivityCommon.ConfigSampleSubDir);
+                    if (Directory.Exists(sampleDir))
+                    {
+                        initDir = sampleDir;
+                    }
+                }
             }
             catch (Exception)
             {
