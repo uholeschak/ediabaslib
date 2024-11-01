@@ -6310,7 +6310,44 @@ namespace BmwDeepObd
                 string sampleInfoFile = Path.Combine(sampleDir, SampleInfoFileName);
                 if (File.Exists(sampleInfoFile))
                 {
-                    if (!force)
+                    bool validInfoData = true;
+
+                    XDocument xmlInfoRead = XDocument.Load(sampleInfoFile);
+                    XAttribute nameAttr = xmlInfoRead.Root?.Attribute("Name");
+                    if (nameAttr == null)
+                    {
+                        validInfoData = false;
+                    }
+                    else
+                    {
+                        if (string.Compare(nameAttr.Value, resourceName, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            validInfoData = false;
+                        }
+                    }
+
+                    XAttribute verAttr = xmlInfoRead.Root?.Attribute("AppVer");
+                    if (verAttr == null)
+                    {
+                        validInfoData = false;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Int64 verValue = XmlConvert.ToInt64(verAttr.Value);
+                            if (verValue != _activityCommon.VersionCode)
+                            {
+                                validInfoData = false;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            validInfoData = false;
+                        }
+                    }
+
+                    if (validInfoData && !force)
                     {
                         return true;
                     }
