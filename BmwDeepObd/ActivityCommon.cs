@@ -789,6 +789,8 @@ namespace BmwDeepObd
         public const string TraceFileNameStd = "ifh.trc";
         public const string TraceFileNameZip = TraceFileNameStd + ZipExt;
         public const string TraceBackupDir = "TraceBackup";
+        public const string ConfigBaseSubDir = "Configurations";
+        public const string ConfigSampleSubDir = "Sample";
         public const string PackageAssembliesDir = "PackageAssemblies";
         public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";

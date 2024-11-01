@@ -6286,6 +6286,45 @@ namespace BmwDeepObd
             }
         }
 
+        private bool ExtractSampleFiles(bool force = false)
+        {
+            try
+            {
+                string resourceName = VehicleInfoBmw.FindResourceName("Sample.zip");
+                if (string.IsNullOrEmpty(resourceName))
+                {
+                    return false;
+                }
+
+                string sampleDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.ConfigBaseSubDir, ActivityCommon.ConfigSampleSubDir);
+                if (Directory.Exists(sampleDir))
+                {
+                    if (!force)
+                    {
+                        return true;
+                    }
+
+                    try
+                    {
+                        Directory.Delete(sampleDir, true);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                ActivityCommon.ExtractZipFile(null, assembly, resourceName, sampleDir, null, null, null);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private void SelectManufacturerInfo()
         {
             if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !_instanceData.VagInfoShown)
