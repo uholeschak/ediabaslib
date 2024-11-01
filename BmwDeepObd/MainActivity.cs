@@ -5835,7 +5835,7 @@ namespace BmwDeepObd
                         }
                     }
                     int lastZipPercent = -1;
-                    ActivityCommon.ExtractZipFile(assetManager, fileName, targetDirectory, key, ignoreFolders,
+                    ActivityCommon.ExtractZipFile(assetManager, null, fileName, targetDirectory, key, ignoreFolders,
                         (percent, decrypt) =>
                         {
                             if (_activityCommon == null)
