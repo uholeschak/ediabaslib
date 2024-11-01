@@ -10786,7 +10786,8 @@ namespace BmwDeepObd
             }
         }
 
-        public static void ExtractZipFile(AssetManager assetManager, string archiveFilenameIn, string outFolder, string key, List<string> ignoreFolders, ProgressZipDelegate progressHandler)
+        public static void ExtractZipFile(AssetManager assetManager, Assembly resourceAssembly, string archiveFilenameIn, string outFolder, string key,
+            List<string> ignoreFolders, ProgressZipDelegate progressHandler)
         {
 #if DEBUG
             string lastFileName = string.Empty;
@@ -10823,11 +10824,14 @@ namespace BmwDeepObd
                                 Stream fsRead = null;
                                 try
                                 {
-                                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                     if (assetManager != null)
                                     {
                                         assetFile = assetManager.OpenFd(archiveFilenameIn);
                                         fsRead = assetFile.CreateInputStream();
+                                    }
+                                    else if (resourceAssembly != null)
+                                    {
+                                        fsRead = resourceAssembly.GetManifestResourceStream(archiveFilenameIn);
                                     }
                                     else
                                     {
@@ -10863,10 +10867,10 @@ namespace BmwDeepObd
                                                 return;
                                             }
 #if IO_TEST
-                                        if (retry == 0)
-                                        {
-                                            throw new IOException("Exception test");
-                                        }
+                                            if (retry == 0)
+                                            {
+                                                throw new IOException("Exception test");
+                                            }
 #endif
                                         }
                                     }
