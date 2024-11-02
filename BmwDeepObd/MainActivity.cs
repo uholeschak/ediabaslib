@@ -1476,7 +1476,7 @@ namespace BmwDeepObd
             cfgCloseMenu?.SetEnabled(!commActive && !string.IsNullOrEmpty(_instanceData.ConfigFileName));
 
             IMenuItem xmlToolMenu = menu.FindItem(Resource.Id.menu_xml_tool);
-            xmlToolMenu?.SetEnabled(!manualEdit && !commActive);
+            xmlToolMenu?.SetEnabled(!commActive);
 
             IMenuItem ediabasToolMenu = menu.FindItem(Resource.Id.menu_ediabas_tool);
             ediabasToolMenu?.SetEnabled(!commActive);
@@ -6797,6 +6797,30 @@ namespace BmwDeepObd
                     return;
                 }
 
+                JobReader jobReader = ActivityCommon.JobReader;
+                if (jobReader == null)
+                {
+                    return;
+                }
+
+                if (jobReader.ManualEdit && !string.IsNullOrEmpty(_instanceData.ConfigFileName))
+                {
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
+                        {
+                            ClearConfiguration();
+                            StartXmlTool(ecuFuncCall);
+                        })
+                        .SetNegativeButton(Resource.String.button_abort, (sender, args) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.config_manual_edit)
+                        .SetTitle(Resource.String.alert_title_info)
+                        .Show();
+                    return;
+                }
+
                 string pageFileName = null;
                 bool ecuAutoRead = false;
                 if (ecuFuncCall != XmlToolActivity.EcuFunctionCallType.None)
@@ -6843,8 +6867,6 @@ namespace BmwDeepObd
                 {
                     return;
                 }
-
-                JobReader jobReader = ActivityCommon.JobReader;
 
                 Intent serverIntent = new Intent(this, typeof(XmlToolActivity));
                 serverIntent.PutExtra(XmlToolActivity.ExtraInitDir, _instanceData.EcuPath);
