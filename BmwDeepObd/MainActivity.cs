@@ -1091,7 +1091,7 @@ namespace BmwDeepObd
                             {
                                 _instanceData.ConfigMatchVehicleShown = true;
                                 string balloonMessage = GetString(Resource.String.config_match_vehicle);
-                                ShowBallonMessage(balloonMessage);
+                                ShowBallonMessage(balloonMessage, 20000);
                             }
                         }
                     }
@@ -6629,13 +6629,15 @@ namespace BmwDeepObd
             _activityCommon.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
         }
 
-        private void ShowBallonMessage(string message)
+        private void ShowBallonMessage(string message, int dismissDuration = ActivityCommon.BalloonDismissDuration)
         {
             View rootView = _contentView?.RootView;
             if (rootView != null)
             {
                 Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
                 balloonBuilder.Text = message;
+                balloonBuilder.AutoDismissDuration = dismissDuration;
+                balloonBuilder.DismissWhenClicked = true;
                 Balloon balloon = balloonBuilder.Build();
                 balloon.Show(rootView);
             }
