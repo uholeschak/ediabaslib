@@ -2704,13 +2704,14 @@ namespace BmwDeepObd
             return balloonBuilder;
         }
 
-        public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, int resId)
+        public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, int resId, int dismissDuration = BalloonDismissDuration)
         {
             View rootView = alertDialog.Window?.DecorView?.RootView;
             if (rootView != null)
             {
                 Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
                 balloonBuilder.Text = context.GetString(resId);
+                balloonBuilder.AutoDismissDuration = dismissDuration;
                 Balloon balloon = balloonBuilder.Build();
                 balloon.ShowAlignTop(rootView);
                 return true;
@@ -2719,13 +2720,14 @@ namespace BmwDeepObd
             return false;
         }
 
-        public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, string text)
+        public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, string text, int dismissDuration = BalloonDismissDuration)
         {
             View rootView = alertDialog.Window?.DecorView?.RootView;
             if (rootView != null)
             {
                 Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
                 balloonBuilder.Text = text;
+                balloonBuilder.AutoDismissDuration = dismissDuration;
                 Balloon balloon = balloonBuilder.Build();
                 balloon.ShowAlignTop(rootView);
                 return true;
@@ -4940,7 +4942,7 @@ namespace BmwDeepObd
             if (_selectManufacturerAlertDialog != null)
             {
                 string message = string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.vag_mode_info_ballon), VagEndDate);
-                ShowAlertDialogBallon(_context, _selectManufacturerAlertDialog, message);
+                ShowAlertDialogBallon(_context, _selectManufacturerAlertDialog, message, 20000);
 
                 _selectManufacturerAlertDialog.DismissEvent += (sender, args) =>
                 {
