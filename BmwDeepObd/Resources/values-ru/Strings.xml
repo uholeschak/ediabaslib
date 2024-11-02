@@ -23,6 +23,7 @@
   <string name="button_skip">Пропустить</string>
   <string name="button_hide">Скрыть</string>
   <string name="button_reset">Сброс настроек</string>
+  <string name="button_manufacturer">Производитель</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
   <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения.\nХотите открыть настройки приложения?</string>
@@ -46,7 +47,7 @@
   <string name="storage_requirements">Эта программа разработана для экспертов.\nМы не несём ответственности в случае неисправности или повреждения транспортного средства.\nДля этого приложения требуется более быстрое устройство хранения данных со свободным пространством не менее {0:fs1}.\nИспользование этого приложения не допускается, если условие не будет принято.</string>  <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nПродолжить?</string>
   <string name="config_match_vehicle">Используйте только те конфигурации, которые точно соответствуют автомобилю.\nСоздавайте конфигурации с помощью генератора конфигураций, поддержка использования сторонних конфигураций отсутствует.</string>
   <string name="ecu_extract_confirm">Для распаковки файлов ECU (Размер около{0:fs1})\nтребуется загрузка информации об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nХотите продолжить? </string>
-  <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Отменить\'.</string>
+  <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Производитель\'.</string>
   <string name="open_trace_file_failed">Не удается открыть файл трассировки:\n{0}.</string>
   <string name="no_ext_app_installed">Сначала установите приложение, которое может открыть {0} файл.</string>
   <string name="choose_file_app">Открыть файл.</string>
@@ -84,6 +85,7 @@
   <string name="version_last_changes">- Поддержка файлов моделирования.\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
+  <string name="vag_mode_info_ballon">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо Deep OBD устройство с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
 
   <!-- Update info -->
   <string name="update_header">Обновление доступно в Google Play.</string>

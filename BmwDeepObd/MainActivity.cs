@@ -1618,7 +1618,7 @@ namespace BmwDeepObd
             switch (item.ItemId)
             {
                 case Resource.Id.menu_manufacturer:
-                    SelectManufacturerInfo();
+                    SelectManufacturer();
                     return true;
 
                 case Resource.Id.menu_scan:
@@ -6401,35 +6401,6 @@ namespace BmwDeepObd
             }
         }
 
-        private void SelectManufacturerInfo()
-        {
-            if (ActivityCommon.SelectedManufacturer == ActivityCommon.ManufacturerType.Bmw && !_instanceData.VagInfoShown)
-            {
-                string message = string.Format(CultureInfo.InvariantCulture, GetString(Resource.String.vag_mode_info), ActivityCommon.VagEndDate).Replace("\n", "<br>");
-                AlertDialog alertDialog = new AlertDialog.Builder(this)
-                    .SetPositiveButton(Resource.String.button_ok, (sender, args) =>
-                    {
-                        SelectManufacturer();
-                    })
-                    .SetNegativeButton(Resource.String.button_abort, (sender, args) => { })
-                    .SetCancelable(true)
-                    .SetMessage(ActivityCommon.FromHtml(message))
-                    .SetTitle(Resource.String.alert_title_info)
-                    .Show();
-                if (alertDialog != null)
-                {
-                    TextView messageView = alertDialog.FindViewById<TextView>(Android.Resource.Id.Message);
-                    if (messageView != null)
-                    {
-                        messageView.MovementMethod = new LinkMovementMethod();
-                    }
-                }
-                _instanceData.VagInfoShown = true;
-                return;
-            }
-            SelectManufacturer();
-        }
-
         private void SelectManufacturer()
         {
             if (_activityCommon == null)
@@ -6502,7 +6473,7 @@ namespace BmwDeepObd
                 {
                     StartXmlTool();
                 })
-                .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
+                .SetNeutralButton(Resource.String.button_manufacturer, (sender, args) =>
                 {
                     SelectManufacturer();
                 })
