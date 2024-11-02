@@ -39,6 +39,8 @@
   <string name="bt_not_available">Bluetooth недоступен.</string>
   <string name="wifi_not_available">Wi-Fi недоступен.</string>
   <string name="config_select">Отсутствует правильная конфигурация.\nХотите создать или выбрать конфигурацию?</string>
+  <!--Translate-->
+  <string name="config_manual_edit">Текущая конфигурация была создана вручную и ее необходимо сначала закрыть.</string>
   <string name="bt_device_not_selected">Bluetooth устройство не выбрано.\nХотите выбрать устройство?</string>
   <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs1} &lt; {1:fs1}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
   <string name="ecu_not_found">ECU файлы не найдены.</string>
