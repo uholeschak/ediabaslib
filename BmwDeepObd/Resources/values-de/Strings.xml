@@ -23,6 +23,7 @@
   <string name="button_skip">Überspringen</string>
   <string name="button_hide">Verbergen</string>
   <string name="button_reset">Zurücksetzen</string>
+  <string name="button_manufacturer">Hersteller</string>
   <string name="back_button_twice_for_exit">Die Schaltfläche zwei mal drücken zum Beenden</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
   <string name="access_denied_ext_storage">Zugriff auf den externen Speicher ist notwendig um die App auszuführen.\nWollen Sie die App Einstellungen öffnen?</string>
@@ -47,7 +48,7 @@
   <string name="config_match_vehicle">Verwenden Sie nur Konfigurationen die exakt zum Fahrzeug passen.\nErzeugen Sie Konfigurationen mit dem Konfigurationsgenerator, es gibt keine Unterstützung bei der Verwendung von Fremdkonfigurationen.</string>
   <string name="ecu_extract">Die ECU Dateien müssen entpackt werden (Größe ca. {0:fs1}),\nder Download von Update-Informationen ist hierfür notwendig.\nWenn das Entpacken sehr langsam ist, verwenden Sie bitte ein schnelleres Speichermedium.\nWollen Sie fortfahren?</string>
   <string name="ecu_extract_confirm">Für das Entpacken der ECU Dateien (Größe ca. {0:fs1})\nist der Download von Update-Informationen notwendig.\nWenn das Entpacken sehr langsam ist, verwenden Sie bitte ein schnelleres Speichermedium.\nWollen Sie fortfahren?</string>
-  <string name="manufacturer_select">Der aktuelle Hersteller ist {0}, um einen anderen zu wählen drücken Sie bitte \'Abbrechen\'.</string>
+  <string name="manufacturer_select">Der aktuelle Hersteller ist {0}, um einen anderen zu wählen drücken Sie bitte \'Hersteller\'.</string>
   <string name="open_trace_file_failed">Die Tracedatei konnte nicht geöffnet werden:\n{0}.</string>
   <string name="no_ext_app_installed">Bitte installieren Sie zunächst eine App, welche {0} Dateien öffnen kann.</string>
   <string name="choose_file_app">Datei öffnen.</string>
@@ -85,6 +86,7 @@
   <string name="version_last_changes">- Unterstützung für Simulationsdateien.\n- Kleinere Probleme behoben</string>
   <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">Der VAG Modus ist noch experimentell und nur für Fahrzeuge bis {0}.\nEs wird ein &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD Adapter&lt;/a&gt; mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.</string>
+  <string name="vag_mode_info_ballon">Der VAG Modus ist noch experimentell und nur für Fahrzeuge bis {0}.\nEs wird einDeep OBD Adapter mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.</string>
 
   <!-- Update info -->
   <string name="update_header">Eine Update ist bei Google Play verfügbar.</string>

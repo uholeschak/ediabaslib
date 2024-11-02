@@ -22,6 +22,7 @@
   <string name="button_skip">Skip</string>
   <string name="button_hide">Hide</string>
   <string name="button_reset">Reset</string>
+  <string name="button_manufacturer">Manufacturer</string>
   <string name="back_button_twice_for_exit">Press button twice in order to exit</string>
   <string name="no_ext_storage">No external storage available</string>
   <string name="access_denied_ext_storage">Access to the external storage is required to execute this app.\nDo you want to open the app settings?</string>
@@ -46,7 +47,7 @@
   <string name="config_match_vehicle">Only use configurations that exactly match the vehicle.\nGenerate configurations with the configuration generator, there is no support for using foreign configurations.</string>
   <string name="ecu_extract">The ECU files have to be extracted (Size approx. {0:fs1}),\nthis requires the download of update information.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
   <string name="ecu_extract_confirm">To extract the ECU files (Size approx. {0:fs1})\nthe download of update information is required.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
-  <string name="manufacturer_select">The current manufacturer is {0}, to choose a different one select \'abort\'.</string>
+  <string name="manufacturer_select">The current manufacturer is {0}, to choose a different one select \'Manufacturer\'.</string>
   <string name="open_trace_file_failed">Unable to open trace file:\n{0}.</string>
   <string name="no_ext_app_installed">Please install an app first, that could open {0} files.</string>
   <string name="choose_file_app">Open file.</string>
@@ -84,6 +85,7 @@
   <string name="version_last_changes">- Simulation file support.\n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">The VAG mode ist still experimental and only for vehicles until {0}.\nA &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD adapter&lt;/a&gt; with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.</string>
+  <string name="vag_mode_info_ballon">The VAG mode ist still experimental and only for vehicles until {0}.\nA Deep OBD adapter with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.</string>
 
   <!-- Update info -->
   <string name="update_header">An update is available at Google Play.</string>

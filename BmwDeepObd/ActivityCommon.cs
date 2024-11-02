@@ -2719,6 +2719,21 @@ namespace BmwDeepObd
             return false;
         }
 
+        public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, string text)
+        {
+            View rootView = alertDialog.Window?.DecorView?.RootView;
+            if (rootView != null)
+            {
+                Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
+                balloonBuilder.Text = text;
+                Balloon balloon = balloonBuilder.Build();
+                balloon.ShowAlignTop(rootView);
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool IsBtReliable()
         {
             if (Build.VERSION.SdkInt == BuildVersionCodes.M &&
@@ -4924,6 +4939,9 @@ namespace BmwDeepObd
             _selectManufacturerAlertDialog = builder.Show();
             if (_selectManufacturerAlertDialog != null)
             {
+                string message = string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.vag_mode_info_ballon), VagEndDate);
+                ShowAlertDialogBallon(_context, _selectManufacturerAlertDialog, message);
+
                 _selectManufacturerAlertDialog.DismissEvent += (sender, args) =>
                 {
                     if (_disposed)
