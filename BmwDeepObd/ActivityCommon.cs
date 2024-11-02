@@ -779,6 +779,7 @@ namespace BmwDeepObd
         public const int FileIoRetryDelay = 1000;
         public const int MinSendCommErrors = 3;
         public const int UserNotificationIdMax = 1000;
+        public const int BalloonDismissDuration = 4000;
         public const SslProtocols DefaultSslProtocols = SslProtocols.None;
         public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
@@ -2694,7 +2695,7 @@ namespace BmwDeepObd
             balloonBuilder.TextSize = 14.0f;
             balloonBuilder.TextTypeface = (int)Android.Graphics.TypefaceStyle.Italic;
             balloonBuilder.BalloonAnimation = BalloonAnimation.Elastic;
-            balloonBuilder.AutoDismissDuration = 4000;
+            balloonBuilder.AutoDismissDuration = BalloonDismissDuration;
             balloonBuilder.SetPadding(10);
             balloonBuilder.ArrowOrientation = ArrowOrientation.Bottom;
             balloonBuilder.ArrowPosition = 0.5f;
