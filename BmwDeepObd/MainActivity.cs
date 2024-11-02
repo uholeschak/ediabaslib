@@ -6609,8 +6609,18 @@ namespace BmwDeepObd
                 balloonBuilder.Text = message;
                 balloonBuilder.AutoDismissDuration = dismissDuration;
                 balloonBuilder.DismissWhenClicked = true;
-                Balloon balloon = balloonBuilder.Build();
+                switch (alignment)
+                {
+                    case TextAlignment.ViewStart:
+                        balloonBuilder.ArrowOrientation = ArrowOrientation.Top;
+                        break;
 
+                    case TextAlignment.ViewEnd:
+                        balloonBuilder.ArrowOrientation = ArrowOrientation.Bottom;
+                        break;
+                }
+
+                Balloon balloon = balloonBuilder.Build();
                 switch (alignment)
                 {
                     case TextAlignment.ViewStart:
