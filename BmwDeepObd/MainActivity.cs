@@ -6504,6 +6504,7 @@ namespace BmwDeepObd
                 })
                 .SetNeutralButton(Resource.String.button_abort, (sender, args) =>
                 {
+                    SelectManufacturer();
                 })
                 .SetCancelable(true)
                 .SetMessage(message)
