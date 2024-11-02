@@ -1084,6 +1084,16 @@ namespace BmwDeepObd
                         StoreSettings();
                         ReadConfigFile();
                         UpdateOptionsMenu();
+
+                        if (!string.IsNullOrEmpty(_instanceData.ConfigFileName) && _activityCommon.SelectedInterface != ActivityCommon.InterfaceType.Simulation)
+                        {
+                            if (!_instanceData.ConfigMatchVehicleShown)
+                            {
+                                _instanceData.ConfigMatchVehicleShown = true;
+                                string balloonMessage = GetString(Resource.String.config_match_vehicle);
+                                ShowBallonMessage(balloonMessage);
+                            }
+                        }
                     }
                     break;
 
@@ -6751,25 +6761,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_instanceData.ConfigMatchVehicleShown)
-            {
-                SelectConfigFileIntent();
-                return;
-            }
-
-            _instanceData.ConfigMatchVehicleShown = true;
-            new AlertDialog.Builder(this)
-                .SetPositiveButton(Resource.String.button_ok, (s, a) =>
-                {
-                    SelectConfigFileIntent();
-                })
-                .SetNegativeButton(Resource.String.button_abort, (s, a) =>
-                {
-                })
-                .SetCancelable(true)
-                .SetMessage(Resource.String.config_match_vehicle)
-                .SetTitle(Resource.String.alert_title_info)
-                .Show();
+            SelectConfigFileIntent();
         }
 
         private void SelectConfigFileIntent()
