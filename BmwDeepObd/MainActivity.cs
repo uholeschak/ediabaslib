@@ -5223,7 +5223,7 @@ namespace BmwDeepObd
                         {
                             if (jobReader.CompatIdsUsed)
                             {
-                                ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn));
+                                ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn), ActivityCommon.BalloonDismissDuration, TextAlignment.ViewStart);
                             }
                         }
                     });
@@ -6600,7 +6600,7 @@ namespace BmwDeepObd
             _activityCommon.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
         }
 
-        private void ShowBallonMessage(string message, int dismissDuration = ActivityCommon.BalloonDismissDuration)
+        private void ShowBallonMessage(string message, int dismissDuration = ActivityCommon.BalloonDismissDuration, TextAlignment alignment = TextAlignment.Center)
         {
             View rootView = _contentView?.RootView;
             if (rootView != null)
@@ -6610,7 +6610,21 @@ namespace BmwDeepObd
                 balloonBuilder.AutoDismissDuration = dismissDuration;
                 balloonBuilder.DismissWhenClicked = true;
                 Balloon balloon = balloonBuilder.Build();
-                balloon.Show(rootView);
+
+                switch (alignment)
+                {
+                    case TextAlignment.ViewStart:
+                        balloon.ShowAlignTop(rootView);
+                        break;
+
+                    case TextAlignment.ViewEnd:
+                        balloon.ShowAlignBottom(rootView);
+                        break;
+
+                    default:
+                        balloon.Show(rootView);
+                        break;
+                }
             }
         }
 
