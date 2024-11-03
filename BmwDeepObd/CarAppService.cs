@@ -37,8 +37,9 @@ namespace BmwDeepObd
     // https://developer.android.com/training/cars/testing/dhu
     // Start Android Auto Emulation Server on the smartphone
     // Select once: Connect vehicle
-    // adb forward tcp:5277 tcp:5277
+    // Open Visual Studio adb console
     // cd /d C:\Users\Ulrich\AppData\Local\Android\android-sdk\extras\google\auto
+    // adb forward tcp:5277 tcp:5277
     // desktop-head-unit.exe
 
     public class CarService : CarAppService
