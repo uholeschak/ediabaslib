@@ -336,7 +336,9 @@ namespace BmwDeepObd
                 _updateScreenRunnable = new UpdateScreenRunnable(this);
                 _carAppApiLevel = carContext.CarAppApiLevel;
                 _listLimit = GetContentLimit(ConstraintManager.ContentLimitTypeList, DefaultListItems);
-
+#if DEBUG
+                //_carAppApiLevel = 1;    // test with lower api level
+#endif
                 Lifecycle.AddObserver(this);
             }
 
