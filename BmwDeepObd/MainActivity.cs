@@ -83,6 +83,13 @@ namespace BmwDeepObd
             RequestEditXml,
         }
 
+        private enum BalloonAlligment
+        {
+            Center,
+            Top,
+            Bottom,
+        }
+
         private class DownloadInfo
         {
             public DownloadInfo(string downloadDir, string targetDir, XElement infoXml = null)
@@ -5223,7 +5230,7 @@ namespace BmwDeepObd
                         {
                             if (jobReader.CompatIdsUsed)
                             {
-                                ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn), ActivityCommon.BalloonDismissDuration, TextAlignment.ViewStart);
+                                ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn), ActivityCommon.BalloonDismissDuration, BalloonAlligment.Top);
                             }
                         }
                     });
@@ -6600,7 +6607,7 @@ namespace BmwDeepObd
             _activityCommon.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
         }
 
-        private void ShowBallonMessage(string message, int dismissDuration = ActivityCommon.BalloonDismissDuration, TextAlignment alignment = TextAlignment.Center)
+        private void ShowBallonMessage(string message, int dismissDuration = ActivityCommon.BalloonDismissDuration, BalloonAlligment alignment = BalloonAlligment.Center)
         {
             View rootView = _contentView?.RootView;
             if (rootView != null)
@@ -6611,11 +6618,11 @@ namespace BmwDeepObd
                 balloonBuilder.DismissWhenClicked = true;
                 switch (alignment)
                 {
-                    case TextAlignment.ViewStart:
+                    case BalloonAlligment.Top:
                         balloonBuilder.ArrowOrientation = ArrowOrientation.Top;
                         break;
 
-                    case TextAlignment.ViewEnd:
+                    case BalloonAlligment.Bottom:
                         balloonBuilder.ArrowOrientation = ArrowOrientation.Bottom;
                         break;
                 }
@@ -6623,11 +6630,11 @@ namespace BmwDeepObd
                 Balloon balloon = balloonBuilder.Build();
                 switch (alignment)
                 {
-                    case TextAlignment.ViewStart:
+                    case BalloonAlligment.Top:
                         balloon.ShowAlignTop(rootView);
                         break;
 
-                    case TextAlignment.ViewEnd:
+                    case BalloonAlligment.Bottom:
                         balloon.ShowAlignBottom(rootView);
                         break;
 
