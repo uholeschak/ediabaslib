@@ -220,7 +220,7 @@ namespace BmwDeepObd
 
             public override Screen OnCreateScreen(Intent intent)
             {
-                LogString("CarSession: OnCreateScreen");
+                LogFormat("CarSession: OnCreateScreen, Api={0}", CarContext.CarAppApiLevel);
                 MainScreenInst = new MainScreen(CarContext, _carService, this);
                 return MainScreenInst;
             }
