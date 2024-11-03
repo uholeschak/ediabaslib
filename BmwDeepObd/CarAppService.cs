@@ -9,6 +9,7 @@ using EdiabasLib;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -988,6 +989,7 @@ namespace BmwDeepObd
                     if (pageListCopy != null)
                     {
                         JobReader jobReader = ActivityCommon.JobReader;
+                        bool errorResetActive = pageListCopy.Any(pageInfo => pageInfo.ErrorResetActive);
 
                         foreach (PageInfoEntry pageInfo in pageListCopy)
                         {
@@ -998,7 +1000,6 @@ namespace BmwDeepObd
 
                             string pageName = pageInfo.Name;
                             bool activePage = pageInfo.ActivePage;
-                            bool errorResetActive = pageInfo.ErrorResetActive;
 
                             Row.Builder row = new Row.Builder()
                                 .SetTitle(pageName)
@@ -1043,7 +1044,11 @@ namespace BmwDeepObd
 
                             if (errorResetActive)
                             {
-                                row.AddText(ResourceContext.GetString(Resource.String.car_service_error_reset_active));
+                                if (pageInfo.ErrorResetActive)
+                                {
+                                    row.AddText(ResourceContext.GetString(Resource.String.car_service_error_reset_active));
+                                }
+
                                 if (CarAppApiLevel >= 5)
                                 {
                                     row.SetEnabled(false);
