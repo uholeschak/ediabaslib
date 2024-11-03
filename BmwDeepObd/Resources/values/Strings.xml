@@ -849,7 +849,7 @@
   <string name="car_service_connected">The vehicle is connected.</string>
   <string name="car_service_fg_service_disabled">The settings are invalid,\ndon\'t use the energy saving mode.</string>
   <string name="car_service_disconnected">The vehicle is disconnected.\nConnect to the vehicle (in the app) first.</string>
-  <string name="car_service_no_config">No configuration loaded.\nLoad a configuration in the app first.</string>
+  <string name="car_service_no_config">No configuration loaded.\nA configuration has to be loaded in the app first.</string>
   <string name="car_service_app_processing">Connection establishment active in the app on the smartphone.</string>
   <string name="car_service_app_displayed">The app has been displayed on the smartphone.</string>
   <string name="car_service_app_store_settings">The app on the smartphone is storing the settings.</string>
@@ -857,7 +857,7 @@
   <string name="car_service_page_list">Page list</string>
   <string name="car_service_page_list_show">Show page list</string>
   <string name="car_service_settings_lock_none">Energy saving mode</string>
-  <string name="car_service_settings_invalid_mode">Invalid for Android Auto</string>
+  <string name="car_service_settings_invalid_mode">Option invalid for Android Auto.</string>
   <string name="car_service_active_page">Active page</string>
   <string name="car_service_no_pages">No pages</string>
   <string name="car_service_no_data">No data</string>

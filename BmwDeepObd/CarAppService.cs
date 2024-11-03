@@ -588,7 +588,7 @@ namespace BmwDeepObd
                 foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
                 {
                     string itemTitle = GetLockTypeTitle(lockType);
-                    string itemText = GetLockTypeText(lockType);
+                    string itemText = GetLockTypeText(lockType, out bool invalidType);
 
                     if (string.IsNullOrEmpty(itemTitle))
                     {
@@ -608,7 +608,7 @@ namespace BmwDeepObd
                         .SetChecked(lockTypeCommCopy == lockType);
                     if (CarAppApiLevel >= 5)
                     {
-                        if (disableLock || lockTypeCommCopy == lockType)
+                        if (disableLock || lockTypeCommCopy == lockType || invalidType)
                         {
                             toggle.SetEnabled(false);
                         }
@@ -631,7 +631,7 @@ namespace BmwDeepObd
                 foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
                 {
                     string itemTitle = GetLockTypeTitle(lockType);
-                    string itemText = GetLockTypeText(lockType);
+                    string itemText = GetLockTypeText(lockType, out bool invalidType);
 
                     if (string.IsNullOrEmpty(itemTitle))
                     {
@@ -651,7 +651,7 @@ namespace BmwDeepObd
                         .SetChecked(lockTypeLoggingCopy == lockType);
                     if (CarAppApiLevel >= 5)
                     {
-                        if (disableLock || lockTypeLoggingCopy == lockType)
+                        if (disableLock || lockTypeLoggingCopy == lockType || invalidType)
                         {
                             toggle.SetEnabled(false);
                         }
@@ -856,11 +856,13 @@ namespace BmwDeepObd
                 return string.Empty;
             }
 
-            private string GetLockTypeText(ActivityCommon.LockType lockType)
+            private string GetLockTypeText(ActivityCommon.LockType lockType, out bool invalidType)
             {
+                invalidType = false;
                 switch (lockType)
                 {
                     case ActivityCommon.LockType.None:
+                        invalidType = true;
                         return ResourceContext.GetString(Resource.String.car_service_settings_invalid_mode);
                 }
 

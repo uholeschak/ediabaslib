@@ -875,7 +875,7 @@
   <string name="car_service_connected">Автомобиль подключен.</string>
   <string name="car_service_fg_service_disabled">Настройки недействительны,\nне используйте режим энергосбережения.</string>
   <string name="car_service_disconnected">Автомобиль отключен.\nСначала подключитесь к автомобилю (в приложении).</string>
-  <string name="car_service_no_config">Конфигурация не загружена.\nСначала загрузите конфигурацию в приложение.</string>
+  <string name="car_service_no_config">Конфигурация не загружена.\nСначала необходимо загрузить конфигурацию в приложение.</string>
   <string name="car_service_app_processing">Установление соединения активно в приложении на смартфоне.</string>
   <string name="car_service_app_displayed">Приложение отобразилось на смартфоне.</string>
   <string name="car_service_app_store_settings">Приложение на смартфоне сохраняет настройки.</string>
@@ -883,7 +883,7 @@
   <string name="car_service_page_list">Список страниц</string>
   <string name="car_service_page_list_show">Показать список страниц</string>
   <string name="car_service_settings_lock_none">Режим энергосбережения</string>
-  <string name="car_service_settings_invalid_mode">Недействительно для Android Auto</string>
+  <string name="car_service_settings_invalid_mode">Опция недействительна для Android Auto.</string>
   <string name="car_service_active_page">Активная страница</string>
   <string name="car_service_no_pages">Нет страниц</string>
   <string name="car_service_no_data">Нет данных</string>
