@@ -434,7 +434,8 @@ namespace Ediabas
         public const int EDIABAS_RUN_0098 = 348;
         public const int EDIABAS_RUN_0099 = 349;
         public const int EDIABAS_RUN_LAST = 349;
-        public const int EDIABAS_ERROR_LAST = 349;
+        public const int EDIABAS_SEC_0000 = 350;
+        public const int EDIABAS_ERROR_LAST = 350;
 
         static ApiInternal()
         {

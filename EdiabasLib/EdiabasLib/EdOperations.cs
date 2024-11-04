@@ -1265,7 +1265,7 @@ namespace EdiabasLib
         private static void OpGenerr(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ErrorCodes error = (ErrorCodes)arg0.GetValueData();
-            if ((error < ErrorCodes.EDIABAS_RUN_0000) || (error > ErrorCodes.EDIABAS_RUN_LAST))
+            if ((error < ErrorCodes.EDIABAS_RUN_0000) || (error > ErrorCodes.EDIABAS_ERROR_LAST))
             {
                 ediabas.RaiseError(ErrorCodes.EDIABAS_BIP_0001);
             }
