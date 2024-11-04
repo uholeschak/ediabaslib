@@ -591,7 +591,7 @@ namespace EdiabasLib
             public Object OpData3;
         }
 
-        public const int EdiabasVersion = 0x760;
+        public const int EdiabasVersion = 0x770;
         public const int TraceAppendDiffHours = 1;
 
         public enum CallSource
