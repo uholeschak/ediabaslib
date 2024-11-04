@@ -1171,7 +1171,7 @@ namespace EdiabasLib
             "IFH-0071: TELEGRAM FORMAT ERROR",
             "IFH-0072: ECU ACCESS COLLISION",
             "IFH-0073: PROXY ERROR",
-            "IFH-0074",
+            "IFH-0074: UDS COMMUNICATION ERROR",
             "IFH-0075",
             "IFH-0076",
             "IFH-0077",
@@ -2340,6 +2340,14 @@ namespace EdiabasLib
             }
         }
 
+        public static bool IsMinVersion770
+        {
+            get
+            {
+                return EdiabasVersion >= 0x770;
+            }
+        }
+
         public bool IsDisposed
         {
             get { return _disposed; }
@@ -2957,6 +2965,11 @@ namespace EdiabasLib
                 {
                     _trapBitDict.Add(ErrorCodes.EDIABAS_BIP_0011, 8);
                     _trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0069, 28);
+                }
+
+                if (IsMinVersion770)
+                {
+                    _trapBitDict.Add(ErrorCodes.EDIABAS_IFH_0074, 29);
                 }
             }
 
