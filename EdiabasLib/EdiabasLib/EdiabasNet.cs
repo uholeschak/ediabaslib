@@ -951,7 +951,8 @@ namespace EdiabasLib
             EDIABAS_RUN_0098 = 348,
             EDIABAS_RUN_0099 = 349,
             EDIABAS_RUN_LAST = 349,
-            EDIABAS_ERROR_LAST = 349,
+            EDIABAS_SEC_0000 = 350,
+            EDIABAS_ERROR_LAST = 350,
             // ReSharper restore InconsistentNaming
         }
 
@@ -1297,6 +1298,7 @@ namespace EdiabasLib
             "RUN-0097",
             "RUN-0098",
             "RUN-0099",
+            "SEC-0000: INTERNAL ERROR",
         };
 
         public enum ResultType : byte
