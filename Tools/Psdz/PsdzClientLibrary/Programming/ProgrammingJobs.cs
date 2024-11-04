@@ -1727,8 +1727,9 @@ namespace PsdzClient.Programming
                             UpdateStatus(sbResult.ToString());
                             log.InfoFormat(CultureInfo.InvariantCulture, "Executing TAL");
                             StartTalExecutionState(OperationStateData.TalExecutionStateEnum.TalExecuting);
+                            CancellationToken token = cts?.Token ?? CancellationToken.None;
                             IPsdzTal executeTalResult = ProgrammingService.Psdz.TalExecutionService.ExecuteTal(PsdzContext.Connection, PsdzContext.Tal,
-                                null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, cts.Token);
+                                null, psdzVin, PsdzContext.FaTarget, talExecutionSettings, PsdzContext.PathToBackupData, token);
                             log.Info("Execute Tal result:");
                             log.InfoFormat(CultureInfo.InvariantCulture, " Size: {0}", executeTalResult.AsXml.Length);
                             log.InfoFormat(CultureInfo.InvariantCulture, " State: {0}", executeTalResult.TalExecutionState);
