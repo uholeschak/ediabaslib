@@ -3556,8 +3556,17 @@ namespace PsdzClient.Programming
 
                 if (OperationState.TalExecutionDict != null)
                 {
-                    OperationState.TalExecutionDict[OperationState.TalExecutionState] =
-                        failure ? OperationStateData.TalExecutionResultEnum.Failure : OperationStateData.TalExecutionResultEnum.Success;
+                    OperationStateData.TalExecutionResultEnum talExecutionResult = OperationStateData.TalExecutionResultEnum.None;
+                    if (failure)
+                    {
+                        talExecutionResult = OperationStateData.TalExecutionResultEnum.Failure;
+                    }
+                    else if (cts != null && cts.Token.IsCancellationRequested)
+                    {
+                        talExecutionResult = OperationStateData.TalExecutionResultEnum.Failure;
+                    }
+
+                    OperationState.TalExecutionDict[OperationState.TalExecutionState] = talExecutionResult;
                 }
             }
 
