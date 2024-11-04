@@ -239,6 +239,7 @@ namespace PsdzClient.Programming
                 Skipped,
                 Success,
                 Failure,
+                Cancelled,
             }
 
             public OperationStateData()
@@ -3563,7 +3564,7 @@ namespace PsdzClient.Programming
                     }
                     else if (cts != null && cts.Token.IsCancellationRequested)
                     {
-                        talExecutionResult = OperationStateData.TalExecutionResultEnum.Failure;
+                        talExecutionResult = OperationStateData.TalExecutionResultEnum.Cancelled;
                     }
 
                     OperationState.TalExecutionDict[OperationState.TalExecutionState] = talExecutionResult;
