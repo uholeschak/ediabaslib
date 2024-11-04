@@ -1,5 +1,5 @@
 ﻿<Project>
    <PropertyGroup>
-       <DefineConstants>$(DefineConstants);_ANDROID_AUTO</DefineConstants>
+       <DefineConstants>$(DefineConstants);ANDROID_AUTO</DefineConstants>
    </PropertyGroup>
 </Project>
