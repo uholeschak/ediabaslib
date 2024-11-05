@@ -3028,6 +3028,7 @@ namespace CarSimulator
                     {
                         case 0x0005: // routing activation request
                         {
+                            Debug.WriteLine("DoIp routing activation");
                             if (payloadLength < 11)
                             {
                                 Debug.WriteLine("DoIp routing activate length too short: {0}", (object)payloadLength);
@@ -3049,6 +3050,7 @@ namespace CarSimulator
                             resData.Add(0x10);
                             // reserved
                             resData.AddRange(new byte[4]);
+                            //Thread.Sleep(1500);   // valid delay
                             break;
                         }
 
