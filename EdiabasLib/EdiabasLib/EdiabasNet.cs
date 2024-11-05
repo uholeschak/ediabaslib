@@ -1001,7 +1001,8 @@ namespace EdiabasLib
             EDIABAS_SEC_0047,
             EDIABAS_SEC_0048,
             EDIABAS_SEC_0049,
-            EDIABAS_ERROR_LAST = EDIABAS_SEC_0049,
+            EDIABAS_SEC_LAST = EDIABAS_SEC_0049,
+            EDIABAS_ERROR_LAST = EDIABAS_SEC_LAST,
             // ReSharper restore InconsistentNaming
         }
 
