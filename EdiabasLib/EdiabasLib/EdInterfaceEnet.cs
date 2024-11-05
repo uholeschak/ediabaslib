@@ -465,25 +465,45 @@ namespace EdiabasLib
                 prop = EdiabasProtected?.GetConfigProperty("EnetDoIPTesterAddress");
                 if (prop != null)
                 {
-                    DoIpTesterAddress = (int)EdiabasNet.StringToValue(prop);
+                    string propTrim = prop.Trim();
+                    if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                    {
+                        propTrim += "0x";
+                    }
+                    DoIpTesterAddress = (int)EdiabasNet.StringToValue(propTrim);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("DoIPTesterAddress");
                 if (prop != null)
                 {
-                    DoIpTesterAddress = (int)EdiabasNet.StringToValue("0x" + prop);
+                    string propTrim = prop.Trim();
+                    if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                    {
+                        propTrim += "0x";
+                    }
+                    DoIpTesterAddress = (int)EdiabasNet.StringToValue(propTrim);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetDoipGatewayAddress");
                 if (prop != null)
                 {
-                    DoIpGatewayAddress = (int)EdiabasNet.StringToValue(prop);
+                    string propTrim = prop.Trim();
+                    if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                    {
+                        propTrim += "0x";
+                    }
+                    DoIpGatewayAddress = (int)EdiabasNet.StringToValue(propTrim);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("DoipGatewayAddress");
                 if (prop != null)
                 {
-                    DoIpGatewayAddress = (int)EdiabasNet.StringToValue("0x" + prop);
+                    string propTrim = prop.Trim();
+                    if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+                    {
+                        propTrim += "0x";
+                    }
+                    DoIpGatewayAddress = (int)EdiabasNet.StringToValue(propTrim);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetControlPort");
