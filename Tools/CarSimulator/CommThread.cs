@@ -291,7 +291,6 @@ namespace CarSimulator
         private const int EnetControlPrgPort = 51561;
         private const int DoIpDiagPort = 13400;
         private const int DoIpProtoVer = EdInterfaceEnet.DoIpProtoVer;
-        private const int DoIpGwAddr = EdInterfaceEnet.DoIpGwAddrDefault;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
         // Otherwise, there is packet loss in the ICOM internally!
@@ -352,6 +351,7 @@ namespace CarSimulator
         private readonly byte[] _sendData;
         private readonly byte[] _receiveData;
         private readonly byte[] _receiveDataMotorBackup;
+        private int _doIpGwAddr;
         private int _noResponseCount;
         private int _nr2123SendCount;
 #pragma warning disable 414
@@ -796,6 +796,7 @@ namespace CarSimulator
             _sendData = new byte[MaxBufferLength];
             _receiveData = new byte[MaxBufferLength];
             _receiveDataMotorBackup = new byte[_receiveData.Length];
+            _doIpGwAddr = EdInterfaceEnet.DoIpGwAddrDefault + 0;
             _noResponseCount = 0;
             _nr2123SendCount = 0;
             _kwp1281InvRespIndex = 0;
@@ -2090,8 +2091,8 @@ namespace CarSimulator
                     byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
                     resData.AddRange(vinBytes);
                     // log address
-                    resData.Add((byte)(DoIpGwAddr >> 8));
-                    resData.Add((byte)(DoIpGwAddr & 0xFF));
+                    resData.Add((byte)(_doIpGwAddr >> 8));
+                    resData.Add((byte)(_doIpGwAddr & 0xFF));
                     // MAC
                     byte[] macBytes = new byte[6];
                     resData.AddRange(macBytes);
@@ -3042,8 +3043,8 @@ namespace CarSimulator
                             resData.Add((byte)(srcAddr >> 8));
                             resData.Add((byte)srcAddr);
                             // log address
-                            resData.Add((byte)(DoIpGwAddr >> 8));
-                            resData.Add((byte)(DoIpGwAddr & 0xFF));
+                            resData.Add((byte)(_doIpGwAddr >> 8));
+                            resData.Add((byte)(_doIpGwAddr & 0xFF));
                             // response code
                             resData.Add(0x10);
                             // reserved
