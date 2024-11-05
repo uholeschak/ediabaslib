@@ -18,7 +18,10 @@ The following properties could be specified in this file:
 * `EnetVehicleProtocol`, `VehicleProtocol`: Order of vehicle protocols used, separated by comma. Possible vales are `HSFZ` and `DoIP`.
 * `EnetHostIdentService`, `HostIdentService`: IPv4 netmask for vehicle searching. Default is `255.255.255.255`. This has changed with Ediabas 7.6.0.
 * `EnetTesterAddress`: Tester address for HSFZ protocol, standard is the hex value `0xF4`.
-* `EnetDoIPTesterAddress`: Tester address for DoIP protocol, standard is the hex value `0x0EF3`.
+* `EnetDoIPTesterAddress`: Tester address for DoIP protocol with `0x` prefix, default is the hex value `0x0EF3`.
+* `DoIPTesterAddress`: Tester address for DoIP protocol without `0x` prefix, default is the hex value `0EF3`.
+* `EnetDoipGatewayAddress`: Gateway address for DoIP protocol with `0x` prefix, default is the hex value `0x0010`.
+* `DoipGatewayAddress`: Gateway address for DoIP protocol without `0x` prefix, default is the hex value `0010`.
 * `EnetControlPort`, `ControlPort`: Control port for HSFZ protocol, standard port is `6811`.
 * `EnetDiagnosticPort`, `DiagnosticPort`: Diagnostic port for HSFZ protocol, standard port is `6801`.
 * `EnetDoIPPort`, `DoIPPort`: Port for DoIP protocol, standard port is `13400`
