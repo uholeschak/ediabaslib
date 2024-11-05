@@ -468,10 +468,22 @@ namespace EdiabasLib
                     DoIpTesterAddress = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = EdiabasProtected?.GetConfigProperty("DoIPTesterAddress");
+                if (prop != null)
+                {
+                    DoIpTesterAddress = (int)EdiabasNet.StringToValue("0x" + prop);
+                }
+
                 prop = EdiabasProtected?.GetConfigProperty("EnetDoipGatewayAddress");
                 if (prop != null)
                 {
                     DoIpGatewayAddress = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("DoipGatewayAddress");
+                if (prop != null)
+                {
+                    DoIpGatewayAddress = (int)EdiabasNet.StringToValue("0x" + prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetControlPort");
