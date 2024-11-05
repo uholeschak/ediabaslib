@@ -320,7 +320,7 @@ namespace EdiabasLib
         public const int MaxAckLength = 13;
         public const int MaxDoIpAckLength = 5;
         public const int DoIpProtoVer = 0x03;
-        public const int DoIpGwAddr = 0x0010;
+        public const int DoIpGwAddrDefault = 0x0010;
         public const string AutoIp = "auto";
         public const string AutoIpAll = ":all";
         public const string ProtocolHsfz = "HSFZ";
@@ -372,6 +372,7 @@ namespace EdiabasLib
         protected string VehicleProtocolProtected = ProtocolHsfz + "," + ProtocolDoIp;
         protected int TesterAddress = 0xF4;
         protected int DoIpTesterAddress = 0x0EF3;
+        protected int DoIpGatewayAddress = DoIpGwAddrDefault;
         protected string HostIdentServiceProtected = "255.255.255.255";
         protected int UdpIdentPort = 6811;
         protected int UdpSrvLocPort = 427;
@@ -465,6 +466,12 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     DoIpTesterAddress = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetDoipGatewayAddress");
+                if (prop != null)
+                {
+                    DoIpGatewayAddress = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetControlPort");
@@ -1933,7 +1940,7 @@ namespace EdiabasLib
                     {
                         long payloadLen = (((long)UdpBuffer[4] << 24) | ((long)UdpBuffer[5] << 16) | ((long)UdpBuffer[6] << 8) | UdpBuffer[7]);
                         uint gwAddr = (uint)((UdpBuffer[8 + 17 + 0] << 8) | UdpBuffer[8 + 17 + 1]);
-                        if (payloadLen >= minPayloadLength && gwAddr == DoIpGwAddr)
+                        if (payloadLen >= minPayloadLength && (gwAddr == DoIpGatewayAddress || DoIpGatewayAddress == 0xFFFF))
                         {
                             addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectDoIp, recIp);
                             try
