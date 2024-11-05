@@ -139,6 +139,9 @@ for /l %%x in (0, 1, 32) do (
 "%OPEN_COVER%" "-output:results35.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#250\""
 "%OPEN_COVER%" "-output:results36.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#349\""
 "%OPEN_COVER%" "-output:results37.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_RAISE_RUNTIMEERR#350\""
+for /l %%x in (351, 1, 410) do (
+!EDIABAS_TEST! !ADD_ARGS! -s "!ECU_TEST_PATH!\cmd_test1.prg" -j "TEST_RAISE_RUNTIMEERR#%%x"
+)
 
 if "!COVERAGE!"=="1" (
 if exist "!REPORTS_PATH!" del /q "!REPORTS_PATH!\*.*"
