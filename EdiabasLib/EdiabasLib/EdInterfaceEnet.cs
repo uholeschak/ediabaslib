@@ -468,7 +468,7 @@ namespace EdiabasLib
                     string propTrim = prop.Trim();
                     if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
                     {
-                        propTrim += "0x";
+                        propTrim = "0x" + propTrim;
                     }
                     DoIpTesterAddress = (int)EdiabasNet.StringToValue(propTrim);
                 }
@@ -479,7 +479,7 @@ namespace EdiabasLib
                     string propTrim = prop.Trim();
                     if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
                     {
-                        propTrim += "0x";
+                        propTrim = "0x" + propTrim;
                     }
                     DoIpTesterAddress = (int)EdiabasNet.StringToValue(propTrim);
                 }
@@ -490,7 +490,7 @@ namespace EdiabasLib
                     string propTrim = prop.Trim();
                     if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
                     {
-                        propTrim += "0x";
+                        propTrim = "0x" + propTrim;
                     }
                     DoIpGatewayAddress = (int)EdiabasNet.StringToValue(propTrim);
                 }
@@ -501,7 +501,7 @@ namespace EdiabasLib
                     string propTrim = prop.Trim();
                     if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
                     {
-                        propTrim += "0x";
+                        propTrim = "0x" + propTrim;
                     }
                     DoIpGatewayAddress = (int)EdiabasNet.StringToValue(propTrim);
                 }
