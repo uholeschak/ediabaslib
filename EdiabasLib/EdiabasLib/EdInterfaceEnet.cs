@@ -382,7 +382,7 @@ namespace EdiabasLib
         protected int ConnectTimeout = 5000;
         protected int BatteryVoltageValue = 12000;
         protected int IgnitionVoltageValue = 12000;
-        protected int DoIpTimeoutAcknowledge = 1500;
+        protected int DoIpTimeoutAcknowledge = 2000;
         protected int AddRecTimeoutProtected = 1000;
         protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
