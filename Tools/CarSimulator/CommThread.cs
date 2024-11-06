@@ -3050,7 +3050,7 @@ namespace CarSimulator
                             resData.Add(0x10);
                             // reserved
                             resData.AddRange(new byte[4]);
-                            //Thread.Sleep(1500);   // valid delay
+                            //Thread.Sleep(1900);   // valid max delay
                             break;
                         }
 
