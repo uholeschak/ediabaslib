@@ -6,12 +6,12 @@ rem For EDIABAS set the COM port in obd.ini (max COM9)
 rem Compile solution EdiabasLib as Debug first.
 rem Arguments: <test type:lib|apilib|ediabas> <interface: ENET|STD:OBD> <port: COM4>
 
-set BATPATH=%~dp0
-set OPEN_COVER=%OPENCOVER_PATH%\OpenCover.Console.exe
-set REPORT_GENERATOR=%REPORTGENERATOR_PATH%\ReportGenerator.exe
-set ECU_PATH=!BATPATH!\..\..\..\Ecu
-set ECU_TEST_PATH=!BATPATH!\..\Ecu
-set REPORTS_PATH=!BATPATH!\Reports
+set "BATPATH=%~dp0"
+set "OPEN_COVER=%OPENCOVER_PATH%\OpenCover.Console.exe"
+set "REPORT_GENERATOR=%REPORTGENERATOR_PATH%\ReportGenerator.exe"
+set "ECU_PATH=!BATPATH!\..\..\..\Ecu"
+set "ECU_TEST_PATH=!BATPATH!\..\Ecu"
+set "REPORTS_PATH=!BATPATH!\Reports"
 if "%2"=="" (
 set IFH=STD:OBD
 ) else (
@@ -24,8 +24,8 @@ set COMPORT=%3
 )
 
 if "%1"=="lib" (
-set EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\EdiabasTest.exe
-set OUTFILE=output_lib.log
+set "EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\EdiabasTest.exe"
+set "OUTFILE=output_lib.log"
 rem set ADD_ARGS=-p !COMPORT! -o "!OUTFILE!" -a -c
 set ADD_ARGS=--ifh="!IFH!" -o "!OUTFILE!" -a -c
 set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=!COMPORT!;CompatMode=0"
@@ -34,7 +34,7 @@ set COVERAGE=1
 goto argsok
 )
 if "%1"=="apilib" (
-set EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLibCall.exe
+set "EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\EdiabasLibCall.exe"
 set OUTFILE=output_apilib.log
 set ADD_ARGS=-o !OUTFILE! --ifh="!IFH!" --device="_" -a -c
 rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
@@ -44,8 +44,8 @@ set COVERAGE=1
 goto argsok
 )
 if "%1"=="ediabas" (
-set EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\EdiabasCall.exe
-set OUTFILE=output_ediabas.log
+set "EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\EdiabasCall.exe"
+set "OUTFILE=output_ediabas.log"
 set ADD_ARGS=-o "!OUTFILE!" --ifh="!IFH!" --device="_" -a -c
 set ADD_ARGS=!ADD_ARGS! --cfg="RemoteHost=127.0.0.1"
 set FILTERS=-[*]*
