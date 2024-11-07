@@ -30,6 +30,8 @@ namespace CarSimulator
         private string _rootFolder;
         private string _ecuFolder;
         private string _responseDir;
+        private string _serverCertFile;
+        private string _serverCertPwd;
         private CommThread _commThread;
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
@@ -54,6 +56,8 @@ namespace CarSimulator
             GetDirectories();
             _rootFolder = Properties.Settings.Default.RootFolder;
             _ecuFolder = Properties.Settings.Default.EcuFolder;
+            _serverCertFile = Properties.Settings.Default.ServerCertFile;
+            _serverCertPwd = Properties.Settings.Default.ServerCertPwd;
             _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
             {
@@ -120,6 +124,8 @@ namespace CarSimulator
 
             Properties.Settings.Default.RootFolder = _rootFolder;
             Properties.Settings.Default.EcuFolder = _ecuFolder;
+            Properties.Settings.Default.ServerCertFile = _serverCertFile;
+            Properties.Settings.Default.ServerCertPwd = _serverCertPwd;
             Properties.Settings.Default.Save();
         }
 
@@ -413,7 +419,7 @@ namespace CarSimulator
                                 try
                                 {
                                     int value = Convert.ToInt32(number, 16);
-                                    configData.Add((byte) value);
+                                    configData.Add((byte)value);
                                 }
                                 catch
                                 {
@@ -695,6 +701,7 @@ namespace CarSimulator
             bool ecuFolderExits = !string.IsNullOrEmpty(_ecuFolder) && Directory.Exists(_ecuFolder);
 
             textBoxEcuFolder.Text = _ecuFolder ?? string.Empty;
+            textBoxServerCert.Text = _serverCertFile ?? string.Empty;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonErrorDefault.Enabled = !testing;
@@ -846,7 +853,7 @@ namespace CarSimulator
         {
             if (InvokeRequired)
             {
-                BeginInvoke((Action) (() =>
+                BeginInvoke((Action)(() =>
                 {
                     UpdateTestStatusText(text);
                 }));
@@ -934,6 +941,22 @@ namespace CarSimulator
             checkBoxIgnitionOk.Checked = true;
             checkBoxKLineResponder.Checked = true;
             UpdateDisplay();
+        }
+
+        private void buttonServerCert_Click(object sender, EventArgs e)
+        {
+            openCertFileDialog.FileName = textBoxServerCert.Text;
+            DialogResult result = openCertFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                _serverCertFile = openCertFileDialog.FileName;
+                UpdateDisplay();
+            }
+        }
+
+        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
         }
     }
 }

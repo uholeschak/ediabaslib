@@ -63,6 +63,9 @@
             checkBoxEnetHsfz = new System.Windows.Forms.CheckBox();
             checkBoxEnetDoIp = new System.Windows.Forms.CheckBox();
             checkBoxHighTestVoltage = new System.Windows.Forms.CheckBox();
+            buttonServerCert = new System.Windows.Forms.Button();
+            textBoxServerCert = new System.Windows.Forms.TextBox();
+            openCertFileDialog = new System.Windows.Forms.OpenFileDialog();
             groupBoxConcepts.SuspendLayout();
             SuspendLayout();
             // 
@@ -249,7 +252,7 @@
             // 
             listBoxResponseFiles.FormattingEnabled = true;
             listBoxResponseFiles.ItemHeight = 15;
-            listBoxResponseFiles.Location = new System.Drawing.Point(262, 197);
+            listBoxResponseFiles.Location = new System.Drawing.Point(262, 242);
             listBoxResponseFiles.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             listBoxResponseFiles.Name = "listBoxResponseFiles";
             listBoxResponseFiles.Size = new System.Drawing.Size(241, 349);
@@ -303,7 +306,7 @@
             // 
             // treeViewDirectories
             // 
-            treeViewDirectories.Location = new System.Drawing.Point(15, 197);
+            treeViewDirectories.Location = new System.Drawing.Point(14, 242);
             treeViewDirectories.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             treeViewDirectories.Name = "treeViewDirectories";
             treeViewDirectories.Size = new System.Drawing.Size(240, 349);
@@ -439,11 +442,41 @@
             checkBoxHighTestVoltage.Text = "High test voltage";
             checkBoxHighTestVoltage.UseVisualStyleBackColor = true;
             // 
+            // buttonServerCert
+            // 
+            buttonServerCert.Location = new System.Drawing.Point(14, 193);
+            buttonServerCert.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonServerCert.Name = "buttonServerCert";
+            buttonServerCert.Size = new System.Drawing.Size(240, 27);
+            buttonServerCert.TabIndex = 22;
+            buttonServerCert.Text = "Select Server Cert";
+            buttonServerCert.UseVisualStyleBackColor = true;
+            buttonServerCert.Click += buttonServerCert_Click;
+            // 
+            // textBoxServerCert
+            // 
+            textBoxServerCert.Location = new System.Drawing.Point(262, 196);
+            textBoxServerCert.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxServerCert.Name = "textBoxServerCert";
+            textBoxServerCert.ReadOnly = true;
+            textBoxServerCert.Size = new System.Drawing.Size(241, 23);
+            textBoxServerCert.TabIndex = 23;
+            // 
+            // openCertFileDialog
+            // 
+            openCertFileDialog.DefaultExt = "pfx";
+            openCertFileDialog.Filter = "Cert|*.pfx|All files|*.*";
+            openCertFileDialog.Multiselect = true;
+            openCertFileDialog.Title = "Select server cert";
+            openCertFileDialog.FileOk += openFileDialog1_FileOk;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(764, 556);
+            ClientSize = new System.Drawing.Size(764, 603);
+            Controls.Add(textBoxServerCert);
+            Controls.Add(buttonServerCert);
             Controls.Add(checkBoxHighTestVoltage);
             Controls.Add(checkBoxEnetDoIp);
             Controls.Add(checkBoxEnetHsfz);
@@ -516,6 +549,9 @@
         private System.Windows.Forms.CheckBox checkBoxEnetHsfz;
         private System.Windows.Forms.CheckBox checkBoxEnetDoIp;
         private System.Windows.Forms.CheckBox checkBoxHighTestVoltage;
+        private System.Windows.Forms.Button buttonServerCert;
+        private System.Windows.Forms.TextBox textBoxServerCert;
+        private System.Windows.Forms.OpenFileDialog openCertFileDialog;
     }
 }
 
