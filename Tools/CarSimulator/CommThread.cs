@@ -143,31 +143,37 @@ namespace CarSimulator
 
         private class BmwTcpChannel
         {
-            public BmwTcpChannel(int diagPort, int controPort, int doIpPort = -1)
+            public BmwTcpChannel(int diagPort, int controPort, int doIpPort = -1, int doIpSslPort = -1)
             {
                 DiagPort = diagPort;
                 ControlPort = controPort;
                 DoIpPort = doIpPort;
+                DoIpSslPort = doIpSslPort;
                 TcpClientDiagList = new List<BmwTcpClientData>();
                 TcpClientControlList = new List<BmwTcpClientData>();
                 TcpClientDoIpList = new List<BmwTcpClientData>();
+                TcpClientDoIpSslList = new List<BmwTcpClientData>();
                 for (int i = 0; i < 10; i++)
                 {
                     TcpClientDiagList.Add(new BmwTcpClientData(this, i, false));
                     TcpClientControlList.Add(new BmwTcpClientData(this, i, false));
                     TcpClientDoIpList.Add(new BmwTcpClientData(this, i, true));
+                    TcpClientDoIpSslList.Add(new BmwTcpClientData(this, i, true));
                 }
             }
 
             public readonly int DiagPort;
             public readonly int ControlPort;
             public readonly int DoIpPort;
+            public readonly int DoIpSslPort;
             public TcpListener TcpServerDiag;
             public readonly List<BmwTcpClientData> TcpClientDiagList;
             public TcpListener TcpServerControl;
             public readonly List<BmwTcpClientData> TcpClientControlList;
             public TcpListener TcpServerDoIp;
             public readonly List<BmwTcpClientData> TcpClientDoIpList;
+            public TcpListener TcpServerDoIpSsl;
+            public readonly List<BmwTcpClientData> TcpClientDoIpSslList;
         }
 
         private class Tp20Channel
@@ -293,6 +299,7 @@ namespace CarSimulator
         private const int EnetDiagPrgPort = 51560;
         private const int EnetControlPrgPort = 51561;
         private const int DoIpDiagPort = 13400;
+        private const int DoIpSslPort = 13496;
         private const int DoIpProtoVer = EdInterfaceEnet.DoIpProtoVer;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
@@ -998,7 +1005,7 @@ namespace CarSimulator
                     }
 
                     _bmwTcpChannels.Clear();
-                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpDiagPort));
+                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpDiagPort, DoIpSslPort));
                     _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPrgPort, EnetControlPrgPort));
 
                     foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
@@ -1018,6 +1025,15 @@ namespace CarSimulator
                             {
                                 bmwTcpChannel.TcpServerDoIp = new TcpListener(IPAddress.Any, bmwTcpChannel.DoIpPort);
                                 bmwTcpChannel.TcpServerDoIp.Start();
+                            }
+                        }
+
+                        if (bmwTcpChannel.DoIpSslPort > 0)
+                        {
+                            if ((_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp)
+                            {
+                                bmwTcpChannel.TcpServerDoIpSsl = new TcpListener(IPAddress.Any, bmwTcpChannel.DoIpSslPort);
+                                bmwTcpChannel.TcpServerDoIpSsl.Start();
                             }
                         }
                     }
