@@ -118,11 +118,12 @@ namespace CarSimulator
 
         private class BmwTcpClientData
         {
-            public BmwTcpClientData(BmwTcpChannel bmwTcpChannel, int index, bool isDoIp)
+            public BmwTcpClientData(BmwTcpChannel bmwTcpChannel, int index, bool isDoIp = false, bool doIpSsl = false)
             {
                 BmwTcpChannel = bmwTcpChannel;
                 Index = index;
                 IsDoIp = isDoIp;
+                DoIpSsl = doIpSsl;
                 TcpClientConnection = null;
                 TcpClientStream = null;
                 LastTcpRecTick = DateTime.MinValue.Ticks;
@@ -132,8 +133,9 @@ namespace CarSimulator
             public readonly BmwTcpChannel BmwTcpChannel;
             public readonly int Index;
             public readonly bool IsDoIp;
+            public readonly bool DoIpSsl;
             public TcpClient TcpClientConnection;
-            public NetworkStream TcpClientStream;
+            public Stream TcpClientStream;
             public long LastTcpRecTick;
             public long LastTcpSendTick;
             public int TcpNackIndex;
@@ -155,10 +157,10 @@ namespace CarSimulator
                 TcpClientDoIpSslList = new List<BmwTcpClientData>();
                 for (int i = 0; i < 10; i++)
                 {
-                    TcpClientDiagList.Add(new BmwTcpClientData(this, i, false));
-                    TcpClientControlList.Add(new BmwTcpClientData(this, i, false));
+                    TcpClientDiagList.Add(new BmwTcpClientData(this, i));
+                    TcpClientControlList.Add(new BmwTcpClientData(this, i));
                     TcpClientDoIpList.Add(new BmwTcpClientData(this, i, true));
-                    TcpClientDoIpSslList.Add(new BmwTcpClientData(this, i, true));
+                    TcpClientDoIpSslList.Add(new BmwTcpClientData(this, i, true, true));
                 }
             }
 
@@ -2608,10 +2610,10 @@ namespace CarSimulator
 
             try
             {
-                if (bmwTcpClientData.TcpClientStream != null && bmwTcpClientData.TcpClientStream.DataAvailable)
+                if (bmwTcpClientData.TcpClientStream is NetworkStream tcpClientStream && tcpClientStream.DataAvailable)
                 {
                     byte[] dataBuffer = new byte[MaxBufferLength];
-                    int recLen = bmwTcpClientData.TcpClientStream.Read(dataBuffer, 0, dataBuffer.Length);
+                    int recLen = tcpClientStream.Read(dataBuffer, 0, dataBuffer.Length);
 #if true
                     DebugLogData("Ctrl Rec: ", dataBuffer, recLen);
 #endif
@@ -2751,11 +2753,11 @@ namespace CarSimulator
 
             try
             {
-                if (bmwTcpClientData.TcpClientStream != null && bmwTcpClientData.TcpClientStream.DataAvailable)
+                if (bmwTcpClientData.TcpClientStream is NetworkStream tcpClientStream && tcpClientStream.DataAvailable)
                 {
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     byte[] dataBuffer = new byte[MaxBufferLength];
-                    int recLen = bmwTcpClientData.TcpClientStream.Read(dataBuffer, 0, 6);
+                    int recLen = tcpClientStream.Read(dataBuffer, 0, 6);
                     if (recLen < 6)
                     {
                         return false;
@@ -2763,15 +2765,15 @@ namespace CarSimulator
                     int payloadLength = (((int)dataBuffer[0] << 24) | ((int)dataBuffer[1] << 16) | ((int)dataBuffer[2] << 8) | dataBuffer[3]);
                     if (payloadLength > dataBuffer.Length - 6)
                     {
-                        while (bmwTcpClientData.TcpClientStream.DataAvailable)
+                        while (tcpClientStream.DataAvailable)
                         {
-                            bmwTcpClientData.TcpClientStream.ReadByte();
+                            tcpClientStream.ReadByte();
                         }
                         return false;
                     }
                     if (payloadLength > 0)
                     {
-                        recLen += bmwTcpClientData.TcpClientStream.Read(dataBuffer, 6, payloadLength);
+                        recLen += tcpClientStream.Read(dataBuffer, 6, payloadLength);
                     }
                     if (recLen < payloadLength + 6)
                     {
@@ -2992,12 +2994,19 @@ namespace CarSimulator
                         return false;
                     }
 
-                    Debug.WriteLine("DoIp connect request [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort);
+                    Debug.WriteLine("DoIp connect request [{0}], Port={1}, SSL={2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, bmwTcpClientData.DoIpSsl);
                     bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmwTcpChannel.TcpServerDoIp.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
-                    bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
+                    if (bmwTcpClientData.DoIpSsl)
+                    {
+                        bmwTcpClientData.TcpClientStream = CreateSslStream(bmwTcpClientData.TcpClientConnection, _serverCertificate);
+                    }
+                    else
+                    {
+                        bmwTcpClientData.TcpClientStream = bmwTcpClientData.TcpClientConnection.GetStream();
+                    }
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
                     bmwTcpClientData.TcpNackIndex = 0;
@@ -3050,11 +3059,11 @@ namespace CarSimulator
 
             try
             {
-                if (bmwTcpClientData.TcpClientStream != null && bmwTcpClientData.TcpClientStream.DataAvailable)
+                if (bmwTcpClientData.TcpClientStream is NetworkStream tcpClientStream && tcpClientStream.DataAvailable)
                 {
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     byte[] dataBuffer = new byte[MaxBufferLength];
-                    int recLen = bmwTcpClientData.TcpClientStream.Read(dataBuffer, 0, 8);
+                    int recLen = tcpClientStream.Read(dataBuffer, 0, 8);
                     if (recLen < 8)
                     {
                         return false;
@@ -3062,15 +3071,15 @@ namespace CarSimulator
                     int payloadLength = (((int)dataBuffer[4] << 24) | ((int)dataBuffer[5] << 16) | ((int)dataBuffer[6] << 8) | dataBuffer[7]);
                     if (payloadLength > dataBuffer.Length - 8)
                     {
-                        while (bmwTcpClientData.TcpClientStream.DataAvailable)
+                        while (tcpClientStream.DataAvailable)
                         {
-                            bmwTcpClientData.TcpClientStream.ReadByte();
+                            tcpClientStream.ReadByte();
                         }
                         return false;
                     }
                     if (payloadLength > 0)
                     {
-                        recLen += bmwTcpClientData.TcpClientStream.Read(dataBuffer, 8, payloadLength);
+                        recLen += tcpClientStream.Read(dataBuffer, 8, payloadLength);
                     }
                     if (recLen < payloadLength + 8)
                     {
@@ -3415,31 +3424,18 @@ namespace CarSimulator
 
         private SslStream CreateSslStream(TcpClient client, X509Certificate serverCertificate)
         {
-            // A client has connected. Create the
-            // SslStream using the client's network stream.
             SslStream sslStream = new SslStream(client.GetStream(), false);
-            // Authenticate the server but don't require the client to authenticate.
             try
             {
+                // Authenticate the server but don't require the client to authenticate.
                 sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: false, checkCertificateRevocation: true);
-
-                // Display the properties and settings for the authenticated stream.
-                //DisplaySecurityLevel(sslStream);
-                //DisplaySecurityServices(sslStream);
-                //DisplayCertificateInformation(sslStream);
-                //DisplayStreamProperties(sslStream);
-
-                // Set timeouts for the read and write to 5 seconds.
-                sslStream.ReadTimeout = 5000;
-                sslStream.WriteTimeout = 5000;
-
                 return sslStream;
             }
             catch (AuthenticationException e)
             {
                 Debug.WriteLine("CreateSslStream Exception: {0}", e.Message);
                 sslStream.Close();
-                return null;
+                throw;
             }
         }
 
