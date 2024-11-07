@@ -11,7 +11,10 @@ using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using BmwFileReader;
@@ -3341,6 +3344,36 @@ namespace CarSimulator
             catch
             {
                 return false;
+            }
+        }
+
+        private SslStream CreateSslStream(TcpClient client, X509Certificate serverCertificate)
+        {
+            // A client has connected. Create the
+            // SslStream using the client's network stream.
+            SslStream sslStream = new SslStream(client.GetStream(), false);
+            // Authenticate the server but don't require the client to authenticate.
+            try
+            {
+                sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+
+                // Display the properties and settings for the authenticated stream.
+                //DisplaySecurityLevel(sslStream);
+                //DisplaySecurityServices(sslStream);
+                //DisplayCertificateInformation(sslStream);
+                //DisplayStreamProperties(sslStream);
+
+                // Set timeouts for the read and write to 5 seconds.
+                sslStream.ReadTimeout = 5000;
+                sslStream.WriteTimeout = 5000;
+
+                return sslStream;
+            }
+            catch (AuthenticationException e)
+            {
+                Debug.WriteLine("CreateSslStream Exception: {0}", e.Message);
+                sslStream.Close();
+                return null;
             }
         }
 
