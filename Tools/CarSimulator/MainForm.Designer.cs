@@ -66,6 +66,8 @@
             buttonServerCert = new System.Windows.Forms.Button();
             textBoxServerCert = new System.Windows.Forms.TextBox();
             openCertFileDialog = new System.Windows.Forms.OpenFileDialog();
+            textBoxCertPwd = new System.Windows.Forms.TextBox();
+            labelCertPwd = new System.Windows.Forms.Label();
             groupBoxConcepts.SuspendLayout();
             SuspendLayout();
             // 
@@ -252,7 +254,7 @@
             // 
             listBoxResponseFiles.FormattingEnabled = true;
             listBoxResponseFiles.ItemHeight = 15;
-            listBoxResponseFiles.Location = new System.Drawing.Point(262, 242);
+            listBoxResponseFiles.Location = new System.Drawing.Point(263, 254);
             listBoxResponseFiles.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             listBoxResponseFiles.Name = "listBoxResponseFiles";
             listBoxResponseFiles.Size = new System.Drawing.Size(241, 349);
@@ -306,10 +308,10 @@
             // 
             // treeViewDirectories
             // 
-            treeViewDirectories.Location = new System.Drawing.Point(14, 242);
+            treeViewDirectories.Location = new System.Drawing.Point(14, 254);
             treeViewDirectories.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             treeViewDirectories.Name = "treeViewDirectories";
-            treeViewDirectories.Size = new System.Drawing.Size(240, 349);
+            treeViewDirectories.Size = new System.Drawing.Size(241, 349);
             treeViewDirectories.TabIndex = 14;
             treeViewDirectories.AfterSelect += treeViewDirectories_AfterSelect;
             // 
@@ -468,13 +470,32 @@
             openCertFileDialog.Filter = "Cert|*.pfx|All files|*.*";
             openCertFileDialog.Multiselect = true;
             openCertFileDialog.Title = "Select server cert";
-            openCertFileDialog.FileOk += openFileDialog1_FileOk;
+            // 
+            // textBoxCertPwd
+            // 
+            textBoxCertPwd.Location = new System.Drawing.Point(262, 225);
+            textBoxCertPwd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxCertPwd.Name = "textBoxCertPwd";
+            textBoxCertPwd.Size = new System.Drawing.Size(241, 23);
+            textBoxCertPwd.TabIndex = 24;
+            textBoxCertPwd.TextChanged += textBoxCertPwd_TextChanged;
+            // 
+            // labelCertPwd
+            // 
+            labelCertPwd.AutoSize = true;
+            labelCertPwd.Location = new System.Drawing.Point(12, 228);
+            labelCertPwd.Name = "labelCertPwd";
+            labelCertPwd.Size = new System.Drawing.Size(85, 15);
+            labelCertPwd.TabIndex = 25;
+            labelCertPwd.Text = "Cert password:";
             // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(764, 603);
+            ClientSize = new System.Drawing.Size(764, 618);
+            Controls.Add(labelCertPwd);
+            Controls.Add(textBoxCertPwd);
             Controls.Add(textBoxServerCert);
             Controls.Add(buttonServerCert);
             Controls.Add(checkBoxHighTestVoltage);
@@ -552,6 +573,8 @@
         private System.Windows.Forms.Button buttonServerCert;
         private System.Windows.Forms.TextBox textBoxServerCert;
         private System.Windows.Forms.OpenFileDialog openCertFileDialog;
+        private System.Windows.Forms.TextBox textBoxCertPwd;
+        private System.Windows.Forms.Label labelCertPwd;
     }
 }
 

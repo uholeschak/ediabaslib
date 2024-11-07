@@ -702,6 +702,8 @@ namespace CarSimulator
 
             textBoxEcuFolder.Text = _ecuFolder ?? string.Empty;
             textBoxServerCert.Text = _serverCertFile ?? string.Empty;
+            textBoxCertPwd.Text = _serverCertPwd ?? string.Empty;
+            textBoxCertPwd.Enabled = !active;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonErrorDefault.Enabled = !testing;
@@ -710,6 +712,7 @@ namespace CarSimulator
             buttonAbortTest.Enabled = testing && !testAborted;
             buttonEcuFolder.Enabled = !active;
             buttonRootFolder.Enabled = !active;
+            buttonServerCert.Enabled = !active;
             checkBoxMoving.Enabled = !testing;
             checkBoxVariableValues.Enabled = !testing;
             checkBoxIgnitionOk.Enabled = !testing;
@@ -793,6 +796,8 @@ namespace CarSimulator
                 }
 
                 UpdateCommThreadConfig();
+                _commThread.ServerCertFile = _serverCertFile;
+                _commThread.ServerCertPwd = _serverCertPwd;
                 _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, checkBoxKLineResponder.Checked, responseType, _configData, enetCommType);
             }
 
@@ -954,9 +959,9 @@ namespace CarSimulator
             }
         }
 
-        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        private void textBoxCertPwd_TextChanged(object sender, EventArgs e)
         {
-
+            _serverCertPwd = textBoxCertPwd.Text;
         }
     }
 }
