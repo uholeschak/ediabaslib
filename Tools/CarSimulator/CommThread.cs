@@ -1233,6 +1233,25 @@ namespace CarSimulator
                 {
                     // ignored
                 }
+
+                // DoIpSsl
+                foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDoIpSslList)
+                {
+                    DoIpClose(bmwTcpClientData);
+                }
+
+                try
+                {
+                    if (bmwTcpChannel.TcpServerDoIpSsl != null)
+                    {
+                        bmwTcpChannel.TcpServerDoIpSsl.Stop();
+                        bmwTcpChannel.TcpServerDoIpSsl = null;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
 
             _bmwTcpChannels.Clear();
@@ -5433,6 +5452,19 @@ namespace CarSimulator
                         {
                             if (bmwTcpClientData.TcpClientConnection != null ||
                                 (bmwTcpChannel.TcpServerDoIp != null && bmwTcpChannel.TcpServerDoIp.Pending()))
+                            {
+                                SerialTransmission(bmwTcpClientData);
+                                transmitted = true;
+                            }
+                        }
+                    }
+
+                    if (bmwTcpChannel.TcpServerDoIpSsl != null)
+                    {
+                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDoIpSslList)
+                        {
+                            if (bmwTcpClientData.TcpClientConnection != null ||
+                                (bmwTcpChannel.TcpServerDoIpSsl != null && bmwTcpChannel.TcpServerDoIpSsl.Pending()))
                             {
                                 SerialTransmission(bmwTcpClientData);
                                 transmitted = true;
