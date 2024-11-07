@@ -335,6 +335,7 @@ namespace CarSimulator
         private readonly List<DynamicUdsEntry> _dynamicUdsEntries;
         private readonly Dictionary<byte, byte[]> _codingStampDict;
         private readonly List<BmwTcpChannel> _bmwTcpChannels;
+        private X509Certificate _serverCertificate;
         private UdpClient _udpClient;
         private bool _udpError;
         private UdpClient _udpDoIpClient;
@@ -761,6 +762,18 @@ namespace CarSimulator
             set;
         }
 
+        public string ServerCertFile
+        {
+            get;
+            set;
+        }
+
+        public string ServerCertPwd
+        {
+            get;
+            set;
+        }
+
         public bool Connected
         {
             get;
@@ -970,6 +983,18 @@ namespace CarSimulator
 
                         default:
                             return false;
+                    }
+
+                    if (File.Exists(ServerCertFile))
+                    {
+                        try
+                        {
+                            _serverCertificate = new X509Certificate2(ServerCertFile, ServerCertPwd);
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine("Fail to load Server cert: {0}", e.Message);
+                        }
                     }
 
                     _bmwTcpChannels.Clear();
@@ -1195,6 +1220,12 @@ namespace CarSimulator
             }
 
             _bmwTcpChannels.Clear();
+
+            if (_serverCertificate != null)
+            {
+                _serverCertificate.Dispose();
+                _serverCertificate = null;
+            }
 
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
             {
