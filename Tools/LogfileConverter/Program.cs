@@ -2385,7 +2385,7 @@ namespace LogfileConverter
                 return false;
             }
 
-            if (telegram[2] != telegram.Count)
+            if (telegram[1] != telegram.Count)
             {
                 return false;
             }
