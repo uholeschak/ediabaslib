@@ -3059,11 +3059,19 @@ namespace CarSimulator
 
             try
             {
-                if (bmwTcpClientData.TcpClientStream is NetworkStream tcpClientStream && tcpClientStream.DataAvailable)
+                if (bmwTcpClientData.TcpClientStream != null)
                 {
+                    NetworkStream networkStream = bmwTcpClientData.TcpClientStream as NetworkStream;
+                    SslStream sslStream = bmwTcpClientData.TcpClientStream as SslStream;
+
+                    if (networkStream != null && !networkStream.DataAvailable)
+                    {
+                        return false;
+                    }
+
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     byte[] dataBuffer = new byte[MaxBufferLength];
-                    int recLen = tcpClientStream.Read(dataBuffer, 0, 8);
+                    int recLen = bmwTcpClientData.TcpClientStream.Read(dataBuffer, 0, 8);
                     if (recLen < 8)
                     {
                         return false;
@@ -3071,15 +3079,25 @@ namespace CarSimulator
                     int payloadLength = (((int)dataBuffer[4] << 24) | ((int)dataBuffer[5] << 16) | ((int)dataBuffer[6] << 8) | dataBuffer[7]);
                     if (payloadLength > dataBuffer.Length - 8)
                     {
-                        while (tcpClientStream.DataAvailable)
+                        if (networkStream != null)
                         {
-                            tcpClientStream.ReadByte();
+                            while (networkStream.DataAvailable)
+                            {
+                                bmwTcpClientData.TcpClientStream.ReadByte();
+                            }
+                        }
+
+                        if (sslStream != null)
+                        {
+                            while (sslStream.ReadByte() >= 0)
+                            {
+                            }
                         }
                         return false;
                     }
                     if (payloadLength > 0)
                     {
-                        recLen += tcpClientStream.Read(dataBuffer, 8, payloadLength);
+                        recLen += bmwTcpClientData.TcpClientStream.Read(dataBuffer, 8, payloadLength);
                     }
                     if (recLen < payloadLength + 8)
                     {
@@ -3429,6 +3447,8 @@ namespace CarSimulator
             {
                 // Authenticate the server but don't require the client to authenticate.
                 sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+                sslStream.ReadTimeout = 1;
+                sslStream.WriteTimeout = TcpSendTimeout;
                 return sslStream;
             }
             catch (AuthenticationException e)
