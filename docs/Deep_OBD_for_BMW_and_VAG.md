@@ -120,8 +120,7 @@ The sending of the trace files failes, the backup trace files are stored in the 
 It's possible to replace the background image. Simply store a custom _Background.jpg_ file in the directory _de.holeschak.bmw_deep_obd\files\Images_ (The _Images_ subdirectory has to be created first).
 
 ## Android Auto
-There is an internal Android Auto test version of the _Deep OBD app_ available.  
-If you are interested to test this version, please contact the app developer and specify your Android account email address.
+There is a Android Auto beta version of the _Deep OBD app_ available. You could enable [beta testing](https://play.google.com/apps/testing/de.holeschak.bmw_deep_obd) with this link.
 
 ## Visual Studio Settings for Compilation
 Visual Studio Android settings.  
