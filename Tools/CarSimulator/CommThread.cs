@@ -301,7 +301,7 @@ namespace CarSimulator
         private const int EnetDiagPrgPort = 51560;
         private const int EnetControlPrgPort = 51561;
         private const int DoIpDiagPort = 13400;
-        private const int DoIpSslPort = 13496;
+        private const int DoIpDiagSslPort = 13496;
         private const int DoIpProtoVer = EdInterfaceEnet.DoIpProtoVer;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
@@ -1007,7 +1007,7 @@ namespace CarSimulator
                     }
 
                     _bmwTcpChannels.Clear();
-                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpDiagPort, DoIpSslPort));
+                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpDiagPort, DoIpDiagSslPort));
                     _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPrgPort, EnetControlPrgPort));
 
                     foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
@@ -1030,7 +1030,7 @@ namespace CarSimulator
                             }
                         }
 
-                        if (bmwTcpChannel.DoIpSslPort > 0)
+                        if (bmwTcpChannel.DoIpSslPort > 0 && _serverCertificate != null)
                         {
                             if ((_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp)
                             {
@@ -3442,11 +3442,16 @@ namespace CarSimulator
 
         private SslStream CreateSslStream(TcpClient client, X509Certificate serverCertificate)
         {
+            if (serverCertificate == null)
+            {
+                return null;
+            }
+
             SslStream sslStream = new SslStream(client.GetStream(), false);
             try
             {
                 // Authenticate the server but don't require the client to authenticate.
-                sslStream.AuthenticateAsServer(serverCertificate, clientCertificateRequired: false, checkCertificateRevocation: true);
+                sslStream.AuthenticateAsServer(serverCertificate, false, false);
                 sslStream.ReadTimeout = 1;
                 sslStream.WriteTimeout = TcpSendTimeout;
                 return sslStream;
