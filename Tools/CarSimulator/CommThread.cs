@@ -1001,6 +1001,13 @@ namespace CarSimulator
                             // generate cert:
                             // openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 36500 -nodes
                             // openssl pkcs12 -export -out cert.pfx -inkey key.pem -in cert.pem -passout pass:
+                            // print cert:
+                            // openssl x509 -inform pem -noout -text -in localhost_cert.pem
+                            // generate hash name:
+                            // openssl x509 -hash -noout -in 'cert.pem'
+                            // cp 'cert.pem' to '<hash>.0'
+                            // copy file to EDIABAS.ini [SSL] SecurityPath property location.
+                            // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
                             _serverCertificate = new X509Certificate2(ServerCertFile, ServerCertPwd);
                         }
                         catch (Exception e)
@@ -3450,7 +3457,17 @@ namespace CarSimulator
                 return null;
             }
 
-            SslStream sslStream = new SslStream(client.GetStream(), false);
+            SslStream sslStream = new SslStream(client.GetStream(), false, new RemoteCertificateValidationCallback(
+                (sender, certificate, chain, errors) =>
+                {
+                    if (errors == SslPolicyErrors.None)
+                    {
+                        return true;
+                    }
+
+                    Debug.WriteLine("CreateSslStream Certificate error: {0}", errors);
+                    return true;
+                }));
             try
             {
                 // Authenticate the server but don't require the client to authenticate.
