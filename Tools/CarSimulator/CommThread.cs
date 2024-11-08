@@ -1000,6 +1000,7 @@ namespace CarSimulator
                         {
                             // generate cert:
                             // openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 36500 -nodes
+                            // openssl pkcs12 -export -out cert.pfx -inkey key.pem -in cert.pem -passout pass:
                             _serverCertificate = new X509Certificate2(ServerCertFile, ServerCertPwd);
                         }
                         catch (Exception e)
