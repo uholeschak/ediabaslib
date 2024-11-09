@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Net.Http;
 using System.Net.Security;
+using System.Security.Authentication;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -1272,7 +1273,16 @@ namespace EdiabasLib
 
                         SharedDataActive.TcpDiagClient.SendBufferSize = TcpSendBufferSize;
                         SharedDataActive.TcpDiagClient.NoDelay = true;
-                        SharedDataActive.TcpDiagStream = SharedDataActive.TcpDiagClient.GetStream();
+
+                        if (string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive.EnetHostConn.IpAddress.ToString(), SharedDataActive.TcpDiagClient);
+                        }
+                        else
+                        {
+                            SharedDataActive.TcpDiagStream = SharedDataActive.TcpDiagClient.GetStream();
+                        }
+
                         SharedDataActive.TcpDiagRecLen = 0;
                         SharedDataActive.LastTcpDiagRecTime = DateTime.MinValue.Ticks;
                         lock (SharedDataActive.TcpDiagStreamRecLock)
@@ -2511,6 +2521,39 @@ namespace EdiabasLib
                 result = false;
             }
             return result;
+        }
+
+        protected SslStream CreateSslStream(string serverName, TcpClient client)
+        {
+            SslStream sslStream = new SslStream(client.GetStream(), false,
+                (sender, certificate, chain, errors) =>
+                {
+                    if (errors == SslPolicyErrors.None)
+                    {
+                        return true;
+                    }
+
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Certificate error: {0}", errors);
+                    return true;
+                },
+                (sender, host, certificates, certificate, issuers) =>
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate request Host={0}, Count={1}", host, certificates.Count);
+                    return null;
+                });
+            try
+            {
+                // Authenticate the server but don't require the client to authenticate.
+                sslStream.AuthenticateAsClient(serverName);
+                sslStream.ReadTimeout = 1;
+                return sslStream;
+            }
+            catch (AuthenticationException ex)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "CreateSslStream exception: " + EdiabasNet.GetExceptionText(ex));
+                sslStream.Close();
+                throw;
+            }
         }
 
         protected bool StartReadTcpDiag(int telLength)
