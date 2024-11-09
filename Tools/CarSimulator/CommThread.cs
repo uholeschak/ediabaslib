@@ -1957,6 +1957,16 @@ namespace CarSimulator
             {
                 return;
             }
+
+            if (bmwTcpClientData?.TcpClientConnection == null)
+            {
+                return;
+            }
+
+            if (bmwTcpClientData.TcpClientStream == null)
+            {
+                return;
+            }
 #if false
             while ((Stopwatch.GetTimestamp() - bmwTcpClientData.LastTcpSendTick) < 10 * TickResolMs)
             {
