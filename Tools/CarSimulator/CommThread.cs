@@ -2999,13 +2999,14 @@ namespace CarSimulator
                 if (!IsTcpClientConnected(bmwTcpClientData.TcpClientConnection))
                 {
                     DoIpClose(bmwTcpClientData);
-                    if (!bmwTcpClientData.BmwTcpChannel.TcpServerDoIp.Pending())
+                    TcpListener tcpServer = bmwTcpClientData.DoIpSsl ? bmwTcpClientData.BmwTcpChannel.TcpServerDoIpSsl : bmwTcpClientData.BmwTcpChannel.TcpServerDoIp;
+                    if (!tcpServer.Pending())
                     {
                         return false;
                     }
 
                     Debug.WriteLine("DoIp connect request [{0}], Port={1}, SSL={2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, bmwTcpClientData.DoIpSsl);
-                    bmwTcpClientData.TcpClientConnection = bmwTcpClientData.BmwTcpChannel.TcpServerDoIp.AcceptTcpClient();
+                    bmwTcpClientData.TcpClientConnection = tcpServer.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
