@@ -321,6 +321,8 @@ namespace EdiabasLib
         public const int MaxDoIpAckLength = 5;
         public const int DoIpProtoVer = 0x03;
         public const int DoIpGwAddrDefault = 0x0010;
+        public const string NetworkProtocolTcp = "TCP";
+        public const string NetworkProtocolSsl = "SSL";
         public const string AutoIp = "auto";
         public const string AutoIpAll = ":all";
         public const string ProtocolHsfz = "HSFZ";
@@ -332,7 +334,8 @@ namespace EdiabasLib
         protected const int TcpDoIpMaxRetries = 2;
         protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
-        protected const string IniFileSection = "XEthernet";
+        protected const string IniFileEnetSection = "XEthernet";
+        protected const string IniFileSslSection = "SSL";
         protected const string IcomOwner = "DeepObd";
         protected static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         protected static readonly byte[] ByteArray0 = new byte[0];
@@ -368,6 +371,7 @@ namespace EdiabasLib
         protected AutoResetEvent UdpEvent;
         protected AutoResetEvent IcomEvent;
 
+        protected string NetworkProtocol = NetworkProtocolTcp;
         protected string RemoteHostProtected = AutoIp;
         protected string VehicleProtocolProtected = ProtocolHsfz + "," + ProtocolDoIp;
         protected int TesterAddress = 0xF4;
@@ -379,6 +383,7 @@ namespace EdiabasLib
         protected int ControlPort = 6811;
         protected int DiagnosticPort = 6801;
         protected int DoIpPort = 13400;
+        protected int DoIpSslPort = 3496;
         protected int ConnectTimeout = 5000;
         protected int BatteryVoltageValue = 12000;
         protected int IgnitionVoltageValue = 12000;
@@ -420,7 +425,19 @@ namespace EdiabasLib
             {
                 base.Ediabas = value;
 
-                string prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
+                string prop = EdiabasProtected?.GetConfigProperty("EnetNetworkProtocol");
+                if (prop != null)
+                {
+                    NetworkProtocol = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("NetworkProtocol");
+                if (prop != null)
+                {
+                    NetworkProtocol = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
                 if (prop != null)
                 {
                     RemoteHostProtected = prop;
@@ -542,6 +559,18 @@ namespace EdiabasLib
                     DoIpPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = EdiabasProtected?.GetConfigProperty("EnetSslPort");
+                if (prop != null)
+                {
+                    DoIpSslPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("SslPort");
+                if (prop != null)
+                {
+                    DoIpSslPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutConnect");
                 if (prop != null)
                 {
@@ -607,7 +636,7 @@ namespace EdiabasLib
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using ENET ini file at: {0}", iniFile);
                         IniFile ediabasIni = new IniFile(iniFile);
-                        string iniRemoteHost = ediabasIni.GetValue(IniFileSection, "RemoteHost", string.Empty);
+                        string iniRemoteHost = ediabasIni.GetValue(IniFileEnetSection, "RemoteHost", string.Empty);
                         bool hostValid = false;
                         if (IsIpv4Address(iniRemoteHost))
                         {
@@ -618,28 +647,36 @@ namespace EdiabasLib
 
                         if (hostValid)
                         {
-                            string iniControlPort = ediabasIni.GetValue(IniFileSection, "ControlPort", string.Empty);
+                            string iniControlPort = ediabasIni.GetValue(IniFileEnetSection, "ControlPort", string.Empty);
                             if (!string.IsNullOrEmpty(iniControlPort))
                             {
                                 ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
                             }
 
-                            string iniDiagnosticPort = ediabasIni.GetValue(IniFileSection, "DiagnosticPort", string.Empty);
+                            string iniDiagnosticPort = ediabasIni.GetValue(IniFileEnetSection, "DiagnosticPort", string.Empty);
                             if (!string.IsNullOrEmpty(iniDiagnosticPort))
                             {
                                 DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
                             }
 
-                            string iniPortDoIP = ediabasIni.GetValue(IniFileSection, "PortDoIP", string.Empty);
+                            string iniPortDoIP = ediabasIni.GetValue(IniFileEnetSection, "PortDoIP", string.Empty);
                             if (!string.IsNullOrEmpty(iniPortDoIP))
                             {
                                 DoIpPort = (int)EdiabasNet.StringToValue(iniPortDoIP);
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using DoIp port from ini file: {0}", DoIpPort);
                             }
 
-                            string iniVehicleProtocol = ediabasIni.GetValue(IniFileSection, "VehicleProtocol", string.Empty);
+                            string iniSslPort = ediabasIni.GetValue(IniFileSslSection, "SSLPORT", string.Empty);
+                            if (!string.IsNullOrEmpty(iniSslPort))
+                            {
+                                DoIpSslPort = (int)EdiabasNet.StringToValue(iniSslPort);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using DoIpSslPort port from ini file: {0}", DoIpPort);
+                            }
+
+
+                            string iniVehicleProtocol = ediabasIni.GetValue(IniFileEnetSection, "VehicleProtocol", string.Empty);
                             if (!string.IsNullOrEmpty(iniVehicleProtocol))
                             {
                                 VehicleProtocol = iniVehicleProtocol;
