@@ -3100,6 +3100,7 @@ namespace CarSimulator
 
                         if (sslStream != null)
                         {
+                            sslStream.ReadTimeout = 1;
                             while (sslStream.ReadByte() >= 0)
                             {
                             }
@@ -3458,7 +3459,7 @@ namespace CarSimulator
                 return null;
             }
 
-            SslStream sslStream = new SslStream(client.GetStream(), false, new RemoteCertificateValidationCallback(
+            SslStream sslStream = new SslStream(client.GetStream(), false,
                 (sender, certificate, chain, errors) =>
                 {
                     if (errors == SslPolicyErrors.None)
@@ -3468,13 +3469,12 @@ namespace CarSimulator
 
                     Debug.WriteLine("CreateSslStream Certificate error: {0}", errors);
                     return true;
-                }));
+                });
             try
             {
                 // Authenticate the server but don't require the client to authenticate.
+                sslStream.ReadTimeout = TcpSendTimeout;
                 sslStream.AuthenticateAsServer(serverCertificate, false, false);
-                sslStream.ReadTimeout = 1;
-                sslStream.WriteTimeout = TcpSendTimeout;
                 return sslStream;
             }
             catch (AuthenticationException e)

@@ -2549,7 +2549,6 @@ namespace EdiabasLib
                 // Authenticate the server but don't require the client to authenticate.
                 sslStream.ReadTimeout = 5000;
                 sslStream.AuthenticateAsClient(serverName);
-                sslStream.ReadTimeout = 1;
                 return sslStream;
             }
             catch (AuthenticationException ex)
@@ -2683,6 +2682,7 @@ namespace EdiabasLib
 
                         if (diagSslStream != null)
                         {
+                            diagSslStream.ReadTimeout = 1;
                             while (diagSslStream.ReadByte() >= 0)
                             {
                             }
@@ -2825,6 +2825,7 @@ namespace EdiabasLib
 
                         if (diagSslStream != null)
                         {
+                            diagSslStream.ReadTimeout = 1;
                             while (diagSslStream.ReadByte() >= 0)
                             {
                             }
