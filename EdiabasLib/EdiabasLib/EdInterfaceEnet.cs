@@ -2537,7 +2537,7 @@ namespace EdiabasLib
                     }
 
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Certificate error: {0}", errors);
-                    return false;
+                    return true;
                 },
                 (sender, host, certificates, certificate, issuers) =>
                 {
