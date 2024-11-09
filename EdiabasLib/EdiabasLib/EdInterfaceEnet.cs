@@ -297,7 +297,7 @@ namespace EdiabasLib
             public AutoResetEvent TcpDiagStreamRecEvent;
             public ManualResetEvent TransmitCancelEvent;
             public TcpClient TcpControlClient;
-            public NetworkStream TcpControlStream;
+            public Stream TcpControlStream;
             public Timer TcpControlTimer;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
