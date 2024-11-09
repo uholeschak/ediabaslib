@@ -2547,6 +2547,7 @@ namespace EdiabasLib
             try
             {
                 // Authenticate the server but don't require the client to authenticate.
+                sslStream.ReadTimeout = 5000;
                 sslStream.AuthenticateAsClient(serverName);
                 sslStream.ReadTimeout = 1;
                 return sslStream;
