@@ -11,6 +11,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Net.Http;
+using System.Net.Security;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -291,7 +292,7 @@ namespace EdiabasLib
             public object NetworkData;
             public EnetConnection EnetHostConn;
             public TcpClient TcpDiagClient;
-            public NetworkStream TcpDiagStream;
+            public Stream TcpDiagStream;
             public bool DiagDoIp;
             public AutoResetEvent TcpDiagStreamRecEvent;
             public ManualResetEvent TransmitCancelEvent;
@@ -2514,7 +2515,7 @@ namespace EdiabasLib
 
         protected bool StartReadTcpDiag(int telLength)
         {
-            NetworkStream localStream = SharedDataActive.TcpDiagStream;
+            Stream localStream = SharedDataActive.TcpDiagStream;
             if (localStream == null)
             {
                 return false;
@@ -2534,7 +2535,7 @@ namespace EdiabasLib
         {
             try
             {
-                NetworkStream networkStream = SharedDataActive.TcpDiagStream;
+                Stream networkStream = SharedDataActive.TcpDiagStream;
                 if (networkStream == null)
                 {
                     return;
@@ -2567,7 +2568,7 @@ namespace EdiabasLib
             }
         }
 
-        protected int TcpDiagEnetReceiver(NetworkStream networkStream)
+        protected int TcpDiagEnetReceiver(Stream networkStream)
         {
             int nextReadLength = 6;
             try
@@ -2623,10 +2624,23 @@ namespace EdiabasLib
                     }
                     else if (telLen > SharedDataActive.TcpDiagBuffer.Length)
                     {   // telegram too large -> remove all
-                        while (SharedDataActive.TcpDiagStream.DataAvailable)
+                        NetworkStream diagNetworkStream = SharedDataActive.TcpDiagStream as NetworkStream;
+                        SslStream diagSslStream = SharedDataActive.TcpDiagStream as SslStream;
+                        if (diagNetworkStream != null)
                         {
-                            SharedDataActive.TcpDiagStream.ReadByte();
+                            while (diagNetworkStream.DataAvailable)
+                            {
+                                diagNetworkStream.ReadByte();
+                            }
                         }
+
+                        if (diagSslStream != null)
+                        {
+                            while (diagSslStream.ReadByte() >= 0)
+                            {
+                            }
+                        }
+
                         SharedDataActive.TcpDiagRecLen = 0;
                     }
                     else
@@ -2643,7 +2657,7 @@ namespace EdiabasLib
             return nextReadLength;
         }
 
-        protected int TcpDiagDoIpReceiver(NetworkStream networkStream)
+        protected int TcpDiagDoIpReceiver(Stream networkStream)
         {
             int nextReadLength = 8;
             try
@@ -2752,9 +2766,21 @@ namespace EdiabasLib
                     }
                     else if (telLen > SharedDataActive.TcpDiagBuffer.Length)
                     {   // telegram too large -> remove all
-                        while (SharedDataActive.TcpDiagStream.DataAvailable)
+                        NetworkStream diagNetworkStream = SharedDataActive.TcpDiagStream as NetworkStream;
+                        SslStream diagSslStream = SharedDataActive.TcpDiagStream as SslStream;
+                        if (diagNetworkStream != null)
                         {
-                            SharedDataActive.TcpDiagStream.ReadByte();
+                            while (diagNetworkStream.DataAvailable)
+                            {
+                                diagNetworkStream.ReadByte();
+                            }
+                        }
+
+                        if (diagSslStream != null)
+                        {
+                            while (diagSslStream.ReadByte() >= 0)
+                            {
+                            }
                         }
                         SharedDataActive.TcpDiagRecLen = 0;
                     }
@@ -3619,7 +3645,7 @@ namespace EdiabasLib
             ParRetryNr78 = 2;
         }
 
-        private void WriteNetworkStream(NetworkStream networkStream, byte[] buffer, int offset, int size, int packetSize = TcpSendBufferSize)
+        private void WriteNetworkStream(Stream networkStream, byte[] buffer, int offset, int size, int packetSize = TcpSendBufferSize)
         {
             int pos = 0;
             while (pos < size)
