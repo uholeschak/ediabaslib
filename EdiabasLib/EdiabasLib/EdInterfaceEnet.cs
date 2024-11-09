@@ -384,6 +384,7 @@ namespace EdiabasLib
         protected int DiagnosticPort = 6801;
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
+        protected string DoIpSslSecurityPath = string.Empty;
         protected int ConnectTimeout = 5000;
         protected int BatteryVoltageValue = 12000;
         protected int IgnitionVoltageValue = 12000;
@@ -571,6 +572,12 @@ namespace EdiabasLib
                     DoIpSslPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
+                prop = EdiabasProtected?.GetConfigProperty("SslSecurityPath");
+                if (prop != null)
+                {
+                    DoIpSslSecurityPath = prop;
+                }
+
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutConnect");
                 if (prop != null)
                 {
@@ -672,9 +679,15 @@ namespace EdiabasLib
                             if (!string.IsNullOrEmpty(iniSslPort))
                             {
                                 DoIpSslPort = (int)EdiabasNet.StringToValue(iniSslPort);
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using DoIpSslPort port from ini file: {0}", DoIpPort);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using DoIpSslPort port from ini file: {0}", DoIpSslPort);
                             }
 
+                            string iniSslSecPath = ediabasIni.GetValue(IniFileSslSection, "SecurityPath", string.Empty);
+                            if (!string.IsNullOrEmpty(iniSslSecPath))
+                            {
+                                DoIpSslSecurityPath = iniSslSecPath;
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using DoIpSslSecurityPath from ini file: {0}", DoIpSslSecurityPath);
+                            }
 
                             string iniVehicleProtocol = ediabasIni.GetValue(IniFileEnetSection, "VehicleProtocol", string.Empty);
                             if (!string.IsNullOrEmpty(iniVehicleProtocol))
