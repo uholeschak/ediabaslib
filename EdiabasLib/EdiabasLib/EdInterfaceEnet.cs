@@ -295,6 +295,7 @@ namespace EdiabasLib
             public TcpClient TcpDiagClient;
             public Stream TcpDiagStream;
             public bool DiagDoIp;
+            public bool DiagDoIpSsl;
             public AutoResetEvent TcpDiagStreamRecEvent;
             public ManualResetEvent TransmitCancelEvent;
             public TcpClient TcpControlClient;
@@ -1201,10 +1202,12 @@ namespace EdiabasLib
                 {
                     SharedDataActive.EnetHostConn = enetHostConn;
                     SharedDataActive.DiagDoIp = communicationMode == CommunicationMode.DoIp;
+                    SharedDataActive.DiagDoIpSsl = SharedDataActive.DiagDoIp && string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
 
+                    int doIpPort = SharedDataActive.DiagDoIpSsl ? DoIpSslPort : DoIpPort;
                     if (SharedDataActive.DiagDoIp)
                     {
-                        diagPort = DoIpPort;
+                        diagPort = doIpPort;
                         if (SharedDataActive.EnetHostConn.DoIpPort >= 0)
                         {
                             diagPort = SharedDataActive.EnetHostConn.DoIpPort;
@@ -1212,7 +1215,7 @@ namespace EdiabasLib
                     }
                     else
                     {
-                        diagPort = SharedDataActive.DiagDoIp ? DoIpPort : DiagnosticPort;
+                        diagPort = SharedDataActive.DiagDoIp ? doIpPort : DiagnosticPort;
                         if (SharedDataActive.EnetHostConn.DiagPort >= 0)
                         {
                             diagPort = SharedDataActive.EnetHostConn.DiagPort;
@@ -1274,7 +1277,7 @@ namespace EdiabasLib
                         SharedDataActive.TcpDiagClient.SendBufferSize = TcpSendBufferSize;
                         SharedDataActive.TcpDiagClient.NoDelay = true;
 
-                        if (string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0)
+                        if (SharedDataActive.DiagDoIpSsl)
                         {
                             SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive.EnetHostConn.IpAddress.ToString(), SharedDataActive.TcpDiagClient);
                         }
