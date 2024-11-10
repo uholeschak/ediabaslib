@@ -2633,11 +2633,18 @@ namespace EdiabasLib
                 // Authenticate the server but don't require the client to authenticate.
                 sslStream.ReadTimeout = 5000;
                 sslStream.AuthenticateAsClient(serverName);
+                if (!sslStream.IsEncrypted || !sslStream.IsSigned)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not authenticated: Encrypted={0}, Signed={1}",
+                        sslStream.IsEncrypted, sslStream.IsSigned);
+                    sslStream.Close();
+                    return null;
+                }
                 return sslStream;
             }
             catch (AuthenticationException ex)
             {
-                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "CreateSslStream exception: " + EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream exception: " + EdiabasNet.GetExceptionText(ex));
                 sslStream.Close();
                 throw;
             }
