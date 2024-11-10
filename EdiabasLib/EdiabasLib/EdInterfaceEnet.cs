@@ -1693,9 +1693,19 @@ namespace EdiabasLib
                 return null;
             }
 
+            IPAddress hostIpAddress = null;
             if (!remoteHostConfig.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
             {
-                return null;
+                string[] hostParts = remoteHostConfig.Split(':');
+                if (hostParts.Length < 1)
+                {
+                    return null;
+                }
+
+                if (!IPAddress.TryParse(hostParts[0], out hostIpAddress))
+                {
+                    return null;
+                }
             }
 
             bool protocolHsfz = true;
@@ -1735,17 +1745,22 @@ namespace EdiabasLib
                 {
                     UdpEvent.Reset();
                     bool broadcastSend = false;
-                    string configData = remoteHostConfig.Remove(0, AutoIp.Length);
+                    string configData = string.Empty;
 
-                    if (!((configData.Length > 0) && (configData[0] == ':')))
+                    if (hostIpAddress == null)
                     {
-                        if (IsIpv4Address(HostIdentServiceProtected))
+                        configData = remoteHostConfig.Remove(0, AutoIp.Length);
+
+                        if (!((configData.Length > 0) && (configData[0] == ':')))
                         {
-                            if (IPAddress.TryParse(HostIdentServiceProtected, out IPAddress ipAddressHostIdent))
+                            if (IsIpv4Address(HostIdentServiceProtected))
                             {
-                                if (ipAddressHostIdent.Equals(IPAddress.Broadcast))
+                                if (IPAddress.TryParse(HostIdentServiceProtected, out IPAddress ipAddressHostIdent))
                                 {
-                                    configData = AutoIpAll;
+                                    if (ipAddressHostIdent.Equals(IPAddress.Broadcast))
+                                    {
+                                        configData = AutoIpAll;
+                                    }
                                 }
                             }
                         }
