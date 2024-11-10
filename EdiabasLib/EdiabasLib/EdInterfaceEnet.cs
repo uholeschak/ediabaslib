@@ -319,7 +319,7 @@ namespace EdiabasLib
             public TcpClient TcpControlClient;
             public Stream TcpControlStream;
             public Timer TcpControlTimer;
-            public List<X509Certificate> TrustedCertificates;
+            public X509CertificateCollection TrustedCertificates;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -1312,7 +1312,7 @@ namespace EdiabasLib
 
                         if (SharedDataActive.DiagDoIpSsl)
                         {
-                            SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive.EnetHostConn.IpAddress.ToString(), SharedDataActive.TcpDiagClient);
+                            SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive.EnetHostConn.IpAddress.ToString(), SharedDataActive);
                         }
                         else
                         {
@@ -2559,9 +2559,9 @@ namespace EdiabasLib
             return result;
         }
 
-        protected SslStream CreateSslStream(string serverName, TcpClient client)
+        protected SslStream CreateSslStream(string serverName, SharedData sharedData)
         {
-            SslStream sslStream = new SslStream(client.GetStream(), false,
+            SslStream sslStream = new SslStream(sharedData.TcpDiagClient.GetStream(), false,
                 (sender, certificate, chain, errors) =>
                 {
                     if (errors == SslPolicyErrors.None)
@@ -2581,7 +2581,7 @@ namespace EdiabasLib
             {
                 // Authenticate the server but don't require the client to authenticate.
                 sslStream.ReadTimeout = 5000;
-                sslStream.AuthenticateAsClient(serverName);
+                sslStream.AuthenticateAsClient(serverName, sharedData.TrustedCertificates, false);
                 return sslStream;
             }
             catch (AuthenticationException ex)
@@ -2612,7 +2612,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                List<X509Certificate> certList = new List<X509Certificate>();
+                X509CertificateCollection certList = new X509CertificateCollection();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
                 {
