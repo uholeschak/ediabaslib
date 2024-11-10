@@ -1202,7 +1202,21 @@ namespace EdiabasLib
                 {
                     SharedDataActive.EnetHostConn = enetHostConn;
                     SharedDataActive.DiagDoIp = communicationMode == CommunicationMode.DoIp;
-                    SharedDataActive.DiagDoIpSsl = SharedDataActive.DiagDoIp && string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
+
+                    bool diagDoIpSsl = false;
+                    if (SharedDataActive.DiagDoIp)
+                    {
+                        diagDoIpSsl = string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
+                        if (diagDoIpSsl)
+                        {
+                            if (string.IsNullOrEmpty(DoIpSslSecurityPath) || !Directory.Exists(DoIpSslSecurityPath))
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SSL SecurityPath invalid: {0}", DoIpSslSecurityPath);
+                                return false;
+                            }
+                        }
+                    }
+                    SharedDataActive.DiagDoIpSsl = diagDoIpSsl;
 
                     int doIpPort = SharedDataActive.DiagDoIpSsl ? DoIpSslPort : DoIpPort;
                     if (SharedDataActive.DiagDoIp)

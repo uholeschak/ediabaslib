@@ -178,7 +178,7 @@ copy /y "!SystemDir!vcruntime140.dll" "!ApiDir!"
 IF EXIST "!RuntimeDir!" (
  copy /y "!RuntimeDir!*.*" "!ApiDir!"
 ) ELSE (
- ECHO No WIN10 DSK installed!
+ ECHO No WIN10 SDK installed!
 )
 
 )</PostBuildEvent>
