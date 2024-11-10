@@ -1727,6 +1727,26 @@ namespace EdiabasLib
 
             try
             {
+                string configData = string.Empty;
+                if (hostIpAddress == null)
+                {
+                    configData = remoteHostConfig.Remove(0, AutoIp.Length);
+
+                    if (!((configData.Length > 0) && (configData[0] == ':')))
+                    {
+                        if (IsIpv4Address(HostIdentServiceProtected))
+                        {
+                            if (IPAddress.TryParse(HostIdentServiceProtected, out IPAddress ipAddressHostIdent))
+                            {
+                                if (ipAddressHostIdent.Equals(IPAddress.Broadcast))
+                                {
+                                    configData = AutoIpAll;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 // ReSharper disable once UseObjectOrCollectionInitializer
                 UdpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 UdpSocket.EnableBroadcast = true;
@@ -1737,7 +1757,7 @@ namespace EdiabasLib
                     UdpRecIpListList = new List<EnetConnection>();
                 }
                 UdpMaxResponses = maxVehicles;
-                UdpIpFilter = IPAddress.Any;
+                UdpIpFilter = hostIpAddress;
                 StartUdpListen();
 
                 int retryCount = 0;
@@ -1745,26 +1765,6 @@ namespace EdiabasLib
                 {
                     UdpEvent.Reset();
                     bool broadcastSend = false;
-                    string configData = string.Empty;
-
-                    if (hostIpAddress == null)
-                    {
-                        configData = remoteHostConfig.Remove(0, AutoIp.Length);
-
-                        if (!((configData.Length > 0) && (configData[0] == ':')))
-                        {
-                            if (IsIpv4Address(HostIdentServiceProtected))
-                            {
-                                if (IPAddress.TryParse(HostIdentServiceProtected, out IPAddress ipAddressHostIdent))
-                                {
-                                    if (ipAddressHostIdent.Equals(IPAddress.Broadcast))
-                                    {
-                                        configData = AutoIpAll;
-                                    }
-                                }
-                            }
-                        }
-                    }
 
                     if ((configData.Length > 0) && (configData[0] == ':'))
                     {
