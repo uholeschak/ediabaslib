@@ -344,7 +344,7 @@ namespace CarSimulator
         private readonly List<DynamicUdsEntry> _dynamicUdsEntries;
         private readonly Dictionary<byte, byte[]> _codingStampDict;
         private readonly List<BmwTcpChannel> _bmwTcpChannels;
-        private X509Certificate _serverCertificate;
+        private X509Certificate2 _serverCertificate;
         private UdpClient _udpClient;
         private bool _udpError;
         private UdpClient _udpDoIpClient;
@@ -3466,7 +3466,7 @@ namespace CarSimulator
             }
         }
 
-        private SslStream CreateSslStream(TcpClient client, X509Certificate serverCertificate)
+        private SslStream CreateSslStream(TcpClient client, X509Certificate2 serverCertificate)
         {
             if (serverCertificate == null)
             {
