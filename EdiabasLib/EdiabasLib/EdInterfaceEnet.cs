@@ -250,7 +250,7 @@ namespace EdiabasLib
             {
                 if (TrustedCertificates != null)
                 {
-                    foreach (X509Certificate certificate in TrustedCertificates)
+                    foreach (X509Certificate2 certificate in TrustedCertificates)
                     {
                         certificate.Dispose();
                     }
@@ -319,7 +319,7 @@ namespace EdiabasLib
             public TcpClient TcpControlClient;
             public Stream TcpControlStream;
             public Timer TcpControlTimer;
-            public X509CertificateCollection TrustedCertificates;
+            public List<X509Certificate2> TrustedCertificates;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -2569,6 +2569,31 @@ namespace EdiabasLib
                         return true;
                     }
 
+                    foreach (X509Certificate trustedCertificate in sharedData.TrustedCertificates)
+                    {
+                        try
+                        {
+                            X509Chain chain2 = new X509Chain();
+                            chain2.ChainPolicy.ExtraStore.Add(trustedCertificate);
+                            chain2.ChainPolicy.VerificationFlags = X509VerificationFlags.NoFlag;
+                            chain2.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                            chain2.Build(new X509Certificate2(certificate));
+                            if (chain2.ChainStatus.Length == 0)
+                            {
+                                return true;
+                            }
+
+                            if (chain2.ChainStatus[0].Status == X509ChainStatusFlags.NoError)
+                            {
+                                return true;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "CreateSslStream exception: " + EdiabasNet.GetExceptionText(ex));
+                        }
+                    }
+
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Certificate error: {0}", errors);
                     return true;
                 },
@@ -2597,7 +2622,7 @@ namespace EdiabasLib
             {
                 // Authenticate the server but don't require the client to authenticate.
                 sslStream.ReadTimeout = 5000;
-                sslStream.AuthenticateAsClient(serverName, sharedData.TrustedCertificates, false);
+                sslStream.AuthenticateAsClient(serverName);
                 return sslStream;
             }
             catch (AuthenticationException ex)
@@ -2628,13 +2653,13 @@ namespace EdiabasLib
                     return false;
                 }
 
-                X509CertificateCollection certList = new X509CertificateCollection();
+                List<X509Certificate2> certList = new List<X509Certificate2>();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
                 {
                     try
                     {
-                        X509Certificate cert = new X509Certificate(certFile);
+                        X509Certificate2 cert = new X509Certificate2(certFile);
                         certList.Add(cert);
                     }
                     catch (Exception ex)
