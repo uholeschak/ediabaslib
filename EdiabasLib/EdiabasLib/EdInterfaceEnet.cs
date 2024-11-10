@@ -1312,7 +1312,7 @@ namespace EdiabasLib
 
                         if (SharedDataActive.DiagDoIpSsl)
                         {
-                            SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive.EnetHostConn.IpAddress.ToString(), SharedDataActive);
+                            SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive);
                         }
                         else
                         {
@@ -2559,8 +2559,14 @@ namespace EdiabasLib
             return result;
         }
 
-        protected SslStream CreateSslStream(string serverName, SharedData sharedData)
+        protected SslStream CreateSslStream(SharedData sharedData)
         {
+            if (sharedData == null)
+            {
+                return null;
+            }
+
+            string serverName = sharedData.EnetHostConn.Vin;
             SslStream sslStream = new SslStream(sharedData.TcpDiagClient.GetStream(), false,
                 (sender, certificate, chain, errors) =>
                 {
