@@ -238,7 +238,7 @@ namespace EdiabasLib
                 TcpDiagStreamSendLock = new object();
                 TcpDiagStreamRecLock = new object();
                 TcpControlTimer = new Timer(TcpControlTimeout, this, Timeout.Infinite, Timeout.Infinite);
-                TrustedCertificates = null;
+                TrustedCAs = null;
                 TcpControlTimerLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
                 TcpDiagRecLen = 0;
@@ -248,15 +248,15 @@ namespace EdiabasLib
 
             public void DisposeCertificates()
             {
-                if (TrustedCertificates != null)
+                if (TrustedCAs != null)
                 {
-                    foreach (X509Certificate2 certificate in TrustedCertificates)
+                    foreach (X509Certificate2 certificate in TrustedCAs)
                     {
                         certificate.Dispose();
                     }
 
-                    TrustedCertificates.Clear();
-                    TrustedCertificates = null;
+                    TrustedCAs.Clear();
+                    TrustedCAs = null;
                 }
             }
 
@@ -319,7 +319,7 @@ namespace EdiabasLib
             public TcpClient TcpControlClient;
             public Stream TcpControlStream;
             public Timer TcpControlTimer;
-            public List<X509Certificate2> TrustedCertificates;
+            public List<X509Certificate2> TrustedCAs;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -2569,7 +2569,7 @@ namespace EdiabasLib
                         return true;
                     }
 
-                    foreach (X509Certificate trustedCertificate in sharedData.TrustedCertificates)
+                    foreach (X509Certificate trustedCertificate in sharedData.TrustedCAs)
                     {
                         try
                         {
@@ -2663,14 +2663,14 @@ namespace EdiabasLib
                     return false;
                 }
 
-                List<X509Certificate2> certList = new List<X509Certificate2>();
+                List<X509Certificate2> caList = new List<X509Certificate2>();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
                 {
                     try
                     {
                         X509Certificate2 cert = new X509Certificate2(certFile);
-                        certList.Add(cert);
+                        caList.Add(cert);
                     }
                     catch (Exception ex)
                     {
@@ -2678,8 +2678,8 @@ namespace EdiabasLib
                     }
                 }
 
-                sharedData.TrustedCertificates = certList;
-                return certList.Count > 0;
+                sharedData.TrustedCAs = caList;
+                return caList.Count > 0;
             }
             catch (Exception ex)
             {
