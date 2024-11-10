@@ -2578,10 +2578,13 @@ namespace EdiabasLib
                             return false;
                         }
 
-                        if (string.Compare(hostName.Trim(), serverName.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
+                        if (string.Compare(hostName.Trim(), "127.0.0.1", StringComparison.OrdinalIgnoreCase) != 0)
                         {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Hostname not matching: '{0}' != '{1}'", hostName, serverName);
-                            return false;
+                            if (string.Compare(hostName.Trim(), serverName.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Hostname not matching: '{0}' != '{1}'", hostName, serverName);
+                                return false;
+                            }
                         }
 
                         foreach (X509Certificate2 trustedCertificate in sharedData.TrustedCAs)
