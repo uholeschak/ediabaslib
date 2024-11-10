@@ -2569,39 +2569,60 @@ namespace EdiabasLib
                         return true;
                     }
 
-                    foreach (X509Certificate trustedCertificate in sharedData.TrustedCAs)
+                    try
                     {
-                        try
+                        X509Certificate2 cert2 = new X509Certificate2(certificate);
+                        string hostName = cert2.GetNameInfo(X509NameType.DnsName, false);
+                        if (string.IsNullOrEmpty(hostName))
                         {
-                            X509Chain chain2 = new X509Chain();
-                            chain2.ChainPolicy.ExtraStore.Add(trustedCertificate);
-                            chain2.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-                            chain2.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                            chain2.Build(new X509Certificate2(certificate));
-                            if (chain2.ChainStatus.Length == 0)
-                            {
-                                return true;
-                            }
+                            return false;
+                        }
 
-                            X509ChainStatusFlags status = chain2.ChainStatus.First().Status;
-                            switch (status)
+                        if (string.Compare(hostName.Trim(), serverName.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Hostname not matching: '{0}' != '{1}'", hostName, serverName);
+                            return false;
+                        }
+
+                        foreach (X509Certificate2 trustedCertificate in sharedData.TrustedCAs)
+                        {
+                            try
                             {
-                                case X509ChainStatusFlags.NoError:
+                                X509Chain chain2 = new X509Chain();
+                                chain2.ChainPolicy.ExtraStore.Add(trustedCertificate);
+                                chain2.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+                                chain2.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                                chain2.Build(new X509Certificate2(certificate));
+                                if (chain2.ChainStatus.Length == 0)
+                                {
                                     return true;
+                                }
 
-                                case X509ChainStatusFlags.UntrustedRoot:
-                                    if (chain2.ChainStatus.Length == 1 &&
-                                        chain2.ChainPolicy.ExtraStore.Contains(chain2.ChainElements[chain2.ChainElements.Count - 1].Certificate))
-                                    {
+                                X509ChainStatusFlags status = chain2.ChainStatus.First().Status;
+                                switch (status)
+                                {
+                                    case X509ChainStatusFlags.NoError:
                                         return true;
-                                    }
-                                    break;
+
+                                    case X509ChainStatusFlags.UntrustedRoot:
+                                        if (chain2.ChainStatus.Length == 1 &&
+                                            chain2.ChainPolicy.ExtraStore.Contains(chain2.ChainElements[chain2.ChainElements.Count - 1].Certificate))
+                                        {
+                                            return true;
+                                        }
+                                        break;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "CreateSslStream exception: " + EdiabasNet.GetExceptionText(ex));
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "CreateSslStream exception: " + EdiabasNet.GetExceptionText(ex));
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "CreateSslStream exception: " + EdiabasNet.GetExceptionText(ex));
+                        return false;
                     }
 
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Certificate error: {0}", errors);
@@ -2612,15 +2633,16 @@ namespace EdiabasLib
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate request Host={0}", host);
                     foreach (X509Certificate cert in certificates)
                     {
-                        string subject = cert.Subject;
-                        if (string.IsNullOrEmpty(subject))
+                        X509Certificate2 cert2 = new X509Certificate2(cert);
+                        string hostName = cert2.GetNameInfo(X509NameType.DnsName, false);
+                        if (string.IsNullOrEmpty(hostName))
                         {
                             continue;
                         }
 
-                        if (subject.IndexOf("CN=" + host, StringComparison.OrdinalIgnoreCase) >= 0)
+                        if (string.Compare(hostName, host, StringComparison.OrdinalIgnoreCase) >= 0)
                         {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate found Subject={0}", subject);
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate found Host={0}", hostName);
                             return cert;
                         }
                     }
