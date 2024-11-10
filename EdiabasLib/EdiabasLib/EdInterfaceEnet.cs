@@ -13,6 +13,7 @@ using System.Xml.Linq;
 using System.Net.Http;
 using System.Net.Security;
 using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -237,11 +238,26 @@ namespace EdiabasLib
                 TcpDiagStreamSendLock = new object();
                 TcpDiagStreamRecLock = new object();
                 TcpControlTimer = new Timer(TcpControlTimeout, this, Timeout.Infinite, Timeout.Infinite);
+                TrustedCertificates = null;
                 TcpControlTimerLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
                 TcpDiagRecQueue = new Queue<byte[]>();
+            }
+
+            public void DisposeCertificates()
+            {
+                if (TrustedCertificates != null)
+                {
+                    foreach (X509Certificate certificate in TrustedCertificates)
+                    {
+                        certificate.Dispose();
+                    }
+
+                    TrustedCertificates.Clear();
+                    TrustedCertificates = null;
+                }
             }
 
             public void Dispose()
@@ -282,6 +298,8 @@ namespace EdiabasLib
                             TcpControlTimer.Dispose();
                             TcpControlTimer = null;
                         }
+
+                        DisposeCertificates();
                     }
 
                     // Note disposing has been done.
@@ -301,6 +319,7 @@ namespace EdiabasLib
             public TcpClient TcpControlClient;
             public Stream TcpControlStream;
             public Timer TcpControlTimer;
+            public List<X509Certificate> TrustedCertificates;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -1209,9 +1228,9 @@ namespace EdiabasLib
                         diagDoIpSsl = string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
                         if (diagDoIpSsl)
                         {
-                            if (string.IsNullOrEmpty(DoIpSslSecurityPath) || !Directory.Exists(DoIpSslSecurityPath))
+                            if (!GetTrustedCertificates(SharedDataActive, DoIpSslSecurityPath))
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SSL SecurityPath invalid: {0}", DoIpSslSecurityPath);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No trusted certificates found in path: {0}", DoIpSslSecurityPath);
                                 return false;
                             }
                         }
@@ -2570,6 +2589,51 @@ namespace EdiabasLib
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "CreateSslStream exception: " + EdiabasNet.GetExceptionText(ex));
                 sslStream.Close();
                 throw;
+            }
+        }
+
+        protected bool GetTrustedCertificates(SharedData sharedData, string certPath)
+        {
+            try
+            {
+                if (sharedData == null)
+                {
+                    return false;
+                }
+
+                sharedData.DisposeCertificates();
+                if (string.IsNullOrEmpty(certPath))
+                {
+                    return false;
+                }
+
+                if (!Directory.Exists(certPath))
+                {
+                    return false;
+                }
+
+                List<X509Certificate> certList = new List<X509Certificate>();
+                IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
+                foreach (string certFile in certFiles)
+                {
+                    try
+                    {
+                        X509Certificate cert = new X509Certificate(certFile);
+                        certList.Add(cert);
+                    }
+                    catch (Exception ex)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetTrustedCertificates File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
+                    }
+                }
+
+                sharedData.TrustedCertificates = certList;
+                return certList.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetTrustedCertificates exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return false;
             }
         }
 
