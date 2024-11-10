@@ -2584,16 +2584,18 @@ namespace EdiabasLib
                             }
 
                             X509ChainStatusFlags status = chain2.ChainStatus.First().Status;
-                            if (status == X509ChainStatusFlags.NoError)
+                            switch (status)
                             {
-                                return true;
-                            }
+                                case X509ChainStatusFlags.NoError:
+                                    return true;
 
-                            if (chain2.ChainStatus.Length == 1 &&
-                                status == X509ChainStatusFlags.UntrustedRoot &&
-                                chain2.ChainPolicy.ExtraStore.Contains(chain2.ChainElements[chain2.ChainElements.Count - 1].Certificate))
-                            {
-                                return true;
+                                case X509ChainStatusFlags.UntrustedRoot:
+                                    if (chain2.ChainStatus.Length == 1 &&
+                                        chain2.ChainPolicy.ExtraStore.Contains(chain2.ChainElements[chain2.ChainElements.Count - 1].Certificate))
+                                    {
+                                        return true;
+                                    }
+                                    break;
                             }
                         }
                         catch (Exception ex)
