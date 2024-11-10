@@ -2591,7 +2591,7 @@ namespace EdiabasLib
 
                             if (chain2.ChainStatus.Length == 1 &&
                                 status == X509ChainStatusFlags.UntrustedRoot &&
-                                chain2.ChainPolicy.ExtraStore.Contains(chain2.ChainElements[chain.ChainElements.Count - 1].Certificate))
+                                chain2.ChainPolicy.ExtraStore.Contains(chain2.ChainElements[chain2.ChainElements.Count - 1].Certificate))
                             {
                                 return true;
                             }
@@ -2603,7 +2603,7 @@ namespace EdiabasLib
                     }
 
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Certificate error: {0}", errors);
-                    return true;
+                    return false;
                 },
                 (sender, host, certificates, certificate, issuers) =>
                 {
