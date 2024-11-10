@@ -390,6 +390,7 @@ namespace EdiabasLib
         protected volatile List<EnetConnection> UdpRecIpListList = new List<EnetConnection>();
         protected object UdpRecListLock = new object();
         protected int UdpMaxResponses;
+        protected IPAddress UdpIpFilter;
         protected AutoResetEvent UdpEvent;
         protected AutoResetEvent IcomEvent;
 
@@ -1726,6 +1727,7 @@ namespace EdiabasLib
                     UdpRecIpListList = new List<EnetConnection>();
                 }
                 UdpMaxResponses = maxVehicles;
+                UdpIpFilter = IPAddress.Any;
                 StartUdpListen();
 
                 int retryCount = 0;
@@ -2167,6 +2169,17 @@ namespace EdiabasLib
                             {
                                 addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, 50000 + gatewayAddr * 10, 50001 + gatewayAddr * 10);
                             }
+                        }
+                    }
+                }
+
+                if (addListConn != null)
+                {
+                    if (UdpIpFilter != null && !UdpIpFilter.Equals(IPAddress.Any))
+                    {
+                        if (!UdpIpFilter.Equals(addListConn.IpAddress))
+                        {
+                            addListConn = null;
                         }
                     }
                 }
