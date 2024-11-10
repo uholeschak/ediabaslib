@@ -2584,7 +2584,7 @@ namespace EdiabasLib
                             return false;
                         }
 
-                        if (string.Compare(hostName.Trim(), "127.0.0.1", StringComparison.OrdinalIgnoreCase) != 0)
+                        if (!string.IsNullOrEmpty(serverName))
                         {
                             if (string.Compare(hostName.Trim(), serverName.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                             {

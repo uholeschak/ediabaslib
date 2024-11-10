@@ -1002,14 +1002,14 @@ namespace CarSimulator
                             // openssl genrsa -out rootCA.key 4096
                             // openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 36500 -out rootCA.crt
                             // openssl x509 -inform pem -noout -text -in rootCA.crt
-                            // openssl req -new -nodes -out localhost.csr -newkey rsa:4096 -keyout localhost.key
-                            // openssl x509 -req -in localhost.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out localhost.crt -days 36500 -sha256
-                            // openssl x509 -inform pem -noout -text -in localhost.crt
-                            // cat localhost.crt rootCA.crt > localhost_full.crt
-                            // openssl pkcs12 -export -out localhost.pfx -inkey localhost.key -in localhost_full.crt -passout pass:
+                            // openssl req -new -nodes -out vin1.csr -newkey rsa:4096 -keyout vin1.key
+                            // openssl x509 -req -in vin1.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out vin1.crt -days 36500 -sha256
+                            // openssl x509 -inform pem -noout -text -in vin1.crt
+                            // cat vin1.crt rootCA.crt > vin1_full.crt
+                            // openssl pkcs12 -export -out vin1.pfx -inkey vin1.key -in vin1_full.crt -passout pass:
                             // generate hash name:
                             // openssl x509 -hash -noout -in rootCA.crt
-                            // cp 'rootCA.crt' to '<hash>.0'
+                            // cp rootCA.crt <hash>.0
                             // copy file to EDIABAS.ini [SSL] SecurityPath property location.
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
                             _serverCertificate = new X509Certificate2(ServerCertFile, ServerCertPwd);
