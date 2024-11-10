@@ -2574,7 +2574,23 @@ namespace EdiabasLib
                 },
                 (sender, host, certificates, certificate, issuers) =>
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate request Host={0}, Count={1}", host, certificates.Count);
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate request Host={0}", host);
+                    foreach (X509Certificate cert in certificates)
+                    {
+                        string subject = cert.Subject;
+                        if (string.IsNullOrEmpty(subject))
+                        {
+                            continue;
+                        }
+
+                        if (subject.IndexOf("CN=" + host, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate found Subject={0}", subject);
+                            return cert;
+                        }
+                    }
+
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate request not found Host={0}", host);
                     return null;
                 });
             try
