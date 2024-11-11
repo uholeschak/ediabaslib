@@ -1231,9 +1231,12 @@ namespace EdiabasLib
                         if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
                         {
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No DoIp UDP response for host: {0}", hostIp);
-                            continue;
+                            //continue;
                         }
-                        SharedDataActive.EnetHostConn = detectedVehicles[0];
+                        else
+                        {
+                            SharedDataActive.EnetHostConn = detectedVehicles[0];
+                        }
 
                         diagDoIpSsl = string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
                         if (diagDoIpSsl)
