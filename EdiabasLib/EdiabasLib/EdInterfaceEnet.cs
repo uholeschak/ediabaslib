@@ -239,6 +239,7 @@ namespace EdiabasLib
                 TcpDiagStreamRecLock = new object();
                 TcpControlTimer = new Timer(TcpControlTimeout, this, Timeout.Infinite, Timeout.Infinite);
                 TrustedCAs = null;
+                S29Certs = null;
                 TcpControlTimerLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
                 TcpDiagRecLen = 0;
@@ -246,7 +247,7 @@ namespace EdiabasLib
                 TcpDiagRecQueue = new Queue<byte[]>();
             }
 
-            public void DisposeCertificates()
+            public void DisposeCAs()
             {
                 if (TrustedCAs != null)
                 {
@@ -257,6 +258,20 @@ namespace EdiabasLib
 
                     TrustedCAs.Clear();
                     TrustedCAs = null;
+                }
+            }
+
+            public void DisposeS29Certs()
+            {
+                if (S29Certs != null)
+                {
+                    foreach (X509Certificate2 certificate in S29Certs)
+                    {
+                        certificate.Dispose();
+                    }
+
+                    S29Certs.Clear();
+                    S29Certs = null;
                 }
             }
 
@@ -299,7 +314,8 @@ namespace EdiabasLib
                             TcpControlTimer = null;
                         }
 
-                        DisposeCertificates();
+                        DisposeCAs();
+                        DisposeS29Certs();
                     }
 
                     // Note disposing has been done.
@@ -320,6 +336,7 @@ namespace EdiabasLib
             public Stream TcpControlStream;
             public Timer TcpControlTimer;
             public List<X509Certificate2> TrustedCAs;
+            public List<X509Certificate2> S29Certs;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -408,6 +425,7 @@ namespace EdiabasLib
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
         protected string DoIpSslSecurityPath = string.Empty;
+        protected string DoIpS29CertPath = string.Empty;
         protected int ConnectTimeout = 5000;
         protected int BatteryVoltageValue = 12000;
         protected int IgnitionVoltageValue = 12000;
@@ -599,6 +617,12 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     DoIpSslSecurityPath = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("S29CertPath");
+                if (prop != null)
+                {
+                    DoIpS29CertPath = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutConnect");
@@ -1238,10 +1262,16 @@ namespace EdiabasLib
                         diagDoIpSsl = string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
                         if (diagDoIpSsl)
                         {
-                            if (!GetTrustedCertificates(SharedDataActive, DoIpSslSecurityPath))
+                            if (!GetTrustedCAs(SharedDataActive, DoIpSslSecurityPath))
                             {
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No trusted certificates found in path: {0}", DoIpSslSecurityPath);
                                 continue;
+                            }
+
+                            if (!GetS29Certs(SharedDataActive, DoIpS29CertPath))
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}", DoIpS29CertPath);
+                                //continue;
                             }
                         }
                     }
@@ -2721,7 +2751,7 @@ namespace EdiabasLib
             }
         }
 
-        protected bool GetTrustedCertificates(SharedData sharedData, string certPath)
+        protected bool GetTrustedCAs(SharedData sharedData, string certPath)
         {
             try
             {
@@ -2730,7 +2760,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                sharedData.DisposeCertificates();
+                sharedData.DisposeCAs();
                 if (string.IsNullOrEmpty(certPath))
                 {
                     return false;
@@ -2752,7 +2782,7 @@ namespace EdiabasLib
                     }
                     catch (Exception ex)
                     {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetTrustedCertificates File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetTrustedCAs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
                     }
                 }
 
@@ -2761,7 +2791,52 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetTrustedCertificates exception: {0}", EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetTrustedCAs exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return false;
+            }
+        }
+
+        protected bool GetS29Certs(SharedData sharedData, string certPath)
+        {
+            try
+            {
+                if (sharedData == null)
+                {
+                    return false;
+                }
+
+                sharedData.DisposeS29Certs();
+                if (string.IsNullOrEmpty(certPath))
+                {
+                    return false;
+                }
+
+                if (!Directory.Exists(certPath))
+                {
+                    return false;
+                }
+
+                List<X509Certificate2> certList = new List<X509Certificate2>();
+                IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
+                foreach (string certFile in certFiles)
+                {
+                    try
+                    {
+                        X509Certificate2 cert = new X509Certificate2(certFile);
+                        certList.Add(cert);
+                    }
+                    catch (Exception ex)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
+                    }
+                }
+
+                sharedData.S29Certs = certList;
+                return certList.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
