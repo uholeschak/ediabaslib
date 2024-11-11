@@ -1226,13 +1226,22 @@ namespace EdiabasLib
                     bool diagDoIpSsl = false;
                     if (SharedDataActive.DiagDoIp)
                     {
+                        string hostIp = SharedDataActive.EnetHostConn.IpAddress.ToString();
+                        List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.DoIp });
+                        if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No DoIp UDP response for host: {0}", hostIp);
+                            continue;
+                        }
+                        SharedDataActive.EnetHostConn = detectedVehicles[0];
+
                         diagDoIpSsl = string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
                         if (diagDoIpSsl)
                         {
                             if (!GetTrustedCertificates(SharedDataActive, DoIpSslSecurityPath))
                             {
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No trusted certificates found in path: {0}", DoIpSslSecurityPath);
-                                return false;
+                                continue;
                             }
                         }
                     }
