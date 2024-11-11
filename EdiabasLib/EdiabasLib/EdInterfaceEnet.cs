@@ -2715,10 +2715,10 @@ namespace EdiabasLib
                         // Use the first certificate that is from an acceptable issuer.
                         foreach (X509Certificate cert in certificates)
                         {
-                            string issuer = certificate.Issuer;
+                            string issuer = cert.Issuer;
                             if (Array.IndexOf(issuers, issuer) != -1)
                             {
-                                return certificate;
+                                return cert;
                             }
                         }
                     }
@@ -2746,7 +2746,7 @@ namespace EdiabasLib
 
                 sslStream.ReadTimeout = 5000;
                 sslStream.AuthenticateAsClient(serverName, clientCertificates, false);
-                if (!sslStream.IsEncrypted || !sslStream.IsSigned)
+                if (!sslStream.IsEncrypted || !sslStream.IsSigned || !sslStream.IsMutuallyAuthenticated)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not authenticated: Encrypted={0}, Signed={1}",
                         sslStream.IsEncrypted, sslStream.IsSigned);
@@ -3989,6 +3989,14 @@ namespace EdiabasLib
 
         private void WriteNetworkStream(Stream networkStream, byte[] buffer, int offset, int size, int packetSize = TcpSendBufferSize)
         {
+            if (networkStream == null)
+            {
+#if !ANDROID
+                Debug.WriteLine("WriteNetworkStream No stream");
+#endif
+                throw new IOException("No network stream");
+            }
+
             int pos = 0;
             while (pos < size)
             {
