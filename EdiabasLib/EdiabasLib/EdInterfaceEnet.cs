@@ -2604,6 +2604,12 @@ namespace EdiabasLib
             }
 
             string serverName = sharedData.EnetHostConn.Vin;
+            if (string.IsNullOrEmpty(serverName))
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Empty server name");
+                return null;
+            }
+
             SslStream sslStream = new SslStream(sharedData.TcpDiagClient.GetStream(), false,
                 (sender, certificate, chain, errors) =>
                 {
