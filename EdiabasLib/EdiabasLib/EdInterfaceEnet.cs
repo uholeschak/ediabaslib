@@ -2667,29 +2667,31 @@ namespace EdiabasLib
                         {
                             try
                             {
-                                X509Chain chain2 = new X509Chain();
-                                chain2.ChainPolicy.ExtraStore.Add(trustedCertificate);
-                                chain2.ChainPolicy.VerificationFlags = X509VerificationFlags.NoFlag;
-                                chain2.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                                chain2.Build(new X509Certificate2(certificate));
-                                if (chain2.ChainStatus.Length == 0)
+                                using (X509Chain chain2 = new X509Chain())
                                 {
-                                    return true;
-                                }
-
-                                X509ChainStatusFlags status = chain2.ChainStatus.First().Status;
-                                switch (status)
-                                {
-                                    case X509ChainStatusFlags.NoError:
+                                    chain2.ChainPolicy.ExtraStore.Add(trustedCertificate);
+                                    chain2.ChainPolicy.VerificationFlags = X509VerificationFlags.IgnoreInvalidName;
+                                    chain2.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+                                    chain2.Build(new X509Certificate2(certificate));
+                                    if (chain2.ChainStatus.Length == 0)
+                                    {
                                         return true;
+                                    }
 
-                                    case X509ChainStatusFlags.UntrustedRoot:
-                                        if (chain2.ChainStatus.Length == 1 &&
-                                            chain2.ChainPolicy.ExtraStore.Contains(chain2.ChainElements[chain2.ChainElements.Count - 1].Certificate))
-                                        {
+                                    X509ChainStatusFlags status = chain2.ChainStatus.First().Status;
+                                    switch (status)
+                                    {
+                                        case X509ChainStatusFlags.NoError:
                                             return true;
-                                        }
-                                        break;
+
+                                        case X509ChainStatusFlags.UntrustedRoot:
+                                            if (chain2.ChainStatus.Length == 1 &&
+                                                chain2.ChainPolicy.ExtraStore.Contains(chain2.ChainElements[chain2.ChainElements.Count - 1].Certificate))
+                                            {
+                                                return true;
+                                            }
+                                            break;
+                                    }
                                 }
                             }
                             catch (Exception ex)
