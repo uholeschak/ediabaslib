@@ -2710,20 +2710,22 @@ namespace EdiabasLib
                 (sender, host, certificates, certificate, issuers) =>
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate request Host={0}", host);
-                    foreach (X509Certificate cert in certificates)
+                    if (issuers != null && issuers.Length > 0 && certificates != null && certificates.Count > 0)
                     {
-                        X509Certificate2 cert2 = new X509Certificate2(cert);
-                        string hostName = cert2.GetNameInfo(X509NameType.DnsName, false);
-                        if (string.IsNullOrEmpty(hostName))
+                        // Use the first certificate that is from an acceptable issuer.
+                        foreach (X509Certificate cert in certificates)
                         {
-                            continue;
+                            string issuer = certificate.Issuer;
+                            if (Array.IndexOf(issuers, issuer) != -1)
+                            {
+                                return certificate;
+                            }
                         }
+                    }
 
-                        if (string.Compare(hostName, host, StringComparison.OrdinalIgnoreCase) >= 0)
-                        {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate found Host={0}", hostName);
-                            return cert;
-                        }
+                    if (certificates != null && certificates.Count > 0)
+                    {
+                        return certificates[0];
                     }
 
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Client certificate request not found Host={0}", host);
@@ -2732,8 +2734,18 @@ namespace EdiabasLib
             try
             {
                 // Authenticate the server but don't require the client to authenticate.
+                X509CertificateCollection clientCertificates = null;
+                if (sharedData.S29Certs != null)
+                {
+                    clientCertificates = new X509CertificateCollection();
+                    foreach (X509Certificate2 cert in sharedData.S29Certs)
+                    {
+                        clientCertificates.Add(cert);
+                    }
+                }
+
                 sslStream.ReadTimeout = 5000;
-                sslStream.AuthenticateAsClient(serverName);
+                sslStream.AuthenticateAsClient(serverName, clientCertificates, false);
                 if (!sslStream.IsEncrypted || !sslStream.IsSigned)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not authenticated: Encrypted={0}, Signed={1}",
