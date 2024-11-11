@@ -3483,7 +3483,6 @@ namespace CarSimulator
                 return null;
             }
 
-            bool checkClientCert = false;
             SslStream sslStream = new SslStream(client.GetStream(), false,
                 (sender, certificate, chain, errors) =>
                 {
@@ -3493,10 +3492,11 @@ namespace CarSimulator
                             return true;
 
                         case SslPolicyErrors.RemoteCertificateNotAvailable:
-                            if (checkClientCert)
-                            {
-                                break;
-                            }
+                            Debug.WriteLine("CreateSslStream no remote certificate");
+                            break;
+
+                        case SslPolicyErrors.RemoteCertificateChainErrors:
+                            Debug.WriteLine("CreateSslStream Ignoring chain error");
                             return true;
                     }
 
@@ -3507,7 +3507,7 @@ namespace CarSimulator
             {
                 // Authenticate the server but don't require the client to authenticate.
                 sslStream.ReadTimeout = TcpSendTimeout;
-                sslStream.AuthenticateAsServer(serverCertificate, checkClientCert, false);
+                sslStream.AuthenticateAsServer(serverCertificate, true, false);
                 return sslStream;
             }
             catch (AuthenticationException e)
