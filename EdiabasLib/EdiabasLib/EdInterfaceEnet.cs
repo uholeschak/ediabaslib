@@ -1231,13 +1231,10 @@ namespace EdiabasLib
                         if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
                         {
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No DoIp UDP response for host: {0}", hostIp);
-                            //continue;
-                        }
-                        else
-                        {
-                            SharedDataActive.EnetHostConn = detectedVehicles[0];
+                            continue;
                         }
 
+                        SharedDataActive.EnetHostConn = detectedVehicles[0];
                         diagDoIpSsl = string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
                         if (diagDoIpSsl)
                         {
@@ -1936,14 +1933,14 @@ namespace EdiabasLib
                         {
                             if (protocolHsfz)
                             {
-                                IPEndPoint ipUdpIdent = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), UdpIdentPort);
+                                IPEndPoint ipUdpIdent = new IPEndPoint(hostIpAddress ?? IPAddress.Parse(HostIdentServiceProtected), UdpIdentPort);
                                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
                                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                 {
                                     UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
                                 }, ipUdpIdent.Address, SharedDataActive.NetworkData);
 
-                                IPEndPoint ipUdpSvrLoc = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), UdpSrvLocPort);
+                                IPEndPoint ipUdpSvrLoc = new IPEndPoint(hostIpAddress ?? IPAddress.Parse(HostIdentServiceProtected), UdpSrvLocPort);
                                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address, UdpSrvLocPort));
                                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                 {
@@ -1953,7 +1950,7 @@ namespace EdiabasLib
 
                             if (protocolDoIp)
                             {
-                                IPEndPoint ipUdpDoIpIdent = new IPEndPoint(IPAddress.Parse(HostIdentServiceProtected), DoIpPort);
+                                IPEndPoint ipUdpDoIpIdent = new IPEndPoint(hostIpAddress ?? IPAddress.Parse(HostIdentServiceProtected), DoIpPort);
                                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending DoIp broadcast to: {0}:{1}", ipUdpDoIpIdent.Address, DoIpPort));
                                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                 {
@@ -2624,13 +2621,10 @@ namespace EdiabasLib
                             return false;
                         }
 
-                        if (!string.IsNullOrEmpty(serverName))
+                        if (string.Compare(hostName.Trim(), serverName.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                         {
-                            if (string.Compare(hostName.Trim(), serverName.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
-                            {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Hostname not matching: '{0}' != '{1}'", hostName, serverName);
-                                return false;
-                            }
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Hostname not matching: '{0}' != '{1}'", hostName, serverName);
+                            return false;
                         }
 
                         foreach (X509Certificate2 trustedCertificate in sharedData.TrustedCAs)
