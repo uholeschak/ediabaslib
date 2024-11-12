@@ -15,7 +15,6 @@ using System.ComponentModel;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using EdiabasLib;
-using System.Reflection;
 
 namespace EdiabasLibConfigTool
 {
@@ -980,6 +979,7 @@ namespace EdiabasLibConfigTool
                 dirName = _ediabasDirIstad;
                 patchType = Patch.PatchType.Istad;
             }
+
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
@@ -992,22 +992,27 @@ namespace EdiabasLibConfigTool
         private void buttonRestore_Click(object sender, EventArgs e)
         {
             string dirName = null;
+            Patch.PatchType patchType = Patch.PatchType.Ediabas;
             if (sender == buttonRestoreEdiabas)
             {
                 dirName = _ediabasDirBmw;
+                patchType = Patch.PatchType.Ediabas;
             }
             else if (sender == buttonRestoreVasPc)
             {
                 dirName = _ediabasDirVag;
+                patchType = Patch.PatchType.VasPc;
             }
             else if (sender == buttonRestoreIstad)
             {
                 dirName = _ediabasDirIstad;
+                patchType = Patch.PatchType.Istad;
             }
+
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
-                Patch.RestoreEdiabas(sr, dirName);
+                Patch.RestoreEdiabas(sr, patchType, dirName);
                 UpdateStatusText(sr.ToString());
             }
             UpdateButtonStatus();
