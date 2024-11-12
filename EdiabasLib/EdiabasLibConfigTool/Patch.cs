@@ -34,9 +34,10 @@ namespace EdiabasLibConfigTool
         public const string Api64DllBackupName = @"api64.backup.dll";
         public const string ConfigFileName = @"EdiabasLib.config";
         public const string IniFileName = @"EDIABAS.INI";
+        public const string ReingoldRegKey = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
+        public const string IstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
-        public const string IstaDefaultPath = @"BMW\ISPI\TRIC\ISTA";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
         static class NativeMethods
@@ -367,7 +368,6 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
-                bool iniUpdated = false;
                 string interfaceValue = @"STD:OBD";
                 if (configFile.ToLowerInvariant().Contains(@"\SIDIS\home\DBaseSys2\".ToLowerInvariant()))
                 {   // VAS-PC instalation
@@ -386,19 +386,13 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
                         UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
-                        if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true))
-                        {
-                            iniUpdated = true;
-                        }
+                        UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
                     }
                     else
                     {
                         UpdateConfigNode(settingsNode, @"ObdComPort", "DEEPOBDWIFI");
                         UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
-                        if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true))
-                        {
-                            iniUpdated = true;
-                        }
+                        UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
                     }
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
@@ -408,10 +402,7 @@ namespace EdiabasLibConfigTool
 
                     UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
                     UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
-                    if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true))
-                    {
-                        iniUpdated = true; 
-                    }
+                    UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
 
                     string keepConnectionValue;
                     switch (adapterType)
@@ -435,10 +426,7 @@ namespace EdiabasLibConfigTool
                         EdInterfaceEnet.ProtocolDoIp : EdInterfaceEnet.ProtocolHsfz;
                     UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
                     UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
-                    if (UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true))
-                    {
-                        iniUpdated = true;
-                    }
+                    UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else
@@ -447,10 +435,8 @@ namespace EdiabasLibConfigTool
                 }
                 xDocument.Save(configFile);
 
-                if (iniUpdated)
-                {
-                    PatchIstaReg(registryViewIsta);
-                }
+                string ediabasBinPath = Path.GetDirectoryName(configFile);
+                PatchIstaReg(registryViewIsta, ediabasBinPath);
             }
             catch (Exception)
             {
@@ -642,7 +628,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool RestoreFiles(StringBuilder sr, string dirName)
+        public static bool RestoreFiles(StringBuilder sr, string dirName, RegistryView? registryViewIsta)
         {
             try
             {
@@ -697,6 +683,8 @@ namespace EdiabasLibConfigTool
                 sr.Append(string.Format(Resources.Strings.RestoreApiDllFailed, Api64DllName));
                 return false;
             }
+
+            PatchIstaReg(registryViewIsta);
             return true;
         }
 
@@ -775,23 +763,25 @@ namespace EdiabasLibConfigTool
                 {
                     iniFile = Path.Combine(dirName, IniFileName);
 
-                    string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
-                    if (!string.IsNullOrEmpty(programFiles))
+                    using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
                     {
-                        string istaPath = Path.Combine(programFiles, IstaDefaultPath);
-                        if (PathStartWith(dirName, istaPath))
+                        using (RegistryKey key = localMachine64.OpenSubKey(ReingoldRegKey, false))
                         {
-                            registryViewIsta = RegistryView.Registry64;
+                            if (key != null)
+                            {
+                                registryViewIsta = RegistryView.Registry64;
+                            }
                         }
                     }
 
-                    string programFilesX86 = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%");
-                    if (!string.IsNullOrEmpty(programFilesX86))
+                    using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
                     {
-                        string istaPath = Path.Combine(programFilesX86, IstaDefaultPath);
-                        if (PathStartWith(dirName, istaPath))
+                        using (RegistryKey key = localMachine32.OpenSubKey(ReingoldRegKey, false))
                         {
-                            registryViewIsta = RegistryView.Registry32;
+                            if (key != null)
+                            {
+                                registryViewIsta = RegistryView.Registry32;
+                            }
                         }
                     }
                 }
@@ -830,14 +820,14 @@ namespace EdiabasLibConfigTool
         public static bool RestoreEdiabas(StringBuilder sr, string dirName)
         {
             sr.AppendFormat(Resources.Strings.RestoreDirectory, dirName);
-            if (!RestoreFiles(sr, dirName))
+            if (!RestoreFiles(sr, dirName, null))
             {
                 return false;
             }
             return true;
         }
 
-        public static bool PatchIstaReg(RegistryView? registryViewIsta)
+        public static bool PatchIstaReg(RegistryView? registryViewIsta, string ediabasBinLocation = null)
         {
             if (registryViewIsta == null)
             {
@@ -848,11 +838,18 @@ namespace EdiabasLibConfigTool
             {
                 using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryViewIsta.Value))
                 {
-                    using (RegistryKey key = localMachine.OpenSubKey(@"SOFTWARE\BMW\ISPI\TRIC\ISTALauncher", true))
+                    using (RegistryKey key = localMachine.OpenSubKey(ReingoldRegKey, true))
                     {
                         if (key != null)
                         {
-                            key.SetValue(@"BMW.TricTools.IstaLauncher.MD5CheckEnabled", "False");
+                            if (!string.IsNullOrEmpty(ediabasBinLocation))
+                            {
+                                key.SetValue(IstaBinPath, ediabasBinLocation);
+                            }
+                            else
+                            {
+                                key.DeleteValue(IstaBinPath, false);
+                            }
                             return true;
                         }
                     }
