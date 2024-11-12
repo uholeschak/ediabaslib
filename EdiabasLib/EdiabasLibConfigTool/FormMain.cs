@@ -962,24 +962,8 @@ namespace EdiabasLibConfigTool
             {
                 return;
             }
-            string dirName = null;
-            Patch.PatchType patchType = Patch.PatchType.Ediabas;
-            if (sender == buttonPatchEdiabas)
-            {
-                dirName = _ediabasDirBmw;
-                patchType = Patch.PatchType.Ediabas;
-            }
-            else if (sender == buttonPatchVasPc)
-            {
-                dirName = _ediabasDirVag;
-                patchType = Patch.PatchType.VasPc;
-            }
-            else if (sender == buttonPatchIstad)
-            {
-                dirName = _ediabasDirIstad;
-                patchType = Patch.PatchType.Istad;
-            }
 
+            string dirName = GetDirName(sender, out Patch.PatchType patchType);
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
@@ -991,8 +975,20 @@ namespace EdiabasLibConfigTool
 
         private void buttonRestore_Click(object sender, EventArgs e)
         {
+            string dirName = GetDirName(sender, out Patch.PatchType patchType);
+            if (!string.IsNullOrEmpty(dirName))
+            {
+                StringBuilder sr = new StringBuilder();
+                Patch.RestoreEdiabas(sr, patchType, dirName);
+                UpdateStatusText(sr.ToString());
+            }
+            UpdateButtonStatus();
+        }
+
+        private string GetDirName(object sender, out Patch.PatchType patchType)
+        {
             string dirName = null;
-            Patch.PatchType patchType = Patch.PatchType.Ediabas;
+            patchType = Patch.PatchType.Ediabas;
             if (sender == buttonRestoreEdiabas)
             {
                 dirName = _ediabasDirBmw;
@@ -1008,14 +1004,7 @@ namespace EdiabasLibConfigTool
                 dirName = _ediabasDirIstad;
                 patchType = Patch.PatchType.Istad;
             }
-
-            if (!string.IsNullOrEmpty(dirName))
-            {
-                StringBuilder sr = new StringBuilder();
-                Patch.RestoreEdiabas(sr, patchType, dirName);
-                UpdateStatusText(sr.ToString());
-            }
-            UpdateButtonStatus();
+            return dirName;
         }
 
         private void buttonDirIstad_Click(object sender, EventArgs e)
