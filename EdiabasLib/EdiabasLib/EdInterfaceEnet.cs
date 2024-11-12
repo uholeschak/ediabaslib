@@ -2761,7 +2761,7 @@ namespace EdiabasLib
                     {
                         threadFinishEvent = new AutoResetEvent(false);
                         SslClientAuthenticationOptions authenticationOptions = new SslClientAuthenticationOptions();
-                        authenticationOptions.TargetHost = serverIpAddress;
+                        authenticationOptions.TargetHost = string.Empty;
                         authenticationOptions.ClientCertificates = clientCertificates;
                         authenticationOptions.CertificateRevocationCheckMode = X509RevocationMode.NoCheck;
                         Task authTask = sslStream.AuthenticateAsClientAsync(authenticationOptions, cts.Token);
@@ -2814,7 +2814,7 @@ namespace EdiabasLib
                 }
 #else
                 sslStream.ReadTimeout = SslAuthTimeout;
-                sslStream.AuthenticateAsClient(serverIpAddress, clientCertificates, false);
+                sslStream.AuthenticateAsClient(string.Empty, clientCertificates, false);
 #endif
                 if (!sslStream.IsEncrypted || !sslStream.IsSigned || !sslStream.IsMutuallyAuthenticated)
                 {
