@@ -2633,8 +2633,10 @@ namespace EdiabasLib
                 return null;
             }
 
-            string serverName = sharedData.EnetHostConn.Vin;
-            if (string.IsNullOrEmpty(serverName))
+            string serverDnName = sharedData.EnetHostConn.Vin;
+            string serverAddress = sharedData.EnetHostConn.IpAddress.ToString();
+
+            if (string.IsNullOrEmpty(serverDnName))
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Empty server name");
                 return null;
@@ -2652,9 +2654,9 @@ namespace EdiabasLib
                             return false;
                         }
 
-                        if (string.Compare(hostName.Trim(), serverName.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
+                        if (string.Compare(hostName.Trim(), serverDnName.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                         {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Hostname not matching: '{0}' != '{1}'", hostName, serverName);
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Hostname not matching: '{0}' != '{1}'", hostName, serverDnName);
                             return false;
                         }
 
@@ -2747,7 +2749,7 @@ namespace EdiabasLib
                 }
 
                 sslStream.ReadTimeout = 5000;
-                sslStream.AuthenticateAsClient(serverName, clientCertificates, false);
+                sslStream.AuthenticateAsClient(serverAddress, clientCertificates, false);
                 if (!sslStream.IsEncrypted || !sslStream.IsSigned || !sslStream.IsMutuallyAuthenticated)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not authenticated: Encrypted={0}, Signed={1}",
