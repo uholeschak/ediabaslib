@@ -762,28 +762,7 @@ namespace EdiabasLibConfigTool
                 if (patchType == PatchType.Istad)
                 {
                     iniFile = Path.Combine(dirName, IniFileName);
-
-                    using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
-                    {
-                        using (RegistryKey key = localMachine64.OpenSubKey(ReingoldRegKey, false))
-                        {
-                            if (key != null)
-                            {
-                                registryViewIsta = RegistryView.Registry64;
-                            }
-                        }
-                    }
-
-                    using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
-                    {
-                        using (RegistryKey key = localMachine32.OpenSubKey(ReingoldRegKey, false))
-                        {
-                            if (key != null)
-                            {
-                                registryViewIsta = RegistryView.Registry32;
-                            }
-                        }
-                    }
+                    registryViewIsta = GetIstaReg();
                 }
 
                 if (!UpdateConfigFile(configFile, iniFile, registryViewIsta, adapterType, devInfo, wlanIface, enetConnection, pin))
@@ -817,14 +796,61 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool RestoreEdiabas(StringBuilder sr, string dirName)
+        public static bool RestoreEdiabas(StringBuilder sr, PatchType patchType, string dirName)
         {
             sr.AppendFormat(Resources.Strings.RestoreDirectory, dirName);
-            if (!RestoreFiles(sr, dirName, null))
+            RegistryView? registryViewIsta = null;
+            if (patchType == PatchType.Istad)
+            {
+                registryViewIsta = GetIstaReg();
+            }
+
+            if (!RestoreFiles(sr, dirName, registryViewIsta))
             {
                 return false;
             }
             return true;
+        }
+
+        public static RegistryView? GetIstaReg()
+        {
+            try
+            {
+                using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+                {
+                    using (RegistryKey key = localMachine64.OpenSubKey(ReingoldRegKey, false))
+                    {
+                        if (key != null)
+                        {
+                            return RegistryView.Registry64;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            try
+            {
+                using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+                {
+                    using (RegistryKey key = localMachine32.OpenSubKey(ReingoldRegKey, false))
+                    {
+                        if (key != null)
+                        {
+                            return RegistryView.Registry32;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
         }
 
         public static bool PatchIstaReg(RegistryView? registryViewIsta, string ediabasBinLocation = null)
