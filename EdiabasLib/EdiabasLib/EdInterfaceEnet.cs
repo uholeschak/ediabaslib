@@ -2643,11 +2643,6 @@ namespace EdiabasLib
             SslStream sslStream = new SslStream(sharedData.TcpDiagClient.GetStream(), false,
                 (sender, certificate, chain, errors) =>
                 {
-                    if (errors == SslPolicyErrors.None)
-                    {
-                        return true;
-                    }
-
                     try
                     {
                         X509Certificate2 cert2 = new X509Certificate2(certificate);
@@ -2661,6 +2656,11 @@ namespace EdiabasLib
                         {
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Hostname not matching: '{0}' != '{1}'", hostName, serverName);
                             return false;
+                        }
+
+                        if (errors == SslPolicyErrors.None)
+                        {
+                            return true;
                         }
 
                         foreach (X509Certificate2 trustedCertificate in sharedData.TrustedCAs)
