@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -370,6 +371,7 @@ namespace EdiabasLib
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
         protected const int TcpEnetAckTimeout = 5000;
+        protected const int SslAuthTimeout = 5000;
         protected const int TcpDoIpMaxRetries = 2;
         protected const int TcpSendBufferSize = 1400;
         protected const int UdpDetectRetries = 3;
@@ -2749,9 +2751,71 @@ namespace EdiabasLib
                         clientCertificates.Add(cert);
                     }
                 }
+#if NET
+                Thread abortThread = null;
+                AutoResetEvent threadFinishEvent = null;
+                ManualResetEvent cancelEvent = sharedData.TransmitCancelEvent;
+                try
+                {
+                    using (CancellationTokenSource cts = new CancellationTokenSource())
+                    {
+                        threadFinishEvent = new AutoResetEvent(false);
+                        SslClientAuthenticationOptions authenticationOptions = new SslClientAuthenticationOptions();
+                        authenticationOptions.TargetHost = serverIpAddress;
+                        authenticationOptions.ClientCertificates = clientCertificates;
+                        authenticationOptions.CertificateRevocationCheckMode = X509RevocationMode.NoCheck;
+                        Task authTask = sslStream.AuthenticateAsClientAsync(authenticationOptions, cts.Token);
+                        if (cancelEvent != null)
+                        {
+                            WaitHandle[] waitHandles = { threadFinishEvent, cancelEvent };
+                            abortThread = new Thread(() =>
+                            {
+                                if (WaitHandle.WaitAny(waitHandles, SslAuthTimeout) == 1)
+                                {
+                                    // ReSharper disable once AccessToDisposedClosure
+                                    cts.Cancel();
+                                }
+                            });
+                            abortThread.Start();
+                        }
 
-                sslStream.ReadTimeout = 5000;
+                        if (!authTask.Wait(SslAuthTimeout))
+                        {
+                            cts.Cancel();
+                        }
+
+                        if (authTask.Status != TaskStatus.RanToCompletion || cts.IsCancellationRequested)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream auth timeout");
+                            sslStream.Close();
+                            return null;  // aborted
+                        }
+
+                        if (cancelEvent != null)
+                        {
+                            if (cancelEvent.WaitOne(0))
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream auth cancelled");
+                                sslStream.Close();
+                                return null;
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    if (abortThread != null)
+                    {
+                        threadFinishEvent.Set();
+                        abortThread.Join();
+                    }
+
+                    threadFinishEvent?.Dispose();
+                }
+#else
+                sslStream.ReadTimeout = SslAuthTimeout;
                 sslStream.AuthenticateAsClient(serverIpAddress, clientCertificates, false);
+#endif
                 if (!sslStream.IsEncrypted || !sslStream.IsSigned || !sslStream.IsMutuallyAuthenticated)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not authenticated: Encrypted={0}, Signed={1}",
