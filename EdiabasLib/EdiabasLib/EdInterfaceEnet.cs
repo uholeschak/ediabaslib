@@ -2633,10 +2633,10 @@ namespace EdiabasLib
                 return null;
             }
 
-            string serverDnName = sharedData.EnetHostConn.Vin;
-            string serverAddress = sharedData.EnetHostConn.IpAddress.ToString();
+            string serverDnsName = sharedData.EnetHostConn.Vin;
+            string serverIpAddress = sharedData.EnetHostConn.IpAddress.ToString();
 
-            if (string.IsNullOrEmpty(serverDnName))
+            if (string.IsNullOrEmpty(serverDnsName))
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Empty server name");
                 return null;
@@ -2648,15 +2648,17 @@ namespace EdiabasLib
                     try
                     {
                         X509Certificate2 cert2 = new X509Certificate2(certificate);
-                        string hostName = cert2.GetNameInfo(X509NameType.DnsName, false);
-                        if (string.IsNullOrEmpty(hostName))
+                        string hostDnsName = cert2.GetNameInfo(X509NameType.DnsName, false);
+                        if (string.IsNullOrEmpty(hostDnsName))
                         {
                             return false;
                         }
 
-                        if (string.Compare(hostName.Trim(), serverDnName.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
+                        if (string.Compare(hostDnsName.Trim(), serverDnsName.Trim(), StringComparison.OrdinalIgnoreCase) != 0 &&
+                            string.Compare(hostDnsName.Trim(), serverIpAddress.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                         {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream Hostname not matching: '{0}' != '{1}'", hostName, serverDnName);
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream DNS name not matching: {0} != {1}, {2}",
+                                hostDnsName, serverDnsName, serverIpAddress);
                             return false;
                         }
 
@@ -2749,7 +2751,7 @@ namespace EdiabasLib
                 }
 
                 sslStream.ReadTimeout = 5000;
-                sslStream.AuthenticateAsClient(serverAddress, clientCertificates, false);
+                sslStream.AuthenticateAsClient(serverIpAddress, clientCertificates, false);
                 if (!sslStream.IsEncrypted || !sslStream.IsSigned || !sslStream.IsMutuallyAuthenticated)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not authenticated: Encrypted={0}, Signed={1}",
