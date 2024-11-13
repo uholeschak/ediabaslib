@@ -782,7 +782,7 @@ namespace EdiabasLibConfigTool
                     registryViewIsta = GetIstaReg();
                 }
 
-                if (!UpdateConfigFile(configFile, iniFile, registryViewIsta, adapterType, devInfo, wlanIface, enetConnection, pin))
+                if (!UpdateConfigFile(configFile, null, registryViewIsta, adapterType, devInfo, wlanIface, enetConnection, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
