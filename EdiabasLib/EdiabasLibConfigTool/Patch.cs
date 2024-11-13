@@ -34,8 +34,8 @@ namespace EdiabasLibConfigTool
         public const string Api64DllBackupName = @"api64.backup.dll";
         public const string ConfigFileName = @"EdiabasLib.config";
         public const string IniFileName = @"EDIABAS.INI";
-        public const string ReingoldRegKey = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
-        public const string IstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
+        public const string RegKeyReingold = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
+        public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
@@ -713,6 +713,22 @@ namespace EdiabasLibConfigTool
         {
             try
             {
+                if (patchType == PatchType.Istad)
+                {
+                    RegistryView? registryViewIsta = GetIstaReg();
+                    if (IsIstaRegPresent(registryViewIsta))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            try
+            {
                 if (string.IsNullOrEmpty(dirName))
                 {
                     return false;
@@ -735,39 +751,12 @@ namespace EdiabasLibConfigTool
                         return true;
                     }
                 }
-
-                try
-                {
-                    if (patchType == PatchType.Istad)
-                    {
-                        RegistryView? registryViewIsta = GetIstaReg();
-                        if (registryViewIsta != null)
-                        {
-                            using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryViewIsta.Value))
-                            {
-                                using (RegistryKey key = localMachine.OpenSubKey(ReingoldRegKey, true))
-                                {
-                                    if (key != null)
-                                    {
-                                        if (key.GetValue(IstaBinPath) != null)
-                                        {
-                                            return true;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
             }
             catch (Exception)
             {
-                return false;
+                // ignored
             }
+
             return false;
         }
 
@@ -846,7 +835,7 @@ namespace EdiabasLibConfigTool
             {
                 using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
                 {
-                    using (RegistryKey key = localMachine64.OpenSubKey(ReingoldRegKey, false))
+                    using (RegistryKey key = localMachine64.OpenSubKey(RegKeyReingold, false))
                     {
                         if (key != null)
                         {
@@ -864,7 +853,7 @@ namespace EdiabasLibConfigTool
             {
                 using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
                 {
-                    using (RegistryKey key = localMachine32.OpenSubKey(ReingoldRegKey, false))
+                    using (RegistryKey key = localMachine32.OpenSubKey(RegKeyReingold, false))
                     {
                         if (key != null)
                         {
@@ -892,18 +881,46 @@ namespace EdiabasLibConfigTool
             {
                 using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryViewIsta.Value))
                 {
-                    using (RegistryKey key = localMachine.OpenSubKey(ReingoldRegKey, true))
+                    using (RegistryKey key = localMachine.OpenSubKey(RegKeyReingold, true))
                     {
                         if (key != null)
                         {
                             if (!string.IsNullOrEmpty(ediabasBinLocation))
                             {
-                                key.SetValue(IstaBinPath, ediabasBinLocation);
+                                key.SetValue(RegKeyIstaBinPath, ediabasBinLocation);
                             }
                             else
                             {
-                                key.DeleteValue(IstaBinPath, false);
+                                key.DeleteValue(RegKeyIstaBinPath, false);
                             }
+                            return true;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
+        public static bool IsIstaRegPresent(RegistryView? registryViewIsta)
+        {
+            if (registryViewIsta == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryViewIsta.Value))
+                {
+                    using (RegistryKey key = localMachine.OpenSubKey(RegKeyReingold, false))
+                    {
+                        if (key != null)
+                        {
                             return true;
                         }
                     }
