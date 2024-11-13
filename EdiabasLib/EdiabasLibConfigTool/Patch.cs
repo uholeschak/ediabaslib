@@ -709,7 +709,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool IsPatched(string dirName)
+        public static bool IsPatched(string dirName, PatchType patchType)
         {
             try
             {
@@ -734,6 +734,34 @@ namespace EdiabasLibConfigTool
                     {
                         return true;
                     }
+                }
+
+                try
+                {
+                    if (patchType == PatchType.Istad)
+                    {
+                        RegistryView? registryViewIsta = GetIstaReg();
+                        if (registryViewIsta != null)
+                        {
+                            using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryViewIsta.Value))
+                            {
+                                using (RegistryKey key = localMachine.OpenSubKey(ReingoldRegKey, true))
+                                {
+                                    if (key != null)
+                                    {
+                                        if (key.GetValue(IstaBinPath) != null)
+                                        {
+                                            return true;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
             }
             catch (Exception)
