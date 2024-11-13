@@ -777,12 +777,12 @@ namespace EdiabasLibConfigTool
             bool bmwValid = Patch.IsValid(_ediabasDirBmw);
             groupBoxEdiabas.Enabled = bmwValid;
             buttonPatchEdiabas.Enabled = bmwValid && allowPatch;
-            buttonRestoreEdiabas.Enabled = bmwValid && allowRestore && Patch.IsPatched(_ediabasDirBmw);
+            buttonRestoreEdiabas.Enabled = bmwValid && allowRestore && Patch.IsPatched(_ediabasDirBmw, Patch.PatchType.Ediabas);
 
             bool vagValid = Patch.IsValid(_ediabasDirVag);
             groupBoxVasPc.Enabled = vagValid;
             buttonPatchVasPc.Enabled = vagValid && allowPatch && (devInfo != null);
-            buttonRestoreVasPc.Enabled = vagValid && allowRestore && Patch.IsPatched(_ediabasDirVag);
+            buttonRestoreVasPc.Enabled = vagValid && allowRestore && Patch.IsPatched(_ediabasDirVag, Patch.PatchType.VasPc);
 
             bool istadValid = Patch.IsValid(_ediabasDirIstad);
             groupBoxIstad.Enabled = true;
@@ -790,7 +790,7 @@ namespace EdiabasLibConfigTool
             textBoxIstaLocation.Text = _ediabasDirIstad ?? string.Empty;
             buttonDirIstad.Enabled = allowRestore;
             buttonPatchIstad.Enabled = istadValid && allowPatch;
-            buttonRestoreIstad.Enabled = istadValid && allowRestore && Patch.IsPatched(_ediabasDirIstad);
+            buttonRestoreIstad.Enabled = istadValid && allowRestore && Patch.IsPatched(_ediabasDirIstad, Patch.PatchType.Istad);
 
             textBoxBluetoothPin.Enabled = !_test.ThreadActive;
             textBoxWifiPassword.Enabled = !_test.ThreadActive;
