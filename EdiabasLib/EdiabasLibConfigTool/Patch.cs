@@ -86,6 +86,7 @@ namespace EdiabasLibConfigTool
             Ediabas,
             VasPc,
             Istad,
+            IstadExt,
         }
 
         public static bool CopyRuntimeRequired { get; private set; }
@@ -713,13 +714,16 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                if (patchType == PatchType.Istad)
+                switch (patchType)
                 {
-                    RegistryView? registryViewIsta = GetIstaReg();
-                    if (IsIstaRegPresent(registryViewIsta))
-                    {
-                        return true;
-                    }
+                    case PatchType.Istad:
+                    case PatchType.IstadExt:
+                        RegistryView? registryViewIsta = GetIstaReg();
+                        if (IsIstaRegPresent(registryViewIsta))
+                        {
+                            return true;
+                        }
+                        break;
                 }
             }
             catch (Exception)
@@ -776,7 +780,7 @@ namespace EdiabasLibConfigTool
                 string iniFile = null;
 
                 RegistryView? registryViewIsta = null;
-                if (patchType == PatchType.Istad)
+                if (patchType == PatchType.IstadExt)
                 {
                     iniFile = Path.Combine(dirName, IniFileName);
                     registryViewIsta = GetIstaReg();
@@ -794,6 +798,7 @@ namespace EdiabasLibConfigTool
                 switch (patchType)
                 {
                     case PatchType.Istad:
+                    case PatchType.IstadExt:
                         sr.Append("\r\n");
                         sr.Append(Resources.Strings.PatchInstadInfo);
                         break;
@@ -817,9 +822,12 @@ namespace EdiabasLibConfigTool
         {
             sr.AppendFormat(Resources.Strings.RestoreDirectory, dirName);
             RegistryView? registryViewIsta = null;
-            if (patchType == PatchType.Istad)
+            switch (patchType)
             {
-                registryViewIsta = GetIstaReg();
+                case PatchType.Istad:
+                case PatchType.IstadExt:
+                    registryViewIsta = GetIstaReg();
+                    break;
             }
 
             if (!RestoreFiles(sr, dirName, registryViewIsta))
