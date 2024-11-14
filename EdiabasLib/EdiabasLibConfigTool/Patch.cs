@@ -960,7 +960,10 @@ namespace EdiabasLibConfigTool
                     {
                         if (key != null)
                         {
-                            return true;
+                            if (key.GetValue(RegKeyIstaBinPath) != null)
+                            {
+                                return true;
+                            }
                         }
                     }
                 }
