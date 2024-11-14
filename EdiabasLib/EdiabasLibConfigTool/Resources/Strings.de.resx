@@ -259,6 +259,10 @@ Das Standard root Password ist {0}.</value>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>Die {0} Backup-Datei ist ungültig.</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="LanguageDe" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Hinweis: In ISTA-D Administration -&gt; VCI Konfiguration als Interface Typ auswählen:
 Ediabas Standardeinstellungen (ediabas.ini).</value>
@@ -284,5 +288,12 @@ mit EdiabasLib unterstützt.</value>
   </data>
   <data name="PatchApiVersionUnknown" xml:space="preserve">
     <value>Warnung: Unbekannte API Version.</value>
+  </data>
+  <data name="IstaRegExtMessage" xml:space="preserve">
+    <value>Es wird empfohlen den ISTA-D Registry Key auf eine externe EdiabasLib Instanz zeigen zu lassen.
+Wollen Sie dies tun?</value>
+  </data>
+  <data name="IstaRegExtTitle" xml:space="preserve">
+    <value>Speicherort</value>
   </data>
 </root>
