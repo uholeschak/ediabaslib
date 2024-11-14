@@ -286,6 +286,25 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die It&apos;s recommended chaging the ISTA-D registry key to point an external EdiabsLib instance.
+        ///You you want to to this? ähnelt.
+        /// </summary>
+        internal static string IstaRegExtMessage {
+            get {
+                return ResourceManager.GetString("IstaRegExtMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Storage location ähnelt.
+        /// </summary>
+        internal static string IstaRegExtTitle {
+            get {
+                return ResourceManager.GetString("IstaRegExtTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Deutsch ähnelt.
         /// </summary>
         internal static string LanguageDe {

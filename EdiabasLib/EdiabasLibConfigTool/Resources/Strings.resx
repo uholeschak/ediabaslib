@@ -294,4 +294,11 @@ are supported with EdiabasLib.</value>
   <data name="PatchApiVersionUnknown" xml:space="preserve">
     <value>Warning: Unknown API version.</value>
   </data>
+  <data name="IstaRegExtMessage" xml:space="preserve">
+    <value>It's recommended chaging the ISTA-D registry key to point an external EdiabsLib instance.
+You you want to to this?</value>
+  </data>
+  <data name="IstaRegExtTitle" xml:space="preserve">
+    <value>Storage location</value>
+  </data>
 </root>

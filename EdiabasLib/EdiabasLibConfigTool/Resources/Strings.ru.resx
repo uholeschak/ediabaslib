@@ -284,4 +284,11 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
   <data name="PatchApiVersionUnknown" xml:space="preserve">
     <value>Внимание: Неизвестная версия API.</value>
   </data>
+  <data name="IstaRegExtMessage" xml:space="preserve">
+    <value>Рекомендуется изменить ключ реестра ISTA-D, чтобы указать внешний экземпляр EdiabsLib.
+Вы хотите это?</value>
+  </data>
+  <data name="IstaRegExtTitle" xml:space="preserve">
+    <value>Место хранения</value>
+  </data>
 </root>
