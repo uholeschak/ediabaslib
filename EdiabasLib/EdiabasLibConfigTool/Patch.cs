@@ -446,7 +446,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool PatchFiles(StringBuilder sr, string dirName)
+        public static bool PatchFiles(StringBuilder sr, string dirName, bool copyOnly)
         {
             try
             {
@@ -769,23 +769,36 @@ namespace EdiabasLibConfigTool
             try
             {
                 sr.AppendFormat(Resources.Strings.PatchDirectory, dirName);
-                if (!PatchFiles(sr, dirName))
+
+                string targetDir = dirName;
+                RegistryView? registryViewIsta = null;
+                if (patchType == PatchType.IstadExt)
+                {
+                    DirectoryInfo parentDirInfo = Directory.GetParent(dirName);
+                    if (parentDirInfo == null)
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(Resources.Strings.PatchConfigUpdateFailed);
+                        return false;
+                    }
+
+                    targetDir = Path.Combine(parentDirInfo.FullName, "EdLibBin");
+                    if (!Directory.Exists(targetDir))
+                    {
+                        Directory.CreateDirectory(targetDir);
+                    }
+
+                    registryViewIsta = GetIstaReg();
+                }
+
+                if (!PatchFiles(sr, targetDir, registryViewIsta != null))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                     return false;
                 }
 
-                string configFile = Path.Combine(dirName, ConfigFileName);
-                string iniFile = null;
-
-                RegistryView? registryViewIsta = null;
-                if (patchType == PatchType.IstadExt)
-                {
-                    iniFile = Path.Combine(dirName, IniFileName);
-                    registryViewIsta = GetIstaReg();
-                }
-
+                string configFile = Path.Combine(targetDir, ConfigFileName);
                 if (!UpdateConfigFile(configFile, null, registryViewIsta, adapterType, devInfo, wlanIface, enetConnection, pin))
                 {
                     sr.Append("\r\n");
