@@ -633,7 +633,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool RestoreFiles(StringBuilder sr, string dirName, RegistryView? registryViewIsta)
+        public static bool RestoreFiles(StringBuilder sr, string dirName)
         {
             try
             {
@@ -689,7 +689,6 @@ namespace EdiabasLibConfigTool
                 return false;
             }
 
-            PatchIstaReg(registryViewIsta);
             return true;
         }
 
@@ -838,18 +837,33 @@ namespace EdiabasLibConfigTool
         public static bool RestoreEdiabas(StringBuilder sr, PatchType patchType, string dirName)
         {
             sr.AppendFormat(Resources.Strings.RestoreDirectory, dirName);
+
             RegistryView? registryViewIsta = null;
             switch (patchType)
             {
                 case PatchType.Istad:
                 case PatchType.IstadExt:
                     registryViewIsta = GetIstaReg();
+                    if (!IsIstaRegPresent(registryViewIsta))
+                    {
+                        registryViewIsta = null;
+                    }
                     break;
             }
 
-            if (!RestoreFiles(sr, dirName, registryViewIsta))
+            if (registryViewIsta != null)
             {
-                return false;
+                if (!PatchIstaReg(registryViewIsta))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (!RestoreFiles(sr, dirName))
+                {
+                    return false;
+                }
             }
             return true;
         }
