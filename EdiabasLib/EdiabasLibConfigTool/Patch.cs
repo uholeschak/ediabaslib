@@ -506,83 +506,86 @@ namespace EdiabasLibConfigTool
                 sr.Append("\r\n");
                 sr.Append(string.Format(Resources.Strings.PatchApiVersion, version64));
 #endif
-                // 32 bit
-                string dllFile32 = Path.Combine(dirName, Api32DllName);
-                bool dll32Exits = File.Exists(dllFile32);
-                if (!dll32Exits)
+                if (!copyOnly)
                 {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api32DllName));
-                    return false;
-                }
-
-                // 64 bit
-                string dllFile64 = Path.Combine(dirName, Api64DllName);
-                bool dll64Exits = File.Exists(dllFile64);
-                if (!dll64Exits)
-                {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api64DllName));
-                    // accept missing file
-                    //return false;
-                }
-
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (dll32Exits)
-                {
-                    string dllFile32Backup = Path.Combine(dirName, Api32DllBackupName);
-                    if (!File.Exists(dllFile32Backup))
-                    {
-                        if (IsOriginalDll(dllFile32))
-                        {
-                            sr.Append("\r\n");
-                            sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api32DllBackupName));
-                            File.Copy(dllFile32, dllFile32Backup, false);
-                        }
-                    }
-                    else
+                    // 32 bit
+                    string dllFile32 = Path.Combine(dirName, Api32DllName);
+                    bool dll32Exits = File.Exists(dllFile32);
+                    if (!dll32Exits)
                     {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api32DllBackupName));
-                    }
-
-                    if (!IsOriginalDll(dllFile32Backup))
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api32DllName));
+                        sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api32DllName));
                         return false;
                     }
 
-                    File.Copy(sourceDll32, dllFile32, true);
-                }
-
-                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-                if (dll64Exits)
-                {
-                    string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
-                    if (!File.Exists(dllFile64Backup))
+                    // 64 bit
+                    string dllFile64 = Path.Combine(dirName, Api64DllName);
+                    bool dll64Exits = File.Exists(dllFile64);
+                    if (!dll64Exits)
                     {
-                        if (IsOriginalDll(dllFile64))
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchOriginalApiDllMissing, Api64DllName));
+                        // accept missing file
+                        //return false;
+                    }
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    if (dll32Exits)
+                    {
+                        string dllFile32Backup = Path.Combine(dirName, Api32DllBackupName);
+                        if (!File.Exists(dllFile32Backup))
+                        {
+                            if (IsOriginalDll(dllFile32))
+                            {
+                                sr.Append("\r\n");
+                                sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api32DllBackupName));
+                                File.Copy(dllFile32, dllFile32Backup, false);
+                            }
+                        }
+                        else
                         {
                             sr.Append("\r\n");
-                            sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api64DllBackupName));
-                            File.Copy(dllFile64, dllFile64Backup, false);
+                            sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api32DllBackupName));
                         }
-                    }
-                    else
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api64DllBackupName));
+
+                        if (!IsOriginalDll(dllFile32Backup))
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api32DllName));
+                            return false;
+                        }
+
+                        File.Copy(sourceDll32, dllFile32, true);
                     }
 
-                    if (!IsOriginalDll(dllFile64Backup))
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    if (dll64Exits)
                     {
-                        sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api64DllName));
-                        return false;
-                    }
+                        string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
+                        if (!File.Exists(dllFile64Backup))
+                        {
+                            if (IsOriginalDll(dllFile64))
+                            {
+                                sr.Append("\r\n");
+                                sr.Append(string.Format(Resources.Strings.PatchCreateBackupFile, Api64DllBackupName));
+                                File.Copy(dllFile64, dllFile64Backup, false);
+                            }
+                        }
+                        else
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(string.Format(Resources.Strings.PatchBackupFileExisting, Api64DllBackupName));
+                        }
 
-                    File.Copy(sourceDll64, dllFile64, true);
+                        if (!IsOriginalDll(dllFile64Backup))
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(string.Format(Resources.Strings.PatchNoValidBackupFile, Api64DllName));
+                            return false;
+                        }
+
+                        File.Copy(sourceDll64, dllFile64, true);
+                    }
                 }
 
                 string sourceConfig = Path.Combine(sourceDir, ConfigFileName);
@@ -592,6 +595,7 @@ namespace EdiabasLibConfigTool
                     sr.Append(Resources.Strings.PatchConfigMissing);
                     return false;
                 }
+
                 string configFile = Path.Combine(dirName, ConfigFileName);
                 if (!File.Exists(configFile))
                 {
