@@ -506,10 +506,16 @@ namespace EdiabasLibConfigTool
                 sr.Append("\r\n");
                 sr.Append(string.Format(Resources.Strings.PatchApiVersion, version64));
 #endif
-                if (!copyOnly)
+                string dllFile32 = Path.Combine(dirName, Api32DllName);
+                string dllFile64 = Path.Combine(dirName, Api64DllName);
+                if (copyOnly)
+                {
+                    File.Copy(sourceDll32, dllFile32, true);
+                    File.Copy(sourceDll64, dllFile64, true);
+                }
+                else
                 {
                     // 32 bit
-                    string dllFile32 = Path.Combine(dirName, Api32DllName);
                     bool dll32Exits = File.Exists(dllFile32);
                     if (!dll32Exits)
                     {
@@ -519,7 +525,6 @@ namespace EdiabasLibConfigTool
                     }
 
                     // 64 bit
-                    string dllFile64 = Path.Combine(dirName, Api64DllName);
                     bool dll64Exits = File.Exists(dllFile64);
                     if (!dll64Exits)
                     {
