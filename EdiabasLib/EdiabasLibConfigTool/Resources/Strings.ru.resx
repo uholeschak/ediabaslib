@@ -285,16 +285,21 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
     <value>Внимание: Неизвестная версия API.</value>
   </data>
   <data name="IstaRegExtMessage" xml:space="preserve">
-    <value>Рекомендуется изменить ключ реестра ISTA-D, чтобы указать внешний экземпляр EdiabsLib.
-Вы хотите это?</value>
+    <value>Рекомендуется изменить раздел реестра ISTA-D
+'{0}'
+чтобы указать внешний экземпляр EdiabsLib.
+Вы хотите это сделать?</value>
   </data>
   <data name="IstaRegExtTitle" xml:space="preserve">
     <value>Место хранения</value>
   </data>
   <data name="PatchRegistry" xml:space="preserve">
-    <value>Исправление ключа реестра: {0}</value>
+    <value>Исправление ключа реестра:
+'{0}'</value>
   </data>
   <data name="RemoveRegKeyFailed" xml:space="preserve">
-    <value>Удаление ключа реестра {0} не удалось.</value>
+    <value>Удаление ключа реестра
+'{0}'
+не удалось.</value>
   </data>
 </root>

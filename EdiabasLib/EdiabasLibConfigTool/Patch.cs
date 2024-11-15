@@ -840,6 +840,7 @@ namespace EdiabasLibConfigTool
 
                 if (registryViewIstaSet != null)
                 {
+                    sr.Append("\r\n");
                     sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyIstaBinFull);
                     string ediabasBinPath = Path.GetDirectoryName(configFile);
                     if (!PatchIstaReg(registryViewIstaSet, ediabasBinPath))

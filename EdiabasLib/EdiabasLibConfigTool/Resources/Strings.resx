@@ -295,16 +295,21 @@ are supported with EdiabasLib.</value>
     <value>Warning: Unknown API version.</value>
   </data>
   <data name="IstaRegExtMessage" xml:space="preserve">
-    <value>It's recommended chaging the ISTA-D registry key to point an external EdiabsLib instance.
+    <value>It's recommended changing the ISTA-D registry key:
+'{0}'
+to point an external EdiabsLib instance.
 You you want to to this?</value>
   </data>
   <data name="IstaRegExtTitle" xml:space="preserve">
     <value>Storage location</value>
   </data>
   <data name="PatchRegistry" xml:space="preserve">
-    <value>Patching registry key: {0}</value>
+    <value>Patching registry key:
+'{0}'</value>
   </data>
   <data name="RemoveRegKeyFailed" xml:space="preserve">
-    <value>Removing the registry key {0} failed.</value>
+    <value>Removing the registry key
+'{0}'
+failed.</value>
   </data>
 </root>

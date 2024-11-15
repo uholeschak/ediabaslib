@@ -290,16 +290,21 @@ mit EdiabasLib unterstützt.</value>
     <value>Warnung: Unbekannte API Version.</value>
   </data>
   <data name="IstaRegExtMessage" xml:space="preserve">
-    <value>Es wird empfohlen den ISTA-D Registry Key auf eine externe EdiabasLib Instanz zeigen zu lassen.
+    <value>Es wird empfohlen den ISTA-D Registrierungschlüssel:
+'{0}'
+auf eine externe EdiabasLib Instanz zeigen zu lassen.
 Wollen Sie dies tun?</value>
   </data>
   <data name="IstaRegExtTitle" xml:space="preserve">
     <value>Speicherort</value>
   </data>
   <data name="PatchRegistry" xml:space="preserve">
-    <value>Patchen des Registrierungsschlüssels: {0}</value>
+    <value>Patchen des Registrierungsschlüssels:
+'{0}'</value>
   </data>
   <data name="RemoveRegKeyFailed" xml:space="preserve">
-    <value>Löschen des Registrierungsschlüssels {0} fehlgeschlagen.</value>
+    <value>Löschen des Registrierungsschlüssels
+'{0}'
+fehlgeschlagen.</value>
   </data>
 </root>
