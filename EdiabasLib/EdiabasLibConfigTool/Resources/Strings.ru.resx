@@ -294,4 +294,7 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
   <data name="PatchRegistry" xml:space="preserve">
     <value>Исправление ключа реестра: {0}</value>
   </data>
+  <data name="RemoveRegKeyFailed" xml:space="preserve">
+    <value>Удаление ключа реестра {0} не удалось.</value>
+  </data>
 </root>
