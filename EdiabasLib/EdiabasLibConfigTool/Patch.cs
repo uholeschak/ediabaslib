@@ -695,6 +695,21 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
+        public static bool RemoveIstaReg(StringBuilder sr, RegistryView? registryViewIsta)
+        {
+            if (registryViewIsta != null)
+            {
+                if (!PatchIstaReg(registryViewIsta))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public static bool IsValid(string dirName)
         {
             try
@@ -806,15 +821,7 @@ namespace EdiabasLibConfigTool
                 }
 
                 sr.AppendFormat(Resources.Strings.PatchDirectory, targetDir);
-                if (registryViewIstaDel != null)
-                {
-                    // remove reg key
-                    if (!PatchIstaReg(registryViewIstaDel))
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
-                    }
-                }
+                RemoveIstaReg(sr, registryViewIstaDel);
 
                 if (!PatchFiles(sr, targetDir, registryViewIstaSet != null))
                 {
@@ -888,15 +895,9 @@ namespace EdiabasLibConfigTool
                 result = false;
             }
 
-            if (registryViewIsta != null)
+            if (!RemoveIstaReg(sr, registryViewIsta))
             {
-                // remove reg key
-                if (!PatchIstaReg(registryViewIsta))
-                {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
-                    result = false;
-                }
+                result = false;
             }
 
             return result;
