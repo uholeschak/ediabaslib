@@ -873,10 +873,6 @@ namespace EdiabasLibConfigTool
                 case PatchType.Istad:
                 case PatchType.IstadExt:
                     registryViewIsta = GetIstaReg();
-                    if (!IsIstaRegPresent(registryViewIsta))
-                    {
-                        registryViewIsta = null;
-                    }
                     break;
             }
 
