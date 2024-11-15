@@ -296,4 +296,7 @@ Wollen Sie dies tun?</value>
   <data name="IstaRegExtTitle" xml:space="preserve">
     <value>Speicherort</value>
   </data>
+  <data name="PatchRegistry" xml:space="preserve">
+    <value>Patchen des Registry Keys: {0}</value>
+  </data>
 </root>

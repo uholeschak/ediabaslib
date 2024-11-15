@@ -291,4 +291,7 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
   <data name="IstaRegExtTitle" xml:space="preserve">
     <value>Место хранения</value>
   </data>
+  <data name="PatchRegistry" xml:space="preserve">
+    <value>Исправление ключа реестра: {0}</value>
+  </data>
 </root>

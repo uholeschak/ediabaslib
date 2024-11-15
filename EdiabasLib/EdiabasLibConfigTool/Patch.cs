@@ -814,6 +814,7 @@ namespace EdiabasLibConfigTool
 
                 if (registryViewIstaDel != null)
                 {
+                    // remove reg key
                     PatchIstaReg(registryViewIstaDel);
                 }
 
@@ -827,10 +828,12 @@ namespace EdiabasLibConfigTool
 
                 if (registryViewIstaSet != null)
                 {
-                    sr.AppendFormat(Resources.Strings.PatchDirectory, RegKeyReingold + @"\" + RegKeyIstaBinPath);
+                    sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyReingold + @"\" + RegKeyIstaBinPath);
                     string ediabasBinPath = Path.GetDirectoryName(configFile);
                     if (!PatchIstaReg(registryViewIstaSet, ediabasBinPath))
                     {
+                        sr.Append("\r\n");
+                        sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                         return false;
                     }
                 }
@@ -879,6 +882,7 @@ namespace EdiabasLibConfigTool
 
             if (registryViewIsta != null)
             {
+                // remove reg key
                 PatchIstaReg(registryViewIsta);
             }
 
