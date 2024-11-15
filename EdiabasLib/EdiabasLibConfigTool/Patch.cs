@@ -872,17 +872,12 @@ namespace EdiabasLibConfigTool
 
             if (registryViewIsta != null)
             {
-                if (!PatchIstaReg(registryViewIsta))
-                {
-                    return false;
-                }
+                PatchIstaReg(registryViewIsta);
             }
-            else
+
+            if (!RestoreFiles(sr, dirName))
             {
-                if (!RestoreFiles(sr, dirName))
-                {
-                    return false;
-                }
+                return false;
             }
             return true;
         }
