@@ -777,36 +777,51 @@ namespace EdiabasLibConfigTool
             try
             {
                 string targetDir = dirName;
-                RegistryView? registryViewIsta = null;
-                if (patchType == PatchType.IstadExt)
+                RegistryView? registryViewIstaSet = null;
+                RegistryView? registryViewIstaDel = null;
+
+                switch (patchType)
                 {
-                    DirectoryInfo parentDirInfo = Directory.GetParent(dirName);
-                    if (parentDirInfo == null)
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(Resources.Strings.PatchConfigUpdateFailed);
-                        return false;
-                    }
+                    case PatchType.Istad:
+                        registryViewIstaDel = GetIstaReg();
+                        break;
 
-                    targetDir = Path.Combine(parentDirInfo.FullName, "EdiabasLib");
-                    if (!Directory.Exists(targetDir))
+                    case PatchType.IstadExt:
                     {
-                        Directory.CreateDirectory(targetDir);
-                    }
+                        DirectoryInfo parentDirInfo = Directory.GetParent(dirName);
+                        if (parentDirInfo == null)
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(Resources.Strings.PatchConfigUpdateFailed);
+                            return false;
+                        }
 
-                    registryViewIsta = GetIstaReg();
+                        targetDir = Path.Combine(parentDirInfo.FullName, "EdiabasLib");
+                        if (!Directory.Exists(targetDir))
+                        {
+                            Directory.CreateDirectory(targetDir);
+                        }
+
+                        registryViewIstaSet = GetIstaReg();
+                        break;
+                    }
                 }
 
                 sr.AppendFormat(Resources.Strings.PatchDirectory, targetDir);
-                if (!PatchFiles(sr, targetDir, registryViewIsta != null))
+                if (!PatchFiles(sr, targetDir, registryViewIstaSet != null))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                     return false;
                 }
 
+                if (registryViewIstaDel != null)
+                {
+                    PatchIstaReg(registryViewIstaDel);
+                }
+
                 string configFile = Path.Combine(targetDir, ConfigFileName);
-                if (!UpdateConfigFile(configFile, null, registryViewIsta, adapterType, devInfo, wlanIface, enetConnection, pin))
+                if (!UpdateConfigFile(configFile, null, registryViewIstaSet, adapterType, devInfo, wlanIface, enetConnection, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
