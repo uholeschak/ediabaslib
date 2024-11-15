@@ -776,8 +776,6 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                sr.AppendFormat(Resources.Strings.PatchDirectory, dirName);
-
                 string targetDir = dirName;
                 RegistryView? registryViewIsta = null;
                 if (patchType == PatchType.IstadExt)
@@ -790,7 +788,7 @@ namespace EdiabasLibConfigTool
                         return false;
                     }
 
-                    targetDir = Path.Combine(parentDirInfo.FullName, "EdLibBin");
+                    targetDir = Path.Combine(parentDirInfo.FullName, "EdiabasLib");
                     if (!Directory.Exists(targetDir))
                     {
                         Directory.CreateDirectory(targetDir);
@@ -799,6 +797,7 @@ namespace EdiabasLibConfigTool
                     registryViewIsta = GetIstaReg();
                 }
 
+                sr.AppendFormat(Resources.Strings.PatchDirectory, targetDir);
                 if (!PatchFiles(sr, targetDir, registryViewIsta != null))
                 {
                     sr.Append("\r\n");
