@@ -977,20 +977,24 @@ namespace EdiabasLibConfigTool
             else if (sender == buttonPatchIstad)
             {
                 dirName = _ediabasDirIstad;
+                patchType = Patch.PatchType.Istad;
 
-                DialogResult result = MessageBox.Show(Resources.Strings.IstaRegExtMessage, Resources.Strings.IstaRegExtTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
-                switch (result)
+                if (Patch.GetIstaReg() != null)
                 {
-                    case DialogResult.Yes:
-                        patchType = Patch.PatchType.IstadExt;
-                        break;
+                    DialogResult result = MessageBox.Show(Resources.Strings.IstaRegExtMessage, Resources.Strings.IstaRegExtTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    switch (result)
+                    {
+                        case DialogResult.Yes:
+                            patchType = Patch.PatchType.IstadExt;
+                            break;
 
-                    case DialogResult.No:
-                        patchType = Patch.PatchType.Istad;
-                        break;
+                        case DialogResult.No:
+                            patchType = Patch.PatchType.Istad;
+                            break;
 
-                    default:
-                        return;
+                        default:
+                            return;
+                    }
                 }
             }
 
