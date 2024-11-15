@@ -36,6 +36,7 @@ namespace EdiabasLibConfigTool
         public const string IniFileName = @"EDIABAS.INI";
         public const string RegKeyReingold = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
         public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
+        public const string RegKeyIstaBinFull = RegKeyReingold + @"\" + RegKeyIstaBinPath;
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
@@ -805,17 +806,21 @@ namespace EdiabasLibConfigTool
                 }
 
                 sr.AppendFormat(Resources.Strings.PatchDirectory, targetDir);
+                if (registryViewIstaDel != null)
+                {
+                    // remove reg key
+                    if (!PatchIstaReg(registryViewIstaDel))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
+                    }
+                }
+
                 if (!PatchFiles(sr, targetDir, registryViewIstaSet != null))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                     return false;
-                }
-
-                if (registryViewIstaDel != null)
-                {
-                    // remove reg key
-                    PatchIstaReg(registryViewIstaDel);
                 }
 
                 string configFile = Path.Combine(targetDir, ConfigFileName);
@@ -828,7 +833,7 @@ namespace EdiabasLibConfigTool
 
                 if (registryViewIstaSet != null)
                 {
-                    sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyReingold + @"\" + RegKeyIstaBinPath);
+                    sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyIstaBinFull);
                     string ediabasBinPath = Path.GetDirectoryName(configFile);
                     if (!PatchIstaReg(registryViewIstaSet, ediabasBinPath))
                     {
@@ -876,17 +881,25 @@ namespace EdiabasLibConfigTool
                     break;
             }
 
+            // ReSharper disable once ReplaceWithSingleAssignment.True
+            bool result = true;
+            if (!RestoreFiles(sr, dirName))
+            {
+                result = false;
+            }
+
             if (registryViewIsta != null)
             {
                 // remove reg key
-                PatchIstaReg(registryViewIsta);
+                if (!PatchIstaReg(registryViewIsta))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
+                    result = false;
+                }
             }
 
-            if (!RestoreFiles(sr, dirName))
-            {
-                return false;
-            }
-            return true;
+            return result;
         }
 
         public static RegistryView? GetIstaReg()
@@ -951,7 +964,10 @@ namespace EdiabasLibConfigTool
                             }
                             else
                             {
-                                key.DeleteValue(RegKeyIstaBinPath, false);
+                                if (key.GetValue(RegKeyIstaBinPath) != null)
+                                {
+                                    key.DeleteValue(RegKeyIstaBinPath);
+                                }
                             }
                             return true;
                         }

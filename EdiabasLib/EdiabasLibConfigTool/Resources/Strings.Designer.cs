@@ -514,6 +514,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Removing the registry key {0} failed. ähnelt.
+        /// </summary>
+        internal static string RemoveRegKeyFailed {
+            get {
+                return ResourceManager.GetString("RemoveRegKeyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Restoring original {0} file failed. ähnelt.
         /// </summary>
         internal static string RestoreApiDllFailed {

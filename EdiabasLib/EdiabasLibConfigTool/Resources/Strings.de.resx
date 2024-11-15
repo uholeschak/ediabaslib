@@ -297,6 +297,9 @@ Wollen Sie dies tun?</value>
     <value>Speicherort</value>
   </data>
   <data name="PatchRegistry" xml:space="preserve">
-    <value>Patchen des Registry Keys: {0}</value>
+    <value>Patchen des Registrierungsschlüssels: {0}</value>
+  </data>
+  <data name="RemoveRegKeyFailed" xml:space="preserve">
+    <value>Löschen des Registrierungsschlüssels {0} fehlgeschlagen.</value>
   </data>
 </root>
