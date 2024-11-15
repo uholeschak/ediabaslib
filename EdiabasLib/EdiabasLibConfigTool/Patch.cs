@@ -358,7 +358,7 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        public static bool UpdateConfigFile(string configFile, string iniFile, RegistryView? registryViewIsta, int adapterType, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
+        public static bool UpdateConfigFile(string configFile, string iniFile, int adapterType, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
         {
             try
             {
@@ -435,9 +435,6 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
                 xDocument.Save(configFile);
-
-                string ediabasBinPath = Path.GetDirectoryName(configFile);
-                PatchIstaReg(registryViewIsta, ediabasBinPath);
             }
             catch (Exception)
             {
@@ -821,11 +818,21 @@ namespace EdiabasLibConfigTool
                 }
 
                 string configFile = Path.Combine(targetDir, ConfigFileName);
-                if (!UpdateConfigFile(configFile, null, registryViewIstaSet, adapterType, devInfo, wlanIface, enetConnection, pin))
+                if (!UpdateConfigFile(configFile, null, adapterType, devInfo, wlanIface, enetConnection, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                     return false;
+                }
+
+                if (registryViewIstaSet != null)
+                {
+                    sr.AppendFormat(Resources.Strings.PatchDirectory, RegKeyReingold + @"\" + RegKeyIstaBinPath);
+                    string ediabasBinPath = Path.GetDirectoryName(configFile);
+                    if (!PatchIstaReg(registryViewIstaSet, ediabasBinPath))
+                    {
+                        return false;
+                    }
                 }
 
                 sr.Append("\r\n");
