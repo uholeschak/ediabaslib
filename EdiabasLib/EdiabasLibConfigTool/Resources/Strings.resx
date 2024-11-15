@@ -301,4 +301,7 @@ You you want to to this?</value>
   <data name="IstaRegExtTitle" xml:space="preserve">
     <value>Storage location</value>
   </data>
+  <data name="PatchRegistry" xml:space="preserve">
+    <value>Patching registry key: {0}</value>
+  </data>
 </root>

@@ -477,6 +477,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Patching registry key: {0} ähnelt.
+        /// </summary>
+        internal static string PatchRegistry {
+            get {
+                return ResourceManager.GetString("PatchRegistry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Hint: In VAS-PC only &quot;Guided Fault Finding&quot; and &quot;Guided Functions&quot;
         ///are supported with EdiabasLib. ähnelt.
         /// </summary>
