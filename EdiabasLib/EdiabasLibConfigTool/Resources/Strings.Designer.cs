@@ -286,7 +286,9 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die It&apos;s recommended chaging the ISTA-D registry key to point an external EdiabsLib instance.
+        ///   Sucht eine lokalisierte Zeichenfolge, die It&apos;s recommended changing the ISTA-D registry key:
+        ///&apos;{0}&apos;
+        ///to point an external EdiabsLib instance.
         ///You you want to to this? ähnelt.
         /// </summary>
         internal static string IstaRegExtMessage {
@@ -477,7 +479,8 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Patching registry key: {0} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Patching registry key:
+        ///&apos;{0}&apos; ähnelt.
         /// </summary>
         internal static string PatchRegistry {
             get {
@@ -514,7 +517,9 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Removing the registry key {0} failed. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Removing the registry key
+        ///&apos;{0}&apos;
+        ///failed. ähnelt.
         /// </summary>
         internal static string RemoveRegKeyFailed {
             get {
