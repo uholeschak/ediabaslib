@@ -50,12 +50,12 @@
             this.buttonPatchVasPc = new System.Windows.Forms.Button();
             this.buttonRestoreVasPc = new System.Windows.Forms.Button();
             this.groupBoxIstad = new System.Windows.Forms.GroupBox();
+            this.textBoxIstaLocation = new System.Windows.Forms.TextBox();
             this.buttonDirIstad = new System.Windows.Forms.Button();
             this.buttonPatchIstad = new System.Windows.Forms.Button();
             this.buttonRestoreIstad = new System.Windows.Forms.Button();
             this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
             this.labelLanguage = new System.Windows.Forms.Label();
-            this.textBoxIstaLocation = new System.Windows.Forms.TextBox();
             this.groupBoxEdiabas.SuspendLayout();
             this.groupBoxVasPc.SuspendLayout();
             this.groupBoxIstad.SuspendLayout();
@@ -97,8 +97,8 @@
             // 
             // buttonClose
             // 
-            this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
             resources.ApplyResources(this.buttonClose, "buttonClose");
+            this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonClose.Name = "buttonClose";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
@@ -168,17 +168,17 @@
             // 
             // groupBoxEdiabas
             // 
+            resources.ApplyResources(this.groupBoxEdiabas, "groupBoxEdiabas");
             this.groupBoxEdiabas.Controls.Add(this.buttonPatchEdiabas);
             this.groupBoxEdiabas.Controls.Add(this.buttonRestoreEdiabas);
-            resources.ApplyResources(this.groupBoxEdiabas, "groupBoxEdiabas");
             this.groupBoxEdiabas.Name = "groupBoxEdiabas";
             this.groupBoxEdiabas.TabStop = false;
             // 
             // groupBoxVasPc
             // 
+            resources.ApplyResources(this.groupBoxVasPc, "groupBoxVasPc");
             this.groupBoxVasPc.Controls.Add(this.buttonPatchVasPc);
             this.groupBoxVasPc.Controls.Add(this.buttonRestoreVasPc);
-            resources.ApplyResources(this.groupBoxVasPc, "groupBoxVasPc");
             this.groupBoxVasPc.Name = "groupBoxVasPc";
             this.groupBoxVasPc.TabStop = false;
             // 
@@ -198,13 +198,20 @@
             // 
             // groupBoxIstad
             // 
+            resources.ApplyResources(this.groupBoxIstad, "groupBoxIstad");
             this.groupBoxIstad.Controls.Add(this.textBoxIstaLocation);
             this.groupBoxIstad.Controls.Add(this.buttonDirIstad);
             this.groupBoxIstad.Controls.Add(this.buttonPatchIstad);
             this.groupBoxIstad.Controls.Add(this.buttonRestoreIstad);
-            resources.ApplyResources(this.groupBoxIstad, "groupBoxIstad");
             this.groupBoxIstad.Name = "groupBoxIstad";
             this.groupBoxIstad.TabStop = false;
+            // 
+            // textBoxIstaLocation
+            // 
+            resources.ApplyResources(this.textBoxIstaLocation, "textBoxIstaLocation");
+            this.textBoxIstaLocation.Name = "textBoxIstaLocation";
+            this.textBoxIstaLocation.ReadOnly = true;
+            this.textBoxIstaLocation.TabStop = false;
             // 
             // buttonDirIstad
             // 
@@ -240,13 +247,6 @@
             resources.ApplyResources(this.labelLanguage, "labelLanguage");
             this.labelLanguage.Name = "labelLanguage";
             // 
-            // textBoxIstaLocation
-            // 
-            resources.ApplyResources(this.textBoxIstaLocation, "textBoxIstaLocation");
-            this.textBoxIstaLocation.Name = "textBoxIstaLocation";
-            this.textBoxIstaLocation.ReadOnly = true;
-            this.textBoxIstaLocation.TabStop = false;
-            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -268,6 +268,7 @@
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.buttonSearch);
             this.Controls.Add(this.listViewDevices);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "FormMain";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
