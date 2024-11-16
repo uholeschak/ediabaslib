@@ -982,7 +982,7 @@ namespace EdiabasLibConfigTool
                 if (Patch.GetIstaReg() != null)
                 {
                     string message = string.Format(Resources.Strings.IstaRegExtMessage, Patch.RegKeyIstaBinFull);
-                    DialogResult result = MessageBox.Show(message, Resources.Strings.IstaRegExtTitle, MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
+                    DialogResult result = MessageBox.Show(message, Resources.Strings.IstaRegExtTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
                     switch (result)
                     {
                         case DialogResult.Yes:
