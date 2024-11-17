@@ -44,7 +44,7 @@ You have to open the adapter and press the reset button after the adapter has bo
 
 ## Use the adapter with INPA, Tool32 or ISTA-D
 You could use the ENET WiFi adapter on a windows PC with INPA, Tool32 or ISTA-D as a replacement for an ENET adapter cable. The following steps are required to establish the connection:
-* Install [.NET framework 4.7.2](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net472) or higher and [VS2015 C++ runtime](https://www.microsoft.com/de-de/download/details.aspx?id=48145) (recommended, but not required)
+* Install [.NET framework 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) or higher and [VS2015 C++ runtime](https://aka.ms/vs/17/release/vc_redist.x86.exe) (recommended, but not required)
 * Optionally connect the ENET adapter with the PC. The PC automatically gets an IP address from the adapter DHCP server.
 * If the vehicle is connected directly to your local network (with a DHCP server present) the vehicle will get an IP address from the DHCP server.
 * Download the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package and extract the .zip file. Start `Api32\EdiabasLibConfigTool.exe` and follow the instructions in the status window: Search the adapter, select it, optionally click `Connect`, click `Check Connection` and patch the required EDIABAS installations.
