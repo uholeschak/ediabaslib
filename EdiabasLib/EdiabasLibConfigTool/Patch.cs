@@ -39,6 +39,7 @@ namespace EdiabasLibConfigTool
         public const string RegKeyIstaBinFull = RegKeyReingold + @"\" + RegKeyIstaBinPath;
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
+        public const string VcRedistLink = @"https://learn.microsoft.com/de-de/cpp/windows/latest-supported-vc-redist?view=msvc-170";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
         static class NativeMethods
@@ -463,7 +464,7 @@ namespace EdiabasLibConfigTool
                     if (string.IsNullOrEmpty(version32))
                     {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName));
+                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName, VcRedistLink));
                         return false;
                     }
                 }

@@ -256,7 +256,8 @@
   <data name="PatchLoadApiDllFailed" xml:space="preserve">
     <value>Не удалось загрузить {0}.
 Архив был распакован корректно?
-Установлена ​​ли среда выполнения VC++?</value>
+Установлена ​​ли среда выполнения VC++
+'{1}'?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>{0} файл резервной копии повреждён или не является таковым.</value>
