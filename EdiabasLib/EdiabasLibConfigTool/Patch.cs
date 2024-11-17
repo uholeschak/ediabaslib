@@ -90,8 +90,6 @@ namespace EdiabasLibConfigTool
             IstadExt,
         }
 
-        public static bool CopyRuntimeRequired { get; private set; }
-
         public static string AssemblyDirectory
         {
             get
@@ -461,7 +459,6 @@ namespace EdiabasLibConfigTool
                 string version32 = EdiabasLibVersion(sourceDll32, false);
                 if (string.IsNullOrEmpty(version32))
                 {
-                    CopyRuntimeRequired = true;
                     version32 = EdiabasLibVersion(sourceDll32, true);
                     if (string.IsNullOrEmpty(version32))
                     {
@@ -492,7 +489,6 @@ namespace EdiabasLibConfigTool
                 string version64 = EdiabasLibVersion(sourceDll64, false);
                 if (string.IsNullOrEmpty(version64))
                 {
-                    CopyRuntimeRequired = true;
                     version64 = EdiabasLibVersion(sourceDll64, true);
                     if (string.IsNullOrEmpty(version64))
                     {
@@ -608,23 +604,6 @@ namespace EdiabasLibConfigTool
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigExisting);
-                }
-
-                if (CopyRuntimeRequired)
-                {
-                    sr.Append("\r\n");
-                    sr.Append(Resources.Strings.PatchCopyRuntime);
-
-                    List<string> runtimeFiles = GetRuntimeFiles(sourceDir);
-                    foreach (string file in runtimeFiles)
-                    {
-                        string baseFile = Path.GetFileName(file);
-                        if (baseFile != null)
-                        {
-                            string destFile = Path.Combine(dirName, baseFile);
-                            File.Copy(file, destFile, true);
-                        }
-                    }
                 }
             }
             catch (Exception)

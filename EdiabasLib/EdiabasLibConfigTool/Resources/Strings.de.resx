@@ -254,7 +254,9 @@ Das Standard root Password ist {0}.</value>
     <value>API version: {0}</value>
   </data>
   <data name="PatchLoadApiDllFailed" xml:space="preserve">
-    <value>Kann {0} nicht laden. Wurde das Archiv korrekt extrahiert?</value>
+    <value>Kann {0} nicht laden.
+Wurde das Archiv korrekt extrahiert?
+Ist die VC++ Runtime installiert?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>Die {0} Backup-Datei ist ungültig.</value>
