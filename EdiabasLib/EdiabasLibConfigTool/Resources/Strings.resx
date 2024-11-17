@@ -256,7 +256,8 @@ The default root password is {0}.</value>
   <data name="PatchLoadApiDllFailed" xml:space="preserve">
     <value>Unable to load {0}.
 Has the archive been extracted correctly?
-Is the VC++ runtime istalled?</value>
+Is the VC++ runtime
+'{1}' istalled?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>The {0} backup file is not valid.</value>
