@@ -162,26 +162,7 @@ IF NOT EXIST "!ApiDir!" mkdir "!ApiDir!"
 copy /y "$(ProjectDir)..\Api32\$(ConfigurationName)\Api32.dll" "!ApiDir!"
 copy /y "$(ProjectDir)..\Api32\x64\$(ConfigurationName)\Api64.dll" "!ApiDir!"
 copy /y "$(ProjectDir)..\EdiabasLib\EdiabasLib.config" "!ApiDir!"
-
-if /I "$(ConfigurationName)" == "Release" (
-
-set "SystemDir=%25WINDIR%25\SysWOW64\"
-set "RuntimeDir=%25PROGRAMFILES(X86)%25\Windows Kits\10\Redist\ucrt\DLLs\x86\"
-IF NOT EXIST "!SystemDir!" (
- set "SystemDir=%25WINDIR%25\System32\"
- set "RuntimeDir=%25PROGRAMFILES%25\Windows Kits\10\Redist\ucrt\DLLs\x86\"
-)
-echo "System dir: !SystemDir!"
-copy /y "!SystemDir!msvcp140.dll" "!ApiDir!"
-copy /y "!SystemDir!vcruntime140.dll" "!ApiDir!"
-
-IF EXIST "!RuntimeDir!" (
- copy /y "!RuntimeDir!*.*" "!ApiDir!"
-) ELSE (
- ECHO No WIN10 SDK installed!
-)
-
-)</PostBuildEvent>
+</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
