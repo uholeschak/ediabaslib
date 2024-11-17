@@ -494,7 +494,7 @@ namespace EdiabasLibConfigTool
                     if (string.IsNullOrEmpty(version64))
                     {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api64DllName));
+                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api64DllName, VcRedistLink));
                         return false;
                     }
                 }
