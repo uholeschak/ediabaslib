@@ -157,7 +157,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="buttonSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 490</value>
+    <value>12, 484</value>
   </data>
   <data name="buttonSearch.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
@@ -184,7 +184,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="buttonClose.Location" type="System.Drawing.Point, System.Drawing">
-    <value>462, 626</value>
+    <value>462, 620</value>
   </data>
   <data name="buttonClose.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -247,7 +247,7 @@
     <value>Vertical</value>
   </data>
   <data name="textBoxStatus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>525, 133</value>
+    <value>525, 127</value>
   </data>
   <data name="textBoxStatus.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -268,7 +268,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="buttonTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>118, 490</value>
+    <value>118, 484</value>
   </data>
   <data name="buttonTest.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 23</value>
@@ -295,7 +295,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="textBoxBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 464</value>
+    <value>12, 458</value>
   </data>
   <data name="textBoxBluetoothPin.MaxLength" type="System.Int32, mscorlib">
     <value>16</value>
@@ -325,7 +325,7 @@
     <value>True</value>
   </data>
   <data name="labelBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 448</value>
+    <value>12, 442</value>
   </data>
   <data name="labelBluetoothPin.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 13</value>
@@ -412,7 +412,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="textBoxWifiPassword.Location" type="System.Drawing.Point, System.Drawing">
-    <value>242, 464</value>
+    <value>242, 458</value>
   </data>
   <data name="textBoxWifiPassword.MaxLength" type="System.Int32, mscorlib">
     <value>63</value>
@@ -445,7 +445,7 @@
     <value>NoControl</value>
   </data>
   <data name="labelWiFiPassword.Location" type="System.Drawing.Point, System.Drawing">
-    <value>239, 448</value>
+    <value>239, 442</value>
   </data>
   <data name="labelWiFiPassword.Size" type="System.Drawing.Size, System.Drawing">
     <value>138, 13</value>
@@ -499,7 +499,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="groupBoxEdiabas.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 521</value>
+    <value>12, 515</value>
   </data>
   <data name="groupBoxEdiabas.Size" type="System.Drawing.Size, System.Drawing">
     <value>218, 48</value>
@@ -550,7 +550,7 @@
     <value>1</value>
   </data>
   <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>236, 521</value>
+    <value>236, 515</value>
   </data>
   <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
     <value>218, 48</value>
@@ -679,7 +679,7 @@
     <value>3</value>
   </data>
   <data name="groupBoxIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 575</value>
+    <value>14, 569</value>
   </data>
   <data name="groupBoxIstad.Size" type="System.Drawing.Size, System.Drawing">
     <value>442, 74</value>
@@ -865,7 +865,7 @@
     <value>96, 96</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>549, 656</value>
+    <value>549, 650</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>EdiabasLib Config Tool</value>
