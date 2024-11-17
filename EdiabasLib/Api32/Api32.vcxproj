@@ -129,7 +129,6 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
