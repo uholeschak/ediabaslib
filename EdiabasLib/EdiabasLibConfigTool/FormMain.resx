@@ -525,30 +525,6 @@
   <data name="groupBoxVasPc.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
   </data>
-  <data name="&gt;&gt;buttonPatchVasPc.Name" xml:space="preserve">
-    <value>buttonPatchVasPc</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchVasPc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchVasPc.Parent" xml:space="preserve">
-    <value>groupBoxVasPc</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchVasPc.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.Name" xml:space="preserve">
-    <value>buttonRestoreVasPc</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.Parent" xml:space="preserve">
-    <value>groupBoxVasPc</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
     <value>236, 515</value>
   </data>
@@ -630,18 +606,6 @@
   <data name="groupBoxIstad.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
   </data>
-  <data name="&gt;&gt;textBoxIstaLocation.Name" xml:space="preserve">
-    <value>textBoxIstaLocation</value>
-  </data>
-  <data name="&gt;&gt;textBoxIstaLocation.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxIstaLocation.Parent" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="&gt;&gt;textBoxIstaLocation.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <data name="&gt;&gt;buttonDirIstad.Name" xml:space="preserve">
     <value>buttonDirIstad</value>
   </data>
@@ -653,30 +617,6 @@
   </data>
   <data name="&gt;&gt;buttonDirIstad.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchIstad.Name" xml:space="preserve">
-    <value>buttonPatchIstad</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchIstad.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchIstad.Parent" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchIstad.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreIstad.Name" xml:space="preserve">
-    <value>buttonRestoreIstad</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreIstad.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreIstad.Parent" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreIstad.ZOrder" xml:space="preserve">
-    <value>3</value>
   </data>
   <data name="groupBoxIstad.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 569</value>
@@ -737,18 +677,6 @@
   </data>
   <data name="buttonDirIstad.Text" xml:space="preserve">
     <value>Select Location</value>
-  </data>
-  <data name="&gt;&gt;buttonDirIstad.Name" xml:space="preserve">
-    <value>buttonDirIstad</value>
-  </data>
-  <data name="&gt;&gt;buttonDirIstad.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonDirIstad.Parent" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="&gt;&gt;buttonDirIstad.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <data name="buttonPatchIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
