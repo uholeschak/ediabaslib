@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace EdiabasLibConfigTool
 {
+    [SupportedOSPlatform("windows")]
     static class Program
     {
         /// <summary>

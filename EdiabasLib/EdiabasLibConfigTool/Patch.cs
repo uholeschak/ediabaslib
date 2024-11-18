@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Xml.Linq;
 using EdiabasLib;
@@ -15,6 +16,7 @@ using SimpleWifi.Win32.Interop;
 
 namespace EdiabasLibConfigTool
 {
+    [SupportedOSPlatform("windows")]
     public static class Patch
     {
         public const string AdapterSsidEnet = @"Deep OBD BMW";
@@ -95,10 +97,23 @@ namespace EdiabasLibConfigTool
         {
             get
             {
+#if NET
+                string location = Assembly.GetExecutingAssembly().Location;
+                if (string.IsNullOrEmpty(location) || !File.Exists(location))
+                {
+                    return null;
+                }
+                return Path.GetDirectoryName(location);
+#else
                 string codeBase = Assembly.GetExecutingAssembly().CodeBase;
                 UriBuilder uri = new UriBuilder(codeBase);
                 string path = Uri.UnescapeDataString(uri.Path);
+                if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                {
+                    return null;
+                }
                 return Path.GetDirectoryName(path);
+#endif
             }
         }
 

@@ -15,9 +15,11 @@ using System.ComponentModel;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using EdiabasLib;
+using System.Runtime.Versioning;
 
 namespace EdiabasLibConfigTool
 {
+    [SupportedOSPlatform("windows")]
     public partial class FormMain : Form
     {
         private readonly BluetoothClient _cli;
