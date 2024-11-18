@@ -257,7 +257,8 @@ Das Standard root Password ist {0}.</value>
     <value>Kann {0} nicht laden.
 Wurde das Archiv korrekt extrahiert?
 Ist die VC++ Runtime
-'{1}' installiert?</value>
+'{1}'
+installiert?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>Die {0} Backup-Datei ist ungültig.</value>

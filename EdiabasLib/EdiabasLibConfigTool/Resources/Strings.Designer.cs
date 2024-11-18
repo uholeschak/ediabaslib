@@ -455,7 +455,8 @@ namespace EdiabasLibConfigTool.Resources {
         ///   Sucht eine lokalisierte Zeichenfolge, die Unable to load {0}.
         ///Has the archive been extracted correctly?
         ///Is the VC++ runtime
-        ///&apos;{1}&apos; istalled? ähnelt.
+        ///&apos;{1}&apos;
+        ///istalled? ähnelt.
         /// </summary>
         internal static string PatchLoadApiDllFailed {
             get {
