@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -19,6 +20,7 @@ using SimpleWifi.Win32.Interop;
 
 namespace EdiabasLibConfigTool
 {
+    [SupportedOSPlatform("windows")]
     public class Test : IDisposable
     {
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
