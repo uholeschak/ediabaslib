@@ -316,4 +316,8 @@ You you want to to this?</value>
 '{0}'
 failed.</value>
   </data>
+  <data name="RemovingRegKey" xml:space="preserve">
+    <value>Removing registry key:
+'{0}'.</value>
+  </data>
 </root>

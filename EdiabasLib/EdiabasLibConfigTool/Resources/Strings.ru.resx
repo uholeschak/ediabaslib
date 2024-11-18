@@ -305,4 +305,8 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
 '{0}'
 не удалось.</value>
   </data>
+  <data name="RemovingRegKey" xml:space="preserve">
+    <value>Удаление ключа реестра:
+'{0}'.</value>
+  </data>
 </root>
