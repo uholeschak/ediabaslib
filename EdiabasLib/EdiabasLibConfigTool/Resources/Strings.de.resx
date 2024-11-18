@@ -311,4 +311,8 @@ Wollen Sie dies tun?</value>
 '{0}'
 fehlgeschlagen.</value>
   </data>
+  <data name="RemovingRegKey" xml:space="preserve">
+    <value>Löschen des Registrierungsschlüssels
+'{0}'.</value>
+  </data>
 </root>

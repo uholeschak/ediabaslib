@@ -679,11 +679,16 @@ namespace EdiabasLibConfigTool
         {
             if (registryViewIsta != null)
             {
-                if (!PatchIstaReg(registryViewIsta))
+                if (IsIstaRegPresent(registryViewIsta))
                 {
                     sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
-                    return false;
+                    sr.Append(string.Format(Resources.Strings.RemovingRegKey, RegKeyIstaBinFull));
+                    if (!PatchIstaReg(registryViewIsta))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
+                        return false;
+                    }
                 }
             }
 
