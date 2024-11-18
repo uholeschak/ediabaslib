@@ -37,15 +37,24 @@
     </PackageReference>
     <PackageReference Include="SimpleWifi.netstandard.Lsh" Version="2.1.1" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>SETLOCAL EnableDelayedExpansion
-set "ApiDir=$(TargetPath)Api32"
-IF NOT EXIST "!ApiDir!" mkdir "!ApiDir!"
-copy /y "$(ProjectDir)..\Api32\$(Configuration)\Api32.dll" "!ApiDir!"
-copy /y "$(ProjectDir)..\Api32\x64\$(Configuration)\Api64.dll" "!ApiDir!"
-copy /y "$(ProjectDir)..\EdiabasLib\EdiabasLib.config" "!ApiDir!"
-</PostBuildEvent>
     <PlatformTarget>x86</PlatformTarget>
     <Nullable>disable</Nullable>
   </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;set &quot;ApiDir=$(TargetDir)Api32&quot;&#xD;&#xA;REM echo ApiDir &quot;!ApiDir!&quot;&#xD;&#xA;IF NOT EXIST &quot;!ApiDir!&quot; mkdir &quot;!ApiDir!&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)..\Api32\$(Configuration)\Api32.dll&quot; &quot;!ApiDir!&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)..\Api32\x64\$(Configuration)\Api64.dll&quot; &quot;!ApiDir!&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)..\EdiabasLib\EdiabasLib.config&quot; &quot;!ApiDir!&quot;" />
+  </Target>
 </Project>
