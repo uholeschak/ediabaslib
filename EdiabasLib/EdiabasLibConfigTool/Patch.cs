@@ -36,7 +36,7 @@ namespace EdiabasLibConfigTool
         public const string IniFileName = @"EDIABAS.INI";
         public const string RegKeyReingold = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
         public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
-        public const string RegKeyIstaBinFull = RegKeyReingold + @"\" + RegKeyIstaBinPath;
+        public const string RegKeyIstaBinFull = RegKeyReingold + @": " + RegKeyIstaBinPath;
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
         public const string VcRedistLink = @"https://learn.microsoft.com/de-de/cpp/windows/latest-supported-vc-redist?view=msvc-170";
