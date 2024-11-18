@@ -951,10 +951,7 @@ namespace EdiabasLibConfigTool
                             }
                             else
                             {
-                                if (key.GetValue(RegKeyIstaBinPath) != null)
-                                {
-                                    key.DeleteValue(RegKeyIstaBinPath);
-                                }
+                                key.DeleteValue(RegKeyIstaBinPath, false);
                             }
                             return true;
                         }
