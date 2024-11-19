@@ -28,260 +28,255 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            this.listViewDevices = new System.Windows.Forms.ListView();
-            this.columnHeaderAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.buttonSearch = new System.Windows.Forms.Button();
-            this.buttonClose = new System.Windows.Forms.Button();
-            this.labelStatus = new System.Windows.Forms.Label();
-            this.textBoxStatus = new System.Windows.Forms.TextBox();
-            this.buttonTest = new System.Windows.Forms.Button();
-            this.textBoxBluetoothPin = new System.Windows.Forms.TextBox();
-            this.labelBluetoothPin = new System.Windows.Forms.Label();
-            this.labelBtDevices = new System.Windows.Forms.Label();
-            this.buttonPatchEdiabas = new System.Windows.Forms.Button();
-            this.openFileDialogConfigFile = new System.Windows.Forms.OpenFileDialog();
-            this.textBoxWifiPassword = new System.Windows.Forms.TextBox();
-            this.labelWiFiPassword = new System.Windows.Forms.Label();
-            this.buttonRestoreEdiabas = new System.Windows.Forms.Button();
-            this.groupBoxEdiabas = new System.Windows.Forms.GroupBox();
-            this.groupBoxVasPc = new System.Windows.Forms.GroupBox();
-            this.buttonPatchVasPc = new System.Windows.Forms.Button();
-            this.buttonRestoreVasPc = new System.Windows.Forms.Button();
-            this.groupBoxIstad = new System.Windows.Forms.GroupBox();
-            this.textBoxIstaLocation = new System.Windows.Forms.TextBox();
-            this.buttonDirIstad = new System.Windows.Forms.Button();
-            this.buttonPatchIstad = new System.Windows.Forms.Button();
-            this.buttonRestoreIstad = new System.Windows.Forms.Button();
-            this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
-            this.labelLanguage = new System.Windows.Forms.Label();
-            this.groupBoxEdiabas.SuspendLayout();
-            this.groupBoxVasPc.SuspendLayout();
-            this.groupBoxIstad.SuspendLayout();
-            this.SuspendLayout();
+            listViewDevices = new System.Windows.Forms.ListView();
+            columnHeaderAddress = new System.Windows.Forms.ColumnHeader();
+            columnHeaderName = new System.Windows.Forms.ColumnHeader();
+            buttonSearch = new System.Windows.Forms.Button();
+            buttonClose = new System.Windows.Forms.Button();
+            labelStatus = new System.Windows.Forms.Label();
+            textBoxStatus = new System.Windows.Forms.TextBox();
+            buttonTest = new System.Windows.Forms.Button();
+            textBoxBluetoothPin = new System.Windows.Forms.TextBox();
+            labelBluetoothPin = new System.Windows.Forms.Label();
+            labelBtDevices = new System.Windows.Forms.Label();
+            buttonPatchEdiabas = new System.Windows.Forms.Button();
+            openFileDialogConfigFile = new System.Windows.Forms.OpenFileDialog();
+            textBoxWifiPassword = new System.Windows.Forms.TextBox();
+            labelWiFiPassword = new System.Windows.Forms.Label();
+            buttonRestoreEdiabas = new System.Windows.Forms.Button();
+            groupBoxEdiabas = new System.Windows.Forms.GroupBox();
+            groupBoxVasPc = new System.Windows.Forms.GroupBox();
+            buttonPatchVasPc = new System.Windows.Forms.Button();
+            buttonRestoreVasPc = new System.Windows.Forms.Button();
+            groupBoxIstad = new System.Windows.Forms.GroupBox();
+            textBoxIstaLocation = new System.Windows.Forms.TextBox();
+            buttonDirIstad = new System.Windows.Forms.Button();
+            buttonPatchIstad = new System.Windows.Forms.Button();
+            buttonRestoreIstad = new System.Windows.Forms.Button();
+            comboBoxLanguage = new System.Windows.Forms.ComboBox();
+            labelLanguage = new System.Windows.Forms.Label();
+            groupBoxEdiabas.SuspendLayout();
+            groupBoxVasPc.SuspendLayout();
+            groupBoxIstad.SuspendLayout();
+            SuspendLayout();
             // 
             // listViewDevices
             // 
-            this.listViewDevices.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeaderAddress,
-            this.columnHeaderName});
-            this.listViewDevices.FullRowSelect = true;
-            this.listViewDevices.GridLines = true;
-            this.listViewDevices.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listViewDevices.HideSelection = false;
-            resources.ApplyResources(this.listViewDevices, "listViewDevices");
-            this.listViewDevices.MultiSelect = false;
-            this.listViewDevices.Name = "listViewDevices";
-            this.listViewDevices.ShowGroups = false;
-            this.listViewDevices.UseCompatibleStateImageBehavior = false;
-            this.listViewDevices.View = System.Windows.Forms.View.Details;
-            this.listViewDevices.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.listViewDevices_ColumnWidthChanging);
-            this.listViewDevices.SelectedIndexChanged += new System.EventHandler(this.listViewDevices_SelectedIndexChanged);
-            this.listViewDevices.DoubleClick += new System.EventHandler(this.listViewDevices_DoubleClick);
+            listViewDevices.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { columnHeaderAddress, columnHeaderName });
+            listViewDevices.FullRowSelect = true;
+            listViewDevices.GridLines = true;
+            listViewDevices.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            resources.ApplyResources(listViewDevices, "listViewDevices");
+            listViewDevices.MultiSelect = false;
+            listViewDevices.Name = "listViewDevices";
+            listViewDevices.ShowGroups = false;
+            listViewDevices.UseCompatibleStateImageBehavior = false;
+            listViewDevices.View = System.Windows.Forms.View.Details;
+            listViewDevices.ColumnWidthChanging += listViewDevices_ColumnWidthChanging;
+            listViewDevices.SelectedIndexChanged += listViewDevices_SelectedIndexChanged;
+            listViewDevices.DoubleClick += listViewDevices_DoubleClick;
             // 
             // columnHeaderAddress
             // 
-            resources.ApplyResources(this.columnHeaderAddress, "columnHeaderAddress");
+            resources.ApplyResources(columnHeaderAddress, "columnHeaderAddress");
             // 
             // columnHeaderName
             // 
-            resources.ApplyResources(this.columnHeaderName, "columnHeaderName");
+            resources.ApplyResources(columnHeaderName, "columnHeaderName");
             // 
             // buttonSearch
             // 
-            resources.ApplyResources(this.buttonSearch, "buttonSearch");
-            this.buttonSearch.Name = "buttonSearch";
-            this.buttonSearch.UseVisualStyleBackColor = true;
-            this.buttonSearch.Click += new System.EventHandler(this.buttonSearch_Click);
+            resources.ApplyResources(buttonSearch, "buttonSearch");
+            buttonSearch.Name = "buttonSearch";
+            buttonSearch.UseVisualStyleBackColor = true;
+            buttonSearch.Click += buttonSearch_Click;
             // 
             // buttonClose
             // 
-            resources.ApplyResources(this.buttonClose, "buttonClose");
-            this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonClose.Name = "buttonClose";
-            this.buttonClose.UseVisualStyleBackColor = true;
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            resources.ApplyResources(buttonClose, "buttonClose");
+            buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
+            buttonClose.Name = "buttonClose";
+            buttonClose.UseVisualStyleBackColor = true;
+            buttonClose.Click += buttonClose_Click;
             // 
             // labelStatus
             // 
-            resources.ApplyResources(this.labelStatus, "labelStatus");
-            this.labelStatus.Name = "labelStatus";
+            resources.ApplyResources(labelStatus, "labelStatus");
+            labelStatus.Name = "labelStatus";
             // 
             // textBoxStatus
             // 
-            resources.ApplyResources(this.textBoxStatus, "textBoxStatus");
-            this.textBoxStatus.Name = "textBoxStatus";
-            this.textBoxStatus.ReadOnly = true;
-            this.textBoxStatus.TabStop = false;
+            resources.ApplyResources(textBoxStatus, "textBoxStatus");
+            textBoxStatus.Name = "textBoxStatus";
+            textBoxStatus.ReadOnly = true;
+            textBoxStatus.TabStop = false;
             // 
             // buttonTest
             // 
-            resources.ApplyResources(this.buttonTest, "buttonTest");
-            this.buttonTest.Name = "buttonTest";
-            this.buttonTest.UseVisualStyleBackColor = true;
-            this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+            resources.ApplyResources(buttonTest, "buttonTest");
+            buttonTest.Name = "buttonTest";
+            buttonTest.UseVisualStyleBackColor = true;
+            buttonTest.Click += buttonTest_Click;
             // 
             // textBoxBluetoothPin
             // 
-            resources.ApplyResources(this.textBoxBluetoothPin, "textBoxBluetoothPin");
-            this.textBoxBluetoothPin.Name = "textBoxBluetoothPin";
-            this.textBoxBluetoothPin.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxBluetoothPin_KeyPress);
+            resources.ApplyResources(textBoxBluetoothPin, "textBoxBluetoothPin");
+            textBoxBluetoothPin.Name = "textBoxBluetoothPin";
+            textBoxBluetoothPin.KeyPress += textBoxBluetoothPin_KeyPress;
             // 
             // labelBluetoothPin
             // 
-            resources.ApplyResources(this.labelBluetoothPin, "labelBluetoothPin");
-            this.labelBluetoothPin.Name = "labelBluetoothPin";
+            resources.ApplyResources(labelBluetoothPin, "labelBluetoothPin");
+            labelBluetoothPin.Name = "labelBluetoothPin";
             // 
             // labelBtDevices
             // 
-            resources.ApplyResources(this.labelBtDevices, "labelBtDevices");
-            this.labelBtDevices.Name = "labelBtDevices";
+            resources.ApplyResources(labelBtDevices, "labelBtDevices");
+            labelBtDevices.Name = "labelBtDevices";
             // 
             // buttonPatchEdiabas
             // 
-            resources.ApplyResources(this.buttonPatchEdiabas, "buttonPatchEdiabas");
-            this.buttonPatchEdiabas.Name = "buttonPatchEdiabas";
-            this.buttonPatchEdiabas.UseVisualStyleBackColor = true;
-            this.buttonPatchEdiabas.Click += new System.EventHandler(this.buttonPatch_Click);
+            resources.ApplyResources(buttonPatchEdiabas, "buttonPatchEdiabas");
+            buttonPatchEdiabas.Name = "buttonPatchEdiabas";
+            buttonPatchEdiabas.UseVisualStyleBackColor = true;
+            buttonPatchEdiabas.Click += buttonPatch_Click;
             // 
             // openFileDialogConfigFile
             // 
-            resources.ApplyResources(this.openFileDialogConfigFile, "openFileDialogConfigFile");
+            resources.ApplyResources(openFileDialogConfigFile, "openFileDialogConfigFile");
             // 
             // textBoxWifiPassword
             // 
-            resources.ApplyResources(this.textBoxWifiPassword, "textBoxWifiPassword");
-            this.textBoxWifiPassword.Name = "textBoxWifiPassword";
+            resources.ApplyResources(textBoxWifiPassword, "textBoxWifiPassword");
+            textBoxWifiPassword.Name = "textBoxWifiPassword";
             // 
             // labelWiFiPassword
             // 
-            resources.ApplyResources(this.labelWiFiPassword, "labelWiFiPassword");
-            this.labelWiFiPassword.Name = "labelWiFiPassword";
+            resources.ApplyResources(labelWiFiPassword, "labelWiFiPassword");
+            labelWiFiPassword.Name = "labelWiFiPassword";
             // 
             // buttonRestoreEdiabas
             // 
-            resources.ApplyResources(this.buttonRestoreEdiabas, "buttonRestoreEdiabas");
-            this.buttonRestoreEdiabas.Name = "buttonRestoreEdiabas";
-            this.buttonRestoreEdiabas.UseVisualStyleBackColor = true;
-            this.buttonRestoreEdiabas.Click += new System.EventHandler(this.buttonRestore_Click);
+            resources.ApplyResources(buttonRestoreEdiabas, "buttonRestoreEdiabas");
+            buttonRestoreEdiabas.Name = "buttonRestoreEdiabas";
+            buttonRestoreEdiabas.UseVisualStyleBackColor = true;
+            buttonRestoreEdiabas.Click += buttonRestore_Click;
             // 
             // groupBoxEdiabas
             // 
-            resources.ApplyResources(this.groupBoxEdiabas, "groupBoxEdiabas");
-            this.groupBoxEdiabas.Controls.Add(this.buttonPatchEdiabas);
-            this.groupBoxEdiabas.Controls.Add(this.buttonRestoreEdiabas);
-            this.groupBoxEdiabas.Name = "groupBoxEdiabas";
-            this.groupBoxEdiabas.TabStop = false;
+            resources.ApplyResources(groupBoxEdiabas, "groupBoxEdiabas");
+            groupBoxEdiabas.Controls.Add(buttonPatchEdiabas);
+            groupBoxEdiabas.Controls.Add(buttonRestoreEdiabas);
+            groupBoxEdiabas.Name = "groupBoxEdiabas";
+            groupBoxEdiabas.TabStop = false;
             // 
             // groupBoxVasPc
             // 
-            resources.ApplyResources(this.groupBoxVasPc, "groupBoxVasPc");
-            this.groupBoxVasPc.Controls.Add(this.buttonPatchVasPc);
-            this.groupBoxVasPc.Controls.Add(this.buttonRestoreVasPc);
-            this.groupBoxVasPc.Name = "groupBoxVasPc";
-            this.groupBoxVasPc.TabStop = false;
+            resources.ApplyResources(groupBoxVasPc, "groupBoxVasPc");
+            groupBoxVasPc.Controls.Add(buttonPatchVasPc);
+            groupBoxVasPc.Controls.Add(buttonRestoreVasPc);
+            groupBoxVasPc.Name = "groupBoxVasPc";
+            groupBoxVasPc.TabStop = false;
             // 
             // buttonPatchVasPc
             // 
-            resources.ApplyResources(this.buttonPatchVasPc, "buttonPatchVasPc");
-            this.buttonPatchVasPc.Name = "buttonPatchVasPc";
-            this.buttonPatchVasPc.UseVisualStyleBackColor = true;
-            this.buttonPatchVasPc.Click += new System.EventHandler(this.buttonPatch_Click);
+            resources.ApplyResources(buttonPatchVasPc, "buttonPatchVasPc");
+            buttonPatchVasPc.Name = "buttonPatchVasPc";
+            buttonPatchVasPc.UseVisualStyleBackColor = true;
+            buttonPatchVasPc.Click += buttonPatch_Click;
             // 
             // buttonRestoreVasPc
             // 
-            resources.ApplyResources(this.buttonRestoreVasPc, "buttonRestoreVasPc");
-            this.buttonRestoreVasPc.Name = "buttonRestoreVasPc";
-            this.buttonRestoreVasPc.UseVisualStyleBackColor = true;
-            this.buttonRestoreVasPc.Click += new System.EventHandler(this.buttonRestore_Click);
+            resources.ApplyResources(buttonRestoreVasPc, "buttonRestoreVasPc");
+            buttonRestoreVasPc.Name = "buttonRestoreVasPc";
+            buttonRestoreVasPc.UseVisualStyleBackColor = true;
+            buttonRestoreVasPc.Click += buttonRestore_Click;
             // 
             // groupBoxIstad
             // 
-            resources.ApplyResources(this.groupBoxIstad, "groupBoxIstad");
-            this.groupBoxIstad.Controls.Add(this.textBoxIstaLocation);
-            this.groupBoxIstad.Controls.Add(this.buttonDirIstad);
-            this.groupBoxIstad.Controls.Add(this.buttonPatchIstad);
-            this.groupBoxIstad.Controls.Add(this.buttonRestoreIstad);
-            this.groupBoxIstad.Name = "groupBoxIstad";
-            this.groupBoxIstad.TabStop = false;
+            resources.ApplyResources(groupBoxIstad, "groupBoxIstad");
+            groupBoxIstad.Controls.Add(textBoxIstaLocation);
+            groupBoxIstad.Controls.Add(buttonDirIstad);
+            groupBoxIstad.Controls.Add(buttonPatchIstad);
+            groupBoxIstad.Controls.Add(buttonRestoreIstad);
+            groupBoxIstad.Name = "groupBoxIstad";
+            groupBoxIstad.TabStop = false;
             // 
             // textBoxIstaLocation
             // 
-            resources.ApplyResources(this.textBoxIstaLocation, "textBoxIstaLocation");
-            this.textBoxIstaLocation.Name = "textBoxIstaLocation";
-            this.textBoxIstaLocation.ReadOnly = true;
-            this.textBoxIstaLocation.TabStop = false;
+            resources.ApplyResources(textBoxIstaLocation, "textBoxIstaLocation");
+            textBoxIstaLocation.Name = "textBoxIstaLocation";
+            textBoxIstaLocation.ReadOnly = true;
+            textBoxIstaLocation.TabStop = false;
             // 
             // buttonDirIstad
             // 
-            resources.ApplyResources(this.buttonDirIstad, "buttonDirIstad");
-            this.buttonDirIstad.Name = "buttonDirIstad";
-            this.buttonDirIstad.UseVisualStyleBackColor = true;
-            this.buttonDirIstad.Click += new System.EventHandler(this.buttonDirIstad_Click);
+            resources.ApplyResources(buttonDirIstad, "buttonDirIstad");
+            buttonDirIstad.Name = "buttonDirIstad";
+            buttonDirIstad.UseVisualStyleBackColor = true;
+            buttonDirIstad.Click += buttonDirIstad_Click;
             // 
             // buttonPatchIstad
             // 
-            resources.ApplyResources(this.buttonPatchIstad, "buttonPatchIstad");
-            this.buttonPatchIstad.Name = "buttonPatchIstad";
-            this.buttonPatchIstad.UseVisualStyleBackColor = true;
-            this.buttonPatchIstad.Click += new System.EventHandler(this.buttonPatch_Click);
+            resources.ApplyResources(buttonPatchIstad, "buttonPatchIstad");
+            buttonPatchIstad.Name = "buttonPatchIstad";
+            buttonPatchIstad.UseVisualStyleBackColor = true;
+            buttonPatchIstad.Click += buttonPatch_Click;
             // 
             // buttonRestoreIstad
             // 
-            resources.ApplyResources(this.buttonRestoreIstad, "buttonRestoreIstad");
-            this.buttonRestoreIstad.Name = "buttonRestoreIstad";
-            this.buttonRestoreIstad.UseVisualStyleBackColor = true;
-            this.buttonRestoreIstad.Click += new System.EventHandler(this.buttonRestore_Click);
+            resources.ApplyResources(buttonRestoreIstad, "buttonRestoreIstad");
+            buttonRestoreIstad.Name = "buttonRestoreIstad";
+            buttonRestoreIstad.UseVisualStyleBackColor = true;
+            buttonRestoreIstad.Click += buttonRestore_Click;
             // 
             // comboBoxLanguage
             // 
-            this.comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxLanguage.FormattingEnabled = true;
-            resources.ApplyResources(this.comboBoxLanguage, "comboBoxLanguage");
-            this.comboBoxLanguage.Name = "comboBoxLanguage";
-            this.comboBoxLanguage.SelectedIndexChanged += new System.EventHandler(this.comboBoxLanguage_SelectedIndexChanged);
+            comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxLanguage.FormattingEnabled = true;
+            resources.ApplyResources(comboBoxLanguage, "comboBoxLanguage");
+            comboBoxLanguage.Name = "comboBoxLanguage";
+            comboBoxLanguage.SelectedIndexChanged += comboBoxLanguage_SelectedIndexChanged;
             // 
             // labelLanguage
             // 
-            resources.ApplyResources(this.labelLanguage, "labelLanguage");
-            this.labelLanguage.Name = "labelLanguage";
+            resources.ApplyResources(labelLanguage, "labelLanguage");
+            labelLanguage.Name = "labelLanguage";
             // 
             // FormMain
             // 
-            this.AcceptButton = this.buttonClose;
+            AcceptButton = buttonClose;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.Controls.Add(this.labelLanguage);
-            this.Controls.Add(this.comboBoxLanguage);
-            this.Controls.Add(this.groupBoxIstad);
-            this.Controls.Add(this.groupBoxVasPc);
-            this.Controls.Add(this.groupBoxEdiabas);
-            this.Controls.Add(this.labelWiFiPassword);
-            this.Controls.Add(this.textBoxWifiPassword);
-            this.Controls.Add(this.labelBtDevices);
-            this.Controls.Add(this.labelBluetoothPin);
-            this.Controls.Add(this.textBoxBluetoothPin);
-            this.Controls.Add(this.buttonTest);
-            this.Controls.Add(this.textBoxStatus);
-            this.Controls.Add(this.labelStatus);
-            this.Controls.Add(this.buttonClose);
-            this.Controls.Add(this.buttonSearch);
-            this.Controls.Add(this.listViewDevices);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.Name = "FormMain";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
-            this.Shown += new System.EventHandler(this.FormMain_Shown);
-            this.groupBoxEdiabas.ResumeLayout(false);
-            this.groupBoxVasPc.ResumeLayout(false);
-            this.groupBoxIstad.ResumeLayout(false);
-            this.groupBoxIstad.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            Controls.Add(labelLanguage);
+            Controls.Add(comboBoxLanguage);
+            Controls.Add(groupBoxIstad);
+            Controls.Add(groupBoxVasPc);
+            Controls.Add(groupBoxEdiabas);
+            Controls.Add(labelWiFiPassword);
+            Controls.Add(textBoxWifiPassword);
+            Controls.Add(labelBtDevices);
+            Controls.Add(labelBluetoothPin);
+            Controls.Add(textBoxBluetoothPin);
+            Controls.Add(buttonTest);
+            Controls.Add(textBoxStatus);
+            Controls.Add(labelStatus);
+            Controls.Add(buttonClose);
+            Controls.Add(buttonSearch);
+            Controls.Add(listViewDevices);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            Name = "FormMain";
+            FormClosing += FormMain_FormClosing;
+            FormClosed += FormMain_FormClosed;
+            Shown += FormMain_Shown;
+            groupBoxEdiabas.ResumeLayout(false);
+            groupBoxVasPc.ResumeLayout(false);
+            groupBoxIstad.ResumeLayout(false);
+            groupBoxIstad.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

@@ -63,7 +63,6 @@ namespace EdiabasLibConfigTool
         public FormMain()
         {
             InitializeComponent();
-            Icon = Properties.Resources.AppIcon;
 
             try
             {
