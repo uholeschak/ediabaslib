@@ -270,6 +270,7 @@
             FormClosing += FormMain_FormClosing;
             FormClosed += FormMain_FormClosed;
             Shown += FormMain_Shown;
+            Resize += FormMain_Resize;
             groupBoxEdiabas.ResumeLayout(false);
             groupBoxVasPc.ResumeLayout(false);
             groupBoxIstad.ResumeLayout(false);

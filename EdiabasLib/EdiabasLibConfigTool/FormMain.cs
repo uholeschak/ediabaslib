@@ -98,7 +98,6 @@ namespace EdiabasLibConfigTool
             comboBoxLanguage.SelectedIndex = selIndex;
 
             listViewDevices.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.None);
-            listViewDevices.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
             textBoxBluetoothPin.Text = @"1234";
             textBoxWifiPassword.Text = @"deepobdbmw";
 
@@ -604,7 +603,7 @@ namespace EdiabasLibConfigTool
                 foreach (BluetoothDeviceInfo device in _deviceList.OrderBy(dev => dev.DeviceAddress.ToString()))
                 {
                     ListViewItem listViewItem =
-                        new ListViewItem(new[] {device.DeviceAddress.ToString(), device.DeviceName})
+                        new ListViewItem(new[] { device.DeviceAddress.ToString(), device.DeviceName })
                         {
                             Tag = device
                         };
@@ -741,7 +740,7 @@ namespace EdiabasLibConfigTool
         {
             if (InvokeRequired)
             {
-                BeginInvoke((Action) UpdateButtonStatus);
+                BeginInvoke((Action)UpdateButtonStatus);
                 return;
             }
             if (_test == null)
@@ -834,7 +833,7 @@ namespace EdiabasLibConfigTool
         {
             if (InvokeRequired)
             {
-                BeginInvoke((Action) (() =>
+                BeginInvoke((Action)(() =>
                 {
                     UpdateStatusText(text);
                 }));
@@ -911,6 +910,7 @@ namespace EdiabasLibConfigTool
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
+            listViewDevices.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
             UpdateButtonStatus();
             PerformSearch();
         }
@@ -1040,7 +1040,7 @@ namespace EdiabasLibConfigTool
 
         private void buttonDirIstad_Click(object sender, EventArgs e)
         {
-            openFileDialogConfigFile.InitialDirectory = _ediabasDirIstad??string.Empty;
+            openFileDialogConfigFile.InitialDirectory = _ediabasDirIstad ?? string.Empty;
             openFileDialogConfigFile.FileName = string.Empty;
             if (openFileDialogConfigFile.ShowDialog() == DialogResult.OK)
             {
@@ -1056,6 +1056,11 @@ namespace EdiabasLibConfigTool
             {
                 SetCulture(languageInfo.Culture);
             }
+        }
+
+        private void FormMain_Resize(object sender, EventArgs e)
+        {
+            listViewDevices.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
         }
     }
 }
