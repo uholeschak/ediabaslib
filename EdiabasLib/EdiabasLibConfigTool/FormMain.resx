@@ -528,54 +528,6 @@
   <data name="groupBoxVasPc.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
   </data>
-  <data name="&gt;&gt;buttonPatchVasPc.Name" xml:space="preserve">
-    <value>buttonPatchVasPc</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchVasPc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchVasPc.Parent" xml:space="preserve">
-    <value>groupBoxVasPc</value>
-  </data>
-  <data name="&gt;&gt;buttonPatchVasPc.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.Name" xml:space="preserve">
-    <value>buttonRestoreVasPc</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.Parent" xml:space="preserve">
-    <value>groupBoxVasPc</value>
-  </data>
-  <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>236, 515</value>
-  </data>
-  <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>218, 48</value>
-  </data>
-  <data name="groupBoxVasPc.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="groupBoxVasPc.Text" xml:space="preserve">
-    <value>VAS-PC</value>
-  </data>
-  <data name="&gt;&gt;groupBoxVasPc.Name" xml:space="preserve">
-    <value>groupBoxVasPc</value>
-  </data>
-  <data name="&gt;&gt;groupBoxVasPc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBoxVasPc.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;groupBoxVasPc.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="buttonPatchVasPc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
@@ -629,6 +581,30 @@
   </data>
   <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>236, 515</value>
+  </data>
+  <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>218, 48</value>
+  </data>
+  <data name="groupBoxVasPc.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="groupBoxVasPc.Text" xml:space="preserve">
+    <value>VAS-PC</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Name" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="groupBoxIstad.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -5963,6 +5939,9 @@
         /wz8O8D2lq03ogBPnz0HRmTgo8B/BPYAnky3WKFQLBk/cAr4v4E3gGBs4r8lDDgqAgClwNPAE8B6wIaK
         FVAoVhMCiABdwCEMp18PIG+y+vn/Ae/rUYPaN2JQAAAAAElFTkSuQmCC
 </value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>639, 695</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>EdiabasLib Config Tool</value>
