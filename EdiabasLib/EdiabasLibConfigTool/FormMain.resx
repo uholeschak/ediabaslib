@@ -136,7 +136,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="listViewDevices.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 39</value>
+    <value>12, 41</value>
   </data>
   <data name="listViewDevices.Size" type="System.Drawing.Size, System.Drawing">
     <value>599, 254</value>
@@ -160,10 +160,10 @@
     <value>Bottom, Left</value>
   </data>
   <data name="buttonSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 486</value>
+    <value>18, 518</value>
   </data>
   <data name="buttonSearch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+    <value>120, 23</value>
   </data>
   <data name="buttonSearch.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -187,7 +187,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="buttonClose.Location" type="System.Drawing.Point, System.Drawing">
-    <value>491, 621</value>
+    <value>491, 657</value>
   </data>
   <data name="buttonClose.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 23</value>
@@ -214,7 +214,7 @@
     <value>True</value>
   </data>
   <data name="labelStatus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 296</value>
+    <value>12, 298</value>
   </data>
   <data name="labelStatus.Size" type="System.Drawing.Size, System.Drawing">
     <value>42, 15</value>
@@ -241,7 +241,7 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="textBoxStatus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 312</value>
+    <value>12, 316</value>
   </data>
   <data name="textBoxStatus.Multiline" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -250,7 +250,7 @@
     <value>Vertical</value>
   </data>
   <data name="textBoxStatus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>599, 129</value>
+    <value>599, 144</value>
   </data>
   <data name="textBoxStatus.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -271,7 +271,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="buttonTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>118, 486</value>
+    <value>154, 518</value>
   </data>
   <data name="buttonTest.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 23</value>
@@ -298,7 +298,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="textBoxBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 460</value>
+    <value>12, 481</value>
   </data>
   <data name="textBoxBluetoothPin.MaxLength" type="System.Int32, mscorlib">
     <value>16</value>
@@ -328,7 +328,7 @@
     <value>True</value>
   </data>
   <data name="labelBluetoothPin.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 444</value>
+    <value>12, 463</value>
   </data>
   <data name="labelBluetoothPin.Size" type="System.Drawing.Size, System.Drawing">
     <value>84, 15</value>
@@ -355,7 +355,7 @@
     <value>True</value>
   </data>
   <data name="labelBtDevices.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 20</value>
+    <value>12, 15</value>
   </data>
   <data name="labelBtDevices.Size" type="System.Drawing.Size, System.Drawing">
     <value>137, 15</value>
@@ -379,10 +379,10 @@
     <value>7</value>
   </data>
   <data name="buttonPatchEdiabas.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 19</value>
+    <value>6, 22</value>
   </data>
   <data name="buttonPatchEdiabas.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+    <value>120, 23</value>
   </data>
   <data name="buttonPatchEdiabas.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -415,7 +415,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="textBoxWifiPassword.Location" type="System.Drawing.Point, System.Drawing">
-    <value>236, 460</value>
+    <value>347, 481</value>
   </data>
   <data name="textBoxWifiPassword.MaxLength" type="System.Int32, mscorlib">
     <value>63</value>
@@ -448,7 +448,7 @@
     <value>NoControl</value>
   </data>
   <data name="labelWiFiPassword.Location" type="System.Drawing.Point, System.Drawing">
-    <value>233, 444</value>
+    <value>347, 463</value>
   </data>
   <data name="labelWiFiPassword.Size" type="System.Drawing.Size, System.Drawing">
     <value>148, 15</value>
@@ -475,10 +475,10 @@
     <value>NoControl</value>
   </data>
   <data name="buttonRestoreEdiabas.Location" type="System.Drawing.Point, System.Drawing">
-    <value>112, 19</value>
+    <value>142, 22</value>
   </data>
   <data name="buttonRestoreEdiabas.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+    <value>120, 23</value>
   </data>
   <data name="buttonRestoreEdiabas.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -502,10 +502,10 @@
     <value>Bottom, Left</value>
   </data>
   <data name="groupBoxEdiabas.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 515</value>
+    <value>12, 547</value>
   </data>
   <data name="groupBoxEdiabas.Size" type="System.Drawing.Size, System.Drawing">
-    <value>218, 48</value>
+    <value>270, 52</value>
   </data>
   <data name="groupBoxEdiabas.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -526,16 +526,64 @@
     <value>4</value>
   </data>
   <data name="groupBoxVasPc.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
+    <value>Bottom, Right</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Name" xml:space="preserve">
+    <value>buttonPatchVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchVasPc.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Name" xml:space="preserve">
+    <value>buttonRestoreVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.Parent" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
+    <value>341, 547</value>
+  </data>
+  <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 52</value>
+  </data>
+  <data name="groupBoxVasPc.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="groupBoxVasPc.Text" xml:space="preserve">
+    <value>VAS-PC</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Name" xml:space="preserve">
+    <value>groupBoxVasPc</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxVasPc.ZOrder" xml:space="preserve">
+    <value>3</value>
   </data>
   <data name="buttonPatchVasPc.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="buttonPatchVasPc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 19</value>
+    <value>6, 22</value>
   </data>
   <data name="buttonPatchVasPc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+    <value>120, 23</value>
   </data>
   <data name="buttonPatchVasPc.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -559,10 +607,10 @@
     <value>NoControl</value>
   </data>
   <data name="buttonRestoreVasPc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>112, 19</value>
+    <value>144, 22</value>
   </data>
   <data name="buttonRestoreVasPc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
+    <value>120, 23</value>
   </data>
   <data name="buttonRestoreVasPc.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -582,35 +630,86 @@
   <data name="&gt;&gt;buttonRestoreVasPc.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="groupBoxVasPc.Location" type="System.Drawing.Point, System.Drawing">
-    <value>236, 515</value>
+  <data name="groupBoxIstad.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
   </data>
-  <data name="groupBoxVasPc.Size" type="System.Drawing.Size, System.Drawing">
-    <value>218, 48</value>
+  <data name="&gt;&gt;textBoxIstaLocation.Name" xml:space="preserve">
+    <value>textBoxIstaLocation</value>
   </data>
-  <data name="groupBoxVasPc.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
+  <data name="&gt;&gt;textBoxIstaLocation.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="groupBoxVasPc.Text" xml:space="preserve">
-    <value>VAS-PC</value>
+  <data name="&gt;&gt;textBoxIstaLocation.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
   </data>
-  <data name="&gt;&gt;groupBoxVasPc.Name" xml:space="preserve">
-    <value>groupBoxVasPc</value>
+  <data name="&gt;&gt;textBoxIstaLocation.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
-  <data name="&gt;&gt;groupBoxVasPc.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;buttonDirIstad.Name" xml:space="preserve">
+    <value>buttonDirIstad</value>
   </data>
-  <data name="&gt;&gt;groupBoxVasPc.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;buttonDirIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;groupBoxVasPc.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonDirIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonDirIstad.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Name" xml:space="preserve">
+    <value>buttonPatchIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonPatchIstad.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Name" xml:space="preserve">
+    <value>buttonRestoreIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.Parent" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;buttonRestoreIstad.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="groupBoxIstad.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
+  <data name="groupBoxIstad.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 601</value>
+  </data>
+  <data name="groupBoxIstad.Size" type="System.Drawing.Size, System.Drawing">
+    <value>473, 79</value>
+  </data>
+  <data name="groupBoxIstad.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="groupBoxIstad.Text" xml:space="preserve">
+    <value>ISTA-D</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.Name" xml:space="preserve">
+    <value>groupBoxIstad</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxIstad.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="textBoxIstaLocation.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
   </data>
   <data name="textBoxIstaLocation.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 16</value>
+    <value>6, 22</value>
   </data>
   <data name="textBoxIstaLocation.Size" type="System.Drawing.Size, System.Drawing">
     <value>461, 23</value>
@@ -634,7 +733,7 @@
     <value>NoControl</value>
   </data>
   <data name="buttonDirIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 45</value>
+    <value>6, 51</value>
   </data>
   <data name="buttonDirIstad.Size" type="System.Drawing.Size, System.Drawing">
     <value>156, 23</value>
@@ -657,11 +756,14 @@
   <data name="&gt;&gt;buttonDirIstad.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="buttonPatchIstad.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="buttonPatchIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="buttonPatchIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>221, 45</value>
+    <value>221, 51</value>
   </data>
   <data name="buttonPatchIstad.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 23</value>
@@ -684,11 +786,14 @@
   <data name="&gt;&gt;buttonPatchIstad.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="buttonRestoreIstad.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="buttonRestoreIstad.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
   <data name="buttonRestoreIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>347, 45</value>
+    <value>347, 51</value>
   </data>
   <data name="buttonRestoreIstad.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 23</value>
@@ -710,30 +815,6 @@
   </data>
   <data name="&gt;&gt;buttonRestoreIstad.ZOrder" xml:space="preserve">
     <value>3</value>
-  </data>
-  <data name="groupBoxIstad.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 569</value>
-  </data>
-  <data name="groupBoxIstad.Size" type="System.Drawing.Size, System.Drawing">
-    <value>473, 74</value>
-  </data>
-  <data name="groupBoxIstad.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="groupBoxIstad.Text" xml:space="preserve">
-    <value>ISTA-D</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.Name" xml:space="preserve">
-    <value>groupBoxIstad</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;groupBoxIstad.ZOrder" xml:space="preserve">
-    <value>2</value>
   </data>
   <data name="comboBoxLanguage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -769,7 +850,7 @@
     <value>NoControl</value>
   </data>
   <data name="labelLanguage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>345, 15</value>
+    <value>330, 15</value>
   </data>
   <data name="labelLanguage.Size" type="System.Drawing.Size, System.Drawing">
     <value>62, 15</value>
@@ -802,7 +883,7 @@
     <value>96, 96</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>623, 656</value>
+    <value>623, 692</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
