@@ -63,11 +63,11 @@
             // 
             // listViewDevices
             // 
+            resources.ApplyResources(listViewDevices, "listViewDevices");
             listViewDevices.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { columnHeaderAddress, columnHeaderName });
             listViewDevices.FullRowSelect = true;
             listViewDevices.GridLines = true;
             listViewDevices.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            resources.ApplyResources(listViewDevices, "listViewDevices");
             listViewDevices.MultiSelect = false;
             listViewDevices.Name = "listViewDevices";
             listViewDevices.ShowGroups = false;
@@ -233,9 +233,9 @@
             // 
             // comboBoxLanguage
             // 
+            resources.ApplyResources(comboBoxLanguage, "comboBoxLanguage");
             comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxLanguage.FormattingEnabled = true;
-            resources.ApplyResources(comboBoxLanguage, "comboBoxLanguage");
             comboBoxLanguage.Name = "comboBoxLanguage";
             comboBoxLanguage.SelectedIndexChanged += comboBoxLanguage_SelectedIndexChanged;
             // 
@@ -265,7 +265,6 @@
             Controls.Add(buttonClose);
             Controls.Add(buttonSearch);
             Controls.Add(listViewDevices);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             Name = "FormMain";
             FormClosing += FormMain_FormClosing;
