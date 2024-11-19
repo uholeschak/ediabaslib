@@ -262,6 +262,15 @@
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>{0} файл резервной копии повреждён или не является таковым.</value>
   </data>
+  <data name="LanguageDe" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="LanguageEn" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageRu" xml:space="preserve">
+    <value>Pусский</value>
+  </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Указание: В ISTA-D администрировании -&gt; VCI конфигурация выберите тип интерфейса:
 Ediabas настройки по умолчанию (ediabas.ini).</value>

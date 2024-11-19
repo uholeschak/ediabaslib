@@ -263,9 +263,14 @@ installiert?</value>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>Die {0} Backup-Datei ist ungültig.</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="LanguageDe" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="LanguageDe" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="LanguageEn" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="LanguageRu" xml:space="preserve">
+    <value>Pусский</value>
   </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Hinweis: In ISTA-D Administration -&gt; VCI Konfiguration als Interface Typ auswählen:
