@@ -173,7 +173,8 @@ namespace EdiabasLibConfigTool
                         if (configure)
                         {
                             string rootPwd = isModBmw || isUniCar ? "admin" : "root";
-                            Process.Start(string.Format("http://{0}", ipAddr));
+                            string url = string.Format("http://{0}", ipAddr);
+                            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
                             _form.UpdateStatusText(string.Format(Resources.Strings.WifiUrlOk, rootPwd));
                             TestOk = true;
                             ConfigPossible = true;
