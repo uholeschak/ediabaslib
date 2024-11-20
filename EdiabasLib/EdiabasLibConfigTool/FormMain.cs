@@ -24,7 +24,7 @@ namespace EdiabasLibConfigTool
     {
         private readonly BluetoothClient _cli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
-        private readonly WifiMod _wifi;
+        private readonly Wifi _wifi;
         private readonly WlanClient _wlanClient;
         private readonly Test _test;
 #if BT3
@@ -118,7 +118,7 @@ namespace EdiabasLibConfigTool
                 sr.Append(string.Format(Resources.Strings.BtInitError, ex.Message));
             }
             _deviceList = new List<BluetoothDeviceInfo>();
-            _wifi = new WifiMod();
+            _wifi = new Wifi();
             _wlanClient = new WlanClient();
             _test = new Test(this);
             if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)
