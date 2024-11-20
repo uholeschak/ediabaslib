@@ -268,13 +268,13 @@
     <value>11</value>
   </data>
   <data name="buttonTest.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
+    <value>Bottom, Right</value>
   </data>
   <data name="buttonTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>154, 518</value>
+    <value>347, 518</value>
   </data>
   <data name="buttonTest.Size" type="System.Drawing.Size, System.Drawing">
-    <value>120, 23</value>
+    <value>258, 23</value>
   </data>
   <data name="buttonTest.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
