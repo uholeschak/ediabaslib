@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.Versioning;
@@ -32,6 +33,7 @@ namespace EdiabasLibConfigTool
         private BluetoothClient _btClient;
         private NetworkStream _dataStream;
         private Stream _dataStreamWrite;
+        private HttpClient _httpClient;
         private volatile Thread _testThread;
         private bool _disposed;
         public bool TestOk { get; set; }
@@ -75,6 +77,12 @@ namespace EdiabasLibConfigTool
                 {
                     // Dispose managed resources.
                     DisconnectStream();
+
+                    if (_httpClient != null)
+                    {
+                        _httpClient.Dispose();
+                        _httpClient = null;
+                    }
                 }
 
                 // Note disposing has been done.
@@ -265,42 +273,50 @@ namespace EdiabasLibConfigTool
             _form.UpdateStatusText(Resources.Strings.Connecting);
 
             StringBuilder sr = new StringBuilder();
-            WebResponse response = null;
-            StreamReader reader = null;
+            string responseFromServer = null;
             try
             {
                 try
                 {
-                    WebRequest request = WebRequest.Create(string.Format("http://{0}", ipAddr));
-                    response = request.GetResponse();
-                }
-                catch (WebException ex)
-                {
-                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    if (_httpClient == null)
                     {
-                        if (ex.Response is HttpWebResponse webResponse)
+                        _httpClient = new HttpClient();
+                        _httpClient.Timeout = TimeSpan.FromSeconds(10);
+                    }
+
+                    string url = string.Format("http://{0}", ipAddr);
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskGet = _httpClient.GetAsync(url);
+                    HttpResponseMessage responseGet = taskGet.Result;
+
+                    bool success = responseGet.IsSuccessStatusCode;
+                    if (!success)
+                    {
+                        if (responseGet.StatusCode == HttpStatusCode.Unauthorized)
                         {
-                            if (webResponse.StatusCode == HttpStatusCode.Unauthorized)
-                            {
-                                sr.Append(Resources.Strings.Connected);
-                                sr.Append("\r\n");
-                                sr.Append(Resources.Strings.TestOk);
-                                _form.UpdateStatusText(sr.ToString());
-                                return true;
-                            }
+                            sr.Append(Resources.Strings.Connected);
+                            sr.Append("\r\n");
+                            sr.Append(Resources.Strings.TestOk);
+                            _form.UpdateStatusText(sr.ToString());
+                            return true;
                         }
                     }
+                    else
+                    {
+                        responseFromServer = responseGet.Content.ReadAsStringAsync().Result;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
 
-                Stream dataStream = response?.GetResponseStream();
-                if (dataStream == null)
+                if (string.IsNullOrEmpty(responseFromServer))
                 {
                     _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                     return false;
                 }
+
                 sr.Append(Resources.Strings.Connected);
-                reader = new StreamReader(dataStream);
-                string responseFromServer = reader.ReadToEnd();
                 if (!responseFromServer.Contains(@"LuCI - Lua Configuration Interface"))
                 {
                     sr.Append("\r\n");
@@ -308,6 +324,7 @@ namespace EdiabasLibConfigTool
                     _form.UpdateStatusText(sr.ToString());
                     return false;
                 }
+
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.HttpResponseOk);
             }
@@ -316,11 +333,7 @@ namespace EdiabasLibConfigTool
                 _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                 return false;
             }
-            finally
-            {
-                reader?.Close();
-                response?.Close();
-            }
+
             sr.Append("\r\n");
             sr.Append(Resources.Strings.TestOk);
             _form.UpdateStatusText(sr.ToString());
