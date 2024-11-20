@@ -267,6 +267,7 @@
             Controls.Add(listViewDevices);
             MaximizeBox = false;
             Name = "FormMain";
+            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             FormClosing += FormMain_FormClosing;
             FormClosed += FormMain_FormClosed;
             Shown += FormMain_Shown;
