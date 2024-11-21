@@ -16,6 +16,7 @@ using System.Security.AccessControl;
 using System.Threading.Tasks;
 using EdiabasLib;
 using System.Runtime.Versioning;
+using System.Drawing;
 
 namespace EdiabasLibConfigTool
 {
@@ -906,6 +907,14 @@ namespace EdiabasLibConfigTool
         {
             e.NewWidth = listViewDevices.Columns[e.ColumnIndex].Width;
             e.Cancel = true;
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            using (MemoryStream ms = new MemoryStream(Properties.Resources.AppIcon))
+            {
+                Icon = new Icon(ms);
+            }
         }
 
         private void FormMain_Shown(object sender, EventArgs e)

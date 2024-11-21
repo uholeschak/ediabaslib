@@ -270,6 +270,7 @@
             SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             FormClosing += FormMain_FormClosing;
             FormClosed += FormMain_FormClosed;
+            Load += FormMain_Load;
             Shown += FormMain_Shown;
             Resize += FormMain_Resize;
             groupBoxEdiabas.ResumeLayout(false);
