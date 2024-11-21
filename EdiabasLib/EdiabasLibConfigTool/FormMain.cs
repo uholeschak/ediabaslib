@@ -16,6 +16,7 @@ using System.Security.AccessControl;
 using System.Threading.Tasks;
 using EdiabasLib;
 using System.Runtime.Versioning;
+using System.Drawing;
 
 namespace EdiabasLibConfigTool
 {
@@ -910,6 +911,11 @@ namespace EdiabasLibConfigTool
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
+            using (MemoryStream ms = new MemoryStream(Properties.Resources.AppIcon))
+            {
+                Icon = new Icon(ms);
+            }
+
             listViewDevices.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
             UpdateButtonStatus();
             PerformSearch();
