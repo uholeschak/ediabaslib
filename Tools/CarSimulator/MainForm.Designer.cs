@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             buttonConnect = new System.Windows.Forms.Button();
             listPorts = new System.Windows.Forms.ListBox();
             timerUpdate = new System.Windows.Forms.Timer(components);
@@ -521,7 +520,6 @@
             Controls.Add(listPorts);
             Controls.Add(buttonConnect);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             MaximizeBox = false;
             Name = "MainForm";

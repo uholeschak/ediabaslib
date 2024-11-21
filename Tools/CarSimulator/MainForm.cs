@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -942,6 +943,11 @@ namespace CarSimulator
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            using (MemoryStream ms = new MemoryStream(Properties.Resources.AppIcon))
+            {
+                Icon = new Icon(ms);
+            }
+
             checkBoxBtNameStd.Checked = true;
             checkBoxIgnitionOk.Checked = true;
             checkBoxKLineResponder.Checked = true;
