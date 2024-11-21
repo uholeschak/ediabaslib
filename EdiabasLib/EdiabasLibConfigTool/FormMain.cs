@@ -909,13 +909,16 @@ namespace EdiabasLibConfigTool
             e.Cancel = true;
         }
 
-        private void FormMain_Shown(object sender, EventArgs e)
+        private void FormMain_Load(object sender, EventArgs e)
         {
             using (MemoryStream ms = new MemoryStream(Properties.Resources.AppIcon))
             {
                 Icon = new Icon(ms);
             }
+        }
 
+        private void FormMain_Shown(object sender, EventArgs e)
+        {
             listViewDevices.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
             UpdateButtonStatus();
             PerformSearch();
