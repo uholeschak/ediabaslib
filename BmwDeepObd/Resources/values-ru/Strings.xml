@@ -84,7 +84,7 @@
 \nВы можете принять участие в проекте или же сообщить об ошибках.
 \nДополнительную информацию вы можете найти на этой веб-странице.</string>
   <string name="version_last_changes_header">Изменения в этой версии:</string>
-  <string name="version_last_changes">- Поддержка Android Auto.n\- Поддержка файлов моделирования.\n- Исправлены незначительные проблемы</string>
+  <string name="version_last_changes">- Поддержка Android Auto.n\- Поддержка файлов симулирования.\n- Исправлены незначительные проблемы</string>
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
   <string name="vag_mode_info_ballon">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо Deep OBD устройство с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
@@ -339,8 +339,7 @@
   <string name="menu_connect">Подключить</string>
   <string name="menu_manufacturer">Производитель</string>
   <string name="menu_adapter">Устройство</string>
-  <!--Translate-->
-  <string name="menu_sel_sim_dir">Каталог симуляций</string>
+  <string name="menu_sel_sim_dir">Каталог файлов симулирования</string>
   <string name="menu_adapter_config">Настройки устройства</string>
   <string name="menu_adapter_ip">IP адаптера</string>
   <string name="menu_enet_ip">ENET IP</string>
@@ -412,8 +411,7 @@
   <string name="select_interface_elmwifi">ELM327 WIFI</string>
   <string name="select_interface_deepobdwifi">Deep OBD ELM WIFI</string>
   <string name="select_interface_ftdi">USB (FTDI)</string>
-  <!--Translate-->
-  <string name="select_interface_simulation">Моделирование</string>
+  <string name="select_interface_simulation">Симулирование</string>
 
   <!-- Manufacturer selection -->
   <string name="select_manufacturer">Выбрать производителя</string>
@@ -869,14 +867,13 @@
   <string name="button_can_adapter_fw_change_custom">Прошить альтернативное программное обеспечение ELM327</string>
 
   <!-- CarService -->
-  <!--Translate-->
-  <string name="car_service_button_connect">Соединять</string>
+  <string name="car_service_button_connect">Подключить</string>
   <string name="car_service_button_disconnect">Отключить</string>
   <string name="car_service_connected">Автомобиль подключен.</string>
   <string name="car_service_fg_service_disabled">Настройки недействительны,\nне используйте режим энергосбережения.</string>
   <string name="car_service_disconnected">Автомобиль отключен.\nСначала подключитесь к автомобилю (в приложении).</string>
   <string name="car_service_no_config">Конфигурация не загружена.\nСначала необходимо загрузить конфигурацию в приложение.</string>
-  <string name="car_service_app_processing">Установление соединения активно в приложении на смартфоне.</string>
+  <string name="car_service_app_processing">Активно установление подключения в приложении на смартфоне.</string>
   <string name="car_service_app_displayed">Приложение отобразилось на смартфоне.</string>
   <string name="car_service_app_store_settings">Приложение на смартфоне сохраняет настройки.</string>
   <string name="car_service_section_pages">Данные о транспортном средстве</string>
@@ -890,7 +887,7 @@
   <string name="car_service_active_page_change">Активная страница изменилась.</string>
   <string name="car_service_active_data_amount_change">Объем данных изменился.</string>
   <string name="car_service_error_reset">Перезагрузить</string>
-  <string name="car_service_error_reset_active">Сброс ошибки активен.</string>
-  <string name="car_service_error_reset_started">Сброс ошибки начат.</string>
+  <string name="car_service_error_reset_active">Активен сброс ошибки.</string>
+  <string name="car_service_error_reset_started">Сброс ошибки инициализирован.</string>
   <string name="car_service_test_info">- Доступна тестовая версия Android Auto. Свяжитесь с разработчиком через веб-сайт.</string>
 </resources>
