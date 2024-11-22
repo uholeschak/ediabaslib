@@ -787,9 +787,15 @@ namespace EdiabasLibConfigTool
 
         public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
         {
+            if (string.IsNullOrEmpty(dirName))
+            {
+                sr.Append("\r\n");
+                sr.Append(Resources.Strings.PatchConfigUpdateFailed);
+                return false;
+            }
+
             try
             {
-                string targetDir = dirName;
                 RegistryView? registryViewIstaSet = null;
                 RegistryView? registryViewIstaDel = null;
 
@@ -800,37 +806,26 @@ namespace EdiabasLibConfigTool
                         break;
 
                     case PatchType.IstadExt:
-                    {
-                        string commonAppFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                        if (string.IsNullOrEmpty(commonAppFolder))
+                        if (!Directory.Exists(dirName))
                         {
-                            sr.Append("\r\n");
-                            sr.Append(Resources.Strings.PatchConfigUpdateFailed);
-                            return false;
-                        }
-
-                        targetDir = Path.Combine(commonAppFolder, "EdiabasLib");
-                        if (!Directory.Exists(targetDir))
-                        {
-                            Directory.CreateDirectory(targetDir);
+                            Directory.CreateDirectory(dirName);
                         }
 
                         registryViewIstaSet = GetIstaReg();
                         break;
-                    }
                 }
 
-                sr.AppendFormat(Resources.Strings.PatchDirectory, targetDir);
+                sr.AppendFormat(Resources.Strings.PatchDirectory, dirName);
                 RemoveIstaReg(sr, registryViewIstaDel);
 
-                if (!PatchFiles(sr, targetDir, registryViewIstaSet != null))
+                if (!PatchFiles(sr, dirName, registryViewIstaSet != null))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                     return false;
                 }
 
-                string configFile = Path.Combine(targetDir, ConfigFileName);
+                string configFile = Path.Combine(dirName, ConfigFileName);
                 if (!UpdateConfigFile(configFile, null, adapterType, devInfo, wlanIface, enetConnection, pin))
                 {
                     sr.Append("\r\n");
