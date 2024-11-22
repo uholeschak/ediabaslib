@@ -15,6 +15,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\EdiabasLib\BtLeGattSpp.cs" Link="BtLeGattSpp.cs" />
+    <Compile Include="..\EdiabasLib\EdBase36.cs" Link="EdBase36.cs" />
     <Compile Include="..\EdiabasLib\EdBluetoothInterfaceAndroid.cs" Link="EdBluetoothInterfaceAndroid.cs" />
     <Compile Include="..\EdiabasLib\EdCustomAdapterCommon.cs" Link="EdCustomAdapterCommon.cs" />
     <Compile Include="..\EdiabasLib\EdCustomWiFiInterface.cs" Link="EdCustomWiFiInterface.cs" />
