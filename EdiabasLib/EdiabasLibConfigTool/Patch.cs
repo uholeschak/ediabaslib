@@ -801,15 +801,15 @@ namespace EdiabasLibConfigTool
 
                     case PatchType.IstadExt:
                     {
-                        DirectoryInfo parentDirInfo = Directory.GetParent(dirName);
-                        if (parentDirInfo == null)
+                        string commonAppFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                        if (string.IsNullOrEmpty(commonAppFolder))
                         {
                             sr.Append("\r\n");
                             sr.Append(Resources.Strings.PatchConfigUpdateFailed);
                             return false;
                         }
 
-                        targetDir = Path.Combine(parentDirInfo.FullName, "EdiabasLib");
+                        targetDir = Path.Combine(commonAppFolder, "EdiabasLib");
                         if (!Directory.Exists(targetDir))
                         {
                             Directory.CreateDirectory(targetDir);
