@@ -53,7 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EdBase36.cs" />
+    <Compile Include="EdBase32.cs" />
     <Compile Include="EdBluetoothInterface.cs" />
     <Compile Include="EdCustomAdapterCommon.cs" />
     <Compile Include="EdCustomWiFiInterface.cs" />
