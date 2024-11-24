@@ -3158,7 +3158,7 @@ namespace EdiabasLib
                 try
                 {
                     XmlDocument xdocConfig = new XmlDocument();
-                    using (FileStream fs = new FileStream(configFile, FileMode.Open))
+                    using (FileStream fs = new FileStream(configFile, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
                         xdocConfig.Load(fs);
                     }
