@@ -594,6 +594,7 @@ namespace EdiabasLib
         public const int EdiabasVersion = 0x770;
         public const int TraceAppendDiffHours = 1;
         public const string UserDirName = "EdiabasLib";
+        public const string TraceDirName = "Trace";
 
         public enum CallSource
         {
@@ -3116,10 +3117,19 @@ namespace EdiabasLib
             string assemblyPath = AssemblyDirectory ?? string.Empty;
             SetConfigProperty("EcuPath", assemblyPath);
 
-            string tracePath = Path.Combine(assemblyPath, "Trace");
+            string tracePath = Path.Combine(assemblyPath, TraceDirName);
             if (!IsDirectoryWritable(tracePath, true))
             {
                 tracePath = GetEdiabasLibUserDir();
+                if (!string.IsNullOrEmpty(tracePath))
+                {
+                    tracePath = Path.Combine(tracePath, TraceDirName);
+                }
+            }
+
+            if (!IsDirectoryWritable(tracePath, true))
+            {
+                tracePath = null;
             }
 
             if (!string.IsNullOrEmpty(tracePath))
