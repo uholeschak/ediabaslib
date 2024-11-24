@@ -3715,6 +3715,11 @@ namespace EdiabasLib
         {
             try
             {
+                if (string.IsNullOrEmpty(dirPath))
+                {
+                    return false;
+                }
+
                 if (!Directory.Exists(dirPath))
                 {
                     if (!create)
