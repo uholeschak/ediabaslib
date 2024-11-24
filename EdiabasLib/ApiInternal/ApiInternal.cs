@@ -1503,10 +1503,9 @@ namespace Ediabas
                                     }
                                 }
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
-                                Console.WriteLine(e);
-                                throw;
+                                // ignored
                             }
 
                             Directory.CreateDirectory(tracePath);
