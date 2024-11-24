@@ -3127,6 +3127,11 @@ namespace EdiabasLib
                 }
             }
 
+            if (!IsDirectoryWritable(tracePath, true))
+            {
+                tracePath = null;
+            }
+
             if (!string.IsNullOrEmpty(tracePath))
             {
                 SetConfigProperty("TracePath", tracePath);
