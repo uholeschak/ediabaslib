@@ -593,6 +593,7 @@ namespace EdiabasLib
 
         public const int EdiabasVersion = 0x770;
         public const int TraceAppendDiffHours = 1;
+        public const string UserDirName = "EdiabasLib";
 
         public enum CallSource
         {
@@ -3116,7 +3117,12 @@ namespace EdiabasLib
             SetConfigProperty("EcuPath", assemblyPath);
 
             string tracePath = Path.Combine(assemblyPath, "Trace");
-            if (IsDirectoryWritable(tracePath, true))
+            if (!IsDirectoryWritable(tracePath, true))
+            {
+                tracePath = GetEdiabasLibUserDir();
+            }
+
+            if (!string.IsNullOrEmpty(tracePath))
             {
                 SetConfigProperty("TracePath", tracePath);
             }
@@ -3719,6 +3725,34 @@ namespace EdiabasLib
             {
                 return false;
             }
+        }
+
+        public static string GetEdiabasLibUserDir(bool create = false)
+        {
+            string userDir = null;
+            try
+            {
+                string commonAppFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                if (string.IsNullOrEmpty(commonAppFolder))
+                {
+                    return null;
+                }
+
+                userDir = Path.Combine(commonAppFolder, UserDirName);
+                if (create)
+                {
+                    if (!IsDirectoryWritable(userDir, true))
+                    {
+                        return null;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return userDir;
         }
 
         private bool OpenSgbdFs()
