@@ -991,17 +991,16 @@ namespace EdiabasLibConfigTool
 
                 if (Patch.GetIstaReg() != null)
                 {
-                    string commonAppFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    if (!string.IsNullOrEmpty(commonAppFolder))
+                    string userDir = EdiabasNet.GetEdiabasLibUserDir();
+                    if (!string.IsNullOrEmpty(userDir))
                     {
-                        string extDir = Path.Combine(commonAppFolder, "EdiabasLib");
                         string message = string.Format(Resources.Strings.IstaRegExtMessage, Patch.RegKeyIstaBinFull);
                         DialogResult result = MessageBox.Show(message, Resources.Strings.IstaRegExtTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
                         switch (result)
                         {
                             case DialogResult.Yes:
                                 patchType = Patch.PatchType.IstadExt;
-                                dirName = extDir;
+                                dirName = userDir;
                                 break;
 
                             case DialogResult.No:
