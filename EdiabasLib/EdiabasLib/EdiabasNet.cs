@@ -3116,7 +3116,10 @@ namespace EdiabasLib
             SetConfigProperty("EcuPath", assemblyPath);
 
             string tracePath = Path.Combine(assemblyPath, "Trace");
-            SetConfigProperty("TracePath", tracePath);
+            if (IsDirectoryWritable(tracePath, true))
+            {
+                SetConfigProperty("TracePath", tracePath);
+            }
 
             bool withFile = false;
             string configFile = Path.Combine(assemblyPath, "EdiabasLib.config");
@@ -3690,6 +3693,32 @@ namespace EdiabasLib
             }
 
             return sb.ToString();
+        }
+
+        public static bool IsDirectoryWritable(string dirPath, bool create = false)
+        {
+            try
+            {
+                if (!Directory.Exists(dirPath))
+                {
+                    if (!create)
+                    {
+                        return false;
+                    }
+
+                    Directory.CreateDirectory(dirPath);
+                }
+
+                string tempFile = Path.Combine(dirPath, Path.GetRandomFileName());
+                using (FileStream fs = File.Create(tempFile, 1, FileOptions.DeleteOnClose))
+                {
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private bool OpenSgbdFs()
