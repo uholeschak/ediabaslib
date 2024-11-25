@@ -17,9 +17,9 @@
     </strings>
     <jobs sgbd="d_dsc">
       <job name="STATUS_ANALOG" results="STAT_LAENGSBESCHLEUNIGUNG_WERT;STAT_QUERBESCHLEUNIGUNG_WERT_1;STAT_SUMMEN_LENKWINKEL_WERT_AFS">
-        <display name="label_dsc_long_acc" result="STAT_LAENGSBESCHLEUNIGUNG_WERT" format="6.4R" />
-        <display name="label_dsc_lat_acc" result="STAT_QUERBESCHLEUNIGUNG_WERT_1" format="6.4R" />
-        <display name="label_dsc_steer_angle" result="STAT_SUMMEN_LENKWINKEL_WERT_AFS" format="6.1R" />
+        <display name="label_dsc_long_acc" result="STAT_LAENGSBESCHLEUNIGUNG_WERT" log_tag="dsc_long_acc" format="6.4R" />
+        <display name="label_dsc_lat_acc" result="STAT_QUERBESCHLEUNIGUNG_WERT_1" log_tag="dsc_lat_acc" format="6.4R" />
+        <display name="label_dsc_steer_angle" result="STAT_SUMMEN_LENKWINKEL_WERT_AFS" log_tag="dsc_steer_angle" format="6.1R" />
       </job>
     </jobs>
   </page>
