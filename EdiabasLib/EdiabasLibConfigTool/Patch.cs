@@ -639,8 +639,11 @@ namespace EdiabasLibConfigTool
                 string dllFile32Backup = Path.Combine(dirName, Api32DllBackupName);
                 if (!File.Exists(dllFile32Backup))
                 {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.RestoreNoBackupFile, Api32DllBackupName));
+                    if (!IsOriginalDll(dllFile32))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.RestoreNoBackupFile, Api32DllBackupName));
+                    }
                 }
                 else
                 {
@@ -663,8 +666,11 @@ namespace EdiabasLibConfigTool
                 string dllFile64Backup = Path.Combine(dirName, Api64DllBackupName);
                 if (!File.Exists(dllFile64Backup))
                 {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.RestoreNoBackupFile, Api64DllBackupName));
+                    if (!IsOriginalDll(dllFile64))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.RestoreNoBackupFile, Api64DllBackupName));
+                    }
                 }
                 else
                 {
