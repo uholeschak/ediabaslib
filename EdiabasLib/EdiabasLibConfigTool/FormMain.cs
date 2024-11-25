@@ -994,7 +994,7 @@ namespace EdiabasLibConfigTool
                     string userDir = EdiabasNet.GetEdiabasLibUserDir();
                     if (!string.IsNullOrEmpty(userDir))
                     {
-                        string message = string.Format(Resources.Strings.IstaRegExtMessage, Patch.RegKeyIstaBinFull);
+                        string message = string.Format(Resources.Strings.IstaRegExtMessage, Patch.RegKeyIstaBinFull, userDir);
                         DialogResult result = MessageBox.Show(message, Resources.Strings.IstaRegExtTitle, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1);
                         switch (result)
                         {

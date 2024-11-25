@@ -301,7 +301,9 @@ mit EdiabasLib unterstützt.</value>
   <data name="IstaRegExtMessage" xml:space="preserve">
     <value>Es wird empfohlen den ISTA-D Registrierungschlüssel:
 '{0}'
-auf eine externe EdiabasLib Instanz zeigen zu lassen.
+auf eine externe EdiabasLib Instanz bei:
+'{1}'
+zeigen zu lassen.
 Wollen Sie dies tun?</value>
   </data>
   <data name="IstaRegExtTitle" xml:space="preserve">
