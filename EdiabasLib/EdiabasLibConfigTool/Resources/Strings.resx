@@ -301,7 +301,8 @@ are supported with EdiabasLib.</value>
   <data name="IstaRegExtMessage" xml:space="preserve">
     <value>It's recommended changing the ISTA-D registry key:
 '{0}'
-to point an external EdiabsLib instance.
+to point an external EdiabsLib instance at:
+'{1}'.
 You you want to to this?</value>
   </data>
   <data name="IstaRegExtTitle" xml:space="preserve">

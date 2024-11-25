@@ -297,9 +297,10 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
     <value>Внимание: Неизвестная версия API.</value>
   </data>
   <data name="IstaRegExtMessage" xml:space="preserve">
-    <value>Рекомендуется изменить раздел реестра ISTA-D
+    <value>Рекомендуется изменить ключ реестра ISTA-D:
 '{0}'
-чтобы указать внешний экземпляр EdiabsLib.
+чтобы указать внешний экземпляр EdiabsLib на:
+'{1}'.
 Вы хотите это сделать?</value>
   </data>
   <data name="IstaRegExtTitle" xml:space="preserve">
