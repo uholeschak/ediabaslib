@@ -35,13 +35,13 @@ namespace EdiabasLib
         private static readonly string Tag = typeof(MemoryStreamReader).FullName;
 #endif
 
-        public MemoryStreamReader(string filePath)
+        public MemoryStreamReader(string filePath, bool disableEncoding = false)
         {
             _filePos = 0;
             _fileLength = 0;
             _mapAddr = -1;
 
-            string realPath = GetRealFileName(filePath, true);
+            string realPath = GetRealFileName(filePath, disableEncoding);
             FileInfo fileInfo = new FileInfo(realPath);
             _fileLength = fileInfo.Length;
 
@@ -91,11 +91,11 @@ namespace EdiabasLib
             return new MemoryStreamReader(path);
         }
 
-        public static bool Exists(string path)
+        public static bool Exists(string path, bool disableEncoding = false)
         {
             try
             {
-                path = GetRealFileName(path, true);
+                path = GetRealFileName(path, disableEncoding);
                 return File.Exists(path);
             }
             catch (Exception)
@@ -344,14 +344,14 @@ namespace EdiabasLib
             }
         }
 
-        private static string GetRealFileName(string filePath, bool enableEncoded = false)
+        private static string GetRealFileName(string filePath, bool disableEncoding)
         {
             if (File.Exists(filePath))
             {
                 return filePath;
             }
 
-            if (enableEncoded)
+            if (!disableEncoding)
             {
                 string encodedFilePath = EdiabasNet.EncodeFilePath(filePath);
                 if (!string.IsNullOrEmpty(encodedFilePath) && File.Exists(encodedFilePath))
