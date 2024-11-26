@@ -8,9 +8,10 @@ The following properties could be specified in this file:
 * `ApiTrace`: API debug level (0..1)
 * `IfhTrace`: Interface debug level (0..3)
 * `TraceBuffering`: 1=Enable buffering of API trace files
-* `TracePath`: Path for trace file storage. If not specified, the subdirectory `Trace` will be used. If the the subdirectory is not writable, the default trace path is `C:\Users\<User>\AppData\Local\EdiabasLib\Trace`.
-* `EcuPath`: Path to the ecu files
-* `RetryComm`: 1=Retry communication
+* `TracePath`: Path for API and IFH trace file storage. The directory is created if it does not exist.  
+If not specified, the subdirectory `Trace` will be used. If the the subdirectory is not writable, the default trace path is `C:\Users\<User>\AppData\Local\EdiabasLib\Trace`.
+* `EcuPath`: Path to the ecu files location.
+* `RetryComm`: 1=Retry communication.
 * `EnetRemoteHost`: Remote host for ENET protocol. Possible values are:
 	* `ip address:<protocol>:<diag port>:<control port>`: No broadcast, directly connect to specified host. Optionally the protcol (`HSFZ` or `DoIP`) and the communication ports could be specified.
 	* `auto`: Broadcast to subnet `HostIdentService`, Identical to EDIABAS `RemoteHost = Autodetect`. When multiple network adapters are present, this may work unreliable. Use `auto:all` instead.
