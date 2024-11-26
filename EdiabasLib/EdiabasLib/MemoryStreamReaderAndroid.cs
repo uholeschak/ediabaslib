@@ -41,7 +41,7 @@ namespace EdiabasLib
             _fileLength = 0;
             _mapAddr = -1;
 
-            string realPath = GetRealFileName(filePath);
+            string realPath = GetRealFileName(filePath, true);
             FileInfo fileInfo = new FileInfo(realPath);
             _fileLength = fileInfo.Length;
 
@@ -95,7 +95,7 @@ namespace EdiabasLib
         {
             try
             {
-                path = GetRealFileName(path);
+                path = GetRealFileName(path, true);
                 return File.Exists(path);
             }
             catch (Exception)
@@ -344,11 +344,20 @@ namespace EdiabasLib
             }
         }
 
-        private static string GetRealFileName(string filePath)
+        private static string GetRealFileName(string filePath, bool enableEncoded = false)
         {
             if (File.Exists(filePath))
             {
                 return filePath;
+            }
+
+            if (enableEncoded)
+            {
+                string encodedFilePath = EdiabasNet.EncodeFilePath(filePath);
+                if (!string.IsNullOrEmpty(encodedFilePath) && File.Exists(encodedFilePath))
+                {
+                    return encodedFilePath;
+                }
             }
 
             // get the case-sensitive name from the directory

@@ -7069,6 +7069,37 @@ namespace EdiabasLib
             return result;
         }
 
+        public static string EncodeFilePath(string filePath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(filePath))
+                {
+                    return string.Empty;
+                }
+
+                string dirName = Path.GetDirectoryName(filePath);
+                string fileName = Path.GetFileName(filePath);
+                if (string.IsNullOrEmpty(dirName) || string.IsNullOrEmpty(fileName))
+                {
+                    return string.Empty;
+                }
+
+                string encodedFileName = EncodeFileName(fileName);
+                if (string.IsNullOrEmpty(encodedFileName))
+                {
+                    return string.Empty;
+                }
+
+                string encodedFilePath = Path.Combine(dirName, encodedFileName);
+                return encodedFilePath;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
         public static string EncodeFileName(string fileName)
         {
             try
