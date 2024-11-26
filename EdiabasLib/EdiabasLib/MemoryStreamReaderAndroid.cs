@@ -86,9 +86,9 @@ namespace EdiabasLib
             }
         }
 
-        public static MemoryStreamReader OpenRead(string path)
+        public static MemoryStreamReader OpenRead(string path, bool disableEncoding = false)
         {
-            return new MemoryStreamReader(path);
+            return new MemoryStreamReader(path, disableEncoding);
         }
 
         public static bool Exists(string path, bool disableEncoding = false)
