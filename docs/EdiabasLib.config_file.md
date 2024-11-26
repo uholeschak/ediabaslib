@@ -8,6 +8,7 @@ The following properties could be specified in this file:
 * `ApiTrace`: API debug level (0..1)
 * `IfhTrace`: Interface debug level (0..3)
 * `TraceBuffering`: 1=Enable buffering of API trace files
+* `TracePath`: Path for trace file storage. If not specified, the subdirectory `Trace` will be used. If the the subdirectory is not writable, the default trace path is `C:\Users\<User>\AppData\Local\EdiabasLib\Trace`.
 * `EcuPath`: Path to the ecu files
 * `RetryComm`: 1=Retry communication
 * `EnetRemoteHost`: Remote host for ENET protocol. Possible values are:
