@@ -772,5 +772,5 @@ There are some job, that require special handling:
 * With `STATUS_MESSWERTBLOCK_LESEN` or `STATUS_BLOCK_LESEN` multiples values could be requested simultanously.  
   The job requires the entries from the table `MESSWERTETAB` or `SG_FUNKTIONEN` with column `ARG` as arument.  
   The first argument `JA` or `NEIN` specifies if the last ECU request is reused.  
-  The number of arguments is limited by the ECU, the typical limit is 10.
+  The number of arguments is limited by the ECU, the typical limit is 10. With the argument `arg_limit` in the `job` node the number of arguments could be limited. If the value is 0, the splitting is disabled.
 * For reading `STATUS_MESSWERTBLOCK_X` the corresponding `MESSWERTBLOCK_X_SCHREIBEN` is to be called first once (`MS450DS0.PRG` only).
