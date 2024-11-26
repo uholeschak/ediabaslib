@@ -64,7 +64,7 @@ namespace EdiabasLib
             ushort bb = 0;
             int bits = 0;
 
-            foreach (var ch in input)
+            foreach (char ch in input)
             {
                 Encode(checked((byte)ch), ref bb, ref bits, output);
             }

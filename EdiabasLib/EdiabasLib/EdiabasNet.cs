@@ -595,6 +595,7 @@ namespace EdiabasLib
         public const int TraceAppendDiffHours = 1;
         public const string UserDirName = "EdiabasLib";
         public const string TraceDirName = "Trace";
+        public const string EncodedFileExt = ".enc";
 
         public enum CallSource
         {
@@ -6924,7 +6925,7 @@ namespace EdiabasLib
             return BitConverter.ToInt32(buffer, 0);
         }
 
-        static double RoundToSignificantDigits(EdFloatType value, EdValueType digits)
+        private static double RoundToSignificantDigits(EdFloatType value, EdValueType digits)
         {
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (value == 0)
@@ -7066,6 +7067,71 @@ namespace EdiabasLib
                 result += string.Format(Culture, "{0:X}", part2);
             }
             return result;
+        }
+
+        public static string EncodeFileName(string fileName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return string.Empty;
+                }
+
+                string encodedName = EdBase32.Encode(Encoding.UTF8.GetBytes(fileName));
+                if (string.IsNullOrEmpty(encodedName))
+                {
+                    return string.Empty;
+                }
+
+                string encodedFileName = encodedName.ToLowerInvariant() + EncodedFileExt;
+                return encodedFileName;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
+        public static string DecodeFileName(string encodedFileName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(encodedFileName))
+                {
+                    return string.Empty;
+                }
+
+                string baseName = Path.GetFileNameWithoutExtension(encodedFileName);
+                if (string.IsNullOrEmpty(baseName))
+                {
+                    return string.Empty;
+                }
+
+                string fileExt = Path.GetExtension(encodedFileName);
+                if (string.IsNullOrEmpty(fileExt))
+                {
+                    return string.Empty;
+                }
+
+                if (string.Compare(fileExt, EncodedFileExt, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return string.Empty;
+                }
+
+                byte[] decodedData = EdBase32.Decode(baseName);
+                if (decodedData == null || decodedData.Length == 0)
+                {
+                    return string.Empty;
+                }
+
+                string decodedFileName = Encoding.UTF8.GetString(decodedData);
+                return decodedFileName;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
         }
 
         // ReSharper disable once UnusedParameter.Local
