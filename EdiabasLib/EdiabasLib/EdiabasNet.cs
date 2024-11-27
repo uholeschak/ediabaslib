@@ -595,7 +595,7 @@ namespace EdiabasLib
         public const int TraceAppendDiffHours = 1;
         public const string UserDirName = "EdiabasLib";
         public const string TraceDirName = "Trace";
-        public const string EncodedFileExt = ".enc";
+        public const string EncodedFileExt = ".enc0";
 
         public enum CallSource
         {
