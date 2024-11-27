@@ -7100,9 +7100,8 @@ namespace EdiabasLib
                     return string.Empty;
                 }
 
-                string dirName = Path.GetDirectoryName(filePath);
                 string fileName = Path.GetFileName(filePath);
-                if (string.IsNullOrEmpty(dirName) || string.IsNullOrEmpty(fileName))
+                if (string.IsNullOrEmpty(fileName))
                 {
                     return string.Empty;
                 }
@@ -7113,12 +7112,54 @@ namespace EdiabasLib
                     return string.Empty;
                 }
 
+                string dirName = Path.GetDirectoryName(filePath);
+                if (string.IsNullOrEmpty(dirName))
+                {
+                    return encodedFileName;
+                }
+
                 string encodedFilePath = Path.Combine(dirName, encodedFileName);
                 return encodedFilePath;
             }
             catch (Exception)
             {
                 return string.Empty;
+            }
+        }
+
+        public static string DecodeFilePath(string filePath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(filePath))
+                {
+                    return string.Empty;
+                }
+
+                string fileName = Path.GetFileName(filePath);
+                if (string.IsNullOrEmpty(fileName))
+                {
+                    return filePath;
+                }
+
+                string decodedFileName = DecodeFileName(fileName);
+                if (string.IsNullOrEmpty(decodedFileName))
+                {
+                    return filePath;
+                }
+
+                string dirName = Path.GetDirectoryName(filePath);
+                if (string.IsNullOrEmpty(dirName))
+                {
+                    return decodedFileName;
+                }
+
+                string decodedFilePath = Path.Combine(dirName, decodedFileName);
+                return decodedFilePath;
+            }
+            catch (Exception)
+            {
+                return filePath;
             }
         }
 
