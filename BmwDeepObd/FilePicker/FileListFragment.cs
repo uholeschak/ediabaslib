@@ -334,13 +334,13 @@ namespace BmwDeepObd.FilePicker
                 foreach (FileSystemInfo item in dir.GetFileSystemInfos().Where(item => item.IsVisible()))
                 {
                     bool add = _allowDirChange;
-                    string fileName = item.Name;
+                    string fullName = item.FullName;
                     if (_decodeFileName)
                     {
-                        fileName = EdiabasNet.DecodeFilePath(fileName);
+                        fullName = EdiabasNet.DecodeFilePath(fullName);
                     }
-                    string displayName = fileName;
 
+                    string displayName = Path.GetFileName(fullName);
                     if (item.IsFile())
                     {
                         if (!_showFiles)
@@ -351,7 +351,7 @@ namespace BmwDeepObd.FilePicker
                         {
                             if (!_showFileExtensions)
                             {
-                                displayName = Path.GetFileNameWithoutExtension(fileName);
+                                displayName = Path.GetFileNameWithoutExtension(fullName);
                             }
 
                             if (_extensionList.Count > 0)
@@ -359,7 +359,8 @@ namespace BmwDeepObd.FilePicker
                                 add = false;
                                 foreach (string extension in _extensionList)
                                 {
-                                    if (item.HasFileExtension(extension))
+                                    string fileExt = Path.GetExtension(fullName);
+                                    if (string.Compare(fileExt, extension, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         add = true;
                                         break;
@@ -368,6 +369,7 @@ namespace BmwDeepObd.FilePicker
                             }
                             if (_fileNameRegex != null)
                             {
+                                string fileName = Path.GetFileName(fullName);
                                 if (!_fileNameRegex.IsMatch(fileName))
                                 {
                                     add = false;
