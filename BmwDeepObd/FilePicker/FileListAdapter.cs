@@ -18,12 +18,13 @@ namespace BmwDeepObd.FilePicker
 
     public class FileInfoEx
     {
-        public FileInfoEx(FileSystemInfo fileSystemInfo, FileInfoType fileType, string displayName, string rootDir)
+        public FileInfoEx(FileSystemInfo fileSystemInfo, FileInfoType fileType, string displayName, string rootDir, string fullFileName = null)
         {
             FileSysInfo = fileSystemInfo;
             FileType = fileType;
             DisplayName = displayName;
             RootDir = rootDir;
+            FullFileName = fullFileName;
         }
 
         public FileSystemInfo FileSysInfo { get; }
@@ -33,6 +34,8 @@ namespace BmwDeepObd.FilePicker
         public string DisplayName { get; }
 
         public string RootDir { get; }
+
+        public string FullFileName { get; }
     }
 
     public class FileListAdapter : ArrayAdapter<FileInfoEx>
@@ -60,7 +63,7 @@ namespace BmwDeepObd.FilePicker
             {
                 lock (this)
                 {
-                    foreach (var fsi in fileInfoExs)
+                    foreach (FileInfoEx fsi in fileInfoExs)
                     {
                         bool addFile = true;
                         if (!string.IsNullOrEmpty(filter) && fsi.RootDir == null && !fsi.FileSysInfo.IsDirectory())

@@ -140,9 +140,16 @@ namespace BmwDeepObd.FilePicker
                         switch (fileSystemInfo.FileType)
                         {
                             case FileInfoType.File:
+                                if (!string.IsNullOrEmpty(fileSystemInfo.FullFileName))
+                                {
+                                    fileName = fileSystemInfo.FullFileName;
+                                    break;
+                                }
+
                                 if (fileSystemInfo.FileSysInfo != null && fileSystemInfo.FileSysInfo.IsDirectory())
                                 {
                                     fileName = fileSystemInfo.FileSysInfo.FullName;
+                                    break;
                                 }
                                 break;
 
@@ -334,13 +341,13 @@ namespace BmwDeepObd.FilePicker
                 foreach (FileSystemInfo item in dir.GetFileSystemInfos().Where(item => item.IsVisible()))
                 {
                     bool add = _allowDirChange;
-                    string fullName = item.FullName;
+                    string fullFileName = item.FullName;
                     if (_decodeFileName)
                     {
-                        fullName = EdiabasNet.DecodeFilePath(fullName);
+                        fullFileName = EdiabasNet.DecodeFilePath(fullFileName);
                     }
 
-                    string displayName = Path.GetFileName(fullName);
+                    string displayName = Path.GetFileName(fullFileName);
                     if (item.IsFile())
                     {
                         if (!_showFiles)
@@ -351,7 +358,7 @@ namespace BmwDeepObd.FilePicker
                         {
                             if (!_showFileExtensions)
                             {
-                                displayName = Path.GetFileNameWithoutExtension(fullName);
+                                displayName = Path.GetFileNameWithoutExtension(fullFileName);
                             }
 
                             if (_extensionList.Count > 0)
@@ -359,7 +366,7 @@ namespace BmwDeepObd.FilePicker
                                 add = false;
                                 foreach (string extension in _extensionList)
                                 {
-                                    string fileExt = Path.GetExtension(fullName);
+                                    string fileExt = Path.GetExtension(fullFileName);
                                     if (string.Compare(fileExt, extension, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         add = true;
@@ -369,7 +376,7 @@ namespace BmwDeepObd.FilePicker
                             }
                             if (_fileNameRegex != null)
                             {
-                                string fileName = Path.GetFileName(fullName);
+                                string fileName = Path.GetFileName(fullFileName);
                                 if (!_fileNameRegex.IsMatch(fileName))
                                 {
                                     add = false;
@@ -379,7 +386,7 @@ namespace BmwDeepObd.FilePicker
                     }
                     if (add)
                     {
-                        visibleThings.Add(new FileInfoEx(item, FileInfoType.File, displayName, null));
+                        visibleThings.Add(new FileInfoEx(item, FileInfoType.File, displayName, null, fullFileName));
                     }
                 }
             }
