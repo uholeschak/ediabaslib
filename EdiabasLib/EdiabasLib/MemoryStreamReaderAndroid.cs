@@ -35,13 +35,13 @@ namespace EdiabasLib
         private static readonly string Tag = typeof(MemoryStreamReader).FullName;
 #endif
 
-        public MemoryStreamReader(string filePath, bool disableEncoding = false)
+        public MemoryStreamReader(string filePath, bool enableNameEncoding = false)
         {
             _filePos = 0;
             _fileLength = 0;
             _mapAddr = -1;
 
-            string realPath = GetRealFileName(filePath, disableEncoding);
+            string realPath = GetRealFileName(filePath, enableNameEncoding);
             FileInfo fileInfo = new FileInfo(realPath);
             _fileLength = fileInfo.Length;
 
@@ -86,16 +86,16 @@ namespace EdiabasLib
             }
         }
 
-        public static MemoryStreamReader OpenRead(string path, bool disableEncoding = false)
+        public static MemoryStreamReader OpenRead(string path, bool enableNameEncoding = false)
         {
-            return new MemoryStreamReader(path, disableEncoding);
+            return new MemoryStreamReader(path, enableNameEncoding);
         }
 
-        public static bool Exists(string path, bool disableEncoding = false)
+        public static bool Exists(string path, bool enableNameEncoding = false)
         {
             try
             {
-                path = GetRealFileName(path, disableEncoding);
+                path = GetRealFileName(path, enableNameEncoding);
                 return File.Exists(path);
             }
             catch (Exception)
@@ -344,14 +344,14 @@ namespace EdiabasLib
             }
         }
 
-        private static string GetRealFileName(string filePath, bool disableEncoding)
+        private static string GetRealFileName(string filePath, bool enableNameEncoding)
         {
             if (File.Exists(filePath))
             {
                 return filePath;
             }
 
-            if (!disableEncoding)
+            if (enableNameEncoding)
             {
                 string encodedFilePath = EdiabasNet.EncodeFilePath(filePath);
                 if (!string.IsNullOrEmpty(encodedFilePath) && File.Exists(encodedFilePath))
