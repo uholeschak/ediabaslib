@@ -52,7 +52,7 @@ namespace BmwDeepObd.FilePicker
                 return false;
             }
 
-            var isHidden = (fsi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden;
+            bool isHidden = (fsi.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden;
             return !isHidden;
         }
 
@@ -62,6 +62,7 @@ namespace BmwDeepObd.FilePicker
             {
                 return false;
             }
+
             string ext = Path.GetExtension(fsi.FullName);
             if (string.Compare(ext, extension, System.StringComparison.OrdinalIgnoreCase) != 0)
             {

@@ -9,6 +9,7 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.Fragment.App;
+using EdiabasLib;
 using Skydoves.BalloonLib;
 
 // ReSharper disable LoopCanBeConvertedToQuery
@@ -60,6 +61,7 @@ namespace BmwDeepObd.FilePicker
         private bool _showCurrentDir;
         private bool _showFiles;
         private bool _showFileExtensions;
+        private bool _decodeFileName;
         private string _infoText;
 
         public override void OnCreate(Bundle savedInstanceState)
@@ -115,6 +117,7 @@ namespace BmwDeepObd.FilePicker
             _showCurrentDir = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowCurrentDir, false) ?? false;
             _showFiles = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowFiles, true) ?? true;
             _showFileExtensions = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraShowExtension, true) ?? true;
+            _decodeFileName = Activity.Intent?.GetBooleanExtra(FilePickerActivity.ExtraDecodeFileName, true) ?? true;
             _infoText = Activity.Intent?.GetStringExtra(FilePickerActivity.ExtraInfoText);
 
             _adapter = new FileListAdapter(Activity, Array.Empty<FileInfoEx>());
@@ -327,10 +330,17 @@ namespace BmwDeepObd.FilePicker
                         visibleThings.Add(new FileInfoEx(null, FileInfoType.ParentDir,"..", rootDir));
                     }
                 }
-                foreach (var item in dir.GetFileSystemInfos().Where(item => item.IsVisible()))
+
+                foreach (FileSystemInfo item in dir.GetFileSystemInfos().Where(item => item.IsVisible()))
                 {
                     bool add = _allowDirChange;
-                    string displayName = item.Name;
+                    string fileName = item.Name;
+                    if (_decodeFileName)
+                    {
+                        fileName = EdiabasNet.DecodeFilePath(fileName);
+                    }
+                    string displayName = fileName;
+
                     if (item.IsFile())
                     {
                         if (!_showFiles)
@@ -341,8 +351,9 @@ namespace BmwDeepObd.FilePicker
                         {
                             if (!_showFileExtensions)
                             {
-                                displayName = Path.GetFileNameWithoutExtension(item.Name);
+                                displayName = Path.GetFileNameWithoutExtension(fileName);
                             }
+
                             if (_extensionList.Count > 0)
                             {
                                 add = false;
@@ -357,7 +368,7 @@ namespace BmwDeepObd.FilePicker
                             }
                             if (_fileNameRegex != null)
                             {
-                                if (!_fileNameRegex.IsMatch(item.Name))
+                                if (!_fileNameRegex.IsMatch(fileName))
                                 {
                                     add = false;
                                 }
