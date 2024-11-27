@@ -2232,6 +2232,7 @@ namespace BmwDeepObd
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? ".grp" : ".prg");
             serverIntent.PutExtra(FilePickerActivity.ExtraDirChange, false);
             serverIntent.PutExtra(FilePickerActivity.ExtraShowExtension, false);
+            serverIntent.PutExtra(FilePickerActivity.ExtraDecodeFileName, true);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
 
