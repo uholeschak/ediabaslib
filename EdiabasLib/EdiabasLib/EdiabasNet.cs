@@ -2374,6 +2374,7 @@ namespace EdiabasLib
         private readonly Dictionary<string, string> _configDict = new Dictionary<string, string>();
         private readonly Dictionary<string, VariantInfo> _groupMappingDict = new Dictionary<string, VariantInfo>();
         private string _logInfo;
+        private bool _enableFileNameEncoding;
         private long _infoProgressRange;
         private long _infoProgressPos;
         private string _infoProgressText = string.Empty;
@@ -2700,6 +2701,24 @@ namespace EdiabasLib
                 lock (_apiLock)
                 {
                     _logInfo = value;
+                }
+            }
+        }
+
+        public bool EnableFileNameEncoding
+        {
+            get
+            {
+                lock (_apiLock)
+                {
+                    return _enableFileNameEncoding;
+                }
+            }
+            set
+            {
+                lock (_apiLock)
+                {
+                    _enableFileNameEncoding = value;
                 }
             }
         }
@@ -3092,6 +3111,9 @@ namespace EdiabasLib
 
             _jobRunning = false;
             _lockTrace = false;
+#if ANDROID
+            _enableFileNameEncoding = true;
+#endif
             SetConfigProperty("EdiabasVersion", EdiabasVersionString);
             SetConfigProperty("Simulation", "0");
             SetConfigProperty("BipDebugLevel", "0");
@@ -3780,7 +3802,7 @@ namespace EdiabasLib
             string fileName = Path.Combine(EcuPath, SgbdFileName);
             try
             {
-                _sgbdFs = MemoryStreamReader.OpenRead(fileName);
+                _sgbdFs = MemoryStreamReader.OpenRead(fileName, _enableFileNameEncoding);
             }
             catch (Exception)
             {
@@ -4651,7 +4673,7 @@ namespace EdiabasLib
                 string fileName = Path.Combine(EcuPath, usesInfo.Name.ToLower(Culture) + ".prg");
                 try
                 {
-                    using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                    using (Stream tempFs = MemoryStreamReader.OpenRead(fileName, _enableFileNameEncoding))
                     {
                         try
                         {
@@ -5214,11 +5236,11 @@ namespace EdiabasLib
             string grpFileName = Path.Combine(dirName, baseFileName + ".grp");
             string localFileName = string.Empty;
 
-            if (MemoryStreamReader.Exists(prgFileName))
+            if (MemoryStreamReader.Exists(prgFileName, _enableFileNameEncoding))
             {
                 localFileName = prgFileName;
             }
-            else if (MemoryStreamReader.Exists(grpFileName))
+            else if (MemoryStreamReader.Exists(grpFileName, _enableFileNameEncoding))
             {
                 localFileName = grpFileName;
             }
@@ -5231,7 +5253,7 @@ namespace EdiabasLib
 
             try
             {
-                using (MemoryStreamReader tempFs = MemoryStreamReader.OpenRead(localFileName))
+                using (MemoryStreamReader tempFs = MemoryStreamReader.OpenRead(localFileName, _enableFileNameEncoding))
                 {
                     byte[] buffer = new byte[4];
                     tempFs.Position = 0x10;
@@ -5451,7 +5473,7 @@ namespace EdiabasLib
                 string fileName = Path.Combine(EcuPath, jobInfo.UsesInfo.Name.ToLower(Culture) + ".prg");
                 try
                 {
-                    using (Stream tempFs = MemoryStreamReader.OpenRead(fileName))
+                    using (Stream tempFs = MemoryStreamReader.OpenRead(fileName, _enableFileNameEncoding))
                     {
                         _sgbdBaseFs = tempFs;
                         try

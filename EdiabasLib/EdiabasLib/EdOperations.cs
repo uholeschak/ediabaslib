@@ -1030,7 +1030,7 @@ namespace EdiabasLib
             {
                 try
                 {
-                    Stream fs = MemoryStreamReader.OpenRead(fileName);
+                    Stream fs = MemoryStreamReader.OpenRead(fileName, ediabas._enableFileNameEncoding);
                     handle = ediabas.StoreUserFile(fs);
                     if (handle < 0)
                     {
@@ -2574,7 +2574,7 @@ namespace EdiabasLib
                 {   // now try for case sensitive file systems
                     try
                     {
-                        using (MemoryStreamReader.OpenRead(prgFileName))
+                        using (MemoryStreamReader.OpenRead(prgFileName, ediabas._enableFileNameEncoding))
                         {
                         }
                         fullFileName = prgFileName;
@@ -2583,7 +2583,7 @@ namespace EdiabasLib
                     {
                         try
                         {
-                            using (MemoryStreamReader.OpenRead(grpFileName))
+                            using (MemoryStreamReader.OpenRead(grpFileName, ediabas._enableFileNameEncoding))
                             {
                             }
                             fullFileName = grpFileName;
@@ -2604,7 +2604,7 @@ namespace EdiabasLib
                 try
                 {
                     ediabas.CloseTableFs();
-                    Stream fs = MemoryStreamReader.OpenRead(fullFileName);
+                    Stream fs = MemoryStreamReader.OpenRead(fullFileName, ediabas._enableFileNameEncoding);
                     ediabas.SetTableFs(fs);
                 }
                 catch (Exception)
