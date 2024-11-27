@@ -367,7 +367,7 @@ namespace BmwDeepObd.FilePicker
                                 foreach (string extension in _extensionList)
                                 {
                                     string fileExt = Path.GetExtension(fullFileName);
-                                    if (string.Compare(fileExt, extension, StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (string.Compare(fileExt, extension, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         add = true;
                                         break;
