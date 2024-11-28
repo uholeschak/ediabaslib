@@ -6249,7 +6249,9 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
-                return Directory.GetFiles(path, "*.prg", SearchOption.TopDirectoryOnly).Any();
+
+                IEnumerable<string> files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly);
+                return files.Any(s => s.EndsWith(".prg", StringComparison.OrdinalIgnoreCase) || s.EndsWith(EdiabasNet.EncodedFileExt, StringComparison.OrdinalIgnoreCase));
             }
             catch (Exception)
             {
