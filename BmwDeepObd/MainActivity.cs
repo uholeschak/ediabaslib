@@ -5864,8 +5864,11 @@ namespace BmwDeepObd
                             };
                         }
                     }
+
+                    List<string> encodeExtensions = new List<string>() { ".prg", ".grp" };
                     int lastZipPercent = -1;
-                    ActivityCommon.ExtractZipFile(assetManager, null, fileName, targetDirectory, key, ignoreFolders,
+
+                    ActivityCommon.ExtractZipFile(assetManager, null, fileName, targetDirectory, key, ignoreFolders, encodeExtensions,
                         (percent, decrypt) =>
                         {
                             if (_activityCommon == null)
@@ -6393,7 +6396,7 @@ namespace BmwDeepObd
                 }
 
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                ActivityCommon.ExtractZipFile(null, assembly, resourceName, sampleDir, null, null, null);
+                ActivityCommon.ExtractZipFile(null, assembly, resourceName, sampleDir, null, null, null, null);
 
                 XElement xmlInfo = new XElement("Info");
                 xmlInfo.Add(new XAttribute("Name", resourceName));
