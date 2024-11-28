@@ -10812,7 +10812,7 @@ namespace BmwDeepObd
         }
 
         public static void ExtractZipFile(AssetManager assetManager, Assembly resourceAssembly, string archiveFilenameIn, string outFolder, string key,
-            List<string> ignoreFolders, ProgressZipDelegate progressHandler)
+            List<string> ignoreFolders, List<string> encodeExtensions, ProgressZipDelegate progressHandler)
         {
 #if DEBUG
             string lastFileName = string.Empty;
@@ -11021,7 +11021,12 @@ namespace BmwDeepObd
                         try
                         {
                             // Manipulate the output filename here as desired.
-                            String fullZipToPath = Path.Combine(outFolder, entryFileName);
+                            string fullZipToPath = Path.Combine(outFolder, entryFileName);
+                            string fileExt = Path.GetExtension(fullZipToPath);
+                            if (encodeExtensions != null && encodeExtensions.Contains(fileExt, StringComparer.OrdinalIgnoreCase))
+                            {
+                                fullZipToPath = EdiabasNet.EncodeFilePath(fullZipToPath);
+                            }
                             string directoryName = Path.GetDirectoryName(fullZipToPath);
                             if (!string.IsNullOrEmpty(directoryName))
                             {
