@@ -11330,8 +11330,20 @@ namespace BmwDeepObd
                     }
                     long fileSize = XmlConvert.ToInt64(sizeAttr.Value);
 
+                    string fullFileName = Path.Combine(baseDir, fileName);
+#if DEBUG && false
+                    string encodedFileName = EdiabasNet.EncodeFilePath(fullFileName);
+                    if (!string.IsNullOrEmpty(encodedFileName))
+                    {
+                        string decodedFilePath = EdiabasNet.DecodeFilePath(encodedFileName);
+                        if (string.Compare(fullFileName, decodedFilePath, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            Android.Util.Log.Error(Tag, string.Format(CultureInfo.InvariantCulture, "Encoding invalid: {0} {1}", fullFileName, decodedFilePath));
+                        }
+                    }
+#endif
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    string filePath = EdiabasNet.GetExistingEncodedFilePath(Path.Combine(baseDir, fileName));
+                    string filePath = EdiabasNet.GetExistingEncodedFilePath(fullFileName);
                     FileInfo fileInfo = new FileInfo(filePath);
                     if (!fileInfo.Exists)
                     {
