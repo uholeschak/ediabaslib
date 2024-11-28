@@ -11327,6 +11327,11 @@ namespace BmwDeepObd
 
                     // ReSharper disable once AssignNullToNotNullAttribute
                     string filePath = Path.Combine(baseDir, fileName);
+                    if (!File.Exists(filePath))
+                    {
+                        filePath = EdiabasNet.EncodeFilePath(filePath);
+                    }
+
                     FileInfo fileInfo = new FileInfo(filePath);
                     if (!fileInfo.Exists)
                     {
@@ -11347,9 +11352,9 @@ namespace BmwDeepObd
                         }
 
                         string md5String = md5Attr.Value;
-                        using (var md5 = MD5.Create())
+                        using (MD5 md5 = MD5.Create())
                         {
-                            using (var stream = File.OpenRead(filePath))
+                            using (FileStream stream = File.OpenRead(filePath))
                             {
                                 byte[] md5Data = md5.ComputeHash(stream);
                                 StringBuilder sb = new StringBuilder();
