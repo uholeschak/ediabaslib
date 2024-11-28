@@ -11326,12 +11326,7 @@ namespace BmwDeepObd
                     long fileSize = XmlConvert.ToInt64(sizeAttr.Value);
 
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    string filePath = Path.Combine(baseDir, fileName);
-                    if (!File.Exists(filePath))
-                    {
-                        filePath = EdiabasNet.EncodeFilePath(filePath);
-                    }
-
+                    string filePath = EdiabasNet.GetExistingEncodedFilePath(Path.Combine(baseDir, fileName));
                     FileInfo fileInfo = new FileInfo(filePath);
                     if (!fileInfo.Exists)
                     {
