@@ -7091,25 +7091,30 @@ namespace EdiabasLib
             return result;
         }
 
-        public bool IsEncodedFileExisting(string filePath)
+        public static string GetExistingEncodedFilePath(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
             {
-                return false;
+                return string.Empty;
             }
 
             if (File.Exists(filePath))
             {
-                return true;
+                return filePath;
             }
 
             string encodedFilePath = EncodeFilePath(filePath);
             if (string.IsNullOrEmpty(encodedFilePath))
             {
-                return false;
+                return string.Empty;
             }
 
-            return File.Exists(encodedFilePath);
+            if (File.Exists(encodedFilePath))
+            {
+                return encodedFilePath;
+            }
+
+            return string.Empty;
         }
 
         public static string EncodeFilePath(string filePath)
