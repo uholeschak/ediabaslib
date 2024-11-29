@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7198,7 +7199,7 @@ namespace EdiabasLib
                     return string.Empty;
                 }
 
-                string encodedName = EdBase32.Encode(Encoding.UTF8.GetBytes(fileName.ToLowerInvariant()));
+                string encodedName = EdBase32.Encode(Encoding.UTF8.GetBytes(WebUtility.UrlEncode(fileName.ToLowerInvariant())));
                 if (string.IsNullOrEmpty(encodedName))
                 {
                     return string.Empty;
@@ -7245,7 +7246,7 @@ namespace EdiabasLib
                     return string.Empty;
                 }
 
-                string decodedFileName = Encoding.UTF8.GetString(decodedData);
+                string decodedFileName = WebUtility.UrlDecode(Encoding.UTF8.GetString(decodedData));
                 return decodedFileName;
             }
             catch (Exception)
