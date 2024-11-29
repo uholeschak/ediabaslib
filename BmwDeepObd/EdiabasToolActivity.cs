@@ -1360,6 +1360,7 @@ namespace BmwDeepObd
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.tool_select_sgbd));
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
             serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? ".grp" : ".prg");
+            serverIntent.PutExtra(FilePickerActivity.ExtraShowExtension, false);
             serverIntent.PutExtra(FilePickerActivity.ExtraDecodeFileName, true);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
         }
