@@ -215,7 +215,7 @@ namespace BmwDeepObd.FilePicker
                         // Do something with the file.  In this case we just pop some toast.
                         //Log.Verbose("FileListFragment", "The file {0} was clicked.", fileSystemInfo.FullName);
                         Intent intent = new Intent();
-                        string fullFileName = fileSystemInfo.FullFileName;
+                        string fullFileName = fileSystemInfo.FileSysInfo.FullName;
                         if (!string.IsNullOrEmpty(fileSystemInfo.FullFileName))
                         {
                             fullFileName = fileSystemInfo.FullFileName;
