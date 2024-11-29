@@ -66,7 +66,7 @@ namespace BmwDeepObd.FilePicker
                     foreach (FileInfoEx fsi in fileInfoExs)
                     {
                         bool addFile = true;
-                        if (!string.IsNullOrEmpty(filter) && fsi.RootDir == null && !fsi.FileSysInfo.IsDirectory())
+                        if (!string.IsNullOrEmpty(filter) && fsi.RootDir == null && fsi.FileSysInfo != null && !fsi.FileSysInfo.IsDirectory())
                         {
                             string baseName = Path.GetFileNameWithoutExtension(fsi.FileSysInfo.Name);
                             if (!string.IsNullOrEmpty(fsi.FullFileName))
@@ -120,7 +120,8 @@ namespace BmwDeepObd.FilePicker
                 }
                 else
                 {
-                    viewHolder.Update(fileSystemEntry.DisplayName, fileSystemEntry.FileSysInfo.IsDirectory() ? Resource.Drawable.folder : Resource.Drawable.file);
+                    bool isDirectory = fileSystemEntry.FileSysInfo != null && fileSystemEntry.FileSysInfo.IsDirectory();
+                    viewHolder.Update(fileSystemEntry.DisplayName, isDirectory ? Resource.Drawable.folder : Resource.Drawable.file);
                 }
             }
 
