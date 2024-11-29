@@ -7198,7 +7198,7 @@ namespace EdiabasLib
                     return string.Empty;
                 }
 
-                string encodedName = EdBase32.Encode(Encoding.UTF8.GetBytes(fileName));
+                string encodedName = EdBase32.Encode(Encoding.UTF8.GetBytes(fileName.ToLowerInvariant()));
                 if (string.IsNullOrEmpty(encodedName))
                 {
                     return string.Empty;
