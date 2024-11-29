@@ -68,11 +68,8 @@ namespace BmwDeepObd.FilePicker
                         bool addFile = true;
                         if (!string.IsNullOrEmpty(filter) && fsi.RootDir == null && fsi.FileSysInfo != null && !fsi.FileSysInfo.IsDirectory())
                         {
-                            string baseName = Path.GetFileNameWithoutExtension(fsi.FileSysInfo.Name);
-                            if (!string.IsNullOrEmpty(fsi.FullFileName))
-                            {
-                                baseName = Path.GetFileNameWithoutExtension(fsi.FullFileName);
-                            }
+                            string fullFileName = !string.IsNullOrEmpty(fsi.FullFileName) ? fsi.FullFileName : fsi.FileSysInfo.Name;
+                            string baseName = Path.GetFileNameWithoutExtension(fullFileName);
 
                             if (!BaseActivity.IsSearchFilterMatching(baseName, filter))
                             {
