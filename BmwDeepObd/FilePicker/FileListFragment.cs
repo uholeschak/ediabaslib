@@ -140,17 +140,7 @@ namespace BmwDeepObd.FilePicker
                         switch (fileSystemInfo.FileType)
                         {
                             case FileInfoType.File:
-                                if (!string.IsNullOrEmpty(fileSystemInfo.FullFileName))
-                                {
-                                    fileName = fileSystemInfo.FullFileName;
-                                    break;
-                                }
-
-                                if (fileSystemInfo.FileSysInfo != null && fileSystemInfo.FileSysInfo.IsDirectory())
-                                {
-                                    fileName = fileSystemInfo.FileSysInfo.FullName;
-                                    break;
-                                }
+                                fileName = !string.IsNullOrEmpty(fileSystemInfo.FullFileName) ? fileSystemInfo.FullFileName : fileSystemInfo.FileSysInfo.FullName;
                                 break;
 
                             case FileInfoType.CurrentDir:
