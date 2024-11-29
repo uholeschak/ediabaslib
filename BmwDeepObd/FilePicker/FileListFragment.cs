@@ -202,15 +202,8 @@ namespace BmwDeepObd.FilePicker
                 {
                     if (fileSystemInfo.FileSysInfo.IsFile())
                     {
-                        // Do something with the file.  In this case we just pop some toast.
-                        //Log.Verbose("FileListFragment", "The file {0} was clicked.", fileSystemInfo.FullName);
                         Intent intent = new Intent();
-                        string fullFileName = fileSystemInfo.FileSysInfo.FullName;
-                        if (!string.IsNullOrEmpty(fileSystemInfo.FullFileName))
-                        {
-                            fullFileName = fileSystemInfo.FullFileName;
-                        }
-
+                        string fullFileName = !string.IsNullOrEmpty(fileSystemInfo.FullFileName) ? fileSystemInfo.FullFileName : fileSystemInfo.FileSysInfo.FullName;
                         intent.PutExtra(FilePickerActivity.ExtraFileName, fullFileName);
 
                         Activity.SetResult(Android.App.Result.Ok, intent);
