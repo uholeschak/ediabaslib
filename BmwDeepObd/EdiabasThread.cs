@@ -908,10 +908,10 @@ namespace BmwDeepObd
                     if (ecuVariant != null)
                     {
 #if false   // test code for result states
-                        List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelResultList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelListWithResultStates(ecuVariant);
+                        List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelResultList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelListWithResultStates(ecuVariant, errorReport.ReadIs);
                         if (envCondLabelResultList != null && envCondLabelResultList.Count > 0)
                         {
-                            string detailTestText = EdiabasThread.ConvertEnvCondErrorDetail(this, errorReport, envCondLabelResultList);
+                            string detailTestText = EdiabasThread.ConvertEnvCondErrorDetail(_context, errorReport, envCondLabelResultList);
                             if (!string.IsNullOrEmpty(detailTestText))
                             {
                                 srMessage.Append("\r\n");
@@ -922,7 +922,7 @@ namespace BmwDeepObd
                         if (errorCode != 0x0000)
                         {
                             envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, errorReport.ReadIs, ecuVariant);
-                            List<string> faultResultList = EdiabasThread.ConvertFaultCodeError(errorCode, errorReport.ReadIs, errorReport, ecuVariant);
+                            List<string> faultResultList = ConvertFaultCodeError(errorCode, errorReport.ReadIs, errorReport, ecuVariant);
 
                             if (faultResultList != null && faultResultList.Count == 2)
                             {
@@ -950,7 +950,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    string textErrorCode = ActivityMain.FormatResultInt64(errorReport.ErrorDict, "F_ORT_NR", "{0:X04}");
+                    string textErrorCode = ActivityMain.FormatResultInt64(errorReport.ErrorDict, "F_ORT_NR", "0x{0:X06}");
                     if (errorCode == 0x0000 || (string.IsNullOrEmpty(text1) && string.IsNullOrEmpty(textErrorCode)))
                     {
                         srMessage.Clear();
