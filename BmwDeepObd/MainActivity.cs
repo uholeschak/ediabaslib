@@ -5865,7 +5865,7 @@ namespace BmwDeepObd
                         }
                     }
 
-                    List<string> encodeExtensions = new List<string>() { ".prg", ".grp" };
+                    List<string> encodeExtensions = new List<string>() { EdiabasNet.PrgFileExt, EdiabasNet.GroupFileExt };
                     int lastZipPercent = -1;
 
                     ActivityCommon.ExtractZipFile(assetManager, null, fileName, targetDirectory, key, ignoreFolders, encodeExtensions,
@@ -6251,7 +6251,7 @@ namespace BmwDeepObd
                 }
 
                 IEnumerable<string> files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly);
-                return files.Any(s => s.EndsWith(".prg", StringComparison.OrdinalIgnoreCase) || s.EndsWith(EdiabasNet.EncodedFileExt, StringComparison.OrdinalIgnoreCase));
+                return files.Any(s => s.EndsWith(EdiabasNet.PrgFileExt, StringComparison.OrdinalIgnoreCase) || s.EndsWith(EdiabasNet.EncodedFileExt, StringComparison.OrdinalIgnoreCase));
             }
             catch (Exception)
             {

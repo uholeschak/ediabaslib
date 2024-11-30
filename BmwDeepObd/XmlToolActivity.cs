@@ -2229,7 +2229,7 @@ namespace BmwDeepObd
             Intent serverIntent = new Intent(this, typeof(FilePickerActivity));
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.tool_select_sgbd));
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, _ecuDir);
-            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? ".grp" : ".prg");
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? EdiabasNet.GroupFileExt : EdiabasNet.PrgFileExt);
             serverIntent.PutExtra(FilePickerActivity.ExtraDirChange, false);
             serverIntent.PutExtra(FilePickerActivity.ExtraShowExtension, false);
             serverIntent.PutExtra(FilePickerActivity.ExtraDecodeFileName, true);

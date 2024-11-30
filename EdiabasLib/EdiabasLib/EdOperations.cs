@@ -2559,8 +2559,8 @@ namespace EdiabasLib
             string baseFileName = arg1.GetStringData();
             if (baseFileName.Length > 0)
             {
-                string prgFileName = Path.Combine(ediabas.EcuPath, baseFileName + ".prg");
-                string grpFileName = Path.Combine(ediabas.EcuPath, baseFileName + ".grp");
+                string prgFileName = Path.Combine(ediabas.EcuPath, baseFileName + PrgFileExt);
+                string grpFileName = Path.Combine(ediabas.EcuPath, baseFileName + GroupFileExt);
                 string fullFileName = string.Empty;
                 if (File.Exists(prgFileName))
                 {

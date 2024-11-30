@@ -679,7 +679,7 @@ namespace BmwDeepObd
                 string fileName = string.Empty;
                 if (!string.IsNullOrEmpty(_instanceData.SgbdFileName))
                 {
-                    bool groupFile = string.Compare(Path.GetExtension(_instanceData.SgbdFileName), ".grp", StringComparison.OrdinalIgnoreCase) == 0;
+                    bool groupFile = string.Compare(Path.GetExtension(_instanceData.SgbdFileName), EdiabasNet.GroupFileExt, StringComparison.OrdinalIgnoreCase) == 0;
                     if (groupFile)
                     {
                         fileName = Path.GetFileNameWithoutExtension(_instanceData.SgbdFileName);
@@ -1359,7 +1359,7 @@ namespace BmwDeepObd
             }
             serverIntent.PutExtra(FilePickerActivity.ExtraTitle, GetString(Resource.String.tool_select_sgbd));
             serverIntent.PutExtra(FilePickerActivity.ExtraInitDir, initDir);
-            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? ".grp" : ".prg");
+            serverIntent.PutExtra(FilePickerActivity.ExtraFileExtensions, groupFile ? EdiabasNet.GroupFileExt : EdiabasNet.PrgFileExt);
             serverIntent.PutExtra(FilePickerActivity.ExtraShowExtension, false);
             serverIntent.PutExtra(FilePickerActivity.ExtraDecodeFileName, true);
             StartActivityForResult(serverIntent, (int)ActivityRequest.RequestSelectSgbd);
