@@ -596,6 +596,8 @@ namespace EdiabasLib
         public const int TraceAppendDiffHours = 1;
         public const string UserDirName = "EdiabasLib";
         public const string TraceDirName = "Trace";
+        public const string PrgFileExt = ".prg";
+        public const string GroupFileExt = ".grp";
         public const string EncodedFileExt = ".enc0";
 
         public enum CallSource
@@ -4671,7 +4673,7 @@ namespace EdiabasLib
 
             foreach (UsesInfo usesInfo in _usesInfos.UsesInfoArray)
             {
-                string fileName = Path.Combine(EcuPath, usesInfo.Name.ToLower(Culture) + ".prg");
+                string fileName = Path.Combine(EcuPath, usesInfo.Name.ToLower(Culture) + PrgFileExt);
                 try
                 {
                     using (Stream tempFs = MemoryStreamReader.OpenRead(fileName, _enableFileNameEncoding))
@@ -5172,7 +5174,7 @@ namespace EdiabasLib
 
                     if (string.IsNullOrEmpty(variantName))
                     {
-                        SgbdFileName = baseFileName + ".grp";
+                        SgbdFileName = baseFileName + GroupFileExt;
                         variantName = ExecuteIdentJob(out string family).ToLower(Culture);
                         if (!string.IsNullOrEmpty(family))
                         {
@@ -5196,7 +5198,7 @@ namespace EdiabasLib
                         _familyName = familyName;
                     }
 
-                    SgbdFileName = variantName + ".prg";
+                    SgbdFileName = variantName + PrgFileExt;
                 }
                 else
                 {
@@ -5205,7 +5207,7 @@ namespace EdiabasLib
                         _groupName = string.Empty;
                         _familyName = string.Empty;
                     }
-                    SgbdFileName = baseFileName + ".prg";
+                    SgbdFileName = baseFileName + PrgFileExt;
                 }
 
                 LogFormat(EdLogLevel.Info, "ResolveSgbdFile resolved: {0}", SgbdFileName);
@@ -5233,8 +5235,8 @@ namespace EdiabasLib
             string baseFileName = Path.GetFileNameWithoutExtension(fileName);
 
             string dirName = Path.GetDirectoryName(fileName) ?? string.Empty;
-            string prgFileName = Path.Combine(dirName, baseFileName + ".prg");
-            string grpFileName = Path.Combine(dirName, baseFileName + ".grp");
+            string prgFileName = Path.Combine(dirName, baseFileName + PrgFileExt);
+            string grpFileName = Path.Combine(dirName, baseFileName + GroupFileExt);
             string localFileName = string.Empty;
 
             if (MemoryStreamReader.Exists(prgFileName, _enableFileNameEncoding))
@@ -5471,7 +5473,7 @@ namespace EdiabasLib
 
             if (jobInfo.UsesInfo != null)
             {
-                string fileName = Path.Combine(EcuPath, jobInfo.UsesInfo.Name.ToLower(Culture) + ".prg");
+                string fileName = Path.Combine(EcuPath, jobInfo.UsesInfo.Name.ToLower(Culture) + PrgFileExt);
                 try
                 {
                     using (Stream tempFs = MemoryStreamReader.OpenRead(fileName, _enableFileNameEncoding))

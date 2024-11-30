@@ -3736,7 +3736,7 @@ namespace EdiabasLib
 
                 string sgbdName = EdiabasProtected.SgbdFileName ?? string.Empty;
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SGBD name: {0}", sgbdName);
-                bool prgFile = sgbdName.EndsWith(".prg", StringComparison.OrdinalIgnoreCase);
+                bool prgFile = sgbdName.EndsWith(EdiabasNet.PrgFileExt, StringComparison.OrdinalIgnoreCase);
                 bool protocolMismatch = false;
                 EdiabasNet.ErrorCodes errorCode = EdiabasNet.ErrorCodes.EDIABAS_IFH_0014;   // concept not implemented
                 switch (KwpMode)
