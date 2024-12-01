@@ -5319,6 +5319,7 @@ namespace BmwDeepObd
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", url ?? string.Empty));
                         xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_assetFileName) ?? string.Empty));
+                        xmlInfo.Add(new XAttribute("EncodeKey", EdiabasNet.EncodeFileNameKey ?? string.Empty));
                         if (_assetFileSize > 0)
                         {
                             xmlInfo.Add(new XAttribute("Size", XmlConvert.ToString(_assetFileSize)));
@@ -6288,18 +6289,41 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+
                 XDocument xmlInfo = XDocument.Load(xmlInfoName);
-                XAttribute nameAttr = xmlInfo.Root?.Attribute("Name");
+                if (xmlInfo.Root == null)
+                {
+                    return false;
+                }
+
+                string rootName = xmlInfo.Root.Name.LocalName;
+                if (string.IsNullOrEmpty(rootName) ||
+                    string.Compare(rootName, "Info", StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+
+                XAttribute nameAttr = xmlInfo.Root.Attribute("Name");
                 if (nameAttr == null)
                 {
                     return false;
                 }
+
                 if (string.IsNullOrEmpty(_assetFileName) ||
                     string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(_assetFileName), StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     return false;
                 }
-                XAttribute sizeAttr = xmlInfo.Root?.Attribute("Size");
+
+                XAttribute encodeKeyAttr = xmlInfo.Root.Attribute("EncodeKey");
+                string encodeKey = encodeKeyAttr?.Value ?? string.Empty;
+                string currentKey = EdiabasNet.EncodeFileNameKey ?? string.Empty;
+                if (string.Compare(encodeKey, currentKey, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+
+                XAttribute sizeAttr = xmlInfo.Root.Attribute("Size");
                 if (sizeAttr != null)
                 {
                     try
@@ -6315,6 +6339,7 @@ namespace BmwDeepObd
                         return false;
                     }
                 }
+
                 return true;
             }
             catch (Exception)
