@@ -1671,6 +1671,7 @@ namespace BmwDeepObd
             _serialInfoList = new List<SerialInfoEntry>();
             AssetFileName = string.Empty;
             AssetFileSize = -1;
+            EdiabasNet.EncodeFileNameKey = string.Empty;
         }
 
         public ActivityCommon(Context context, BcReceiverUpdateDisplayDelegate bcReceiverUpdateDisplayHandler = null,
