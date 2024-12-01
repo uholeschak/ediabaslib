@@ -12699,6 +12699,7 @@ using System.Threading;"
                 return false;
             }
 
+            EdiabasNet.EncodeFileNameKey = AppId.ToLowerInvariant();
             string settingsFile2 = GetSettingsFileName(true);
             if (File.Exists(settingsFile))
             {
