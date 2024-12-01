@@ -6252,7 +6252,12 @@ namespace BmwDeepObd
                 }
 
                 IEnumerable<string> files = Directory.EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly);
-                return files.Any(s => s.EndsWith(EdiabasNet.PrgFileExt, StringComparison.OrdinalIgnoreCase) || s.EndsWith(EdiabasNet.EncodedFileExt, StringComparison.OrdinalIgnoreCase));
+                if (!files.Any(s => s.EndsWith(EdiabasNet.PrgFileExt, StringComparison.OrdinalIgnoreCase) || s.EndsWith(EdiabasNet.EncodedFileExt, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return false;
+                }
+
+                return true;
             }
             catch (Exception)
             {
