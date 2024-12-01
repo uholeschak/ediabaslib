@@ -3066,7 +3066,7 @@ namespace EdiabasLib
 
         public EdiabasNet() : this(null)
         {
-#if !ANDROID
+#if ANDROID
             _enableFileNameEncoding = true;
 #else
             _enableFileNameEncoding = _encodeFileNameKey != null;
@@ -7112,34 +7112,68 @@ namespace EdiabasLib
 
         public static string ScrambleString(string unscrambled, string key)
         {
-            char[] chars = unscrambled.ToArray();
-            Random random = new Random(_encodeFileNameKey.GetHashCode());
-            for (int i = 0; i < chars.Length; i++)
+            try
             {
-                int randomIndex = random.Next(0, chars.Length);
-                (chars[randomIndex], chars[i]) = (chars[i], chars[randomIndex]);
-            }
+                if (string.IsNullOrEmpty(key))
+                {
+                    return unscrambled;
+                }
 
-            string scrambled = new string(chars);
-            return scrambled;
+                if (string.IsNullOrEmpty(unscrambled))
+                {
+                    return unscrambled;
+                }
+
+                char[] chars = unscrambled.ToArray();
+                Random random = new Random(key.GetHashCode());
+                for (int i = 0; i < chars.Length; i++)
+                {
+                    int randomIndex = random.Next(0, chars.Length);
+                    (chars[randomIndex], chars[i]) = (chars[i], chars[randomIndex]);
+                }
+
+                string scrambled = new string(chars);
+                return scrambled;
+            }
+            catch (Exception)
+            {
+                return unscrambled;
+            }
         }
 
         public static string UnscrambleString(string scrambled, string key)
         {
-            Random random = new Random(_encodeFileNameKey.GetHashCode());
-            char[] scramChars = scrambled.ToArray();
-            List<int> swaps = new List<int>();
-            for (int i = 0; i < scramChars.Length; i++)
+            try
             {
-                swaps.Add(random.Next(0, scramChars.Length));
-            }
-            for (int i = scramChars.Length - 1; i >= 0; i--)
-            {
-                (scramChars[swaps[i]], scramChars[i]) = (scramChars[i], scramChars[swaps[i]]);
-            }
+                if (string.IsNullOrEmpty(key))
+                {
+                    return scrambled;
+                }
 
-            string unscrambled = new string(scramChars);
-            return unscrambled;
+                if (string.IsNullOrEmpty(scrambled))
+                {
+                    return scrambled;
+                }
+
+                Random random = new Random(key.GetHashCode());
+                char[] scramChars = scrambled.ToArray();
+                List<int> swaps = new List<int>();
+                for (int i = 0; i < scramChars.Length; i++)
+                {
+                    swaps.Add(random.Next(0, scramChars.Length));
+                }
+                for (int i = scramChars.Length - 1; i >= 0; i--)
+                {
+                    (scramChars[swaps[i]], scramChars[i]) = (scramChars[i], scramChars[swaps[i]]);
+                }
+
+                string unscrambled = new string(scramChars);
+                return unscrambled;
+            }
+            catch (Exception)
+            {
+                return scrambled;
+            }
         }
 
         public static string GetExistingEncodedFilePath(string filePath)
@@ -7254,6 +7288,18 @@ namespace EdiabasLib
                 {
                     decodedFileName = ScrambleString(decodedFileName, _encodeFileNameKey);
                 }
+#if false
+                else
+                {
+                    string testKey = "Test";
+                    string scramble = ScrambleString(decodedFileName, testKey);
+                    string unscramble = UnscrambleString(scramble, testKey);
+                    if (string.Compare(decodedFileName, unscramble, StringComparison.Ordinal) != 0)
+                    {
+                        return string.Empty;
+                    }
+                }
+#endif
 
                 string encodedName = EdBase32.Encode(Encoding.UTF8.GetBytes(WebUtility.UrlEncode(decodedFileName)));
                 if (string.IsNullOrEmpty(encodedName))
