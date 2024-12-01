@@ -12548,7 +12548,9 @@ using System.Threading;"
 
         public bool GetSettings(InstanceDataCommon instanceData, SettingsMode settingsMode, bool forceInit)
         {
-            return GetSettingsFromFile(instanceData, null, settingsMode, forceInit);
+            bool result = GetSettingsFromFile(instanceData, null, settingsMode, forceInit);
+            EdiabasNet.EncodeFileNameKey = AppId;
+            return result;
         }
 
         public bool GetSettingsFromFile(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, bool forceInit)
