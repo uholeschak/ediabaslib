@@ -2347,6 +2347,7 @@ namespace EdiabasLib
         private static readonly object SharedDataLock = new object();
         private static readonly Dictionary<string, byte[]> SharedDataDict = new Dictionary<string, byte[]>();
         private static int _instanceCount;
+        private static string _encodeFileNameKey;
 
         private const string JobNameInit = "INITIALISIERUNG";
         private const string JobNameExit = "ENDE";
@@ -2453,6 +2454,18 @@ namespace EdiabasLib
             get
             {
                 return EdiabasVersion >= 0x770;
+            }
+        }
+
+        public static string EncodeFileNameKey
+        {
+            get
+            {
+                return _encodeFileNameKey;
+            }
+            set
+            {
+                _encodeFileNameKey = value;
             }
         }
 
@@ -3053,6 +3066,11 @@ namespace EdiabasLib
 
         public EdiabasNet() : this(null)
         {
+#if !ANDROID
+            _enableFileNameEncoding = true;
+#else
+            _enableFileNameEncoding = _encodeFileNameKey != null;
+#endif
         }
 
         public EdiabasNet(string config)
@@ -3114,9 +3132,7 @@ namespace EdiabasLib
 
             _jobRunning = false;
             _lockTrace = false;
-#if ANDROID
-            _enableFileNameEncoding = true;
-#endif
+
             SetConfigProperty("EdiabasVersion", EdiabasVersionString);
             SetConfigProperty("Simulation", "0");
             SetConfigProperty("BipDebugLevel", "0");
@@ -7094,6 +7110,38 @@ namespace EdiabasLib
             return result;
         }
 
+        public static string ScrambleString(string unscrambled, string key)
+        {
+            char[] chars = unscrambled.ToArray();
+            Random random = new Random(_encodeFileNameKey.GetHashCode());
+            for (int i = 0; i < chars.Length; i++)
+            {
+                int randomIndex = random.Next(0, chars.Length);
+                (chars[randomIndex], chars[i]) = (chars[i], chars[randomIndex]);
+            }
+
+            string scrambled = new string(chars);
+            return scrambled;
+        }
+
+        public static string UnscrambleString(string scrambled, string key)
+        {
+            Random random = new Random(_encodeFileNameKey.GetHashCode());
+            char[] scramChars = scrambled.ToArray();
+            List<int> swaps = new List<int>();
+            for (int i = 0; i < scramChars.Length; i++)
+            {
+                swaps.Add(random.Next(0, scramChars.Length));
+            }
+            for (int i = scramChars.Length - 1; i >= 0; i--)
+            {
+                (scramChars[swaps[i]], scramChars[i]) = (scramChars[i], scramChars[swaps[i]]);
+            }
+
+            string unscrambled = new string(scramChars);
+            return unscrambled;
+        }
+
         public static string GetExistingEncodedFilePath(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
@@ -7201,7 +7249,13 @@ namespace EdiabasLib
                     return string.Empty;
                 }
 
-                string encodedName = EdBase32.Encode(Encoding.UTF8.GetBytes(WebUtility.UrlEncode(fileName.ToLowerInvariant())));
+                string decodedFileName = fileName.ToLowerInvariant();
+                if (_encodeFileNameKey != null)
+                {
+                    decodedFileName = ScrambleString(decodedFileName, _encodeFileNameKey);
+                }
+
+                string encodedName = EdBase32.Encode(Encoding.UTF8.GetBytes(WebUtility.UrlEncode(decodedFileName)));
                 if (string.IsNullOrEmpty(encodedName))
                 {
                     return string.Empty;
@@ -7249,6 +7303,11 @@ namespace EdiabasLib
                 }
 
                 string decodedFileName = WebUtility.UrlDecode(Encoding.UTF8.GetString(decodedData));
+                if (_encodeFileNameKey != null)
+                {
+                    decodedFileName = UnscrambleString(decodedFileName, _encodeFileNameKey);
+                }
+
                 return decodedFileName;
             }
             catch (Exception)
