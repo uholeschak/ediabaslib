@@ -6318,7 +6318,7 @@ namespace BmwDeepObd
                 XAttribute encodeKeyAttr = xmlInfo.Root.Attribute("EncodeKey");
                 string encodeKey = encodeKeyAttr?.Value ?? string.Empty;
                 string currentKey = EdiabasNet.EncodeFileNameKey ?? string.Empty;
-                if (string.Compare(encodeKey, currentKey, StringComparison.OrdinalIgnoreCase) != 0)
+                if (string.Compare(encodeKey, currentKey, StringComparison.Ordinal) != 0)
                 {
                     return false;
                 }
