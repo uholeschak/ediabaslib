@@ -6335,8 +6335,8 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                XAttribute appIdAttr = xmlInfo.Root.Attribute("AppId");
-                string encodeKey = appIdAttr?.Value ?? string.Empty;
+                XAttribute encodeKeyAttr = xmlInfo.Root.Attribute("EncodeKey");
+                string encodeKey = encodeKeyAttr?.Value ?? string.Empty;
                 string currentKey = EdiabasNet.EncodeFileNameKey ?? string.Empty;
                 if (string.Compare(encodeKey, currentKey, StringComparison.Ordinal) != 0)
                 {
