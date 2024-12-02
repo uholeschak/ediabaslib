@@ -5319,7 +5319,7 @@ namespace BmwDeepObd
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", url ?? string.Empty));
                         xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_assetFileName) ?? string.Empty));
-                        xmlInfo.Add(new XAttribute("EncodeKey", EdiabasNet.EncodeFileNameKey ?? string.Empty));
+                        xmlInfo.Add(new XAttribute("DataId", EdiabasNet.EncodeFileNameKey ?? string.Empty));
                         if (_assetFileSize > 0)
                         {
                             xmlInfo.Add(new XAttribute("Size", XmlConvert.ToString(_assetFileSize)));
@@ -6335,10 +6335,10 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                XAttribute encodeKeyAttr = xmlInfo.Root.Attribute("EncodeKey");
-                string encodeKey = encodeKeyAttr?.Value ?? string.Empty;
-                string currentKey = EdiabasNet.EncodeFileNameKey ?? string.Empty;
-                if (string.Compare(encodeKey, currentKey, StringComparison.Ordinal) != 0)
+                XAttribute dataIdAttr = xmlInfo.Root.Attribute("DataId");
+                string dataId = dataIdAttr?.Value ?? string.Empty;
+                string encodeKey = EdiabasNet.EncodeFileNameKey ?? string.Empty;
+                if (string.Compare(dataId, encodeKey, StringComparison.Ordinal) != 0)
                 {
                     return false;
                 }

@@ -7144,7 +7144,7 @@ namespace EdiabasLib
                     return unscrambled;
                 }
 
-                int seed = int.Abs(GetHashCode(key));
+                int seed = Math.Abs(GetHashCode(key));
                 Random random = new Random(seed);
                 char[] chars = unscrambled.ToArray();
 
@@ -7177,7 +7177,7 @@ namespace EdiabasLib
                     return scrambled;
                 }
 
-                int seed = int.Abs(GetHashCode(key));
+                int seed = Math.Abs(GetHashCode(key));
                 Random random = new Random(seed);
                 char[] scramChars = scrambled.ToArray();
                 List<int> swaps = new List<int>();
