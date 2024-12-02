@@ -489,7 +489,7 @@ namespace BmwDeepObd
             [XmlElement("CompressTrace")] public bool CompressTrace { get; set; }
             // hidden settings
             [XmlElement("DisableNetworkCheck")] public bool DisableNetworkCheck { get; set; }
-            [XmlElement("DisableFileNameEncoding")] public bool DisableFileNameEncoding { get; set; }
+            [XmlElement("DisableFileNameEncoding"), DefaultValue(false)] public bool DisableFileNameEncoding { get; set; }
         }
 
         public class VagEcuEntry
@@ -12465,6 +12465,7 @@ using System.Threading;"
                 storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorUrl), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.EmailAddress), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.TraceInfo), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.DisableFileNameEncoding), ignoreXmlAttributes);
             }
 
             return storageClassAttributes;

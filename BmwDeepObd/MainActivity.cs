@@ -5870,9 +5870,13 @@ namespace BmwDeepObd
                         }
                     }
 
-                    List<string> encodeExtensions = new List<string>() { EdiabasNet.PrgFileExt, EdiabasNet.GroupFileExt };
-                    int lastZipPercent = -1;
+                    List<string> encodeExtensions = null;
+                    if (!ActivityCommon.DisableFileNameEncoding)
+                    {
+                        encodeExtensions = new List<string>() { EdiabasNet.PrgFileExt, EdiabasNet.GroupFileExt };
+                    }
 
+                    int lastZipPercent = -1;
                     ActivityCommon.ExtractZipFile(assetManager, null, fileName, targetDirectory, key, ignoreFolders, encodeExtensions,
                         (percent, decrypt) =>
                         {
