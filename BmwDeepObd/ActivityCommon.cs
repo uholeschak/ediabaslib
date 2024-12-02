@@ -367,6 +367,7 @@ namespace BmwDeepObd
                 this.CollectDebugInfo = ActivityCommon.CollectDebugInfo;
                 this.CompressTrace = ActivityCommon.CompressTrace;
                 this.DisableNetworkCheck = ActivityCommon.DisableNetworkCheck;
+                this.DisableFileNameEncoding = ActivityCommon.DisableFileNameEncoding;
             }
 
             public void InitData(InstanceDataCommon instanceData, ActivityCommon activityCommon, bool storage = false)
@@ -488,6 +489,7 @@ namespace BmwDeepObd
             [XmlElement("CompressTrace")] public bool CompressTrace { get; set; }
             // hidden settings
             [XmlElement("DisableNetworkCheck")] public bool DisableNetworkCheck { get; set; }
+            [XmlElement("DisableFileNameEncoding")] public bool DisableFileNameEncoding { get; set; }
         }
 
         public class VagEcuEntry
@@ -1429,6 +1431,8 @@ namespace BmwDeepObd
         public static bool CompressTrace { get; set; }
 
         public static bool DisableNetworkCheck { get; set; }
+
+        public static bool DisableFileNameEncoding { get; set; }
 
         public static TranslatorType SelectedTranslator => _translatorType;
 
@@ -12662,6 +12666,7 @@ using System.Threading;"
                     CollectDebugInfo = storageData.CollectDebugInfo;
                     CompressTrace = storageData.CompressTrace;
                     DisableNetworkCheck = storageData.DisableNetworkCheck;
+                    DisableFileNameEncoding = storageData.DisableFileNameEncoding;
 
                     CheckSettingsVersionChange(instanceData);
                 }
