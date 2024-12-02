@@ -5306,6 +5306,7 @@ namespace BmwDeepObd
             _downloadProgress.ButtonAbort.Enabled = false;
             _downloadProgress.Show();
             UpdateLockState();
+            UpdateDisplay();
             _activityCommon.SetPreferredNetworkInterface();
 
             Thread downloadThread = new Thread(() =>
@@ -5398,6 +5399,7 @@ namespace BmwDeepObd
                             _downloadProgress.Dismiss();
                             _downloadProgress = null;
                             UpdateLockState();
+                            UpdateDisplay();
                         }
 
                         bool cancelled = ex.InnerException is System.Threading.Tasks.TaskCanceledException;
@@ -5461,6 +5463,7 @@ namespace BmwDeepObd
                                             _downloadProgress.Dismiss();
                                             _downloadProgress = null;
                                             UpdateLockState();
+                                            UpdateDisplay();
                                         }
                                     };
                                 }
@@ -5477,6 +5480,7 @@ namespace BmwDeepObd
                     _downloadProgress.Dismiss();
                     _downloadProgress = null;
                     UpdateLockState();
+                    UpdateDisplay();
 
                     if (!success || error)
                     {
@@ -5968,6 +5972,7 @@ namespace BmwDeepObd
                         _downloadProgress.Dismiss();
                         _downloadProgress = null;
                         UpdateLockState();
+                        UpdateDisplay();
                     }
 
                     if (extractFailed)
