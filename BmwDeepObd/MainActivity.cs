@@ -6079,6 +6079,7 @@ namespace BmwDeepObd
                     .SetMessage(message)
                     .SetTitle(Resource.String.alert_title_question)
                     .Show();
+
                 if (_downloadEcuAlertDialog != null)
                 {
                     _downloadEcuAlertDialog.DismissEvent += (sender, args) =>
@@ -6087,14 +6088,21 @@ namespace BmwDeepObd
                         {
                             return;
                         }
+
+                        _downloadEcuAlertDialog = null;
+                        UpdateDisplay();
+
                         if (!_instanceData.StorageRequirementsAccepted)
                         {
                             Finish();
+                            return;
                         }
-                        _downloadEcuAlertDialog = null;
+
                         CheckForEcuFiles(checkPackage);
                     };
                 }
+
+                UpdateDisplay();
                 return false;
             }
 
@@ -6136,8 +6144,11 @@ namespace BmwDeepObd
                             return;
                         }
                         _downloadEcuAlertDialog = null;
+                        UpdateDisplay();
                     };
                 }
+
+                UpdateDisplay();
                 return false;
             }
 
@@ -6230,13 +6241,17 @@ namespace BmwDeepObd
                         {
                             return;
                         }
+
                         _downloadEcuAlertDialog = null;
+                        UpdateDisplay();
+
                         handler?.Invoke(this, EventArgs.Empty);
                     };
                 }
 
                 _instanceData.UpdateSkipVersion = -1;
                 StoreSettings();
+                UpdateDisplay();
                 return true;
             }
             return false;
@@ -6320,8 +6335,8 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                XAttribute encodeKeyAttr = xmlInfo.Root.Attribute("EncodeKey");
-                string encodeKey = encodeKeyAttr?.Value ?? string.Empty;
+                XAttribute appIdAttr = xmlInfo.Root.Attribute("AppId");
+                string encodeKey = appIdAttr?.Value ?? string.Empty;
                 string currentKey = EdiabasNet.EncodeFileNameKey ?? string.Empty;
                 if (string.Compare(encodeKey, currentKey, StringComparison.Ordinal) != 0)
                 {
