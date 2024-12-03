@@ -11547,12 +11547,12 @@ namespace BmwDeepObd
         }
 
 
-        public static List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(string packageAssembiesDir, out bool hasErrors)
+        public static List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(string packageAssembiesDir, out List<string> errorList)
         {
             string assembliesDir = packageAssembiesDir;
             Assembly[] loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<Microsoft.CodeAnalysis.MetadataReference> referencesList = new List<Microsoft.CodeAnalysis.MetadataReference>();
-            hasErrors = false;
+            errorList = new List<string>();
 
             List<string> abiDirs = GetCurrentAbiDirs();
 #if DEBUG
@@ -11616,12 +11616,13 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    hasErrors = true;
+                    string fileName = Path.GetFileName(assembly.Location);
+                    errorList.Add(fileName);
                 }
             }
 
 #if DEBUG
-            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences Has errors: {0}", hasErrors));
+            Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences Error count: {0}", errorList.Count));
 #endif
             return referencesList;
         }

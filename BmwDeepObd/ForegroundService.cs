@@ -871,11 +871,11 @@ namespace BmwDeepObd
                     return true;
                 }
 
-                List<Microsoft.CodeAnalysis.MetadataReference> referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out bool hasErrors);
-                if (hasErrors)
+                List<Microsoft.CodeAnalysis.MetadataReference> referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out List<string> errorList);
+                if (errorList.Count > 0)
                 {
 #if DEBUG
-                    Android.Util.Log.Info(Tag, "CompileCode: GetLoadedMetadataReferences failed");
+                    Android.Util.Log.Info(Tag, string.Format("CompileCode: GetLoadedMetadataReferences failed: Errors={0}", errorList.Count));
 #endif
                     return false;
                 }

@@ -5104,12 +5104,12 @@ namespace BmwDeepObd
 #endif
                         }
 
-                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out bool hasErrors);
-                        if (hasErrors)
+                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out List<string> errorList);
+                        if (errorList.Count > 0)
                         {
                             if (_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir, true))
                             {
-                                referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out hasErrors);
+                                referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out errorList);
                             }
                             else
                             {
@@ -5119,10 +5119,10 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (hasErrors)
+                        if (errorList.Count > 0)
                         {
 #if DEBUG
-                            Log.Info(Tag, "CompileCode GetLoadedMetadataReferences failed");
+                            Log.Info(Tag, string.Format("CompileCode GetLoadedMetadataReferences failed: Errors={0}", errorList.Count));
 #endif
                         }
 
