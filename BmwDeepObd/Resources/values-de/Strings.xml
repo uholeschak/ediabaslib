@@ -183,7 +183,7 @@
   <string name="compile_cpu_usage_value">CPU Auslastung: {0}%</string>
   <string name="compile_cpu_usage_high">Die CPU Auslastung im Leerlauf ist sehr hoch ({0}%), dies kann Kommunikationsprobleme verursachen.\nBitte beenden Sie Hintergrund-Apps welche die CPU zu stark belasten.</string>
   <string name="compile_start">Anwendercode kompilieren</string>
-  <string name="compile_missing_assemblies">Fehlende Assemblies:</string>
+  <string name="compile_missing_assemblies">Fehlende System-Assemblies:</string>
   <string name="compile_crash">Die App ist beim Kompilieren des Anwerdercodes abgestürzt.\nEs gibt einen bekannten Compilerfehler:\nVerwenden Sie keine komplexen initialisierten Strukturen oder Arrays, initialisieren Sie diese im Konstruktor.</string>
   <string name="compile_compat_id_warn">Die Konfiguration wurde mit einer anderen BMW Datenbank erzeugt, einige Einträge könnten inkompatibel sein.\nUm dies zu korrigieren, öffnen Sie jede ECU, welche mit einem * im Seitentitel markiert ist, im Konfigurationsgenerator, prüfen die Einträge und speichern die Konfiguration wieder ab.</string>
 
