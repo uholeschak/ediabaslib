@@ -8380,7 +8380,8 @@ namespace BmwDeepObd
                 LastAdapterSerial = string.Empty;
                 EmailAddress = string.Empty;
                 TraceInfo = string.Empty;
-                AppId = string.Empty;
+                // keep last AppId
+                //AppId = string.Empty;
             }
 
             if (includeTheme)
