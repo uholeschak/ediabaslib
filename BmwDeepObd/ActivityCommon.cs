@@ -12559,7 +12559,7 @@ using System.Threading;"
             return result;
         }
 
-        public bool GetSettingsFromFile(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, bool forceInit)
+        public bool GetSettingsFromFile(InstanceDataCommon instanceData, string fileName, SettingsMode settingsMode, bool forceInit = false)
         {
             if (instanceData == null)
             {
