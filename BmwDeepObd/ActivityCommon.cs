@@ -11595,6 +11595,23 @@ namespace BmwDeepObd
 
                 if (location != null)
                 {
+                    try
+                    {
+                        using (File.Open(location, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        {
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences File read Exception: {0}", ex.Message));
+#endif
+                        location = null;
+                    }
+                }
+
+                if (location != null)
+                {
                     referencesList.Add(Microsoft.CodeAnalysis.MetadataReference.CreateFromFile(location));
                 }
                 else
