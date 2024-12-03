@@ -11601,7 +11601,9 @@ namespace BmwDeepObd
                         {
                         }
                     }
+#pragma warning disable CS0168 // Variable is declared but never used
                     catch (Exception ex)
+#pragma warning restore CS0168 // Variable is declared but never used
                     {
 #if DEBUG
                         Android.Util.Log.Info(Tag, string.Format("GetLoadedMetadataReferences File read Exception: {0}", ex.Message));
