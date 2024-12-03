@@ -1206,7 +1206,7 @@ namespace BmwDeepObd
                             }
                             else if (!string.IsNullOrEmpty(importFileName))
                             {
-                                if (!_activityCommon.GetSettingsFromFile(_instanceData, importFileName, ActivityCommon.SettingsMode.Private, false))
+                                if (!_activityCommon.GetSettingsFromFile(_instanceData, importFileName, ActivityCommon.SettingsMode.Private))
                                 {
                                     string message = GetString(Resource.String.settings_import_no_file) + "\r\n" + exportFileName;
                                     _activityCommon.ShowAlert(message, Resource.String.alert_title_error);
