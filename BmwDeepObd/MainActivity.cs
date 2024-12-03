@@ -5193,17 +5193,42 @@ namespace BmwDeepObd
                             Thread.Sleep(1000);
                         }
 
-                        foreach (string compileResult in compileResultList)
+                        if (compileResultList.Count > 0)
                         {
-                            string result = compileResult;
-                            RunOnUiThread(() =>
+                            if (errorList.Count > 0)
                             {
-                                if (_activityCommon == null)
+                                StringBuilder sbMessage = new StringBuilder();
+                                sbMessage.AppendLine(GetString(Resource.String.compile_missing_assemblies));
+
+                                foreach (string error in errorList)
                                 {
-                                    return;
+                                    sbMessage.AppendLine(error);
                                 }
-                                _activityCommon.ShowAlert(result, Resource.String.alert_title_error);
-                            });
+
+                                RunOnUiThread(() =>
+                                {
+                                    if (_activityCommon == null)
+                                    {
+                                        return;
+                                    }
+                                    _activityCommon.ShowAlert(sbMessage.ToString(), Resource.String.alert_title_error);
+                                });
+                            }
+                            else
+                            {
+                                foreach (string compileResult in compileResultList)
+                                {
+                                    string result = compileResult;
+                                    RunOnUiThread(() =>
+                                    {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+                                        _activityCommon.ShowAlert(result, Resource.String.alert_title_error);
+                                    });
+                                }
+                            }
                         }
                     }
 
