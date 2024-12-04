@@ -60,6 +60,7 @@ namespace Ediabas
         };
 
         public const int APICOMPATIBILITYVERSION = 0x0800;
+        public const int APICOMPATIBILITYVERSION_MIN = 0x0700;
         public const int APIBUSY = 0;
         public const int APIREADY = 1;
         public const int APIBREAK = 2;
@@ -234,7 +235,7 @@ namespace Ediabas
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
         {
             versionInfo = string.Empty;
-            if (versionCompatibility < APICOMPATIBILITYVERSION)
+            if (versionCompatibility < APICOMPATIBILITYVERSION_MIN)
             {
                 return false;
             }
