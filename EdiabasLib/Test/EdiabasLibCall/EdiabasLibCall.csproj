@@ -55,13 +55,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\apiNET32\apiNET32.csproj">
-      <Project>{A210DA60-5EFE-4373-A553-7C7F746BDD81}</Project>
-      <Name>apiNET32</Name>
-    </ProjectReference>
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <ProjectReference Include="..\..\apiNET\apiNET464.csproj">
+      <Project>{a210da60-5efe-4373-a553-7c7f746bdd81}</Project>
+      <Name>apiNET464</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
