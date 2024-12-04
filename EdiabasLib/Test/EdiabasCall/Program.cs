@@ -457,7 +457,67 @@ namespace EdiabasCall
                                                 }
                                                 break;
                                             }
+#if EDIABAS
+                                        case API.APIFORMAT_REAL + 1:
+                                            if (_apiHandle != 0)
+                                            {
+                                                try
+                                                {
+                                                    // ReSharper disable once InlineOutVariableDeclaration
+                                                    long resultLong;
+                                                    bool apiResultLL = _is64Bit ? __api64ResultLongLong(_apiHandle, out resultLong, resultName, set) :
+                                                        __api32ResultLongLong(_apiHandle, out resultLong, resultName, set);
+                                                    if (apiResultLL)
+                                                    {
+                                                        sbResult.Append(string.Format(Culture, "LL: {0}", resultLong));
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    sbResult.Append(string.Format(Culture, " '{0}'", ex.Message));
+                                                }
+                                            }
+                                            break;
 
+                                        case API.APIFORMAT_REAL + 2:
+                                            if (_apiHandle != 0)
+                                            {
+                                                try
+                                                {
+                                                    // ReSharper disable once InlineOutVariableDeclaration
+                                                    ulong resultUlong;
+                                                    bool apiResultQW = _is64Bit ? __api64ResultQWord(_apiHandle, out resultUlong, resultName, set) :
+                                                        __api32ResultQWord(_apiHandle, out resultUlong, resultName, set);
+                                                    if (apiResultQW)
+                                                    {
+                                                        sbResult.Append(string.Format(Culture, "QW: {0}", resultUlong));
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    sbResult.Append(string.Format(Culture, " '{0}'", ex.Message));
+                                                }
+                                            }
+                                            break;
+#else
+                                        case API.APIFORMAT_LONGLONG:
+                                            {
+                                                if (API.apiResultLongLong(out long resultLong, resultName, set))
+                                                {
+                                                    sbResult.Append(string.Format(Culture, "LL: {0}", resultLong));
+                                                }
+                                                break;
+                                            }
+
+                                        case API.APIFORMAT_QWORD:
+                                            {
+                                                if (API.apiResultQWord(out ulong resultUlong, resultName, set))
+                                                {
+                                                    sbResult.Append(string.Format(Culture, "QW: {0}", resultUlong));
+                                                }
+                                                break;
+                                            }
+#endif
                                         case API.APIFORMAT_TEXT:
                                             {
                                                 if (_apiHandle == 0)
