@@ -47,7 +47,7 @@ More details could be found here: [Supported adapter types](docs/AdapterTypes.md
 ![BMW deep OBD and VAG](docs/README_AppMotorSmall.png) ![BMW deep OBD and VAG](docs/README_AppMotorGraphSmall.png)
 
 ### Android Auto
-[Android Auto](docs/Deep_OBD_for_BMW_and_VAG.md#android-auto) is now available in the release version of the app.
+[Android Auto](docs/Deep_OBD_for_BMW_and_VAG.md#android-auto) is now available in the release version of _[Deep OBD](docs/Deep_OBD_for_BMW_and_VAG.md)_.
 
 # Hints
 At the moment most BEST/1 commands are implemented, but a few are still missing, which seem to be not required in the current ECU files.  
