@@ -8,8 +8,8 @@
     <ProjectGuid>{A210DA60-5EFE-4373-A553-7C7F746BDD81}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>apiNET32</RootNamespace>
-    <AssemblyName>apiNET32</AssemblyName>
+    <RootNamespace>apiNET464</RootNamespace>
+    <AssemblyName>apiNET464</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
