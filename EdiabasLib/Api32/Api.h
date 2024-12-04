@@ -1,5 +1,5 @@
 /**
-***    @(#)  api.h - Header file of API/EDIABAS, Version 7.0  @(#)
+***    @(#)  api.h - Header file of API/EDIABAS, Version 8.0  @(#)
 ***
 *******************************************************************/
 
@@ -15,7 +15,7 @@ extern "C" {
 
 /*--- define's ---*/
 
-#define APICOMPATIBILITYVERSION 0x0700  /* API compatibility version */
+#define APICOMPATIBILITYVERSION 0x0800  /* API compatibility version */
 
 #define APIBUSY                 0       /* API state's */
 #define APIREADY                1
@@ -27,13 +27,13 @@ extern "C" {
 #define APIMAXNAME              64      /* maximal name length incl. '\0'
                                            (job, ecu, result)              */
 #define APIMAXPARA              1024    /* maximal job para length */
-#define APIMAXPARAEXT           65536L  /* maximal job para length / v7 */
+#define APIMAXPARAEXT           65536   /* maximal job para length / v7 */
 #define APIMAXSTDPARA           256     /* maximal standard job para length */
 #define APIMAXRESULT            256     /* maximal result length incl. '\0'*/
 
 #define APIMAXTEXT              1024    /* maximal text length incl. '\0'  */
 #define APIMAXBINARY            1024    /* maximal binary buffer length    */
-#define APIMAXBINARYEXT         65536L  /* maximal binary buffer length / v7 */
+#define APIMAXBINARYEXT         65536   /* maximal binary buffer length / v7 */
 
 #define APIMAXCONFIG            256     /* maximal config buffer length incl.'\0' */
 
@@ -409,8 +409,8 @@ typedef char APICHAR;                   /* 8 bit            */
 typedef unsigned char APIBYTE;          /* 8 bit, unsigned  */
 typedef short APIINTEGER;               /* 16 bit           */
 typedef unsigned short APIWORD;         /* 16 bit, unsigned */
-typedef long APILONG;                   /* 32 bit           */
-typedef unsigned long APIDWORD;         /* 32 bit, unsigned */
+typedef int32_t APILONG;                /* 32 bit           */
+typedef uint32_t APIDWORD;              /* 32 bit, unsigned */
 typedef int64_t APILONGLONG;            /* 64 bit           */
 typedef uint64_t APIQWORD;              /* 64 bit, unsigned */
 typedef APICHAR APITEXT;                /* 8 bit            */
@@ -425,7 +425,9 @@ typedef enum { APIFORMAT_CHAR,          /* CHAR format      */
                APIFORMAT_DWORD,         /* DWORD format     */
                APIFORMAT_TEXT,          /* TEXT format      */
                APIFORMAT_BINARY,        /* BINARY format    */
-               APIFORMAT_REAL           /* REAL format      */
+               APIFORMAT_REAL,          /* REAL format      */
+               APIFORMAT_LONGLONG,      /* LONGLONG format  */
+               APIFORMAT_QWORD          /* QWORD format     */
              } APIRESULTFORMAT;
 
 typedef void *APIRESULTFIELD;           /* results handle   */
@@ -450,11 +452,9 @@ APIBOOL apiResultBinary(APIBINARY *,APIWORD *,const char *,APIWORD);
 APIBOOL apiResultByte(APIBYTE *,const char *,APIWORD);
 APIBOOL apiResultChar(APICHAR *,const char *,APIWORD);
 APIBOOL apiResultDWord(APIDWORD *,const char *,APIWORD);
-APIBOOL apiResultQWord(APIQWORD*, const char*, APIWORD);
 APIBOOL apiResultFormat(APIRESULTFORMAT *,const char *,APIWORD);
 APIBOOL apiResultInt(APIINTEGER *,const char *,APIWORD);
 APIBOOL apiResultLong(APILONG *,const char *,APIWORD);
-APIBOOL apiResultLongLong(APILONGLONG*, const char*, APIWORD);
 APIBOOL apiResultName(char *,APIWORD,APIWORD);
 APIBOOL apiResultNumber(APIWORD *,APIWORD);
 APIBOOL apiResultReal(APIREAL *,const char *,APIWORD);
@@ -475,6 +475,11 @@ APIBOOL apiCheckVersion(int,char *);
 APIBOOL apiResultBinaryExt(APIBINARY *,APIDWORD *,APIDWORD,const char *,APIWORD);
 int apiStateExt(int);
 void apiTrace(const char *);
+
+/*--- additional prototypes / v8 ---*/
+
+APIBOOL apiResultLongLong(APILONGLONG *,const char *,APIWORD);
+APIBOOL apiResultQWord(APIQWORD *,const char *,APIWORD);
 
 
 #ifdef __cplusplus

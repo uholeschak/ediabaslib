@@ -41,7 +41,7 @@ namespace Ediabas
 
         private static readonly ApiInternal _apiInternal;
 
-        public const int APICOMPATIBILITYVERSION = 0x700;
+        public const int APICOMPATIBILITYVERSION = 0x0800;
         public const int APIBUSY = 0;
         public const int APIREADY = 1;
         public const int APIBREAK = 2;
@@ -66,6 +66,8 @@ namespace Ediabas
         public const int APIFORMAT_TEXT = 6;
         public const int APIFORMAT_BINARY = 7;
         public const int APIFORMAT_REAL = 8;
+        public const int APIFORMAT_LONGLONG = 9;
+        public const int APIFORMAT_QWORD = 10;
         public const int EDIABAS_ERR_NONE = 0;
         public const int EDIABAS_RESERVED = 1;
         public const int EDIABAS_ERROR_CODE_OUT_OF_RANGE = 2;
