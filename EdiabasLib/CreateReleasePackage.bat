@@ -10,7 +10,7 @@ set "EDIABASTESTPATH=!PACKAGEPATH!EdiabasTest\"
 set "TOOLPATH=!PACKAGEPATH!EdiabasLibConfigTool\"
 set "TOOLSRCPATH=!BATPATH!EdiabasLibConfigTool\artifacts\bin\EdiabasLibConfigTool\release\"
 set "LOGCONVPATH=!PACKAGEPATH!LogfileConverter\"
-set "APINET32PATH=!PACKAGEPATH!ApiNet32\"
+set "APINETPATH=!PACKAGEPATH!ApiNet\"
 set "CANADAPTERPATH=!PACKAGEPATH!CanAdapter\"
 set "CANADAPTERELMPATH=!PACKAGEPATH!CanAdapterElm\"
 set "ENETADAPTERPATH=!PACKAGEPATH!EnetAdapter\"
@@ -41,8 +41,8 @@ copy "!TOOLSRCPATH!Api32\*.*" "!TOOLPATH!Api32" || EXIT /b 1
 mkdir "!LOGCONVPATH!" || EXIT /b 1
 copy "!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\*.*" "!LOGCONVPATH!" || EXIT /b 1
 
-mkdir "!APINET32PATH!" || EXIT /b 1
-copy "!BATPATH!apiNET32\bin\Release\*.dll" "!APINET32PATH!" || EXIT /b 1
+mkdir "!APINETPATH!" || EXIT /b 1
+copy "!BATPATH!apiNET\bin\Release\*.dll" "!APINETPATH!" || EXIT /b 1
 
 mkdir "!CANADAPTERPATH!" || EXIT /b 1
 copy "!BATPATH!CanAdapter\CanAdapter\Release\*.hex" "!CANADAPTERPATH!" || EXIT /b 1
