@@ -11,6 +11,16 @@ IF NOT EXIST "!BESTNET_PATH!" (
 )
 
 echo:
+echo compiling base1.b1v
+!BESTNET_PATH! -i "!ECU_PATH!\base1.b1v" EXIT /b 1
+echo done
+
+echo:
+echo compiling base2.b1v
+!BESTNET_PATH! -i "!ECU_PATH!\base2.b1v" EXIT /b 1
+echo done
+
+echo:
 echo compiling cmd_test1.b1v
 !BESTNET_PATH! -i "!ECU_PATH!\cmd_test1.b1v" EXIT /b 1
 echo done
