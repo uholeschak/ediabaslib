@@ -272,7 +272,7 @@ static array<byte> ^ ConvertNetString(String ^string, char far *buf, int bufsize
         return nullptr;
     }
     array<byte> ^ bytes = Ediabas::ApiInternal::Encoding->GetBytes(string);
-    int length = min(bytes->Length, bufsize);
+    int length = min(bytes->Length, bufsize - 1);
     if (length > 0)
     {
         pin_ptr<byte> p = &bytes[0];
