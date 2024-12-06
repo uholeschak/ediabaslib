@@ -703,7 +703,7 @@ namespace Ediabas
 
         public bool apiResultText(out char[] buffer, string result, ushort rset, string format)
         {
-            logFormat(ApiLogLevel.Normal, "apiResultText({0}, {1}, {2})", result, rset, format);
+            logFormat(ApiLogLevel.Normal, "apiResultText[]({0}, {1}, {2})", result, rset, format);
 
             buffer = null;
             if (!waitJobFinish())
@@ -730,7 +730,7 @@ namespace Ediabas
 
         public bool apiResultBinary(out byte[] buffer, out ushort bufferLen, string result, ushort rset)
         {
-            logFormat(ApiLogLevel.Normal, "apiResultText({0}, {1})", result, rset);
+            logFormat(ApiLogLevel.Normal, "apiResultBinary({0}, {1})", result, rset);
 
             buffer = null;
             bufferLen = 0;
