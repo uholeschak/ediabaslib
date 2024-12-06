@@ -714,7 +714,7 @@ namespace Ediabas
 
             setLocalError(EDIABAS_ERR_NONE);
             string text;
-            if (apiResultText(out text, result, rset, format))
+            if (!apiResultText(out text, result, rset, format))
             {
                 logFormat(ApiLogLevel.Normal, "={0}", false);
                 return false;
