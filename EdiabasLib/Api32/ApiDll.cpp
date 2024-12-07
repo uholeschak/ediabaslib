@@ -777,18 +777,20 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
         return APIFALSE;
     }
 
-    String ^ buffer;
+    String^ buffer;
+    String^ resultString = ConvertCString(result);
+    String^ formatString = ConvertCString(format);
     if (!apiInternal->apiResultText(
         buffer,
-        ConvertCString(result),
+        resultString,
         set,
-        ConvertCString(format)))
+        formatString))
     {
         return APIFALSE;
     }
     array<byte> ^ bytes = ConvertNetString(buffer, buf, APIMAXTEXT);
 
-    apiInternal->logFormat(Ediabas::ApiInternal::ApiLogLevel::Normal, "=({0})", bytes);
+    apiInternal->logFormat(Ediabas::ApiInternal::ApiLogLevel::Normal, "apiResultText({0}, {1}, {2}={3})", resultString, set, formatString, bytes);
     return APITRUE;
 }
 
