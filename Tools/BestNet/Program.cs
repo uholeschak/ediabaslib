@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -335,7 +336,8 @@ namespace BestNet
                 IntPtr[] libFilesPtr = new IntPtr[] { IntPtr.Zero };
                 IntPtr userNamePtr = IntPtr.Zero;
 
-                string dateStr = DateTime.Now.ToString("ddd MMM dd HH:mm:ss yyy");
+                DateTime inputFileDate = File.GetLastWriteTime(inputFile);
+                string dateStr = inputFileDate.ToString("ddd MMM dd HH:mm:ss yyyy", CultureInfo.InvariantCulture);
                 IntPtr datePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(dateStr));
                 string password = passwordLabel ?? string.Empty;
                 IntPtr passwordLabelPtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(password));
