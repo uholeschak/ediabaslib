@@ -99,6 +99,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EdiabasLibConfigTool", "EdiabasLibConfigTool\EdiabasLibConfigTool.csproj", "{073E54E9-DCCA-4A9F-9E72-7E96340E43BE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DEA06A3D-89F8-4AC1-B765-7A4A5C603E37} = {DEA06A3D-89F8-4AC1-B765-7A4A5C603E37}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apiNET464", "apiNET\apiNET464.csproj", "{A210DA60-5EFE-4373-A553-7C7F746BDD81}"
 EndProject
