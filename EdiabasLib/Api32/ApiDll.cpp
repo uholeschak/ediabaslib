@@ -446,7 +446,7 @@ DLLEXPORT void FAR PASCAL __apiJob(unsigned int handle,
     {
         paraBuffer[i] = para[i];
     }
-    apiInternal->logFormat(Ediabas::ApiInternal::ApiLogLevel::Normal, "apiJob({0}, {1}, {2}={3}, {4})",
+    apiInternal->logFormat(Ediabas::ApiInternal::ApiLogLevel::Normal, "__apiJob({0}, {1}, {2}={3}, {4})",
         ecuString, jobString,
         Ediabas::ApiInternal::Encoding->GetString(paraBuffer),
         paraBuffer, resultString);
@@ -790,7 +790,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiResultText(unsigned int handle,
     }
     array<byte> ^ bytes = ConvertNetString(buffer, buf, APIMAXTEXT);
 
-    apiInternal->logFormat(Ediabas::ApiInternal::ApiLogLevel::Normal, "apiResultText({0}, {1}, {2}={3})", resultString, set, formatString, bytes);
+    apiInternal->logFormat(Ediabas::ApiInternal::ApiLogLevel::Normal, "__apiResultText({0}, {1}, {2}={3})", resultString, set, formatString, bytes);
     return APITRUE;
 }
 
