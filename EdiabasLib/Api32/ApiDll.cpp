@@ -254,6 +254,7 @@ static String ^ ConvertCString(const char far *string)
     {
         return String::Empty;
     }
+
     array<byte>^ bytes = gcnew array<byte>(length);
     pin_ptr<byte> p = &bytes[0];
     memcpy(p, string, length);
@@ -266,20 +267,26 @@ static array<byte> ^ ConvertNetString(String ^string, char far *buf, int bufsize
     {
         return nullptr;
     }
+
     if (string == nullptr)
     {
         buf[0] = 0;
         return nullptr;
     }
-    array<byte> ^ bytes = Ediabas::ApiInternal::Encoding->GetBytes(string);
-    int length = min(bytes->Length, bufsize - 1);
-    if (length > 0)
+
+    array<byte> ^ bytesEncode = Ediabas::ApiInternal::Encoding->GetBytes(string);
+    int length = min(bytesEncode->Length, bufsize - 1);
+    array<byte>^ bytesResult = gcnew array<byte>(length + 1);
+    for (size_t i = 0; i < length; i++)
     {
-        pin_ptr<byte> p = &bytes[0];
-        memcpy_s(buf, bufsize, p, length);
+        bytesResult[i] = bytesEncode[i];
     }
-    buf[length] = 0;
-    return bytes;
+    bytesResult[length] = 0;
+
+    pin_ptr<byte> p = &bytesResult[0];
+    memcpy_s(buf, bufsize, p, bytesResult->Length);
+
+    return bytesResult;
 }
 
 #ifdef __cplusplus
