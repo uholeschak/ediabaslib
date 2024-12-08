@@ -2064,7 +2064,7 @@ namespace EdiabasLib
             new VJobInfo("_JOBCOMMENTS", VJobJobComments),
             new VJobInfo("_ARGUMENTS", VJobJobArgs),
             new VJobInfo("_RESULTS", VJobJobResults),
-            new VJobInfo("_VERSIONINFO", VJobVerinfos),
+            new VJobInfo("_VERSIONINFO", VJobVerInfos),
             new VJobInfo("_TABLES", VJobTables),
             new VJobInfo("_TABLE", VJobTable),
         };
@@ -2300,6 +2300,24 @@ namespace EdiabasLib
             public UsesInfo[] UsesInfoArray { get; set; }
         }
 
+        private class VersionInfos
+        {
+            public VersionInfos()
+            {
+                BipVersion = 0;
+                Author = string.Empty;
+                From = string.Empty;
+                Revision = string.Empty;
+                Package = 0;
+            }
+
+            public long BipVersion { get; set; }
+            public string Author { get; set; }
+            public string From { get; set; }
+            public string Revision { get; set; }
+            public long Package { get; set; }
+        }
+
         private class DescriptionInfos
         {
             public List<string> GlobalComments { get; set; }
@@ -2419,6 +2437,7 @@ namespace EdiabasLib
         private EdValueType _pcCounter;
         private JobInfos _jobInfos;
         private UsesInfos _usesInfos;
+        private VersionInfos _versionInfos;
         private DescriptionInfos _descriptionInfos;
         private TableInfos _tableInfos;
         private TableInfos _tableInfosExt;
@@ -3825,6 +3844,7 @@ namespace EdiabasLib
                 return false;
             }
             _usesInfos = ReadAllUses(_sgbdFs);
+            _versionInfos = ReadVersionInfos(_sgbdFs);
             _descriptionInfos = null;
             _jobInfos = ReadAllJobs(_sgbdFs);
             _tableInfos = ReadAllTables(_sgbdFs);
@@ -4600,6 +4620,37 @@ namespace EdiabasLib
             }
 
             return usesInfosLocal;
+        }
+
+        private VersionInfos ReadVersionInfos(Stream fs)
+        {
+            byte[] buffer = new byte[4];
+            fs.Position = 0x94;
+            fs.Read(buffer, 0, buffer.Length);
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(buffer, 0, 4);
+            }
+
+            VersionInfos versionInfosLocal = new VersionInfos();
+            Int32 infoOffset = BitConverter.ToInt32(buffer, 0);
+            if (infoOffset < 0)
+            {
+                return versionInfosLocal;
+            }
+            fs.Position = infoOffset;
+
+            byte[] infoBuffer = new byte[0x6C];
+            ReadAndDecryptBytes(fs, infoBuffer, 0, infoBuffer.Length);
+
+            versionInfosLocal.BipVersion = infoBuffer[2] << 16 | infoBuffer[1] << 8 | infoBuffer[0];
+            versionInfosLocal.Author = Encoding.GetString(infoBuffer, 0x08, 0x40).TrimEnd('\0');
+            versionInfosLocal.Revision = string.Format(CultureInfo.InvariantCulture, "{0}.{1}", BitConverter.ToInt16(infoBuffer, 0x06), BitConverter.ToInt16(infoBuffer, 0x04));
+            versionInfosLocal.From = Encoding.GetString(infoBuffer, 0x48, 0x20).TrimEnd('\0');
+            versionInfosLocal.Package = BitConverter.ToInt32(infoBuffer, 0x68);
+
+            return versionInfosLocal;
         }
 
         private DescriptionInfos ReadDescriptions(Stream fs)
@@ -5463,10 +5514,22 @@ namespace EdiabasLib
                 _closeSgbdFs = false;
                 CloseSgbdFs();
             }
+
             if (!OpenSgbdFs())
             {
                 throw new ArgumentOutOfRangeException("OpenSgbdFs", "ExecuteJobPrivate: Open SGBD failed");
             }
+
+            long bipVersion = _versionInfos.BipVersion;
+            long ediabasBipVersion = (((EdiabasVersion >> 8) & 0xF) << 16) | (((EdiabasVersion >> 4) & 0xF) << 8) | (EdiabasVersion & 0xF);
+            LogFormat(EdLogLevel.Info, "Version BIP={0:X04}, EDIABAS={0:X04}", bipVersion, ediabasBipVersion);
+
+            if (bipVersion > ediabasBipVersion)
+            {
+                SetError(ErrorCodes.EDIABAS_BIP_0009);
+                return;
+            }
+
             JobInfo jobInfo = GetJobInfo(jobName);
             if (jobInfo == null)
             {
@@ -5944,7 +6007,7 @@ namespace EdiabasLib
             }
         }
 
-        private static void VJobVerinfos(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
+        private static void VJobVerInfos(EdiabasNet ediabas, List<Dictionary<string, ResultData>> resultSets)
         {
             Stream fs = ediabas._sgbdFs;
 
@@ -5953,52 +6016,29 @@ namespace EdiabasLib
                 ediabas._descriptionInfos = ediabas.ReadDescriptions(fs);
             }
 
-            byte[] buffer = new byte[4];
-            fs.Position = 0x94;
-            fs.Read(buffer, 0, buffer.Length);
-
-            if (!BitConverter.IsLittleEndian)
+            if (ediabas._versionInfos == null)
             {
-                Array.Reverse(buffer, 0, 4);
+                ediabas._versionInfos = ediabas.ReadVersionInfos(fs);
             }
-            Int32 infoOffset = BitConverter.ToInt32(buffer, 0);
-            if (infoOffset < 0)
-            {
-                return;
-            }
-            fs.Position = infoOffset;
-
-            byte[] infoBuffer = new byte[0x6C];
-            ReadAndDecryptBytes(fs, infoBuffer, 0, infoBuffer.Length);
 
             Dictionary<string, ResultData> resultDict = new Dictionary<string, ResultData>();
 
             const string entryBipVersion = "BIP_VERSION";
-            resultDict.Add(entryBipVersion, new ResultData(ResultType.TypeS, entryBipVersion, string.Format("{0}.{1}.{2}", infoBuffer[2], infoBuffer[1], infoBuffer[0])));
+            long bipVersion = ediabas._versionInfos.BipVersion;
+            string bipVersionStr = string.Format("{0}.{1}.{2}", (bipVersion >> 16) & 0xFF, (bipVersion >> 8) & 0xFF, bipVersion & 0xFF);
+            resultDict.Add(entryBipVersion, new ResultData(ResultType.TypeS, entryBipVersion, bipVersionStr));
 
             const string entryAuthor = "AUTHOR";
-            resultDict.Add(entryAuthor, new ResultData(ResultType.TypeS, entryAuthor, Encoding.GetString(infoBuffer, 0x08, 0x40).TrimEnd('\0')));
+            resultDict.Add(entryAuthor, new ResultData(ResultType.TypeS, entryAuthor, ediabas._versionInfos.Author));
 
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(buffer, 0x04, 2);
-            }
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(buffer, 0x06, 2);
-            }
             const string entryRevision = "REVISION";
-            resultDict.Add(entryRevision, new ResultData(ResultType.TypeS, entryRevision, string.Format("{0}.{1}", BitConverter.ToInt16(infoBuffer, 0x06), BitConverter.ToInt16(infoBuffer, 0x04))));
+            resultDict.Add(entryRevision, new ResultData(ResultType.TypeS, entryRevision, ediabas._versionInfos.Revision));
 
             const string entryFrom = "FROM";
-            resultDict.Add(entryFrom, new ResultData(ResultType.TypeS, entryFrom, Encoding.GetString(infoBuffer, 0x48, 0x20).TrimEnd('\0')));
+            resultDict.Add(entryFrom, new ResultData(ResultType.TypeS, entryFrom, ediabas._versionInfos.From));
 
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(buffer, 0x68, 2);
-            }
             const string entryPackage = "PACKAGE";
-            resultDict.Add(entryPackage, new ResultData(ResultType.TypeL, entryPackage, (Int64)BitConverter.ToInt32(infoBuffer, 0x68)));
+            resultDict.Add(entryPackage, new ResultData(ResultType.TypeL, entryPackage, (Int64)ediabas._versionInfos.Package));
 
             if (ediabas._descriptionInfos.GlobalComments != null)
             {
