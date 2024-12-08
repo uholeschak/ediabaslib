@@ -5522,7 +5522,7 @@ namespace EdiabasLib
 
             long bipVersion = _versionInfos.BipVersion;
             long ediabasBipVersion = (((EdiabasVersion >> 8) & 0xF) << 16) | (((EdiabasVersion >> 4) & 0xF) << 8) | (EdiabasVersion & 0xF);
-            LogFormat(EdLogLevel.Info, "Version BIP={0:X04}, EDIABAS={0:X04}", bipVersion, ediabasBipVersion);
+            LogFormat(EdLogLevel.Info, "Version BIP={0:X08}, EDIABAS={0:X08}", bipVersion, ediabasBipVersion);
 
             if (bipVersion > ediabasBipVersion)
             {

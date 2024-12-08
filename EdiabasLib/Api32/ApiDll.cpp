@@ -277,7 +277,7 @@ static array<byte> ^ ConvertNetString(String ^string, char far *buf, int bufsize
     array<byte> ^ bytesEncode = Ediabas::ApiInternal::Encoding->GetBytes(string);
     int length = min(bytesEncode->Length, bufsize - 1);
     array<byte>^ bytesResult = gcnew array<byte>(length + 1);
-    for (size_t i = 0; i < length; i++)
+    for (int i = 0; i < length; i++)
     {
         bytesResult[i] = bytesEncode[i];
     }
