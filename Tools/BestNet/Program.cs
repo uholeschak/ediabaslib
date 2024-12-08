@@ -337,7 +337,8 @@ namespace BestNet
                 IntPtr userNamePtr = IntPtr.Zero;
 
                 DateTime inputFileDate = File.GetLastWriteTime(inputFile);
-                string dateStr = inputFileDate.ToString("ddd MMM dd HH:mm:ss yyyy", CultureInfo.InvariantCulture);
+                // a terminiating space must be added, because the last char is removed
+                string dateStr = inputFileDate.ToString("ddd MMM dd HH:mm:ss yyyy ", CultureInfo.InvariantCulture);
                 IntPtr datePtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(dateStr));
                 string password = passwordLabel ?? string.Empty;
                 IntPtr passwordLabelPtr = StoreIntPtr(Marshal.StringToHGlobalAnsi(password));
