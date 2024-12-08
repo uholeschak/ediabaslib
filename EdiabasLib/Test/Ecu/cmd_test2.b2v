@@ -14,6 +14,8 @@ comment : or BestNet -i cmd_test2.b2v -l test.lib;
 ////////////////////////////////////////////////////////////////////////
 
 #pragma arraysize (2048)
+//#pragma runtime_version ( 0x0703 )
+//#pragma best2_version ( 0x0703 )
 
 table TEST_TABLE_FIRST[3][]=
 {
