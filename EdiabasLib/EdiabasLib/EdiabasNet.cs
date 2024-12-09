@@ -1411,9 +1411,11 @@ namespace EdiabasLib
             TypeB,  // 8 bit
             TypeW,  // 16 bit
             TypeD,  // 32 bit
+            TypeQ,  // 64 bit
             TypeC,  // 8 bit char
             TypeI,  // 16 bit signed
             TypeL,  // 32 bit signed
+            TypeLL, // 64 bit signed
             TypeR,  // float
             TypeS,  // string
             TypeY,  // array

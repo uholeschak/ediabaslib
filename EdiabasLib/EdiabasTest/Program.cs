@@ -387,6 +387,14 @@ namespace EdiabasTest
                                     sbResult.Append(string.Format(Culture, "L: {0} 0x{1:X08}", value, (UInt32)value));
                                     break;
 
+                                case EdiabasNet.ResultType.TypeQ:  // 64 bit
+                                    sbResult.Append(string.Format(Culture, "QW: {0} 0x{1:X016}", value, (UInt64)value));
+                                    break;
+
+                                case EdiabasNet.ResultType.TypeLL:  // 64 bit signed
+                                    sbResult.Append(string.Format(Culture, "L: {0} 0x{1:X016}", value, (UInt64)value));
+                                    break;
+
                                 default:
                                     sbResult.Append("?");
                                     break;
