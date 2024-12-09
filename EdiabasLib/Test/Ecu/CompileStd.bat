@@ -43,5 +43,10 @@ echo compiling cmd_ident.b1g
 echo done
 
 echo:
+echo compiling adapter_prg.b2v
+"!BEST2_PATH!" -Q "!ECU_PATH!\adapter_prg.b2v" || EXIT /b 1
+echo done
+
+echo:
 echo Files successfully compiled
 exit /b 0
