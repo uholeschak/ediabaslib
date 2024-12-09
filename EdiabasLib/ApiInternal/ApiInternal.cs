@@ -586,18 +586,25 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            if (!getResultInt64(out Int64 int64Buffer, out EdiabasLib.EdiabasNet.ResultType resultType, result, rset))
+            if (!getResultInt64(out Int64 int64Buffer, out EdiabasNet.ResultType resultType, result, rset))
             {
                 return false;
             }
 
-            if (resultType == EdiabasNet.ResultType.TypeD)
+            switch (resultType)
             {
-                buffer = (uint)int64Buffer;
-            }
-            else
-            {
-                buffer = (int)int64Buffer;
+                case EdiabasNet.ResultType.TypeQ:
+                case EdiabasNet.ResultType.TypeLL:
+                    buffer = int64Buffer;
+                    break;
+
+                case EdiabasNet.ResultType.TypeD:
+                    buffer = (uint)int64Buffer;
+                    break;
+
+                default:
+                    buffer = (int)int64Buffer;
+                    break;
             }
 
             logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
@@ -616,12 +623,22 @@ namespace Ediabas
             }
 
             setLocalError(EDIABAS_ERR_NONE);
-            if (!getResultInt64(out Int64 int64Buffer, out EdiabasLib.EdiabasNet.ResultType resultType, result, rset))
+            if (!getResultInt64(out Int64 int64Buffer, out EdiabasNet.ResultType resultType, result, rset))
             {
                 return false;
             }
 
-            buffer = (uint)int64Buffer;
+            switch (resultType)
+            {
+                case EdiabasNet.ResultType.TypeQ:
+                case EdiabasNet.ResultType.TypeLL:
+                    buffer = (ulong)int64Buffer;
+                    break;
+
+                default:
+                    buffer = (uint)int64Buffer;
+                    break;
+            }
 
             logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
             return true;
@@ -839,6 +856,10 @@ namespace Ediabas
                     buffer = APIFORMAT_DWORD;
                     break;
 
+                case EdiabasNet.ResultType.TypeQ:
+                    buffer = APIFORMAT_QWORD;
+                    break;
+
                 case EdiabasNet.ResultType.TypeC:
                     buffer = APIFORMAT_CHAR;
                     break;
@@ -849,6 +870,10 @@ namespace Ediabas
 
                 case EdiabasNet.ResultType.TypeL:
                     buffer = APIFORMAT_LONG;
+                    break;
+
+                case EdiabasNet.ResultType.TypeLL:
+                    buffer = APIFORMAT_LONGLONG;
                     break;
 
                 case EdiabasNet.ResultType.TypeR:

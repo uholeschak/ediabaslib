@@ -469,7 +469,7 @@ namespace EdiabasCall
                                                         __api32ResultLongLong(_apiHandle, out resultLong, resultName, set);
                                                     if (apiResultLL)
                                                     {
-                                                        sbResult.Append(string.Format(Culture, "LL: {0}", resultLong));
+                                                        sbResult.Append(string.Format(Culture, "LL: {0} 0x{0:X016}", resultLong));
                                                     }
                                                 }
                                                 catch (Exception ex)
@@ -490,7 +490,7 @@ namespace EdiabasCall
                                                         __api32ResultQWord(_apiHandle, out resultUlong, resultName, set);
                                                     if (apiResultQW)
                                                     {
-                                                        sbResult.Append(string.Format(Culture, "QW: {0}", resultUlong));
+                                                        sbResult.Append(string.Format(Culture, "QW: {0} 0x{0:X016}", resultUlong));
                                                     }
                                                 }
                                                 catch (Exception ex)
@@ -504,7 +504,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultLongLong(out long resultLong, resultName, set))
                                                 {
-                                                    sbResult.Append(string.Format(Culture, "LL: {0}", resultLong));
+                                                    sbResult.Append(string.Format(Culture, "LL: {0} 0x{0:X016}", resultLong));
                                                 }
                                                 break;
                                             }
@@ -513,7 +513,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultQWord(out ulong resultUlong, resultName, set))
                                                 {
-                                                    sbResult.Append(string.Format(Culture, "QW: {0}", resultUlong));
+                                                    sbResult.Append(string.Format(Culture, "QW: {0} 0x{0:X016}", resultUlong));
                                                 }
                                                 break;
                                             }
