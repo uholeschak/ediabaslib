@@ -426,15 +426,24 @@ namespace EdiabasTest
                                     sbResult.Append(string.Format(Culture, " {0}", (double)value));
                                     if (_api76)
                                     {
-                                        if (resultData.ResType == EdiabasNet.ResultType.TypeD)
+                                        switch (resultData.ResType)
                                         {
-                                            sbResult.Append(string.Format(Culture, " {0}", (uint)value));
+                                            case EdiabasNet.ResultType.TypeQ:
+                                            case EdiabasNet.ResultType.TypeLL:
+                                                sbResult.Append(string.Format(Culture, " {0}", (ulong)value));
+                                                sbResult.Append(string.Format(Culture, " {0}", (long)value));
+                                                break;
+
+                                            case EdiabasNet.ResultType.TypeD:
+                                                sbResult.Append(string.Format(Culture, " {0}", (uint)value));
+                                                sbResult.Append(string.Format(Culture, " {0}", (uint)value));
+                                                break;
+
+                                            default:
+                                                sbResult.Append(string.Format(Culture, " {0}", (int)value));
+                                                sbResult.Append(string.Format(Culture, " {0}", (uint)value));
+                                                break;
                                         }
-                                        else
-                                        {
-                                            sbResult.Append(string.Format(Culture, " {0}", (int)value));
-                                        }
-                                        sbResult.Append(string.Format(Culture, " {0}", (uint)value));
                                     }
                                 }
                                 else
@@ -450,8 +459,19 @@ namespace EdiabasTest
                                     sbResult.Append(string.Format(Culture, " {0}", valueDouble));
                                     if (_api76)
                                     {
-                                        sbResult.Append(string.Format(Culture, " {0}", (int)value));
-                                        sbResult.Append(string.Format(Culture, " {0}", (uint)value));
+                                        switch (resultData.ResType)
+                                        {
+                                            case EdiabasNet.ResultType.TypeQ:
+                                            case EdiabasNet.ResultType.TypeLL:
+                                                sbResult.Append(string.Format(Culture, " {0}", (ulong)value));
+                                                sbResult.Append(string.Format(Culture, " {0}", (long)value));
+                                                break;
+
+                                            default:
+                                                sbResult.Append(string.Format(Culture, " {0}", (int)value));
+                                                sbResult.Append(string.Format(Culture, " {0}", (uint)value));
+                                                break;
+                                        }
                                     }
                                 }
                             }
