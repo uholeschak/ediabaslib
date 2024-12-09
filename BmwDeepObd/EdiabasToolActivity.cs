@@ -3082,6 +3082,14 @@ namespace BmwDeepObd
                                     resultText = string.Format(Culture, "L: {0} 0x{1:X08}", value, (UInt32)value);
                                     break;
 
+                                case EdiabasNet.ResultType.TypeQ:  // 64 bit
+                                    resultText = string.Format(Culture, "D: {0} 0x{1:X016}", value, (UInt64)value);
+                                    break;
+
+                                case EdiabasNet.ResultType.TypeLL:  // 64 bit signed
+                                    resultText = string.Format(Culture, "L: {0} 0x{1:X016}", value, (UInt64)value);
+                                    break;
+
                                 default:
                                     resultText = "?";
                                     break;
