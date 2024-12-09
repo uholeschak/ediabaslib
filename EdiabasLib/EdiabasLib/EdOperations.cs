@@ -1740,8 +1740,8 @@ namespace EdiabasLib
             if (arg1.OpData1.GetType() == typeof(Register))
             {
                 EdValueType resultHigh = (EdValueType)((UInt64)result >> (int)(len << 3));
-                // If values are negative the result is unpredctiable.
-                // We don't emulate the origonal behaviour here in this case
+                // If values are negative the result is unpredictiable.
+                // We don't emulate the original behaviour here in this case.
                 arg1.SetRawData(resultHigh, len);
             }
         }
