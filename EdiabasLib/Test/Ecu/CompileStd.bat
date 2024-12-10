@@ -53,5 +53,10 @@ echo compiling d60m47a0_dcan.b1v
 echo done
 
 echo:
+echo compiling dm338ds1_interbyte.b1v
+"!BEST1_PATH!" -Q  "!ECU_PATH!\dm338ds1_interbyte.b1v" || EXIT /b 1
+echo done
+
+echo:
 echo Files successfully compiled
 exit /b 0
