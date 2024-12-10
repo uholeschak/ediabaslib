@@ -4,8 +4,8 @@ SETLOCAL EnableDelayedExpansion
 set "BATPATH=%~dp0"
 set "ECU_PATH=!BATPATH!"
 set "EDIABAS_BIN_PATH=!EDIABAS_PATH!\BIN\"
-set "BEST1_PATH=!EDIABAS_BIN_PATH!Best1.exe"
-set "BEST2_PATH=!EDIABAS_BIN_PATH!Best2.exe"
+set "BEST1_PATH=!EDIABAS_BIN_PATH!Best164.exe"
+set "BEST2_PATH=!EDIABAS_BIN_PATH!Best264.exe"
 
 IF NOT EXIST "!BEST1_PATH!" (
   echo !BEST1_PATH! not existing
