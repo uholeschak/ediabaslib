@@ -41,5 +41,10 @@ echo compiling adapter_prg.b2v
 echo done
 
 echo:
+echo compiling d60m47a0_dcan.b1v
+"!BESTNET_PATH!" -i "!ECU_PATH!\d60m47a0_dcan.b1v" || EXIT /b 1
+echo done
+
+echo:
 echo Files successfully compiled
 exit /b 0
