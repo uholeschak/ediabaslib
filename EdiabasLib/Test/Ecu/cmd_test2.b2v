@@ -140,6 +140,45 @@ exitnoexcept2:
 }
 
 ////////////////////////////////////////////////////////////////////////
+job(  name      : INFO;
+      comment   : SGBD Info;
+   ) 
+{
+#asm
+                    clear      S1
+                    move       S1,"CMD_TEST2"
+                    push       #$1.L
+                    ergs       "ECU",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,"Ulrich Holeschak"
+                    push       #$1.L
+                    ergs       "ORIGIN",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,"1.00"
+                    push       #$1.L
+                    ergs       "REVISION",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,"Ulrich Holeschak"
+                    push       #$1.L
+                    ergs       "AUTHOR",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,""
+                    push       #$1.L
+                    ergs       "COMMENT",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,"deutsch"
+                    push       #$1.L
+                    ergs       "SPRACHE",S1
+                    pop        L0
+#endasm
+}
+
+////////////////////////////////////////////////////////////////////////
 
 job(  name      : TEST_SUBB_FLAGS;
       comment   : Test math flags;

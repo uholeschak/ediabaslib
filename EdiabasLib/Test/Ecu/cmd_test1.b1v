@@ -41,6 +41,62 @@ ENDE#
 					eoj
 					eoj
 
+INFO#
+;    JOBNAME:INFO
+;    JOBCOMMENT:Information SGBD
+;    RESULT:ECU
+;    RESULTTYPE:string
+;    RESULTCOMMENT:Steuergeraet im Klartext
+;    RESULT:ORIGIN
+;    RESULTTYPE:string
+;    RESULTCOMMENT:Steuergeraete-Verantwortlicher
+;    RESULT:REVISION
+;    RESULTTYPE:string
+;    RESULTCOMMENT:Versions-Nummer
+;    RESULT:AUTHOR
+;    RESULTTYPE:string
+;    RESULTCOMMENT:Name aller Autoren
+;    RESULT:COMMENT
+;    RESULTTYPE:string
+;    RESULTCOMMENT:wichtige Hinweise
+;    RESULT:SPRACHE
+;    RESULTTYPE:string
+;    RESULTCOMMENT:deutsch, english
+;
+                    clear      S1
+                    move       S1,"CMD_TEST1"
+                    push       #$1.L
+                    ergs       "ECU",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,"Ulrich Holeschak"
+                    push       #$1.L
+                    ergs       "ORIGIN",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,"1.00"
+                    push       #$1.L
+                    ergs       "REVISION",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,"Ulrich Holeschak"
+                    push       #$1.L
+                    ergs       "AUTHOR",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,""
+                    push       #$1.L
+                    ergs       "COMMENT",S1
+                    pop        L0
+                    clear      S1
+                    move       S1,"deutsch"
+                    push       #$1.L
+                    ergs       "SPRACHE",S1
+                    pop        L0
+                    eoj
+                    eoj
+
+
 TEST_SREG#
 ;    JOBNAME:TEST_SREG
 ;    JOBCOMMENT:Test sreg
