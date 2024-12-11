@@ -142,40 +142,32 @@ exitnoexcept2:
 ////////////////////////////////////////////////////////////////////////
 job(  name      : INFO;
       comment   : SGBD Info;
+      result    : ECU;
+        type    : string;
+        comment : Steuergeraet im Klartext;
+      result    : ORIGIN;
+        type    : string;
+        comment : Steuergeraete-Verantwortlicher;
+      result    : REVISION;
+        type    : string;
+        comment : Versions-Nummer;
+      result    : AUTHOR;
+        type    : string;
+        comment : Name aller Autoren;
+      result    : COMMENT;
+        type    : string;
+        comment : wichtige Hinweise;
+      result    : SPRACHE;
+        type    : string;
+        comment : deutsch, english;
    ) 
 {
-#asm
-                    clear      S1
-                    move       S1,"CMD_TEST2"
-                    push       #$1.L
-                    ergs       "ECU",S1
-                    pop        L0
-                    clear      S1
-                    move       S1,"Ulrich Holeschak"
-                    push       #$1.L
-                    ergs       "ORIGIN",S1
-                    pop        L0
-                    clear      S1
-                    move       S1,"1.00"
-                    push       #$1.L
-                    ergs       "REVISION",S1
-                    pop        L0
-                    clear      S1
-                    move       S1,"Ulrich Holeschak"
-                    push       #$1.L
-                    ergs       "AUTHOR",S1
-                    pop        L0
-                    clear      S1
-                    move       S1,""
-                    push       #$1.L
-                    ergs       "COMMENT",S1
-                    pop        L0
-                    clear      S1
-                    move       S1,"deutsch"
-                    push       #$1.L
-                    ergs       "SPRACHE",S1
-                    pop        L0
-#endasm
+    ECU = "CMD_TEST2";
+    ORIGIN = "Ulrich Holeschak";
+    REVISION = "1.00";
+    AUTHOR = "Ulrich Holeschak";
+    COMMENT = "";
+    SPRACHE = "deutsch";
 }
 
 ////////////////////////////////////////////////////////////////////////
