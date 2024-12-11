@@ -1976,6 +1976,16 @@ namespace EdiabasLib
             ediabas._flags.UpdateFlags(value, arg0.GetDataLen());
         }
 
+        // plugin pop float
+        private static void OpPpopflt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Info, "OpPpopflt: Ignoring");
+
+            EdFloatType value = 0;
+            arg0.SetRawData(value);
+            ediabas._flags.Overflow = false;
+        }
+
         // plugin pop string
         private static void OpPpopy(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
@@ -1988,6 +1998,12 @@ namespace EdiabasLib
         private static void OpPpush(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             ediabas.LogFormat(EdLogLevel.Info, "OpPpush: Ignoring");
+        }
+
+        // plugin push float
+        private static void OpPpushflt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            ediabas.LogFormat(EdLogLevel.Info, "OpPpushflt: Ignoring");
         }
 
         // plugin push string
