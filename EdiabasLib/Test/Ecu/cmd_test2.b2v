@@ -1815,6 +1815,22 @@ job(  name      : TEST_MULT_FLAGS;
 
 #asm
 					enewset
+					move		L4,#$7FFFFFFF
+					move		L5,#4
+					ergl		"VALUE1", L4
+					ergl		"VALUE2", L5
+					mult		L4,L5
+#endasm
+	calc_flags();
+#asm
+					ergl		"VALUE_RESA4", L4
+					ergl		"VALUE_RESB4", L5
+					ergs		"FLAGS", S1
+					ergs		"JUMPS", S2
+#endasm
+
+#asm
+					enewset
 					move		I4,#$7FFF
 					move		I5,#2
 					ergi		"VALUE1", I4
