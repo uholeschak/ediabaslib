@@ -181,13 +181,17 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\"))
+                using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
                 {
-                    if (ndpKey != null && ndpKey.GetValue("Release") != null)
+                    using (RegistryKey ndpKey = localMachine32.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\"))
                     {
-                        if (ndpKey.GetValue("Release") is int releaseKey)
+                        if (ndpKey != null)
                         {
-                            return releaseKey;
+                            object releaseValue = ndpKey.GetValue("Release");
+                            if (releaseValue is int releaseKey)
+                            {
+                                return releaseKey;
+                            }
                         }
                     }
                 }
