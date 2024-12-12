@@ -328,4 +328,8 @@ fehlgeschlagen.</value>
   <data name="TitleError" xml:space="preserve">
     <value>Fehler</value>
   </data>
+  <data name="WifiAccessRejected" xml:space="preserve">
+    <value>Der Wi-Fi Zugriff wurde zurückgewiesen.
+Erlauben Sie den Standortzugriff für alle Applikationen im System.</value>
+  </data>
 </root>

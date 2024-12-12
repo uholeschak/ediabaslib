@@ -327,4 +327,8 @@ failed.</value>
   <data name="TitleError" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="WifiAccessRejected" xml:space="preserve">
+    <value>Access to Wi-Fi has been rejected.
+Enable location access for all apps in the system.</value>
+  </data>
 </root>
