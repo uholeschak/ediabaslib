@@ -318,4 +318,10 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
     <value>Удаление ключa регистрации
 '{0}'.</value>
   </data>
+  <data name="NetFrameworkMissing" xml:space="preserve">
+    <value>Для этого приложения требуется .NET Framework {0} или выше.</value>
+  </data>
+  <data name="TitleError" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
 </root>

@@ -286,9 +286,10 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die It&apos;s recommended changing the ISTA-D registry key:
+        ///   Sucht eine lokalisierte Zeichenfolge, die It&apos;s recommended pointing the ISTA-D registry key:
         ///&apos;{0}&apos;
-        ///to point an external EdiabsLib instance.
+        ///to an external EdiabsLib instance at:
+        ///&apos;{1}&apos;.
         ///You you want to to this? ähnelt.
         /// </summary>
         internal static string IstaRegExtMessage {
@@ -330,6 +331,15 @@ namespace EdiabasLibConfigTool.Resources {
         internal static string LanguageRu {
             get {
                 return ResourceManager.GetString("LanguageRu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die This application requires .NET Framework {0} or higher. ähnelt.
+        /// </summary>
+        internal static string NetFrameworkMissing {
+            get {
+                return ResourceManager.GetString("NetFrameworkMissing", resourceCulture);
             }
         }
         
@@ -610,6 +620,15 @@ namespace EdiabasLibConfigTool.Resources {
         internal static string TestOk {
             get {
                 return ResourceManager.GetString("TestOk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error ähnelt.
+        /// </summary>
+        internal static string TitleError {
+            get {
+                return ResourceManager.GetString("TitleError", resourceCulture);
             }
         }
         
