@@ -329,7 +329,7 @@ fehlgeschlagen.</value>
     <value>Fehler</value>
   </data>
   <data name="WifiAccessRejected" xml:space="preserve">
-    <value>Der Wi-Fi Zugriff wurde zurückgewiesen.
+    <value>Der Wi-Fi Zugriff wurde abgelehnt.
 Erlauben Sie den Standortzugriff für alle Applikationen im System.</value>
   </data>
 </root>

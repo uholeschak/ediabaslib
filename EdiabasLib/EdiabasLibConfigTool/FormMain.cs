@@ -122,11 +122,18 @@ namespace EdiabasLibConfigTool
             try
             {
                 _wifi = new Wifi();
-                _wlanClient = new WlanClient();
             }
             catch (Exception)
             {
                 _wifi = null;
+            }
+
+            try
+            {
+                _wlanClient = new WlanClient();
+            }
+            catch (Exception)
+            {
                 _wlanClient = null;
             }
 
