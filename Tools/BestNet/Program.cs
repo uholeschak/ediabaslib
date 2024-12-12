@@ -303,6 +303,16 @@ namespace BestNet
                 {
                     WriteNewConsoleLine("Map file: {0}", mapFile);
                 }
+                else
+                {
+                    if (!keepFiles)
+                    {
+                        if (File.Exists(mapFile))
+                        {
+                            File.Delete(mapFile);
+                        }
+                    }
+                }
 
                 int? revision = null;
                 if (!string.IsNullOrEmpty(revisionString))
