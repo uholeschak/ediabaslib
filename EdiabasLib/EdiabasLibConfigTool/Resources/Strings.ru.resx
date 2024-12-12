@@ -324,4 +324,8 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
   <data name="TitleError" xml:space="preserve">
     <value>Ошибка</value>
   </data>
+  <data name="WifiAccessRejected" xml:space="preserve">
+    <value>Доступ к Wi-Fi отклонен.
+Включить доступ к местоположению для всех приложений в системе.</value>
+  </data>
 </root>

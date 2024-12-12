@@ -119,10 +119,27 @@ namespace EdiabasLibConfigTool
                 sr.Append(string.Format(Resources.Strings.BtInitError, ex.Message));
             }
             _deviceList = new List<BluetoothDeviceInfo>();
-            _wifi = new Wifi();
-            _wlanClient = new WlanClient();
+            try
+            {
+                _wifi = new Wifi();
+                _wlanClient = new WlanClient();
+            }
+            catch (Exception)
+            {
+                _wifi = null;
+                _wlanClient = null;
+            }
+
             _test = new Test(this);
-            if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)
+            if (_wifi == null || _wlanClient == null)
+            {
+                if (sr.Length > 0)
+                {
+                    sr.Append("\r\n");
+                }
+                sr.Append(Resources.Strings.WifiAccessRejected);
+            }
+            else if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)
             {
                 if (sr.Length > 0)
                 {
@@ -130,6 +147,7 @@ namespace EdiabasLibConfigTool
                 }
                 sr.Append(Resources.Strings.WifiAdapterError);
             }
+
             GetDirectories();
 
             _lastActiveProbing = GetEnableActiveProbing();
@@ -340,28 +358,31 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                foreach (WlanInterface wlanIface in _wlanClient.Interfaces)
+                if (_wlanClient != null)
                 {
-                    if (wlanIface.InterfaceState == WlanInterfaceState.Connected)
+                    foreach (WlanInterface wlanIface in _wlanClient.Interfaces)
                     {
-                        WlanConnectionAttributes conn = wlanIface.CurrentConnection;
-                        string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
-                        if (string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            string.Compare(ssidString, Patch.AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            string.Compare(ssidString, Patch.AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            string.Compare(ssidString, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
-                            ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
-                            ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase)
-                            )
+                        if (wlanIface.InterfaceState == WlanInterfaceState.Connected)
                         {
-                            string bssString = conn.wlanAssociationAttributes.Dot11Bssid.ToString();
-                            ListViewItem listViewItem =
-                                new ListViewItem(new[] { bssString, conn.profileName })
-                                {
-                                    Tag = wlanIface
-                                };
-                            listView.Items.Add(listViewItem);
+                            WlanConnectionAttributes conn = wlanIface.CurrentConnection;
+                            string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
+                            if (string.Compare(ssidString, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
+                                string.Compare(ssidString, Patch.AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0 ||
+                                string.Compare(ssidString, Patch.AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0 ||
+                                string.Compare(ssidString, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
+                                ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
+                                ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
+                                ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase)
+                               )
+                            {
+                                string bssString = conn.wlanAssociationAttributes.Dot11Bssid.ToString();
+                                ListViewItem listViewItem =
+                                    new ListViewItem(new[] { bssString, conn.profileName })
+                                    {
+                                        Tag = wlanIface
+                                    };
+                                listView.Items.Add(listViewItem);
+                            }
                         }
                     }
                 }
@@ -370,27 +391,31 @@ namespace EdiabasLibConfigTool
             {
                 // ignored
             }
+
             try
             {
-                foreach (AccessPoint ap in _wifi.GetAccessPoints())
+                if (_wifi != null)
                 {
-                    if (!ap.IsConnected)
+                    foreach (AccessPoint ap in _wifi.GetAccessPoints())
                     {
-                        if (string.Compare(ap.Name, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            string.Compare(ap.Name, Patch.AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            string.Compare(ap.Name, Patch.AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            string.Compare(ap.Name, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
-                            ap.Name.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
-                            ap.Name.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
-                            ap.Name.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase)
-                            )
+                        if (!ap.IsConnected)
                         {
-                            ListViewItem listViewItem =
-                                new ListViewItem(new[] { Resources.Strings.DisconnectedAdapter, ap.Name })
-                                {
-                                    Tag = ap
-                                };
-                            listView.Items.Add(listViewItem);
+                            if (string.Compare(ap.Name, Patch.AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
+                                string.Compare(ap.Name, Patch.AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0 ||
+                                string.Compare(ap.Name, Patch.AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0 ||
+                                string.Compare(ap.Name, Patch.AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0 ||
+                                ap.Name.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
+                                ap.Name.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
+                                ap.Name.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase)
+                               )
+                            {
+                                ListViewItem listViewItem =
+                                    new ListViewItem(new[] { Resources.Strings.DisconnectedAdapter, ap.Name })
+                                    {
+                                        Tag = ap
+                                    };
+                                listView.Items.Add(listViewItem);
+                            }
                         }
                     }
                 }
