@@ -4,7 +4,7 @@ SETLOCAL EnableDelayedExpansion
 set "BATPATH=%~dp0"
 set "ECU_PATH=!BATPATH!"
 set "BESTNET_PATH=!BATPATH!..\..\..\Tools\BestNet\artifacts\bin\BestNet\release\BestNet.exe"
-rem set "EXTRA_OPT=-k"
+rem set "EXTRA_OPT=-k -m"
 set "EXTRA_OPT="
 
 IF NOT EXIST "!BESTNET_PATH!" (
