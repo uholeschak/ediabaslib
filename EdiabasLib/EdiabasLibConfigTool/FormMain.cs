@@ -177,6 +177,28 @@ namespace EdiabasLibConfigTool
             return (os.Platform == PlatformID.Win32NT) && (os.Version.Major >= 6);
         }
 
+        private int GetNetFrameworkVersion()
+        {
+            try
+            {
+                using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\"))
+                {
+                    if (ndpKey != null && ndpKey.GetValue("Release") != null)
+                    {
+                        if (ndpKey.GetValue("Release") is int releaseKey)
+                        {
+                            return releaseKey;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
+            return -1;
+        }
+
         private void GetDirectories()
         {
             string dirBmw = Environment.GetEnvironmentVariable("ediabas_config_dir");
