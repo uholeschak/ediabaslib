@@ -321,4 +321,10 @@ failed.</value>
     <value>Removing registry key:
 '{0}'.</value>
   </data>
+  <data name="NetFrameworkMissing" xml:space="preserve">
+    <value>This application requires .NET Framework {0} or higher.</value>
+  </data>
+  <data name="TitleError" xml:space="preserve">
+    <value>Error</value>
+  </data>
 </root>

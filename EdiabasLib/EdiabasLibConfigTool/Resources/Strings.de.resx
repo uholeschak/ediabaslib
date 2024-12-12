@@ -322,4 +322,10 @@ fehlgeschlagen.</value>
     <value>Löschen des Registrierungsschlüssels
 '{0}'.</value>
   </data>
+  <data name="NetFrameworkMissing" xml:space="preserve">
+    <value>Diese Applikation benötigt .NET Framework {0} oder höher.</value>
+  </data>
+  <data name="TitleError" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
 </root>
