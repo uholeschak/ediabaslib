@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using EdiabasLib;
 using System.Runtime.Versioning;
 using System.Drawing;
+using Windows.Foundation;
 
 namespace EdiabasLibConfigTool
 {
@@ -198,8 +199,12 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
-                Process.Start("ms-settings:" + settingsType);
-                return true;
+#pragma warning disable CA1416
+                IAsyncOperation<bool> launchUri = Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:" + settingsType));
+                launchUri.Wait();
+                bool result = launchUri.GetResults();
+#pragma warning restore CA1416
+                return result;
             }
             catch (Exception)
             {
