@@ -1134,5 +1134,19 @@ namespace EdiabasLibConfigTool
         {
             listViewDevices.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
         }
+
+        private void richTextBoxStatus_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            string url = e.LinkText;
+            if (string.IsNullOrEmpty(url))
+            {
+                return;
+            }
+
+            if (url.Contains("privacy-location"))
+            {
+                StartSettingsApp("privacy-location");
+            }
+        }
     }
 }

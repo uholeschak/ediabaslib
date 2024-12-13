@@ -243,6 +243,7 @@
             resources.ApplyResources(richTextBoxStatus, "richTextBoxStatus");
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
+            richTextBoxStatus.LinkClicked += richTextBoxStatus_LinkClicked;
             // 
             // FormMain
             // 
