@@ -38,6 +38,7 @@ namespace EdiabasLibConfigTool
         private string _ediabasDirVag;
         private string _ediabasDirIstad;
         private string _initMessage;
+        private volatile bool _launchingSettings;
         private volatile bool _searching;
         private volatile bool _vehicleTaskActive;
         private List<EdInterfaceEnet.EnetConnection> _detectedVehicles;
@@ -200,16 +201,34 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
+                if (_launchingSettings)
+                {
+                    return false;
+                }
+
 #pragma warning disable CA1416
-                IAsyncOperation<bool> launchUri = Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:" + settingsType));
-                launchUri.Wait();
-                bool result = launchUri.GetResults();
+                _launchingSettings = true;
+                IAsyncOperation<bool> launchUri =
+                    Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:" + settingsType));
+                launchUri.AsTask().ContinueWith(task =>
+                {
+                    if (InvokeRequired)
+                    {
+                        _launchingSettings = false;
+                        BeginInvoke((Action)UpdateButtonStatus);
+                    }
+                });
 #pragma warning restore CA1416
-                return result;
+                return true;
             }
             catch (Exception)
             {
+                _launchingSettings = false;
                 return false;
+            }
+            finally
+            {
+                UpdateButtonStatus();
             }
         }
 
@@ -807,10 +826,10 @@ namespace EdiabasLibConfigTool
                 return;
             }
 
-            bool searching = _searching || _vehicleTaskActive;
-            comboBoxLanguage.Enabled = !searching && !_test.ThreadActive;
-            buttonSearch.Enabled = !searching && !_test.ThreadActive;
-            buttonClose.Enabled = !searching && !_test.ThreadActive;
+            bool processing = _launchingSettings || _searching || _vehicleTaskActive;
+            comboBoxLanguage.Enabled = !processing && !_test.ThreadActive;
+            buttonSearch.Enabled = !processing && !_test.ThreadActive;
+            buttonClose.Enabled = !processing && !_test.ThreadActive;
 
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
@@ -819,7 +838,7 @@ namespace EdiabasLibConfigTool
             buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
 
             bool allowPatch = false;
-            if (!searching)
+            if (!processing)
             {
                 if (enetConnection != null)
                 {
@@ -831,7 +850,7 @@ namespace EdiabasLibConfigTool
                 }
             }
 
-            bool allowRestore = !searching && !_test.ThreadActive;
+            bool allowRestore = !processing && !_test.ThreadActive;
 
             bool bmwValid = Patch.IsValid(_ediabasDirBmw);
             groupBoxEdiabas.Enabled = bmwValid;
