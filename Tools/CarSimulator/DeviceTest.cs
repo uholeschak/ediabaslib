@@ -74,23 +74,8 @@ namespace CarSimulator
         {
             MaxErrorVoltage = 0;
 
-            try
-            {
-                _wifi = new Wifi();
-            }
-            catch (Exception)
-            {
-                _wifi = null;
-            }
-
-            try
-            {
-                _wlanClient = new WlanClient();
-            }
-            catch (Exception)
-            {
-                _wlanClient = null;
-            }
+            _wifi = new Wifi();
+            _wlanClient = new WlanClient();
 
             _form = form;
             _form.UpdateTestStatusText(string.Empty);
@@ -276,56 +261,53 @@ namespace CarSimulator
             espLink = false;
             try
             {
-                if (_wlanClient != null)
+                foreach (WlanInterface wlanIface in _wlanClient.Interfaces)
                 {
-                    foreach (WlanInterface wlanIface in _wlanClient.Interfaces)
+                    if (wlanIface.InterfaceState == WlanInterfaceState.Connected)
                     {
-                        if (wlanIface.InterfaceState == WlanInterfaceState.Connected)
+                        WlanConnectionAttributes conn = wlanIface.CurrentConnection;
+                        string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
+                        if (string.Compare(ssidString, AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            WlanConnectionAttributes conn = wlanIface.CurrentConnection;
-                            string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
-                            if (string.Compare(ssidString, AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                return true;
-                            }
-                            if (string.Compare(ssidString, AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                return true;
-                            }
-                            if (string.Compare(ssidString, AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                espLink = true;
-                                return true;
-                            }
+                            return true;
                         }
-                        else
+                        if (string.Compare(ssidString, AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            WlanProfileInfo[] wlanProfiles = wlanIface.GetProfiles();
-                            if (wlanProfiles != null)
+                            return true;
+                        }
+                        if (string.Compare(ssidString, AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            espLink = true;
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        WlanProfileInfo[] wlanProfiles = wlanIface.GetProfiles();
+                        if (wlanProfiles != null)
+                        {
+                            foreach (WlanProfileInfo wlanProfile in wlanProfiles)
                             {
-                                foreach (WlanProfileInfo wlanProfile in wlanProfiles)
+                                string profileName = wlanProfile.profileName;
+                                // ReSharper disable once ReplaceWithSingleAssignment.False
+                                bool deleteProfile = false;
+                                if (string.Compare(profileName, AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0)
                                 {
-                                    string profileName = wlanProfile.profileName;
-                                    // ReSharper disable once ReplaceWithSingleAssignment.False
-                                    bool deleteProfile = false;
-                                    if (string.Compare(profileName, AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        deleteProfile = true;
-                                    }
+                                    deleteProfile = true;
+                                }
 
-                                    if (string.Compare(profileName, AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0)
-                                    {
-                                        deleteProfile = true;
-                                    }
+                                if (string.Compare(profileName, AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    deleteProfile = true;
+                                }
 
-                                    if (deleteProfile)
-                                    {
-                                        wlanIface.DeleteProfile(profileName);
-                                    }
+                                if (deleteProfile)
+                                {
+                                    wlanIface.DeleteProfile(profileName);
                                 }
                             }
-
                         }
+
                     }
                 }
             }
@@ -336,37 +318,34 @@ namespace CarSimulator
 
             try
             {
-                if (_wifi != null)
+                foreach (AccessPoint ap in _wifi.GetAccessPoints())
                 {
-                    foreach (AccessPoint ap in _wifi.GetAccessPoints())
+                    if (!ap.IsConnected)
                     {
-                        if (!ap.IsConnected)
+                        if ((string.Compare(ap.Name, AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0) ||
+                            (string.Compare(ap.Name, AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0) ||
+                            (string.Compare(ap.Name, AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0))
                         {
-                            if ((string.Compare(ap.Name, AdapterSsidElm1, StringComparison.OrdinalIgnoreCase) == 0) ||
-                                (string.Compare(ap.Name, AdapterSsidElm2, StringComparison.OrdinalIgnoreCase) == 0) ||
-                                (string.Compare(ap.Name, AdapterSsidEspLink, StringComparison.OrdinalIgnoreCase) == 0))
+                            AuthRequest authRequest = new AuthRequest(ap);
+                            _connectActive = true;
+                            ap.ConnectAsync(authRequest, true, success =>
                             {
-                                AuthRequest authRequest = new AuthRequest(ap);
-                                _connectActive = true;
-                                ap.ConnectAsync(authRequest, true, success =>
+                                _executeInnerTest = success;
+                                _connectActive = false;
+                                _form.BeginInvoke((Action)(() =>
                                 {
-                                    _executeInnerTest = success;
-                                    _connectActive = false;
-                                    _form.BeginInvoke((Action)(() =>
+                                    // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                                    if (!success)
                                     {
-                                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                                        if (!success)
-                                        {
-                                            _form.UpdateTestStatusText("Connection failed");
-                                        }
-                                        else
-                                        {
-                                            _form.UpdateTestStatusText("Wifi connected");
-                                        }
-                                    }));
-                                });
-                                return false;
-                            }
+                                        _form.UpdateTestStatusText("Connection failed");
+                                    }
+                                    else
+                                    {
+                                        _form.UpdateTestStatusText("Wifi connected");
+                                    }
+                                }));
+                            });
+                            return false;
                         }
                     }
                 }
