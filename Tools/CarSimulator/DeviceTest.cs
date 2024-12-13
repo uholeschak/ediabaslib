@@ -259,6 +259,18 @@ namespace CarSimulator
         private bool ConnectWifiDevice(string comPort, string btDeviceName, out bool espLink)
         {
             espLink = false;
+            if (_wifi == null || _wlanClient == null)
+            {
+                _form.UpdateTestStatusText("WiFi access rejected");
+                return false;
+            }
+
+            if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)
+            {
+                _form.UpdateTestStatusText("WiFi not available");
+                return false;
+            }
+
             try
             {
                 foreach (WlanInterface wlanIface in _wlanClient.Interfaces)
