@@ -329,7 +329,7 @@ failed.</value>
   </data>
   <data name="WifiAccessRejected" xml:space="preserve">
     <value>Wi-Fi access has been rejected.
-Enable location access for all apps.
+Enable location access for this app in the system.
 Click here to open the system app: {0}</value>
   </data>
 </root>

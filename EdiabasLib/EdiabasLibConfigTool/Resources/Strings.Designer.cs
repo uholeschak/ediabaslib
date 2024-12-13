@@ -634,7 +634,7 @@ namespace EdiabasLibConfigTool.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Wi-Fi access has been rejected.
-        ///Enable location access for all apps.
+        ///Enable location access for this app in the system.
         ///Click here to open the system app: {0} ähnelt.
         /// </summary>
         internal static string WifiAccessRejected {
