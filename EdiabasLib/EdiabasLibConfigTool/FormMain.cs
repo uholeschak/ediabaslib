@@ -147,7 +147,8 @@ namespace EdiabasLibConfigTool
                     sr.Append("\r\n");
                 }
                 sr.Append(Resources.Strings.WifiAccessRejected);
-                StartSettingsApp("privacy-location");
+                sr.Append("\r\n");
+                sr.Append("file://ms-settings/privacy-location");
             }
             else if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)
             {
