@@ -146,9 +146,9 @@ namespace EdiabasLibConfigTool
                 {
                     sr.Append("\r\n");
                 }
-                sr.Append(Resources.Strings.WifiAccessRejected);
-                sr.Append("\r\n");
-                sr.Append("file://ms-settings/privacy-location");
+
+                string message = string.Format(CultureInfo.InvariantCulture, Resources.Strings.WifiAccessRejected, "file://ms-settings/privacy-location");
+                sr.Append(message);
             }
             else if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)
             {
