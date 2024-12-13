@@ -12,6 +12,7 @@ using SimpleWifi;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using EdiabasLib;
@@ -145,6 +146,7 @@ namespace EdiabasLibConfigTool
                     sr.Append("\r\n");
                 }
                 sr.Append(Resources.Strings.WifiAccessRejected);
+                StartSettingsApp("privacy-location");
             }
             else if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)
             {
@@ -184,6 +186,24 @@ namespace EdiabasLibConfigTool
             catch (Exception)
             {
                 // ignored
+            }
+        }
+
+        public bool StartSettingsApp(string settingsType)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(settingsType))
+                {
+                    return false;
+                }
+
+                Process.Start("ms-settings:" + settingsType);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
