@@ -35,7 +35,6 @@
             buttonSearch = new System.Windows.Forms.Button();
             buttonClose = new System.Windows.Forms.Button();
             labelStatus = new System.Windows.Forms.Label();
-            textBoxStatus = new System.Windows.Forms.TextBox();
             buttonTest = new System.Windows.Forms.Button();
             textBoxBluetoothPin = new System.Windows.Forms.TextBox();
             labelBluetoothPin = new System.Windows.Forms.Label();
@@ -56,6 +55,7 @@
             buttonRestoreIstad = new System.Windows.Forms.Button();
             comboBoxLanguage = new System.Windows.Forms.ComboBox();
             labelLanguage = new System.Windows.Forms.Label();
+            richTextBoxStatus = new System.Windows.Forms.RichTextBox();
             groupBoxEdiabas.SuspendLayout();
             groupBoxVasPc.SuspendLayout();
             groupBoxIstad.SuspendLayout();
@@ -104,13 +104,6 @@
             // 
             resources.ApplyResources(labelStatus, "labelStatus");
             labelStatus.Name = "labelStatus";
-            // 
-            // textBoxStatus
-            // 
-            resources.ApplyResources(textBoxStatus, "textBoxStatus");
-            textBoxStatus.Name = "textBoxStatus";
-            textBoxStatus.ReadOnly = true;
-            textBoxStatus.TabStop = false;
             // 
             // buttonTest
             // 
@@ -244,11 +237,19 @@
             resources.ApplyResources(labelLanguage, "labelLanguage");
             labelLanguage.Name = "labelLanguage";
             // 
+            // richTextBoxStatus
+            // 
+            richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            resources.ApplyResources(richTextBoxStatus, "richTextBoxStatus");
+            richTextBoxStatus.Name = "richTextBoxStatus";
+            richTextBoxStatus.ReadOnly = true;
+            // 
             // FormMain
             // 
             AcceptButton = buttonClose;
             resources.ApplyResources(this, "$this");
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            Controls.Add(richTextBoxStatus);
             Controls.Add(labelLanguage);
             Controls.Add(comboBoxLanguage);
             Controls.Add(groupBoxIstad);
@@ -260,7 +261,6 @@
             Controls.Add(labelBluetoothPin);
             Controls.Add(textBoxBluetoothPin);
             Controls.Add(buttonTest);
-            Controls.Add(textBoxStatus);
             Controls.Add(labelStatus);
             Controls.Add(buttonClose);
             Controls.Add(buttonSearch);
@@ -289,7 +289,6 @@
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.Label labelStatus;
-        private System.Windows.Forms.TextBox textBoxStatus;
         private System.Windows.Forms.Button buttonTest;
         private System.Windows.Forms.Label labelBluetoothPin;
         private System.Windows.Forms.Label labelBtDevices;
@@ -310,6 +309,7 @@
         private System.Windows.Forms.ComboBox comboBoxLanguage;
         private System.Windows.Forms.Label labelLanguage;
         private System.Windows.Forms.TextBox textBoxIstaLocation;
+        private System.Windows.Forms.RichTextBox richTextBoxStatus;
     }
 }
 

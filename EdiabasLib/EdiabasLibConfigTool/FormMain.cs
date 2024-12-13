@@ -902,10 +902,11 @@ namespace EdiabasLibConfigTool
             {
                 message = _initMessage + "\r\n" + text;
             }
-            textBoxStatus.Text = message;
-            textBoxStatus.SelectionStart = textBoxStatus.TextLength;
-            textBoxStatus.Update();
-            textBoxStatus.ScrollToCaret();
+
+            richTextBoxStatus.Text = message;
+            richTextBoxStatus.SelectionStart = richTextBoxStatus.TextLength;
+            richTextBoxStatus.Update();
+            richTextBoxStatus.ScrollToCaret();
         }
 
         public void PerformSearch()
