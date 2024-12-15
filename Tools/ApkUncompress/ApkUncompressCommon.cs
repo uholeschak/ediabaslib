@@ -14,6 +14,7 @@ namespace ApkUncompress;
 
 public class ApkUncompressCommon
 {
+    public const string AssembliesLibPath = "lib/";
     public const string AssembliesPathApk = "assemblies/";
     public const string AssembliesPathAab = "base/root/assemblies/";
 
@@ -121,6 +122,7 @@ public class ApkUncompressCommon
             }
 
             string entryFileName = Path.GetFileName(entry.Name);
+            string? entryPath = Path.GetDirectoryName(entry.Name);
             if (!entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.Ordinal))
             {
                 continue;
@@ -136,6 +138,11 @@ public class ApkUncompressCommon
             assemblyFileName = assemblyFileName.Remove(assemblyFileName.Length - MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT.Length);
 
             string outputFile = assemblyFileName;
+            if (!string.IsNullOrEmpty(entryPath))
+            {
+                outputFile = Path.Combine(entryPath, outputFile);
+            }
+
             if (!string.IsNullOrEmpty(prefix))
             {
                 outputFile = Path.Combine(prefix, outputFile);
@@ -276,7 +283,14 @@ public class ApkUncompressCommon
 
                 if (!blobFound)
                 {
-                    return UncompressFromAPK_IndividualEntries(zf, filePath, assembliesPath, prefix, outputPath);
+                    bool entriesFound = UncompressFromAPK_IndividualEntries(zf, filePath, assembliesPath, prefix, outputPath);
+                    if (!entriesFound)
+                    {
+                        if (!UncompressFromAPK_ElfEncoded(zf, filePath, AssembliesLibPath, prefix, outputPath))
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
             finally
