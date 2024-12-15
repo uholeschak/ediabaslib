@@ -3,9 +3,12 @@ using System.IO;
 using System;
 using System.Buffers;
 using System.Text;
+using ELFSharp.ELF;
+using ELFSharp.ELF.Sections;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Xamarin.Android.AssemblyStore;
+using Xamarin.Android.Tasks;
 
 namespace ApkUncompress;
 
@@ -94,15 +97,91 @@ public class ApkUncompressCommon
 
     public bool UncompressDLL(string filePath, string prefix, string? outputPath)
     {
-        using (var fs = File.Open(filePath, FileMode.Open, FileAccess.Read))
+        using (FileStream fs = File.Open(filePath, FileMode.Open, FileAccess.Read))
         {
             return UncompressDLL(fs, Path.GetFileName(filePath), prefix, outputPath);
         }
     }
 
+    public bool UncompressFromAPK_ElfEncoded(ZipFile apk, string filePath, string libPath, string prefix, string? outputPath)
+    {
+        bool result = true;
+        int extractedCount = 0;
+
+        foreach (ZipEntry entry in apk)
+        {
+            if (!entry.IsFile)
+            {
+                continue;
+            }
+
+            if (!entry.Name.StartsWith(libPath, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            string entryFileName = Path.GetFileName(entry.Name);
+            if (!entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (!entryFileName.EndsWith(".dll" + MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            string assemblyFileName = entryFileName;
+            assemblyFileName = assemblyFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER.Length);
+            assemblyFileName = assemblyFileName.Remove(assemblyFileName.Length - MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT.Length);
+
+            string outputFile = assemblyFileName;
+            if (!string.IsNullOrEmpty(prefix))
+            {
+                outputFile = Path.Combine(prefix, outputFile);
+            }
+
+            if (!string.IsNullOrEmpty(outputPath))
+            {
+                outputFile = Path.Combine(outputPath, outputFile);
+            }
+
+            using (Stream zipStream = apk.GetInputStream(entry))
+            {
+                using (IELF elfReader = ELFReader.Load(zipStream, false))
+                {
+                    if (!elfReader.TryGetSection("payload", out ISection payloadSection))
+                    {
+                        result = false;
+                        continue;
+                    }
+
+                    byte[] payloadData = payloadSection.GetContents();
+                    if (payloadData == null)
+                    {
+                        result = false;
+                        continue;
+                    }
+
+                    File.WriteAllBytes(outputFile, payloadData);
+                    extractedCount++;
+                }
+            }
+        }
+
+        if (extractedCount == 0)
+        {
+            result = false;
+        }
+
+        return result;
+    }
+
     public bool UncompressFromAPK_IndividualEntries(ZipFile apk, string filePath, string assembliesPath, string prefix, string? outputPath)
     {
         bool result = true;
+        int extractedCount = 0;
+
         foreach (ZipEntry entry in apk)
         {
             if (!entry.IsFile)
@@ -134,9 +213,15 @@ public class ApkUncompressCommon
                 {
                     result = false;
                 }
+
+                extractedCount++;
             }
         }
 
+        if (extractedCount == 0)
+        {
+            result = false;
+        }
         return result;
     }
 
