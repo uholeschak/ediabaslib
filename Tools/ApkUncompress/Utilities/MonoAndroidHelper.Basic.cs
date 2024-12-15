@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO.Hashing;
 using System.Text;
 
 using Xamarin.Android.Tools;
-#pragma warning disable CS8603 // Possible null reference return.
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 
 namespace Xamarin.Android.Tasks;
 
@@ -97,7 +94,7 @@ partial class MonoAndroidHelper
 
 	public static string AbiToRid (string abi)
 	{
-		if (!AbiToRidMap.TryGetValue (abi, out string rid)) {
+		if (!AbiToRidMap.TryGetValue (abi, out string? rid)) {
 			throw new NotSupportedException ($"Internal error: unsupported ABI '{abi}'");
 		};
 
@@ -106,7 +103,7 @@ partial class MonoAndroidHelper
 
 	public static string RidToAbi (string rid)
 	{
-		if (!RidToAbiMap.TryGetValue (rid, out string abi)) {
+		if (!RidToAbiMap.TryGetValue (rid, out string? abi)) {
 			throw new NotSupportedException ($"Internal error: unsupported Runtime Identifier '{rid}'");
 		};
 
@@ -134,7 +131,7 @@ partial class MonoAndroidHelper
 
 	public static string ArchToRid (AndroidTargetArch arch)
 	{
-		if (!ArchToRidMap.TryGetValue (arch, out string rid)) {
+		if (!ArchToRidMap.TryGetValue (arch, out string? rid)) {
 			throw new InvalidOperationException ($"Internal error: unsupported architecture '{arch}'");
 		};
 
@@ -143,7 +140,7 @@ partial class MonoAndroidHelper
 
 	public static string ArchToAbi (AndroidTargetArch arch)
 	{
-		if (!ArchToAbiMap.TryGetValue (arch, out string abi)) {
+		if (!ArchToAbiMap.TryGetValue (arch, out string? abi)) {
 			throw new InvalidOperationException ($"Internal error: unsupported architecture '{arch}'");
 		};
 
@@ -161,9 +158,9 @@ partial class MonoAndroidHelper
 		return Convert.ToString (obj, CultureInfo.InvariantCulture);
 	}
 
-	public static string MapAndroidAbiToClang (string androidAbi)
+	public static string? MapAndroidAbiToClang (string androidAbi)
 	{
-		if (ClangAbiMap.TryGetValue (androidAbi, out string clangAbi)) {
+		if (ClangAbiMap.TryGetValue (androidAbi, out string? clangAbi)) {
 			return clangAbi;
 		}
 		return null;
@@ -230,15 +227,4 @@ partial class MonoAndroidHelper
 	}
 
 	public static byte[] Utf8StringToBytes (string str) => Encoding.UTF8.GetBytes (str);
-
-	public static ulong GetXxHash (string str, bool is64Bit) => GetXxHash (Utf8StringToBytes (str), is64Bit);
-
-	public static ulong GetXxHash (byte[] stringBytes, bool is64Bit)
-	{
-		if (is64Bit) {
-			return XxHash3.HashToUInt64 (stringBytes);
-		}
-
-		return (ulong)XxHash32.HashToUInt32 (stringBytes);
-	}
 }
