@@ -122,13 +122,15 @@ public class ApkUncompressCommon
             }
 
             string entryFileName = Path.GetFileName(entry.Name);
-            string? entryPath = Path.GetDirectoryName(entry.Name);
-            if (!entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.Ordinal))
+            string subPath = entry.Name.Remove(0, libPath.Length);
+            string? entryPath = Path.GetDirectoryName(subPath);
+
+            if (!entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
 
-            if (!entryFileName.EndsWith(".dll" + MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT, StringComparison.Ordinal))
+            if (!entryFileName.EndsWith(".dll" + MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -153,26 +155,53 @@ public class ApkUncompressCommon
                 outputFile = Path.Combine(outputPath, outputFile);
             }
 
-            using (Stream zipStream = apk.GetInputStream(entry))
+            string? outputDir = Path.GetDirectoryName(outputFile);
+            if (string.IsNullOrEmpty(outputDir))
             {
-                using (IELF elfReader = ELFReader.Load(zipStream, false))
+                continue;
+            }
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                byte[] buffer = new byte[4096]; // 4K is optimum
+                using (Stream zipStream = apk.GetInputStream(entry))
                 {
-                    if (!elfReader.TryGetSection("payload", out ISection payloadSection))
-                    {
-                        result = false;
-                        continue;
-                    }
-
-                    byte[] payloadData = payloadSection.GetContents();
-                    if (payloadData == null)
-                    {
-                        result = false;
-                        continue;
-                    }
-
-                    File.WriteAllBytes(outputFile, payloadData);
-                    extractedCount++;
+                    StreamUtils.Copy(zipStream, memoryStream, buffer);
                 }
+
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                try
+                {
+                    using (IELF elfReader = ELFReader.Load(memoryStream, false))
+                    {
+                        if (!elfReader.TryGetSection("payload", out ISection payloadSection))
+                        {
+                            result = false;
+                            continue;
+                        }
+
+                        byte[] payloadData = payloadSection.GetContents();
+                        if (payloadData == null)
+                        {
+                            result = false;
+                            continue;
+                        }
+
+                        if (!Directory.Exists(outputDir))
+                        {
+                            Directory.CreateDirectory(outputDir);
+                        }
+
+                        File.WriteAllBytes(outputFile, payloadData);
+                        extractedCount++;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                extractedCount++;
             }
         }
 
@@ -206,17 +235,17 @@ public class ApkUncompressCommon
                 continue;
             }
 
-            using (var stream = new MemoryStream())
+            using (MemoryStream memoryStream = new MemoryStream())
             {
                 byte[] buffer = new byte[4096]; // 4K is optimum
                 using (Stream zipStream = apk.GetInputStream(entry))
                 {
-                    StreamUtils.Copy(zipStream, stream, buffer);
+                    StreamUtils.Copy(zipStream, memoryStream, buffer);
                 }
 
-                stream.Seek(0, SeekOrigin.Begin);
+                memoryStream.Seek(0, SeekOrigin.Begin);
                 string fileName = entry.Name.Substring(assembliesPath.Length);
-                if (!UncompressDLL(stream, fileName, prefix, outputPath))
+                if (!UncompressDLL(memoryStream, fileName, prefix, outputPath))
                 {
                     result = false;
                 }
