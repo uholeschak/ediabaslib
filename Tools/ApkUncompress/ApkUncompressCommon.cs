@@ -157,15 +157,22 @@ public class ApkUncompressCommon
                 continue;
             }
 
+            if (!string.IsNullOrEmpty(cultureDir))
+            {
+                if (string.IsNullOrEmpty(entryPath))
+                {
+                    entryPath = cultureDir;
+                }
+                else
+                {
+                    entryPath = Path.Combine(entryPath, cultureDir);
+                }
+            }
+
             string outputFile = assemblyFileName;
             if (!string.IsNullOrEmpty(entryPath))
             {
                 outputFile = Path.Combine(entryPath, outputFile);
-            }
-
-            if (!string.IsNullOrEmpty(cultureDir))
-            {
-                outputFile = Path.Combine(cultureDir, outputFile);
             }
 
             if (!string.IsNullOrEmpty(prefix))
