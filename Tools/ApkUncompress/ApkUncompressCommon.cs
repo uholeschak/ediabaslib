@@ -134,9 +134,22 @@ public class ApkUncompressCommon
             cleanedFileName = cleanedFileName.Remove(cleanedFileName.Length - MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT.Length);
 
             string? assemblyFileName = null;
+            string cultureDir = null;
             if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
             {
                 assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER.Length);
+            }
+            else if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
+            {
+                assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER.Length);
+                int cultureSepIndex = assemblyFileName.IndexOf('-');
+                if (cultureSepIndex < 0)
+                {
+                    continue;
+                }
+
+                cultureDir = assemblyFileName.Substring(0, cultureSepIndex);
+                assemblyFileName = assemblyFileName.Remove(0, cultureSepIndex + 1);
             }
 
             if (string.IsNullOrEmpty(assemblyFileName))
@@ -148,6 +161,11 @@ public class ApkUncompressCommon
             if (!string.IsNullOrEmpty(entryPath))
             {
                 outputFile = Path.Combine(entryPath, outputFile);
+            }
+
+            if (!string.IsNullOrEmpty(cultureDir))
+            {
+                outputFile = Path.Combine(cultureDir, outputFile);
             }
 
             if (!string.IsNullOrEmpty(prefix))
