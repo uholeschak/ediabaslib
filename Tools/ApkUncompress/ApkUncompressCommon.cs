@@ -144,7 +144,7 @@ public class ApkUncompressCommon
             {
                 assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER.Length);
                 int cultureSepIndex = assemblyFileName.IndexOf('-');
-                if (cultureSepIndex < 0)
+                if (cultureSepIndex < 1)
                 {
                     continue;
                 }
