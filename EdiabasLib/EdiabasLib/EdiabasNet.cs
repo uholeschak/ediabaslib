@@ -4594,7 +4594,10 @@ namespace EdiabasLib
         {
             byte[] buffer = new byte[4];
             fs.Position = 0x7C;
-            fs.Read(buffer, 0, buffer.Length);
+            if (fs.Read(buffer, 0, buffer.Length) != buffer.Length)
+            {
+                throw new EndOfStreamException("ReadAllUses");
+            }
 
             if (!BitConverter.IsLittleEndian)
             {
@@ -4662,7 +4665,10 @@ namespace EdiabasLib
         {
             byte[] buffer = new byte[4];
             fs.Position = 0x90;
-            fs.Read(buffer, 0, buffer.Length);
+            if (fs.Read(buffer, 0, buffer.Length) != buffer.Length)
+            {
+                throw new EndOfStreamException("ReadDescriptions");
+            }
 
             if (!BitConverter.IsLittleEndian)
             {
@@ -4798,7 +4804,10 @@ namespace EdiabasLib
         {
             byte[] buffer = new byte[4];
             fs.Position = 0x18;
-            fs.Read(buffer, 0, buffer.Length);
+            if (fs.Read(buffer, 0, buffer.Length) != buffer.Length)
+            {
+                throw new EndOfStreamException("GetJobList");
+            }
 
             if (!BitConverter.IsLittleEndian)
             {
@@ -4811,7 +4820,10 @@ namespace EdiabasLib
             }
 
             fs.Position = 0x88;
-            fs.Read(buffer, 0, buffer.Length);
+            if (fs.Read(buffer, 0, buffer.Length) != buffer.Length)
+            {
+                throw new EndOfStreamException("GetJobList");
+            }
 
             if (!BitConverter.IsLittleEndian)
             {
@@ -4887,7 +4899,10 @@ namespace EdiabasLib
         {
             byte[] buffer = new byte[4];
             fs.Position = 0x84;
-            fs.Read(buffer, 0, buffer.Length);
+            if (fs.Read(buffer, 0, buffer.Length) != buffer.Length)
+            {
+                throw new EndOfStreamException("ReadAllTables");
+            }
 
             TableInfos tableInfosLocal = new TableInfos
             {
@@ -7005,7 +7020,11 @@ namespace EdiabasLib
         private static int ReadInt32(Stream fs)
         {
             byte[] buffer = new byte[4];
-            fs.Read(buffer, 0, 4);
+            if (fs.Read(buffer, 0, buffer.Length) != buffer.Length)
+            {
+                throw new EndOfStreamException("ReadInt32");
+            }
+
             if (!BitConverter.IsLittleEndian)
             {
                 Array.Reverse(buffer);
