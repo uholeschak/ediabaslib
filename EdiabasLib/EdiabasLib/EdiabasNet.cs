@@ -4628,7 +4628,10 @@ namespace EdiabasLib
         {
             byte[] buffer = new byte[4];
             fs.Position = 0x94;
-            fs.Read(buffer, 0, buffer.Length);
+            if (fs.Read(buffer, 0, buffer.Length) != buffer.Length)
+            {
+                throw new EndOfStreamException("ReadVersionInfos");
+            }
 
             if (!BitConverter.IsLittleEndian)
             {
@@ -6988,9 +6991,15 @@ namespace EdiabasLib
 
         private static void ReadAndDecryptBytes(Stream fs, byte[] buffer, int offset, int count)
         {
-            fs.Read(buffer, offset, count);
+            if (fs.Read(buffer, offset, count) != count)
+            {
+                throw new EndOfStreamException("ReadAndDecryptBytes");
+            }
+
             for (int i = offset; i < (offset + count); ++i)
+            {
                 buffer[i] ^= 0xF7;
+            }
         }
 
         private static int ReadInt32(Stream fs)
