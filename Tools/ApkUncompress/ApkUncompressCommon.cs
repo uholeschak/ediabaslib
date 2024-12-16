@@ -104,7 +104,7 @@ public class ApkUncompressCommon
         }
     }
 
-    public bool UncompressFromAPK_ElfEncoded(ZipFile apk, string filePath, string libPath, string prefix, string? outputPath)
+    public bool UncompressFromAPK_IndividualElfFiles(ZipFile apk, string filePath, string libPath, string prefix, string? outputPath)
     {
         bool result = true;
         int extractedCount = 0;
@@ -320,7 +320,7 @@ public class ApkUncompressCommon
 
                 if (!filesFound)
                 {
-                    if (!UncompressFromAPK_ElfEncoded(zf, filePath, AssembliesLibPath, prefix, outputPath))
+                    if (!UncompressFromAPK_IndividualElfFiles(zf, filePath, AssembliesLibPath, prefix, outputPath))
                     {
                         return false;
                     }
