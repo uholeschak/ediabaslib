@@ -10,6 +10,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using Xamarin.Android.AssemblyStore;
 using Xamarin.Android.Tasks;
 using System.Collections;
+using Microsoft.IO;
 
 namespace ApkUncompress;
 
@@ -18,6 +19,7 @@ public class ApkUncompressCommon
     public const string AssembliesLibPath = "lib/";
     public const string AssembliesPathApk = "assemblies/";
     public const string AssembliesPathAab = "base/root/assemblies/";
+    public static readonly RecyclableMemoryStreamManager MemoryStreamManager = new RecyclableMemoryStreamManager();
 
     private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
     private readonly ArrayPool<byte> bytePool;
@@ -143,6 +145,7 @@ public class ApkUncompressCommon
             else if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
             {
                 assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER.Length);
+                // MonoAndroidHelper.SATELLITE_CULTURE_END_MARKER_CHAR is incorrect!
                 int cultureSepIndex = assemblyFileName.IndexOf('-');
                 if (cultureSepIndex < 1)
                 {
@@ -192,7 +195,7 @@ public class ApkUncompressCommon
                 continue;
             }
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            using (RecyclableMemoryStream memoryStream = new RecyclableMemoryStream(MemoryStreamManager))
             {
                 byte[] buffer = new byte[4096]; // 4K is optimum
                 using (Stream zipStream = apk.GetInputStream(entry))
@@ -287,7 +290,7 @@ public class ApkUncompressCommon
                 continue;
             }
 
-            using (MemoryStream memoryStream = new MemoryStream())
+            using (RecyclableMemoryStream memoryStream = new RecyclableMemoryStream(MemoryStreamManager))
             {
                 byte[] buffer = new byte[4096]; // 4K is optimum
                 using (Stream zipStream = apk.GetInputStream(entry))
@@ -325,11 +328,11 @@ public class ApkUncompressCommon
                 assemblyName = Path.Combine(assembly.Store.Arch, assemblyName);
             }
 
-            using (var stream = new MemoryStream())
+            using (RecyclableMemoryStream memoryStream = new RecyclableMemoryStream(MemoryStreamManager))
             {
-                assembly.ExtractImage(stream);
-                stream.Seek(0, SeekOrigin.Begin);
-                UncompressDLL(stream, assemblyName, prefix, outputPath);
+                assembly.ExtractImage(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                UncompressDLL(memoryStream, assemblyName, prefix, outputPath);
             }
         }
 
