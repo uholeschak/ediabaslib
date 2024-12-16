@@ -348,7 +348,7 @@ public class ApkUncompressCommon
             ZipFile? zf = null;
             try
             {
-                bool filesFound = false;
+                bool blobFound = false;
                 FileStream fs = File.OpenRead(filePath);
                 zf = new ZipFile(fs);
                 foreach (ZipEntry zipEntry in zf)
@@ -360,25 +360,24 @@ public class ApkUncompressCommon
 
                     if (string.Compare(zipEntry.Name, blobName, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        filesFound = true;
+                        blobFound = true;
                         break;
                     }
                 }
 
-                if (!filesFound)
+                if (!blobFound)
                 {
                     if (UncompressFromAPK_IndividualEntries(zf, filePath, assembliesPath, prefix, outputPath))
                     {
-                        filesFound = true;
+                        return true;
                     }
-                }
 
-                if (!filesFound)
-                {
-                    if (!UncompressFromAPK_IndividualElfFiles(zf, filePath, AssembliesLibPath, prefix, outputPath))
+                    if (UncompressFromAPK_IndividualElfFiles(zf, filePath, AssembliesLibPath, prefix, outputPath))
                     {
-                        return false;
+                        return true;
                     }
+
+                    return false;
                 }
             }
             finally
