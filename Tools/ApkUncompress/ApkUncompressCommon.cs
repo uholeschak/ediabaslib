@@ -9,6 +9,7 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Xamarin.Android.AssemblyStore;
 using Xamarin.Android.Tasks;
+using System.Collections;
 
 namespace ApkUncompress;
 
@@ -134,7 +135,7 @@ public class ApkUncompressCommon
             cleanedFileName = cleanedFileName.Remove(cleanedFileName.Length - MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT.Length);
 
             string? assemblyFileName = null;
-            string cultureDir = null;
+            string? cultureDir = null;
             if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
             {
                 assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER.Length);
@@ -204,6 +205,27 @@ public class ApkUncompressCommon
                 {
                     using (IELF elfReader = ELFReader.Load(memoryStream, false))
                     {
+#if false
+                        foreach (ISection section in elfReader.Sections)
+                        {
+                            if (section.Name == "payload")
+                            {
+                                continue;
+                            }
+                            byte[] data = section.GetContents();
+                            string dataString;
+                            if (section.Name == ".dynstr")
+                            {
+                                dataString = Encoding.UTF8.GetString(data);
+                            }
+                            else
+                            {
+                                dataString = BitConverter.ToString(data);
+                            }
+
+                            Console.WriteLine("Section: {0} '{1}'", section.Name, dataString);
+                        }
+#endif
                         if (!elfReader.TryGetSection("payload", out ISection payloadSection))
                         {
                             result = false;
