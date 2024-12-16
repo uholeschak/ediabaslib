@@ -125,19 +125,24 @@ public class ApkUncompressCommon
             string subPath = entry.Name.Remove(0, libPath.Length);
             string? entryPath = Path.GetDirectoryName(subPath);
 
-            if (!entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
             if (!entryFileName.EndsWith(".dll" + MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
 
-            string assemblyFileName = entryFileName;
-            assemblyFileName = assemblyFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER.Length);
-            assemblyFileName = assemblyFileName.Remove(assemblyFileName.Length - MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT.Length);
+            string cleanedFileName = entryFileName;
+            cleanedFileName = cleanedFileName.Remove(cleanedFileName.Length - MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT.Length);
+
+            string? assemblyFileName = null;
+            if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
+            {
+                assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER.Length);
+            }
+
+            if (string.IsNullOrEmpty(assemblyFileName))
+            {
+                continue;
+            }
 
             string outputFile = assemblyFileName;
             if (!string.IsNullOrEmpty(entryPath))
