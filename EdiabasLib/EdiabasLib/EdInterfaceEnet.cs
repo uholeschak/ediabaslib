@@ -2859,7 +2859,11 @@ namespace EdiabasLib
                 {
                     try
                     {
+#if NET9_0_OR_GREATER
+                        X509Certificate2 cert = X509CertificateLoader.LoadCertificateFromFile(certFile);
+#else
                         X509Certificate2 cert = new X509Certificate2(certFile);
+#endif
                         caList.Add(cert);
                     }
                     catch (Exception ex)
@@ -2904,7 +2908,11 @@ namespace EdiabasLib
                 {
                     try
                     {
+#if NET9_0_OR_GREATER
+                        X509Certificate2 cert = X509CertificateLoader.LoadCertificateFromFile(certFile);
+#else
                         X509Certificate2 cert = new X509Certificate2(certFile);
+#endif
                         certList.Add(cert);
                     }
                     catch (Exception ex)
