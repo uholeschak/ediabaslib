@@ -32,12 +32,30 @@ namespace ApkUncompress
                 {
                     continue;
                 }
-                string? outputPath = Path.GetDirectoryName(fullPath);
-                string prefix = $"uncompressed-{Path.GetFileNameWithoutExtension(file)}";
 
-                if (String.Compare(".dll", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                string? outputPath = Path.GetDirectoryName(fullPath);
+                if (string.IsNullOrEmpty(outputPath))
                 {
-                    if (!apkUncompress.UncompressDLL(file, "uncompressed-", outputPath))
+                    continue;
+                }
+
+                string prefix = $"uncompressed-{Path.GetFileNameWithoutExtension(file)}";
+                string outputDir = Path.Combine(outputPath, prefix);
+                if (Directory.Exists(outputDir))
+                {
+                    Directory.Delete(outputDir, true);
+                }
+
+                string prefixDll = "uncompressed-";
+                string outputDirDll = Path.Combine(outputPath, prefixDll);
+                if (Directory.Exists(outputDirDll))
+                {
+                    Directory.Delete(outputDirDll, true);
+                }
+
+                if (string.Compare(".dll", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    if (!apkUncompress.UncompressDLL(file, prefixDll, outputPath))
                     {
                         Console.WriteLine("Uncompress failed: {0}", file);
                         haveErrors = true;
@@ -47,7 +65,7 @@ namespace ApkUncompress
                     continue;
                 }
 
-                if (String.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     if (!apkUncompress.UncompressFromAPK(file, ApkUncompressCommon.AssembliesPathApk, prefix, outputPath))
                     {
@@ -59,7 +77,7 @@ namespace ApkUncompress
                     continue;
                 }
 
-                if (String.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     if (!apkUncompress.UncompressFromAPK(file, ApkUncompressCommon.AssembliesPathAab, prefix, outputPath))
                     {
