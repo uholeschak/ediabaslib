@@ -7,7 +7,8 @@
         android:id="@+id/layoutXmlToolEcu"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
         <TextView
             android:id="@+id/textViewPageNameTitle"
             android:text="@string/xml_tool_ecu_page_name"
