@@ -19,7 +19,6 @@ using BmwDeepObd.Dialogs;
 using BmwDeepObd.FilePicker;
 using BmwFileReader;
 using EdiabasLib;
-using Skydoves.BalloonLib;
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 // ReSharper disable LoopCanBeConvertedToQuery
