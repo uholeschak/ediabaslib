@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using ApkUncompress;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-using Microsoft.IO;
 
 namespace Xamarin.Android.AssemblyStore
 {
@@ -235,7 +233,7 @@ namespace Xamarin.Android.AssemblyStore
 					continue;
 				}
 
-				using (RecyclableMemoryStream stream = new RecyclableMemoryStream(ApkUncompressCommon.MemoryStreamManager)) {
+				using (MemoryStream stream = new MemoryStream()) {
                     byte[] buffer = new byte[4096]; // 4K is optimum
                     using (Stream zipStream = archive.GetInputStream(entry))
                     {

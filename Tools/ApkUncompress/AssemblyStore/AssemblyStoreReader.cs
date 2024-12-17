@@ -1,5 +1,4 @@
 using ApkUncompress;
-using Microsoft.IO;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ namespace Xamarin.Android.AssemblyStore
 		const uint ASSEMBLY_STORE_MAGIC = 0x41424158; // 'XABA', little-endian
 		const uint ASSEMBLY_STORE_FORMAT_VERSION = 1; // The highest format version this reader understands
 
-        RecyclableMemoryStream? storeData;
+        MemoryStream? storeData;
 
 		public uint Version                               { get; private set; }
 		public uint LocalEntryCount                       { get; private set; }
@@ -33,7 +32,7 @@ namespace Xamarin.Android.AssemblyStore
 
 			store.Seek (0, SeekOrigin.Begin);
 			if (keepStoreInMemory) {
-				storeData = new RecyclableMemoryStream(ApkUncompressCommon.MemoryStreamManager);
+				storeData = new MemoryStream();
 				store.CopyTo (storeData);
 				storeData.Flush ();
 				store.Seek (0, SeekOrigin.Begin);

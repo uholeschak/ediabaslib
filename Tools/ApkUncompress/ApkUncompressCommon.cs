@@ -10,7 +10,6 @@ using ICSharpCode.SharpZipLib.Zip;
 using Xamarin.Android.AssemblyStore;
 using Xamarin.Android.Tasks;
 using System.Collections;
-using Microsoft.IO;
 
 namespace ApkUncompress;
 
@@ -19,8 +18,8 @@ public class ApkUncompressCommon
     public const string AssembliesLibPath = "lib/";
     public const string AssembliesPathApk = "assemblies/";
     public const string AssembliesPathAab = "base/root/assemblies/";
-    public static readonly RecyclableMemoryStreamManager MemoryStreamManager = new RecyclableMemoryStreamManager();
 
+    private const int BufferSize = 4096;
     private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
     private readonly ArrayPool<byte> bytePool;
 
@@ -91,7 +90,7 @@ public class ApkUncompressCommon
 
         using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
         {
-            byte[] buffer = new byte[4096]; // 4K is optimum
+            byte[] buffer = new byte[BufferSize]; // 4K is optimum
             inputStream.Seek(0, SeekOrigin.Begin);
             StreamUtils.Copy(inputStream, fs, buffer);
         }
@@ -195,18 +194,19 @@ public class ApkUncompressCommon
                 continue;
             }
 
-            using (RecyclableMemoryStream memoryStream = new RecyclableMemoryStream(MemoryStreamManager))
+            string tempFileName = Path.GetTempFileName();
+            using (FileStream tempStream = File.Create(tempFileName, BufferSize, FileOptions.DeleteOnClose))
             {
-                byte[] buffer = new byte[4096]; // 4K is optimum
+                byte[] buffer = new byte[BufferSize]; // 4K is optimum
                 using (Stream zipStream = apk.GetInputStream(entry))
                 {
-                    StreamUtils.Copy(zipStream, memoryStream, buffer);
+                    StreamUtils.Copy(zipStream, tempStream, buffer);
                 }
 
-                memoryStream.Seek(0, SeekOrigin.Begin);
+                tempStream.Seek(0, SeekOrigin.Begin);
                 try
                 {
-                    using (IELF elfReader = ELFReader.Load(memoryStream, false))
+                    using (IELF elfReader = ELFReader.Load(tempStream, false))
                     {
 #if false
                         foreach (ISection section in elfReader.Sections)
@@ -290,17 +290,18 @@ public class ApkUncompressCommon
                 continue;
             }
 
-            using (RecyclableMemoryStream memoryStream = new RecyclableMemoryStream(MemoryStreamManager))
+            string tempFileName = Path.GetTempFileName();
+            using (FileStream tempStream = File.Create(tempFileName, BufferSize, FileOptions.DeleteOnClose))
             {
-                byte[] buffer = new byte[4096]; // 4K is optimum
+                byte[] buffer = new byte[BufferSize]; // 4K is optimum
                 using (Stream zipStream = apk.GetInputStream(entry))
                 {
-                    StreamUtils.Copy(zipStream, memoryStream, buffer);
+                    StreamUtils.Copy(zipStream, tempStream, buffer);
                 }
 
-                memoryStream.Seek(0, SeekOrigin.Begin);
+                tempStream.Seek(0, SeekOrigin.Begin);
                 string fileName = entry.Name.Substring(assembliesPath.Length);
-                if (!UncompressDLL(memoryStream, fileName, prefix, outputPath))
+                if (!UncompressDLL(tempStream, fileName, prefix, outputPath))
                 {
                     result = false;
                 }
@@ -328,11 +329,12 @@ public class ApkUncompressCommon
                 assemblyName = Path.Combine(assembly.Store.Arch, assemblyName);
             }
 
-            using (RecyclableMemoryStream memoryStream = new RecyclableMemoryStream(MemoryStreamManager))
+            string tempFileName = Path.GetTempFileName();
+            using (FileStream tempStream = File.Create(tempFileName, BufferSize, FileOptions.DeleteOnClose))
             {
-                assembly.ExtractImage(memoryStream);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                UncompressDLL(memoryStream, assemblyName, prefix, outputPath);
+                assembly.ExtractImage(tempStream);
+                tempStream.Seek(0, SeekOrigin.Begin);
+                UncompressDLL(tempStream, assemblyName, prefix, outputPath);
             }
         }
 
