@@ -3,7 +3,8 @@
     android:id="@+id/layoutBmwActuator"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
     <WebView
         android:id="@+id/webViewCoding"
         android:layout_width="match_parent"
