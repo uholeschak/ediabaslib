@@ -14,13 +14,13 @@
     <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;CA1416;CS8632;IL3000</NoWarn>
+    <NoWarn>1701;1702;CA1416;CS8632</NoWarn>
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;CA1416;CS8632;IL3000</NoWarn>
+    <NoWarn>1701;1702;CA1416;CS8632</NoWarn>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidLinkTool>r8</AndroidLinkTool>
