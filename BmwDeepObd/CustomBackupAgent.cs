@@ -2,6 +2,7 @@
 using Android.App.Backup;
 using Android.OS;
 using Java.IO;
+using System.Runtime.Versioning;
 
 namespace BmwDeepObd;
 
@@ -21,14 +22,22 @@ public class CustomBackupAgent : BackupAgent
         base.OnDestroy();
     }
 
+    [SupportedOSPlatform("android28.0")]
     public override void OnBackup(ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState)
     {
         BackupTransportFlags transportFlags = 0;
         long quota = 0;
         if (data != null)
         {
-            transportFlags = data.TransportFlags;
-            quota = data.Quota;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+            {
+                transportFlags = data.TransportFlags;
+            }
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                quota = data.Quota;
+            }
         }
 
         Android.Util.Log.Info(Tag, string.Format("OnBackup: Flags={0}, Quota={1}", transportFlags, quota));
@@ -45,6 +54,7 @@ public class CustomBackupAgent : BackupAgent
         Android.Util.Log.Info(Tag, string.Format("OnRestore: Version={0}, Size={1}", appVersionCode, dataSize));
     }
 
+    [SupportedOSPlatform("android28.0")]
     public override void OnRestore(BackupDataInput data, long appVersionCode, ParcelFileDescriptor newState)
     {
         int dataSize = 0;
@@ -57,14 +67,22 @@ public class CustomBackupAgent : BackupAgent
         base.OnRestore(data, appVersionCode, newState);
     }
 
+    [SupportedOSPlatform("android28.0")]
     public override void OnFullBackup(FullBackupDataOutput data)
     {
         BackupTransportFlags transportFlags = 0;
         long quota = 0;
         if (data != null)
         {
-            transportFlags = data.TransportFlags;
-            quota = data.Quota;
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
+            {
+                transportFlags = data.TransportFlags;
+            }
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                quota = data.Quota;
+            }
         }
 
         Android.Util.Log.Info(Tag, string.Format("OnFullBackup: Flags={0}, Quota={1}", transportFlags, quota));
@@ -89,6 +107,7 @@ public class CustomBackupAgent : BackupAgent
         base.OnRestoreFinished();
     }
 
+    [SupportedOSPlatform("android24.0")]
     public override void OnQuotaExceeded(long backupDataBytes, long quotaBytes)
     {
         Android.Util.Log.Info(Tag, string.Format("OnQuotaExceeded: Backup={0}, Quota={1}", backupDataBytes, quotaBytes));
