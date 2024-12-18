@@ -11560,6 +11560,7 @@ namespace BmwDeepObd
 #endif
             foreach (Assembly assembly in loadedAssemblies)
             {
+                // the location contain no path for embedded assemblies
 #pragma warning disable IL3000
                 string location = assembly.Location;
 #pragma warning restore IL3000
@@ -11620,6 +11621,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
+                    // the location contain no path for embedded assemblies
 #pragma warning disable IL3000
                     string fileName = Path.GetFileName(assembly.Location);
 #pragma warning restore IL3000
