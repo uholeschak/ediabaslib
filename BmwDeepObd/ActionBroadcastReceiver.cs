@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Util;
 using System.Globalization;
+using System.Runtime.Versioning;
 
 namespace BmwDeepObd;
 
@@ -36,6 +37,7 @@ public class ActionBroadcastReceiver : BroadcastReceiver
     // testing broadcast, but Exported must be set to true in the manifest before it can be used
     // adb shell am broadcast -a android.intent.action.QUICKBOOT_POWERON -p de.holeschak.bmw_deep_obd
 
+    [SupportedOSPlatform("android28.0")]
     public override void OnReceive(Context context, Intent intent)
     {
         if (intent?.Action == null)
