@@ -328,12 +328,6 @@ namespace BmwDeepObd
             _contentView = FindViewById<View>(Android.Resource.Id.Content);
 
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-#if DEBUG
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
-            {
-                builder.DetectUnsafeIntentLaunch();
-            }
-#endif
             StrictMode.SetVmPolicy(builder.Build());
 
             _activityCommon = new ActivityCommon(this, () =>
