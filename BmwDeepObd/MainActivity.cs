@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -179,6 +180,7 @@ namespace BmwDeepObd
             Android.Manifest.Permission.WriteExternalStorage,
         };
 
+        [SupportedOSPlatform("android33.0")]
         private readonly string[] _permissionsPostNotifications =
         {
             Android.Manifest.Permission.PostNotifications

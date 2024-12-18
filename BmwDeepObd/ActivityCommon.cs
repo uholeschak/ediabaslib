@@ -48,6 +48,7 @@ using BmwDeepObd.Dialogs;
 using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
 using Android.App.Backup;
+using System.Runtime.Versioning;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -774,6 +775,7 @@ namespace BmwDeepObd
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
         public const int UdsDtcStatusOverride = 0x2C;
+        [SupportedOSPlatform("android23.0")]
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
         public const long UpdateCheckDelayDefault = TimeSpan.TicksPerDay;
         public const ThemeType ThemeDefault = ThemeType.Dark;
@@ -859,6 +861,7 @@ namespace BmwDeepObd
         public const int RequestPermissionBluetooth = (int)PermissionRequestCodes.RequestPermissionBluetooth;
         public const int RequestPermissionLocation = (int)PermissionRequestCodes.RequestPermissionLocation;
 
+        [SupportedOSPlatform("android31.0")]
         public static readonly string[] PermissionsBluetooth =
         {
             Android.Manifest.Permission.BluetoothScan,
@@ -14133,6 +14136,7 @@ using System.Threading;"
 
     public static class AndroidExtensions
     {
+        [SupportedOSPlatform("android33.0")]
         public static T GetParcelableExtraType<T>(this Intent intent, string name)
         {
             object parcel;
