@@ -2,9 +2,15 @@
    <PropertyGroup>
        <DefineConstants>$(DefineConstants);ANDROID_AUTO</DefineConstants>
    </PropertyGroup>
-  <Target Name="PatchRemoveRegisterAttribute" BeforeTargets="_RemoveRegisterAttribute">
+  <Target Name="PatchRemoveRegisterAttributeBefore" BeforeTargets="_RemoveRegisterAttribute">
     <PropertyGroup>
-      <AndroidIncludeDebugSymbols>True</AndroidIncludeDebugSymbols>
+      <AndroidIncludeDebugSymbolsStd>$(AndroidIncludeDebugSymbols)</AndroidIncludeDebugSymbolsStd>
+      <AndroidIncludeDebugSymbols Condition=" '$(EmbedAssembliesIntoApk)' == 'True' ">True</AndroidIncludeDebugSymbols>
+    </PropertyGroup>
+  </Target>
+  <Target Name="PatchRemoveRegisterAttributeAfter" AfterTargets="_RemoveRegisterAttribute">
+    <PropertyGroup>
+      <AndroidIncludeDebugSymbols Condition=" '$(EmbedAssembliesIntoApk)' == 'True' ">$(AndroidIncludeDebugSymbolsStd)</AndroidIncludeDebugSymbols>
     </PropertyGroup>
   </Target>
 </Project>
