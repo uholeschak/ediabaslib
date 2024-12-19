@@ -18,7 +18,6 @@ public class ApkUncompressCommon
     public const string AssembliesLibPath = "lib/";
     public const string AssembliesPathApk = "assemblies/";
     public const string AssembliesPathAab = "base/root/assemblies/";
-    public const string MANGLED_ASSEMBLY_AOT_ASSEMBLY_MARKER = "libaot-";
 
     private const int BufferSize = 4096;
     private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
@@ -141,10 +140,6 @@ public class ApkUncompressCommon
             if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
             {
                 assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER.Length);
-            }
-            else if (entryFileName.StartsWith(MANGLED_ASSEMBLY_AOT_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
-            {
-                assemblyFileName = cleanedFileName.Remove(0, MANGLED_ASSEMBLY_AOT_ASSEMBLY_MARKER.Length);
             }
             else if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
             {
