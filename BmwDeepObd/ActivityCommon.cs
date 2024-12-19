@@ -1186,7 +1186,9 @@ namespace BmwDeepObd
             try
             {
                 PackageManager packageManager = context?.PackageManager;
+#pragma warning disable CA1416
                 IList<ApplicationInfo> appList = GetInstalledApplications(packageManager, PackageInfoFlags.MatchAll);
+#pragma warning restore CA1416
                 if (appList != null)
                 {
                     foreach (ApplicationInfo appInfo in appList)
@@ -6821,7 +6823,9 @@ namespace BmwDeepObd
 #pragma warning restore CS0618
                 }
 
+#pragma warning disable CA1416
                 return packageManager.GetInstalledApplications(PackageManager.ApplicationInfoFlags.Of((int)infoFlags));
+#pragma warning restore CA1416
             }
             catch (Exception)
             {
@@ -14136,14 +14140,15 @@ using System.Threading;"
 
     public static class AndroidExtensions
     {
-        [SupportedOSPlatform("android33.0")]
         public static T GetParcelableExtraType<T>(this Intent intent, string name)
         {
             object parcel;
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
+#pragma warning disable CA1416
                 parcel = intent.GetParcelableExtra(name, Java.Lang.Class.FromType(typeof(T)));
+#pragma warning restore CA1416
             }
             else
             {
