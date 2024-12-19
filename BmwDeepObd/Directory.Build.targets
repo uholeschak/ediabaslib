@@ -2,4 +2,9 @@
    <PropertyGroup>
        <DefineConstants>$(DefineConstants);ANDROID_AUTO</DefineConstants>
    </PropertyGroup>
+  <Target Name="PatchRemoveRegisterAttribute" BeforeTargets="_RemoveRegisterAttribute">
+    <PropertyGroup>
+      <AndroidIncludeDebugSymbols>True</AndroidIncludeDebugSymbols>
+    </PropertyGroup>
+  </Target>
 </Project>
