@@ -5801,6 +5801,7 @@ namespace BmwDeepObd
             return true;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         public void RequestUsbPermission(UsbDevice usbDevice)
         {
             if (!UsbSupport)
@@ -6676,6 +6677,7 @@ namespace BmwDeepObd
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         public static PackageInfo GetPackageInfo(PackageManager packageManager, string packageName, PackageInfoFlags infoFlags = 0)
         {
             try
@@ -6722,6 +6724,7 @@ namespace BmwDeepObd
             return packageInfo?.ApplicationInfo;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         public bool IsAppStorageLocationInternal()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -10713,6 +10716,7 @@ namespace BmwDeepObd
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         public static Java.Lang.ICharSequence FromHtml(string source)
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
