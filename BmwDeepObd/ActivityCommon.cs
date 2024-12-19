@@ -1181,14 +1181,13 @@ namespace BmwDeepObd
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416")]
         public static bool IsMtcService(Context context)
         {
             try
             {
                 PackageManager packageManager = context?.PackageManager;
-#pragma warning disable CA1416
                 IList<ApplicationInfo> appList = GetInstalledApplications(packageManager, PackageInfoFlags.MatchAll);
-#pragma warning restore CA1416
                 if (appList != null)
                 {
                     foreach (ApplicationInfo appInfo in appList)
@@ -6807,6 +6806,7 @@ namespace BmwDeepObd
             return GetInstalledPackages(_packageManager, infoFlags);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416")]
         public static IList<ApplicationInfo> GetInstalledApplications(PackageManager packageManager, PackageInfoFlags infoFlags = 0)
         {
             try
@@ -6823,9 +6823,7 @@ namespace BmwDeepObd
 #pragma warning restore CS0618
                 }
 
-#pragma warning disable CA1416
                 return packageManager.GetInstalledApplications(PackageManager.ApplicationInfoFlags.Of((int)infoFlags));
-#pragma warning restore CA1416
             }
             catch (Exception)
             {
@@ -13064,6 +13062,7 @@ using System.Threading;"
             return storageList;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416")]
         public static string GetVolumePath(string volumeId)
         {
             try
@@ -14140,15 +14139,14 @@ using System.Threading;"
 
     public static class AndroidExtensions
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416")]
         public static T GetParcelableExtraType<T>(this Intent intent, string name)
         {
             object parcel;
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
             {
-#pragma warning disable CA1416
                 parcel = intent.GetParcelableExtra(name, Java.Lang.Class.FromType(typeof(T)));
-#pragma warning restore CA1416
             }
             else
             {
