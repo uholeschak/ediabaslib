@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Xamarin.Android.Tools;
 
@@ -35,10 +36,14 @@ class AssemblyStoreExplorer
 		Is64Bit = reader.Is64Bit;
 
 		var dict = new Dictionary<string, AssemblyStoreItem> (StringComparer.Ordinal);
-		foreach (AssemblyStoreItem item in Assemblies) {
-			dict.Add (item.Name, item);
-		}
-		AssembliesByName = dict.AsReadOnly ();
+        if (Assemblies != null)
+        {
+            foreach (AssemblyStoreItem item in Assemblies)
+            {
+                dict.Add(item.Name, item);
+            }
+        }
+        AssembliesByName = dict.AsReadOnly ();
 	}
 
 	protected AssemblyStoreExplorer (FileInfo storeInfo)
@@ -151,16 +156,23 @@ class AssemblyStoreExplorer
 	{
 		var ret = new List<AssemblyStoreExplorer> ();
 
-		foreach (string path in paths) {
-			if (!zip.ContainsEntry (path)) {
-				continue;
-			}
+		foreach (string path in paths)
+        {
+            foreach (ZipEntry zipEntry in zf)
+            {
+                if (!zipEntry.IsFile)
+                {
+                    continue; // Ignore directories
+                }
 
-			ZipEntry entry = zip.ReadEntry (path);
-			var stream = new MemoryStream ();
-			entry.Extract (stream);
-			ret.Add (new AssemblyStoreExplorer (stream, $"{fi.FullName}!{path}"));
-		}
+                if (string.Compare(zipEntry.Name, path, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    Stream zipStream = zf.GetInputStream(zipEntry);
+                    ret.Add(new AssemblyStoreExplorer(zipStream, $"{fi.FullName}!{path}"));
+                    break;
+                }
+            }
+        }
 
 		if (ret.Count == 0) {
 			return (null, null, false);
