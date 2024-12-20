@@ -189,6 +189,7 @@ namespace EdiabasLib
                                 {
                                     Android.Net.NetworkCapabilities networkCapabilities = connectivityManager.GetNetworkCapabilities(network);
                                     Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
+#pragma warning disable CA1416
                                     if (networkCapabilities != null && linkProperties != null && linkProperties.DhcpServerAddress != null)
                                     {
                                         if (networkCapabilities.TransportInfo is Android.Net.Wifi.WifiInfo)
@@ -201,6 +202,7 @@ namespace EdiabasLib
                                             }
                                         }
                                     }
+#pragma warning restore CA1416
                                 }
                             }
                         }
