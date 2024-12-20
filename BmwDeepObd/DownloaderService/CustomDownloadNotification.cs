@@ -380,6 +380,7 @@ namespace BmwDeepObd
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         public static bool RegisterNotificationChannels(Context context)
         {
             try

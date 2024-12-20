@@ -197,6 +197,7 @@ namespace BmwDeepObd
 #endif
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private int HctApiVerDetect()
         {
             if (_hctApiVerDetected.HasValue)

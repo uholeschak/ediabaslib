@@ -393,6 +393,7 @@ namespace BmwDeepObd
             return message;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private void StopService()
         {
             if (_isStarted)
@@ -484,6 +485,7 @@ namespace BmwDeepObd
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private void RegisterForegroundService()
         {
             try
