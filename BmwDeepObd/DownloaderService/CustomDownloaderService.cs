@@ -1460,6 +1460,7 @@ namespace BmwDeepObd
         /// <param name="network">
         /// The network.
         /// </param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private void UpdateNetworkState(Network network)
         {
             NetworkState tempState = this.networkState;
@@ -1486,24 +1487,27 @@ namespace BmwDeepObd
                                     this.networkState |= NetworkState.Roaming;
                                 }
 
-                                try
+                                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
                                 {
-                                    if (telephonyManager.HasCarrierPrivileges)
+                                    try
                                     {
-                                        NetworkType networkType = telephonyManager.DataNetworkType;
-                                        this.networkState |= CheckNetworkType(networkType);
-                                    }
-                                    else
-                                    {
-                                        if (telephonyManager.DataState == DataConnectionStatus.Connected)
+                                        if (telephonyManager.HasCarrierPrivileges)
                                         {
-                                            this.networkState |= NetworkState.Is3G;
+                                            NetworkType networkType = telephonyManager.DataNetworkType;
+                                            this.networkState |= CheckNetworkType(networkType);
+                                        }
+                                        else
+                                        {
+                                            if (telephonyManager.DataState == DataConnectionStatus.Connected)
+                                            {
+                                                this.networkState |= NetworkState.Is3G;
+                                            }
                                         }
                                     }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Log.Error(Tag, string.Format("UpdateNetworkState Exception {0}", ex.Message));
+                                    catch (Exception ex)
+                                    {
+                                        Log.Error(Tag, string.Format("UpdateNetworkState Exception {0}", ex.Message));
+                                    }
                                 }
                             }
                         }
