@@ -1296,11 +1296,10 @@ namespace BmwDeepObd
 
                         if (showServiceMenu)
                         {
-                            if (!_menuUpdateHandler.HasCallbacks(_showServiceMenuRunnable))
+                            ActivityCommon.PostRunnable(_menuUpdateHandler, _showServiceMenuRunnable, () =>
                             {
                                 _ecuInfoBmwServiceMenu = ecuInfo;
-                                _menuUpdateHandler.Post(_showServiceMenuRunnable);
-                            }
+                            });
                         }
                     }
                     break;
@@ -1749,10 +1748,7 @@ namespace BmwDeepObd
 
             if (_ecuInfoBmwServiceMenu != null)
             {
-                if (!_menuUpdateHandler.HasCallbacks(_showServiceMenuRunnable))
-                {
-                    _menuUpdateHandler.Post(_showServiceMenuRunnable);
-                }
+                ActivityCommon.PostRunnable(_menuUpdateHandler, _showServiceMenuRunnable);
             }
         }
 
