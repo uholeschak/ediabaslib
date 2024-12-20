@@ -3164,7 +3164,7 @@ namespace BmwDeepObd
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
-        public static bool PostRunnable(Handler handler, Java.Lang.Runnable runnable, RunnablePostDelegate runnablePostDelegate = null)
+        public static bool PostRunnable(Handler handler, Java.Lang.IRunnable runnable, RunnablePostDelegate runnablePostDelegate = null)
         {
             if (handler == null || runnable == null)
             {

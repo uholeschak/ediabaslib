@@ -1153,10 +1153,7 @@ namespace BmwDeepObd
             {
                 if (!IsEdiabasThreadRunning())
                 {
-                    if (!_updateHandler.HasCallbacks(_startRunnable))
-                    {
-                        _updateHandler.Post(_startRunnable);
-                    }
+                    ActivityCommon.PostRunnable(_updateHandler, _startRunnable);
                 }
             }
 

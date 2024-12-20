@@ -442,10 +442,7 @@ namespace BmwDeepObd
         private void PostSelectTabPage(int pageIndex)
         {
             _selectTabPageRunnable.SelectTabPageIndex = pageIndex;
-            if (!_updateHandler.HasCallbacks(_selectTabPageRunnable))
-            {
-                _updateHandler.Post(_selectTabPageRunnable);
-            }
+            ActivityCommon.PostRunnable(_updateHandler, _selectTabPageRunnable);
         }
 
         private void PostCreateActionBarTabs()
@@ -460,10 +457,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (!_updateHandler.HasCallbacks(_createActionBarRunnable))
-            {
-                _updateHandler.Post(_createActionBarRunnable);
-            }
+            ActivityCommon.PostRunnable(_updateHandler, _createActionBarRunnable);
         }
 
         private void CreateActionBarTabs()
