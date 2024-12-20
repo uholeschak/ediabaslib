@@ -164,6 +164,7 @@ static class Utils
     {
         foreach (string entry in entries)
         {
+            bool found = false;
             foreach (ZipEntry zipEntry in zf)
             {
                 if (!zipEntry.IsFile)
@@ -171,10 +172,16 @@ static class Utils
                     continue; // Ignore directories
                 }
 
-                if (string.Compare(zipEntry.Name, entry, StringComparison.OrdinalIgnoreCase) != 0)
+                if (string.Compare(zipEntry.Name, entry, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    return false;
+                    found = true;
+                    break;
                 }
+            }
+
+            if (!found)
+            {
+                return false;
             }
         }
 
