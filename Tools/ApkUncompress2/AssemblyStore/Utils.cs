@@ -144,6 +144,10 @@ static class Utils
                 return FileFormat.AabBase;
             }
         }
+        catch (Exception)
+        {
+            return defaultFormat;
+        }
         finally
         {
             if (zf != null)

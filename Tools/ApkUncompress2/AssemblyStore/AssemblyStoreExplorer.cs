@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-
+using ICSharpCode.SharpZipLib.Zip;
 using Xamarin.Android.Tools;
 
 namespace Xamarin.Android.AssemblyStore;
@@ -112,22 +112,42 @@ class AssemblyStoreExplorer
 
 	static (IList<AssemblyStoreExplorer>? explorers, string? errorMessage) OpenCommon (FileInfo fi, List<IList<string>> pathLists)
 	{
-		using var zip = ZipArchive.Open (fi.FullName, FileMode.Open);
-		IList<AssemblyStoreExplorer>? explorers;
-		string? errorMessage;
-		bool pathsFound;
+        ZipFile? zf = null;
+        try
+        {
+            FileStream fs = File.OpenRead(fi.FullName);
+            zf = new ZipFile(fs);
 
-		foreach (IList<string> paths in pathLists) {
-			(explorers, errorMessage, pathsFound) = TryLoad (fi, zip, paths);
-			if (pathsFound) {
-				return (explorers, errorMessage);
-			}
-		}
+            IList<AssemblyStoreExplorer>? explorers;
+            string? errorMessage;
+            bool pathsFound;
 
-		return (null, "Unable to find any blob entries");
+            foreach (IList<string> paths in pathLists)
+            {
+                (explorers, errorMessage, pathsFound) = TryLoad(fi, zf, paths);
+                if (pathsFound)
+                {
+                    return (explorers, errorMessage);
+                }
+            }
+
+            return (null, "Unable to find any blob entries");
+        }
+        catch (Exception ex)
+        {
+            return (null, $"Exception {ex.Message}");
+        }
+        finally
+        {
+            if (zf != null)
+            {
+                zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                zf.Close(); // Ensure we release resources
+            }
+        }
 	}
 
-	static (IList<AssemblyStoreExplorer>? explorers, string? errorMessage, bool pathsFound) TryLoad (FileInfo fi, ZipArchive zip, IList<string> paths)
+	static (IList<AssemblyStoreExplorer>? explorers, string? errorMessage, bool pathsFound) TryLoad (FileInfo fi, ZipFile zf, IList<string> paths)
 	{
 		var ret = new List<AssemblyStoreExplorer> ();
 
