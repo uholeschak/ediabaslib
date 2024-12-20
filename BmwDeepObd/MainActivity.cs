@@ -2463,10 +2463,7 @@ namespace BmwDeepObd
                         SendCarSessionConnectBroadcast(true);
                         if (_activityActive)
                         {
-                            if (!_updateHandler.HasCallbacks(_handleConnectOptionRunnable))
-                            {
-                                _updateHandler.Post(_handleConnectOptionRunnable);
-                            }
+                            ActivityCommon.PostRunnable(_updateHandler, _handleConnectOptionRunnable);
                         }
                     }
                 }
