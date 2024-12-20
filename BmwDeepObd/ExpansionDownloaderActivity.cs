@@ -794,6 +794,7 @@ namespace BmwDeepObd
         /// <returns>
         /// The get expansion files.
         /// </returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private bool GetExpansionFiles()
         {
             bool result = false;
@@ -1084,6 +1085,7 @@ namespace BmwDeepObd
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private void RequestNotificationsPermissions()
         {
             if (_activityDestroyed)

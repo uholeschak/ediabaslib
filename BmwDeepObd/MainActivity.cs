@@ -275,6 +275,7 @@ namespace BmwDeepObd
             ClearPage(tab.Position);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AddActivityToStack(this);
@@ -979,6 +980,7 @@ namespace BmwDeepObd
             HandleIntent(intent);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
         {
             switch ((ActivityRequest)requestCode)
@@ -2829,6 +2831,7 @@ namespace BmwDeepObd
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private bool RequestOverlayPermissions(EventHandler<EventArgs> handler)
         {
             if (_overlayPermissionRequested || _overlayPermissionGranted)
@@ -3089,6 +3092,7 @@ namespace BmwDeepObd
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private void RequestNotificationsPermissions()
         {
             if (_activityDestroyed)
@@ -7104,6 +7108,7 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private bool StartEditXml(string fileName)
         {
             try

@@ -462,6 +462,7 @@ namespace BmwDeepObd
             ActivityCompat.RequestPermissions(this, requestPermissions, ActivityCommon.RequestPermissionBluetooth);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private void BtPermissionGranted()
         {
             _btPermissionGranted = true;

@@ -663,6 +663,7 @@ namespace BmwDeepObd
             Finish();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         public void EnableFullScreenMode(bool enable)
         {
             if (Window != null && _decorView != null)

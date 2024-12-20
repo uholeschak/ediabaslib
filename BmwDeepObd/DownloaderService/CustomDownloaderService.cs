@@ -1410,6 +1410,7 @@ namespace BmwDeepObd
         /// <param name="wakeUp">
         /// The wake up.
         /// </param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private void ScheduleAlarm(int wakeUp)
         {
             Android.App.AlarmManager alarms = GetSystemService(AlarmService) as Android.App.AlarmManager;
@@ -1548,6 +1549,7 @@ namespace BmwDeepObd
 #pragma warning restore CA1422
 #pragma warning restore CS0618
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private NetworkState CheckNetworkType(NetworkType networkType)
         {
             NetworkState state = NetworkState.Disconnected;
