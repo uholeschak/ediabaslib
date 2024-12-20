@@ -167,8 +167,14 @@ class AssemblyStoreExplorer
 
                 if (string.Compare(zipEntry.Name, path, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    Stream zipStream = zf.GetInputStream(zipEntry);
-                    ret.Add(new AssemblyStoreExplorer(zipStream, $"{fi.FullName}!{path}"));
+                    MemoryStream memoryStream = new MemoryStream();
+                    byte[] buffer = new byte[4096]; // 4K is optimum
+                    using (Stream zipStream = zf.GetInputStream(zipEntry))
+                    {
+                        StreamUtils.Copy(zipStream, memoryStream, buffer);
+                    }
+
+                    ret.Add(new AssemblyStoreExplorer(memoryStream, $"{fi.FullName}!{path}"));
                     break;
                 }
             }

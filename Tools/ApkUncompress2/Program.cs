@@ -73,7 +73,7 @@ namespace ApkUncompress2
                             }
 
                             Directory.CreateDirectory(outDir);
-                            using (var fileStream = File.Create(outFile))
+                            using (FileStream fileStream = File.Create(outFile))
                             {
                                 stream.Seek(0, SeekOrigin.Begin);
                                 stream.CopyTo(fileStream);
