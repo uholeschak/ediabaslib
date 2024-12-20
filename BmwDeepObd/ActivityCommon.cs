@@ -7617,7 +7617,9 @@ namespace BmwDeepObd
                     try
                     {
                         StringBuilder sbPackages = new StringBuilder();
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
                         IList<PackageInfo> installedPackages = GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
                         if (installedPackages != null)
                         {
                             foreach (PackageInfo packageInfoLocal in installedPackages)

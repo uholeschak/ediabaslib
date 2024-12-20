@@ -2956,6 +2956,7 @@ namespace BmwDeepObd
             return false;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private bool RequestStorageManagerPermissions()
         {
             if (_storageManagerPermissionRequested || _storageManagerPermissionGranted)
@@ -3786,10 +3787,12 @@ namespace BmwDeepObd
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
                     {
+#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
                         if (ActivityCommon.SwapMultiWindowOrientation && IsInMultiWindowMode)
                         {
                             portrait = !portrait;
                         }
+#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
                     }
 
                     int gaugeCount = portrait ? pageInfo.GaugesPortraitValue : pageInfo.GaugesLandscapeValue;
