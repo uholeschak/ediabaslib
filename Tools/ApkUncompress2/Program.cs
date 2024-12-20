@@ -51,6 +51,12 @@ namespace ApkUncompress2
                     continue;
                 }
 
+                string outDirBase = Path.Combine(srcDir, baseFileName);
+                if (Directory.Exists(outDirBase))
+                {
+                    Directory.Delete(outDirBase, true);
+                }
+
                 foreach (AssemblyStoreExplorer store in explorers)
                 {
                     if (store.Assemblies != null)
@@ -65,7 +71,7 @@ namespace ApkUncompress2
                             }
 
                             string archName = store.TargetArch.HasValue ? store.TargetArch.Value.ToString().ToLowerInvariant() : "unknown";
-                            string outFile = Path.Combine(srcDir, baseFileName, archName, storeItem.Name);
+                            string outFile = Path.Combine(outDirBase, archName, storeItem.Name);
                             string? outDir = Path.GetDirectoryName(outFile);
                             if (string.IsNullOrEmpty(outDir))
                             {
