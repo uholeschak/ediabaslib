@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using Android.OS;
 // ReSharper disable ConvertPropertyToExpressionBody
 
@@ -344,6 +345,7 @@ namespace EdiabasLib
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private static string GetRealFileName(string filePath, bool enableNameEncoding)
         {
             if (File.Exists(filePath))
@@ -443,6 +445,7 @@ namespace EdiabasLib
             {
             }
 
+            [SupportedOSPlatform("android29.0")]
             public DirectoryObserver(Java.IO.File rootPath)
                 : base(rootPath, Events)
             {

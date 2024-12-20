@@ -1011,6 +1011,7 @@ namespace EdiabasLib
 
     public static class AndroidExtensions
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static T GetParcelableExtraType<T>(this Android.Content.Intent intent, string name)
         {
             object parcel;

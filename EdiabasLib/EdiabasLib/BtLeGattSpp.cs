@@ -142,7 +142,9 @@ namespace EdiabasLib
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
                 BGattBaseCallback bGattCallback = Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu ? new BGatt2Callback(this) : new BGatt1Callback(this);
+#pragma warning disable CA1416
                 _bluetoothGatt = device.ConnectGatt(context, false, bGattCallback, BluetoothTransports.Le);
+#pragma warning restore CA1416
                 if (_bluetoothGatt == null)
                 {
                     LogString("*** ConnectGatt failed");
@@ -309,7 +311,9 @@ namespace EdiabasLib
                 byte[] enableNotifyArray = BluetoothGattDescriptor.EnableNotificationValue.ToArray();
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                 {
+#pragma warning disable CA1416
                     if (_bluetoothGatt.WriteDescriptor(descriptor, enableNotifyArray) != (int) CurrentBluetoothStatusCodes.Success)
+#pragma warning restore CA1416
                     {
                         LogString("*** GATT SPP write config descriptor failed");
                         return false;
@@ -646,6 +650,7 @@ namespace EdiabasLib
                 _btLeGattSpp = btLeGattSpp;
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
             public override void Write(byte[] buffer, int offset, int count)
             {
                 base.Write(buffer, offset, count);
