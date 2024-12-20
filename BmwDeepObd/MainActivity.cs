@@ -275,7 +275,7 @@ namespace BmwDeepObd
             ClearPage(tab.Position);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         protected override void OnCreate(Bundle savedInstanceState)
         {
             AddActivityToStack(this);
@@ -980,7 +980,7 @@ namespace BmwDeepObd
             HandleIntent(intent);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
         {
             switch ((ActivityRequest)requestCode)
@@ -2831,7 +2831,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private bool RequestOverlayPermissions(EventHandler<EventArgs> handler)
         {
             if (_overlayPermissionRequested || _overlayPermissionGranted)
@@ -2956,7 +2956,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private bool RequestStorageManagerPermissions()
         {
             if (_storageManagerPermissionRequested || _storageManagerPermissionGranted)
@@ -3093,7 +3093,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void RequestNotificationsPermissions()
         {
             if (_activityDestroyed)
@@ -3148,7 +3148,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private bool LocationPermissionsGranted(EventHandler<EventArgs> handler = null)
         {
             _locationPersissionGranted = true;
@@ -7111,7 +7111,7 @@ namespace BmwDeepObd
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private bool StartEditXml(string fileName)
         {
             try
@@ -7999,23 +7999,27 @@ namespace BmwDeepObd
         }
 
         [BroadcastReceiver(Exported = false)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public class ChooseReceiver : BroadcastReceiver
         {
             public override void OnReceive(Context context, Intent intent)
             {
                 try
                 {
-                    ComponentName clickedComponent = intent?.GetParcelableExtraType<ComponentName>(Intent.ExtraChosenComponent);
-                    if (clickedComponent != null)
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
                     {
-                        string packageName = clickedComponent.PackageName;
-                        string className = clickedComponent.ClassName;
-                        if (!string.IsNullOrEmpty(packageName) && !string.IsNullOrEmpty(className))
+                        ComponentName clickedComponent = intent?.GetParcelableExtraType<ComponentName>(Intent.ExtraChosenComponent);
+                        if (clickedComponent != null)
                         {
-                            Intent broadcastIntent = new Intent(ActivityCommon.PackageNameAction);
-                            broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorPackageName, packageName);
-                            broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorClassName, className);
-                            InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                            string packageName = clickedComponent.PackageName;
+                            string className = clickedComponent.ClassName;
+                            if (!string.IsNullOrEmpty(packageName) && !string.IsNullOrEmpty(className))
+                            {
+                                Intent broadcastIntent = new Intent(ActivityCommon.PackageNameAction);
+                                broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorPackageName, packageName);
+                                broadcastIntent.PutExtra(ActivityCommon.BroadcastXmlEditorClassName, className);
+                                InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).SendBroadcast(broadcastIntent);
+                            }
                         }
                     }
                 }

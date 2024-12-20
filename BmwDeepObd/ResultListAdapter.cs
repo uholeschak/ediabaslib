@@ -161,7 +161,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void SetTextApperance(TextView textView, int? resId)
         {
             if (resId == null)

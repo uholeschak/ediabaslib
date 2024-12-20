@@ -393,7 +393,7 @@ namespace BmwDeepObd
             return message;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void StopService()
         {
             if (_isStarted)
@@ -485,7 +485,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void RegisterForegroundService()
         {
             try
@@ -1122,7 +1122,7 @@ namespace BmwDeepObd
         /// user taps on the notification; it will take them to the main activity of the app.
         /// </summary>
         /// <returns>The content intent.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private Android.App.PendingIntent BuildIntentToShowMainActivity()
         {
             Intent showMainActivityIntent = new Intent(this, GetType());
@@ -1141,7 +1141,7 @@ namespace BmwDeepObd
         /// notification in the status bar
         /// </summary>
         /// <returns>The stop service action.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private NotificationCompat.Action BuildStopServiceAction()
         {
             string message;

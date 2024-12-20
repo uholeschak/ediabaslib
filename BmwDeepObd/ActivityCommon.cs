@@ -1181,7 +1181,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static bool IsMtcService(Context context)
         {
             try
@@ -2305,7 +2305,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool StartMtcService()
         {
             if (_mtcServiceConnection == null)
@@ -3327,7 +3327,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool SetPreferredNetworkInterface()
         {
             if (IsEmulator())
@@ -3402,7 +3402,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool RegisterNotificationChannels()
         {
             try
@@ -3497,7 +3497,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool NotificationsEnabled(string channelId = null)
         {
             try
@@ -3538,7 +3538,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool IsNotificationActive(int notificationId)
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
@@ -3559,7 +3559,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool ShowNotification(int id, int priority, string title, string message, bool update = false)
         {
             try
@@ -4030,7 +4030,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool IsValidWifiConnection(out string localAddress, out string localMask, out string dhcpServerAddress, out string ssid)
         {
             localAddress = null;
@@ -4182,7 +4182,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public string GetWifiSsid(WifiInfo wifiInfo)
         {
             try
@@ -4972,7 +4972,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool RequestBtPermissions()
         {
             if (MtcBtService)
@@ -5100,7 +5100,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static bool OpenAppSettingAccessFiles(Android.App.Activity activity, int requestCode)
         {
             try
@@ -5129,7 +5129,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool ShowNotificationSettings(int requestCodeApp, int? requestCodeChannel = null, string channelId = null)
         {
             if (_activity == null)
@@ -5400,7 +5400,7 @@ namespace BmwDeepObd
             return _btEnableCounter > 0;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool IsBluetoothConnected()
         {
             if (!IsBluetoothEnabled())
@@ -5811,7 +5811,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public void RequestUsbPermission(UsbDevice usbDevice)
         {
             if (!UsbSupport)
@@ -6687,7 +6687,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static PackageInfo GetPackageInfo(PackageManager packageManager, string packageName, PackageInfoFlags infoFlags = 0)
         {
             try
@@ -6734,7 +6734,7 @@ namespace BmwDeepObd
             return packageInfo?.ApplicationInfo;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public bool IsAppStorageLocationInternal()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
@@ -6756,7 +6756,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static string GetInstallerPackageName(PackageManager packageManager, string packageName)
         {
             try
@@ -6793,7 +6793,7 @@ namespace BmwDeepObd
             return GetInstallerPackageName(_packageManager, _context?.PackageName);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static IList<PackageInfo> GetInstalledPackages(PackageManager packageManager, PackageInfoFlags infoFlags = 0)
         {
             try
@@ -6823,7 +6823,7 @@ namespace BmwDeepObd
             return GetInstalledPackages(_packageManager, infoFlags);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static IList<ApplicationInfo> GetInstalledApplications(PackageManager packageManager, PackageInfoFlags infoFlags = 0)
         {
             try
@@ -6853,7 +6853,7 @@ namespace BmwDeepObd
             return GetInstalledApplications(_packageManager, infoFlags);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static ActivityInfo GetActivityInfo(PackageManager packageManager, ComponentName componentName, PackageInfoFlags infoFlags = 0)
         {
             try
@@ -6888,7 +6888,7 @@ namespace BmwDeepObd
             return GetActivityInfo(_packageManager, _activity?.ComponentName, infoFlags);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static IList<ResolveInfo> QueryIntentActivities(PackageManager packageManager, Intent intent, PackageInfoFlags infoFlags = 0)
         {
             try
@@ -6940,7 +6940,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public string GetCertificateInfo()
         {
             try
@@ -10728,7 +10728,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static Java.Lang.ICharSequence FromHtml(string source)
         {
             if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
@@ -13085,7 +13085,7 @@ using System.Threading;"
             return storageList;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static string GetVolumePath(string volumeId)
         {
             try
@@ -14162,7 +14162,7 @@ using System.Threading;"
 
     public static class AndroidExtensions
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public static T GetParcelableExtraType<T>(this Intent intent, string name)
         {
             object parcel;
