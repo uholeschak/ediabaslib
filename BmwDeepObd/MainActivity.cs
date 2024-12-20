@@ -3592,17 +3592,11 @@ namespace BmwDeepObd
 
             if (force)
             {
-                if (!_updateHandler.HasCallbacks(_updateDisplayForceRunnable))
-                {
-                    _updateHandler.Post(_updateDisplayForceRunnable);
-                }
+                ActivityCommon.PostRunnable(_updateHandler, _updateDisplayForceRunnable);
                 return;
             }
 
-            if (!_updateHandler.HasCallbacks(_updateDisplayRunnable))
-            {
-                _updateHandler.Post(_updateDisplayRunnable);
-            }
+            ActivityCommon.PostRunnable(_updateHandler, _updateDisplayRunnable);
         }
 
         private void UpdateDisplay(bool forceUpdate = false)
@@ -4909,17 +4903,16 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (!_updateHandler.HasCallbacks(_compileCodeRunnable))
+            if (ActivityCommon.PostRunnable(_updateHandler, _compileCodeRunnable))
             {
 #if DEBUG
-                Log.Info(Tag, string.Format("PostCompileCode accepted: {0}", this));
+                Log.Info(Tag, string.Format("PostCompileCode rejected: {0}", this));
 #endif
-                _updateHandler.Post(_compileCodeRunnable);
             }
             else
             {
 #if DEBUG
-                Log.Info(Tag, string.Format("PostCompileCode rejected: {0}", this));
+                Log.Info(Tag, string.Format("PostCompileCode accepted: {0}", this));
 #endif
             }
         }
