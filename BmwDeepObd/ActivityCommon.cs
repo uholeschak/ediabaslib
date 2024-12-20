@@ -774,6 +774,7 @@ namespace BmwDeepObd
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
         public delegate void DestroyDelegate();
         public delegate void EdiabasEventDelegate(bool connect);
+        public delegate void RunnablePostDelegate();
         public const int UdsDtcStatusOverride = 0x2C;
         [SupportedOSPlatform("android23.0")]
         public const BuildVersionCodes MinEthernetSettingsVersion = BuildVersionCodes.M;
@@ -3160,6 +3161,39 @@ namespace BmwDeepObd
             }
 
             return null;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
+        public static bool PostRunnable(Handler handler, Java.Lang.Runnable runnable, RunnablePostDelegate runnablePostDelegate = null)
+        {
+            if (handler == null || runnable == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                {
+                    if (!handler.HasCallbacks(runnable))
+                    {
+                        runnablePostDelegate?.Invoke();
+                        handler.Post(runnable);
+                        return true;
+                    }
+                    return false;
+                }
+
+                handler.RemoveCallbacks(runnable);
+                runnablePostDelegate?.Invoke();
+                handler.Post(runnable);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return false;
         }
 
         public bool RegisterInternetCellularCallback()
