@@ -478,11 +478,10 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (!_notificationHandler.HasCallbacks(_notificationRunnable))
+            ActivityCommon.PostRunnable(_notificationHandler, _notificationRunnable, () =>
             {
                 _notificationRunnable.DelayUpdate = delayUpdate;
-                _notificationHandler.Post(_notificationRunnable);
-            }
+            });
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
@@ -606,10 +605,7 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (!_stopHandler.HasCallbacks(_stopRunnable))
-            {
-                _stopHandler.Post(_stopRunnable);
-            }
+            ActivityCommon.PostRunnable(_stopHandler, _stopRunnable);
         }
 
         private void StopEdiabasThread()
