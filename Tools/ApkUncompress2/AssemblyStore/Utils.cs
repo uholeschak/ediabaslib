@@ -4,7 +4,7 @@ using System.Buffers;
 
 using ELFSharp.ELF;
 using ELFSharp.ELF.Sections;
-using Xamarin.Tools.Zip;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Xamarin.Android.AssemblyStore;
 
@@ -123,31 +123,57 @@ static class Utils
 
 	static FileFormat DetectAndroidArchive (FileInfo info, FileFormat defaultFormat)
 	{
-		using var zip = ZipArchive.Open (info.FullName, FileMode.Open);
+        ZipFile? zf = null;
+        try
+        {
+            FileStream fs = File.OpenRead(info.FullName);
+            zf = new ZipFile(fs);
 
-		if (HasAllEntries (zip, aabZipEntries)) {
-			return FileFormat.Aab;
-		}
+            if (HasAllEntries(zf, aabZipEntries))
+            {
+                return FileFormat.Aab;
+            }
 
-		if (HasAllEntries (zip, apkZipEntries)) {
-			return FileFormat.Apk;
-		}
+            if (HasAllEntries(zf, apkZipEntries))
+            {
+                return FileFormat.Apk;
+            }
 
-		if (HasAllEntries (zip, aabBaseZipEntries)) {
-			return FileFormat.AabBase;
-		}
+            if (HasAllEntries(zf, aabBaseZipEntries))
+            {
+                return FileFormat.AabBase;
+            }
+        }
+        finally
+        {
+            if (zf != null)
+            {
+                zf.IsStreamOwner = true; // Makes close also shut the underlying stream
+                zf.Close(); // Ensure we release resources
+            }
+        }
 
-		return defaultFormat;
+        return defaultFormat;
 	}
 
-	static bool HasAllEntries (ZipArchive zip, string[] entries)
-	{
-		foreach (string entry in entries) {
-			if (!zip.ContainsEntry (entry, caseSensitive: true)) {
-				return false;
-			}
-		}
+    static bool HasAllEntries (ZipFile zf, string[] entries)
+    {
+        foreach (string entry in entries)
+        {
+            foreach (ZipEntry zipEntry in zf)
+            {
+                if (!zipEntry.IsFile)
+                {
+                    continue; // Ignore directories
+                }
 
-		return true;
-	}
+                if (string.Compare(zipEntry.Name, entry, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }
