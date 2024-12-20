@@ -1076,6 +1076,7 @@ namespace BmwDeepObd
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
         private bool SelectCopyDocumentTree(bool fromApp)
         {
             if (!ActivityCommon.IsDocumentTreeSupported())
