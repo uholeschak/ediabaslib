@@ -1364,6 +1364,7 @@ namespace BmwDeepObd
         /// <summary>
         /// Polls the network state, setting the flags appropriately.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void PollNetworkState()
         {
             if (this.connectivityManager == null)
@@ -1410,7 +1411,7 @@ namespace BmwDeepObd
         /// <param name="wakeUp">
         /// The wake up.
         /// </param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void ScheduleAlarm(int wakeUp)
         {
             Android.App.AlarmManager alarms = GetSystemService(AlarmService) as Android.App.AlarmManager;
@@ -1460,7 +1461,7 @@ namespace BmwDeepObd
         /// <param name="network">
         /// The network.
         /// </param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void UpdateNetworkState(Network network)
         {
             NetworkState tempState = this.networkState;
@@ -1487,9 +1488,9 @@ namespace BmwDeepObd
                                     this.networkState |= NetworkState.Roaming;
                                 }
 
-                                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                                try
                                 {
-                                    try
+                                    if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
                                     {
                                         if (telephonyManager.HasCarrierPrivileges)
                                         {
@@ -1504,10 +1505,10 @@ namespace BmwDeepObd
                                             }
                                         }
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        Log.Error(Tag, string.Format("UpdateNetworkState Exception {0}", ex.Message));
-                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error(Tag, string.Format("UpdateNetworkState Exception {0}", ex.Message));
                                 }
                             }
                         }
@@ -1553,7 +1554,7 @@ namespace BmwDeepObd
 #pragma warning restore CA1422
 #pragma warning restore CS0618
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private NetworkState CheckNetworkType(NetworkType networkType)
         {
             NetworkState state = NetworkState.Disconnected;

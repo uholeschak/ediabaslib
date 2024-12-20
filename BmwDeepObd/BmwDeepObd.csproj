@@ -18,7 +18,7 @@
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-    <AndroidUseAssemblyStore>True</AndroidUseAssemblyStore>
+    <AndroidUseAssemblyStore>False</AndroidUseAssemblyStore>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>1701;1702;CS8632</NoWarn>

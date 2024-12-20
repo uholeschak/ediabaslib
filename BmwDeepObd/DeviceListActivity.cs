@@ -439,7 +439,7 @@ namespace BmwDeepObd
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void RequestBtPermissions()
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
@@ -463,7 +463,7 @@ namespace BmwDeepObd
             ActivityCompat.RequestPermissions(this, requestPermissions, ActivityCommon.RequestPermissionBluetooth);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibilitys")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private void BtPermissionGranted()
         {
             _btPermissionGranted = true;
