@@ -13,6 +13,7 @@ abstract class AssemblyStoreReader
 	static readonly UTF8Encoding ReaderEncoding = new UTF8Encoding (false);
 
 	protected Stream? StoreStream                { get; }
+    protected ZipFile? ZipFile                   { get; }
     protected ZipEntry? ZipEntry                 { get; }
 
     public abstract string Description          { get; }
@@ -25,21 +26,22 @@ abstract class AssemblyStoreReader
 	public IList<AssemblyStoreItem>? Assemblies { get; protected set; }
 	public bool Is64Bit                         { get; protected set; }
 
-	protected AssemblyStoreReader (Stream? store, ZipEntry? zipEntry, string path)
+	protected AssemblyStoreReader (Stream? store, ZipFile? zf, ZipEntry? zipEntry, string path)
 	{
 		StoreStream = store;
+        ZipFile = zf;
         ZipEntry = zipEntry;
         StorePath = path;
 	}
 
-    public static AssemblyStoreReader? Create (Stream? store, ZipEntry? zipEntry, string path)
+    public static AssemblyStoreReader? Create (Stream? store, ZipFile? zf, ZipEntry? zipEntry, string path)
 	{
-		AssemblyStoreReader? reader = MakeReaderReady (new StoreReader_V1 (store, zipEntry, path));
+		AssemblyStoreReader? reader = MakeReaderReady (new StoreReader_V1 (store, zf, zipEntry, path));
 		if (reader != null) {
 			return reader;
 		}
 
-		reader = MakeReaderReady (new StoreReader_V2 (store, zipEntry, path));
+		reader = MakeReaderReady (new StoreReader_V2 (store, zf, zipEntry, path));
 		if (reader != null) {
 			return reader;
 		}
@@ -57,7 +59,7 @@ abstract class AssemblyStoreReader
 		return reader;
 	}
 
-	protected BinaryReader CreateReader () => new BinaryReader (StoreStream, ReaderEncoding, leaveOpen: true);
+	protected BinaryReader CreateReader (Stream stream) => new BinaryReader (stream, ReaderEncoding, leaveOpen: true);
 
 	protected abstract bool IsSupported ();
 	protected abstract void Prepare ();

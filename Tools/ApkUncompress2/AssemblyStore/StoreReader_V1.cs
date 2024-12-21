@@ -20,8 +20,8 @@ class StoreReader_V1 : AssemblyStoreReader
 		AabBasePaths = new List<string> ().AsReadOnly ();
 	}
 
-	public StoreReader_V1 (Stream? store, ZipEntry? zipEntry, string path)
-		: base (store, zipEntry, path)
+	public StoreReader_V1 (Stream? store, ZipFile? zf, ZipEntry? zipEntry, string path)
+		: base (store, zf, zipEntry, path)
 	{}
 
 	protected override bool IsSupported ()

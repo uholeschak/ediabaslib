@@ -77,8 +77,8 @@ partial class StoreReader_V2 : AssemblyStoreReader
 		}
 	}
 
-	public StoreReader_V2 (Stream? store, ZipEntry? zipEntry, string path)
-		: base (store, zipEntry, path)
+	public StoreReader_V2 (Stream? store, ZipFile? zf, ZipEntry? zipEntry, string path)
+		: base (store, zf, zipEntry, path)
 	{
 	}
 
@@ -89,7 +89,7 @@ partial class StoreReader_V2 : AssemblyStoreReader
 	protected override bool IsSupported ()
 	{
 		StoreStream.Seek (0, SeekOrigin.Begin);
-		using var reader = CreateReader ();
+		using var reader = CreateReader (StoreStream);
 
 		uint magic = reader.ReadUInt32 ();
 		if (magic == Utils.ELF_MAGIC) {
@@ -150,7 +150,7 @@ partial class StoreReader_V2 : AssemblyStoreReader
 		IndexEntryCount = header.index_entry_count;
 
 		StoreStream.Seek ((long)elfOffset + Header.NativeSize, SeekOrigin.Begin);
-		using var reader = CreateReader ();
+		using var reader = CreateReader (StoreStream);
 
 		var index = new List<IndexEntry> ();
 		for (uint i = 0; i < header.index_entry_count; i++) {
