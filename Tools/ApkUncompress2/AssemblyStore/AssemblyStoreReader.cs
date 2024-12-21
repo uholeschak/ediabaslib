@@ -1,4 +1,3 @@
-using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,36 +11,32 @@ abstract class AssemblyStoreReader
 {
 	static readonly UTF8Encoding ReaderEncoding = new UTF8Encoding (false);
 
-	protected Stream? StoreStream                { get; }
-    protected ZipFile? ZipFile                   { get; }
-    protected ZipEntry? ZipEntry                 { get; }
+	protected Stream StoreStream                { get; }
 
-    public abstract string Description          { get; }
+	public abstract string Description          { get; }
 	public abstract bool NeedsExtensionInName   { get; }
 	public string StorePath                     { get; }
 
-    public AndroidTargetArch TargetArch         { get; protected set; } = AndroidTargetArch.Arm;
+	public AndroidTargetArch TargetArch         { get; protected set; } = AndroidTargetArch.Arm;
 	public uint AssemblyCount                   { get; protected set; }
 	public uint IndexEntryCount                 { get; protected set; }
 	public IList<AssemblyStoreItem>? Assemblies { get; protected set; }
 	public bool Is64Bit                         { get; protected set; }
 
-	protected AssemblyStoreReader (Stream? store, ZipFile? zf, ZipEntry? zipEntry, string path)
+	protected AssemblyStoreReader (Stream store, string path)
 	{
 		StoreStream = store;
-        ZipFile = zf;
-        ZipEntry = zipEntry;
-        StorePath = path;
+		StorePath = path;
 	}
 
-    public static AssemblyStoreReader? Create (Stream? store, ZipFile? zf, ZipEntry? zipEntry, string path)
+	public static AssemblyStoreReader? Create (Stream store, string path)
 	{
-		AssemblyStoreReader? reader = MakeReaderReady (new StoreReader_V1 (store, zf, zipEntry, path));
+		AssemblyStoreReader? reader = MakeReaderReady (new StoreReader_V1 (store, path));
 		if (reader != null) {
 			return reader;
 		}
 
-		reader = MakeReaderReady (new StoreReader_V2 (store, zf, zipEntry, path));
+		reader = MakeReaderReady (new StoreReader_V2 (store, path));
 		if (reader != null) {
 			return reader;
 		}
@@ -49,7 +44,7 @@ abstract class AssemblyStoreReader
 		return null;
 	}
 
-    static AssemblyStoreReader? MakeReaderReady (AssemblyStoreReader reader)
+	static AssemblyStoreReader? MakeReaderReady (AssemblyStoreReader reader)
 	{
 		if (!reader.IsSupported ()) {
 			return null;
@@ -59,7 +54,7 @@ abstract class AssemblyStoreReader
 		return reader;
 	}
 
-	protected BinaryReader CreateReader (Stream stream) => new BinaryReader (stream, ReaderEncoding, leaveOpen: true);
+	protected BinaryReader CreateReader () => new BinaryReader (StoreStream, ReaderEncoding, leaveOpen: true);
 
 	protected abstract bool IsSupported ();
 	protected abstract void Prepare ();

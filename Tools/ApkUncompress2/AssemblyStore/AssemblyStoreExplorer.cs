@@ -19,12 +19,12 @@ class AssemblyStoreExplorer
 	public IDictionary<string, AssemblyStoreItem>? AssembliesByName { get; }
 	public bool Is64Bit                                             { get; }
 
-	protected AssemblyStoreExplorer (Stream? storeStream, ZipFile? zf, ZipEntry? zipEntry, string path)
+	protected AssemblyStoreExplorer (Stream storeStream, string path)
 	{
 		StorePath = path;
-		var storeReader = AssemblyStoreReader.Create (storeStream, zf, zipEntry, path);
+		var storeReader = AssemblyStoreReader.Create (storeStream, path);
 		if (storeReader == null) {
-			storeStream?.Dispose ();
+			storeStream.Dispose ();
 			throw new NotSupportedException ($"Format of assembly store '{path}' is unsupported");
 		}
 
@@ -47,7 +47,7 @@ class AssemblyStoreExplorer
 	}
 
 	protected AssemblyStoreExplorer (FileInfo storeInfo)
-		: this (storeInfo.OpenRead (), null, null, storeInfo.FullName)
+		: this (storeInfo.OpenRead (), storeInfo.FullName)
 	{}
 
 	public static (IList<AssemblyStoreExplorer>? explorers, string? errorMessage) Open (string inputFile)
@@ -174,7 +174,7 @@ class AssemblyStoreExplorer
                         StreamUtils.Copy(zipStream, memoryStream, buffer);
                     }
 
-                    ret.Add(new AssemblyStoreExplorer(memoryStream, zf, zipEntry, $"{fi.FullName}!{path}"));
+                    ret.Add(new AssemblyStoreExplorer(memoryStream, $"{fi.FullName}!{path}"));
                     break;
                 }
             }

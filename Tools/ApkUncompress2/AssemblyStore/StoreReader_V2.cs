@@ -5,7 +5,6 @@ using System.Text;
 
 using Xamarin.Android.Tools;
 using Xamarin.Android.Tasks;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace Xamarin.Android.AssemblyStore;
 
@@ -29,14 +28,9 @@ partial class StoreReader_V2 : AssemblyStoreReader
 	public static IList<string> AabPaths      { get; }
 	public static IList<string> AabBasePaths  { get; }
 
-	readonly HashSet<uint> supportedVersions = new HashSet<uint> {
-        ASSEMBLY_STORE_FORMAT_VERSION_64BIT | ASSEMBLY_STORE_ABI_AARCH64,
-        ASSEMBLY_STORE_FORMAT_VERSION_64BIT | ASSEMBLY_STORE_ABI_X64,
-        ASSEMBLY_STORE_FORMAT_VERSION_32BIT | ASSEMBLY_STORE_ABI_ARM,
-        ASSEMBLY_STORE_FORMAT_VERSION_32BIT | ASSEMBLY_STORE_ABI_X86,
-    };
+	readonly HashSet<uint> supportedVersions;
 
-    Header? header;
+	Header? header;
 	ulong elfOffset = 0;
 
 	static StoreReader_V2 ()
@@ -77,9 +71,15 @@ partial class StoreReader_V2 : AssemblyStoreReader
 		}
 	}
 
-	public StoreReader_V2 (Stream? store, ZipFile? zf, ZipEntry? zipEntry, string path)
-		: base (store, zf, zipEntry, path)
+	public StoreReader_V2 (Stream store, string path)
+		: base (store, path)
 	{
+		supportedVersions = new HashSet<uint> {
+			ASSEMBLY_STORE_FORMAT_VERSION_64BIT | ASSEMBLY_STORE_ABI_AARCH64,
+			ASSEMBLY_STORE_FORMAT_VERSION_64BIT | ASSEMBLY_STORE_ABI_X64,
+			ASSEMBLY_STORE_FORMAT_VERSION_32BIT | ASSEMBLY_STORE_ABI_ARM,
+			ASSEMBLY_STORE_FORMAT_VERSION_32BIT | ASSEMBLY_STORE_ABI_X86,
+		};
 	}
 
 	static string GetBlobName (string abi) => $"libassemblies.{abi}.blob.so";
@@ -89,7 +89,7 @@ partial class StoreReader_V2 : AssemblyStoreReader
 	protected override bool IsSupported ()
 	{
 		StoreStream.Seek (0, SeekOrigin.Begin);
-		using var reader = CreateReader (StoreStream);
+		using var reader = CreateReader ();
 
 		uint magic = reader.ReadUInt32 ();
 		if (magic == Utils.ELF_MAGIC) {
@@ -150,7 +150,7 @@ partial class StoreReader_V2 : AssemblyStoreReader
 		IndexEntryCount = header.index_entry_count;
 
 		StoreStream.Seek ((long)elfOffset + Header.NativeSize, SeekOrigin.Begin);
-		using var reader = CreateReader (StoreStream);
+		using var reader = CreateReader ();
 
 		var index = new List<IndexEntry> ();
 		for (uint i = 0; i < header.index_entry_count; i++) {
