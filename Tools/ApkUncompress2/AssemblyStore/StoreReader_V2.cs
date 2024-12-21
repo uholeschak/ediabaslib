@@ -5,6 +5,7 @@ using System.Text;
 
 using Xamarin.Android.Tools;
 using Xamarin.Android.Tasks;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Xamarin.Android.AssemblyStore;
 
@@ -28,9 +29,14 @@ partial class StoreReader_V2 : AssemblyStoreReader
 	public static IList<string> AabPaths      { get; }
 	public static IList<string> AabBasePaths  { get; }
 
-	readonly HashSet<uint> supportedVersions;
+	readonly HashSet<uint> supportedVersions = new HashSet<uint> {
+        ASSEMBLY_STORE_FORMAT_VERSION_64BIT | ASSEMBLY_STORE_ABI_AARCH64,
+        ASSEMBLY_STORE_FORMAT_VERSION_64BIT | ASSEMBLY_STORE_ABI_X64,
+        ASSEMBLY_STORE_FORMAT_VERSION_32BIT | ASSEMBLY_STORE_ABI_ARM,
+        ASSEMBLY_STORE_FORMAT_VERSION_32BIT | ASSEMBLY_STORE_ABI_X86,
+    };
 
-	Header? header;
+    Header? header;
 	ulong elfOffset = 0;
 
 	static StoreReader_V2 ()
@@ -71,15 +77,9 @@ partial class StoreReader_V2 : AssemblyStoreReader
 		}
 	}
 
-	public StoreReader_V2 (Stream store, string path)
-		: base (store, path)
+	public StoreReader_V2 (Stream? store, ZipEntry? zipEntry, string path)
+		: base (store, zipEntry, path)
 	{
-		supportedVersions = new HashSet<uint> {
-			ASSEMBLY_STORE_FORMAT_VERSION_64BIT | ASSEMBLY_STORE_ABI_AARCH64,
-			ASSEMBLY_STORE_FORMAT_VERSION_64BIT | ASSEMBLY_STORE_ABI_X64,
-			ASSEMBLY_STORE_FORMAT_VERSION_32BIT | ASSEMBLY_STORE_ABI_ARM,
-			ASSEMBLY_STORE_FORMAT_VERSION_32BIT | ASSEMBLY_STORE_ABI_X86,
-		};
 	}
 
 	static string GetBlobName (string abi) => $"libassemblies.{abi}.blob.so";

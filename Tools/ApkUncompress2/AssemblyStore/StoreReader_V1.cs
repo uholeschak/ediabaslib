@@ -1,3 +1,4 @@
+using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Generic;
 using System.IO;
 
@@ -19,8 +20,8 @@ class StoreReader_V1 : AssemblyStoreReader
 		AabBasePaths = new List<string> ().AsReadOnly ();
 	}
 
-	public StoreReader_V1 (Stream store, string path)
-		: base (store, path)
+	public StoreReader_V1 (Stream? store, ZipEntry? zipEntry, string path)
+		: base (store, zipEntry, path)
 	{}
 
 	protected override bool IsSupported ()

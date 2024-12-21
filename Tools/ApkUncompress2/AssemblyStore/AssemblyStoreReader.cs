@@ -1,3 +1,4 @@
+using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,32 +12,34 @@ abstract class AssemblyStoreReader
 {
 	static readonly UTF8Encoding ReaderEncoding = new UTF8Encoding (false);
 
-	protected Stream StoreStream                { get; }
+	protected Stream? StoreStream                { get; }
+    protected ZipEntry? ZipEntry                 { get; }
 
-	public abstract string Description          { get; }
+    public abstract string Description          { get; }
 	public abstract bool NeedsExtensionInName   { get; }
 	public string StorePath                     { get; }
 
-	public AndroidTargetArch TargetArch         { get; protected set; } = AndroidTargetArch.Arm;
+    public AndroidTargetArch TargetArch         { get; protected set; } = AndroidTargetArch.Arm;
 	public uint AssemblyCount                   { get; protected set; }
 	public uint IndexEntryCount                 { get; protected set; }
 	public IList<AssemblyStoreItem>? Assemblies { get; protected set; }
 	public bool Is64Bit                         { get; protected set; }
 
-	protected AssemblyStoreReader (Stream store, string path)
+	protected AssemblyStoreReader (Stream? store, ZipEntry? zipEntry, string path)
 	{
 		StoreStream = store;
-		StorePath = path;
+        ZipEntry = zipEntry;
+        StorePath = path;
 	}
 
-	public static AssemblyStoreReader? Create (Stream store, string path)
+    public static AssemblyStoreReader? Create (Stream? store, ZipEntry? zipEntry, string path)
 	{
-		AssemblyStoreReader? reader = MakeReaderReady (new StoreReader_V1 (store, path));
+		AssemblyStoreReader? reader = MakeReaderReady (new StoreReader_V1 (store, zipEntry, path));
 		if (reader != null) {
 			return reader;
 		}
 
-		reader = MakeReaderReady (new StoreReader_V2 (store, path));
+		reader = MakeReaderReady (new StoreReader_V2 (store, zipEntry, path));
 		if (reader != null) {
 			return reader;
 		}
@@ -44,7 +47,7 @@ abstract class AssemblyStoreReader
 		return null;
 	}
 
-	static AssemblyStoreReader? MakeReaderReady (AssemblyStoreReader reader)
+    static AssemblyStoreReader? MakeReaderReady (AssemblyStoreReader reader)
 	{
 		if (!reader.IsSupported ()) {
 			return null;
