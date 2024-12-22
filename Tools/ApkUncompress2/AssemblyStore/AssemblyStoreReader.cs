@@ -63,13 +63,14 @@ abstract class AssemblyStoreReader : IDisposable
 
 	public Stream ReadEntryImageData (AssemblyStoreItem entry, bool uncompressIfNeeded = false)
 	{
+        if (uncompressIfNeeded)
+        {
+            throw new NotImplementedException();
+        }
+
 		ulong startOffset = GetStoreStartDataOffset ();
 		StoreStream.Seek ((uint)startOffset + entry.DataOffset, SeekOrigin.Begin);
 		var stream = new MemoryStream ();
-
-		if (uncompressIfNeeded) {
-			throw new NotImplementedException ();
-		}
 
 		const long BufferSize = 65535;
 		byte[] buffer = Utils.BytePool.Rent ((int)BufferSize);
