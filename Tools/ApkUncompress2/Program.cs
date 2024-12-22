@@ -41,54 +41,63 @@ namespace ApkUncompress2
                     haveErrors = true;
                     continue;
                 }
-                
-                string baseFileName = Path.GetFileNameWithoutExtension(inputFile);
-                string? srcDir = Path.GetDirectoryName(inputFile);
-                if (string.IsNullOrEmpty(srcDir))
-                {
-                    Console.WriteLine("Invalid directory");
-                    haveErrors = true;
-                    continue;
-                }
 
-                string outDirBase = Path.Combine(srcDir, baseFileName);
-                if (Directory.Exists(outDirBase))
+                try
                 {
-                    Directory.Delete(outDirBase, true);
-                }
-
-                foreach (AssemblyStoreExplorer store in explorers)
-                {
-                    if (store.Assemblies != null)
+                    string baseFileName = Path.GetFileNameWithoutExtension(inputFile);
+                    string? srcDir = Path.GetDirectoryName(inputFile);
+                    if (string.IsNullOrEmpty(srcDir))
                     {
-                        foreach (AssemblyStoreItem storeItem in store.Assemblies)
+                        Console.WriteLine("Invalid directory");
+                        haveErrors = true;
+                        continue;
+                    }
+
+                    string outDirBase = Path.Combine(srcDir, baseFileName);
+                    if (Directory.Exists(outDirBase))
+                    {
+                        Directory.Delete(outDirBase, true);
+                    }
+
+                    foreach (AssemblyStoreExplorer store in explorers)
+                    {
+                        if (store.Assemblies != null)
                         {
-                            Stream? stream = store.ReadImageData(storeItem);
-                            if (stream == null)
+                            foreach (AssemblyStoreItem storeItem in store.Assemblies)
                             {
-                                Console.WriteLine($"Failed to read image data for {storeItem.Name}");
-                                continue;
-                            }
+                                Stream? stream = store.ReadImageData(storeItem);
+                                if (stream == null)
+                                {
+                                    Console.WriteLine($"Failed to read image data for {storeItem.Name}");
+                                    continue;
+                                }
 
-                            string archName = store.TargetArch.HasValue ? store.TargetArch.Value.ToString().ToLowerInvariant() : "unknown";
-                            string outFile = Path.Combine(outDirBase, archName, storeItem.Name);
-                            string? outDir = Path.GetDirectoryName(outFile);
-                            if (string.IsNullOrEmpty(outDir))
-                            {
-                                continue;
-                            }
+                                string archName = store.TargetArch.HasValue ? store.TargetArch.Value.ToString().ToLowerInvariant() : "unknown";
+                                string outFile = Path.Combine(outDirBase, archName, storeItem.Name);
+                                string? outDir = Path.GetDirectoryName(outFile);
+                                if (string.IsNullOrEmpty(outDir))
+                                {
+                                    continue;
+                                }
 
-                            Directory.CreateDirectory(outDir);
-                            using (FileStream fileStream = File.Create(outFile))
-                            {
-                                stream.Seek(0, SeekOrigin.Begin);
-                                stream.CopyTo(fileStream);
+                                Directory.CreateDirectory(outDir);
+                                using (FileStream fileStream = File.Create(outFile))
+                                {
+                                    stream.Seek(0, SeekOrigin.Begin);
+                                    stream.CopyTo(fileStream);
+                                }
+                                stream.Dispose();
                             }
-                            stream.Dispose();
                         }
                     }
                 }
-
+                finally
+                {
+                    foreach (AssemblyStoreExplorer store in explorers)
+                    {
+                        store.Dispose();
+                    }
+                }
             }
 
             return haveErrors ? 1 : 0;

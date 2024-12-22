@@ -7,9 +7,11 @@ using Xamarin.Android.Tools;
 
 namespace Xamarin.Android.AssemblyStore;
 
-class AssemblyStoreExplorer
+class AssemblyStoreExplorer : IDisposable
 {
-	readonly AssemblyStoreReader reader;
+    private bool _disposed;
+
+    readonly AssemblyStoreReader reader;
 
 	public string StorePath                                         { get; }
 	public AndroidTargetArch? TargetArch                            { get; }
@@ -244,4 +246,32 @@ class AssemblyStoreExplorer
 
 		return true;
 	}
+    public void Dispose()
+    {
+        Dispose(true);
+        // This object will be cleaned up by the Dispose method.
+        // Therefore, you should call GC.SupressFinalize to
+        // take this object off the finalization queue
+        // and prevent finalization code for this object
+        // from executing a second time.
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        // Check to see if Dispose has already been called.
+        if (!_disposed)
+        {
+            // If disposing equals true, dispose all managed
+            // and unmanaged resources.
+            if (disposing)
+            {
+                reader?.Dispose();
+            }
+
+            // Note disposing has been done.
+            _disposed = true;
+        }
+    }
+
 }
