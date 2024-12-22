@@ -200,14 +200,14 @@ class AssemblyStoreExplorer : IDisposable
 		return (ret, null, true);
 	}
 
-	public Stream? ReadImageData (AssemblyStoreItem item, bool uncompressIfNeeded = false)
+	public Stream? ReadImageData (AssemblyStoreItem item)
 	{
-		return reader.ReadEntryImageData (item, uncompressIfNeeded);
+		return reader.ReadEntryImageData (item);
 	}
 
-    public bool StoreImageData(AssemblyStoreItem item, string fileName, bool uncompressIfNeeded = false)
+    public bool StoreImageData(AssemblyStoreItem item, string fileName)
     {
-        return reader.StoreEntryImageData(item, fileName, uncompressIfNeeded);
+        return reader.StoreEntryImageData(item, fileName);
     }
 
     string EnsureCorrectAssemblyName (string assemblyName)

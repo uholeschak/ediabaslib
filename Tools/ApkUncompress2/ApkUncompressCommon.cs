@@ -2,6 +2,10 @@
 using System.IO;
 using System;
 using Xamarin.Android.AssemblyStore;
+using ICSharpCode.SharpZipLib.Core;
+using K4os.Compression.LZ4;
+using System.Text;
+using System.Buffers;
 
 namespace ApkUncompress2;
 
@@ -9,8 +13,74 @@ public class ApkUncompressCommon
 {
     public delegate bool ProgressDelegate(int percent);
 
+    private const int BufferSize = 4096;
+    private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
+    private readonly ArrayPool<byte> bytePool;
+
     public ApkUncompressCommon()
     {
+        bytePool = ArrayPool<byte>.Shared;
+    }
+
+    public bool UncompressDLL(Stream inputStream, string filePath)
+    {
+        string outputFile = filePath;
+        bool retVal = true;
+
+        string? outputDir = Path.GetDirectoryName(outputFile);
+        if (!string.IsNullOrEmpty(outputDir))
+        {
+            Directory.CreateDirectory(outputDir);
+        }
+
+        //
+        // LZ4 compressed assembly header format:
+        //   uint magic;                 // 0x5A4C4158; 'XALZ', little-endian
+        //   uint descriptor_index;      // Index into an internal assembly descriptor table
+        //   uint uncompressed_length;   // Size of assembly, uncompressed
+        //
+        using (BinaryReader reader = new BinaryReader(inputStream, new UTF8Encoding(false), true))
+        {
+            uint magic = reader.ReadUInt32();
+            if (magic == CompressedDataMagic)
+            {
+                reader.ReadUInt32(); // descriptor index, ignore
+                uint decompressedLength = reader.ReadUInt32();
+
+                int inputLength = (int)(inputStream.Length - 12);
+                byte[] sourceBytes = bytePool.Rent(inputLength);
+                reader.Read(sourceBytes, 0, inputLength);
+
+                byte[] assemblyBytes = bytePool.Rent((int)decompressedLength);
+                int decoded = LZ4Codec.Decode(sourceBytes, 0, inputLength, assemblyBytes, 0, (int)decompressedLength);
+                if (decoded != (int)decompressedLength)
+                {
+                    retVal = false;
+                }
+                else
+                {
+                    using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
+                    {
+                        fs.Write(assemblyBytes, 0, decoded);
+                        fs.Flush();
+                    }
+                }
+
+                bytePool.Return(sourceBytes);
+                bytePool.Return(assemblyBytes);
+
+                return retVal;
+            }
+        }
+
+        using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
+        {
+            byte[] buffer = new byte[BufferSize]; // 4K is optimum
+            inputStream.Seek(0, SeekOrigin.Begin);
+            StreamUtils.Copy(inputStream, fs, buffer);
+        }
+
+        return retVal;
     }
 
     public bool UncompressFromAPK(string filePath, string outputDir, ProgressDelegate? progressDelegate = null)
@@ -57,6 +127,8 @@ public class ApkUncompressCommon
 
                             string archName = store.TargetArch.HasValue ? store.TargetArch.Value.ToString().ToLowerInvariant() : "unknown";
                             string outFile = Path.Combine(outputDir, archName, storeItem.Name);
+                            string outFileTmp = outFile + ".tmp";
+
                             string? outDir = Path.GetDirectoryName(outFile);
                             if (string.IsNullOrEmpty(outDir))
                             {
@@ -64,9 +136,24 @@ public class ApkUncompressCommon
                             }
 
                             Directory.CreateDirectory(outDir);
-                            if (!store.StoreImageData(storeItem, outFile))
+                            try
                             {
-                                continue;
+                                if (!store.StoreImageData(storeItem, outFileTmp))
+                                {
+                                    continue;
+                                }
+
+                                using (FileStream fs = File.Open(outFileTmp, FileMode.Open, FileAccess.Read))
+                                {
+                                    if (!UncompressDLL(fs, outFile))
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+                            finally
+                            {
+                                File.Delete(outFileTmp);
                             }
 
                             extractedCount++;

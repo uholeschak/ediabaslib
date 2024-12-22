@@ -61,13 +61,8 @@ abstract class AssemblyStoreReader : IDisposable
 	protected abstract void Prepare ();
 	protected abstract ulong GetStoreStartDataOffset ();
 
-	public Stream ReadEntryImageData (AssemblyStoreItem entry, bool uncompressIfNeeded = false)
+	public Stream ReadEntryImageData (AssemblyStoreItem entry)
 	{
-        if (uncompressIfNeeded)
-        {
-            throw new NotImplementedException();
-        }
-
 		ulong startOffset = GetStoreStartDataOffset ();
 		StoreStream.Seek ((uint)startOffset + entry.DataOffset, SeekOrigin.Begin);
 		var stream = new MemoryStream ();
@@ -87,13 +82,8 @@ abstract class AssemblyStoreReader : IDisposable
 		return stream;
 	}
 
-    public bool StoreEntryImageData(AssemblyStoreItem entry, string fileName, bool uncompressIfNeeded = false)
+    public bool StoreEntryImageData(AssemblyStoreItem entry, string fileName)
     {
-        if (uncompressIfNeeded)
-        {
-            throw new NotImplementedException();
-        }
-
         try
         {
             ulong startOffset = GetStoreStartDataOffset();
