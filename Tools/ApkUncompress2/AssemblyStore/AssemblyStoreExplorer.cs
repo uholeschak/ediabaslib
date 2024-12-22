@@ -169,14 +169,24 @@ class AssemblyStoreExplorer : IDisposable
 
                 if (string.Compare(zipEntry.Name, path, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    MemoryStream memoryStream = new MemoryStream();
-                    byte[] buffer = new byte[4096]; // 4K is optimum
-                    using (Stream zipStream = zf.GetInputStream(zipEntry))
+                    try
                     {
-                        StreamUtils.Copy(zipStream, memoryStream, buffer);
-                    }
+                        const int bufferSize = 4096;
+                        string tempFileName = Path.GetTempFileName();
+                        FileStream fileStream = File.Create(tempFileName, bufferSize, FileOptions.DeleteOnClose);
 
-                    ret.Add(new AssemblyStoreExplorer(memoryStream, $"{fi.FullName}!{path}"));
+                        byte[] buffer = new byte[bufferSize];
+                        using (Stream zipStream = zf.GetInputStream(zipEntry))
+                        {
+                            StreamUtils.Copy(zipStream, fileStream, buffer);
+                        }
+
+                        ret.Add(new AssemblyStoreExplorer(fileStream, $"{fi.FullName}!{path}"));
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
                     break;
                 }
             }
