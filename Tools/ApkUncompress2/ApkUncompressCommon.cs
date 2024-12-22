@@ -22,62 +22,66 @@ public class ApkUncompressCommon
         bytePool = ArrayPool<byte>.Shared;
     }
 
-    public bool UncompressDLL(Stream inputStream, string filePath)
+    public bool UncompressDLL(string inputFilePath, string outputFilePath)
     {
-        string outputFile = filePath;
         bool retVal = true;
-
+        string outputFile = outputFilePath;
         string? outputDir = Path.GetDirectoryName(outputFile);
         if (!string.IsNullOrEmpty(outputDir))
         {
             Directory.CreateDirectory(outputDir);
         }
 
-        //
-        // LZ4 compressed assembly header format:
-        //   uint magic;                 // 0x5A4C4158; 'XALZ', little-endian
-        //   uint descriptor_index;      // Index into an internal assembly descriptor table
-        //   uint uncompressed_length;   // Size of assembly, uncompressed
-        //
-        using (BinaryReader reader = new BinaryReader(inputStream, new UTF8Encoding(false), true))
+        try
         {
-            uint magic = reader.ReadUInt32();
-            if (magic == CompressedDataMagic)
+            using (FileStream inputStream = File.Open(inputFilePath, FileMode.Open, FileAccess.Read))
             {
-                reader.ReadUInt32(); // descriptor index, ignore
-                uint decompressedLength = reader.ReadUInt32();
-
-                int inputLength = (int)(inputStream.Length - 12);
-                byte[] sourceBytes = bytePool.Rent(inputLength);
-                reader.Read(sourceBytes, 0, inputLength);
-
-                byte[] assemblyBytes = bytePool.Rent((int)decompressedLength);
-                int decoded = LZ4Codec.Decode(sourceBytes, 0, inputLength, assemblyBytes, 0, (int)decompressedLength);
-                if (decoded != (int)decompressedLength)
+                //
+                // LZ4 compressed assembly header format:
+                //   uint magic;                 // 0x5A4C4158; 'XALZ', little-endian
+                //   uint descriptor_index;      // Index into an internal assembly descriptor table
+                //   uint uncompressed_length;   // Size of assembly, uncompressed
+                //
+                using (BinaryReader reader = new BinaryReader(inputStream, new UTF8Encoding(false), true))
                 {
-                    retVal = false;
-                }
-                else
-                {
-                    using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
+                    uint magic = reader.ReadUInt32();
+                    if (magic == CompressedDataMagic)
                     {
-                        fs.Write(assemblyBytes, 0, decoded);
-                        fs.Flush();
+                        reader.ReadUInt32(); // descriptor index, ignore
+                        uint decompressedLength = reader.ReadUInt32();
+
+                        int inputLength = (int)(inputStream.Length - 12);
+                        byte[] sourceBytes = bytePool.Rent(inputLength);
+                        reader.Read(sourceBytes, 0, inputLength);
+
+                        byte[] assemblyBytes = bytePool.Rent((int)decompressedLength);
+                        int decoded = LZ4Codec.Decode(sourceBytes, 0, inputLength, assemblyBytes, 0, (int)decompressedLength);
+                        if (decoded != (int)decompressedLength)
+                        {
+                            retVal = false;
+                        }
+                        else
+                        {
+                            using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
+                            {
+                                fs.Write(assemblyBytes, 0, decoded);
+                                fs.Flush();
+                            }
+                        }
+
+                        bytePool.Return(sourceBytes);
+                        bytePool.Return(assemblyBytes);
+
+                        return retVal;
                     }
                 }
-
-                bytePool.Return(sourceBytes);
-                bytePool.Return(assemblyBytes);
-
-                return retVal;
             }
-        }
 
-        using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
+            File.Move(inputFilePath, outputFilePath);
+        }
+        catch (Exception)
         {
-            byte[] buffer = new byte[BufferSize]; // 4K is optimum
-            inputStream.Seek(0, SeekOrigin.Begin);
-            StreamUtils.Copy(inputStream, fs, buffer);
+            retVal = false;
         }
 
         return retVal;
@@ -143,17 +147,17 @@ public class ApkUncompressCommon
                                     continue;
                                 }
 
-                                using (FileStream fs = File.Open(outFileTmp, FileMode.Open, FileAccess.Read))
+                                if (!UncompressDLL(outFileTmp, outFile))
                                 {
-                                    if (!UncompressDLL(fs, outFile))
-                                    {
-                                        continue;
-                                    }
+                                    continue;
                                 }
                             }
                             finally
                             {
-                                File.Delete(outFileTmp);
+                                if (File.Exists(outFileTmp))
+                                {
+                                    File.Delete(outFileTmp);
+                                }
                             }
 
                             extractedCount++;
