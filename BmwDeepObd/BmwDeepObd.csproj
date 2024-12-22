@@ -18,7 +18,6 @@
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-    <AndroidUseAssemblyStore>False</AndroidUseAssemblyStore>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <NoWarn>1701;1702;CS8632</NoWarn>
@@ -26,7 +25,6 @@
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidLinkTool>r8</AndroidLinkTool>
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
-    <AndroidUseAssemblyStore>True</AndroidUseAssemblyStore>
   </PropertyGroup>
   <ItemGroup>
     <AndroidAsset Remove="Assets\AboutAssets.txt" />
@@ -57,16 +55,19 @@
     <Compile Include="..\EdiabasLib\UdsFileReader\DataReader.cs" Link="DataReader.cs" />
     <Compile Include="..\EdiabasLib\UdsFileReader\UdsReader.cs" Link="UdsReader.cs" />
     <Compile Include="..\EdiabasLib\UdsFileReader\VehicleInfoVag.cs" Link="VehicleInfoVag.cs" />
-    <Compile Include="..\Tools\ApkUncompress\ApkUncompressCommon.cs" Link="ApkUncompressCommon.cs" />
-    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreAssembly.cs" Link="AssemblyStoreAssembly.cs" />
-    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreExplorer.cs" Link="AssemblyStoreExplorer.cs" />
-    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreExplorerLogLevel.cs" Link="AssemblyStoreExplorerLogLevel.cs" />
-    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreHashEntry.cs" Link="AssemblyStoreHashEntry.cs" />
-    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreManifestEntry.cs" Link="AssemblyStoreManifestEntry.cs" />
-    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreManifestReader.cs" Link="AssemblyStoreManifestReader.cs" />
-    <Compile Include="..\Tools\ApkUncompress\AssemblyStore\AssemblyStoreReader.cs" Link="AssemblyStoreReader.cs" />
-    <Compile Include="..\Tools\ApkUncompress\Utilities\AndroidTargetArch.cs" Link="AndroidTargetArch.cs" />
-    <Compile Include="..\Tools\ApkUncompress\Utilities\MonoAndroidHelper.Basic.cs" Link="MonoAndroidHelper.Basic.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\ApkUncompressCommon.cs" Link="ApkUncompress\ApkUncompressCommon.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\AssemblyStoreExplorer.cs" Link="ApkUncompress\AssemblyStoreExplorer.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\AssemblyStoreItem.cs" Link="ApkUncompress\AssemblyStoreItem.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\AssemblyStoreReader.cs" Link="ApkUncompress\AssemblyStoreReader.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\ELFPayloadError.cs" Link="ApkUncompress\ELFPayloadError.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\FileFormat.cs" Link="ApkUncompress\FileFormat.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\Log.cs" Link="ApkUncompress\Log.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\StoreReader_V1.cs" Link="ApkUncompress\StoreReader_V1.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\StoreReader_V2.Classes.cs" Link="ApkUncompress\StoreReader_V2.Classes.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\StoreReader_V2.cs" Link="ApkUncompress\StoreReader_V2.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\AssemblyStore\Utils.cs" Link="ApkUncompress\Utils.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\Utilities\AndroidTargetArch.cs" Link="ApkUncompress\AndroidTargetArch.cs" />
+    <Compile Include="..\Tools\ApkUncompress2\Utilities\MonoAndroidHelper.Basic.cs" Link="ApkUncompress\MonoAndroidHelper.Basic.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Sample\Sample.zip" />
@@ -109,6 +110,7 @@
     <Folder Include="HexFiles\Type7\" />
     <Folder Include="HexFiles\Type8\" />
     <Folder Include="HexFiles\Type16\" />
+    <Folder Include="ApkUncompress\" />
     <Folder Include="VehicleInfo\" />
   </ItemGroup>
   <ItemGroup>
