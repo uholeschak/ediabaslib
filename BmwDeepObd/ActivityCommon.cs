@@ -761,6 +761,7 @@ namespace BmwDeepObd
 
         public delegate bool ProgressZipDelegate(int percent, bool decrypt = false);
         public delegate bool ProgressVerifyDelegate(int percent);
+        public delegate bool ProgressApkDelegate(int percent);
         public delegate bool ProgressDocumentCopyDelegate(string name);
         public delegate void BcReceiverUpdateDisplayDelegate();
         public delegate void BcReceiverReceivedDelegate(Context context, Intent intent);
@@ -11461,7 +11462,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public bool ExtraktPackageAssemblies(string outputPath, bool forceUpdate = false)
+        public bool ExtraktPackageAssemblies(string outputPath, ProgressApkDelegate progressApkDelegate = null, bool forceUpdate = false)
         {
             try
             {
@@ -11512,7 +11513,14 @@ namespace BmwDeepObd
 
                 bool result = false;
                 ApkUncompress2.ApkUncompressCommon apkUncompress = new ApkUncompress2.ApkUncompressCommon();
-                if (apkUncompress.UncompressFromAPK(packageFilePath, outputPath))
+                if (apkUncompress.UncompressFromAPK(packageFilePath, outputPath, percent =>
+                    {
+                        if (progressApkDelegate != null)
+                        {
+                            return progressApkDelegate(percent);
+                        }
+                        return true;
+                    }))
                 {
                     result = true;
                 }

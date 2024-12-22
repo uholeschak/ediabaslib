@@ -7,60 +7,84 @@ namespace ApkUncompress2;
 
 public class ApkUncompressCommon
 {
+    public delegate bool ProgressDelegate(int percent);
+
     public ApkUncompressCommon()
     {
-
     }
 
-    public bool UncompressFromAPK(string filePath, string outputDir)
+    public bool UncompressFromAPK(string filePath, string outputDir, ProgressDelegate? progressDelegate = null)
     {
         int extractedCount = 0;
 
-        (FileFormat format, FileInfo? info) = Utils.DetectFileFormat(filePath);
-        if (info == null)
-        {
-            return false;
-        }
-
-        (IList<AssemblyStoreExplorer>? explorers, string? errorMessage) = AssemblyStoreExplorer.Open(filePath);
-        if (explorers == null)
-        {
-            return false;
-        }
-
         try
         {
-            foreach (AssemblyStoreExplorer store in explorers)
+            (FileFormat format, FileInfo? info) = Utils.DetectFileFormat(filePath);
+            if (info == null)
             {
-                if (store.Assemblies != null)
+                return false;
+            }
+
+            (IList<AssemblyStoreExplorer>? explorers, string? errorMessage) = AssemblyStoreExplorer.Open(filePath);
+            if (explorers == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                foreach (AssemblyStoreExplorer store in explorers)
                 {
-                    foreach (AssemblyStoreItem storeItem in store.Assemblies)
+                    if (store.Assemblies != null)
                     {
-                        string archName = store.TargetArch.HasValue ? store.TargetArch.Value.ToString().ToLowerInvariant() : "unknown";
-                        string outFile = Path.Combine(outputDir, archName, storeItem.Name);
-                        string? outDir = Path.GetDirectoryName(outFile);
-                        if (string.IsNullOrEmpty(outDir))
-                        {
-                            continue;
-                        }
+                        int itemCount = store.Assemblies.Count;
+                        int itemIndex = 0;
 
-                        Directory.CreateDirectory(outDir);
-                        if (!store.StoreImageData(storeItem, outFile))
+                        foreach (AssemblyStoreItem storeItem in store.Assemblies)
                         {
-                            continue;
-                        }
+                            if (progressDelegate != null)
+                            {
+                                if (itemCount > 0)
+                                {
+                                    if (!progressDelegate((itemIndex * 100) / itemCount))
+                                    {
+                                        return false;
+                                    }
+                                }
+                            }
 
-                        extractedCount++;
+                            itemIndex++;
+
+                            string archName = store.TargetArch.HasValue ? store.TargetArch.Value.ToString().ToLowerInvariant() : "unknown";
+                            string outFile = Path.Combine(outputDir, archName, storeItem.Name);
+                            string? outDir = Path.GetDirectoryName(outFile);
+                            if (string.IsNullOrEmpty(outDir))
+                            {
+                                continue;
+                            }
+
+                            Directory.CreateDirectory(outDir);
+                            if (!store.StoreImageData(storeItem, outFile))
+                            {
+                                continue;
+                            }
+
+                            extractedCount++;
+                        }
                     }
                 }
             }
-        }
-        finally
-        {
-            foreach (AssemblyStoreExplorer store in explorers)
+            finally
             {
-                store.Dispose();
+                foreach (AssemblyStoreExplorer store in explorers)
+                {
+                    store.Dispose();
+                }
             }
+        }
+        catch (Exception)
+        {
+            return false;
         }
 
         return extractedCount > 0;

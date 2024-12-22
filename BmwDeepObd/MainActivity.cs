@@ -5089,34 +5089,78 @@ namespace BmwDeepObd
                         StoreLastAppState(ActivityCommon.LastAppState.Compile);
                     });
 
+                    List<Microsoft.CodeAnalysis.MetadataReference> referencesList = null;
+                    List<string> errorList = null;
+
+                    for (int extractTry = 0; extractTry < 2; extractTry++)
+                    {
+                        bool forceUpdate = extractTry > 0;
+                        if (jobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
+                        {
+                            if (!_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir,
+                                    percent =>
+                                    {
+                                        RunOnUiThread(() =>
+                                        {
+                                            if (_activityCommon == null)
+                                            {
+                                                return;
+                                            }
+
+                                            if (_compileProgress != null)
+                                            {
+                                                _compileProgress.Indeterminate = false;
+                                                _compileProgress.Progress = percent;
+                                            }
+                                        });
+
+                                        return true;
+                                    }, forceUpdate))
+                            {
+#if DEBUG
+                                Log.Info(Tag, "CompileCode ExtraktPackageAssemblies failed: Force={0}", forceUpdate);
+#endif
+                            }
+                        }
+
+                        referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out errorList);
+                        if (errorList.Count == 0)
+                        {
+                            break;
+                        }
+
+                        if (errorList.Count > 0)
+                        {
+#if DEBUG
+                            Log.Info(Tag, string.Format("CompileCode GetLoadedMetadataReferences failed: Errors={0}, Force={1}", errorList.Count, forceUpdate));
+#endif
+                        }
+                    }
+
                     if (jobReader.PageList.Any(pageInfo => pageInfo.ClassCode != null))
                     {
-                        if (!_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir))
+                        if (!_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir,
+                                percent =>
+                                {
+                                    RunOnUiThread(() =>
+                                    {
+                                        if (_activityCommon == null)
+                                        {
+                                            return;
+                                        }
+
+                                        if (_compileProgress != null)
+                                        {
+                                            _compileProgress.Indeterminate = false;
+                                            _compileProgress.Progress = percent;
+                                        }
+                                    });
+
+                                    return true;
+                                }))
                         {
 #if DEBUG
                             Log.Info(Tag, "CompileCode ExtraktPackageAssemblies failed");
-#endif
-                        }
-
-                        List<Microsoft.CodeAnalysis.MetadataReference> referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out List<string> errorList);
-                        if (errorList.Count > 0)
-                        {
-                            if (_activityCommon.ExtraktPackageAssemblies(_instanceData.PackageAssembliesDir, true))
-                            {
-                                referencesList = ActivityCommon.GetLoadedMetadataReferences(_instanceData.PackageAssembliesDir, out errorList);
-                            }
-                            else
-                            {
-#if DEBUG
-                                Log.Info(Tag, "CompileCode ExtraktPackageAssemblies failed");
-#endif
-                            }
-                        }
-
-                        if (errorList.Count > 0)
-                        {
-#if DEBUG
-                            Log.Info(Tag, string.Format("CompileCode GetLoadedMetadataReferences failed: Errors={0}", errorList.Count));
 #endif
                         }
 
@@ -5189,7 +5233,7 @@ namespace BmwDeepObd
 
                         if (compileResultList.Count > 0)
                         {
-                            if (errorList.Count > 0)
+                            if (errorList != null && errorList.Count > 0)
                             {
                                 StringBuilder sbMessage = new StringBuilder();
                                 sbMessage.AppendLine(GetString(Resource.String.compile_missing_assemblies));
