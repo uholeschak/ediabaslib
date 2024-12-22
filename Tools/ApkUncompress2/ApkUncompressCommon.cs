@@ -36,12 +36,6 @@ public class ApkUncompressCommon
                 {
                     foreach (AssemblyStoreItem storeItem in store.Assemblies)
                     {
-                        Stream? stream = store.ReadImageData(storeItem);
-                        if (stream == null)
-                        {
-                            continue;
-                        }
-
                         string archName = store.TargetArch.HasValue ? store.TargetArch.Value.ToString().ToLowerInvariant() : "unknown";
                         string outFile = Path.Combine(outputDir, archName, storeItem.Name);
                         string? outDir = Path.GetDirectoryName(outFile);
@@ -51,12 +45,11 @@ public class ApkUncompressCommon
                         }
 
                         Directory.CreateDirectory(outDir);
-                        using (FileStream fileStream = File.Create(outFile))
+                        if (!store.StoreImageData(storeItem, outFile))
                         {
-                            stream.Seek(0, SeekOrigin.Begin);
-                            stream.CopyTo(fileStream);
+                            continue;
                         }
-                        stream.Dispose();
+
                         extractedCount++;
                     }
                 }

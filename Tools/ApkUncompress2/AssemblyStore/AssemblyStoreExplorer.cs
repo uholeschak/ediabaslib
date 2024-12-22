@@ -205,7 +205,12 @@ class AssemblyStoreExplorer : IDisposable
 		return reader.ReadEntryImageData (item, uncompressIfNeeded);
 	}
 
-	string EnsureCorrectAssemblyName (string assemblyName)
+    public bool StoreImageData(AssemblyStoreItem item, string fileName, bool uncompressIfNeeded = false)
+    {
+        return reader.StoreEntryImageData(item, fileName, uncompressIfNeeded);
+    }
+
+    string EnsureCorrectAssemblyName (string assemblyName)
 	{
 		assemblyName = Path.GetFileName (assemblyName);
 		if (reader.NeedsExtensionInName) {
