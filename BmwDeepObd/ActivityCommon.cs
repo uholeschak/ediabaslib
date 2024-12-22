@@ -11510,23 +11510,11 @@ namespace BmwDeepObd
                     Directory.Delete(outputPath, true);
                 }
 
-                string ext = Path.GetExtension(packageFilePath);
                 bool result = false;
-                ApkUncompress.ApkUncompressCommon apkUncompress = new ApkUncompress.ApkUncompressCommon();
-                if (string.Compare(".apk", ext, StringComparison.OrdinalIgnoreCase) == 0)
+                ApkUncompress2.ApkUncompressCommon apkUncompress = new ApkUncompress2.ApkUncompressCommon();
+                if (apkUncompress.UncompressFromAPK(packageFilePath, outputPath))
                 {
-                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompress.ApkUncompressCommon.AssembliesPathApk, null, outputPath))
-                    {
-                        result = true;
-                    }
-                }
-
-                if (string.Compare(".aab", ext, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    if (apkUncompress.UncompressFromAPK(packageFilePath, ApkUncompress.ApkUncompressCommon.AssembliesPathAab, null, outputPath))
-                    {
-                        result = true;
-                    }
+                    result = true;
                 }
 
                 if (result && Directory.Exists(outputPath))
@@ -11601,7 +11589,7 @@ namespace BmwDeepObd
             if (isArm)
             {
                 // the release version uses _ and debug uses -
-                return is64Bit ? ["arm64_v8a", "arm64-v8a"] : ["armeabi_v7a", "armeabi-v7a"];
+                return is64Bit ? ["arm64", "arm64_v8a", "arm64-v8a"] : ["armeabi", "armeabi_v7a", "armeabi-v7a"];
             }
 
             // only the _ variant is used for release and debug
@@ -11634,6 +11622,13 @@ namespace BmwDeepObd
                 if (!File.Exists(location))
                 {
                     string fileName = Path.GetFileName(location);
+                    string ext = Path.GetExtension(fileName);
+
+                    if (string.IsNullOrEmpty(ext) || string.Compare(ext, ".dll", StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        fileName += ".dll";
+                    }
+
                     location = Path.Combine(assembliesDir, fileName);
                     if (!File.Exists(location))
                     {

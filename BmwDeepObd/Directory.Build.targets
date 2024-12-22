@@ -1,6 +1,7 @@
 ﻿<Project>
    <PropertyGroup>
-       <DefineConstants>$(DefineConstants);ANDROID_AUTO</DefineConstants>
+     <DefineConstants>$(DefineConstants);ANDROID_AUTO</DefineConstants>
+     <AndroidUseAssemblyStore>True</AndroidUseAssemblyStore>
    </PropertyGroup>
   <Target Name="PatchRemoveRegisterAttributeBefore" BeforeTargets="_RemoveRegisterAttribute">
     <PropertyGroup>
