@@ -7,6 +7,8 @@ namespace ApkUncompress2
 {
     internal class App
     {
+        static ApkUncompressCommon apkUncompress = new ApkUncompressCommon();
+
         static int Usage()
         {
             Console.WriteLine("Usage: decompress-assemblies {file.{apk,aab}} [{file.{apk,aab} ...]");
@@ -24,80 +26,36 @@ namespace ApkUncompress2
             }
 
             bool haveErrors = false;
-            foreach (string inputFile in args)
+            foreach (string file in args)
             {
-                (FileFormat format, FileInfo? info) = Utils.DetectFileFormat(inputFile);
-                if (info == null)
+                string ext = Path.GetExtension(file);
+                string fullPath = Path.GetFullPath(file);
+                if (string.IsNullOrEmpty(fullPath))
                 {
-                    Console.WriteLine($"File '{inputFile}' does not exist.");
-                    haveErrors = true;
                     continue;
                 }
 
-                (IList<AssemblyStoreExplorer>? explorers, string? errorMessage) = AssemblyStoreExplorer.Open(inputFile);
-                if (explorers == null)
+                string? outputPath = Path.GetDirectoryName(fullPath);
+                if (string.IsNullOrEmpty(outputPath))
                 {
-                    Console.WriteLine(errorMessage ?? "Unknown error");
-                    haveErrors = true;
                     continue;
                 }
 
-                try
+                string prefix = $"uncompressed-{Path.GetFileNameWithoutExtension(file)}";
+                string outputDir = Path.Combine(outputPath, prefix);
+                if (Directory.Exists(outputDir))
                 {
-                    string baseFileName = Path.GetFileNameWithoutExtension(inputFile);
-                    string? srcDir = Path.GetDirectoryName(inputFile);
-                    if (string.IsNullOrEmpty(srcDir))
-                    {
-                        Console.WriteLine("Invalid directory");
-                        haveErrors = true;
-                        continue;
-                    }
-
-                    string outDirBase = Path.Combine(srcDir, baseFileName);
-                    if (Directory.Exists(outDirBase))
-                    {
-                        Directory.Delete(outDirBase, true);
-                    }
-
-                    foreach (AssemblyStoreExplorer store in explorers)
-                    {
-                        if (store.Assemblies != null)
-                        {
-                            foreach (AssemblyStoreItem storeItem in store.Assemblies)
-                            {
-                                Stream? stream = store.ReadImageData(storeItem);
-                                if (stream == null)
-                                {
-                                    Console.WriteLine($"Failed to read image data for {storeItem.Name}");
-                                    continue;
-                                }
-
-                                string archName = store.TargetArch.HasValue ? store.TargetArch.Value.ToString().ToLowerInvariant() : "unknown";
-                                string outFile = Path.Combine(outDirBase, archName, storeItem.Name);
-                                string? outDir = Path.GetDirectoryName(outFile);
-                                if (string.IsNullOrEmpty(outDir))
-                                {
-                                    continue;
-                                }
-
-                                Directory.CreateDirectory(outDir);
-                                using (FileStream fileStream = File.Create(outFile))
-                                {
-                                    stream.Seek(0, SeekOrigin.Begin);
-                                    stream.CopyTo(fileStream);
-                                }
-                                stream.Dispose();
-                            }
-                        }
-                    }
+                    Directory.Delete(outputDir, true);
                 }
-                finally
+
+                if (!apkUncompress.UncompressFromAPK(file, outputDir))
                 {
-                    foreach (AssemblyStoreExplorer store in explorers)
-                    {
-                        store.Dispose();
-                    }
+                    Console.WriteLine("Uncompress failed: {0}", file);
+                    haveErrors = true;
                 }
+
+                Console.WriteLine("Uncompressed: {0}", file);
+                continue;
             }
 
             return haveErrors ? 1 : 0;
