@@ -181,6 +181,7 @@ class AssemblyStoreExplorer : IDisposable
                             StreamUtils.Copy(zipStream, fileStream, buffer);
                         }
 
+                        fileStream.Seek(0, SeekOrigin.Begin);
                         ret.Add(new AssemblyStoreExplorer(fileStream, $"{fi.FullName}!{path}"));
                     }
                     catch (Exception)
