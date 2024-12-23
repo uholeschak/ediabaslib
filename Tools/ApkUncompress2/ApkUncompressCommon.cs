@@ -90,13 +90,27 @@ public class ApkUncompressCommon
         return retVal;
     }
 
-    public bool UncompressFromAPK_IndividualElfFiles(ZipFile apk, string filePath, string outputPath)
+    public bool UncompressFromAPK_IndividualElfFiles(ZipFile apk, string filePath, string outputPath, ProgressDelegate? progressDelegate = null)
     {
         bool result = true;
         int extractedCount = 0;
+        long entryCount = apk.Count;
+        long itemIndex = 0;
 
         foreach (ZipEntry entry in apk)
         {
+            if (progressDelegate != null)
+            {
+                if (entryCount > 0)
+                {
+                    if (!progressDelegate((int) ((itemIndex * 100) / entryCount)))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            itemIndex++;
             if (!entry.IsFile)
             {
                 continue;
@@ -345,7 +359,7 @@ public class ApkUncompressCommon
             {
                 FileStream fs = File.OpenRead(filePath);
                 zf = new ZipFile(fs);
-                if (UncompressFromAPK_IndividualElfFiles(zf, filePath, outputDir))
+                if (UncompressFromAPK_IndividualElfFiles(zf, filePath, outputDir, progressDelegate))
                 {
                     return true;
                 }
