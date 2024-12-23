@@ -3,13 +3,9 @@ using System.IO;
 using System;
 using System.Buffers;
 using System.Text;
-using ELFSharp.ELF;
-using ELFSharp.ELF.Sections;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using Xamarin.Android.AssemblyStore;
-using Xamarin.Android.Tasks;
-using System.Collections;
 
 namespace ApkUncompress;
 
@@ -104,168 +100,6 @@ public class ApkUncompressCommon
         {
             return UncompressDLL(fs, Path.GetFileName(filePath), prefix, outputPath);
         }
-    }
-
-    public bool UncompressFromAPK_IndividualElfFiles(ZipFile apk, string filePath, string libPath, string prefix, string? outputPath)
-    {
-        bool result = true;
-        int extractedCount = 0;
-
-        foreach (ZipEntry entry in apk)
-        {
-            if (!entry.IsFile)
-            {
-                continue;
-            }
-
-            if (!entry.Name.StartsWith(libPath, StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            string entryFileName = Path.GetFileName(entry.Name);
-            string subPath = entry.Name.Remove(0, libPath.Length);
-            string? entryPath = Path.GetDirectoryName(subPath);
-
-            if (!entryFileName.EndsWith(".dll" + MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT, StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
-            string cleanedFileName = entryFileName;
-            cleanedFileName = cleanedFileName.Remove(cleanedFileName.Length - MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT.Length);
-
-            string? assemblyFileName = null;
-            string? cultureDir = null;
-            if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
-            {
-                assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER.Length);
-            }
-            else if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
-            {
-                assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER.Length);
-                // MonoAndroidHelper.SATELLITE_CULTURE_END_MARKER_CHAR is incorrect!
-                int cultureSepIndex = assemblyFileName.IndexOf('-');
-                if (cultureSepIndex < 1)
-                {
-                    continue;
-                }
-
-                cultureDir = assemblyFileName.Substring(0, cultureSepIndex);
-                assemblyFileName = assemblyFileName.Remove(0, cultureSepIndex + 1);
-            }
-
-            if (string.IsNullOrEmpty(assemblyFileName))
-            {
-                continue;
-            }
-
-            if (!string.IsNullOrEmpty(cultureDir))
-            {
-                if (string.IsNullOrEmpty(entryPath))
-                {
-                    entryPath = cultureDir;
-                }
-                else
-                {
-                    entryPath = Path.Combine(entryPath, cultureDir);
-                }
-            }
-
-            string outputFile = assemblyFileName;
-            if (!string.IsNullOrEmpty(entryPath))
-            {
-                outputFile = Path.Combine(entryPath, outputFile);
-            }
-
-            if (!string.IsNullOrEmpty(prefix))
-            {
-                outputFile = Path.Combine(prefix, outputFile);
-            }
-
-            if (!string.IsNullOrEmpty(outputPath))
-            {
-                outputFile = Path.Combine(outputPath, outputFile);
-            }
-
-            string? outputDir = Path.GetDirectoryName(outputFile);
-            if (string.IsNullOrEmpty(outputDir))
-            {
-                continue;
-            }
-
-            string tempFileName = Path.GetTempFileName();
-            using (FileStream tempStream = File.Create(tempFileName, BufferSize, FileOptions.DeleteOnClose))
-            {
-                byte[] buffer = new byte[BufferSize]; // 4K is optimum
-                using (Stream zipStream = apk.GetInputStream(entry))
-                {
-                    StreamUtils.Copy(zipStream, tempStream, buffer);
-                }
-
-                tempStream.Seek(0, SeekOrigin.Begin);
-                try
-                {
-                    using (IELF elfReader = ELFReader.Load(tempStream, false))
-                    {
-#if false
-                        foreach (ISection section in elfReader.Sections)
-                        {
-                            if (section.Name == "payload")
-                            {
-                                continue;
-                            }
-                            byte[] data = section.GetContents();
-                            string dataString;
-                            if (section.Name == ".dynstr")
-                            {
-                                dataString = Encoding.UTF8.GetString(data);
-                            }
-                            else
-                            {
-                                dataString = BitConverter.ToString(data);
-                            }
-
-                            Console.WriteLine("Section: {0} '{1}'", section.Name, dataString);
-                        }
-#endif
-                        if (!elfReader.TryGetSection("payload", out ISection payloadSection))
-                        {
-                            result = false;
-                            continue;
-                        }
-
-                        byte[] payloadData = payloadSection.GetContents();
-                        if (payloadData == null)
-                        {
-                            result = false;
-                            continue;
-                        }
-
-                        if (!Directory.Exists(outputDir))
-                        {
-                            Directory.CreateDirectory(outputDir);
-                        }
-
-                        File.WriteAllBytes(outputFile, payloadData);
-                        extractedCount++;
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                extractedCount++;
-            }
-        }
-
-        if (extractedCount == 0)
-        {
-            result = false;
-        }
-
-        return result;
     }
 
     public bool UncompressFromAPK_IndividualEntries(ZipFile apk, string filePath, string assembliesPath, string prefix, string? outputPath)
@@ -370,11 +204,6 @@ public class ApkUncompressCommon
                 if (!blobFound)
                 {
                     if (UncompressFromAPK_IndividualEntries(zf, filePath, assembliesPath, prefix, outputPath))
-                    {
-                        return true;
-                    }
-
-                    if (UncompressFromAPK_IndividualElfFiles(zf, filePath, AssembliesLibPath, prefix, outputPath))
                     {
                         return true;
                     }
