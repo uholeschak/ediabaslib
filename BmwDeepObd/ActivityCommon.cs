@@ -11604,7 +11604,6 @@ namespace BmwDeepObd
             return is64Bit ? ["x86_64", "x86-64"] : ["x86"];
         }
 
-
         public static List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(string packageAssembiesDir, out List<string> errorList)
         {
             string assembliesDir = packageAssembiesDir;
@@ -11632,9 +11631,10 @@ namespace BmwDeepObd
                     string fileName = Path.GetFileName(location);
                     string ext = Path.GetExtension(fileName);
 
-                    if (string.IsNullOrEmpty(ext) || string.Compare(ext, ".dll", StringComparison.OrdinalIgnoreCase) != 0)
+                    const string dllExtension = ".dll";
+                    if (string.IsNullOrEmpty(ext) || string.Compare(ext, dllExtension, StringComparison.OrdinalIgnoreCase) != 0)
                     {
-                        fileName += ".dll";
+                        fileName += dllExtension;
                     }
 
                     location = Path.Combine(assembliesDir, fileName);
