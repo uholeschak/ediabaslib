@@ -6,6 +6,10 @@ using ICSharpCode.SharpZipLib.Core;
 using K4os.Compression.LZ4;
 using System.Text;
 using System.Buffers;
+using ELFSharp.ELF.Sections;
+using ELFSharp.ELF;
+using ICSharpCode.SharpZipLib.Zip;
+using Xamarin.Android.Tasks;
 
 namespace ApkUncompress2;
 
@@ -14,6 +18,7 @@ public class ApkUncompressCommon
     public delegate bool ProgressDelegate(int percent);
 
     private const int BufferSize = 4096;
+    private const string AssembliesLibPath = "lib/";
     private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
     private readonly ArrayPool<byte> bytePool;
 
@@ -84,6 +89,164 @@ public class ApkUncompressCommon
 
         return retVal;
     }
+
+    public bool UncompressFromAPK_IndividualElfFiles(ZipFile apk, string filePath, string outputPath)
+    {
+        bool result = true;
+        int extractedCount = 0;
+
+        foreach (ZipEntry entry in apk)
+        {
+            if (!entry.IsFile)
+            {
+                continue;
+            }
+
+            if (!entry.Name.StartsWith(AssembliesLibPath, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            string entryFileName = Path.GetFileName(entry.Name);
+            string subPath = entry.Name.Remove(0, AssembliesLibPath.Length);
+            string? entryPath = Path.GetDirectoryName(subPath);
+
+            if (!entryFileName.EndsWith(".dll" + MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            string cleanedFileName = entryFileName;
+            cleanedFileName = cleanedFileName.Remove(cleanedFileName.Length - MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT.Length);
+
+            string? assemblyFileName = null;
+            string? cultureDir = null;
+            if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
+            {
+                assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_REGULAR_ASSEMBLY_MARKER.Length);
+            }
+            else if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
+            {
+                assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER.Length);
+                // MonoAndroidHelper.SATELLITE_CULTURE_END_MARKER_CHAR is incorrect!
+                int cultureSepIndex = assemblyFileName.IndexOf('-');
+                if (cultureSepIndex < 1)
+                {
+                    continue;
+                }
+
+                cultureDir = assemblyFileName.Substring(0, cultureSepIndex);
+                assemblyFileName = assemblyFileName.Remove(0, cultureSepIndex + 1);
+            }
+
+            if (string.IsNullOrEmpty(assemblyFileName))
+            {
+                continue;
+            }
+
+            if (!string.IsNullOrEmpty(cultureDir))
+            {
+                if (string.IsNullOrEmpty(entryPath))
+                {
+                    entryPath = cultureDir;
+                }
+                else
+                {
+                    entryPath = Path.Combine(entryPath, cultureDir);
+                }
+            }
+
+            string outputFile = assemblyFileName;
+            if (!string.IsNullOrEmpty(entryPath))
+            {
+                outputFile = Path.Combine(entryPath, outputFile);
+            }
+
+            if (!string.IsNullOrEmpty(outputPath))
+            {
+                outputFile = Path.Combine(outputPath, outputFile);
+            }
+
+            string? outputDir = Path.GetDirectoryName(outputFile);
+            if (string.IsNullOrEmpty(outputDir))
+            {
+                continue;
+            }
+
+            string tempFileName = Path.GetTempFileName();
+            using (FileStream tempStream = File.Create(tempFileName, BufferSize, FileOptions.DeleteOnClose))
+            {
+                byte[] buffer = new byte[BufferSize]; // 4K is optimum
+                using (Stream zipStream = apk.GetInputStream(entry))
+                {
+                    StreamUtils.Copy(zipStream, tempStream, buffer);
+                }
+
+                tempStream.Seek(0, SeekOrigin.Begin);
+                try
+                {
+                    using (IELF elfReader = ELFReader.Load(tempStream, false))
+                    {
+#if false
+                        foreach (ISection section in elfReader.Sections)
+                        {
+                            if (section.Name == "payload")
+                            {
+                                continue;
+                            }
+                            byte[] data = section.GetContents();
+                            string dataString;
+                            if (section.Name == ".dynstr")
+                            {
+                                dataString = Encoding.UTF8.GetString(data);
+                            }
+                            else
+                            {
+                                dataString = BitConverter.ToString(data);
+                            }
+
+                            Console.WriteLine("Section: {0} '{1}'", section.Name, dataString);
+                        }
+#endif
+                        if (!elfReader.TryGetSection("payload", out ISection payloadSection))
+                        {
+                            result = false;
+                            continue;
+                        }
+
+                        byte[] payloadData = payloadSection.GetContents();
+                        if (payloadData == null)
+                        {
+                            result = false;
+                            continue;
+                        }
+
+                        if (!Directory.Exists(outputDir))
+                        {
+                            Directory.CreateDirectory(outputDir);
+                        }
+
+                        File.WriteAllBytes(outputFile, payloadData);
+                        extractedCount++;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+
+                extractedCount++;
+            }
+        }
+
+        if (extractedCount == 0)
+        {
+            result = false;
+        }
+
+        return result;
+    }
+
 
     public bool UncompressFromAPK(string filePath, string outputDir, ProgressDelegate? progressDelegate = null)
     {
