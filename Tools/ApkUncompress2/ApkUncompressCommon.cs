@@ -10,6 +10,7 @@ using ELFSharp.ELF.Sections;
 using ELFSharp.ELF;
 using ICSharpCode.SharpZipLib.Zip;
 using Xamarin.Android.Tasks;
+using System.Text.RegularExpressions;
 
 namespace ApkUncompress2;
 
@@ -143,14 +144,18 @@ public class ApkUncompressCommon
             {
                 assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER.Length);
                 // MonoAndroidHelper.SATELLITE_CULTURE_END_MARKER_CHAR is incorrect!
-                int cultureSepIndex = assemblyFileName.IndexOf('-');
-                if (cultureSepIndex < 1)
+                MatchCollection cultureMatches = Regex.Matches(assemblyFileName, "^([a-z]{2}-[a-z]+|[a-z]{2})-", RegexOptions.IgnoreCase);
+                if ((cultureMatches.Count == 1) || (cultureMatches[0].Groups.Count == 2))
+                {
+                    cultureDir = cultureMatches[0].Groups[1].Value;
+                }
+
+                if (string.IsNullOrEmpty(cultureDir))
                 {
                     continue;
                 }
 
-                cultureDir = assemblyFileName.Substring(0, cultureSepIndex);
-                assemblyFileName = assemblyFileName.Remove(0, cultureSepIndex + 1);
+                assemblyFileName = assemblyFileName.Remove(0, cultureDir.Length + 1);
             }
 
             if (string.IsNullOrEmpty(assemblyFileName))
