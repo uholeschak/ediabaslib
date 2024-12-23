@@ -21,6 +21,7 @@ public class ApkUncompressCommon
     private const int BufferSize = 4096;
     private const string AssembliesLibPath = "lib/";
     private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
+    private static Regex regexCulture = new Regex("^([a-z]{2}-[a-z]+|[a-z]{2})-", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
     private readonly ArrayPool<byte> bytePool;
 
     public ApkUncompressCommon()
@@ -144,7 +145,7 @@ public class ApkUncompressCommon
             {
                 assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER.Length);
                 // MonoAndroidHelper.SATELLITE_CULTURE_END_MARKER_CHAR is incorrect!
-                MatchCollection cultureMatches = Regex.Matches(assemblyFileName, "^([a-z]{2}-[a-z]+|[a-z]{2})-", RegexOptions.IgnoreCase);
+                MatchCollection cultureMatches = regexCulture.Matches(assemblyFileName);
                 if ((cultureMatches.Count == 1) || (cultureMatches[0].Groups.Count == 2))
                 {
                     cultureDir = cultureMatches[0].Groups[1].Value;
