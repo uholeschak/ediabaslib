@@ -29,7 +29,7 @@ public class ApkUncompressCommon
         bytePool = ArrayPool<byte>.Shared;
     }
 
-    public bool UncompressDLL(string fileName)
+    public bool UncompressFile(string fileName)
     {
         bool retVal = true;
 
@@ -55,26 +55,31 @@ public class ApkUncompressCommon
 
                         int inputLength = (int)(inputStream.Length - 12);
                         byte[] sourceBytes = bytePool.Rent(inputLength);
-                        reader.Read(sourceBytes, 0, inputLength);
-
-                        byte[] assemblyBytes = bytePool.Rent((int)decompressedLength);
-                        int decoded = LZ4Codec.Decode(sourceBytes, 0, inputLength, assemblyBytes, 0, (int)decompressedLength);
-                        if (decoded != (int)decompressedLength)
+                        if (reader.Read(sourceBytes, 0, inputLength) != inputLength)
                         {
                             retVal = false;
                         }
                         else
                         {
-                            using (var fs = File.Open(tempFileName, FileMode.Create, FileAccess.Write))
+                            byte[] assemblyBytes = bytePool.Rent((int)decompressedLength);
+                            int decoded = LZ4Codec.Decode(sourceBytes, 0, inputLength, assemblyBytes, 0, (int)decompressedLength);
+                            if (decoded != (int)decompressedLength)
                             {
-                                fs.Write(assemblyBytes, 0, decoded);
-                                fs.Flush();
+                                retVal = false;
                             }
-                            uncompressed = true;
-                        }
+                            else
+                            {
+                                using (var fs = File.Open(tempFileName, FileMode.Create, FileAccess.Write))
+                                {
+                                    fs.Write(assemblyBytes, 0, decoded);
+                                    fs.Flush();
+                                }
+                                uncompressed = true;
+                            }
 
-                        bytePool.Return(sourceBytes);
-                        bytePool.Return(assemblyBytes);
+                            bytePool.Return(sourceBytes);
+                            bytePool.Return(assemblyBytes);
+                        }
                     }
                 }
             }
@@ -247,6 +252,19 @@ public class ApkUncompressCommon
                         }
 
                         File.WriteAllBytes(outputFile, payloadData);
+                        if (payloadData.Length >= 4)
+                        {
+                            uint magic = BitConverter.ToUInt32(payloadData, 0);
+                            if (magic == CompressedDataMagic)
+                            {
+                                if (!UncompressFile(outputFile))
+                                {
+                                    result = false;
+                                    continue;
+                                }
+                            }
+                        }
+
                         extractedCount++;
                     }
                 }
@@ -325,7 +343,7 @@ public class ApkUncompressCommon
                                 continue;
                             }
 
-                            if (!UncompressDLL(outFile))
+                            if (!UncompressFile(outFile))
                             {
                                 continue;
                             }
