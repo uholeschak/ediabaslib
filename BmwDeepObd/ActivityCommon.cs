@@ -11629,10 +11629,9 @@ namespace BmwDeepObd
                 if (!File.Exists(location))
                 {
                     string fileName = Path.GetFileName(location);
-                    string ext = Path.GetExtension(fileName);
 
                     const string dllExtension = ".dll";
-                    if (string.IsNullOrEmpty(ext) || string.Compare(ext, dllExtension, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (!fileName.EndsWith(dllExtension, StringComparison.OrdinalIgnoreCase))
                     {
                         fileName += dllExtension;
                     }
