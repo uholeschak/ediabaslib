@@ -22,19 +22,15 @@ public class ApkUncompressCommon
         bytePool = ArrayPool<byte>.Shared;
     }
 
-    public bool UncompressDLL(string inputFilePath, string outputFilePath)
+    public bool UncompressDLL(string fileName)
     {
         bool retVal = true;
-        string outputFile = outputFilePath;
-        string? outputDir = Path.GetDirectoryName(outputFile);
-        if (!string.IsNullOrEmpty(outputDir))
-        {
-            Directory.CreateDirectory(outputDir);
-        }
 
         try
         {
-            using (FileStream inputStream = File.Open(inputFilePath, FileMode.Open, FileAccess.Read))
+            string tempFileName = fileName + ".tmp";
+            bool uncompressed = false;
+            using (FileStream inputStream = File.Open(fileName, FileMode.Open, FileAccess.Read))
             {
                 //
                 // LZ4 compressed assembly header format:
@@ -62,22 +58,24 @@ public class ApkUncompressCommon
                         }
                         else
                         {
-                            using (var fs = File.Open(outputFile, FileMode.Create, FileAccess.Write))
+                            using (var fs = File.Open(tempFileName, FileMode.Create, FileAccess.Write))
                             {
                                 fs.Write(assemblyBytes, 0, decoded);
                                 fs.Flush();
                             }
+                            uncompressed = true;
                         }
 
                         bytePool.Return(sourceBytes);
                         bytePool.Return(assemblyBytes);
-
-                        return retVal;
                     }
                 }
             }
 
-            File.Move(inputFilePath, outputFilePath);
+            if (uncompressed)
+            {
+                File.Move(tempFileName, fileName, true);
+            }
         }
         catch (Exception)
         {
@@ -131,7 +129,6 @@ public class ApkUncompressCommon
 
                             string archName = store.TargetArch.HasValue ? store.TargetArch.Value.ToString().ToLowerInvariant() : "unknown";
                             string outFile = Path.Combine(outputDir, archName, storeItem.Name);
-                            string outFileTmp = outFile + ".tmp";
 
                             string? outDir = Path.GetDirectoryName(outFile);
                             if (string.IsNullOrEmpty(outDir))
@@ -140,24 +137,14 @@ public class ApkUncompressCommon
                             }
 
                             Directory.CreateDirectory(outDir);
-                            try
+                            if (!store.StoreImageData(storeItem, outFile))
                             {
-                                if (!store.StoreImageData(storeItem, outFileTmp))
-                                {
-                                    continue;
-                                }
-
-                                if (!UncompressDLL(outFileTmp, outFile))
-                                {
-                                    continue;
-                                }
+                                continue;
                             }
-                            finally
+
+                            if (!UncompressDLL(outFile))
                             {
-                                if (File.Exists(outFileTmp))
-                                {
-                                    File.Delete(outFileTmp);
-                                }
+                                continue;
                             }
 
                             extractedCount++;
