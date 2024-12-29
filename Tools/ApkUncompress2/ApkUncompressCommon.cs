@@ -125,7 +125,7 @@ public class ApkUncompressCommon
                 continue;
             }
 
-            string libPath = null;
+            string? libPath = null;
             if (entry.Name.StartsWith(AssembliesPathLibApk, StringComparison.Ordinal))
             {
                 libPath = AssembliesPathLibApk;
