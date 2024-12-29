@@ -11506,13 +11506,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (Directory.Exists(outputPath))
-                {
-                    Directory.Delete(outputPath, true);
-                }
-
-                List<string> apkFileList = new List<string>();
-                apkFileList.Add(packageFile);
+                List<string> apkFileList = new List<string> { packageFile };
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                 {
@@ -11529,6 +11523,11 @@ namespace BmwDeepObd
                             }
                         }
                     }
+                }
+
+                if (Directory.Exists(outputPath))
+                {
+                    Directory.Delete(outputPath, true);
                 }
 
                 bool result = false;
