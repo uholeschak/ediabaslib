@@ -2,6 +2,8 @@ mklink /j D:\Projects\EdiabasLibUH\CarControl D:\Projects\EdiabasLib\CarControl
 mklink /j D:\Projects\EdiabasLibUH\BmwDeepObd D:\Projects\EdiabasLib\BmwDeepObd
 mklink /j D:\Projects\EdiabasLibUH\Tools\CarSimulator D:\Projects\EdiabasLib\Tools\CarSimulator
 mklink /j D:\Projects\EdiabasLibUH\Tools\Mono D:\Projects\EdiabasLib\Tools\Mono
+mklink /j D:\Projects\EdiabasLibUH\Tools\ApkUncompress D:\Projects\EdiabasLib\Tools\ApkUncompress
+mklink /j D:\Projects\EdiabasLibUH\Tools\ApkUncompress2 D:\Projects\EdiabasLib\Tools\ApkUncompress2
 mklink /j D:\Projects\EdiabasLibUH\ToolsSetup D:\Projects\EdiabasLib\ToolsSetup
 mklink /j D:\Projects\EdiabasLibUH\EdiabasLib D:\Projects\EdiabasLib\EdiabasLib
 mklink /j D:\Projects\EdiabasLibUH\docs D:\Projects\EdiabasLib\docs
