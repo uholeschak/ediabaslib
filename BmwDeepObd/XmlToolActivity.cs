@@ -8035,7 +8035,7 @@ namespace BmwDeepObd
             XAttribute dbNameAttr = pageNode.Attribute("db_name");
             if (dbNameAttr != null)
             {
-                string dbName = Path.GetFileName(ActivityCommon.AssetEcuFileName) ?? string.Empty;
+                string dbName = ActivityCommon.AssetEcuId;
                 if (string.Compare(dbName, dbNameAttr.Value, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     useCompatIds = false;
@@ -8399,17 +8399,17 @@ namespace BmwDeepObd
                     pageNode.Add(new XAttribute("logfile", ActivityCommon.CreateValidFileName(ecuInfo.Name + ".log")));
                 }
 
-                string dbName = Path.GetFileName(ActivityCommon.AssetEcuFileName) ?? string.Empty;
-                if (!string.IsNullOrWhiteSpace(dbName))
+                string assetEcuId = ActivityCommon.AssetEcuId;
+                if (!string.IsNullOrWhiteSpace(assetEcuId))
                 {
                     XAttribute dbNameAttr = pageNode.Attribute("db_name");
                     if (dbNameAttr == null)
                     {
-                        pageNode.Add(new XAttribute("db_name", dbName));
+                        pageNode.Add(new XAttribute("db_name", assetEcuId));
                     }
                     else
                     {
-                        dbNameAttr.Value = dbName;
+                        dbNameAttr.Value = assetEcuId;
                     }
                 }
 

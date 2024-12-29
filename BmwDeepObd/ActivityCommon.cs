@@ -1338,6 +1338,32 @@ namespace BmwDeepObd
 
         public static long AssetEcuFileSize { get; set; }
 
+        public static string AssetEcuId
+        {
+            get
+            {
+                StringBuilder sbName = new StringBuilder();
+                string fileName = Path.GetFileName(AssetEcuFileName);
+
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    sbName.Append(fileName);
+                }
+
+                if (AssetEcuFileSize >= 0)
+                {
+                    if (sbName.Length > 0)
+                    {
+                        sbName.Append("_");
+                    }
+
+                    sbName.Append(string.Format(CultureInfo.InvariantCulture, "{0}", AssetEcuFileSize));
+                }
+
+                return sbName.ToString();
+            }
+        }
+
         public static string AppId
         {
             get
