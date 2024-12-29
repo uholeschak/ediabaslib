@@ -11472,19 +11472,19 @@ namespace BmwDeepObd
                 }
 
                 PackageInfo packageInfo = GetPackageInfo();
-                string packageFilePath = packageInfo.ApplicationInfo?.SourceDir;
-                if (string.IsNullOrEmpty(packageFilePath))
+                string packageFile = packageInfo.ApplicationInfo?.SourceDir;
+                if (string.IsNullOrEmpty(packageFile))
                 {
                     return false;
                 }
 
-                if (!File.Exists(packageFilePath))
+                if (!File.Exists(packageFile))
                 {
                     return false;
                 }
 
                 string packageInfoFile = Path.Combine(outputPath, "PackageInfo.xml");
-                DateTime packageFileTime = File.GetLastWriteTimeUtc(packageFilePath);
+                DateTime packageFileTime = File.GetLastWriteTimeUtc(packageFile);
                 string packageTimeStamp = packageFileTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                 string oldTimeStamp = null;
 
@@ -11511,24 +11511,48 @@ namespace BmwDeepObd
                     Directory.Delete(outputPath, true);
                 }
 
+                List<string> apkFileList = new List<string>();
+                apkFileList.Add(packageFile);
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
+                {
+#pragma warning disable CA1416
+                    IList<string> packageSplitFiles = packageInfo.ApplicationInfo?.SplitSourceDirs;
+#pragma warning restore CA1416
+                    if (packageSplitFiles != null)
+                    {
+                        foreach (string splitName in packageSplitFiles)
+                        {
+                            if (File.Exists(splitName))
+                            {
+                                apkFileList.Add(splitName);
+                            }
+                        }
+                    }
+                }
+
                 bool result = false;
                 ApkUncompress2.ApkUncompressCommon apkUncompress = new ApkUncompress2.ApkUncompressCommon();
-                if (apkUncompress.UncompressFromAPK(packageFilePath, outputPath, percent =>
-                    {
-                        if (progressApkDelegate != null)
-                        {
-                            return progressApkDelegate(percent);
-                        }
-                        return true;
-                    }))
+                foreach (string apkFile in apkFileList)
                 {
-                    result = true;
+                    if (apkUncompress.UncompressFromAPK(apkFile, outputPath, percent =>
+                        {
+                            if (progressApkDelegate != null)
+                            {
+                                return progressApkDelegate(percent);
+                            }
+                            return true;
+                        }))
+                    {
+                        result = true;
+                        break;
+                    }
                 }
 
                 if (result && Directory.Exists(outputPath))
                 {
                     XElement xmlInfo = new XElement("PackageInfo");
-                    xmlInfo.Add(new XAttribute("Name", packageFilePath));
+                    xmlInfo.Add(new XAttribute("Name", packageFile));
                     xmlInfo.Add(new XAttribute("Date", packageTimeStamp));
                     xmlInfo.Save(packageInfoFile);
                 }
