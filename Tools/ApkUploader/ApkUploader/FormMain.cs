@@ -1869,7 +1869,7 @@ namespace ApkUploader
             if (!string.IsNullOrWhiteSpace(textBoxBundleFile.Text))
             {
                 openFileDialogBundle.FileName = textBoxBundleFile.Text;
-                openFileDialogBundle.InitialDirectory = Path.GetDirectoryName(textBoxBundleFile.Text);
+                openFileDialogBundle.InitialDirectory = Path.GetDirectoryName(textBoxBundleFile.Text) ?? string.Empty;
             }
             if (openFileDialogBundle.ShowDialog() != DialogResult.OK)
             {
@@ -1884,7 +1884,7 @@ namespace ApkUploader
             if (!string.IsNullOrWhiteSpace(textBoxObbFile.Text))
             {
                 openFileDialogObb.FileName = textBoxObbFile.Text;
-                openFileDialogObb.InitialDirectory = Path.GetDirectoryName(textBoxObbFile.Text);
+                openFileDialogObb.InitialDirectory = Path.GetDirectoryName(textBoxObbFile.Text) ?? string.Empty;
             }
             if (openFileDialogObb.ShowDialog() != DialogResult.OK)
             {
@@ -1910,7 +1910,7 @@ namespace ApkUploader
             if (!string.IsNullOrWhiteSpace(textBoxSerialFileName.Text))
             {
                 openFileDialogSerial.FileName = textBoxSerialFileName.Text;
-                openFileDialogSerial.InitialDirectory = Path.GetDirectoryName(textBoxSerialFileName.Text);
+                openFileDialogSerial.InitialDirectory = Path.GetDirectoryName(textBoxSerialFileName.Text) ?? string.Empty;
             }
             if (openFileDialogSerial.ShowDialog() != DialogResult.OK)
             {
