@@ -17,7 +17,7 @@
     <NoWarn>1701;1702;CS8632</NoWarn>
     <AndroidKeyStore>False</AndroidKeyStore>
     <AndroidEnableMultiDex>True</AndroidEnableMultiDex>
-    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <AndroidUseAapt2>True</AndroidUseAapt2>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
     <AndroidPackageFormat>aab</AndroidPackageFormat>
