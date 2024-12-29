@@ -84,7 +84,7 @@ namespace ApkUploader
             _apkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), @".apk");
         }
 
-        private void UpdateStatus(string message)
+        private void UpdateStatus(string message = null)
         {
             if (InvokeRequired)
             {
@@ -92,7 +92,9 @@ namespace ApkUploader
                 return;
             }
 
-            textBoxStatus.Text = message;
+            bool isApk = IsApk(textBoxBundleFile.Text);
+
+            textBoxStatus.Text = message ?? string.Empty;
             textBoxStatus.SelectionStart = textBoxStatus.TextLength;
             textBoxStatus.Update();
             textBoxStatus.ScrollToCaret();
@@ -113,11 +115,11 @@ namespace ApkUploader
             checkBoxUpdateName.Enabled = enable;
             textBoxVersion.Enabled = enable;
             textBoxBundleFile.Enabled = enable;
-            textBoxObbFile.Enabled = enable;
+            textBoxObbFile.Enabled = enable && isApk;
             textBoxResourceFolder.Enabled = enable;
             textBoxSerialFileName.Enabled = enable;
             buttonSelectBundleFile.Enabled = enable;
-            buttonSelectObbFile.Enabled = enable;
+            buttonSelectObbFile.Enabled = enable && isApk;
             buttonSelectResourceFolder.Enabled = enable;
             buttonSelectSerialFile.Enabled = enable;
 
@@ -377,6 +379,23 @@ namespace ApkUploader
                 }
             }
             return credential;
+        }
+
+        private static bool IsApk(string bundleFileName)
+        {
+            if (string.IsNullOrEmpty(bundleFileName))
+            {
+                return false;
+            }
+
+            string ext = Path.GetExtension(bundleFileName);
+            if (string.IsNullOrEmpty(ext))
+            {
+                return false;
+            }
+
+            bool isApk = string.Compare(ext, ".apk", StringComparison.OrdinalIgnoreCase) == 0;
+            return isApk;
         }
 
         private static BaseClientService.Initializer GetInitializer(UserCredential credential)
@@ -1365,9 +1384,7 @@ namespace ApkUploader
                 return false;
             }
 
-            string ext = Path.GetExtension(bundleFileName);
-            bool isApk = !string.IsNullOrEmpty(ext) && string.Compare(ext, ".apk", StringComparison.OrdinalIgnoreCase) == 0;
-
+            bool isApk = IsApk(bundleFileName);
             if (isApk && !string.IsNullOrEmpty(expansionFileName))
             {
                 if (expansionFileName != ExpansionKeep)
@@ -1725,7 +1742,7 @@ namespace ApkUploader
 
         private void FormMain_Shown(object sender, EventArgs e)
         {
-            UpdateStatus(string.Empty);
+            UpdateStatus();
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -1877,6 +1894,7 @@ namespace ApkUploader
             }
 
             textBoxBundleFile.Text = openFileDialogBundle.FileName;
+            UpdateStatus();
         }
 
         private void buttonSelectObbFile_Click(object sender, EventArgs e)
@@ -1892,6 +1910,7 @@ namespace ApkUploader
             }
 
             textBoxObbFile.Text = openFileDialogObb.FileName;
+            UpdateStatus();
         }
 
         private void buttonSelectResourceFolder_Click(object sender, EventArgs e)
