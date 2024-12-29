@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApkUncompress", "ApkUncompress.csproj", "{5ED5EC5F-DD7F-438C-AF29-61A713C6AD93}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5ED5EC5F-DD7F-438C-AF29-61A713C6AD93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED5EC5F-DD7F-438C-AF29-61A713C6AD93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED5EC5F-DD7F-438C-AF29-61A713C6AD93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED5EC5F-DD7F-438C-AF29-61A713C6AD93}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B2C0EB86-E109-4B8F-A47B-3D8B0A365C53}
+	EndGlobalSection
+EndGlobal
