@@ -168,7 +168,7 @@ namespace BmwDeepObd
 #endif
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
         private const long EcuExtractSize = 2600000000;         // extracted ecu files size
-        private const string InfoXmlName = "ObbInfo.xml";
+        private const string EcuPackInfoXmlName = "EcuPackInfo.xml";
         private const string SampleInfoFileName = "SampleInfo.xml";
         private const string ContentFileName = "Content.xml";
         private const string TranslationFileNameMain = "TranslationMain.xml";
@@ -5062,7 +5062,7 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    File.Delete(Path.Combine(ecuBaseDir, InfoXmlName));
+                                    File.Delete(Path.Combine(ecuBaseDir, EcuPackInfoXmlName));
                                 }
                                 catch (Exception)
                                 {
@@ -6001,7 +6001,7 @@ namespace BmwDeepObd
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (!extractFailed)
                     {
-                        infoXml?.Save(Path.Combine(targetDirectory, InfoXmlName));
+                        infoXml?.Save(Path.Combine(targetDirectory, EcuPackInfoXmlName));
                     }
                 }
                 catch (Exception ex)
@@ -6376,7 +6376,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                string xmlInfoName = Path.Combine(path, InfoXmlName);
+                string xmlInfoName = Path.Combine(path, EcuPackInfoXmlName);
                 if (!File.Exists(xmlInfoName))
                 {
                     return false;
