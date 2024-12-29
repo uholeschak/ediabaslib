@@ -19,7 +19,8 @@ public class ApkUncompressCommon
     public delegate bool ProgressDelegate(int percent);
 
     private const int BufferSize = 4096;
-    private const string AssembliesLibPath = "lib/";
+    private const string AssembliesPathLibApk = "lib/";
+    private const string AssembliesPathLibAab = "base/lib/";
     private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
     // https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/a9eac961-e77d-41a6-90a5-ce1a8b0cdb9c
     private static readonly Regex regexCulture = new Regex("^([a-z]{2,3}-[a-z0-9]{2,4}-[a-z]{2}|[a-z]{2,3}-[a-z]{2,3}_[a-z]{2,6}|[a-z]{2,3}-[a-z0-9]{2,4}|[a-z]{2,3})-", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase);
@@ -124,13 +125,23 @@ public class ApkUncompressCommon
                 continue;
             }
 
-            if (!entry.Name.StartsWith(AssembliesLibPath, StringComparison.Ordinal))
+            string libPath = null;
+            if (entry.Name.StartsWith(AssembliesPathLibApk, StringComparison.Ordinal))
+            {
+                libPath = AssembliesPathLibApk;
+            }
+            else if (entry.Name.StartsWith(AssembliesPathLibAab, StringComparison.Ordinal))
+            {
+                libPath = AssembliesPathLibAab;
+            }
+
+            if (string.IsNullOrEmpty(libPath))
             {
                 continue;
             }
 
             string entryFileName = Path.GetFileName(entry.Name);
-            string subPath = entry.Name.Remove(0, AssembliesLibPath.Length);
+            string subPath = entry.Name.Remove(0, libPath.Length);
             string? entryPath = Path.GetDirectoryName(subPath);
 
             if (!entryFileName.EndsWith(".dll" + MonoAndroidHelper.MANGLED_ASSEMBLY_NAME_EXT, StringComparison.OrdinalIgnoreCase))

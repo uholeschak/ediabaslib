@@ -11,7 +11,6 @@ namespace ApkUncompress;
 
 public class ApkUncompressCommon
 {
-    public const string AssembliesLibPath = "lib/";
     public const string AssembliesPathApk = "assemblies/";
     public const string AssembliesPathAab = "base/root/assemblies/";
 
