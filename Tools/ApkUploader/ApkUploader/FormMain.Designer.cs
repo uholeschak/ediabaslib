@@ -174,6 +174,7 @@
             textBoxBundleFile.Name = "textBoxBundleFile";
             textBoxBundleFile.Size = new System.Drawing.Size(1194, 23);
             textBoxBundleFile.TabIndex = 11;
+            textBoxBundleFile.Leave += textBoxBundleFile_Leave;
             // 
             // labelObbFile
             // 

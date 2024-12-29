@@ -44,7 +44,7 @@ namespace ApkUploader
                 FileSize = fileSize;
             }
 
-            public int Version { get;}
+            public int Version { get; }
             public bool FromBundle { get; }
             public int ExpansionVersion { get; }
             public long FileSize { get; }
@@ -1897,6 +1897,11 @@ namespace ApkUploader
             UpdateStatus();
         }
 
+        private void textBoxBundleFile_Leave(object sender, EventArgs e)
+        {
+            UpdateStatus();
+        }
+
         private void buttonSelectObbFile_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(textBoxObbFile.Text))
@@ -1910,7 +1915,6 @@ namespace ApkUploader
             }
 
             textBoxObbFile.Text = openFileDialogObb.FileName;
-            UpdateStatus();
         }
 
         private void buttonSelectResourceFolder_Click(object sender, EventArgs e)
@@ -1922,7 +1926,6 @@ namespace ApkUploader
             }
 
             textBoxResourceFolder.Text = folderBrowserDialogResource.SelectedPath;
-            UpdateStatus();
         }
 
         private void buttonSelectSerialFile_Click(object sender, EventArgs e)
@@ -1938,7 +1941,6 @@ namespace ApkUploader
             }
 
             textBoxSerialFileName.Text = openFileDialogSerial.FileName;
-            UpdateStatus();
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
