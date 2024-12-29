@@ -1053,6 +1053,7 @@ namespace BmwDeepObd
         private bool? _usbSupport;
         private bool? _mtcBtService;
         private bool? _mtcBtManager;
+        private static string _assetEcuFileName;
         private static string _mtcBtModuleName;
         private static readonly object LockObject = new object();
         private static readonly object JobReaderLockObject = new object();
@@ -1333,9 +1334,9 @@ namespace BmwDeepObd
 
         public static string UsbFirmwareFileName { get; set; }
 
-        public static string AssetFileName { get; set; }
+        public static string AssetEcuFileName { get; set; }
 
-        public static long AssetFileSize { get; set; }
+        public static long AssetEcuFileSize { get; set; }
 
         public static string AppId
         {
@@ -1679,8 +1680,8 @@ namespace BmwDeepObd
             JobReader = new JobReader(false);
             _recentConfigList = new List<string>();
             _serialInfoList = new List<SerialInfoEntry>();
-            AssetFileName = string.Empty;
-            AssetFileSize = -1;
+            AssetEcuFileName = string.Empty;
+            AssetEcuFileSize = -1;
             EdiabasNet.EncodeFileNameKey = string.Empty;
         }
 
@@ -10880,6 +10881,42 @@ namespace BmwDeepObd
             }
         }
 
+        public static string GetAssetEcuFilename()
+        {
+            if (!string.IsNullOrEmpty(_assetEcuFileName))
+            {
+                return _assetEcuFileName;
+            }
+
+            try
+            {
+                Regex regex = new Regex(@"^Ecu.*\.bin$", RegexOptions.IgnoreCase);
+                AssetManager assets = ActivityCommon.GetPackageContext()?.Assets;
+                if (assets != null)
+                {
+                    string[] assetFiles = assets.List(string.Empty);
+                    if (assetFiles != null)
+                    {
+                        foreach (string fileName in assetFiles)
+                        {
+                            if (regex.IsMatch(fileName))
+                            {
+                                _assetEcuFileName = fileName;
+                                return fileName;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            _assetEcuFileName = string.Empty;
+            return null;
+        }
+
         public static void ExtractZipFile(AssetManager assetManager, Assembly resourceAssembly, string archiveFilenameIn, string outFolder, string key,
             List<string> ignoreFolders, List<string> encodeExtensions, ProgressZipDelegate progressHandler)
         {
@@ -11506,13 +11543,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (Directory.Exists(outputPath))
-                {
-                    Directory.Delete(outputPath, true);
-                }
-
-                List<string> apkFileList = new List<string>();
-                apkFileList.Add(packageFile);
+                List<string> apkFileList = new List<string> { packageFile };
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
                 {
@@ -11529,6 +11560,11 @@ namespace BmwDeepObd
                             }
                         }
                     }
+                }
+
+                if (Directory.Exists(outputPath))
+                {
+                    Directory.Delete(outputPath, true);
                 }
 
                 bool result = false;

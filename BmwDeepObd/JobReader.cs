@@ -194,7 +194,7 @@ namespace BmwDeepObd
                 DisplayList = displayList;
                 StringList = stringList;
 
-                string assetFileName = Path.GetFileName(ActivityCommon.AssetFileName) ?? string.Empty;
+                string assetFileName = Path.GetFileName(ActivityCommon.AssetEcuFileName) ?? string.Empty;
                 UseCompatIds = string.Compare(dbName, assetFileName, StringComparison.OrdinalIgnoreCase) != 0;
 
                 CompatIdsUsed = false;

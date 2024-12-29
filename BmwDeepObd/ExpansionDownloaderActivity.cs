@@ -59,7 +59,6 @@ namespace BmwDeepObd
             Android.Manifest.Permission.PostNotifications
         };
 
-        private static string _assetFileName;
         private bool _storageAccessRequested;
         private bool _storageAccessGranted;
         private bool _notificationGranted;
@@ -492,7 +491,7 @@ namespace BmwDeepObd
                 return true;
             }
 
-            return !string.IsNullOrEmpty(GetAssetFilename());
+            return !string.IsNullOrEmpty(ActivityCommon.GetAssetEcuFilename());
         }
 
         /// <summary>
@@ -666,42 +665,6 @@ namespace BmwDeepObd
                 // ignored
             }
 
-            return null;
-        }
-
-        public static string GetAssetFilename()
-        {
-            if (!string.IsNullOrEmpty(_assetFileName))
-            {
-                return _assetFileName;
-            }
-
-            try
-            {
-                Regex regex = new Regex(@"^Ecu.*\.bin$", RegexOptions.IgnoreCase);
-                AssetManager assets = ActivityCommon.GetPackageContext()?.Assets;
-                if (assets != null)
-                {
-                    string[] assetFiles = assets.List(string.Empty);
-                    if (assetFiles != null)
-                    {
-                        foreach (string fileName in assetFiles)
-                        {
-                            if (regex.IsMatch(fileName))
-                            {
-                                _assetFileName = fileName;
-                                return fileName;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            _assetFileName = string.Empty;
             return null;
         }
 

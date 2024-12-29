@@ -240,8 +240,8 @@ namespace BmwDeepObd
         private CustomProgressDialog _downloadProgress;
         private CustomProgressDialog _compileProgress;
         private bool _extractZipCanceled;
-        private string _assetFileName;
-        private long _assetFileSize = -1;
+        private string _assetEcuFileName;
+        private long _assetEcuFileSize = -1;
         private AssetManager _assetManager;
         private AlertDialog _startAlertDialog;
         private AlertDialog _configSelectAlertDialog;
@@ -2734,18 +2734,18 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
-            string assetFileName = ExpansionDownloaderActivity.GetAssetFilename();
-            if (!string.IsNullOrEmpty(assetFileName))
+            string assetEcuFileName = ActivityCommon.GetAssetEcuFilename();
+            if (!string.IsNullOrEmpty(assetEcuFileName))
             {
                 try
                 {
                     AssetManager assetManager = ActivityCommon.GetPackageContext()?.Assets;
                     if (assetManager != null)
                     {
-                        AssetFileDescriptor assetFile = assetManager.OpenFd(assetFileName);
+                        AssetFileDescriptor assetFile = assetManager.OpenFd(assetEcuFileName);
                         _assetManager = assetManager;
-                        _assetFileName = assetFileName;
-                        _assetFileSize = assetFile.Length;
+                        _assetEcuFileName = assetEcuFileName;
+                        _assetEcuFileSize = assetFile.Length;
                     }
                 }
                 catch (Exception)
@@ -2756,12 +2756,12 @@ namespace BmwDeepObd
 
             if (_assetManager == null)
             {
-                _assetFileName = ExpansionDownloaderActivity.GetObbFilename(this);
-                _assetFileSize = -1;
+                _assetEcuFileName = ExpansionDownloaderActivity.GetObbFilename(this);
+                _assetEcuFileSize = -1;
             }
 
-            ActivityCommon.AssetFileName = _assetFileName;
-            ActivityCommon.AssetFileSize = _assetFileSize;
+            ActivityCommon.AssetEcuFileName = _assetEcuFileName;
+            ActivityCommon.AssetEcuFileSize = _assetEcuFileSize;
 
             if (_activityCommon.GetSettings(_instanceData, ActivityCommon.SettingsMode.All, !_activityRecreated))
             {
@@ -5321,7 +5321,7 @@ namespace BmwDeepObd
 
         private void DownloadFile(string url, string downloadDir, string unzipTargetDir = null)
         {
-            if (string.IsNullOrEmpty(_assetFileName))
+            if (string.IsNullOrEmpty(_assetEcuFileName))
             {
                 ShowObbMissingRestart();
                 return;
@@ -5382,11 +5382,11 @@ namespace BmwDeepObd
                     {
                         XElement xmlInfo = new XElement("Info");
                         xmlInfo.Add(new XAttribute("Url", url ?? string.Empty));
-                        xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_assetFileName) ?? string.Empty));
+                        xmlInfo.Add(new XAttribute("Name", Path.GetFileName(_assetEcuFileName) ?? string.Empty));
                         xmlInfo.Add(new XAttribute("DataId", EdiabasNet.EncodeFileNameKey ?? string.Empty));
-                        if (_assetFileSize > 0)
+                        if (_assetEcuFileSize > 0)
                         {
-                            xmlInfo.Add(new XAttribute("Size", XmlConvert.ToString(_assetFileSize)));
+                            xmlInfo.Add(new XAttribute("Size", XmlConvert.ToString(_assetEcuFileSize)));
                         }
                         downloadInfo = new DownloadInfo(downloadDir, unzipTargetDir, xmlInfo);
                     }
@@ -5400,7 +5400,7 @@ namespace BmwDeepObd
                         string obbName = string.Empty;
                         try
                         {
-                            obbName = Path.GetFileName(_assetFileName) ?? string.Empty;
+                            obbName = Path.GetFileName(_assetEcuFileName) ?? string.Empty;
                         }
                         catch (Exception)
                         {
@@ -5695,11 +5695,11 @@ namespace BmwDeepObd
                 {
                     return null;
                 }
-                if (string.IsNullOrEmpty(_assetFileName))
+                if (string.IsNullOrEmpty(_assetEcuFileName))
                 {
                     return null;
                 }
-                string baseName = Path.GetFileName(_assetFileName);
+                string baseName = Path.GetFileName(_assetEcuFileName);
                 if (string.IsNullOrEmpty(baseName))
                 {
                     return null;
@@ -5757,7 +5757,7 @@ namespace BmwDeepObd
 
         private void ExtractObbFile(DownloadInfo downloadInfo, string key)
         {
-            ExtractZipFile(_assetManager, _assetFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
+            ExtractZipFile(_assetManager, _assetEcuFileName, downloadInfo.TargetDir, downloadInfo.InfoXml, key, false,
                 new List<string> { Path.Combine(_instanceData.AppDataPath, "EcuVag") });
         }
 
@@ -6178,7 +6178,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            if (string.IsNullOrEmpty(_assetFileName))
+            if (string.IsNullOrEmpty(_assetEcuFileName))
             {
                 ShowObbMissingRestart();
                 return false;
@@ -6401,8 +6401,8 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                if (string.IsNullOrEmpty(_assetFileName) ||
-                    string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(_assetFileName), StringComparison.OrdinalIgnoreCase) != 0)
+                if (string.IsNullOrEmpty(_assetEcuFileName) ||
+                    string.Compare(Path.GetFileNameWithoutExtension(nameAttr.Value), Path.GetFileNameWithoutExtension(_assetEcuFileName), StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     return false;
                 }
@@ -6421,7 +6421,7 @@ namespace BmwDeepObd
                     try
                     {
                         Int64 fileSize = XmlConvert.ToInt64(sizeAttr.Value);
-                        if (fileSize != _assetFileSize)
+                        if (fileSize != _assetEcuFileSize)
                         {
                             return false;
                         }
