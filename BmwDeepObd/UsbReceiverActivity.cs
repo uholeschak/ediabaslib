@@ -57,10 +57,10 @@ namespace BmwDeepObd
         {
             try
             {
-                Intent intent = new Intent(this, typeof(ExpansionDownloaderActivity));
-                intent.SetAction(Intent.ActionMain);
-                intent.AddCategory(Intent.CategoryLauncher);
-                intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask);
+                Intent intent = new Intent(this, typeof(ActivityMain));
+                //intent.SetAction(Intent.ActionMain);
+                //intent.AddCategory(Intent.CategoryLauncher);
+                intent.SetFlags(ActivityFlags.SingleTop | ActivityFlags.NewTask | ActivityFlags.ClearTop);
                 StartActivity(intent);
             }
             catch (Exception)

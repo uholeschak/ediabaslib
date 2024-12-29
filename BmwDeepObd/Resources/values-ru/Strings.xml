@@ -112,38 +112,6 @@
   <string name="obb_missing_restart">Файл расширения не найден,\nнеобходимо перезапустить приложение.</string>
   <string name="obb_not_readable">Файл расширения:\n{0}\nошибка чтения.\nПроверьте права доступа или удалите файл.</string>
 
-  <!-- Downloader library -->
-  <string name="notification_download_complete">Загрузка завершена</string>
-  <string name="notification_download_failed">Ошибка загрузки</string>
-
-  <string name="state_unknown">Старт..."</string>
-  <string name="state_idle">Ожидание начала загрузки</string>
-  <string name="state_fetching_url">Поиск ресурсов для загрузки</string>
-  <string name="state_connecting">Подключение к серверу загрузки</string>
-  <string name="state_downloading">Загрузка ресурсов</string>
-  <string name="state_completed">Загрузка завершена</string>
-  <string name="state_paused_network_unavailable">Загрузка приостановлена, поскольку отсутствует сеть</string>
-  <string name="state_paused_network_setup_failure">Загрузка приостановлена. Протестируйте любую веб-страницу в браузере</string>
-  <string name="state_paused_by_request">Загрузка приостановлена</string>
-  <string name="state_paused_wifi_unavailable">Загрузка приостановлена, поскольку отсутствует WiFi</string>
-  <string name="state_paused_wifi_disabled">Загрузка приостановлена, поскольку отключен WiFi</string>
-  <string name="state_paused_roaming">Загрузка приостановлена, поскольку активный роуминг</string>
-  <string name="state_paused_sdcard_unavailable">Загрузка приостановлена, поскольку внешняя память недоступна</string>
-  <string name="state_failed_unlicensed">Ошибка загрузки. Возможно приложение не было загружено из Google Play</string>
-  <string name="state_failed_fetching_url">Ошибка загрузки, поскольку ресурсы не найдены</string>
-  <string name="state_failed_sdcard_full">Ошибка загрузки из-за нехватки внешней памяти.</string>
-  <string name="state_failed_cancelled">Загрузка прервана</string>
-  <string name="state_failed">Ошибка загрузки</string>
-
-  <string name="kilobytes_per_second">%1$s кб/с</string>
-  <string name="time_remaining">Необходимое время: %1$s</string>
-  <string name="time_remaining_notification">%1$s осталось</string> 
-  
-  <!-- Error codes -->
-  <string name="error_code_error_temporary">Временная ошибка</string>
-  <string name="error_code_error_present">Ошибка в наличии</string>
-  <string name="error_code_error_stored">Ошибка сохранена</string>
-
   <!-- Alert titles -->
   <string name="alert_title_info">Информация</string>
   <string name="alert_title_warning">Предупреждение</string>

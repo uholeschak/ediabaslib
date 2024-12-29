@@ -48,11 +48,13 @@ using Skydoves.BalloonLib;
 
 namespace BmwDeepObd
 {
-    [Android.App.Activity(Label = "@string/app_name", MainLauncher = false,
-            Name = ActivityCommon.AppNameSpace + "." + nameof(ActivityMain),
-            LaunchMode = LaunchMode.SingleTask,
-            UiOptions = UiOptions.SplitActionBarWhenNarrow,
-            ConfigurationChanges = ActivityConfigChanges)]
+    [Android.App.Activity(Label = "@string/app_name",
+        MainLauncher = true,
+        Exported = true,
+        Name = ActivityCommon.AppNameSpace + "." + nameof(ActivityMain),
+        LaunchMode = LaunchMode.SingleTask,
+        UiOptions = UiOptions.SplitActionBarWhenNarrow,
+        ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
 #pragma warning disable CS0618 // TabLayout.IOnTabSelectedListener2 creates compiler errors
     public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener
@@ -756,10 +758,6 @@ namespace BmwDeepObd
             }
 
             _activityActive = true;
-            if (_activityCommon != null)
-            {
-                _activityCommon.NotificationManagerCompat?.Cancel(CustomDownloadNotification.NotificationId);
-            }
 
             UpdateLockState();
             if (_compileCodePending)
@@ -2756,7 +2754,7 @@ namespace BmwDeepObd
 
             if (_assetManager == null)
             {
-                _assetEcuFileName = ExpansionDownloaderActivity.GetObbFilename(this);
+                _assetEcuFileName = string.Empty;
                 _assetEcuFileSize = -1;
             }
 

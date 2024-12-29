@@ -95,55 +95,6 @@
   <string name="update_info">Update Informationen:</string>
   <string name="update_show">Wollen Sie das Update anzeigen?\nSie können auch diese App-Version überspringen.</string>
 
-  <!-- Expansion downloader -->
-  <string name="exp_down_paused_cellular">Wollen Sie den Download über eine Mobilfunkverbindung aktivieren? Dies kann zuätzlich Kosten verursachen.</string>
-  <string name="exp_down_paused_cellular_2">Wenn Sie den Download nicht über Mobilfunk aktivieren, wird er automatisch fortgesetzt, wenn eine Wi-Fi Verbindung verfügbar ist.</string>
-  <string name="exp_down_button_resume_cellular">Download fortsetzen</string>
-  <string name="exp_down_button_wifi_settings">Wi-Fi Einstellungen</string>
-  <string name="exp_down_verifying_download">Download überprüfen</string>
-  <string name="exp_down_validation_complete">XAPK Dateiüberprüfung abgeschlossen.</string>
-  <string name="exp_down_validation_failed">XAPK Dateiüberprüfung fehlgeschlagen.</string>
-  <string name="exp_down_button_pause">Download anhalten</string>
-  <string name="exp_down_button_resume">Download fortsetzen</string>
-  <string name="exp_down_button_cancel">Abbrechen</string>
-  <string name="exp_down_button_cancel_verify">Überprüfung abbrechen</string>
-  <string name="exp_down_obb_missing">Die App wurde nicht von Google Play heruntergeladen und die Erweiterungsdatei fehlt.\nLaden Sie die OBB-Datei mit einem APK Downloader von Google Play herunter und kopieren Sie diese mit dem Namen:\n\'{0}\'\nin eines der Verzeichnisse:\n{1}\nEs gibt dafür keinen Support, die Verwendung von Google Play ist der einzige empfohlene Weg.</string>
-  <string name="exp_down_time_remaining">Verbleibende Zeit: {0}</string>
-  <string name="obb_missing_restart">Die Erweiterungsdatei wurde nicht gefunden,\ndie App muss neu gestartet werden..</string>
-  <string name="obb_not_readable">Die Erweiterungsdatei:\n{0}\nist nicht lesbar.\nPrüfen Sie die Zugriffsrechte oder löschen sie die Datei.</string>
-
-  <!-- Downloader library -->
-  <string name="notification_download_complete">Download abgeschlossen</string>
-  <string name="notification_download_failed">Download fehlgeschlagen</string>
-
-  <string name="state_unknown">Starten..."</string>
-  <string name="state_idle">Warten auf Start des Downloads</string>
-  <string name="state_fetching_url">Suchen nach Resourcen für den Download</string>
-  <string name="state_connecting">Verbinden mit dem Download Server</string>
-  <string name="state_downloading">Resourcen herunterladen</string>
-  <string name="state_completed">Download abgeschlossen</string>
-  <string name="state_paused_network_unavailable">Download angehalten weil das Netztwerk nicht verfügbar ist</string>
-  <string name="state_paused_network_setup_failure">Download angehalten. Testen Sie eine Webseite im Browser</string>
-  <string name="state_paused_by_request">Download angehalten</string>
-  <string name="state_paused_wifi_unavailable">Download angehalten, weil WiFi nicht verfügbar ist</string>
-  <string name="state_paused_wifi_disabled">Download angehalten, weil WiFi deaktiviert ist</string>
-  <string name="state_paused_roaming">Download angehalten, weil Roaming aktiv ist</string>
-  <string name="state_paused_sdcard_unavailable">Download angehalten, weil der externe Speicher nicht verfügbar ist</string>
-  <string name="state_failed_unlicensed">Download fehlgeschlagen, weil die App unter Umständen nicht aus Google Play heruntergeladen wurde</string>
-  <string name="state_failed_fetching_url">Download fehlgeschlagen, weil die Resourcen nicht gefunden wurden</string>
-  <string name="state_failed_sdcard_full">Download fehlgeschlagen, weil der externe Speicher voll ist</string>
-  <string name="state_failed_cancelled">Download abgebrochen</string>
-  <string name="state_failed">Download fehlgeschlagen</string>
-
-  <string name="kilobytes_per_second">%1$s KB/s</string>
-  <string name="time_remaining">Verbleibende Zeit: %1$s</string>
-  <string name="time_remaining_notification">%1$s übrig</string>
-
-  <!-- Error codes -->
-  <string name="error_code_error_temporary">Fehler temporär</string>
-  <string name="error_code_error_present">Fehler vorhanden</string>
-  <string name="error_code_error_stored">Fehler gespeichert</string>
-
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
   <string name="alert_title_warning">Warnung</string>

@@ -3474,8 +3474,6 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                CustomDownloadNotification.RegisterNotificationChannels(_context);
-
                 UnregisterNotificationChannels();
 
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
@@ -7469,11 +7467,9 @@ namespace BmwDeepObd
                     string adapterBlacklistOld = AdapterBlacklist;
                     AdapterBlacklist = adapterBlacklistNew ?? string.Empty;
 
-                    string obbName = string.Empty;
                     string installer = string.Empty;
                     try
                     {
-                      obbName = Path.GetFileName(ExpansionDownloaderActivity.GetObbFilename(_activity)) ?? string.Empty;
                       installer = GetInstallerPackageName();
                     }
                     catch (Exception)
@@ -7519,7 +7515,6 @@ namespace BmwDeepObd
                     sb.Append(string.Format("\nApp version name: {0}", packageInfo?.VersionName ?? string.Empty));
                     sb.Append(string.Format("\nApp version code: {0}", VersionCode));
                     sb.Append(string.Format("\nApp id: {0}", AppId));
-                    sb.Append(string.Format("\nOBB: {0}", obbName));
                     sb.Append(string.Format("\nInstaller: {0}", installer ?? string.Empty));
                     sb.Append(string.Format("\nEnable translation: {0}", EnableTranslation));
                     sb.Append(string.Format("\nManufacturer: {0}", ManufacturerName()));
