@@ -1922,6 +1922,7 @@ namespace ApkUploader
             }
 
             textBoxResourceFolder.Text = folderBrowserDialogResource.SelectedPath;
+            UpdateStatus();
         }
 
         private void buttonSelectSerialFile_Click(object sender, EventArgs e)
@@ -1937,6 +1938,7 @@ namespace ApkUploader
             }
 
             textBoxSerialFileName.Text = openFileDialogSerial.FileName;
+            UpdateStatus();
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
