@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupAttributeTypo -->
+<!-- ReSharper disable MarkupTextTypo -->
+<resources>
+  <string name="library_name">DeepObd</string>
+  <string name="app_name">Deep OBD</string>
+  <string name="button_connected">Соединено</string>
+  <string name="button_disconnected">Разъединено</string>
+  <string name="button_yes">Да</string>
+  <string name="button_no">Нет</string>
+  <string name="button_ok">Ok</string>
+  <string name="button_abort">Отменить</string>
+  <string name="button_close">Закрыть</string>
+  <string name="button_select">Выбрать</string>
+  <string name="button_generate">Генерировать</string>
+  <string name="button_manually">Вручную</string>
+  <string name="button_copy">Копировать</string>
+  <string name="button_accept">Принять</string>
+  <string name="button_decline">Отклонить</string>
+  <string name="button_apply">Применить</string>
+  <string name="button_execute">Выполнить</string>
+  <string name="button_donate">Пожертвовать</string>
+  <string name="button_skip">Пропустить</string>
+  <string name="button_hide">Скрыть</string>
+  <string name="button_reset">Сброс настроек</string>
+  <string name="button_manufacturer">Производитель</string>
+  <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
+  <string name="no_ext_storage">Внешняя память недоступна</string>
+  <string name="access_denied_ext_storage">Доступ к внешней памяти необходим для выполнения приложения.\nХотите открыть настройки приложения?</string>
+  <string name="access_manage_files">Для доступа к внешнему хранилищу\nтребуется доступ к управлению файлами.\nОткрыть настройки управления?</string>
+  <string name="overlay_permission_denied">Для коммуникации в фоновом режиме необходимо отображение через другие приложения (оверлейное отображение).\nХотите открыть настройки приложения?</string>
+  <string name="notification_permission_denied">Для фоновой связи требуется уведомление.\nОткрыть настройки приложения?</string>
+  <string name="store_settings_failed">Не удалось сохранить настройки. Пожалуйста, переустановите приложение.</string>
+  <string name="store_settings_filename">Настройки были сохранены в:</string>
+  <string name="long_click_show_title">Нажмите и удерживайте, чтобы показать заголовок</string>
+  <string name="low_memory_detected">Недостаточно системной памяти!</string>
+  <string name="bt_enable">Bluetooth не активирован.\nХотите его активировать?</string>
+  <string name="wifi_enable">Wi-Fi не активирован.\nАктивировать или выбрать точку доступа?</string>
+  <string name="bt_not_available">Bluetooth недоступен.</string>
+  <string name="wifi_not_available">Wi-Fi недоступен.</string>
+  <string name="config_select">Отсутствует правильная конфигурация.\nХотите создать или выбрать конфигурацию?</string>
+  <!--Translate-->
+  <string name="config_manual_edit">Текущая конфигурация была создана вручную и ее необходимо сначала закрыть.</string>
+  <string name="bt_device_not_selected">Bluetooth устройство не выбрано.\nХотите выбрать устройство?</string>
+  <string name="ecu_download_free_space">На этом устройстве недостаточно свободной памяти ({0:fs1} &lt; {1:fs1}) для сохранения ECU файла.\nХотите выбрать другой носитель памяти?</string>
+  <string name="ecu_not_found">ECU файлы не найдены.</string>
+  <string name="ecu_package">Для этого приложения доступны обновлённые ECU файлы.</string>
+  <string name="ecu_download">Хотите загрузить ECU файлы (размер файла примерно {0:fs1})?</string>
+  <string name="storage_requirements">Эта программа разработана для экспертов.\nМы не несём ответственности в случае неисправности или повреждения транспортного средства.\nДля этого приложения требуется более быстрое устройство хранения данных со свободным пространством не менее {0:fs1}.\nИспользование этого приложения не допускается, если условие не будет принято.</string>  <string name="ecu_extract">Необходимо распаковать файлы ECU (приблизительный размер {0:fs1}),\nдля этого требуется загрузить информацию об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nПродолжить?</string>
+  <string name="config_match_vehicle">Используйте только те конфигурации, которые точно соответствуют автомобилю.\nСоздавайте конфигурации с помощью генератора конфигураций, поддержка использования сторонних конфигураций отсутствует.</string>
+  <string name="ecu_extract_confirm">Для распаковки файлов ECU (Размер около{0:fs1})\nтребуется загрузка информации об обновлении.\nЕсли распаковка происходит очень медленно, используйте более быстрый носитель данных.\nХотите продолжить? </string>
+  <string name="manufacturer_select">Выбранный производитель {0}. Для выбора другого нажмите \'Производитель\'.</string>
+  <string name="open_trace_file_failed">Не удается открыть файл трассировки:\n{0}.</string>
+  <string name="no_ext_app_installed">Сначала установите приложение, которое может открыть {0} файл.</string>
+  <string name="choose_file_app">Открыть файл.</string>
+  <string name="no_xml_editor_installed">Пожалуйста, установите сначала XML редактор.</string>
+  <string name="choose_xml_editor">Выберите XML редактор.</string>
+  <string name="file_access_denied">Отказано в доступе к файлу.\nПожалуйста, проверьте наличие файла и права доступа.</string>
+  <string name="file_editing_failed">Редактировать файл не удалось.</string>
+  <string name="display_order_edit_hint">Используйте длинное нажатие и перетаскивание, чтобы изменить порядок отображения.</string>
+  <string name="display_line_original_position">Исходное положение: {0}</string>
+  <string name="error_no_error">Ошибки отсутствуют</string>
+  <string name="error_reading_errors">Считывание ошибок: {0}</string>
+  <string name="error_reading_relevant_only">(Отображаются только важные данные,\nкоторые можно изменить в глобальных настройках.)</string>
+  <string name="error_reading_state_init">Инициализация</string>
+  <string name="error_reading_state_error">Ошибка</string>
+  <string name="error_reading_state_detect">Обнаружение {0}%</string>
+  <string name="error_reading_state_read">Прогресс {0}%</string>
+  <string name="error_reset_condition">Условия сброса ошибки не выполнены.\nПожалуйста, остановите двигатель, включите зажигание и повторите попытку.</string>
+  <string name="error_no_response">Нет подтверждения</string>
+  <string name="error_error_code">Код ошибки</string>
+  <string name="error_info_code">Инфокод</string>
+  <string name="error_shadow">(Shadow)</string>
+  <string name="error_unknown">Неизвестный</string>
+  <string name="error_hidden">Скрытый</string>
+  <string name="error_env_title">Условия окружающей среды:</string>
+  <string name="error_env_frequency">Частота</string>
+  <string name="error_env_log_count">Логистический счётчик</string>
+  <string name="error_env_pcode">SAE Код</string>
+  <string name="error_env_km">Пробег</string>
+  <string name="error_env_time">Время ошибки</string>
+  <string formatted="false" name="version_change_info_message">Этот проект с открытым исходным кодом размещен на:
+\n&lt;a href=\'https://github.com/uholeschak/ediabaslib\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;
+\nВы можете принять участие в проекте или же сообщить об ошибках.
+\nДополнительную информацию вы можете найти на этой веб-странице.</string>
+  <string name="version_last_changes_header">Изменения в этой версии:</string>
+  <string name="version_last_changes">- Поддержка Android 15.\n- Поддержка Android Auto.n\- Поддержка файлов симулирования.\n- Исправлены незначительные проблемы</string>
+  <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
+  <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
+  <string name="vag_mode_info_ballon">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо Deep OBD устройство с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
+
+  <!-- Update info -->
+  <string name="update_header">Обновление доступно в Google Play.</string>
+  <string name="update_version">Версия приложения: {0}</string>
+  <string name="update_info">Информация по обновлению:</string>
+  <string name="update_show">Показывать обновление?\nВы также можете пропустить эту версию приложения.</string>
+
+  <!-- Expansion downloader -->
+  <string name="exp_down_paused_cellular">Хотите активировать загрузку через мобильное соединение? Это может привести к дополнительным расходам.</string>
+  <string name="exp_down_paused_cellular_2">Если вы не активировали мобильное соединение, то загрузка возобновится автоматически, когда будет доступно соединение Wi-Fi.</string>
+  <string name="exp_down_button_resume_cellular">Продолжить загрузку</string>
+  <string name="exp_down_button_wifi_settings">Настройки Wi-Fi</string>
+  <string name="exp_down_verifying_download">Проверить загрузку</string>
+  <string name="exp_down_validation_complete">Проверка XAPK файла завершена.</string>
+  <string name="exp_down_validation_failed">Ошибка проверки XAPK файла.</string>
+  <string name="exp_down_button_pause">Остановить загрузку</string>
+  <string name="exp_down_button_resume">Продолжить загрузку</string>
+  <string name="exp_down_button_cancel">Отменить</string>
+  <string name="exp_down_button_cancel_verify">Отменить проверку</string>
+  <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.\nЗагрузите OBB-файл при помощи APK-загрузчика и скопируйте его с именем:\n\'{0}\'\nв папку:\n{1}\nВ данном случае поддержка отсутствует, использование Google Play - единственный рекомендуемый способ.</string>
+  <string name="exp_down_time_remaining">Необходимое время: {0}</string>
+  <string name="obb_missing_restart">Файл расширения не найден,\nнеобходимо перезапустить приложение.</string>
+  <string name="obb_not_readable">Файл расширения:\n{0}\nошибка чтения.\nПроверьте права доступа или удалите файл.</string>
+
+  <!-- Alert titles -->
+  <string name="alert_title_info">Информация</string>
+  <string name="alert_title_warning">Предупреждение</string>
+  <string name="alert_title_error">Ошибка</string>
+  <string name="alert_title_question">Вопрос</string>
+
+  <!-- Notifications -->
+  <string name="notification_download">Скачать</string>
+  <string name="notification_communication">Коммуникация</string>
+  <string name="notification_group_custom">Пользовательский</string>
+  <string name="notification_custom_min">Пользовательский минимум</string>
+  <string name="notification_custom_low">Пользовательский низкий</string>
+  <string name="notification_custom_default">Пользовательское по умолчанию</string>
+  <string name="notification_custom_high">Пользовательский высокий</string>
+  <string name="notification_custom_max">Пользовательский максимум</string>
+
+  <!-- Service -->
+  <string name="service_notification_comm_active">Соединение активно</string>
+  <string name="service_notification_comm_ok">Соединение с автомобилем установлено</string>
+  <string name="service_notification_comm_error">Ошибка связи с автомобилем</string>
+  <string name="service_notification_idle">Неактивный</string>
+  <string name="service_notification_wait_media">Ожидание носителя информации</string>
+  <string name="service_notification_load_settings">Чтение настроек</string>
+  <string name="service_notification_compile_code">Компилировать код пользователя</string>
+  <string name="service_notification_init_reader">Чтение базы данных</string>
+  <string name="service_notification_connecting">Установка соединения</string>
+  <string name="service_notification_error">Ошибка старта</string>
+  <string name="service_notification_abort">Отмена</string>
+  <string name="service_stop_comm_app">Открыть приложение и прервать соединение</string>
+  <string name="service_stop_comm">Прервать соединение</string>
+  <string name="service_abort_operation">Отмена процесса</string>
+  <string name="service_status_caption">Пожалуйста, подождите, активен процесс старта.</string>
+  <string name="service_status_info">Статус процесса:</string>
+
+  <!-- Compile -->
+  <string name="compile_cpu_usage">Проверка загрузки процессора</string>
+  <string name="compile_cpu_usage_value">Загрузка процессора: {0}%</string>
+  <string name="compile_cpu_usage_high">Загрузка процессора на холостом ходу очень высокая ({0}%), это может привести к проблемам в соединении.\nПожалуйста, закройте фоновые приложения, которые слишком загружают процессор.</string>
+  <string name="compile_start">Компилировать код пользователя</string>
+  <!--Translate-->
+  <string name="compile_missing_assemblies">Отсутствующие системные сборки:</string>
+  <string name="compile_crash">Сбой приложения при компиляции кода пользователя.\nСуществует известная ошибка компилятора:\nне используйте сложно инициализированные структуры или массивы в коде,\nинициализируйте их в конструкторе.</string>
+  <string name="compile_compat_id_warn">Конфигурация была создана с другой базой данных BMW и некоторые записи могут быть несовместимы.\nЧтобы исправить это, необходимо открыть каждый ECU, отмеченный * в заголовке страницы в генераторе конфигурации, проверить записи и снова сохранить конфигурацию.</string>
+
+  <!-- Download -->
+  <string formatted="false" name="download_manual">Если у вас возникли проблемы с автоматической загрузкой ECU файлов - загрузите их с&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;и установите вручную.&lt;br&gt;Использовать ручную установку?</string>
+  <string name="select_ecu_zip">Выбрать ECU Zip</string>
+  <string name="downloading_file">Скачать файлы</string>
+  <string name="download_failed">Не удалось скачать файлы.\nПожалуйста, проверьте подключение к сети.</string>
+  <string name="download_proxy_config">В настройках сети настроен прокси.\nЭто может вызвать проблемы с подключением.\nУдалите прокси, если это возможно.</string>
+  <string name="obb_offline_extract">Хотите распаковать ECU файлы оффлайн?</string>
+  <string name="obb_offline_extract_title">Распаковка оффлайн</string>
+  <string name="obb_offline_extract_message">Введите оффлайн-ключ.\nЧтобы получить ключ, нужно отправить электронное письмо с \nверсией приложения: {0}\nи ID: {1}\n на: {2} .\nВы можете вставить ключ через контекстное меню поля ввода.</string>
+  <string name="obb_offline_key_invalid">Оффлайн-ключ недействителен.</string>
+  <string name="extract_cleanup">Удалить старые файлы</string>
+  <string name="decrypt_file">Подготовка архива</string>
+  <string name="extract_file">Разархивировать файлы</string>
+  <string name="verify_files">Проверка файлов</string>
+  <string name="extract_failed">Не удалось разархивировать файлы.\nВозможно поврежден Zip-файл.\nВ большинстве случаев причиной является дефектный носитель данных.</string>
+  <string name="extract_failed_io">Не удалось сохранить разархивированные файлы.\nПовреждена файловая система?\nНа данном устройстве недостаточно свободаной памяти?\nРекомендуется удалить всё программное обеспечение для защиты файлов (например, антивирус).</string>
+  <string name="write_files_failed">Не удалось сохранить файлы.\nНа данном устройстве недостаточно свободаной памяти?\nРекомендуется удалить всё программное обеспечение для защиты файлов (например, антивирус).</string>
+
+  <!-- Job reader -->
+  <string name="job_reader_read_xml_failed">Ошибка чтения файла конфигурации.</string>
+  <string name="job_reader_file_name_invalid">Имя файла неверно.</string>
+
+  <!-- Init VAG UDS -->
+  <string name="vag_uds_init">Загрузка VAG файлов</string>
+  <string name="vag_uds_error">Ошибка при чтении VAG файлов</string>
+
+  <!-- Init BMW ECU functions -->
+  <string name="bmw_ecu_func_init">Загрузка BMW файлов</string>
+  <string name="bmw_ecu_func_error">Ошибка при чтении BMW файлов</string>
+
+  <!-- Documents processing -->
+  <string name="copy_documents_progress">Копировать файлы</string>
+  <string name="copy_documents_error">Ошибка копирования</string>
+  <string name="copy_documents_create">Файл или папка:\n{0}\nбудет создана.\nХотите продолжить?</string>
+  <string name="copy_documents_exists">Файл или папка:\n{0}\nуже существует.\nХотите заменить?</string>
+  <string name="del_documents_progress">Удалить файлы </string>
+  <string name="del_documents_error">Ошибка удаления</string>
+  <string name="del_document_request">Файл или папка:\n{0}\nбудет удалена.\nХотите продолжить?</string>
+
+  <!-- Send trace file -->
+  <string name="send_trace_file_request">Ошибка соединения.\nХотите отправить анонимный и сжатый Trace-файл (размер {0:fs0}) для улучшения качества продукта?</string>
+  <string name="send_message_request">Ошибка соединения.\nХотите отправить анонимный файл для улучшения качества продукта?</string>
+  <string name="send_trace_file">Послать Trace-файл</string>
+  <string name="compress_trace_file_failed">Не удалось сжать Trace-файл.</string>
+  <string name="send_trace_file_failed">Не удалось отправить Trace-файл.</string>
+  <string name="send_trace_file_failed_retry">Не удалось отправить Trace-файл.\nПожалуйста, проверьте подключение к сети.\nХотите повторить отправку?</string>
+  <string name="send_trace_file_failed_message">Хотите повторить отправку?</string>
+  <string name="send_trace_backup_info">Вы можете повторить отправку позже, используя следующую функцию главного меню:\nПовторно отправить файл трассировки.</string>
+  <string name="send_trace_message">Отсылать дополнительную информацию</string>
+  <string name="send_trace_email">Электронная почта:</string>
+  <string name="send_trace_info">Дополнительная информация (например тип автомобиля и адаптера, ограничения):</string>
+  <string name="send_trace_send_info">Хотите отправить следующую дополнительную информацию, чтобы помочь улучшить программу?</string>
+
+  <!-- Translate -->
+  <string name="translate_text">Перевод текста</string>
+  <string name="translate_failed">Ошибка перевода текста.\nПожалуйста, проверьте подключение к сети.\nХотите повторить перевод?</string>
+  <string name="translate_enable_request">Хотите автоматически перевести тексты ECU с помощью {0}?\nДля этого вам нужен аккаунт и ключ API.</string>
+  <string name="translate_store_key">Сохранить ключ?</string>
+
+  <!-- Translate Menu -->
+  <string name="menu_translation_submenu">Переводы</string>
+  <string name="menu_translation_enable">Перевести ECU тексты</string>
+  <string name="menu_translation_yandex_key">Настройки перевода</string>
+  <string name="menu_translation_clear_cache">Удалить кэш перевода</string>
+
+  <!-- Translate Key -->
+  <string name="trans_api_key_title">Настройки перевода</string>
+  <string name="trans_caption_translator">Переводчик</string>
+  <string name="trans_translator_yandex_translate">Яндекс.Переводчик</string>
+  <string name="trans_translator_ibm">IBM Watson</string>
+  <string name="trans_translator_deepl">DeepL</string>
+  <string name="trans_translator_yandex_cloud">Yandex Cloud</string>
+  <string name="trans_key_desc">Для автоматического перевода с {0} требуется (бесплатный) ключ API и учётная запись, что позволяет делать ограниченное количество переводов в день.\nИспользуйте следующие кнопки для входа в свою учетную запись, чтобы создать ключ или для отображения существующих.\nСкопируйте ключ из браузера и вставьте его в нижнее поле с помощью кнопки Вставить.\nЧтобы скопировать ключ, нажмите и удерживайте первое слово, расширьте диапазон и выберите "Копировать".</string>
+  <string name="trans_key_yandex_cloud">Yandex Cloud позволяет использовать дополнительно токен OAuth и идентификатор папки вместо API-ключа.</string>
+  <string name="trans_key_copy_title">копировать API ключ</string>
+  <string name="button_api_key_create">создать API ключ</string>
+  <string name="button_api_key_get">Показать API ключи</string>
+  <string name="trans_key_paste_title">API ключ</string>
+  <string name="folder_id_paste_title">Идентификатор папки</string>
+  <string name="button_folder_id_paste">Вставить идентификатор папки</string>
+  <string name="button_api_key_paste">Вставить API ключи</string>
+  <string name="api_url_paste_title">API URL</string>
+  <string name="button_api_url_paste">вставить API URL</string>
+  <string name="trans_key_test_title">Перевести</string>
+  <string name="button_api_key_test">Проверить перевод</string>
+  <string name="button_api_key_test_failed">Ошибка при переводе</string>
+
+  <!--  DeviceListActivity -->
+  <string name="scanning">Поиск устройств ...</string>
+  <string name="select_device">Выбор устройства</string>
+  <string name="none_paired">Отсутствуют авторизированные устойства.</string>
+  <string name="none_found">Устройство не найдено</string>
+  <string name="bt_not_enabled">Bluetooth не активирован</string>
+  <string name="bt_mtc_service_error">Bluetooth подключён, но обмен данными отсутствует.\nИспользуется ограниченный режим. Пожалуйста, соедините устройства через меню телефона.</string>
+  <string name="bt_mtc_antenna_info">Для некоторых Android-Радио рекомендуется заменить антенный кабель внутреннего модуля Bluetooth и вывести его из корпуса.\nАнтенный кабель должен иметь длину 15,5 см. Для модулей без кабелей - кажущаяся оптимальная длина составляет 16,0 см.</string>
+  <string name="bt_mtc_module_error">Устройства Android с модулем Bluetooth FSC-BW124, похоже, имеют проблемы коммуникации с адаптерами OBD.\nСоединение, вероятно, не будет работать правильно.</string>  <string name="bt_module_name">(Модуль Bluetooth: {0})</string>
+  <string name="bt_mtc_module_escape_mode">Bluetooth модуль {0} имеет ограниченный канал связи, поэтому необходимо использовать специальный режим связи.\nПо техническим причинам в этом режиме поддерживаются не все протоколы OBD, и требуется самая новая прошивка адаптера.</string>
+  <string name="bt_mtc_module_pwd">Текущий пин для Bluetooth {0} не является значением для адаптера по умолчанию {1}.\nЛибо вы меняете пин адаптера, либо текущий пин для Bluetooth.\nВы хотите изменить текущий пин на {1}?</string>
+  <string formatted="false" name="bt_mtc_firmware_error">Известно, что текущая версия микропрограммы {0} имеет проблемы со связью по Bluetooth.&lt;br&gt;Необходимо обновить прошивку на более новую или более старую версию (в зависимости от наличия).&lt;br&gt;&lt;a href=\'{1}\'&gt;Загрузка прошивки&lt;/a&gt;&lt;br&gt;&lt;a href=\'{2}\'&gt;Инструкции по обновлению&lt;/a&gt;</string>
+  <string name="title_paired_devices">Авторизированные устройства</string>
+  <string name="title_other_devices">Другие доступные устройства</string>
+  <string name="button_scan">Поиск устройств</string>
+  <string name="button_bt_settings">Откройте настройки Bluetooth</string>
+  <string name="detect_adapter">Определение типа устройства</string>
+  <string name="adapter_connection_mtc_failed">Не удалось установить соединение с Bluetooth адаптером.\nПопробуйте устранить эту проблему путём удаления и нового подключения адаптера.\nПовторное подключение смартфона также может улучшить качество связи.\nИспользуйте OBD адаптер с Bluetooth чипом YC1021 (для более новых радиостанций на Android) или Bluetooth чипом BC417 (для старых радиостанций на Android).</string>
+  <string name="adapter_connection_failed">Не удалось установить Bloetooth соединение с устройством.\nЗакройте другие приложения, если они используют это соединение или перезагрузите ваше Android устройство.</string>
+  <string name="adapter_connection_generic">Не удалось установить соединение с устройством.</string>
+  <string name="unknown_adapter_type">Не установлен тип устройства.\nХотите все равно использовать это устройство (Пакеты данных будут посланы без изменений)?</string>
+  <string name="unknown_adapter_generic">Не установлен тип устройства.\nХотите все равно использовать это устройство?</string>
+  <string name="adapter_raw_warn">Режим прямой связи целесообразен только для адаптеров без прошивки или для перепрошивки адаптера!\nСоединение с автомобилем в большинстве случаев невозможно!\nХотите продолжить?</string>
+  <string name="invalid_adapter_type">ELM327 устройство поддерживает не все необходимые команды и несовместимо с этим приложением.</string>
+  <string name="fake_elm_adapter_type">ELM327 устройство имеет поддельную версию {0}.{1} и несовместимо с этим приложением.</string>
+  <string name="limited_elm_adapter_type">Адаптер ELM327 не является оригинальным и не поддерживает все функции. Не все операции могут быть выполнены.</string>
+  <string name="elm_no_can">Автомобиль не поддерживает D-CAN, коммуникация с ELM327 адаптером невозможна.</string>
+  <string name="fake_elm_try">Вы всё-таки хотите попробовать использовать адаптер?</string>
+  <string formatted="false" name="recommened_adapter_type">Рекомендуется ELM327 устройство v1.4b, v1.5 или оригинальной версии v2.1,&lt;br&gt;которое базируется на процессоре PIC18F25K80 (не на MCP2515 чипе).&lt;br&gt;По ссылке &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; можете найти улучшенную прошивку.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
+  <string formatted="false" name="adapter_elm_replacement">ELM327 устройства медленные и поддерживают только D-CAN (автомобили начиная с 3/2007).&lt;br&gt;Вы можете купить улучшенную прошивку&lt;br&gt;&lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;.\nОригинальные адаптеры Deep OBD содержат лицензию на кодирование одного автомобиля.</string>
+  <string name="adapter_stn_firmware">Рекомендуется сначала обновить прошивку адаптера.\nХотите открыть приложение OBDLink для выполнения обновления?</string>
+  <string name="adapter_elm_firmware">Рекомендуется прошить альтернативное программное обеспечение ELM327.\nОткрыть конфигурацию адаптера для обновления программного обеспечения?</string>
+  <string name="adapter_cfg_required">Устройство, возможно, требуется настроить.\nХотите получить доступ к конфигурации устройства?</string>
+  <string name="adapter_fw_update">Доступно обновление для этого устройства.\nХотите получить доступ к конфигурации устройства, чтобы установить обновление?</string>
+  <string name="adapter_no_escape_mode">Для этого типа Bluetooth-модуля требуется обновление прошивки OBD адаптера.</string>
+  <string name="access_permission_rejected">Без прав доступа поиск устройств Bluetooth невозможен.\nХотите открыть настройки приложения?</string>
+  <string name="location_provider_disabled_bt">Для поиска Bluetooth устройств необходимо активировать службы определения местоположения.\nХотите активировать службы определения местоположения?</string>
+  <string name="location_provider_disabled_wifi">Для обнаружения адаптеров Wi-Fi необходимо включить службы определения местоположения.nАктивировать службы определения местоположения?</string>
+  <string name="bt_device_enter_mac">Введите Bluetooth-адрес уже подключённого адаптера OBD в указанном формате</string>
+  <string name="bt_device_mac_invalid">Неправильный формат Bluetooth-адреса</string>
+  <string name="bt_device_connected">(Подключено)</string>
+  <string name="bt_device_menu_tite">Выберите одну из нижеперечисленных опций для этого устройства</string>
+  <string name="bt_device_select">Выбрать OBD адаптер</string>
+  <string name="bt_device_pair">Соединить устройство</string>
+  <string name="bt_device_unpair">Отсоединить устройство</string>
+  <string name="bt_device_connect_obd">Подключить как OBD адаптер</string>
+  <string name="bt_device_connect_phone">Подключить как телефон</string>
+  <string name="bt_device_disconnect_phone">Отсоединить телефон</string>
+  <string name="bt_device_delete">Удалить устройство</string> 
+
+  <!-- tabs_activate -->
+  <string name="button_active">Активна</string>
+  <string name="button_inactive">Не активна</string>
+
+  <!-- tabs_errors -->
+  <string name="button_error_reset">Удалить ошибки</string>
+  <string name="button_error_reset_all">Удалить все ошибки</string>
+  <string name="button_error_select_all">Выбрать все ошибки</string>
+  <string name="button_error_deselect_all">Отменить выбор всех ошибок</string>
+
+  <!-- Options Menu -->
+  <string name="menu_settings">Настройки</string>
+  <string name="menu_search">Поиск</string>
+  <string name="menu_connect">Подключить</string>
+  <string name="menu_manufacturer">Производитель</string>
+  <string name="menu_adapter">Устройство</string>
+  <string name="menu_sel_sim_dir">Каталог файлов симулирования</string>
+  <string name="menu_adapter_config">Настройки устройства</string>
+  <string name="menu_adapter_ip">IP адаптера</string>
+  <string name="menu_enet_ip">ENET IP</string>
+  <string name="menu_cfg_submenu">Конфигурация</string>
+  <string name="menu_recent_cfg_submenu">Последние конфигурации</string>
+  <string name="menu_recent_cfg_clear">Удалить</string>
+  <string name="menu_cfg_page_functions">Функции страницы</string>
+  <string name="menu_cfg_page_ediabas">Ediabas утилита</string>
+  <string name="menu_cfg_page_bmw_actuator">Функции актуатора</string>
+  <string name="menu_cfg_page_bmw_service">Сервисные функции</string>
+  <string name="menu_cfg_page_vag_coding">Кодировать</string>
+  <string name="menu_cfg_page_vag_coding2">Кодировать 2</string>
+  <string name="menu_cfg_page_vag_adaption">Адаптация</string>
+  <string name="menu_cfg_page_vag_login">Авторизация</string>
+  <string name="menu_cfg_page_vag_sec_access">Права доступа</string>
+  <string name="menu_cfg_sel">Выбрать</string>
+  <string name="menu_cfg_edit">Редактировать</string>
+  <string name="menu_cfg_pages_edit">Редактировать список страниц</string>
+  <string name="menu_cfg_page_menu">Редактировать текущую страницу</string>
+  <string name="menu_cfg_page_edit">Редактировать текущую страницу</string>
+  <string name="menu_cfg_page_edit_fontsize">Размер шрифта</string>
+  <string name="menu_cfg_page_edit_gauges_landscape">Графические элементы в альбомном формате</string>
+  <string name="menu_cfg_page_edit_gauges_portrait">Графические элементы в портретном формате</string>
+  <string name="menu_cfg_page_edit_display_order">Порядок отображения результатов</string>
+  <string name="menu_cfg_select_edit">Редактировать другой файл</string>
+  <string name="menu_cfg_edit_reset">Сбросить XML редактор</string>
+  <string name="menu_cfg_close">Закрыть</string>
+  <string name="menu_xml_tool">Генератор конфигураций</string>
+  <string name="menu_ediabas_tool">Ediabas утилита</string>
+  <string name="menu_bmw_coding">Кодировать</string>
+  <string name="menu_download_ecu">Скачать ECU файл.</string>
+  <string name="menu_extract_ecu">Извлечь файлы ECU</string>
+  <string name="menu_submenu_log">Протокол данных</string>
+  <string name="menu_trace_submenu">Файл трассировки</string>
+  <string name="menu_send_trace">Отправить файл трассировки</string>
+  <string name="menu_open_trace">Открыть файл трассировки</string>
+  <string name="menu_send_last_trace">Повторно отправить файл трассировки</string>
+  <string name="menu_open_last_trace">Открыть последний файл трассировки</string>
+  <string name="menu_global_settings">Глобальные настройки</string>
+  <string name="menu_submenu_help">Онлайн помощь</string>
+  <string name="menu_info">Информация о приложении</string>
+  <string name="menu_exit">Завершить приложение</string>
+  <string name="menu_hint_copy_folder">Копирование файлов в каталог приложения и из него можно произвести через глобальные настройки.</string>
+
+  <!-- Data logging -->
+  <string name="datalog_enable_trace">Создать Trace файл</string>
+  <string name="datalog_append_trace">Добавить Trace файл</string>
+  <string name="datalog_enable_datalog">Протоколировать данные</string>
+  <string name="datalog_append_datalog">Прикрепить протокол</string>
+  <string name="datalog_no_tags">Отсутствуют метки записи данных.\nДля активации записи данных, необходимо указать метки записи на странице ECU генератора конфигурации.</string>
+  <string name="datalog_temporary">Запись данных временная.\nЧтобы сохранить настройку, активируйте опцию \'Сохранить настройки данных журнала\' в глобальных настройках.</string>
+  <string name="datalog_date">Дата</string>
+
+  <!-- FilePicker -->
+  <string name="select_file">Выбрать файл</string>
+  <string name="access_dir_failed">В доступе отказано:</string>
+  <string name="file_picker_dir_select">Нажмите и удерживайте, чтобы выбрать каталог, или выберите \'.\' для текущего каталога.</string>
+  <string name="file_picker_search">Поиск</string>
+
+  <!-- Storage media selection -->
+  <string name="select_media">Выбрать носитель памяти</string>
+  <string name="default_media">По умолчанию</string>
+  <string name="free_space">Свободно</string>
+
+  <!-- Interface selection -->
+  <string name="select_interface">Выбрать интерфейс</string>
+  <string name="select_interface_bt">Bluetooth</string>
+  <string name="select_interface_enet">ENET / Deep OBD WIFI</string>
+  <string name="select_interface_elmwifi">ELM327 WIFI</string>
+  <string name="select_interface_deepobdwifi">Deep OBD ELM WIFI</string>
+  <string name="select_interface_ftdi">USB (FTDI)</string>
+  <string name="select_interface_simulation">Симулирование</string>
+
+  <!-- Manufacturer selection -->
+  <string name="select_manufacturer">Выбрать производителя</string>
+  <string name="select_manufacturer_bmw">BMW</string>
+  <string name="select_manufacturer_audi">Audi</string>
+  <string name="select_manufacturer_seat">Seat</string>
+  <string name="select_manufacturer_skoda">Skoda</string>
+  <string name="select_manufacturer_vw">VW</string>
+
+  <!-- Translator selection -->
+  <string name="select_translator_yantex">Yantex.Translate</string>
+  <string name="select_translator_ibm">IBM Watson</string>
+  <string name="select_translator_deepl">DeepL</string>
+  <string name="select_translator_yandex_cloud">Yandex Cloud</string>
+
+  <!-- Bluetooth -->
+  <string name="mtc_disconnect_warn">Для стабильной связи с адаптером, соедините радио с любым имеющимся смартфоном.\nХотите продолжить без подключения смартфона?</string>
+  <string name="mtc_not_bound_warn">Bluetooth не активен, попробуйте запустить приложение позже.\nВсё равно хотите продолжить?</string>
+
+  <!-- Wi-Fi-->
+  <string name="connected_with_wifi_adapter">В настоящее время вы подключены к Wi-Fi адаптеру.\nДля получения доступа в интернет необходимо отключить адаптер.\nОтключить Wi-Fi?</string>
+
+  <!-- USB -->
+  <string name="ftdi_fake_device">Подключенный USB-адаптер использует отключенный поддельный FT232R чип.\nДля стабильного соединения рекомендуется использовать только оригинальные  FTDI чипы.</string> 
+
+  <!-- ENET ip selection -->
+  <string name="select_enet_ip_search">Поиск автомобиля</string>
+  <string name="select_enet_ip">Выберите ENET IP-адрес</string>
+  <string name="select_enet_ip_auto">Автоматически</string>
+  <string name="select_enet_ip_none">Не настроено</string>
+  <string name="select_enet_ip_edit">IP-адрес</string>
+  <string name="select_enet_ip_port_edit">Номер порта (необязательно)</string>
+  <string name="select_enet_info_ip">Локальный IP</string>
+  <string name="select_enet_info_mask">Маска подсети</string>
+  <string name="select_enet_info_dhcp_srv">DHCP-сервер</string>
+
+    <!-- ENET adapter config -->
+  <string name="enet_adapter_web_info">Пароль для веб интерфейса устойства по умолчанию {0}.\nЕсли устройство после его конфигурирования больше не реагирует - необходимо открыть устройство, перезагрузить его и нажать кнопку сброса.</string>
+  <string name="enet_adapter_wifi_info">Если вы используете OBD BMW Wi-Fi устройство, выберите точку доступа с именем \'Deep OBD BMW\'. Пароль по умолчанию deepobdbmw.</string>
+  <string name="enet_adapter_ssid_warn">Вы соединены не с Deep OBD BMW, Unichip ENET или modBMW Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
+  <string name="enet_ethernet_hint">В случае если вы используете прямое подключение Ethernet-кабеля, то необходимо настроить сетевой адаптер Android с автоматическим IP-адресом (например 169.254.1.10 / 255.255.0.0).</string>
+
+  <!-- ELM327 Wi-Fi -->
+  <string name="elmwifi_adapter_warn">Вы соединены не с ELM327 Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
+
+  <!-- Deep OBD Wi-Fi -->
+  <string name="deepobdwifi_adapter_warn">Вы соединены не с Deep OBD Wi-Fi устройством.\nВыбрать другую точку доступа?</string>
+
+  <!-- AP mode -->
+  <string name="ap_mode_adapter_ip_error">В режиме точки доступа необходимо указать IP-адрес адаптера вручную в меню приложения.\nХотите сделать это сейчас?</string>
+
+  <!-- Battery voltage -->
+  <string name="battery_voltage_warn">Очень высокое напряжение аккумулятора ({0}V),\nэто может привезти к  разрушению OBD-адаптера.\nПожалуйста, проверьте регулятор напряжения вашего автомобиля.</string>
+
+  <!--  GlobalSettingsActivity -->
+  <string name="settings_title">Глобальные настройки</string>
+  <string name="settings_caption_locale">Язык</string>
+  <string name="settings_locale_default">Стандарт</string>
+  <string name="settings_locale_en">Англиийский</string>
+  <string name="settings_locale_de">Немецкий</string>
+  <string name="settings_locale_ru">Русский</string>
+  <string name="settings_caption_theme">Темы</string>
+  <string name="settings_theme_dark">Темная</string>
+  <string name="settings_theme_light">Светлая</string>
+  <string name="settings_caption_title_bar">Панель заглавия</string>
+  <string name="settings_auto_hide_title_bar">Автоматически скрывать панель заглавия на главной странице (показать при отпускании после длинного нажатия)</string>
+  <string name="settings_suppress_title_bar">Скрывать неиспользуемые панели заглавия  (показывать при помощи жеста смахивания)</string>
+  <string name="settings_full_screen_mode">Полноэкранный режим</string>
+  <string name="settings_caption_multi_window">Многооконный режим</string>
+  <string name="settings_swap_multi_window_orientation">Графическое отображение: Изменить ориентацию в многооконном режиме</string>
+  <string name="settings_caption_internet">Подключение сетевого адаптера OBD к интернет соединению через</string>
+  <string name="settings_internet_cellular">Мобильную сеть</string>
+  <string name="settings_internet_wifi">Wi-Fi</string>
+  <string name="settings_internet_ethernet">Ethernet</string>
+  <string name="settings_caption_bluetooth_enable">Включение Bluetooth</string>
+  <string name="settings_always_enable_bt">Всегда включать Bluetooth без запроса</string>
+  <string name="settings_ask_for_bt_enable">Запрос для включения Bluetooth</string>
+  <string name="settings_no_bt_handling">Без автоматического управления Bluetooth</string>
+  <string name="settings_caption_bluetooth_disable">Выключение Bluetooth</string>
+  <string name="settings_disable_bt_at_exit">Выключать Bluetooth при выходе из приложения</string>
+  <string name="settings_caption_lock_communication">Блокировка во время соединения</string>
+  <string name="settings_caption_lock_logging">Блокировка во время регистрации данных</string>
+  <string name="settings_lock_none">Переводить устройство в режим энергосбережения и останавливать передачу данных</string>
+  <string name="settings_lock_cpu">Поддерживать активность процессора</string>
+  <string name="settings_lock_dim">Уменьшенная яркость экрана</string>
+  <string name="settings_lock_bright">Яркий экран</string> 
+  <string name="settings_caption_logfiles">Регистрация данных</string>
+  <string name="settings_store_data_log_settings">Сохранять настройки записи данных</string>
+  <string name="settings_caption_app_start">Запустить приложение</string>
+  <string name="settings_start_offline">Нет связи с автомобилем</string>
+  <string name="settings_start_connect">Автоматическое подключение к автомобилю</string>
+  <string name="settings_start_connect_close">Завершить автоматическое подключение к автомобилю и приложение</string>
+  <string name="settings_start_boot">Автоматический запуск процесса во время загрузки для восстановления последнего соединения.</string>
+  <string name="settings_caption_update">Проверка обновления</string>
+  <string name="settings_update_off">Не проверять</string>
+  <string name="settings_update_1day">Каждый день</string>
+  <string name="settings_update_1week">Каждую неделю</string>
+  <string name="settings_caption_app_exit">Выход из приложения</string>
+  <string name="settings_sys_config">Настроить запуск приложения</string>
+  <string name="settings_double_click_for_app_exit">Для выхода из приложения требуется двойное нажатие</string>
+  <string name="settings_caption_broadcast">Broadcast</string>
+  <string name="settings_send_data_broadcast">Послать Broadcasts-данные</string>
+  <string name="settings_caption_cpu_usage">Загрузка процессора</string>
+  <string name="settings_check_cpu_usage">Проверка загрузки процессора при запуске</string>
+  <string name="settings_caption_check_ecu_files">Проверка ECU файлов</string>
+  <string name="settings_caption_battery_voltage_warning">Предупреждение о напряжении батареи</string>
+  <string name="settings_show_battery_voltage_warning">Показать предупреждение о перенапряжении</string>
+  <string name="settings_caption_old_vag_mode">VAG режим</string>
+  <string name="settings_old_vag_mode">Использовать старый режим VAG</string>
+  <string name="settings_caption_bmw_database">База данных BMW</string>
+  <string name="settings_use_bmw_database">Использовать базу данных BMW</string>
+  <string name="settings_show_only_relevant_errors">Показывать только существенные ошибки</string>
+  <string name="settings_caption_scan_all_ecus">Распознавание ECU</string>
+  <string name="settings_scan_all_ecus">Для автомобилей BMW с протоколом DS2 всегда сканировать все ECU (медленно)</string>
+  <string name="settings_check_ecu_files">Проверка ECU файлов при запуске</string>
+  <string name="settings_caption_file_manage">Управление файлами</string>
+  <string name="settings_storage_sel_public_dir">Выбрать общедоступный каталог</string>
+  <string name="settings_storage_sel_app_dir">Выбрать каталог в приложении</string>
+  <string name="settings_storage_copy_tree_to_app">Копировать каталог в приложение</string>
+  <string name="settings_storage_copy_tree_from_app">Копировать файл или каталог из приложения</string>
+  <string name="settings_storage_del_tree_from_app">Удалить файл или каталог из приложения</string>
+  <string name="settings_caption_storage">Носитель памяти</string>
+  <string name="settings_caption_notifications">Уведомления</string>
+  <string name="settings_notification_settings">Настройки уведомлений</string>
+  <string name="settings_caption_debug">Отладить</string>
+  <string name="settings_collect_debug_info">Собрать отладочную информацию для файла трассировки</string>
+  <string name="settings_uncompressed_trace">Создание несжатых файлов трассировки (медленно)</string>
+  <string name="settings_hci_snoop_log">Файл журнала отслеживания Bluetooth HCI:\n{0}</string>
+  <string name="settings_hci_snoop_log_config">Настроить журнал отслеживания</string>
+  <string name="settings_options">Настройки</string>
+  <string name="settings_default_settings">Настройки по умолчанию</string>
+  <string name="settings_export_settings">Экспорт настроек</string>
+  <string name="settings_import_settings">Импорт настроек</string>
+  <string name="settings_import_no_file">Файл импорта не найден:</string>
+  <string name="settings_export_private">Хотите также экспортировать личные данные?</string>
+  <string name="settings_mtc_boot_hint_title">Опция загрузки очень часто работает неправильно на радиостанциях Android.</string>
+  <string name="settings_mtc_boot_hint_app_manger">Рекомендуется настроить Deep OBD в диспетчере приложений, чтобы оставаться активным в режиме ожидания.</string>
+  <string name="settings_mtc_boot_hint_start">Рекомендуется выбрать второй вариант запуска и всегда держать Deep OBD на переднем плане, чтобы приложение оставалось активным после режима ожидания.\nПри использовании других инструментов (например, Automation, Macrodroid) приложение необходимо запускать после загрузки.</string>
+  <string name="settings_internal_location_boot_hint">Параметр загрузки доступен только в том случае, если приложение установлено на внутреннюю память.</string>
+  <string name="settings_start_app_failed">Ошибка запуска приложения.</string>
+
+  <!--  EdiabasToolActivity -->
+  <string name="tool_title">Ediabas утилита</string>
+  <string name="tool_select_sgbd">Выбрать SGBD</string>
+  <string name="tool_read_sgbd">Считать SGBD информацию</string>
+  <string name="tool_job_jobs">Задания:</string>
+  <string name="tool_job_jobs_prompt">Выбор задания</string>
+  <string name="tool_job_job">Задание:</string>
+  <string name="tool_job_arguments">Аргументы:</string>
+  <string name="tool_job_bin_args">Данные (шеснадцатиричные по желаанию с пробелами)</string>
+  <string name="tool_job_arg_assist">Помощник по аргументам</string>
+  <string name="tool_job_arguments_error_detail">Без аргументов будут считаны все ошибки</string>
+  <string name="tool_job_arguments_info_detail">Без аргументов считывается вся информация</string>
+  <string name="tool_job_results">Результаты:</string>
+  <string name="tool_job_result">Результат:</string>
+  <string name="tool_job_infos">Информация:</string>
+  <string name="tool_check_continuous">Непрерывно</string>
+  <string name="tool_read_errors_failure">Не удалось считать ошибки</string>
+  <string name="tool_no_errors">Ошибки отсутствуют</string>
+  <string name="tool_jobs_not_found_list">В ECU не удалось найти следующие задания:</string>
+
+  <!--  Argument Assistant Status -->
+  <string name="arg_assist_title">Помощник по аргументам</string>
+  <string name="arg_assist_arg_type">Тип аргумента</string>
+  <string name="arg_assist_type_arg">Имя аргумента(ARG)</string>
+  <string name="arg_assist_type_id">Идентификатор аргумента (ID)</string>
+  <string name="arg_assist_control_param">Управляющие параметры</string>
+  <string name="arg_assist_str">Выполнить действия (STR)</string>
+  <string name="arg_assist_stpr">Остановить действия (STPR)</string>
+  <string name="arg_assist_rrr">Считать результаты действия (RRR)</string>
+  <string name="arg_assist_rctecu">Передать управление ECU (RCTECU)</string>
+  <string name="arg_assist_rtd">Восстановить значения по умолчанию (RTD)</string>
+  <string name="arg_assist_fcs">Заморозить текущее состояние (FCS)</string>
+  <string name="arg_assist_sta">Кратковременное изменение (STA)</string>
+  <string name="arg_assist_args">Аргументы</string>
+  <string name="arg_assist_block_number">Номер блока</string>
+  <string name="arg_assist_define_new">Переопределение блока</string>
+  <string name="arg_assist_control_arg">Аргумент</string>
+  <string name="arg_assist_control_arg_prompt">Выбор аргумента</string>
+  <string name="arg_assist_control_parameter">Параметр</string>
+  <string name="arg_assist_amount_limit">Количество аргументов ограничено в зависимости от типа ECU.\nЕсли вы выберете слишком много аргументов, то данные передаваться не будут.</string>
+  <string name="arg_assist_apply_args">Хотите применить выбранные аргументы?</string>
+
+  <!-- Ediabas Tool Options Menu -->
+  <string name="menu_tool_sel_interface">Интерфейс</string>
+  <string name="menu_tool_offline">оффлайн</string>
+  <string name="menu_tool_sel_sgbd_grp">SGBD (grp)</string>
+  <string name="menu_tool_sel_sgbd_prg">SGBD (prg)</string>
+
+  <!-- XML Tool Activity -->
+  <string name="xml_tool_title">Генератор конфигураций</string>
+  <string name="button_xml_tool_read">Считать</string>
+  <string name="button_xml_tool_edit">Редактировать</string>
+  <string name="button_xml_tool_save">Сохранить</string>
+  <string name="xml_tool_analyze">Считать данные автомобиля</string>
+  <string name="xml_tool_continue_search">Хотите продолжить последний прерванный поиск?</string>
+  <string name="xml_tool_clear_ecus">Удалить существующие ECU файлы?</string>
+  <string name="xml_tool_del_all_info">Удалить всю информацию (в том числе XML-файлы) для этой конфигурации?</string>
+  <string name="xml_tool_reset_ecu_setting">Удалить все настройки для этого ECU?</string>
+  <string name="xml_tool_read_ecu_again">Хотите повторно запросить список ECU из автомобиля?</string>
+  <string name="xml_tool_search_ecus">Поиск ECU файлов.\nОбнаружено: {0}/{1}</string>
+  <string name="xml_tool_sel_mwtab_info">Для этого ECU найдено несколько таблиц данных.\nПожалуйста, выберите таблицу данных, которая лучше всего подходит для вашего ECU.\nСледует отдать предпочтение таблице, в названии которой присутствуют значения 7-ой и 8-ой позиции VIN-номера.</string>
+  <string name="xml_tool_no_mwtab">Не обнаружено таблиц данных для этого ECU файла</string>
+  <string name="xml_tool_select_sgbd">Выбрать тип автомобиля</string>
+  <string name="xml_tool_no_response">Автомобиль не отвечает</string>
+  <string name="xml_tool_no_response_manual">Автомобиль не отвечает.\nДля распознавания мотоциклов вы должны включить соответствующую опцию в меню.\nЕсли у вашего автомобиля используется К-LINE коммуникация, то необходимо использовать USB или Deep ОDB адаптер.\nЗдесь приведён список <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>поддерживаемых адаптеров</a>.\nПерейти к <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>ручной настройке</a>?</string>
+  <string name="xml_tool_no_response_adapter">Автомобиль не отвечает.\nХотите проверить соединение адаптера?</string>
+  <string name="xml_tool_no_response_raw">Автомобиль не отвечает.\nАктивен режим прямой связи, это может служить источником проблемы.\nВыбрать другой адаптер?</string>
+  <string name="xml_tool_read_jobs_failed">Не удалось считать задания</string>
+  <string name="xml_tool_aborting">Отмена операции</string>
+  <string name="xml_tool_read_ecu_info_failed">Не удалось считать ECU информацию</string>
+  <string name="xml_tool_save_xml_failed">Не удалось сохранить конфигурацию</string>
+  <string name="xml_tool_msg_save_config">Сохранить конфигурацию?</string>
+  <string name="xml_tool_msg_save_config_select">Хотите сохранить конфигурацию и использовать её как активную?</string>
+  <string name="xml_tool_msg_save_config_empty">Вы не выбрали информации для отображения.\nКликайте по ECU и выбирайте необходимые задания и результаты.\nСохранить конфигурацию в текущем виде?</string>
+  <string name="xml_tool_msg_ecu_error">Для некоторых ECU информация не может быть найдена.</string>
+  <string name="xml_tool_msg_pin78">Необходимо соединить контакты 7 и 8 в OBD разъеме адаптера, чтобы определилось больше блоков управления.\nВ автомобилях с OBD I разъёмом в моторном отсеке, контакт 8 должен быть дополнительно подключён к OBD II гнезду в салоне.</string>
+  <string name="xml_tool_msg_page_not_avail">Выбранная страница ECU не может быть открыта.\nКонфигурация должна быть создана с помощью генератора конфигурации, и ECU должен быть доступен.</string>
+  <string name="xml_tool_msg_service_menu">Чтобы выполнить сервисные функции для ECU, откройте контекстное меню ECU и выберите пункт «Сервисные функции».</string>
+  <string name="xml_tool_select_ecu_type">Выбрать ECU-тип</string>
+  <string name="xml_tool_ecu_list">Обнаруженные ECU</string>
+  <string name="xml_tool_info_sgbd">SGBD</string>
+  <string name="xml_tool_info_grp">Группа</string>
+  <string name="xml_tool_info_vin">VIN</string>
+  <string name="xml_tool_errors_page">Ошибки</string>
+  <string name="xml_tool_auto_config">Автоматически</string>
+  <string name="xml_tool_man_config">Ручная настройка</string>
+  <string name="xml_tool_job_read_mwblock">Считать блок измерений</string>
+  <string name="xml_tool_job_read_vin">Определить VIN</string>
+  <string name="xml_tool_result_vin">VIN</string>
+  <string name="xml_tool_service_open_jobs">Показать {0} задания</string>
+  <string name="xml_tool_service_jobs_warning">Сервисные функции пока экспериментальные!\nОтображаемые задания в Ediabas Tool могут иметь только аргументы по умолчанию, которые необходимо адаптировать перед выполнением задания!\nВы обязаны проверять задания перед выполнением!\nПомощник по аргументам может быть полезен в этом случае.\nИз-за сложности сбора данных возможно, что в будущем для выполнения заданий потребуются адаптеры Deep OBD.\nХотите продолжить?</string>
+  <string name="xml_tool_drag_list_hint">Нажмите и удерживайте ЭБУ, чтобы изменить порядок.</string>
+  <string name="xml_tool_job_results">Результаты работы:</string>
+  <string name="xml_tool_num_job_results">Количество результатов работы: {0}</string>
+
+  <!-- XML Tool Options Menu -->
+  <string name="menu_xml_tool_add_errors_page">Добавить страницу ошибок</string>
+  <string name="menu_xml_tool_detect_motorbikes">Обнаружение мотоциклов</string>
+  <string name="menu_xml_tool_cfg_type">Конфигурация</string>
+
+  <!-- XML Tool Edit Menu -->
+  <string name="menu_xml_tool_edit_detect">Определение ECU</string>
+  <string name="menu_xml_tool_edit_grp">Добавить ECU (grp)</string>
+  <string name="menu_xml_tool_edit_prg">Добавить ECU (prg)</string>
+  <string name="menu_xml_tool_edit_del">Удалить неиспользуемые ECU</string>
+  <string name="menu_xml_tool_edit_del_all">Удалить всю ECU-информацию</string>
+
+  <!-- XML Tool context Menu -->
+  <string name="menu_xml_config_ecu">Настроить ECU</string>
+  <string name="menu_xml_tool_move_top">Переместить в начало</string>
+  <string name="menu_xml_tool_move_up">Переместить вверх</string>
+  <string name="menu_xml_tool_move_down">Переместить вниз</string>
+  <string name="menu_xml_tool_move_bottom">Переместить в конец</string>
+  <string name="menu_xml_tool_ediabas_tool">Ediabas утилита</string>
+  <string name="menu_xml_tool_bmw_actuator">Функции актуатора</string>
+  <string name="menu_xml_tool_bmw_service">Сервисные функции</string>
+  <string name="menu_xml_tool_vag_coding">Кодировать</string>
+  <string name="menu_xml_tool_vag_coding2">Кодировать 2</string>
+  <string name="menu_xml_tool_vag_adaption">Адаптация</string>
+  <string name="menu_xml_tool_vag_login">Авторизация</string>
+  <string name="menu_xml_tool_vag_sec_access">Права доступа</string>
+
+  <!-- XML Tool Ecu Activity -->
+  <string name="xml_tool_ecu_title">Задания для ECU: {0}</string>
+  <string name="xml_tool_ecu_job_comments">Комментарии для задания: {0}</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info">ECU информация:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_addr">Aдрес {0:X02}:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_subsys">Подсистема {0}:</string>
+  <string name="xml_tool_ecu_result_comments">Комментарии для результата: {0}</string>
+  <string name="xml_tool_ecu_result_type">Тип данных</string>
+  <string name="xml_tool_ecu_user_format">Пользователь</string>
+  <string name="xml_tool_ecu_format">Выходной формат</string>
+  <string name="xml_tool_ecu_format_right">Вправо</string>
+  <string name="xml_tool_ecu_format_left">Влево</string>
+  <string name="xml_tool_ecu_page_name">Название страницы</string>
+  <string name="xml_tool_ecu_ecu_name">Название ECU</string>
+  <string name="xml_tool_ecu_display_type">Тип отображения</string>
+  <string name="xml_tool_ecu_display_type_grid">Графическое отображение</string>
+  <string name="xml_tool_ecu_font_size">Размер шрифта</string>
+  <string name="xml_tool_ecu_font_size_small">Мелкий</string>
+  <string name="xml_tool_ecu_font_size_medium">Средний</string>
+  <string name="xml_tool_ecu_font_size_large">Большой</string>
+  <string name="xml_tool_ecu_grid_count">Графические элементы на строку</string>
+  <string name="xml_tool_ecu_grid_count_portrait_value">Вертикальный формат</string>
+  <string name="xml_tool_ecu_grid_count_landscape_value">Горизонтальный формат</string>
+  <string name="xml_tool_ecu_jobs_name">Список заданий</string>
+  <string name="xml_tool_ecu_show_all_jobs">Показать все задания</string>
+  <string name="xml_tool_ecu_results">Результат задания</string>
+  <string name="xml_tool_ecu_show_all_results">Показывать все результаты</string>
+  <string name="xml_tool_ecu_arg_limit">Максимальное количество аргументов на запрос</string>
+  <string name="xml_tool_ecu_arg_limit_off">Неограниченно</string>
+  <string name="xml_tool_ecu_display_text">Выведенный текст</string>
+  <string name="xml_tool_ecu_display_order">Порядок отображения</string>
+  <string name="xml_tool_ecu_log_tag">Тег для протоколированных данных</string>
+  <string name="xml_tool_ecu_grid_type">Графический дизайн</string>
+  <string name="xml_tool_ecu_grid_type_hidden">Скрытый</string>
+  <string name="xml_tool_ecu_grid_type_text">Только текст</string>
+  <string name="xml_tool_ecu_grid_type_simple_square">Простое квадратное отображение</string>
+  <string name="xml_tool_ecu_grid_type_simple_round">Простое округлённое отображение</string>
+  <string name="xml_tool_ecu_grid_type_simple_dot">Простое отображение с точкой</string>
+  <string name="xml_tool_ecu_min_value">Мин. значение</string>
+  <string name="xml_tool_ecu_max_value">Макс. значение</string>
+  <string name="xml_tool_ecu_test_format">Тестировать формат</string>
+  <string name="xml_tool_button_test_format">Считать</string>
+  <string name="xml_tool_ecu_add_functions">Дополнительные функции</string>
+  <string name="xml_tool_button_ediabas_tool">Ediabas утилита</string>
+  <string name="xml_tool_button_bmw_actuator">Функции актуатора</string>
+  <string name="xml_tool_button_bmw_coding">Кодировать</string>
+  <string name="xml_tool_button_bmw_service">Сервисные функции</string>
+  <string name="xml_tool_button_coding">Кодировать</string>
+  <string name="xml_tool_button_coding2">Кодировать 2</string>
+  <string name="xml_tool_button_adaption">Адаптация</string>
+  <string name="xml_tool_button_login">Авторизация</string>
+  <string name="xml_tool_button_sec_access">Права доступа</string>
+  <string name="xml_tool_execute_test_job">Выполнение задания</string>
+  <string name="xml_tool_read_test_job_failed">Не удалось выполнить задание</string>
+  <string name="xml_tool_ecu_msg_save_lock">Запись конфигурации была заблокирована в файле конфигурации.\nИзменения не могут быть сохранены.</string>
+  <string name="xml_tool_ecu_msg_no_selection">Вы не выбрали данные для отображения.\nВыберите сначала нужные задания и результаты из списка.\nВы все равно хотите отменить?</string>
+  <string name="xml_tool_ecu_msg_no_grid_selection">Вы активировали графический дисплей, но не выбрали графическое представление.\nГрафическое представление будет недоступно.\nПродолжить?</string>
+  <string name="xml_tool_ecu_msg_func_not_avail">Выбранная функция недоступна.</string>
+  <string name="xml_tool_ecu_arg_limit_hint">Максимальное количество аргументов запроса зависит от типа ЭБУ.\nНеобходимо уменьшить параметр \"максимальное количество аргументов на запрос\", если на главной странице отображаются не все значения.</string>
+
+  <!-- VAG Coding Activity -->
+  <string name="vag_coding_title_coding">Кодировка ECU: {0}</string>
+  <string name="vag_coding_title_login">Авторизация ECU: {0}</string>
+  <string name="vag_coding_title_sec_access">Права дооступа ECU: {0}</string>
+  <string name="vag_coding_subsystem_title">Подсистема</string>
+  <string name="vag_coding_short_title">Кодировка (деc.): {0}-{1}</string>
+  <string name="vag_coding_login_title">Авторизация (деc.): {0}-{1}</string>
+  <string name="vag_coding_sec_access_title">Права дооступа (деc.): {0}-{1}</string>
+  <string name="vag_coding_comments_title">Примечания</string>
+  <string name="vag_coding_raw_title">Кодировка (шест.)</string>
+  <string name="vag_coding_workshop_number_title">Номер мастерской (деc.): {0}-{1}</string>
+  <string name="vag_coding_importer_number_title">Номер импортёра (деc.): {0}-{1}</string>
+  <string name="vag_coding_equipment_number_title">Номер устройства (деc.): {0}-{1}</string>
+  <string name="vag_coding_ecu_reset">Выполнить ECU сброс</string>
+  <string name="vag_coding_assistant_title">Помощник по кодированию</string>
+  <string name="vag_coding_execute_title">Выполнить операцию</string>
+  <string name="vag_coding_button_execute">Выполнить</string>
+  <string name="vag_coding_processing">Выполнение операции</string>
+  <string name="vag_coding_write_values_invalid">Если идентификационный номер предприятия, номер импортера или серийный номер прибора равен 0 или слишком большой, ECU может отклонить значения.\nХотите продолжить?</string>
+  <string name="vag_coding_write_coding_illegal_arguments">Аргументы для операции находятся вне рабочего диапазона</string>
+  <string name="vag_coding_write_coding_failed">Ошибка выполнения операции</string>
+  <string name="vag_coding_write_coding_access_denied">В доступе отказано, сначала вы должны авторизироваться</string>
+  <string name="vag_coding_write_coding_reset_failed">Ошибка сброса ECU</string>
+  <string name="vag_coding_write_coding_ok">Кодирование успешно завершено</string>
+  <string name="vag_coding_write_coding2_failed">Не удалось записать кодировку.\nЕсли код был неправильным, то вам необходимо оставить зажигание включённым как минимум на 10 минут, прежде чем пытаться снова!</string>
+  <string name="vag_coding_login_job_failed">Ошибка авторизации.\nЕсли код был неправильным, то вам необходимо выключить зажигание на 1-2 минуты, прежде чем пытаться снова!</string>
+  <string name="vag_coding_login_job_ok">Авторизация успешно завершена</string>
+  <string name="vag_coding_sec_access_job_failed">Ошибка права доступа</string>
+  <string name="vag_coding_sec_access_job_ok">Права доступа получены</string>
+
+  <!-- VAG Adaption Activity -->
+  <string name="vag_adaption_title_adaption">Адаптация ECU: {0}</string>
+  <string name="vag_adaption_channel_title">Документированный канал</string>
+  <string name="vag_adaption_channel_select">Выбор канала адаптации</string>
+  <string name="vag_adaption_channel_reset">Сброс адаптационных значений</string>
+  <string name="vag_adaption_channel_reset_info">Сохранение канала адаптации 0 сбрасывает все адаптированные значения</string>
+  <string name="vag_adaption_channel_number_title">Номер канала</string>
+  <string name="vag_adaption_comments_title">Примечания</string>
+  <string name="vag_adaption_value_current_title">Текущее значение адаптации</string>
+  <string name="vag_adaption_value_new_title">Новое значение адаптации</string>
+  <string name="vag_adaption_value_test_title">Протестированное значение адаптации</string>
+  <string name="vag_adaption_meas_value_title">Значение {0}: {1}</string>
+  <string name="vag_adaption_workshop_number_title">Номер мастерской (деc.): {0}-{1}</string>
+  <string name="vag_adaption_importer_number_title">Номер импортёра (деc.): {0}-{1}</string>
+  <string name="vag_adaption_equipment_number_title">Номер устройства (деc.): {0}-{1}</string>
+  <string name="vag_adaption_operation_title">Операции</string>
+  <string name="vag_adaption_service_id">ID Сервиса:</string>
+  <string name="vag_adaption_button_read">Считать</string>
+  <string name="vag_adaption_button_test">Тестировать</string>
+  <string name="vag_adaption_button_store">Сохранить</string>
+  <string name="vag_adaption_button_stop">Остановить</string>
+  <string name="vag_adaption_ecu_reset">Выполнить ECU сброс</string>
+  <string name="vag_adaption_change_coding_first">Рекомендуется сначала исправить кодировку в ECU.</string>
+
+  <!-- BMW Actuator Activity -->
+  <string name="bmw_actuator_title">Актуатор ECU: {0}</string>
+  <string name="bmw_actuator_function_title">Функция</string>
+  <string name="bmw_actuator_function_prompt">Выбор функции</string>
+  <string name="bmw_actuator_comments_title">Примечания</string>
+  <string name="bmw_actuator_status_title">Статус</string>
+  <string name="bmw_actuator_operation_title">Операции</string>
+  <string name="bmw_actuator_button_execute_single">Одноразовое выполнение</string>
+  <string name="bmw_actuator_button_execute_continuous">Постоянное выполнение</string>
+  <string name="bmw_actuator_button_stop">Остановить</string>
+  <string name="bmw_actuator_operation_failed">Ошибка выполнения операции</string>
+
+  <!-- BMW Coding Activity -->
+  <string name="bmw_coding_title">Кодирование BMW</string>
+  <string name="bmw_coding_series">Текущая серия автомобилей: {0}.</string>
+  <string name="bmw_coding_requirement">Кодировка BMW доступна только для серии F или выше.</string>
+  <string name="bmw_coding_network_error">Загрузка веб-страницы не удалась, повторная попытка.</string>
+  <string formatted="false" name="bmw_coding_connect_request">Кодирование BMW — это онлайн-сервис, требующий быстрого и стабильного подключения к Интернету.\nЭто доступно только для серии F или выше.\nПри кодировании требуется сильноточное зарядное устройство.\nНа этапе тестирования это будет бесплатно, позже потребуется лицензия для оплаты стоимости сервера.\Оригинальные &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md#buy-a-preprogrammed-adapter\'&gt;адаптеры Deep OBD&lt;/a&gt; содержат лицензию на кодирование одного автомобиля.\nВы хотите продолжить?</string>
+  <string name="bmw_coding_connecting">Establish connection.</string>
+  <string name="bmw_coding_connect_url_failed">Не удалось подключиться к серверу.\nХотите попробовать еще раз?</string>
+  <string name="bmw_coding_connect_failed">Не удалось установить соединение.\nПожалуйста, проверьте подключение к сети.</string>
+  <string name="bmw_coding_connection_active">Соединение с автомобилем активно.\nПри выходе со страницы общение будет прервано.\nСначала закройте соединение.\nВы все еще хотите покинуть страницу?</string>
+  <string name="bmw_coding_mtc_reject">Bluetooth-соединение Android-радио недостаточно стабильно для кодирования.\nВместо этого используйте смартфон.</string>
+  <string name="bmw_coding_elm_reject">Адаптеры ELM327 недостаточно стабильны для кодирования.\nПожалуйста, используйте адаптер Deep OBD, ENET или FTDI.</string>
+  <string name="bmw_coding_ssl_fail">Установка зашифрованного соединения не удалась, данные будут передаваться в незашифрованном виде.</string>
+
+  <!-- CAN Adapter Activity -->
+  <string name="can_adapter_title">Настройки устройства</string>
+  <string name="can_adapter_mode_name">Режим работы CAN</string>
+  <string name="can_adapter_sep_time">Интервал между пакетами данных [мс]</string>
+  <string name="can_adapter_block_size">Размер блока данных</string>
+  <string name="can_adapter_bt_pin">Pin код для Bluetooth</string>
+  <string name="can_adapter_bt_name">Имя Bluetooth устройства</string>
+  <string name="can_adapter_ignition_state">Зажигание</string>
+  <string name="can_adapter_bat_voltage">Напряжение аккумулятора</string>
+  <string name="can_adapter_fw_version">Версия прошивки (текущая / доступная)</string>
+  <string name="can_adapter_ser_num">Серийный номер</string>
+  <string name="can_adapter_type">Тип адаптера</string>
+  <string name="can_adapter_type_unknown">Неизвестный</string>
+  <string name="can_adapter_expert">Режим эксперта</string>
+  <string name="can_adapter_comm_error">Ошибка соединения</string>
+  <string name="can_adapter_comm_error_std">Ошибка соединения.\nКонфигурация адаптера возможна только во время, когда светодиод адаптера активен после включения.</string>
+  <string name="can_adapter_blacklisted">Неверный адаптер.</string>
+  <string name="can_adapter_ignition_on">Зажигание включено</string>
+  <string name="can_adapter_ignition_off">Зажигание выключено</string>
+  <string name="can_adapter_ignition_no_status">Статус недоступен</string>
+  <string name="can_adapter_text_off">0: выкл. (по умолчанию)</string>
+  <string name="can_adapter_pin_length">Pin код для Bluetooth должен быть длиной не менее 4 символов.</string>
+  <string name="can_adapter_name_length">Неправильная длина имени Bluetooth устройства в UTF-8</string>
+  <string name="can_adapter_new_pin">Для активации нового Pin кода для Bluetooth {0} выключите, а затем включите адаптер.</string>
+  <string name="can_adapter_new_name">Для активации нового имени для Bluetooth устройства выключите, а затем включите адаптер.</string>
+  <string name="can_adapter_processing">Выполнение операции</string>
+  <string name="can_adapter_fw_update_present">Доступно обновление для этого адаптера.\nХотите установить обновление?</string>
+  <string name="can_adapter_fw_update_info">Во время обновления связь не должна прерываться ни при каких обстоятельствах.\nПродолжить?</string>
+  <string name="can_adapter_fw_update_info_ftdi">Для обновления требуется, чтобы загрузчик уже был прошит в устройство один раз.\nЕсли приложение больше не запускается, вам необходимо перезагрузить процессор на этапе подключения, но соединение USB не должно прерываться.\nПродолжить?</string>
+  <string name="can_adapter_fw_elm_info">Данная ELM327{0} cовместимая прошивка предоставлена без какой-либо поддержки.\Для более детальной информации, пожалуйста, читайте документацию по ELM327{0}.</string>
+  <string name="can_adapter_fw_update_connect">При подключении к устройству может потребоваться перезагрузка процессора.</string>
+  <string name="can_adapter_fw_update_active">Обновление прошивки.\nПожалуйста не прерывайте связь.</string>
+  <string name="can_adapter_fw_update_conn_failed">Не удалось подключиться к адаптеру</string>
+  <string name="can_adapter_fw_update_failed">Не удалось обновить прошивку.\nЕсли все светодиоды адаптера активны, адаптер находится в режиме загрузчика, и для нормального использования его необходимо снова прошить.</string>
+  <string name="can_adapter_fw_update_ok">Обновление прошивки успешно завершено</string>
+  <string name="can_adapter_fw_invalid">Файл прошивки неисправен.</string>
+  <string name="can_adapter_fw_update_ok_detect">Обновление программного обеспечения прошло успешно.\nНеобходимо перезагрузить и заново идентифицировать адаптер.</string>
+  <string name="can_adapter_bt_not_reliable">Как известно, ваше Android-устройство ненадёжно при работе с Bluetooth.\nПожалуйста, используйте другое устройство.</string>
+  <string name="can_adapter_select_fw_file">Выбрать прошивку</string>
+  <string name="button_can_adapter_read">Считать</string>
+  <string name="button_can_adapter_write">Сохранить</string>
+  <string name="button_can_adapter_close">Закрыть</string>
+  <string name="button_can_adapter_can_auto">Автоматически</string>
+  <string name="button_can_adapter_can_500">D-CAN (после 3/2007)</string>
+  <string name="button_can_adapter_can_100">K-CAN (не стандарт)</string>
+  <string name="button_can_adapter_can_off">K-LINE (до 3/2007)</string>
+  <string name="button_can_adapter_fw_sel">Выбрать прошивку</string>
+  <string name="button_can_adapter_fw_update">Обновление прошивки</string>
+  <string name="button_can_adapter_fw_change_elm">Прошить программное обеспечение ELM327</string>
+  <string name="button_can_adapter_fw_change_custom">Прошить альтернативное программное обеспечение ELM327</string>
+
+  <!-- CarService -->
+  <string name="car_service_button_connect">Подключить</string>
+  <string name="car_service_button_disconnect">Отключить</string>
+  <string name="car_service_connected">Автомобиль подключен.</string>
+  <string name="car_service_fg_service_disabled">Настройки недействительны,\nне используйте режим энергосбережения.</string>
+  <string name="car_service_disconnected">Автомобиль отключен.\nСначала подключитесь к автомобилю (в приложении).</string>
+  <string name="car_service_no_config">Конфигурация не загружена.\nСначала необходимо загрузить конфигурацию в приложение.</string>
+  <string name="car_service_app_processing">Активно установление подключения в приложении на смартфоне.</string>
+  <string name="car_service_app_displayed">Приложение отобразилось на смартфоне.</string>
+  <string name="car_service_app_store_settings">Приложение на смартфоне сохраняет настройки.</string>
+  <string name="car_service_section_pages">Данные о транспортном средстве</string>
+  <string name="car_service_page_list">Список страниц</string>
+  <string name="car_service_page_list_show">Показать список страниц</string>
+  <string name="car_service_settings_lock_none">Режим энергосбережения</string>
+  <string name="car_service_settings_invalid_mode">Опция недействительна для Android Auto.</string>
+  <string name="car_service_active_page">Активная страница</string>
+  <string name="car_service_no_pages">Нет страниц</string>
+  <string name="car_service_no_data">Нет данных</string>
+  <string name="car_service_active_page_change">Активная страница изменилась.</string>
+  <string name="car_service_active_data_amount_change">Объем данных изменился.</string>
+  <string name="car_service_error_reset">Перезагрузить</string>
+  <string name="car_service_error_reset_active">Активен сброс ошибки.</string>
+  <string name="car_service_error_reset_started">Сброс ошибки инициализирован.</string>
+  <string name="car_service_test_info">- Доступна тестовая версия Android Auto. Свяжитесь с разработчиком через веб-сайт.</string>
+</resources>

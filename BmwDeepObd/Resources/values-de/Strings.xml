@@ -1,0 +1,846 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupAttributeTypo -->
+<!-- ReSharper disable MarkupTextTypo -->
+<resources>
+  <string name="library_name">DeepObd</string>
+  <string name="app_name">Deep OBD</string>
+  <string name="button_connected">Verbunden</string>
+  <string name="button_disconnected">Getrennt</string>
+  <string name="button_yes">Ja</string>
+  <string name="button_no">Nein</string>
+  <string name="button_ok">Ok</string>
+  <string name="button_abort">Abbrechen</string>
+  <string name="button_close">Schließen</string>
+  <string name="button_select">Auswählen</string>
+  <string name="button_generate">Generieren</string>
+  <string name="button_manually">Manuell</string>
+  <string name="button_copy">Kopieren</string>
+  <string name="button_accept">Akzeptieren</string>
+  <string name="button_decline">Ablehnen</string>
+  <string name="button_apply">Übernehmen</string>
+  <string name="button_execute">Ausführen</string>
+  <string name="button_donate">Spenden</string>
+  <string name="button_skip">Überspringen</string>
+  <string name="button_hide">Verbergen</string>
+  <string name="button_reset">Zurücksetzen</string>
+  <string name="button_manufacturer">Hersteller</string>
+  <string name="back_button_twice_for_exit">Die Schaltfläche zwei mal drücken zum Beenden</string>
+  <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
+  <string name="access_denied_ext_storage">Zugriff auf den externen Speicher ist notwendig um die App auszuführen.\nWollen Sie die App Einstellungen öffnen?</string>
+  <string name="access_manage_files">Der Zugriff auf das Dateimanagement ist notwendig,\num auf den externen Speicher zuzugreifen.\nWollen Sie die Management Einstellungen öffnen?</string>
+  <string name="overlay_permission_denied">Für die Hintergrundkommunikation ist die Anzeige über anderen Apps notwendig.\nWollen Sie die App Einstellungen öffnen?</string>
+  <string name="notification_permission_denied">Für die Hintergrundkommunikation sind Benachrichtungen notwendig.\nWollen Sie die App Einstellungen öffnen?</string>
+  <string name="store_settings_failed">Das Speichern der Einstellungen ist fehlgeschlagen. Bitte reinstallieren Sie die App.</string>
+  <string name="store_settings_filename">Die Einstellungen wurden gespeichert unter:</string>
+  <string name="long_click_show_title">Lang-Klick um Titel anzuzeigen</string>
+  <string name="low_memory_detected">Der Systemspeicher ist knapp!</string>
+  <string name="bt_enable">Bluetooth ist nicht aktiviert.\nWollen Sie es jetzt aktivieren?</string>
+  <string name="wifi_enable">Wi-Fi ist nicht aktiviert.\nWollen Sie es jetzt aktivieren oder den Access Point auswählen?</string>
+  <string name="bt_not_available">Bluetooth ist nicht verfügbar.</string>
+  <string name="wifi_not_available">Wi-Fi ist nicht verfügbar.</string>
+  <string name="config_select">Es ist keine gültige Konfiguration vorhanden.\nWollen Sie jetzt eine Konfiguration generieren oder auswählen?</string>
+  <string name="config_manual_edit">Die aktuelle Konfiguration wurde manuell erstellt und muss zuerst geschlossen werden.</string>
+  <string name="bt_device_not_selected">Es wurde kein Bluetooth Gerät ausgewählt.\nWollen Sie jetzt ein Gerät auswählen?</string>
+  <string name="ecu_download_free_space">Es ist nicht genügend freier Speicher ({0:fs1} &lt; {1:fs1}) auf dem Gerät verfügbar, um die ECU Dateien zu abzulegen.\nWollen Sie ein anderes Speichermedium wählen?</string>
+  <string name="ecu_not_found">Es wurden keine ECU Dateien gefunden.</string>
+  <string name="ecu_package">Es stehen aktualisierte ECU Dateien für diese Anwendung zur Verfügung.</string>
+  <string name="ecu_download">Wollen Sie jetzt die ECU Dateien herunterladen (Dateigröße ca. {0:fs1})?</string>
+  <string name="storage_requirements">Dies ist ein Expertentool.\nKeine Haftung bei Fehlfunktion oder Schäden am Fahrzeug.\nDiese App benötigt ein schnelles Speichermedium mit einem freien Speicherbereich von mindestens {0:fs1}.\nDie Verwendung der App ist nicht zulässig, wenn diese Bedingung nicht akzeptiert wird.</string>
+  <string name="config_match_vehicle">Verwenden Sie nur Konfigurationen die exakt zum Fahrzeug passen.\nErzeugen Sie Konfigurationen mit dem Konfigurationsgenerator, es gibt keine Unterstützung bei der Verwendung von Fremdkonfigurationen.</string>
+  <string name="ecu_extract">Die ECU Dateien müssen entpackt werden (Größe ca. {0:fs1}),\nder Download von Update-Informationen ist hierfür notwendig.\nWenn das Entpacken sehr langsam ist, verwenden Sie bitte ein schnelleres Speichermedium.\nWollen Sie fortfahren?</string>
+  <string name="ecu_extract_confirm">Für das Entpacken der ECU Dateien (Größe ca. {0:fs1})\nist der Download von Update-Informationen notwendig.\nWenn das Entpacken sehr langsam ist, verwenden Sie bitte ein schnelleres Speichermedium.\nWollen Sie fortfahren?</string>
+  <string name="manufacturer_select">Der aktuelle Hersteller ist {0}, um einen anderen zu wählen drücken Sie bitte \'Hersteller\'.</string>
+  <string name="open_trace_file_failed">Die Tracedatei konnte nicht geöffnet werden:\n{0}.</string>
+  <string name="no_ext_app_installed">Bitte installieren Sie zunächst eine App, welche {0} Dateien öffnen kann.</string>
+  <string name="choose_file_app">Datei öffnen.</string>
+  <string name="no_xml_editor_installed">Bitte installieren Sie zunächst einen XML Editor.</string>
+  <string name="choose_xml_editor">Wählen Sie ein XML Editor aus.</string>
+  <string name="file_access_denied">Zugriff auf die Datei verweigert.\nBitte überprüfen sie den Speicherort und die Zugriffsrechte.</string>
+  <string name="file_editing_failed">Die Datei konnte nicht bearbeitet werden.</string>
+  <string name="display_line_original_position">Originalposition: {0}</string>
+  <string name="display_order_edit_hint">Langclick und Drag Drop verwenden um die Anzeigereihefolge zu ändern.</string>
+  <string name="error_no_error">Keine Fehler vorhanden</string>
+  <string name="error_reading_errors">Fehlerspeicher lesen: {0}</string>
+  <string name="error_reading_relevant_only">(Es werden nur relevante Daten angezeigt,\nänderbar in den globalen Einstellungen.)</string>
+  <string name="error_reading_state_init">Initialisieren</string>
+  <string name="error_reading_state_error">Fehler</string>
+  <string name="error_reading_state_detect">Erkennen {0}%</string>
+  <string name="error_reading_state_read">Fortschritt {0}%</string>
+  <string name="error_reset_condition">Die Bedingungen für das Fehlerlöschen wurden nicht erfüllt.\nBitte stoppen sie den Motor, schalten die Zündung ein und versuchen Sie es noch einmal.</string>
+  <string name="error_no_response">Keine Antwort</string>
+  <string name="error_error_code">Fehlercode</string>
+  <string name="error_info_code">Infocode</string>
+  <string name="error_shadow">(Shadow)</string>
+  <string name="error_unknown">Unbekannt</string>
+  <string name="error_hidden">Verborgen</string>
+  <string name="error_env_title">Umgebungsbedingungen:</string>
+  <string name="error_env_frequency">Häufigkeit</string>
+  <string name="error_env_log_count">Logistikzähler</string>
+  <string name="error_env_pcode">SAE Code</string>
+  <string name="error_env_km">Kilometerstand</string>
+  <string name="error_env_time">Fehlerzeitpunkt</string>
+  <string formatted="false" name="version_change_info_message">Dieses Open Source Projekt wird gehostet auf:
+\n&lt;a href=\'https://github.com/uholeschak/ediabaslib\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;
+\nSie können gerne mitwirken oder Probleme melden.
+\nEine detailierte Dokumentation kann auch auf dieser Webseite gefunden werden.</string>
+  <string name="version_last_changes_header">Änderungen in dieser Version:</string>
+  <string name="version_last_changes">Unterstützung für Android 15.\n- Unterstützung für Android Auto.\n- Unterstützung für Simulationsdateien.\n- Kleinere Probleme behoben</string>
+  <string name="app_info_message">Deep OBD für BMW und VAG\nVersion: {0}\nId: {1}</string>
+  <string formatted="false" name="vag_mode_info">Der VAG Modus ist noch experimentell und nur für Fahrzeuge bis {0}.\nEs wird ein &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD Adapter&lt;/a&gt; mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.</string>
+  <string name="vag_mode_info_ballon">Der VAG Modus ist noch experimentell und nur für Fahrzeuge bis {0}.\nEs wird einDeep OBD Adapter mit mindestens Firmwareversion 0.11 benötigt.\nIm Moment werden nur die Protokolle KWP2000, KWP1281, TP2.0 und UDS unterstützt.</string>
+
+  <!-- Update info -->
+  <string name="update_header">Ein Update ist bei Google Play verfügbar.</string>
+  <string name="update_version">App-Version: {0}</string>
+  <string name="update_info">Update Informationen:</string>
+  <string name="update_show">Wollen Sie das Update anzeigen?\nSie können auch diese App-Version überspringen.</string>
+
+  <!-- Alert titles -->
+  <string name="alert_title_info">Information</string>
+  <string name="alert_title_warning">Warnung</string>
+  <string name="alert_title_error">Fehler</string>
+  <string name="alert_title_question">Frage</string>
+
+  <!-- Notifications -->
+  <string name="notification_download">Download</string>
+  <string name="notification_communication">Kommunikation</string>
+  <string name="notification_group_custom">Benutzerdefiniert</string>
+  <string name="notification_custom_min">Benutzerdefiniert Minimal</string>
+  <string name="notification_custom_low">Benutzerdefiniert Niedrig</string>
+  <string name="notification_custom_default">Benutzerdefiniert Standard</string>
+  <string name="notification_custom_high">Benutzerdefiniert Hoch</string>
+  <string name="notification_custom_max">Benutzerdefiniert Maximum</string>
+
+  <!-- Service -->
+  <string name="service_notification_comm_active">Die Kommunikation ist aktiv</string>
+  <string name="service_notification_comm_ok">Verbindung zum Fahrzeug hergestellt</string>
+  <string name="service_notification_comm_error">Keine Verbindung zum Fahrzeug</string>
+  <string name="service_notification_idle">Inaktiv</string>
+  <string name="service_notification_wait_media">Auf Speichermedium warten</string>
+  <string name="service_notification_load_settings">Einstellungen lesen</string>
+  <string name="service_notification_compile_code">Anwendercode kompilieren</string>
+  <string name="service_notification_init_reader">Datenbank lesen</string>
+  <string name="service_notification_connecting">Verbindung herstellen</string>
+  <string name="service_notification_error">Start fehlgeschlagen</string>
+  <string name="service_notification_abort">Wird abgebrochen</string>
+  <string name="service_stop_comm_app">App öffnen und Kommunikation beenden</string>
+  <string name="service_stop_comm">Kommunikation beenden</string>
+  <string name="service_abort_operation">Vorgang abbrechen</string>
+  <string name="service_status_caption">Bitte warten, der Startservice ist aktiv.</string>
+  <string name="service_status_info">Servicestatus:</string>
+
+  <!-- Compile -->
+  <string name="compile_cpu_usage">CPU Auslastung überprüfen</string>
+  <string name="compile_cpu_usage_value">CPU Auslastung: {0}%</string>
+  <string name="compile_cpu_usage_high">Die CPU Auslastung im Leerlauf ist sehr hoch ({0}%), dies kann Kommunikationsprobleme verursachen.\nBitte beenden Sie Hintergrund-Apps welche die CPU zu stark belasten.</string>
+  <string name="compile_start">Anwendercode kompilieren</string>
+  <string name="compile_missing_assemblies">Fehlende System-Assemblies:</string>
+  <string name="compile_crash">Die App ist beim Kompilieren des Anwerdercodes abgestürzt.\nEs gibt einen bekannten Compilerfehler:\nVerwenden Sie keine komplexen initialisierten Strukturen oder Arrays, initialisieren Sie diese im Konstruktor.</string>
+  <string name="compile_compat_id_warn">Die Konfiguration wurde mit einer anderen BMW Datenbank erzeugt, einige Einträge könnten inkompatibel sein.\nUm dies zu korrigieren, öffnen Sie jede ECU, welche mit einem * im Seitentitel markiert ist, im Konfigurationsgenerator, prüfen die Einträge und speichern die Konfiguration wieder ab.</string>
+
+  <!-- Download -->
+  <string formatted="false" name="download_manual">Wenn Sie Probleme mit dem automatischen Download der ECU Dateien haben, können Sie diese von&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;herunterladen und manuell installieren.&lt;br&gt;Wollen Sie die manuelle Installation verwenden?</string>
+  <string name="select_ecu_zip">ECU Zip auswählen</string>
+  <string name="downloading_file">Dateien herunterladen</string>
+  <string name="download_failed">Herunterladen der Dateien fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
+  <string name="download_proxy_config">Ein Proxy wurde in den Netzwerkeinstellungen konfiguriert.\nDies kann zu Verbindungsproblemen führen.\nEntfernen sie den Proxy, wenn dies möglich ist.</string>
+  <string name="obb_offline_extract">Wollen Sie die ECU Dateien offline extrahieren?</string>
+  <string name="obb_offline_extract_title">Offline extrahieren</string>
+  <string name="obb_offline_extract_message">Geben Sie den Offline-Key ein.\nUm den Key zu erhalten, senden Sie eine E-Mail mit der\nApp Version: {0}\nund ID: {1}\nan: {2} .\nSie können den Key durch das Kontextmenü des Eingabefeldes einfügen.</string>
+  <string name="obb_offline_key_invalid">Der Offline-Key ist ungültig.</string>
+  <string name="extract_cleanup">Alte Dateien löschen</string>
+  <string name="decrypt_file">Archiv vorbereiten</string>
+  <string name="extract_file">Dateien entpacken</string>
+  <string name="verify_files">Dateien überprüfen</string>
+  <string name="extract_failed">Das Entpacken der Dateien ist fehlgeschlagen.\nDie Zip-Datei scheint beschädigt zu sein.\nIn den meisten Fällen ist der Grund ein defektes Speichermedium.</string>
+  <string name="extract_failed_io">Das Speichern der extrahierten Dateien ist fehlgeschlagen.\nIst das Dateisystem beschädigt?\nEs wird empfohlen alle Dateischutz-Software (z.B. Antivirus) zu deinstallieren.</string>
+  <string name="write_files_failed">Das Speichern der Dateien ist fehlgeschlagen.\nIst kein Speicher mehr auf dem Gerät verfügbar?\nEs wird empfohlen alle Dateischutz-Software (z.B. Antivirus) zu deinstallieren.</string>
+
+  <!-- Job reader -->
+  <string name="job_reader_read_xml_failed">Das Lesen der Konfigurationsdatei ist fehlgeschlagen.</string>
+  <string name="job_reader_file_name_invalid">Der Dateiname ist ungültig.</string>
+
+  <!-- Init VAG UDS -->
+  <string name="vag_uds_init">VAG Dateien lesen</string>
+  <string name="vag_uds_error">VAG Dateien lesen fehlgeschlagen</string>
+
+  <!-- Init BMW ECU functions -->
+  <string name="bmw_ecu_func_init">BMW Dateien lesen</string>
+  <string name="bmw_ecu_func_error">BMW Dateien lesen fehlgeschlagen</string>
+
+  <!-- Documents processing -->
+  <string name="copy_documents_progress">Kopiere Dateien</string>
+  <string name="copy_documents_error">Kopieren fehlgeschlagen</string>
+  <string name="copy_documents_create">Die Datei oder Ordner:\n{0}\nwird erzeugt.\nWollen Sie fortfahren?</string>
+  <string name="copy_documents_exists">Die Datei oder Ordner:\n{0}\nexistiert bereits.\nWollen Sie diese ersetzen?</string>
+  <string name="del_documents_progress">Lösche Dateien</string>
+  <string name="del_documents_error">Löschen fehlgeschlagen</string>
+  <string name="del_document_request">Die Datei oder Ordner:\n{0}\nwird gelöscht.\nWollen Sie fortfahren?</string>
+
+  <!-- Send trace file -->
+  <string name="send_trace_file_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie eine komprimierte und anonyme Trace-Datei (Größe {0:fs0}) senden um Produktverbesserungen zu ermöglichen?</string>
+  <string name="send_message_request">Es sind Kommunikationsfehler aufgetreten.\nWollen Sie anonyme Daten senden um Produktverbesserungen zu ermöglichen?</string>
+  <string name="send_trace_file">Trace-Datei senden</string>
+  <string name="compress_trace_file_failed">Trace-Datei komprimieren fehlgeschlagen.</string>
+  <string name="send_trace_file_failed">Trace-Datei senden fehlgeschlagen.</string>
+  <string name="send_trace_file_failed_retry">Trace-Datei senden fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie das Senden wiederholen?</string>
+  <string name="send_trace_file_failed_message">Wollen Sie das Senden wiederholen?</string>
+  <string name="send_trace_backup_info">Sie können über folgende Haupmenüfunktion das Senden später noch einmal wiederholen:\nTrace Datei erneut senden.</string>
+  <string name="send_trace_message">Optionale Informationen senden</string>
+  <string name="send_trace_email">E-Mail:</string>
+  <string name="send_trace_info">Zusätzliche Informationen (z.B. Fahrzeug- und Adaptertyp, Randbedingungen):</string>
+  <string name="send_trace_send_info">Wollen Sie die folgenden optionalen Information senden, um zu helfen das Programm zu verbessern?</string>
+
+  <!-- Translate -->
+  <string name="translate_text">Text wird übersetzt</string>
+  <string name="translate_failed">Übersetzung fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie die Übersetzung wiederholen?</string>
+  <string name="translate_enable_request">Wollen Sie automatisch die ECU Texte mit {0} übersetzen lassen?\nHierfür benötigen Sie einen Account und einen API Key.</string>
+  <string name="translate_store_key">Wollen Sie den API Key speichern?</string>
+
+  <!-- Translate Menu -->
+  <string name="menu_translation_submenu">Übersetzungen</string>
+  <string name="menu_translation_enable">ECU Texte übersetzen</string>
+  <string name="menu_translation_yandex_key">Einstellungen Übersetzung</string>
+  <string name="menu_translation_clear_cache">Übersetzungscache löschen</string>
+
+  <!-- Translate Key -->
+  <string name="trans_api_key_title">Einstellungen Übersetzung</string>
+  <string name="trans_caption_translator">Übersetzer</string>
+  <string name="trans_translator_yandex_translate">Yandex.Translate</string>
+  <string name="trans_translator_ibm">IBM Watson</string>
+  <string name="trans_translator_deepl">DeepL</string>
+  <string name="trans_translator_yandex_cloud">Yandex Cloud</string>
+  <string name="trans_key_desc">Für eine automatische Übersetzung mit {0} wird eine (kostenloser) API Key und Account benötigt, der eine begrenzte Anzahl an Übersetzungen pro Tag erlaubt.\nMit den folgenden Schaltflächen loggen Sie sich in Ihren Account ein um eine Key zu erzeugen oder Ihre bestehenden anzuzeigen.\nKopieren Sie den Key aus dem Browser und fügen Sie Ihn in das untere Feld mit der Einfügen Schaltfläche ein.\nUm den Key zu kopieren drücken und halten Sie das erste Wort, erweitern den Bereich und wählen Sie anschließend kopieren.</string>
+  <string name="trans_key_yandex_cloud">Yandex Cloud erlaubt zusätzlich ein OAuth Token und eine Folder ID anstelle des API Keys zu verwenden.</string>
+  <string name="trans_key_copy_title">API Key kopieren</string>
+  <string name="button_api_key_create">API Key erzeugen</string>
+  <string name="button_api_key_get">API Keys anzeigen</string>
+  <string name="trans_key_paste_title">API Key</string>
+  <string name="button_api_key_paste">API Key einfügen</string>
+  <string name="folder_id_paste_title">Folder ID</string>
+  <string name="button_folder_id_paste">Folder ID einfügen</string>
+  <string name="api_url_paste_title">API URL</string>
+  <string name="button_api_url_paste">API URL einfügen</string>
+  <string name="trans_key_test_title">Translate</string>
+  <string name="button_api_key_test">Übersetzung testen</string>
+  <string name="button_api_key_test_failed">Übersetzung fehlgeschlagen</string>
+
+  <!--  DeviceListActivity -->
+  <string name="scanning">Nach Geräten suchen ...</string>
+  <string name="select_device">Adapter auswählen</string>
+  <string name="none_paired">Keine Geräte sind gekoppelt</string>
+  <string name="none_found">Keine Geräte gefunden</string>
+  <string name="bt_not_enabled">Bluetooth ist nicht aktiviert</string>
+  <string name="bt_mtc_service_error">Der Bluetooth Service ist verbunden, sendet aber keine Daten.\nEs wird ein eingeschränkter Modus verwendet, bitte koppeln Sie die Geräte über das Telefonmenü.</string>
+  <string name="bt_mtc_antenna_info">Bei einigen Android Radios ist es zu empfehlen, das Antennenkabel des internen Bluetoothmoduls zu ersetzen und es aus dem Gehäuse herauszuführen.\nDas Antennenkabel sollte eine Länge von 15.5 cm haben. Bei Modulen ohne Kabel scheint eine Länge von 16.0 cm optimal zu sein.</string>
+  <string name="bt_mtc_module_error">Android Geräte mit Bluetooth Modul FSC-BW124 scheinen Kommunikationsprobleme mit den OBD Adaptern zu haben.\nDie Verbindung wird warscheinlich nicht korrekt funtionieren.</string>
+  <string name="bt_mtc_module_escape_mode">Das Bluetooth Module {0} hat einen limitierten Kommunikationskanal und es muss ein besonderer Kommunikationsmodus verwendet werden.\nAus technischen Gründen werden nicht alle OBD Protokolle in diesem Modus unterstützt und es ist die aktuelle Adapter Firmware notwendig.</string>
+  <string name="bt_mtc_module_pwd">Die aktuelle Bluetooth Pin {0} ist nicht der Defaultwert {1} für die Adapter.\nEntweder Sie ändern die Adapter Pin oder die aktuelle Bluetooth pin.\nWollen Sie aktuelle Pin auf {1} ändern?</string>
+  <string formatted="false" name="bt_mtc_firmware_error">Die aktuelle Firmwareversion {0} hat bekannte Bluetooth Kommunikationsprobleme.&lt;br&gt;Bitte downgraden oder upgraden Sie zuerst die Firmware (nach Verfügbarkeit).&lt;br&gt;&lt;a href=\'{1}\'&gt;Firmware herunterladen&lt;/a&gt;&lt;br&gt;&lt;a href=\'{2}\'&gt;Updateanleitung&lt;/a&gt;</string>
+  <string name="bt_module_name">(Bluetooth Modul: {0})</string>
+  <string name="title_paired_devices">Gekoppelte Geräte</string>
+  <string name="title_other_devices">Andere verfügbare Geräte</string>
+  <string name="button_scan">Nach Geräten suchen</string>
+  <string name="button_bt_settings">Bluetooth Einstellungen öffnen</string>
+  <string name="detect_adapter">Adaptertyp erkennen</string>
+  <string name="adapter_connection_mtc_failed">Es konnte keine Bluetooth-Verbindung zum Adapter hergestellt werden.\nVersuchen Sie den Adapter zu löschen und neu zu verbinden um das Problem zu lösen.\nEine erneutes Verbinden des Smartphones kann auch helfen die Kommunikation zu verbessern.\nVerwenden Sie OBD Adapter mit YC1021 (für neuere Android Radios) oder BC417 (für ältere Android Radios) Bluetooth Chip.</string>
+  <string name="adapter_connection_failed">Es konnte keine Bluetooth-Verbindung zum Adapter hergestellt werden.\nWenn eine andere App diese Verbindung verwendet beenden Sie diese App oder starten Sie das Android Gerät neu.</string>
+  <string name="adapter_connection_generic">Es konnte keine Verbindung zum Adapter hergestellt werden.</string>
+  <string name="unknown_adapter_type">Der Adaptertyp wurde nicht erkannt.\nWollen Sie trotzdem diesen Adapter verwenden (die Telegramme werden unverändert gesendet)?</string>
+  <string name="unknown_adapter_generic">Der Adaptertyp wurde nicht erkannt.\nWollen Sie trotzdem diesen Adapter verwenden?</string>
+  <string name="adapter_raw_warn">Der direkte Kommunikationsmodus ist nur für Adapter ohne Firmware oder zum Flashen des Adapters sinnvoll!\nEine Kommunikation mit dem Fahrzeug ist in dem meisten Fällen nicht möglich!\nWollen Sie trotzdem fortfahren?</string>
+  <string name="invalid_adapter_type">Der ELM327 Adapter unterstützt nicht all notwendigen Kommandos und ist inkompatibel mit dieser Software.</string>
+  <string name="fake_elm_adapter_type">Der ELM327 Adapter ist eine gefälschte {0}.{1} Version und inkompatibel mit dieser Software.</string>
+  <string name="limited_elm_adapter_type">Der ELM327 Adapter ist nicht original und unterstützt nicht alle Funktionen. Es sind nicht alle Vorgänge möglich.</string>
+  <string name="elm_no_can">Das Fahrzeug unterstützt kein D-CAN, die Kommunikation mit dem ELM327 Adapter ist nicht möglich.</string>
+  <string name="fake_elm_try">Wollen Sie trotzdem versuchen den Adapter zu verwenden?</string>
+  <string formatted="false" name="recommened_adapter_type">Es wird ein ELM327 v1.4b, v1.5 oder original v2.1 Adapter empfohlen,&lt;br&gt;welcher auf einem PIC18F25K80 Prozessor basiert (kein MCP2515 Chip).&lt;br&gt;Auf &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; befindet sich eine verbesserte Firmware.\nOriginale Deep OBD Adapter enthalten auch eine Lizenz, um ein BMW Fahrzeug zu kodieren.</string>
+  <string formatted="false" name="adapter_elm_replacement">ELM327 Adapter sind langsam und unterstützen nur D-CAN (Fahrzeuge ab 3/2007).&lt;br&gt;Sie können jetzt Adapter mit Ersatzfirmware kaufen unter&lt;br&gt;&lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;,&lt;br&gt;welche viele Verbesserungen aufweist.\nOriginale Deep OBD Adapter enthalten auch eine Lizenz, um ein BMW Fahrzeug zu kodieren.</string>
+  <string name="adapter_stn_firmware">Es wird empfohlen zuerst die Adapter Firmware zu aktualisieren.\nWollen Sie die OBDLink App öffnen um das Update auszuführen?</string>
+  <string name="adapter_elm_firmware">Es wird empfohlen die ELM327 Firmware mit der Ersatzfirmware zu aktualisieren.\nWollen Sie die Adapter Konfiguration aufrufen um das Firmware Update durchzuführen?</string>
+  <string name="adapter_cfg_required">Der Adapter muss unter Umständen noch konfiguriert werden.\nWollen Sie die Adapter Konfiguration aufrufen?</string>
+  <string name="adapter_fw_update">Es ist ein Firmwareupdate für diesen Adapter verfügbar.\nWollen Sie die Adapter Konfiguration aufrufen um das Update zu installieren?</string>
+  <string name="adapter_no_escape_mode">Für diesen Bluetooth Modultyp ist ein Firmwareupdate des OBD Adapters notwendig.</string>
+  <string name="access_permission_rejected">Ohne Zugriffsberechtigung ist das Suchen nach Bluetooth Geräten nicht möglich.\nWollen Sie die App Einstellungen öffnen?</string>
+  <string name="location_provider_disabled_bt">Die Standort-Dienste müssen für die Suche nach Bluetooth Geräten aktiviert sein.\nWollen Sie die Standort-Dienste aktivieren?</string>
+  <string name="location_provider_disabled_wifi">Die Standort-Dienste müssen für die Erkennung der Wi-Fi Adapter aktiviert sein.\nWollen Sie die Standort-Dienste aktivieren?</string>
+  <string name="bt_device_enter_mac">Geben Sie die Bluetooth Adresse eines bereits gekoppelten OBD Adapters in dem angegebenen Format ein</string>
+  <string name="bt_device_mac_invalid">Die Bluetooth Adresse hat nicht das richtige Format</string>
+  <string name="bt_device_connected">(Verbunden)</string>
+  <string name="bt_device_menu_tite">Wählen Sie einen Vorgang für dieses Gerät</string>
+  <string name="bt_device_select">OBD Adapter auswählen</string>
+  <string name="bt_device_pair">Gerät koppeln</string>
+  <string name="bt_device_unpair">Gerät entkoppeln</string>
+  <string name="bt_device_connect_obd">Als OBD Adapter verbinden</string>
+  <string name="bt_device_connect_phone">Als Telefon verbinden</string>
+  <string name="bt_device_disconnect_phone">Telefon trennen</string>
+  <string name="bt_device_delete">Gerät löschen</string>
+
+  <!-- tabs_activate -->
+  <string name="button_active">Aktiv</string>
+  <string name="button_inactive">Inaktiv</string>
+
+  <!-- tabs_errors -->
+  <string name="button_error_reset">Fehler löschen</string>
+  <string name="button_error_reset_all">Alle Fehler löschen</string>
+  <string name="button_error_select_all">Alle auswählen</string>
+  <string name="button_error_deselect_all">Alle abwählen</string>
+
+  <!-- Options Menu -->
+  <string name="menu_settings">Einstellungen</string>
+  <string name="menu_search">Suchen</string>
+  <string name="menu_connect">Verbinden</string>
+  <string name="menu_manufacturer">Hersteller</string>
+  <string name="menu_adapter">Adapter</string>
+  <string name="menu_sel_sim_dir">Simulationsverzeichnis</string>
+  <string name="menu_adapter_config">Adapter Konfiguration</string>
+  <string name="menu_enet_ip">ENET IP</string>
+  <string name="menu_adapter_ip">Adapter IP</string>
+  <string name="menu_cfg_submenu">Konfiguration</string>
+  <string name="menu_recent_cfg_submenu">Letzte Konfigurationen</string>
+  <string name="menu_recent_cfg_clear">Löschen</string>
+  <string name="menu_cfg_page_functions">Funktionen der Seite</string>
+  <string name="menu_cfg_page_ediabas">Ediabas Tool</string>
+  <string name="menu_cfg_page_bmw_actuator">Aktuator Funktionen</string>
+  <string name="menu_cfg_page_bmw_service">Service Funktionen</string>
+  <string name="menu_cfg_page_vag_coding">Kodieren</string>
+  <string name="menu_cfg_page_vag_coding2">Kodieren 2</string>
+  <string name="menu_cfg_page_vag_adaption">Adaption</string>
+  <string name="menu_cfg_page_vag_login">Login</string>
+  <string name="menu_cfg_page_vag_sec_access">Zugriffsberechtigung</string>
+  <string name="menu_cfg_sel">Auswählen</string>
+  <string name="menu_cfg_edit">Editieren</string>
+  <string name="menu_cfg_pages_edit">Seitenliste editieren</string>
+  <string name="menu_cfg_page_menu">Aktuelle Seite editieren</string>
+  <string name="menu_cfg_page_edit">Seite editieren</string>
+  <string name="menu_cfg_page_edit_fontsize">Schriftgröße</string>
+  <string name="menu_cfg_page_edit_gauges_landscape">Graphische Elemente Querformat</string>
+  <string name="menu_cfg_page_edit_gauges_portrait">Graphische Elemente Hochformat</string>
+  <string name="menu_cfg_page_edit_display_order">Anzeigereihenfolge der Ergebnisse</string>
+  <string name="menu_cfg_select_edit">Andere Datei editieren</string>
+  <string name="menu_cfg_edit_reset">XML Editor zurücksetzen</string>
+  <string name="menu_cfg_close">Schließen</string>
+  <string name="menu_xml_tool">Konfigurationsgenerator</string>
+  <string name="menu_ediabas_tool">Ediabas Tool</string>
+  <string name="menu_bmw_coding">Kodieren</string>
+  <string name="menu_download_ecu">ECU Dateien herunterladen</string>
+  <string name="menu_extract_ecu">ECU Dateien entpacken</string>
+  <string name="menu_submenu_log">Datenaufzeichnung</string>
+  <string name="menu_trace_submenu">Trace Datei</string>
+  <string name="menu_send_trace">Trace Datei senden</string>
+  <string name="menu_open_trace">Trace Datei öffnen</string>
+  <string name="menu_send_last_trace">Trace Datei erneut senden</string>
+  <string name="menu_open_last_trace">Letzte Trace Datei öffnen</string>
+  <string name="menu_global_settings">Globale Einstellungen</string>
+  <string name="menu_submenu_help">Onlinehilfe</string>
+  <string name="menu_info">App Info</string>
+  <string name="menu_exit">App beenden</string>
+  <string name="menu_hint_copy_folder">Sie können Dateien zu und vom App Verzeichnis in den globalen Einstellungen kopieren.</string>
+
+  <!-- Data logging -->
+  <string name="datalog_enable_trace">Tracefile erzeugen</string>
+  <string name="datalog_append_trace">Tracefile anhängen</string>
+  <string name="datalog_enable_datalog">Daten aufzeichnen</string>
+  <string name="datalog_append_datalog">Logdaten anhängen</string>
+  <string name="datalog_no_tags">Es sind keine Tags für die Datenaufzeichnung vorhanden.\nUm die Datenaufzeichnung zu aktivieren, müssen Tags für die Datenaufzeichnung auf der ECU Seite des Konfigurationsgenerator angegeben werden.</string>
+  <string name="datalog_temporary">Die Datenaufzeichung ist nur temporär.\nUm die Einstellung zu speichern, aktivieren Sie die die Option \'Speichern der Logdaten-Einstellungen\' in den globalen Einstellungen.</string>
+  <string name="datalog_date">Datum</string>
+
+  <!-- FilePicker -->
+  <string name="select_file">Datei wählen</string>
+  <string name="access_dir_failed">Zugriff verweigert:</string>
+  <string name="file_picker_dir_select">Lang klicken um das Verzeichnis auszuwählen oder wählen Sie \'.\' für das aktuellen Verzeichnisses.</string>
+  <string name="file_picker_search">Suchen</string>
+
+  <!-- Storage media selection -->
+  <string name="select_media">Speichermedium auswählen</string>
+  <string name="default_media">Standard</string>
+  <string name="free_space">frei</string>
+
+  <!-- Interface selection -->
+  <string name="select_interface">Interface auswählen</string>
+  <string name="select_interface_bt">Bluetooth</string>
+  <string name="select_interface_enet">ENET / Deep OBD WIFI</string>
+  <string name="select_interface_elmwifi">ELM327 WIFI</string>
+  <string name="select_interface_deepobdwifi">Deep OBD ELM WIFI</string>
+  <string name="select_interface_ftdi">USB (FTDI)</string>
+  <string name="select_interface_simulation">Simulation</string>
+
+  <!-- Manufacturer selection -->
+  <string name="select_manufacturer">Hersteller auswählen</string>
+  <string name="select_manufacturer_bmw">BMW</string>
+  <string name="select_manufacturer_audi">Audi</string>
+  <string name="select_manufacturer_seat">Seat</string>
+  <string name="select_manufacturer_skoda">Skoda</string>
+  <string name="select_manufacturer_vw">VW</string>
+
+  <!-- Translator selection -->
+  <string name="select_translator_yantex">Yantex.Translate</string>
+  <string name="select_translator_ibm">IBM Watson</string>
+  <string name="select_translator_deepl">DeepL</string>
+  <string name="select_translator_yandex_cloud">Yandex Cloud</string>
+
+  <!-- Bluetooth -->
+  <string name="mtc_disconnect_warn">Für eine stabile Kommunikation mit dem Adapter wird empfohlen, irgendein zuätzliches Smartphone mit dem Radio zu koppeln.\nWollen Sie trotzdem fortfahren?</string>
+  <string name="mtc_not_bound_warn">Der Bluetooth Service ist nicht aktiv, versuchen Sie die App später noch einmal zu starten.\nWollen Sie trotzdem fortfahren?</string>
+
+  <!-- Wi-Fi-->
+  <string name="connected_with_wifi_adapter">Sie sind im Moment mit einem Wi-Fi Adapter verbunden.\nFür den Internetzugriff muss der Adapter getrennt werden.\nWollen Sie Wi-Fi jetzt ausschalten?</string>
+
+  <!-- USB -->
+  <string name="ftdi_fake_device">Der angeschlossene USB Adapter verwendet ein deaktivierten gefälschten FT232R Chip.\nFür eine stabile Verbindung werden nur original FTDI Chips empfohlen.</string>
+
+  <!-- ENET ip selection -->
+  <string name="select_enet_ip_search">Fahrzeuge suchen</string>
+  <string name="select_enet_ip">ENET IP-Adresse wählen</string>
+  <string name="select_enet_ip_auto">Automatisch</string>
+  <string name="select_enet_ip_none">Nicht konfiguriert</string>
+  <string name="select_enet_ip_edit">IP-Addresse</string>
+  <string name="select_enet_ip_port_edit">Portnummer (optional)</string>
+  <string name="select_enet_info_ip">Lokale IP</string>
+  <string name="select_enet_info_mask">Netzmaske</string>
+  <string name="select_enet_info_dhcp_srv">DHCP Server</string>
+
+  <!-- ENET adapter config -->
+  <string name="enet_adapter_web_info">Das Default-Password für das Adapter-Webinterface ist {0}.\nFalls der Adapter nach der Konfiguration nicht mehr erreichbar ist, müssen Sie den Adapter öffnen und die Resetaste drücken, nachdem der Adapter gebootet hat.</string>
+  <string name="enet_adapter_wifi_info">Wenn Sie einen Deep OBD BMW Wi-Fi Adapter verwenden, wählen Sie den Access Point mit dem Namen \'Deep OBD BMW\', das Default-Password ist deepobdbmw.</string>
+  <string name="enet_adapter_ssid_warn">Sie sind nicht mit einem Deep OBD BMW, Unichip ENET oder modBMW Wi-Fi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
+  <string name="enet_ethernet_hint">Wenn Sie eine direkte Ethernet Kabelverbindung verwenden, müssen Sie den Android LAN Adapter mit einer Auto-IP Adresse konfigurieren,\nz.B. 169.254.1.10 / 255.255.0.0.</string>
+
+  <!-- ELM327 Wi-Fi -->
+  <string name="elmwifi_adapter_warn">Sie sind nicht mit einem ELM327 Wi-Fi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
+
+  <!-- Deep OBD Wi-Fi -->
+  <string name="deepobdwifi_adapter_warn">Sie sind nicht mit einem Deep OBD Wi-Fi Adapter verbunden.\nWollen Sie einen anderen Access Point auswählen?</string>
+
+  <!-- AP mode -->
+  <string name="ap_mode_adapter_ip_error">Im Hotspot-Modus müssen Sie die Adapter IP manuell im App Menü angeben.\nWollen Sie dies jetzt tun?</string>
+
+  <!-- Battery voltage -->
+  <string name="battery_voltage_warn">Die Batteriespannung ist sehr hoch ({0}V),\ndies kann den OBD Adapter zerstören.\nÜberprüfen Sie bitte den Spannungsregler Ihres Fahrzeugs.</string>
+
+  <!--  GlobalSettingsActivity -->
+  <string name="settings_title">Globale Einstellungen</string>
+  <string name="settings_caption_locale">Sprache</string>
+  <string name="settings_locale_default">Standard</string>
+  <string name="settings_locale_en">Englisch</string>
+  <string name="settings_locale_de">Deutsch</string>
+  <string name="settings_locale_ru">Russisch</string>
+  <string name="settings_caption_theme">Theme</string>
+  <string name="settings_theme_dark">Dunkel</string>
+  <string name="settings_theme_light">Hell</string>
+  <string name="settings_caption_title_bar">Titelzeile</string>
+  <string name="settings_auto_hide_title_bar">Titelzeile auf Hauptseite bei Verbindung automatisch ausblenden (mit Lang-Klick und Loslassen anzeigen)</string>
+  <string name="settings_suppress_title_bar">Nicht verwendete Titelzeilen unterdrücken (mit Wischgeste anzeigen)</string>
+  <string name="settings_full_screen_mode">Vollbildmodus</string>
+  <string name="settings_caption_multi_window">Geteilte Bildschirmansicht</string>
+  <string name="settings_swap_multi_window_orientation">Graphische Anzeige: Anzeige-Orientierung in geteilter Ansicht vertauschen</string>
+  <string name="settings_caption_internet">Für OBD Netzwerkadapter Internetverbindung über</string>
+  <string name="settings_internet_cellular">Mobiles Netzwerk</string>
+  <string name="settings_internet_wifi">Wi-Fi</string>
+  <string name="settings_internet_ethernet">Ethernet</string>
+  <string name="settings_caption_bluetooth_enable">Bluetooth einschalten</string>
+  <string name="settings_always_enable_bt">Immer Bluetooth einschalten ohne Nachfrage</string>
+  <string name="settings_ask_for_bt_enable">Nachfragen ob Bluetooth eingeschaltet werden soll</string>
+  <string name="settings_no_bt_handling">Keine automatische Bluetooth-Behandlung</string>
+  <string name="settings_caption_bluetooth_disable">Bluetooth ausschalten</string>
+  <string name="settings_disable_bt_at_exit">Bluetooth beim Beenden auschalten, wenn nicht verwendet und von App eingeschaltet</string>
+  <string name="settings_caption_lock_communication">Sperre während der Kommunikation</string>
+  <string name="settings_caption_lock_logging">Sperre während der Datenaufzeichnung</string>
+  <string name="settings_lock_none">Gerät wechselt in den Energiesparmodus und die Kommunikation wird beendet</string>
+  <string name="settings_lock_cpu">CPU bleibt aktiv</string>
+  <string name="settings_lock_dim">Bildschirm wird gedimmt</string>
+  <string name="settings_lock_bright">Bildschirm bleibt hell</string>
+  <string name="settings_caption_logfiles">Datenaufzeichnung</string>
+  <string name="settings_store_data_log_settings">Speichern der Logdaten-Einstellungen</string>
+  <string name="settings_caption_app_start">App starten</string>
+  <string name="settings_start_offline">Keine Verbindungsaufbau zum Fahrzeug</string>
+  <string name="settings_start_connect">Automatischer Verbindungsaufbau zum Fahrzeug</string>
+  <string name="settings_start_connect_close">Automatischer Verbindungsaufbau zum Fahrzeug und App beenden</string>
+  <string name="settings_start_boot">Automatischer Servicestart beim Booten um den letzten Verbindungszustand wieder herzustellen</string>
+  <string name="settings_caption_update">Update-Prüfung</string>
+  <string name="settings_update_off">Niemals</string>
+  <string name="settings_update_1day">Jeden Tag</string>
+  <string name="settings_update_1week">Jede Woche</string>
+  <string name="settings_caption_app_exit">App beenden</string>
+  <string name="settings_sys_config">App-Start konfigurieren</string>
+  <string name="settings_double_click_for_app_exit">Doppelklick notwendig um App zu beenden</string>
+  <string name="settings_caption_broadcast">Broadcast</string>
+  <string name="settings_send_data_broadcast">Daten-Broadcasts senden</string>
+  <string name="settings_caption_cpu_usage">CPU Auslastung</string>
+  <string name="settings_check_cpu_usage">CPU Auslastung am Start prüfen</string>
+  <string name="settings_caption_check_ecu_files">ECU Dateien überprüfen</string>
+  <string name="settings_check_ecu_files">ECU Dateien beim Start überprüfen</string>
+  <string name="settings_caption_battery_voltage_warning">Batteriespannungs-Warnung</string>
+  <string name="settings_show_battery_voltage_warning">Überspannungswarnung anzeigen</string>
+  <string name="settings_caption_old_vag_mode">VAG Modus</string>
+  <string name="settings_old_vag_mode">Alten VAG Modus verwenden</string>
+  <string name="settings_caption_bmw_database">BMW Datenbank</string>
+  <string name="settings_use_bmw_database">BMW Datenbank verwenden</string>
+  <string name="settings_show_only_relevant_errors">Nur relevante Fehler anzeigen</string>
+  <string name="settings_caption_scan_all_ecus">ECU Erkennung</string>
+  <string name="settings_scan_all_ecus">Bei BMW Fahrzeugen mit DS2 Protokoll immer alle ECUs scannen (langsam)</string>
+  <string name="settings_caption_file_manage">Dateimanagement</string>
+  <string name="settings_storage_sel_public_dir">Öffentliches Verzeichnis auswählen</string>
+  <string name="settings_storage_sel_app_dir">App Verzeichnis auswählen</string>
+  <string name="settings_storage_copy_tree_to_app">Verzeichnis zur App kopieren</string>
+  <string name="settings_storage_copy_tree_from_app">Datei oder Verzeichnis von der App kopieren</string>
+  <string name="settings_storage_del_tree_from_app">Datei oder Verzeichnis von der App löschen</string>
+  <string name="settings_caption_storage">Speichermedium</string>
+  <string name="settings_caption_notifications">Benachrichtigungen</string>
+  <string name="settings_notification_settings">Benachrichtigungseinstellungen</string>
+  <string name="settings_caption_debug">Debuggen</string>
+  <string name="settings_collect_debug_info">Debug-Informationen für Trace-Datei sammeln</string>
+  <string name="settings_uncompressed_trace">Unkomprimierte Trace-Dateien erzeugen (langsam)</string>
+  <string name="settings_hci_snoop_log">Bluetooth HCI Snoop Log Datei:\n{0}</string>
+  <string name="settings_hci_snoop_log_config">Snoop Log Konfigurieren</string>
+  <string name="settings_options">Einstellungen</string>
+  <string name="settings_default_settings">Standardeinstellungen</string>
+  <string name="settings_export_settings">Einstellungen exportieren</string>
+  <string name="settings_import_settings">Einstellungen importieren</string>
+  <string name="settings_import_no_file">Die Importdatei wurde nicht gefunden:</string>
+  <string name="settings_export_private">Wollen Sie auch private Daten exportieren?</string>
+  <string name="settings_mtc_boot_hint_title">Die Bootoption funktioniert oft nicht korrekt bei Android Radios.</string>
+  <string name="settings_mtc_boot_hint_app_manger">Es wird empfohlen Deep OBD im App-Manager so zu konfigurieren, dass es im Standby aktiv bleibt.</string>
+  <string name="settings_mtc_boot_hint_start">Es wird empfohlen die zweite Startoption wählen und Deep OBD immer im Vordergrund zu lassen, damit die App nach dem Standby aktiv bleibt.\nMit anderen Tools (z.B. Automation, Macrodroid) muss der App-Start nach dem Booten ausgeführt werden.</string>
+  <string name="settings_internal_location_boot_hint">Die Bootoption ist nur verfügbar, wenn die App im internen Speicher installiert ist.</string>
+  <string name="settings_start_app_failed">Die App konnte nicht gestartet werden.</string>
+
+  <!--  EdiabasToolActivity -->
+  <string name="tool_title">Ediabas Tool</string>
+  <string name="tool_select_sgbd">SGBD auswählen</string>
+  <string name="tool_read_sgbd">SGBD Informationen lesen</string>
+  <string name="tool_job_jobs">Jobs:</string>
+  <string name="tool_job_jobs_prompt">Job auswählen</string>
+  <string name="tool_job_job">Job:</string>
+  <string name="tool_job_arguments">Argumente:</string>
+  <string name="tool_job_bin_args">Daten (Hex optional mit Leerzeichen)</string>
+  <string name="tool_job_arg_assist">Argumenten Assistent</string>
+  <string name="tool_job_arguments_error_detail">Ohne Argumente werden alle Fehler gelesen</string>
+  <string name="tool_job_arguments_info_detail">Ohne Argumente werden alle Informationen gelesen</string>
+  <string name="tool_job_results">Ergebnisse:</string>
+  <string name="tool_job_result">Ergebnis:</string>
+  <string name="tool_job_infos">Informationen:</string>
+  <string name="tool_check_continuous">Fortlaufend</string>
+  <string name="tool_read_errors_failure">Fehler lesen fehlgeschlagen</string>
+  <string name="tool_no_errors">Keine Fehler</string>
+  <string name="tool_jobs_not_found_list">Die folgenden Jobs konnten in der ECU nicht gefunden werden:</string>
+
+  <!--  Argument Assistant Status -->
+  <string name="arg_assist_title">Argument Assistent</string>
+  <string name="arg_assist_arg_type">Argumententyp</string>
+  <string name="arg_assist_type_arg">Argument Name (ARG)</string>
+  <string name="arg_assist_type_id">Argument Id (ID)</string>
+  <string name="arg_assist_control_param">Steuerparameter</string>
+  <string name="arg_assist_str">Routine starten (STR)</string>
+  <string name="arg_assist_stpr">Routine stoppen (STPR)</string>
+  <string name="arg_assist_rrr">Routine Ergebnisse abfragen (RRR)</string>
+  <string name="arg_assist_rctecu">Kontrolle an ECU übergeben (RCTECU)</string>
+  <string name="arg_assist_rtd">Auf Default zurücksetzen (RTD)</string>
+  <string name="arg_assist_fcs">Aktuellen Zustand einfrieren (FCS)</string>
+  <string name="arg_assist_sta">Kurzzeitige Änderung (STA)</string>
+  <string name="arg_assist_args">Argumente</string>
+  <string name="arg_assist_block_number">Block Nummer</string>
+  <string name="arg_assist_define_new">Block neu definieren</string>
+  <string name="arg_assist_control_arg">Argument</string>
+  <string name="arg_assist_control_arg_prompt">Argument auswählen</string>
+  <string name="arg_assist_control_parameter">Parameter</string>
+  <string name="arg_assist_amount_limit">Abhängig vom ECU-Typ ist die Anzahl der Argumente begrenzt.\nWenn sie zu viele Argumente wählen, werden keine Daten übertragen.</string>
+  <string name="arg_assist_apply_args">Wollen Sie die gewählten Argumente übernehmen?</string>
+
+  <!-- Ediabas Tool Options Menu -->
+  <string name="menu_tool_sel_interface">Schnittstelle</string>
+  <string name="menu_tool_offline">Offline</string>
+  <string name="menu_tool_sel_sgbd_grp">SGBD (grp)</string>
+  <string name="menu_tool_sel_sgbd_prg">SGBD (prg)</string>
+
+  <!-- XML Tool Activity -->
+  <string name="xml_tool_title">Konfigurationsgenerator</string>
+  <string name="button_xml_tool_read">Lesen</string>
+  <string name="button_xml_tool_edit">Bearbeiten</string>
+  <string name="button_xml_tool_save">Speichern</string>
+  <string name="xml_tool_analyze">Fahrzeugdaten lesen</string>
+  <string name="xml_tool_continue_search">Wollen Sie den letzten abgebrochenen Suchvorgang fortsetzen?</string>
+  <string name="xml_tool_clear_ecus">Sollen die bestehenden ECUs gelöscht werden?</string>
+  <string name="xml_tool_del_all_info">Sollen alle informationen (inklusive der XML Dateien) für diese Konfiguration gelöscht werden?</string>
+  <string name="xml_tool_reset_ecu_setting">Sollen alle Einstellungen für diese ECU gelöscht werden?</string>
+  <string name="xml_tool_read_ecu_again">Wollen Sie die vollständige ECU-Liste erneut vom Fahrzeug lesen?</string>
+  <string name="xml_tool_search_ecus">ECUs werden gesucht.\nErkannt: {0}/{1}</string>
+  <string name="xml_tool_sel_mwtab_info">Es wurden mehrere Datentabellen für diese ECU gefunden.\nBitte wählen Sie die Datentabelle, welche am Besten für Ihre ECU passt.\nWenn die 7. und 8. Stelle der FG-Nummer im Namen enthalten ist, sollte man diese Tabelle bevorzugen.</string>
+  <string name="xml_tool_no_mwtab">Es wurden keine Datentabellen für diese ECU gefunden</string>
+  <string name="xml_tool_select_sgbd">Fahrzeugtyp auswählen</string>
+  <string name="xml_tool_no_response">Keine Antwort vom Fahrzeug</string>
+  <string name="xml_tool_no_response_manual">Keine Antwort vom Fahrzeug.\nBei Motorrädern sollten Sie die Motorräder erkennen Option im Menü aktivieren.\nBei K-LINE Fahrzeugen wird ein USB oder Deep OBD Adapter benötigt.\nHier finden Sie eine Liste der <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>unterstützten Adapter</a>.\nWollen Sie auf <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>manuelle Konfiguration</a> umschalten?</string>
+  <string name="xml_tool_no_response_adapter">Keine Antwort vom Fahrzeug.\nWollen Sie die Adapter-Verbindung überprüfen?</string>
+  <string name="xml_tool_no_response_raw">Keine Antwort vom Fahrzeug.\nDer direkte Kommunikationsmodus is aktiv und könnte die Ursache des Problems sein.\nWollen sie einen anderen Adapter wählen?</string>
+  <string name="xml_tool_read_jobs_failed">Jobs lesen fehlgeschlagen</string>
+  <string name="xml_tool_aborting">Vorgang wird abgebrochen</string>
+  <string name="xml_tool_read_ecu_info_failed">ECU Information lesen fehlgeschlagen</string>
+  <string name="xml_tool_save_xml_failed">Konfiguration speichern fehlgeschlagen</string>
+  <string name="xml_tool_msg_save_config">Wollen Sie die Konfiguration speichern?</string>
+  <string name="xml_tool_msg_save_config_select">Wollen Sie die Konfiguration speichern und als aktive Konfiguration verwenden?</string>
+  <string name="xml_tool_msg_save_config_empty">Sie haben keine Daten für die Anzeige ausgewählt.\nKlicken Sie auf die ECUs und wählen Sie die gewünschen Jobs und Ergebnisse.\nWollen Sie die Konfiguration trotzdem speichern?</string>
+  <string name="xml_tool_msg_ecu_error">Für einige ECUs konnten keine Information ermittelt werden.</string>
+  <string name="xml_tool_msg_pin78">Eine Verbindung zwischen den Adapter Pins 7 and 8 ist notwendig, um mehr ECUs erkennen zu können.\nBei Fahrzeugen mit OBD I Buchse im Motorraum muss zusätzlich Pin 8 an der OBD II Buchse im Fahrzeug verbunden werden!</string>
+  <string name="xml_tool_msg_page_not_avail">Die gewählte ECU Seite kann nicht geöffnet werden.\nDie Konfiguration muss mit dem Konfigurationsgenerator erstellt worden sein und die ECU erreichbar sein.</string>
+  <string name="xml_tool_msg_service_menu">Um Service Funktionen für eine ECU auszuführen, öffnen sie das Kontextmenü der ECU und wählen Sie den Eintrag \'Service Funktionen\'.</string>
+  <string name="xml_tool_select_ecu_type">ECU-Typ auswählen</string>
+  <string name="xml_tool_ecu_list">Erkannte ECUs</string>
+  <string name="xml_tool_info_sgbd">SGBD</string>
+  <string name="xml_tool_info_grp">Gruppe</string>
+  <string name="xml_tool_info_vin">FG-NR</string>
+  <string name="xml_tool_errors_page">Fehler</string>
+  <string name="xml_tool_auto_config">Automatisch</string>
+  <string name="xml_tool_man_config">Manuell</string>
+  <string name="xml_tool_job_read_mwblock">Messwerteblock lesen</string>
+  <string name="xml_tool_job_read_vin">Fahrgestellnummer lesen</string>
+  <string name="xml_tool_result_vin">Fahrgestellnummer</string>
+  <string name="xml_tool_service_open_jobs">{0} Jobs anzeigen</string>
+  <string name="xml_tool_service_jobs_warning">Die Servicefunktionen sind noch experimentell!\nDie angezeigten Jobs im Ediabas Tool haben unter Umständen nur Defaultargumente, welche vor der Jobausführung angepasst werden müssen!\nDer Argumenten Assistent kann dabei hilfreich sein.\nEs ist Ihre Verantwortung die Jobs vor der Ausführung zu prüfen!\nAufgrund der Komplexität der Datenerfassung, kann es sein, dass zukünftig die Jobs Deep OBD Adaptern für die Ausführung benötigen.\nWollen Sie trotzdem fortfahren?</string>
+  <string name="xml_tool_drag_list_hint">Langklick auf die ECU um die Reihenfolge zu ändern.</string>
+  <string name="xml_tool_job_results">Job Ergebnisse:</string>
+  <string name="xml_tool_num_job_results">Anzahl Job Ergebnisse: {0}</string>
+
+  <!-- XML Tool Options Menu -->
+  <string name="menu_xml_tool_add_errors_page">Fehlerseite hinzufügen</string>
+  <string name="menu_xml_tool_detect_motorbikes">Motorräder erkennen</string>
+  <string name="menu_xml_tool_cfg_type">Konfiguration</string>
+
+  <!-- XML Tool Edit Menu -->
+  <string name="menu_xml_tool_edit_detect">ECUs erkennen</string>
+  <string name="menu_xml_tool_edit_grp">ECU (grp) hinzufügen</string>
+  <string name="menu_xml_tool_edit_prg">ECU (prg) hinzufügen</string>
+  <string name="menu_xml_tool_edit_del">Unbenutze ECUs löschen</string>
+  <string name="menu_xml_tool_edit_del_all">Alle ECU-Informationen löschen</string>
+
+  <!-- XML Tool context Menu -->
+  <string name="menu_xml_config_ecu">ECU Konfigurieren</string>
+  <string name="menu_xml_tool_move_top">An den Anfang verschieben</string>
+  <string name="menu_xml_tool_move_up">Nach oben verschieben</string>
+  <string name="menu_xml_tool_move_down">Nach unten verschieben</string>
+  <string name="menu_xml_tool_move_bottom">An das Ende verschieben</string>
+  <string name="menu_xml_tool_ediabas_tool">Ediabas Tool</string>
+  <string name="menu_xml_tool_bmw_actuator">Aktuator Funktionen</string>
+  <string name="menu_xml_tool_bmw_service">Service Funktionen</string>
+  <string name="menu_xml_tool_vag_coding">Kodieren</string>
+  <string name="menu_xml_tool_vag_coding2">Kodieren 2</string>
+  <string name="menu_xml_tool_vag_adaption">Adaption</string>
+  <string name="menu_xml_tool_vag_login">Login</string>
+  <string name="menu_xml_tool_vag_sec_access">Zugriffsberechtigung</string>
+
+    <!-- XML Tool Ecu Activity -->
+  <string name="xml_tool_ecu_title">Jobs für ECU: {0}</string>
+  <string name="xml_tool_ecu_job_comments">Kommentare für Job: {0}</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info">ECU Informationen:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_addr">Adresse {0:X02}:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_subsys">Subsystem {0}:</string>
+  <string name="xml_tool_ecu_result_comments">Kommentare für Ergebnis: {0}</string>
+  <string name="xml_tool_ecu_result_type">Datentyp</string>
+  <string name="xml_tool_ecu_user_format">Anwender</string>
+  <string name="xml_tool_ecu_format">Ausgabeformat</string>
+  <string name="xml_tool_ecu_format_right">Rechts</string>
+  <string name="xml_tool_ecu_format_left">Links</string>
+  <string name="xml_tool_ecu_page_name">Seitenname</string>
+  <string name="xml_tool_ecu_ecu_name">ECU Name</string>
+  <string name="xml_tool_ecu_display_type">Anzeigeart</string>
+  <string name="xml_tool_ecu_display_type_grid">Graphische Anzeige</string>
+  <string name="xml_tool_ecu_font_size">Schriftgröße</string>
+  <string name="xml_tool_ecu_font_size_small">Klein</string>
+  <string name="xml_tool_ecu_font_size_medium">Mittel</string>
+  <string name="xml_tool_ecu_font_size_large">Groß</string>
+  <string name="xml_tool_ecu_grid_count">Graphische Elemente pro Zeile</string>
+  <string name="xml_tool_ecu_grid_count_portrait_value">Hochformat</string>
+  <string name="xml_tool_ecu_grid_count_landscape_value">Querformat</string>
+  <string name="xml_tool_ecu_jobs_name">Job Liste</string>
+  <string name="xml_tool_ecu_show_all_jobs">Alle Jobs anzeigen</string>
+  <string name="xml_tool_ecu_results">Job Ergebnis</string>
+  <string name="xml_tool_ecu_show_all_results">Alle Ergebnisse anzeigen</string>
+  <string name="xml_tool_ecu_arg_limit">Maximale Argumente pro Anfrage</string>
+  <string name="xml_tool_ecu_arg_limit_off">Unbegrenzt</string>
+  <string name="xml_tool_ecu_display_text">Anzeigetext</string>
+  <string name="xml_tool_ecu_display_order">Anzeigereihenfolge</string>
+  <string name="xml_tool_ecu_log_tag">Tag für Datenaufzeichnung</string>
+  <string name="xml_tool_ecu_grid_type">Graphische Darstellung</string>
+  <string name="xml_tool_ecu_grid_type_hidden">Verborgen</string>
+  <string name="xml_tool_ecu_grid_type_text">Nur Text</string>
+  <string name="xml_tool_ecu_grid_type_simple_square">Einfache eckige Anzeige</string>
+  <string name="xml_tool_ecu_grid_type_simple_round">Einfache runde Anzeige</string>
+  <string name="xml_tool_ecu_grid_type_simple_dot">Einfache Anzeige mit Punkt</string>
+  <string name="xml_tool_ecu_min_value">Min Wert</string>
+  <string name="xml_tool_ecu_max_value">Max Wert</string>
+  <string name="xml_tool_ecu_test_format">Format testen</string>
+  <string name="xml_tool_button_test_format">Lesen</string>
+  <string name="xml_tool_ecu_add_functions">Zusätzliche Funtionen</string>
+  <string name="xml_tool_button_ediabas_tool">Ediabas Tool</string>
+  <string name="xml_tool_button_bmw_actuator">Aktuator Funktionen</string>
+  <string name="xml_tool_button_bmw_service">Service Funktionen</string>
+  <string name="xml_tool_button_bmw_coding">Kodieren</string>
+  <string name="xml_tool_button_coding">Kodieren</string>
+  <string name="xml_tool_button_coding2">Kodieren 2</string>
+  <string name="xml_tool_button_adaption">Adaption</string>
+  <string name="xml_tool_button_login">Login</string>
+  <string name="xml_tool_button_sec_access">Zugriffsberechtigung</string>
+  <string name="xml_tool_execute_test_job">Job wird ausgeführt</string>
+  <string name="xml_tool_read_test_job_failed">Ausführen des Jobs fehlgeschlagen</string>
+  <string name="xml_tool_ecu_msg_save_lock">Das Schreiben der Konfiguration wurde in der Konfigurationsdatei gesperrt.\nÄnderungen können nicht gespeichert werden.</string>
+  <string name="xml_tool_ecu_msg_no_selection">Sie haben keine Daten für die Anzeige ausgewählt.\nWählen Sie hierfür zunächst die gewünschen Jobs und Ergebnisse aus der Liste.\nWollen Sie trotzdem abbrechen?</string>
+  <string name="xml_tool_ecu_msg_no_grid_selection">Sie haben die graphische Anzeige aktiviert, aber keine graphische Darstellung ausgewählt.\nEs wird keine graphische Darstellung angezeigt.\nWollen Sie trotzdem fortfahren?</string>
+  <string name="xml_tool_ecu_msg_func_not_avail">Die gewählte Funktion ist nicht verfügbar.</string>
+  <string name="xml_tool_ecu_arg_limit_hint">Die maximalen Argumente pro Anfrage hängen vom ECU Typ ab.\nWenn nicht alle Werte auf der Hauptseite angezeigt werden, müssen Sie die \"Maximale Argumente pro Anfrage\" reduzieren.</string>
+
+  <!-- VAG Coding Activity -->
+  <string name="vag_coding_title_coding">ECU Kodieren: {0}</string>
+  <string name="vag_coding_title_login">ECU Login: {0}</string>
+  <string name="vag_coding_title_sec_access">ECU Zugriffsberechtigung: {0}</string>
+  <string name="vag_coding_subsystem_title">Subsystem</string>
+  <string name="vag_coding_short_title">Kodierung (dec): {0}-{1}</string>
+  <string name="vag_coding_login_title">Login (dec): {0}-{1}</string>
+  <string name="vag_coding_sec_access_title">Zugriffsberechtigung (dec): {0}-{1}</string>
+  <string name="vag_coding_comments_title">Hinweise</string>
+  <string name="vag_coding_raw_title">Kodierung (hex)</string>
+  <string name="vag_coding_workshop_number_title">Betriebsnummer (dec): {0}-{1}</string>
+  <string name="vag_coding_importer_number_title">Importeursnummer (dec): {0}-{1}</string>
+  <string name="vag_coding_equipment_number_title">Gerätenummer (dec): {0}-{1}</string>
+  <string name="vag_coding_ecu_reset">ECU Reset durchführen</string>
+  <string name="vag_coding_assistant_title">Kodierungs-Assistent</string>
+  <string name="vag_coding_execute_title">Vorgang ausführen</string>
+  <string name="vag_coding_button_execute">Ausführen</string>
+  <string name="vag_coding_processing">Vorgang wird ausgeführt</string>
+  <string name="vag_coding_write_values_invalid">Wenn die Betriebsnummer, Importeursnummer oder Gerätenummer 0 oder zu groß sind, kann es sein, dass die ECU die Werte ablehnt.\nWollen Sie trotzdem fortfahren?</string>
+  <string name="vag_coding_write_coding_illegal_arguments">Die Job Argumente sind außerhalb des gültigen Bereichs</string>
+  <string name="vag_coding_write_coding_failed">Der Vorgang ist fehlgeschlagen</string>
+  <string name="vag_coding_write_coding_access_denied">Zugriff verweigert, Sie müssen sich zuerst authentifizieren</string>
+  <string name="vag_coding_write_coding_reset_failed">Der ECU Reset ist fehlgeschlagen</string>
+  <string name="vag_coding_write_coding_ok">Kodierung schreiben erfolgreich</string>
+  <string name="vag_coding_write_coding2_failed">Kodierung schreiben fehlgeschlagen.\nWenn der Code falsch war, müssen Sie die Zündung für mindesten 10 Minuten eingeschaltet lassen, bevor Sie es erneut versuchen!</string>
+  <string name="vag_coding_login_job_failed">Login fehlgeschlagen.\nWenn der Code falsch war, müssen Sie die Zündung für 1 bis 2 Minuten ausschalten, bevor Sie es erneut versuchen!</string>
+  <string name="vag_coding_login_job_ok">Login erfolgreich</string>
+  <string name="vag_coding_sec_access_job_failed">Zugriffsberechtigung fehlgeschlagen</string>
+  <string name="vag_coding_sec_access_job_ok">Zugriffsberechtigung erfolgreich</string>
+
+  <!-- VAG Adaption Activity -->
+  <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
+  <string name="vag_adaption_channel_title">Dokumentierter Kanal</string>
+  <string name="vag_adaption_channel_select">Adaptionskanal wählen</string>
+  <string name="vag_adaption_channel_reset">Adaptionswerte zurücksetzen</string>
+  <string name="vag_adaption_channel_reset_info">Das Speichern von Adaptionskanal 0 setzt alle Lernwerte zurück</string>
+  <string name="vag_adaption_channel_number_title">Kanalnummer</string>
+  <string name="vag_adaption_comments_title">Hinweise</string>
+  <string name="vag_adaption_value_current_title">Aktueller Adaptionswert</string>
+  <string name="vag_adaption_value_new_title">Neuer Adaptionswert</string>
+  <string name="vag_adaption_value_test_title">Getesteter Adaptionswert</string>
+  <string name="vag_adaption_meas_value_title">Wert {0}: {1}</string>
+  <string name="vag_adaption_workshop_number_title">Betriebsnummer (dec): {0}-{1}</string>
+  <string name="vag_adaption_importer_number_title">Importeursnummer (dec): {0}-{1}</string>
+  <string name="vag_adaption_equipment_number_title">Gerätenummer (dec): {0}-{1}</string>
+  <string name="vag_adaption_operation_title">Vorgänge</string>
+  <string name="vag_adaption_service_id">Service ID:</string>
+  <string name="vag_adaption_button_read">Lesen</string>
+  <string name="vag_adaption_button_test">Testen</string>
+  <string name="vag_adaption_button_store">Speichern</string>
+  <string name="vag_adaption_button_stop">Stop</string>
+  <string name="vag_adaption_ecu_reset">ECU Reset durchführen</string>
+  <string name="vag_adaption_change_coding_first">Es wird empfohlen, zunächst die Kodierung in der ECU zu korrigieren.</string>
+
+  <!-- BMW Actuator Activity -->
+  <string name="bmw_actuator_title">Aktuator ECU: {0}</string>
+  <string name="bmw_actuator_function_title">Funktion</string>
+  <string name="bmw_actuator_function_prompt">Funktion wählen</string>
+  <string name="bmw_actuator_comments_title">Hinweise</string>
+  <string name="bmw_actuator_status_title">Status</string>
+  <string name="bmw_actuator_operation_title">Vorgänge</string>
+  <string name="bmw_actuator_button_execute_single">Einmalig Ausführen</string>
+  <string name="bmw_actuator_button_execute_continuous">Dauerhaft Ausführen</string>
+  <string name="bmw_actuator_button_stop">Stop</string>
+  <string name="bmw_actuator_operation_failed">Der Vorgang ist fehlgeschlagen</string>
+
+  <!-- BMW Coding Activity -->
+  <string name="bmw_coding_title">BMW Kodieren</string>
+  <string name="bmw_coding_series">Das aktuelle Fahrzeugmodell ist: {0}.</string>
+  <string name="bmw_coding_requirement">BMW Kodieren ist nur verfügbar für F Modelle oder höher.</string>
+  <string name="bmw_coding_network_error">Das Laden der Webseite ist fehlgeschlagen, wiederholen.</string>
+  <string formatted="false" name="bmw_coding_connect_request">BMW Kodieren ist ein Online Dienst und benötigt eine stabile und schnelle Internetverbindung.\nEs ist nur für F Modelle oder höher verfügbar.\nEin Hochstrom Ladegerät ist während der Kodierung notwendig.\nIn der Testphase ist es kostenlos, später wird eine Lizenz benötigt, um die Serverkosten zu decken.\nOriginale &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md#buy-a-preprogrammed-adapter\'&gt;Deep OBD Adapter&lt;/a&gt; enthalten eine Lizenz um ein Fahrzeug zu kodieren.\nWollen Sie fortfahren?</string>
+  <string name="bmw_coding_connecting">Verbindungsaufbau.</string>
+  <string name="bmw_coding_connect_failed">Verbindungsaufbau fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.</string>
+  <string name="bmw_coding_connect_url_failed">Die Verbindung zum Server ist fehlgeschlagen.\nWollen Sie es noch einmal versuchen?</string>
+  <string name="bmw_coding_connection_active">Die Verbindung zum Fahrzeug is aktiv.\nWenn Sie die Seite verlassen wird die Verbindung unterbrochen.\nBitte trennen Sie die Verbindung zuerst.\nWollen Sie trotzdem die Seite verlassen?</string>
+  <string name="bmw_coding_mtc_reject">Die Bluetooth Verbindung der Android Radios ist nicht stabil genug für das Kodieren.\nBitte verwenden Sie stattdessen ein Smartphone.</string>
+  <string name="bmw_coding_elm_reject">Die ELM327 Adapters sind nicht stabil genug für das Kodieren.\nBitte verwenden Sie ein Deep OBD, ENET oder FTDI Adapter.</string>
+  <string name="bmw_coding_ssl_fail">Der Aufbau der verschlüsselten Verbindung ist fehlgeschlagen, die Daten werden unverschlüsselt übertragen.</string>
+
+  <!-- CAN Adapter Activity -->
+  <string name="can_adapter_title">Adapter Konfiguration</string>
+  <string name="can_adapter_mode_name">CAN Betriebsart</string>
+  <string name="can_adapter_sep_time">Telegrammabstand [ms]</string>
+  <string name="can_adapter_block_size">Blockgröße</string>
+  <string name="can_adapter_bt_pin">Bluetooth Pin</string>
+  <string name="can_adapter_bt_name">Bluetooth Name</string>
+  <string name="can_adapter_ignition_state">Zündung</string>
+  <string name="can_adapter_bat_voltage">Batteriespannung</string>
+  <string name="can_adapter_fw_version">Firmwareversion (aktuell / verfügbar)</string>
+  <string name="can_adapter_ser_num">Seriennummer</string>
+  <string name="can_adapter_type">Adaptertyp</string>
+  <string name="can_adapter_type_unknown">Unbekannt</string>
+  <string name="can_adapter_expert">Expertenmodus</string>
+  <string name="can_adapter_comm_error">Es ist ein Kommunikationsfehler aufgetreten</string>
+  <string name="can_adapter_comm_error_std">Es ist ein Kommunikationsfehler aufgetreten.\nDie Adapterkonfiguration ist nur möglich,\nwenn die Adapter LED nach dem Einschalten aktiv ist.</string>
+  <string name="can_adapter_blacklisted">Der Adapter ist ungültig.</string>
+  <string name="can_adapter_ignition_on">Zündung an</string>
+  <string name="can_adapter_ignition_off">Zündung aus</string>
+  <string name="can_adapter_ignition_no_status">Kein Status verfügbar</string>
+  <string name="can_adapter_text_off">0: Aus (Standard)</string>
+  <string name="can_adapter_pin_length">Die Bluetooth Pin muss mindestens 4 Stellen lang sein</string>
+  <string name="can_adapter_name_length">Die Länge des UTF-8 Bluetoothnamens ist ungültig</string>
+  <string name="can_adapter_new_pin">Die neue Bluetooth Pin {0} wird aktiv, wenn der Adapter aus und eingeschaltet wird.</string>
+  <string name="can_adapter_new_name">Der neue Bluetooth Name wird aktiv, wenn der Adapter aus und eingeschaltet wird.</string>
+  <string name="can_adapter_processing">Vorgang wird ausgeführt</string>
+  <string name="can_adapter_fw_update_present">Es ist ein Firmwareupdate für den Adpter vorhanden.\nWollen Sie das Update jetzt installieren?</string>
+  <string name="can_adapter_fw_update_info">Während des Updates darf die Kommunikation auf keinen Fall unterbrochen werden.\nWollen Sie fortfahren?</string>
+  <string name="can_adapter_fw_update_info_ftdi">Für das Update ist es notwendig, dass der Bootloader einmalig in das Gerät geflasht wurde.\nWenn die Applikation nicht mehr startet, muss der Prozessor während des Verbindungsaufbaus zurückgesetzt werden, aber die USB Kommunikation darf nicht unterbrochen werden.\nWollen Sie fortfahren?</string>
+  <string name="can_adapter_fw_elm_info">Die ELM327{0} kompatible Firmware wird ohne Support zur Verfügung gestellt.\nBitte lesen sie die original ELM327{0} Documentation für mehr Details.</string>
+  <string name="can_adapter_fw_update_connect">Verbindungsaufbau zum Gerät, ein Prozessor-Reset kann notwendig sein.</string>
+  <string name="can_adapter_fw_update_active">Firmware Aktualisierung aktiv.\nBitte Kommunikation nicht unterbrechen.</string>
+  <string name="can_adapter_fw_update_conn_failed">Verbindung zum Adapter fehlgeschlagen</string>
+  <string name="can_adapter_fw_update_failed">Firmware Aktualisierung fehlgeschlagen.\nWenn alle Adapter LEDs aktiv sind, befindet sich der Adapter im Bootloader Modus und muss für den normalen Gebrauch erneut geflashed werden.</string>
+  <string name="can_adapter_fw_update_ok">Firmware Aktualisierung erfolgreich</string>
+  <string name="can_adapter_fw_update_ok_detect">Die Firmware Aktualisierung war erfolgreich.\nSie sollten den Adapter neu starten, danach müssen sie ihn wieder neu erkennen.</string>
+  <string name="can_adapter_fw_invalid">Die Firmware Datei ist fehlerhaft.</string>
+  <string name="can_adapter_bt_not_reliable">Ihr Android Gerät ist dafür bekannt, dass die Bluetooth-Verbindung nicht zuverlässig ist.\nBitte verwenden Sie ein anderes Gerät.</string>
+  <string name="can_adapter_select_fw_file">Firmware auswählen</string>
+  <string name="button_can_adapter_read">Lesen</string>
+  <string name="button_can_adapter_write">Schreiben</string>
+  <string name="button_can_adapter_close">Schließen</string>
+  <string name="button_can_adapter_can_auto">Automatisch</string>
+  <string name="button_can_adapter_can_500">D-CAN (ab 3/2007)</string>
+  <string name="button_can_adapter_can_100">K-CAN (kein Standard)</string>
+  <string name="button_can_adapter_can_off">K-LINE (vor 3/2007)</string>
+  <string name="button_can_adapter_fw_sel">Firmware auswählen</string>
+  <string name="button_can_adapter_fw_update">Firmware aktualisieren</string>
+  <string name="button_can_adapter_fw_change_elm">ELM327 Firmware flashen</string>
+  <string name="button_can_adapter_fw_change_custom">Ersatzfirmware flashen</string>
+
+  <!-- CarService -->
+  <string name="car_service_button_connect">Verbinden</string>
+  <string name="car_service_button_disconnect">Trennen</string>
+  <string name="car_service_connected">Das Fahrzeug ist verbunden.</string>
+  <string name="car_service_fg_service_disabled">Die Einstellungen sind ungültig,\nverwenden sie keinen Energiesparmodus.</string>
+  <string name="car_service_disconnected">Das Fahrzeug ist nicht verbunden.\nDie Kommuniation muss zuerst (in der App) gestartet werden.</string>
+  <string name="car_service_no_config">Keine Konfiguration geladen.\nEs muss zuerst eine Konfiguration in der App geladen werden.</string>
+  <string name="car_service_app_processing">Verbindungsaufbau in der App auf dem Smartphone aktiv.</string>
+  <string name="car_service_app_displayed">Die App wird auf dem Smartphone angezeigt.</string>
+  <string name="car_service_app_store_settings">Die App auf dem Smartphone speichert die Einstellungen.</string>
+  <string name="car_service_section_pages">Fahrzeugdaten</string>
+  <string name="car_service_page_list">Seitenliste</string>
+  <string name="car_service_page_list_show">Seitenliste anzeigen</string>
+  <string name="car_service_settings_lock_none">Energiesparmodus</string>
+  <string name="car_service_settings_invalid_mode">Option für Android Auto ungültig.</string>
+  <string name="car_service_active_page">Aktive Seite</string>
+  <string name="car_service_no_pages">Keine Seiten</string>
+  <string name="car_service_no_data">Keine Daten</string>
+  <string name="car_service_active_page_change">Die aktive Seite hat sich geändert.</string>
+  <string name="car_service_active_data_amount_change">Die Anzahl der Daten hat sich verändert.</string>
+  <string name="car_service_error_reset">Zurücksetzen</string>
+  <string name="car_service_error_reset_active">Der Fehlerreset ist aktiv.</string>
+  <string name="car_service_error_reset_started">Der Fehlerreset wurde gestartet.</string>
+  <string name="car_service_test_info">- Android Auto Testversion verfügbar.\n Kontaktieren Sie den Entwickler über die Webseite.</string>
+</resources>
