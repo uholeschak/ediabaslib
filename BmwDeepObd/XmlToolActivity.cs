@@ -8034,13 +8034,14 @@ namespace BmwDeepObd
             bool useCompatIds = false;
             if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
             {
+                useCompatIds = true;
                 string dataId = ActivityCommon.EcuFunctionReader.FaultDataId;
                 XAttribute dbNameAttr = pageNode.Attribute("db_name");
                 if (dbNameAttr != null)
                 {
-                    if (string.Compare(dataId, dbNameAttr.Value, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.Compare(dataId, dbNameAttr.Value, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        useCompatIds = true;
+                        useCompatIds = false;
                     }
                 }
             }
@@ -8402,18 +8403,20 @@ namespace BmwDeepObd
                     pageNode.Add(new XAttribute("logfile", ActivityCommon.CreateValidFileName(ecuInfo.Name + ".log")));
                 }
 
-                string assetEcuId = ActivityCommon.AssetEcuId;
-                if (!string.IsNullOrWhiteSpace(assetEcuId))
+                string dataId = "-";
+                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                 {
-                    XAttribute dbNameAttr = pageNode.Attribute("db_name");
-                    if (dbNameAttr == null)
-                    {
-                        pageNode.Add(new XAttribute("db_name", assetEcuId));
-                    }
-                    else
-                    {
-                        dbNameAttr.Value = assetEcuId;
-                    }
+                    dataId = ActivityCommon.EcuFunctionReader.FaultDataId;
+                }
+
+                XAttribute dbNameAttr = pageNode.Attribute("db_name");
+                if (dbNameAttr == null)
+                {
+                    pageNode.Add(new XAttribute("db_name", dataId));
+                }
+                else
+                {
+                    dbNameAttr.Value = dataId;
                 }
 
                 XElement stringsNode = GetDefaultStringsNode(ns, pageNode);

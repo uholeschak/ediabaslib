@@ -194,8 +194,15 @@ namespace BmwDeepObd
                 DisplayList = displayList;
                 StringList = stringList;
 
-                string assetEcuId = ActivityCommon.AssetEcuId;
-                UseCompatIds = string.Compare(dbName, assetEcuId, StringComparison.OrdinalIgnoreCase) != 0;
+                UseCompatIds = false;
+                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                {
+                    string dataId = ActivityCommon.EcuFunctionReader.FaultDataId;
+                    if (string.Compare(dbName, dataId, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        UseCompatIds = true;
+                    }
+                }
 
                 CompatIdsUsed = false;
                 if (JobsInfo != null)
