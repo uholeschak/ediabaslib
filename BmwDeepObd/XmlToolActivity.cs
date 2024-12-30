@@ -8031,14 +8031,18 @@ namespace BmwDeepObd
                 }
             }
 
-            bool useCompatIds = true;
-            XAttribute dbNameAttr = pageNode.Attribute("db_name");
-            if (dbNameAttr != null)
+            bool useCompatIds = false;
+            if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
             {
-                string dbName = ActivityCommon.AssetEcuId;
-                if (string.Compare(dbName, dbNameAttr.Value, StringComparison.OrdinalIgnoreCase) == 0)
+                useCompatIds = true;
+                string dataId = ActivityCommon.EcuFunctionReader.FaultDataId;
+                XAttribute dbNameAttr = pageNode.Attribute("db_name");
+                if (dbNameAttr != null)
                 {
-                    useCompatIds = false;
+                    if (string.Compare(dataId, dbNameAttr.Value, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        useCompatIds = false;
+                    }
                 }
             }
             ecuInfo.UseCompatIds = useCompatIds;

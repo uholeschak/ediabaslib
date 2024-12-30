@@ -26,13 +26,7 @@ namespace BmwFileReader
         private EcuFunctionStructs.EcuFaultData _ecuFaultData;
         private string _ecuFaultDataLanguage;
 
-        public string FaultDataVersion
-        {
-            get;
-            private set;
-        }
-
-        public string FaultDataDate
+        public string FaultDataId
         {
             get;
             private set;
@@ -120,8 +114,9 @@ namespace BmwFileReader
 
             try
             {
-                FaultDataVersion = ecuFaultData.DatabaseVersion ?? string.Empty;
-                FaultDataDate = ecuFaultData.DatabaseDate.ToString(CultureInfo.InvariantCulture);
+                string faultDataVersion = ecuFaultData.DatabaseVersion ?? string.Empty;
+                string faultDataDate = ecuFaultData.DatabaseDate.ToString(CultureInfo.InvariantCulture);
+                FaultDataId = faultDataVersion + faultDataDate;
 
                 DateTime rulesInfoDate = DateTime.Parse(RulesInfo.DatabaseDate, CultureInfo.InvariantCulture);
                 VehicleStructsBmw.VersionInfo rulesVersionInfo = new VehicleStructsBmw.VersionInfo(RulesInfo.DatabaseVersion, rulesInfoDate);
