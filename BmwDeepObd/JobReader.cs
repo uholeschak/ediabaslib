@@ -194,29 +194,7 @@ namespace BmwDeepObd
                 DisplayList = displayList;
                 StringList = stringList;
 
-                UseCompatIds = false;
-                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
-                {
-                    string dataId = ActivityCommon.EcuFunctionReader.FaultDataId;
-                    if (string.Compare(dbName, dataId, StringComparison.OrdinalIgnoreCase) != 0)
-                    {
-                        UseCompatIds = true;
-                    }
-                }
-
-                CompatIdsUsed = false;
-                if (JobsInfo != null)
-                {
-                    foreach (JobInfo jobInfo in JobsInfo.JobList)
-                    {
-                        jobInfo.UseCompatIds = UseCompatIds;
-                        if (UseCompatIds && !string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
-                        {
-                            CompatIdsUsed = true;
-                            break;
-                        }
-                    }
-                }
+                UpdateCompatIdUsage();
 
                 InfoObject = null;
                 ClassObject = null;
@@ -261,6 +239,33 @@ namespace BmwDeepObd
                 }
             }
 
+            public void UpdateCompatIdUsage()
+            {
+                UseCompatIds = false;
+                if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
+                {
+                    string dataId = ActivityCommon.EcuFunctionReader.FaultDataId;
+                    if (string.Compare(DbName, dataId, StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        UseCompatIds = true;
+                    }
+                }
+
+                CompatIdsUsed = false;
+                if (JobsInfo != null)
+                {
+                    foreach (JobInfo jobInfo in JobsInfo.JobList)
+                    {
+                        jobInfo.UseCompatIds = UseCompatIds;
+                        if (UseCompatIds && !string.IsNullOrWhiteSpace(jobInfo.FixedFuncStructId))
+                        {
+                            CompatIdsUsed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
             public int? GaugesPortrait { get; }
 
             public int GaugesPortraitValue => GaugesPortrait ?? GaugesPortraitDefault;
@@ -287,9 +292,9 @@ namespace BmwDeepObd
 
             public List<StringInfo> StringList { get; }
 
-            public bool UseCompatIds { get; }
+            public bool UseCompatIds { get; private set; }
 
-            public bool CompatIdsUsed { get; }
+            public bool CompatIdsUsed { get; private set; }
 
             public object InfoObject { get; set; }
 
@@ -399,7 +404,8 @@ namespace BmwDeepObd
 
         public ActivityCommon.InterfaceType Interface => _interfaceType;
 
-        public bool IsMotorbike {
+        public bool IsMotorbike
+        {
             get
             {
                 if (!string.IsNullOrEmpty(_bnType))
@@ -419,6 +425,19 @@ namespace BmwDeepObd
                 }
 
                 return false;
+            }
+        }
+
+        public void UpdateCompatIdUsage()
+        {
+            _compatIdsUsed = false;
+            foreach (PageInfo pageInfo in _pageList)
+            {
+                pageInfo.UpdateCompatIdUsage();
+                if (pageInfo.CompatIdsUsed)
+                {
+                    _compatIdsUsed = true;
+                }
             }
         }
 
@@ -939,13 +958,9 @@ namespace BmwDeepObd
                     }
                 }
 
+                UpdateCompatIdUsage();
                 foreach (PageInfo pageInfo in _pageList)
                 {
-                    if (pageInfo.CompatIdsUsed)
-                    {
-                        _compatIdsUsed = true;
-                    }
-
                     if (pageInfo.ErrorsInfo != null)
                     {
                         _errorPage = pageInfo;
