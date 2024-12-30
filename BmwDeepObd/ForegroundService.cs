@@ -1088,6 +1088,7 @@ namespace BmwDeepObd
 #if DEBUG
                         Android.Util.Log.Info(Tag, "CommStateMachine: StartEdiabasThread no page selected");
 #endif
+                        ActivityCommon.JobReader.UpdateCompatIdUsage();
                         if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo, EdiabasEventHandler))
                         {
 #if DEBUG

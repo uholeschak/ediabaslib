@@ -2170,6 +2170,12 @@ namespace BmwDeepObd
                 }
                 else
                 {
+                    ActivityCommon.JobReader.UpdateCompatIdUsage();
+                    if (ActivityCommon.JobReader.CompatIdsUsed)
+                    {
+                        ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn), ActivityCommon.BalloonDismissDuration, BalloonAlligment.Top);
+                    }
+
                     if (!_instanceData.AdapterCheckOk && _activityCommon.AdapterCheckRequired)
                     {
                         if (_checkAdapter.StartCheckAdapter(_instanceData.AppDataPath,
@@ -2628,6 +2634,7 @@ namespace BmwDeepObd
                 _translatedList = null;
                 _maxDispUpdateTime = 0;
 
+                ActivityCommon.JobReader.UpdateCompatIdUsage();
                 if (!_activityCommon.StartEdiabasThread(_instanceData, pageInfo, EdiabasEventHandler))
                 {
                     return false;
@@ -5286,13 +5293,6 @@ namespace BmwDeepObd
                         {
                             string balloonMessage = string.Format(GetString(Resource.String.compile_cpu_usage_high), cpuUsage);
                             ShowBallonMessage(balloonMessage);
-                        }
-                        else
-                        {
-                            if (jobReader.CompatIdsUsed)
-                            {
-                                ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn), ActivityCommon.BalloonDismissDuration, BalloonAlligment.Top);
-                            }
                         }
                     });
                 }
