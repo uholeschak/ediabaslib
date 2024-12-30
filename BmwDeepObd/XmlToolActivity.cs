@@ -8403,20 +8403,12 @@ namespace BmwDeepObd
                     pageNode.Add(new XAttribute("logfile", ActivityCommon.CreateValidFileName(ecuInfo.Name + ".log")));
                 }
 
-                string dataId = "-";
+                XAttribute dbNameAttr = pageNode.Attribute("db_name");
+                dbNameAttr?.Remove();
                 if (ActivityCommon.EcuFunctionsActive && ActivityCommon.EcuFunctionReader != null)
                 {
-                    dataId = ActivityCommon.EcuFunctionReader.FaultDataId;
-                }
-
-                XAttribute dbNameAttr = pageNode.Attribute("db_name");
-                if (dbNameAttr == null)
-                {
+                    string dataId = ActivityCommon.EcuFunctionReader.FaultDataId;
                     pageNode.Add(new XAttribute("db_name", dataId));
-                }
-                else
-                {
-                    dbNameAttr.Value = dataId;
                 }
 
                 XElement stringsNode = GetDefaultStringsNode(ns, pageNode);
