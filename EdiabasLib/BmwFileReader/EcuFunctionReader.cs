@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Serialization;
 using ICSharpCode.SharpZipLib.Zip;
 // ReSharper disable ConvertToUsingDeclaration
@@ -114,9 +115,23 @@ namespace BmwFileReader
 
             try
             {
-                string faultDataVersion = ecuFaultData.DatabaseVersion ?? string.Empty;
-                string faultDataDate = ecuFaultData.DatabaseDate.ToString(CultureInfo.InvariantCulture);
-                FaultDataId = faultDataVersion + faultDataDate;
+                StringBuilder sbDataId = new StringBuilder();
+
+                string databaseVersion = ecuFaultData.DatabaseVersion;
+                if (!string.IsNullOrEmpty(databaseVersion))
+                {
+                    sbDataId.Append(databaseVersion);
+                }
+
+                if (sbDataId.Length > 0)
+                {
+                    sbDataId.Append("_");
+                }
+
+                string faultDataDate = ecuFaultData.DatabaseDate.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+                sbDataId.Append(faultDataDate);
+
+                FaultDataId = sbDataId.ToString();
 
                 DateTime rulesInfoDate = DateTime.Parse(RulesInfo.DatabaseDate, CultureInfo.InvariantCulture);
                 VehicleStructsBmw.VersionInfo rulesVersionInfo = new VehicleStructsBmw.VersionInfo(RulesInfo.DatabaseVersion, rulesInfoDate);

@@ -730,7 +730,7 @@
     <xs:attribute name="db_name" type="string1-type" use="optional">
       <xs:annotation>
         <xs:documentation>
-          ID of the database that has been used to generate the configuration.
+          ID of the BMW database that has been used to generate the configuration.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
