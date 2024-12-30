@@ -353,6 +353,7 @@ namespace BmwDeepObd
         private bool _manualEdit;
         private bool _logTagsPresent;
         private bool _compatIdsUsed;
+        private bool _compatIdWarningShown;
         private string _sgbdFunctional = string.Empty;
         private string _interfaceName = string.Empty;
         private string _vehicleSeries = string.Empty;
@@ -383,6 +384,12 @@ namespace BmwDeepObd
         public bool LogTagsPresent => _logTagsPresent;
 
         public bool CompatIdsUsed => _compatIdsUsed;
+
+        public bool CompatIdWarningShown
+        {
+            get => _compatIdWarningShown;
+            set => _compatIdWarningShown = value;
+        }
 
         public string SgbdFunctional => _sgbdFunctional;
 
@@ -455,6 +462,7 @@ namespace BmwDeepObd
             _logPath = string.Empty;
             _logTagsPresent = false;
             _compatIdsUsed = false;
+            _compatIdWarningShown = false;
             _sgbdFunctional = string.Empty;
             _manufacturerName = string.Empty;
             _interfaceName = string.Empty;

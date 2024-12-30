@@ -2175,7 +2175,11 @@ namespace BmwDeepObd
 
                     if (ActivityCommon.JobReader.CompatIdsUsed)
                     {
-                        ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn), ActivityCommon.BalloonDismissDuration, BalloonAlligment.Top);
+                        if (!ActivityCommon.JobReader.CompatIdWarningShown)
+                        {
+                            ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn), ActivityCommon.BalloonDismissDuration, BalloonAlligment.Top);
+                            ActivityCommon.JobReader.CompatIdWarningShown = true;
+                        }
                     }
 
                     if (!_instanceData.AdapterCheckOk && _activityCommon.AdapterCheckRequired)
