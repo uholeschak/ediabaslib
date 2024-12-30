@@ -26,6 +26,18 @@ namespace BmwFileReader
         private EcuFunctionStructs.EcuFaultData _ecuFaultData;
         private string _ecuFaultDataLanguage;
 
+        public string FaultDataVersion
+        {
+            get;
+            private set;
+        }
+
+        public string FaultDataDate
+        {
+            get;
+            private set;
+        }
+
         private class StreamEventReader : StreamReader
         {
             public delegate bool ReadEventHandler(int bytesRead);
@@ -108,6 +120,9 @@ namespace BmwFileReader
 
             try
             {
+                FaultDataVersion = ecuFaultData.DatabaseVersion ?? string.Empty;
+                FaultDataDate = ecuFaultData.DatabaseDate.ToString(CultureInfo.InvariantCulture);
+
                 DateTime rulesInfoDate = DateTime.Parse(RulesInfo.DatabaseDate, CultureInfo.InvariantCulture);
                 VehicleStructsBmw.VersionInfo rulesVersionInfo = new VehicleStructsBmw.VersionInfo(RulesInfo.DatabaseVersion, rulesInfoDate);
                 if (!rulesVersionInfo.IsMinVersion(ecuFaultData.DatabaseVersion, ecuFaultData.DatabaseDate))
