@@ -2171,6 +2171,8 @@ namespace BmwDeepObd
                 else
                 {
                     ActivityCommon.JobReader.UpdateCompatIdUsage();
+                    _fragmentStateAdapter?.UpdatePageTitles();
+
                     if (ActivityCommon.JobReader.CompatIdsUsed)
                     {
                         ShowBallonMessage(GetString(Resource.String.compile_compat_id_warn), ActivityCommon.BalloonDismissDuration, BalloonAlligment.Top);
@@ -7700,7 +7702,7 @@ namespace BmwDeepObd
                 public JobReader.PageInfo PageInfo { get; }
                 public long ItemId { get; }
                 public int ResourceId { get; }
-                public string Title { get; }
+                public string Title { get; set; }
             }
 
             private static long IdOffset;
@@ -7775,6 +7777,29 @@ namespace BmwDeepObd
                 }
 
                 NotifyItemInserted(position);
+            }
+
+            public void UpdatePageTitles()
+            {
+                bool changed = false;
+                foreach (TabPageInfo tabPageInfo in _pageList)
+                {
+                    JobReader.PageInfo pageInfo = tabPageInfo.PageInfo;
+                    if (pageInfo != null)
+                    {
+                        string title = GetPageString(pageInfo, pageInfo.Name);
+                        if (tabPageInfo.Title != title)
+                        {
+                            tabPageInfo.Title = title;
+                            changed = true;
+                        }
+                    }
+                }
+
+                if (changed)
+                {
+                    NotifyDataSetChanged();
+                }
             }
         }
 
