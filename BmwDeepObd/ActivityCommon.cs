@@ -10912,7 +10912,7 @@ namespace BmwDeepObd
             try
             {
                 Regex regex = new Regex(@"^Ecu.*\.bin$", RegexOptions.IgnoreCase);
-                AssetManager assets = ActivityCommon.GetPackageContext()?.Assets;
+                AssetManager assets = GetPackageContext()?.Assets;
                 if (assets != null)
                 {
                     string[] assetFiles = assets.List(string.Empty);
@@ -11055,7 +11055,30 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    if (resourceAssembly != null)
+                    if (assetManager != null)
+                    {
+                        AssetFileDescriptor assetFile = null;
+                        try
+                        {
+                            assetFile = assetManager.OpenFd(archiveFilenameIn);
+                            using (Stream inputStream = assetFile.CreateInputStream())
+                            {
+                                if (inputStream == null)
+                                {
+                                    throw new IOException("Opening asset stream failed");
+                                }
+
+                                fs = new MemoryStream();
+                                inputStream.CopyTo(fs);
+                                fs.Seek(0, SeekOrigin.Begin);
+                            }
+                        }
+                        finally
+                        {
+                            assetFile?.Close();
+                        }
+                    }
+                    else if (resourceAssembly != null)
                     {
                         fs = resourceAssembly.GetManifestResourceStream(archiveFilenameIn);
                     }

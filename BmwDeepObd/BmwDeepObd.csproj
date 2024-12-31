@@ -34,6 +34,7 @@
   <ItemGroup>
     <AndroidAsset Remove="Assets\.gitignore" />
     <AndroidAsset Update="Assets\Ecu.bin" AssetPack="assets1" DeliveryType="InstallTime" />
+    <AndroidAsset Update="Assets\Sample.zip" AssetPack="assets1" DeliveryType="InstallTime" />
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="Mono.Android" RootMode="visible" />
@@ -44,7 +45,6 @@
     <None Remove="Assets\Ecu.bin" />
     <None Remove="Resources\layout\service_busy.xml" />
     <None Remove="Resources\xml\automotive_app_desc.xml" />
-    <None Remove="Sample\Sample.zip" />
     <None Remove="Xml\BmwDeepObd.xsd" />
   </ItemGroup>
   <ItemGroup>
@@ -76,7 +76,6 @@
     <Compile Include="..\Tools\ApkUncompress2\Utilities\MonoAndroidHelper.Basic.cs" Link="ApkUncompress\MonoAndroidHelper.Basic.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Sample\Sample.zip" />
     <EmbeddedResource Include="Xml\BmwDeepObd.xsd" />
   </ItemGroup>
   <ItemGroup>

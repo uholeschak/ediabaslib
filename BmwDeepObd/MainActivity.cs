@@ -6453,7 +6453,26 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string resourceName = VehicleInfoBmw.FindResourceName("Sample.zip");
+                AssetManager assets = ActivityCommon.GetPackageContext()?.Assets;
+                if (assets == null)
+                {
+                    return false;
+                }
+
+                string resourceName = null;
+                string[] assetFiles = assets.List(string.Empty);
+                if (assetFiles != null)
+                {
+                    foreach (string fileName in assetFiles)
+                    {
+                        if (fileName.EndsWith("Sample.zip", StringComparison.OrdinalIgnoreCase))
+                        {
+                            resourceName = fileName;
+                            break;
+                        }
+                    }
+                }
+
                 if (string.IsNullOrEmpty(resourceName))
                 {
                     return false;
@@ -6518,8 +6537,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                ActivityCommon.ExtractZipFile(null, assembly, resourceName, sampleDir, null, null, null, null);
+                ActivityCommon.ExtractZipFile(assets, null, resourceName, sampleDir, null, null, null, null);
 
                 XElement xmlInfo = new XElement("Info");
                 xmlInfo.Add(new XAttribute("Name", resourceName));
