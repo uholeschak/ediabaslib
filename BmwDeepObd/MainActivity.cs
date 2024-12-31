@@ -6463,9 +6463,10 @@ namespace BmwDeepObd
                 string[] assetFiles = assets.List(string.Empty);
                 if (assetFiles != null)
                 {
+                    Regex regex = new Regex(@"^Sample.*\.zip$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
                     foreach (string fileName in assetFiles)
                     {
-                        if (fileName.EndsWith("Sample.zip", StringComparison.OrdinalIgnoreCase))
+                        if (regex.IsMatch(fileName))
                         {
                             resourceName = fileName;
                             break;
