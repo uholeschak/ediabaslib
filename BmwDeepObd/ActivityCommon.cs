@@ -786,6 +786,7 @@ namespace BmwDeepObd
         public const int MinSendCommErrors = 3;
         public const int UserNotificationIdMax = 1000;
         public const int BalloonDismissDuration = 4000;
+        private const int StreamBufferSize = 4096;
         public const SslProtocols DefaultSslProtocols = SslProtocols.None;
         public const string PrimaryVolumeName = "primary";
         public const string MtcBtAppName = @"com.microntek.bluetooth";
@@ -10998,7 +10999,7 @@ namespace BmwDeepObd
 
                                     using (CryptoStream crStream = new CryptoStream(fsRead, crypto.CreateDecryptor(), CryptoStreamMode.Read))
                                     {
-                                        byte[] buffer = new byte[4096];     // 4K is optimum
+                                        byte[] buffer = new byte[StreamBufferSize];
                                         using (FileStream fsWrite = File.Create(tempFile))
                                         {
                                             bool aborted = false;
@@ -11068,8 +11069,10 @@ namespace BmwDeepObd
                                     throw new IOException("Opening asset stream failed");
                                 }
 
-                                fs = new MemoryStream();
-                                inputStream.CopyTo(fs);
+                                byte[] buffer = new byte[StreamBufferSize];
+                                string tempFileName = Path.GetTempFileName();
+                                fs = File.Create(tempFileName, StreamBufferSize, FileOptions.DeleteOnClose);
+                                StreamUtils.Copy(inputStream, fs, buffer);
                                 fs.Seek(0, SeekOrigin.Begin);
                             }
                         }
@@ -11184,7 +11187,7 @@ namespace BmwDeepObd
                                 Directory.CreateDirectory(directoryName);
                             }
 
-                            byte[] buffer = new byte[4096];     // 4K is optimum
+                            byte[] buffer = new byte[StreamBufferSize];
                             noRetry = true;     // no retry for zip stream exception
                             using (Stream zipStream = zf.GetInputStream(zipEntry))
                             {
@@ -11283,7 +11286,7 @@ namespace BmwDeepObd
                         };
                         zipStream.PutNextEntry(newEntry);
 
-                        byte[] buffer = new byte[4096];
+                        byte[] buffer = new byte[StreamBufferSize];
                         using (FileStream streamReader = File.OpenRead(filename))
                         {
                             StreamUtils.Copy(streamReader, zipStream, buffer);
@@ -11322,7 +11325,7 @@ namespace BmwDeepObd
                         }
                         if (string.Compare(zipEntry.Name, archiveName, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            byte[] buffer = new byte[4096]; // 4K is optimum
+                            byte[] buffer = new byte[StreamBufferSize];
                             using (Stream zipStream = zf.GetInputStream(zipEntry))
                             {
                                 StreamUtils.Copy(zipStream, outStream, buffer);
@@ -11362,7 +11365,7 @@ namespace BmwDeepObd
                         Size = inStream.Length
                     };
                     zipStream.PutNextEntry(newEntry);
-                    byte[] buffer = new byte[4096];
+                    byte[] buffer = new byte[StreamBufferSize];
                     StreamUtils.Copy(inStream, zipStream, buffer);
                     zipStream.CloseEntry();
                 }
