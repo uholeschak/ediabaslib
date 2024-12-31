@@ -18,7 +18,7 @@ public class ApkUncompressCommon
 {
     public delegate bool ProgressDelegate(int percent);
 
-    private const int BufferSize = 4096;
+    private const int StreamBufferSize = 4096;
     private const string AssembliesPathLibApk = "lib/";
     private const string AssembliesPathLibAab = "base/lib/";
     private const uint CompressedDataMagic = 0x5A4C4158; // 'XALZ', little-endian
@@ -211,9 +211,9 @@ public class ApkUncompressCommon
             }
 
             string tempFileName = Path.GetTempFileName();
-            using (FileStream tempStream = File.Create(tempFileName, BufferSize, FileOptions.DeleteOnClose))
+            using (FileStream tempStream = File.Create(tempFileName, StreamBufferSize, FileOptions.DeleteOnClose))
             {
-                byte[] buffer = new byte[BufferSize]; // 4K is optimum
+                byte[] buffer = new byte[StreamBufferSize];
                 using (Stream zipStream = apk.GetInputStream(entry))
                 {
                     StreamUtils.Copy(zipStream, tempStream, buffer);
