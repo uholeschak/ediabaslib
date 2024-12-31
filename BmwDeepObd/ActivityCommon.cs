@@ -10912,13 +10912,13 @@ namespace BmwDeepObd
 
             try
             {
-                Regex regex = new Regex(@"^Ecu.*\.bin$", RegexOptions.IgnoreCase);
                 AssetManager assets = GetPackageContext()?.Assets;
                 if (assets != null)
                 {
                     string[] assetFiles = assets.List(string.Empty);
                     if (assetFiles != null)
                     {
+                        Regex regex = new Regex(@"^Ecu.*\.bin$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
                         foreach (string fileName in assetFiles)
                         {
                             if (regex.IsMatch(fileName))
