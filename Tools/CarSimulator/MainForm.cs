@@ -813,6 +813,7 @@ namespace CarSimulator
                 UpdateCommThreadConfig();
                 _commThread.ServerCertFile = _serverCertFile;
                 _commThread.ServerCertPwd = _serverCertPwd;
+                _commThread.ServerSslPort = _serverSslPort;
                 _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, checkBoxKLineResponder.Checked, responseType, _configData, enetCommType);
             }
 

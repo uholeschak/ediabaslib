@@ -301,7 +301,6 @@ namespace CarSimulator
         private const int EnetDiagPrgPort = 51560;
         private const int EnetControlPrgPort = 51561;
         private const int DoIpDiagPort = 13400;
-        private const int DoIpDiagSslPort = 13496;
         private const int DoIpProtoVer = EdInterfaceEnet.DoIpProtoVer;
         private const int SrvLocPort = 427;
         // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
@@ -783,6 +782,12 @@ namespace CarSimulator
             set;
         }
 
+        public int ServerSslPort
+        {
+            get;
+            set;
+        }
+
         public bool Connected
         {
             get;
@@ -1031,7 +1036,7 @@ namespace CarSimulator
                     }
 
                     _bmwTcpChannels.Clear();
-                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpDiagPort, DoIpDiagSslPort));
+                    _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpDiagPort, ServerSslPort));
                     _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPrgPort, EnetControlPrgPort));
 
                     foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
