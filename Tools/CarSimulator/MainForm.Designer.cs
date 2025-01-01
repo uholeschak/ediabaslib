@@ -67,6 +67,8 @@
             openCertFileDialog = new System.Windows.Forms.OpenFileDialog();
             textBoxCertPwd = new System.Windows.Forms.TextBox();
             labelCertPwd = new System.Windows.Forms.Label();
+            labelSslPort = new System.Windows.Forms.Label();
+            textBoxSslPort = new System.Windows.Forms.TextBox();
             groupBoxConcepts.SuspendLayout();
             SuspendLayout();
             // 
@@ -472,10 +474,10 @@
             // 
             // textBoxCertPwd
             // 
-            textBoxCertPwd.Location = new System.Drawing.Point(262, 225);
+            textBoxCertPwd.Location = new System.Drawing.Point(77, 225);
             textBoxCertPwd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxCertPwd.Name = "textBoxCertPwd";
-            textBoxCertPwd.Size = new System.Drawing.Size(241, 23);
+            textBoxCertPwd.Size = new System.Drawing.Size(177, 23);
             textBoxCertPwd.TabIndex = 24;
             textBoxCertPwd.TextChanged += textBoxCertPwd_TextChanged;
             // 
@@ -484,15 +486,35 @@
             labelCertPwd.AutoSize = true;
             labelCertPwd.Location = new System.Drawing.Point(12, 228);
             labelCertPwd.Name = "labelCertPwd";
-            labelCertPwd.Size = new System.Drawing.Size(85, 15);
+            labelCertPwd.Size = new System.Drawing.Size(58, 15);
             labelCertPwd.TabIndex = 25;
-            labelCertPwd.Text = "Cert password:";
+            labelCertPwd.Text = "Cert pwd:";
+            // 
+            // labelSslPort
+            // 
+            labelSslPort.AutoSize = true;
+            labelSslPort.Location = new System.Drawing.Point(263, 228);
+            labelSslPort.Name = "labelSslPort";
+            labelSslPort.Size = new System.Drawing.Size(53, 15);
+            labelSslPort.TabIndex = 26;
+            labelSslPort.Text = "SSL port:";
+            // 
+            // textBoxSslPort
+            // 
+            textBoxSslPort.Location = new System.Drawing.Point(323, 225);
+            textBoxSslPort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxSslPort.Name = "textBoxSslPort";
+            textBoxSslPort.Size = new System.Drawing.Size(180, 23);
+            textBoxSslPort.TabIndex = 27;
+            textBoxSslPort.TextChanged += textBoxSslPort_TextChanged;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(764, 618);
+            Controls.Add(textBoxSslPort);
+            Controls.Add(labelSslPort);
             Controls.Add(labelCertPwd);
             Controls.Add(textBoxCertPwd);
             Controls.Add(textBoxServerCert);
@@ -573,6 +595,8 @@
         private System.Windows.Forms.OpenFileDialog openCertFileDialog;
         private System.Windows.Forms.TextBox textBoxCertPwd;
         private System.Windows.Forms.Label labelCertPwd;
+        private System.Windows.Forms.Label labelSslPort;
+        private System.Windows.Forms.TextBox textBoxSslPort;
     }
 }
 

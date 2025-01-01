@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace CarSimulator
         public const string Api32DllName = @"api32.dll";
         public const string ResponseFileStd = "g31_coding.txt";
         public const string ResponseFileE61 = "e61.txt";
+        public const int DefaultSslPort = 3496;
         private const string EcuDirName = "Ecu";
         private const string ResponseDirName = "Response";
         private string _appDir;
@@ -33,6 +35,7 @@ namespace CarSimulator
         private string _responseDir;
         private string _serverCertFile;
         private string _serverCertPwd;
+        private int _serverSslPort = DefaultSslPort;
         private CommThread _commThread;
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
@@ -59,6 +62,15 @@ namespace CarSimulator
             _ecuFolder = Properties.Settings.Default.EcuFolder;
             _serverCertFile = Properties.Settings.Default.ServerCertFile;
             _serverCertPwd = Properties.Settings.Default.ServerCertPwd;
+            try
+            {
+                _serverSslPort = Properties.Settings.Default.ServerSslPort;
+            }
+            catch (Exception)
+            {
+                _serverSslPort = DefaultSslPort;
+            }
+
             _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
             {
@@ -127,6 +139,7 @@ namespace CarSimulator
             Properties.Settings.Default.EcuFolder = _ecuFolder;
             Properties.Settings.Default.ServerCertFile = _serverCertFile;
             Properties.Settings.Default.ServerCertPwd = _serverCertPwd;
+            Properties.Settings.Default.ServerSslPort = _serverSslPort;
             Properties.Settings.Default.Save();
         }
 
@@ -704,6 +717,7 @@ namespace CarSimulator
             textBoxEcuFolder.Text = _ecuFolder ?? string.Empty;
             textBoxServerCert.Text = _serverCertFile ?? string.Empty;
             textBoxCertPwd.Text = _serverCertPwd ?? string.Empty;
+            textBoxSslPort.Text = _serverSslPort.ToString(CultureInfo.InvariantCulture);
             textBoxCertPwd.Enabled = !active;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
@@ -968,6 +982,11 @@ namespace CarSimulator
         private void textBoxCertPwd_TextChanged(object sender, EventArgs e)
         {
             _serverCertPwd = textBoxCertPwd.Text;
+        }
+
+        private void textBoxSslPort_TextChanged(object sender, EventArgs e)
+        {
+            _serverSslPort = int.TryParse(textBoxSslPort.Text, out int value) ? value : DefaultSslPort;
         }
     }
 }

@@ -14,5 +14,8 @@
     <Setting Name="ServerCertPwd" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="ServerSslPort" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">3496</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
