@@ -21,7 +21,7 @@ It is based on the hardware of an [A5-V11 3G/4G Router](https://wiki.openwrt.org
 ## Alternative WiFi adapter
 Since the adapter is no longer available, there are some commercial alternatives:  
 **modBM**: [modBM Wifi ENET adapter](https://modbm.com/shop/wifi-enet/) which also uses the [A5-V11 3G/4G Router](https://wiki.openwrt.org/toh/unbranded/a5-v11).  
-**Unichip**: [Unichip ENET WiFi adapter](https://unichip-tec.com/product/bmw-enet-wifi-adapter/) (company not existing any more) It's recommended to changed the settings of the adapter to the values of the `EnetWifiSettings.dat` configuration file.  
+**Unichip**: Unichip ENET WiFi adapter (historical). It's recommended to load the settings of the `EnetWifiSettings.dat` configuration file into the adapter. The default configuration password of these adapters was `Nichip@_^1755`.  
 For BMW pre F-series use the [Bluetooth adapter](Replacement_firmware_for_ELM327.md)
 
 ## Adapter cable
