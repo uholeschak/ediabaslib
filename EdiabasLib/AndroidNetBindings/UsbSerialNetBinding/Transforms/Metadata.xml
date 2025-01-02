@@ -15,6 +15,8 @@
   <remove-node path="/api/package[@name='com.hoho.android.usbserial.util']/class[@name='SerialInputOutputManager']" />
   <remove-node path="/api/package[@name='com.hoho.android.usbserial.util']/interface[@name='SerialInputOutputManager.Listener']" />
   <remove-node path="/api/package[@name='com.hoho.android.usbserial.util']/class[@name='SerialInputOutputManager.State']" />
+  <remove-node path="/api/package[@name='com.hoho.android.usbserial.driver']/interface[@name='UsbSerialPort']/method[@name='getFlowControl' and count(parameter)=0]" />
+  <remove-node path="/api/package[@name='com.hoho.android.usbserial.driver']/interface[@name='UsbSerialPort']/method[@name='setFlowControl' and count(parameter)=1 and parameter[1][@type='com.hoho.android.usbserial.driver.UsbSerialPort.FlowControl']]" />
 
   <!-- CommonUsbSerialPort -->
   <attr path="/api/package[@name='com.hoho.android.usbserial.driver']/class[@name='CommonUsbSerialPort']" name="visibility">public</attr>
