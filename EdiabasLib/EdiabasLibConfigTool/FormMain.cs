@@ -12,7 +12,6 @@ using SimpleWifi;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Security.AccessControl;
 using System.Threading.Tasks;
 using EdiabasLib;
