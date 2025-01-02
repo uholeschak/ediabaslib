@@ -74,11 +74,33 @@ namespace CarSimulator
         {
             MaxErrorVoltage = 0;
 
-            _wifi = new Wifi();
-            _wlanClient = new WlanClient();
+            try
+            {
+                _wifi = new Wifi();
+            }
+            catch (Exception e)
+            {
+                _wifi = null;
+            }
+
+            try
+            {
+                _wlanClient = new WlanClient();
+            }
+            catch (Exception)
+            {
+                _wlanClient = null;
+            }
 
             _form = form;
             _form.UpdateTestStatusText(string.Empty);
+
+            if (_wifi == null || _wlanClient == null)
+            {
+                string message = string.Format(
+                        "Wi-Fi access has been rejected.\r\nEnable location access for this app in the system.\r\nClick here to open the system app: {0}", "file://ms-settings/privacy-location");
+                _form.UpdateTestStatusText(message);
+            }
         }
 
         public bool TestActive => _workerThread != null && _workerThread.IsAlive;
