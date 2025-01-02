@@ -267,7 +267,6 @@ namespace CarSimulator
                     return false;
                 }
 
-//#pragma warning disable CA1416
                 _launchingSettings = true;
                 IAsyncOperation<bool> launchUri =
                     Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:" + settingsType));
@@ -279,7 +278,6 @@ namespace CarSimulator
                         BeginInvoke((Action)UpdateDisplay);
                     }
                 });
-//#pragma warning restore CA1416
                 return true;
             }
             catch (Exception)
