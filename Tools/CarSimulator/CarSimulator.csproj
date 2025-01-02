@@ -7,6 +7,7 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <Nullable>disable</Nullable>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <ApplicationIcon>AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\EdiabasLib\BmwFileReader\SgFunctions.cs">
@@ -20,6 +21,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AppIcon.ico" />
     <Content Include="PCANBasic.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
