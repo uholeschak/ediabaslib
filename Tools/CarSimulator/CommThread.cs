@@ -1018,7 +1018,7 @@ namespace CarSimulator
                             // openssl x509 -hash -noout -in rootCA.crt
                             // cp rootCA.crt <hash>.0
                             // copy file to EDIABAS.ini [SSL] SecurityPath property location.
-                            
+
                             // client key:
                             // openssl req -new -nodes -out client.csr -newkey rsa:4096 -keyout client.key
                             // openssl x509 -req -in client.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out client.crt -days 36500 -sha256
