@@ -53,7 +53,6 @@
             folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             buttonRootFolder = new System.Windows.Forms.Button();
             buttonDeviceTestBt = new System.Windows.Forms.Button();
-            textBoxTestResults = new System.Windows.Forms.TextBox();
             buttonDeviceTestWifi = new System.Windows.Forms.Button();
             checkBoxBtNameStd = new System.Windows.Forms.CheckBox();
             buttonAbortTest = new System.Windows.Forms.Button();
@@ -69,6 +68,7 @@
             labelCertPwd = new System.Windows.Forms.Label();
             labelSslPort = new System.Windows.Forms.Label();
             textBoxSslPort = new System.Windows.Forms.TextBox();
+            richTextBoxTestResults = new System.Windows.Forms.RichTextBox();
             groupBoxConcepts.SuspendLayout();
             SuspendLayout();
             // 
@@ -161,7 +161,7 @@
             radioButtonTp20.Location = new System.Drawing.Point(7, 234);
             radioButtonTp20.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             radioButtonTp20.Name = "radioButtonTp20";
-            radioButtonTp20.Size = new System.Drawing.Size(92, 19);
+            radioButtonTp20.Size = new System.Drawing.Size(93, 19);
             radioButtonTp20.TabIndex = 28;
             radioButtonTp20.TabStop = true;
             radioButtonTp20.Text = "TP 2.0 (CAN)";
@@ -344,17 +344,6 @@
             buttonDeviceTestBt.UseVisualStyleBackColor = true;
             buttonDeviceTestBt.Click += buttonDeviceTest_Click;
             // 
-            // textBoxTestResults
-            // 
-            textBoxTestResults.Location = new System.Drawing.Point(511, 12);
-            textBoxTestResults.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            textBoxTestResults.Multiline = true;
-            textBoxTestResults.Name = "textBoxTestResults";
-            textBoxTestResults.ReadOnly = true;
-            textBoxTestResults.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            textBoxTestResults.Size = new System.Drawing.Size(240, 256);
-            textBoxTestResults.TabIndex = 16;
-            // 
             // buttonDeviceTestWifi
             // 
             buttonDeviceTestWifi.Location = new System.Drawing.Point(392, 45);
@@ -508,11 +497,24 @@
             textBoxSslPort.TabIndex = 27;
             textBoxSslPort.TextChanged += textBoxSslPort_TextChanged;
             // 
+            // richTextBoxTestResults
+            // 
+            richTextBoxTestResults.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            richTextBoxTestResults.Location = new System.Drawing.Point(510, 12);
+            richTextBoxTestResults.Name = "richTextBoxTestResults";
+            richTextBoxTestResults.ReadOnly = true;
+            richTextBoxTestResults.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            richTextBoxTestResults.Size = new System.Drawing.Size(242, 256);
+            richTextBoxTestResults.TabIndex = 28;
+            richTextBoxTestResults.Text = "";
+            richTextBoxTestResults.LinkClicked += richTextBoxTestResults_LinkClicked;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(764, 618);
+            Controls.Add(richTextBoxTestResults);
             Controls.Add(textBoxSslPort);
             Controls.Add(labelSslPort);
             Controls.Add(labelCertPwd);
@@ -527,7 +529,6 @@
             Controls.Add(buttonAbortTest);
             Controls.Add(checkBoxBtNameStd);
             Controls.Add(buttonDeviceTestWifi);
-            Controls.Add(textBoxTestResults);
             Controls.Add(buttonDeviceTestBt);
             Controls.Add(buttonRootFolder);
             Controls.Add(treeViewDirectories);
@@ -581,7 +582,6 @@
         private System.Windows.Forms.RadioButton radioButtonKwp2000;
         private System.Windows.Forms.RadioButton radioButtonTp20;
         private System.Windows.Forms.Button buttonDeviceTestBt;
-        private System.Windows.Forms.TextBox textBoxTestResults;
         private System.Windows.Forms.Button buttonDeviceTestWifi;
         private System.Windows.Forms.CheckBox checkBoxBtNameStd;
         private System.Windows.Forms.Button buttonAbortTest;
@@ -597,6 +597,7 @@
         private System.Windows.Forms.Label labelCertPwd;
         private System.Windows.Forms.Label labelSslPort;
         private System.Windows.Forms.TextBox textBoxSslPort;
+        private System.Windows.Forms.RichTextBox richTextBoxTestResults;
     }
 }
 

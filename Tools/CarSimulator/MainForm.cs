@@ -6,9 +6,11 @@ using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Windows.Foundation;
 using BmwFileReader;
 using EdiabasLib;
 using Microsoft.Win32;
@@ -25,6 +27,7 @@ namespace CarSimulator
         public const int DefaultSslPort = 3496;
         private const string EcuDirName = "Ecu";
         private const string ResponseDirName = "Response";
+        private volatile bool _launchingSettings;
         private string _appDir;
         private string _ediabasBinDirBmw;
         private string _ediabasEcuDirBmw;
@@ -51,6 +54,7 @@ namespace CarSimulator
         public SgFunctions sgFunctions => _sgFunctions;
         public DeviceTest deviceTest => _deviceTest;
 
+        [SupportedOSPlatform("windows")]
         public MainForm()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -246,6 +250,46 @@ namespace CarSimulator
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public bool StartSettingsApp(string settingsType)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(settingsType))
+                {
+                    return false;
+                }
+
+                if (_launchingSettings)
+                {
+                    return false;
+                }
+
+//#pragma warning disable CA1416
+                _launchingSettings = true;
+                IAsyncOperation<bool> launchUri =
+                    Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:" + settingsType));
+                launchUri.AsTask().ContinueWith(task =>
+                {
+                    if (InvokeRequired)
+                    {
+                        _launchingSettings = false;
+                        BeginInvoke((Action)UpdateDisplay);
+                    }
+                });
+//#pragma warning restore CA1416
+                return true;
+            }
+            catch (Exception)
+            {
+                _launchingSettings = false;
+                return false;
+            }
+            finally
+            {
+                UpdateDisplay();
             }
         }
 
@@ -710,7 +754,7 @@ namespace CarSimulator
             bool connected = _commThread != null && _commThread.ThreadRunning();
             bool testing = _deviceTest != null && _deviceTest.TestActive;
             bool testAborted = _deviceTest != null && _deviceTest.AbortTest;
-            bool active = connected || testing;
+            bool active = connected || testing || _launchingSettings;
             bool testFilePresent = !string.IsNullOrEmpty(responseDir) && File.Exists(Path.Combine(responseDir, ResponseFileE61));
             bool ecuFolderExits = !string.IsNullOrEmpty(_ecuFolder) && Directory.Exists(_ecuFolder);
 
@@ -887,10 +931,10 @@ namespace CarSimulator
             }
             else
             {
-                textBoxTestResults.Text = text;
-                textBoxTestResults.SelectionStart = textBoxTestResults.TextLength;
-                textBoxTestResults.Update();
-                textBoxTestResults.ScrollToCaret();
+                richTextBoxTestResults.Text = text;
+                richTextBoxTestResults.SelectionStart = richTextBoxTestResults.TextLength;
+                richTextBoxTestResults.Update();
+                richTextBoxTestResults.ScrollToCaret();
             }
         }
 
@@ -988,6 +1032,20 @@ namespace CarSimulator
         private void textBoxSslPort_TextChanged(object sender, EventArgs e)
         {
             _serverSslPort = int.TryParse(textBoxSslPort.Text, out int value) ? value : DefaultSslPort;
+        }
+
+        private void richTextBoxTestResults_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            string url = e.LinkText;
+            if (string.IsNullOrEmpty(url))
+            {
+                return;
+            }
+
+            if (url.Contains("privacy-location"))
+            {
+                StartSettingsApp("privacy-location");
+            }
         }
     }
 }
