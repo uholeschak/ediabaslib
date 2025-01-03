@@ -7,4 +7,4 @@ set JAVA_HOME=C:\Program Files\Java\jdk-11.0.17
 Build:
 gradlew.bat clean
 gradlew.bat build
-copy library\build\outputs\aar\library-release.aar to DragListViewNetBinding
+copy build\outputs\aar\CustomGauge-release.aar to CustomGaugeNetBinding
