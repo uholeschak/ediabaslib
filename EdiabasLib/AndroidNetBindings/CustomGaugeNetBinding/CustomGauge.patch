@@ -1,5 +1,5 @@
 diff --git a/CustomGauge/build.gradle b/CustomGauge/build.gradle
-index 43357d5..4a4bad7 100644
+index 43357d5..a00ce6f 100644
 --- a/CustomGauge/build.gradle
 +++ b/CustomGauge/build.gradle
 @@ -25,11 +25,11 @@ ext {
@@ -7,13 +7,13 @@ index 43357d5..4a4bad7 100644
  
  android {
 -    compileSdkVersion 28
-+    compileSdkVersion 33
++    compileSdkVersion 34
  
      defaultConfig {
 -        minSdkVersion 15
 -        targetSdkVersion 28
-+        minSdkVersion 19
-+        targetSdkVersion 33
++        minSdkVersion 21
++        targetSdkVersion 34
          versionCode 4
          versionName "1.0.4"
      }
@@ -49,7 +49,7 @@ index 9913a85..e2718d6 100644
          mPaint = new Paint();
          mPaint.setColor(mStrokeColor);
 diff --git a/CustomGaugeExample/build.gradle b/CustomGaugeExample/build.gradle
-index 12e72b7..c1ddabf 100644
+index 12e72b7..6fc074f 100644
 --- a/CustomGaugeExample/build.gradle
 +++ b/CustomGaugeExample/build.gradle
 @@ -1,12 +1,12 @@
@@ -57,14 +57,14 @@ index 12e72b7..c1ddabf 100644
  
  android {
 -    compileSdkVersion 28
-+    compileSdkVersion 33
++    compileSdkVersion 34
  
      defaultConfig {
          applicationId "pl.pawelkleczkowskicustomgauge"
 -        minSdkVersion 15
 -        targetSdkVersion 28
-+        minSdkVersion 19
-+        targetSdkVersion 33
++        minSdkVersion 21
++        targetSdkVersion 34
          versionCode 4
          versionName "1.0.4"
      }
@@ -104,10 +104,29 @@ index e48d945..fc31819 100644
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
 diff --git a/build.gradle b/build.gradle
-index cef47c5..8572e31 100644
+index cef47c5..db8765a 100644
 --- a/build.gradle
 +++ b/build.gradle
-@@ -25,3 +25,7 @@ allprojects {
+@@ -4,6 +4,9 @@ buildscript {
+     repositories {
+         jcenter()
+         google()
++        mavenCentral()
++        maven { url 'https://plugins.gradle.org/m2/' }
++        maven { url 'https://groovy.jfrog.io/artifactory/libs-release/' }
+     }
+     dependencies {
+         classpath 'com.android.tools.build:gradle:3.4.1'
+@@ -19,9 +22,16 @@ allprojects {
+     repositories {
+         jcenter()
+         google()
++        mavenCentral()
++        maven { url 'https://plugins.gradle.org/m2/' }
++        maven { url 'https://groovy.jfrog.io/artifactory/libs-release/' }
+     }
+ }
+ 
  task clean(type: Delete) {
      delete rootProject.buildDir
  }
