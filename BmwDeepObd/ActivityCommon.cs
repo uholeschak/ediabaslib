@@ -5017,11 +5017,20 @@ namespace BmwDeepObd
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) =>
             {
             });
+
             _selectManufacturerAlertDialog = builder.Show();
             if (_selectManufacturerAlertDialog != null)
             {
-                string message = string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.vag_mode_info_ballon), VagEndDate);
-                ShowAlertDialogBallon(_context, _selectManufacturerAlertDialog, message, 20000);
+                _selectManufacturerAlertDialog.ShowEvent += (sender, args) =>
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+
+                    string message = string.Format(CultureInfo.InvariantCulture, _context.GetString(Resource.String.vag_mode_info_ballon), VagEndDate);
+                    ShowAlertDialogBallon(_context, _selectManufacturerAlertDialog, message, 20000);
+                };
 
                 _selectManufacturerAlertDialog.DismissEvent += (sender, args) =>
                 {
@@ -5029,6 +5038,7 @@ namespace BmwDeepObd
                     {
                         return;
                     }
+
                     _selectManufacturerAlertDialog = null;
                 };
             }
