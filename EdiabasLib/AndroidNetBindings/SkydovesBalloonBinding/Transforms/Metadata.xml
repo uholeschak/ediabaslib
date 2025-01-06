@@ -27,4 +27,35 @@
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonExtensionKt']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonHighlightAnimation']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonLazyExtensionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonPersistence']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonPersistence.Companion']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonPlacement']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonSizeSpec']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='DeferredBalloon']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='DeferredBalloonGroup']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.extensions']/class[@name='ContextExtensionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.extensions']/class[@name='DrawableExtensionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.extensions']/class[@name='GlobalExtensionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.extensions']/class[@name='SizeExtensionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.extensions']/class[@name='StringExtensionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.extensions']/class[@name='TextViewExtensionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.extensions']/class[@name='TextViewExtensionKt.WhenMappings']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.extensions']/class[@name='ViewExtensionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='AwaitBalloonsDsl.DefaultImpls']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='IconFormKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='IconGravity']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.internals']/class[@name='DefinitionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.internals']/class[@name='ViewPropertyKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.overlay']/class[@name='BalloonAnchorOverlayView']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.overlay']/class[@name='BalloonOverlayAnimation']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.overlay']/class[@name='BalloonOverlayCircle']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.overlay']/class[@name='BalloonOverlayEmpty']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.overlay']/class[@name='BalloonOverlayOval']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.overlay']/class[@name='BalloonOverlayRect']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.overlay']/class[@name='BalloonOverlayRoundRect']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='PlacementType']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.radius']/class[@name='RadiusLayout']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='TextFormKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.vectortext']/class[@name='VectorTextViewParams']" name="final">false</attr>
 </metadata>
