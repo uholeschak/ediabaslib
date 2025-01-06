@@ -35,10 +35,10 @@ using Base62;
 using BmwDeepObd.Dialogs;
 using BmwDeepObd.FilePicker;
 using BmwFileReader;
+using Com.Skydoves.Balloon;
 using EdiabasLib;
 using Google.Android.Material.Tabs;
 using Java.Interop;
-using Skydoves.BalloonLib;
 // ReSharper disable MergeCastWithTypeCheck
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
@@ -6758,17 +6758,17 @@ namespace BmwDeepObd
             if (rootView != null)
             {
                 Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                balloonBuilder.Text = message;
-                balloonBuilder.AutoDismissDuration = dismissDuration;
-                balloonBuilder.DismissWhenClicked = true;
+                balloonBuilder.SetText(message);
+                balloonBuilder.SetAutoDismissDuration(dismissDuration);
+                balloonBuilder.SetDismissWhenClicked(true);
                 switch (alignment)
                 {
                     case BalloonAlligment.Top:
-                        balloonBuilder.ArrowOrientation = ArrowOrientation.Top;
+                        balloonBuilder.SetArrowOrientation(ArrowOrientation.Top);
                         break;
 
                     case BalloonAlligment.Bottom:
-                        balloonBuilder.ArrowOrientation = ArrowOrientation.Bottom;
+                        balloonBuilder.SetArrowOrientation(ArrowOrientation.Bottom);
                         break;
                 }
 
@@ -6784,7 +6784,7 @@ namespace BmwDeepObd
                         break;
 
                     default:
-                        balloon.Show(rootView);
+                        balloon.ShowAtCenter(rootView);
                         break;
                 }
             }

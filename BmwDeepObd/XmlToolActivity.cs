@@ -28,8 +28,8 @@ using AndroidX.RecyclerView.Widget;
 using BmwDeepObd.Dialogs;
 using BmwFileReader;
 using Com.Woxthebox.Draglistview;
-using Skydoves.BalloonLib;
 using System.Runtime.InteropServices;
+using Com.Skydoves.Balloon;
 
 // ReSharper disable IdentifierTypo
 // ReSharper disable StringLiteralTypo
@@ -1687,9 +1687,9 @@ namespace BmwDeepObd
                         if (itemViewBalloon != null)
                         {
                             Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                            balloonBuilder.Text = GetString(Resource.String.xml_tool_drag_list_hint);
+                            balloonBuilder.SetText(GetString(Resource.String.xml_tool_drag_list_hint));
                             Balloon balloon = balloonBuilder.Build();
-                            balloon.Show(itemViewBalloon);
+                            balloon.ShowAtCenter(itemViewBalloon);
 
                             _instanceData.ListMoveHintShown = true;
                         }

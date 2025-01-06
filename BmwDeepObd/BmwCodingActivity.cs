@@ -25,7 +25,6 @@ using AndroidX.Core.Content.PM;
 using BmwDeepObd.Dialogs;
 using EdiabasLib;
 using Java.Interop;
-using Skydoves.BalloonLib;
 
 namespace BmwDeepObd
 {

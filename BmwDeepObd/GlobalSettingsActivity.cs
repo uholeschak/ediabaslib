@@ -9,7 +9,7 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.FilePicker;
-using Skydoves.BalloonLib;
+using Com.Skydoves.Balloon;
 
 namespace BmwDeepObd
 {
@@ -473,9 +473,9 @@ namespace BmwDeepObd
                             if (!_instanceData.BootHintShown)
                             {
                                 Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                                balloonBuilder.Text = message;
+                                balloonBuilder.SetText(message);
                                 Balloon balloon = balloonBuilder.Build();
-                                balloon.Show(_radioButtonStartBoot);
+                                balloon.ShowAtCenter(_radioButtonStartBoot);
 
                                 _instanceData.BootHintShown = true;
                             }

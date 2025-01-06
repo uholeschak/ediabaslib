@@ -15,7 +15,7 @@ using BmwFileReader;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
 using BmwDeepObd.Dialogs;
-using Skydoves.BalloonLib;
+using Com.Skydoves.Balloon;
 
 namespace BmwDeepObd
 {
@@ -2193,9 +2193,9 @@ namespace BmwDeepObd
                 if (!_instanceData.ArgLimitCritical)
                 {
                     Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                    balloonBuilder.Text = GetString(Resource.String.xml_tool_ecu_arg_limit_hint);
+                    balloonBuilder.SetText(GetString(Resource.String.xml_tool_ecu_arg_limit_hint));
                     Balloon balloon = balloonBuilder.Build();
-                    balloon.Show(_spinnerArgLimit);
+                    balloon.ShowAtCenter(_spinnerArgLimit);
                 }
             }
 

@@ -5,8 +5,8 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.View;
 using AndroidX.RecyclerView.Widget;
+using Com.Skydoves.Balloon;
 using Com.Woxthebox.Draglistview;
-using Skydoves.BalloonLib;
 
 namespace BmwDeepObd.Dialogs
 {
@@ -143,9 +143,9 @@ namespace BmwDeepObd.Dialogs
                     if (itemViewBalloon != null)
                     {
                         Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(_activity);
-                        balloonBuilder.Text = _activity.GetString(Resource.String.display_order_edit_hint);
+                        balloonBuilder.SetText(_activity.GetString(Resource.String.display_order_edit_hint));
                         Balloon balloon = balloonBuilder.Build();
-                        balloon.Show(itemViewBalloon);
+                        balloon.ShowAtCenter(itemViewBalloon);
                     }
                 }
             };
