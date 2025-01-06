@@ -15,7 +15,7 @@ using Android.Widget;
 using AndroidX.Activity;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.View;
-using Skydoves.BalloonLib;
+using Com.Skydoves.Balloon;
 
 namespace BmwDeepObd
 {
@@ -399,9 +399,9 @@ namespace BmwDeepObd
                                 if (rootView != null)
                                 {
                                     Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                                    balloonBuilder.Text = GetString(Resource.String.long_click_show_title);
+                                    balloonBuilder.SetText(GetString(Resource.String.long_click_show_title));
                                     Balloon balloon = balloonBuilder.Build();
-                                    balloon.Show(rootView);
+                                    balloon.ShowAtCenter(rootView);
 
                                     _instanceDataBase.LongClickShown = true;
                                 }

@@ -9,8 +9,8 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.Fragment.App;
+using Com.Skydoves.Balloon;
 using EdiabasLib;
-using Skydoves.BalloonLib;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 
@@ -164,7 +164,7 @@ namespace BmwDeepObd.FilePicker
             if (!string.IsNullOrWhiteSpace(_infoText))
             {
                 Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
-                balloonBuilder.Text = _infoText;
+                balloonBuilder.SetText(_infoText);
                 Balloon balloon = balloonBuilder.Build();
                 balloon.ShowAlignTop(ListView);
             }
@@ -216,9 +216,9 @@ namespace BmwDeepObd.FilePicker
                             if (!_instanceData.DirSelectHintShown)
                             {
                                 Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
-                                balloonBuilder.Text = Activity.GetString(Resource.String.file_picker_dir_select);
+                                balloonBuilder.SetText(Activity.GetString(Resource.String.file_picker_dir_select));
                                 Balloon balloon = balloonBuilder.Build();
-                                balloon.Show(view);
+                                balloon.ShowAtCenter(view);
 
                                 _instanceData.DirSelectHintShown = true;
                             }
@@ -385,9 +385,9 @@ namespace BmwDeepObd.FilePicker
                 {
                     string message = GetString(Resource.String.access_dir_failed) + "\r\n" + directory;
                     Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
-                    balloonBuilder.Text = message;
+                    balloonBuilder.SetText(message);
                     Balloon balloon = balloonBuilder.Build();
-                    balloon.Show(view);
+                    balloon.ShowAtCenter(view);
                 }
                 return;
             }

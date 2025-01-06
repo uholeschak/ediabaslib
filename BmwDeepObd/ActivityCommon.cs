@@ -45,10 +45,10 @@ using AndroidX.Core.Content;
 using AndroidX.Core.Content.PM;
 using AndroidX.DocumentFile.Provider;
 using BmwDeepObd.Dialogs;
-using Skydoves.BalloonLib;
 using AndroidX.Lifecycle;
 using Android.App.Backup;
 using System.Runtime.Versioning;
+using Com.Skydoves.Balloon;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -2728,18 +2728,18 @@ namespace BmwDeepObd
         public static Balloon.Builder GetBalloonBuilder(Context context)
         {
             Balloon.Builder balloonBuilder = new Balloon.Builder(context);
-            balloonBuilder.DismissWhenClicked = true;
-            balloonBuilder.DismissWhenTouchOutside = true;
-            balloonBuilder.BackgroundColor = GetStyleColor(context, Resource.Attribute.balloonBackgroundColor);
-            balloonBuilder.TextColor = GetStyleColor(context, Resource.Attribute.balloonTextColor);
-            balloonBuilder.TextSize = 14.0f;
-            balloonBuilder.TextTypeface = (int)Android.Graphics.TypefaceStyle.Italic;
-            balloonBuilder.BalloonAnimation = BalloonAnimation.Elastic;
-            balloonBuilder.AutoDismissDuration = BalloonDismissDuration;
+            balloonBuilder.SetDismissWhenClicked(true);
+            balloonBuilder.SetDismissWhenTouchOutside(true);
+            balloonBuilder.SetBackgroundColor(GetStyleColor(context, Resource.Attribute.balloonBackgroundColor));
+            balloonBuilder.SetTextColor(GetStyleColor(context, Resource.Attribute.balloonTextColor));
+            balloonBuilder.SetTextSize(14.0f);
+            balloonBuilder.SetTextTypeface((int)Android.Graphics.TypefaceStyle.Italic);
+            balloonBuilder.SetBalloonAnimation(BalloonAnimation.Elastic);
+            balloonBuilder.SetAutoDismissDuration(BalloonDismissDuration);
             balloonBuilder.SetPadding(10);
-            balloonBuilder.ArrowOrientation = ArrowOrientation.Bottom;
-            balloonBuilder.ArrowPosition = 0.5f;
-            balloonBuilder.LifecycleOwner = ProcessLifecycleOwner.Get();
+            balloonBuilder.SetArrowOrientation(ArrowOrientation.Bottom);
+            balloonBuilder.SetArrowPosition(0.5f);
+            balloonBuilder.SetLifecycleOwner(ProcessLifecycleOwner.Get());
 
             return balloonBuilder;
         }
@@ -2750,8 +2750,8 @@ namespace BmwDeepObd
             if (rootView != null)
             {
                 Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
-                balloonBuilder.Text = context.GetString(resId);
-                balloonBuilder.AutoDismissDuration = dismissDuration;
+                balloonBuilder.SetText(context.GetString(resId));
+                balloonBuilder.SetAutoDismissDuration(dismissDuration);
                 Balloon balloon = balloonBuilder.Build();
                 balloon.ShowAlignTop(rootView);
                 return true;
@@ -2766,8 +2766,8 @@ namespace BmwDeepObd
             if (rootView != null)
             {
                 Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
-                balloonBuilder.Text = text;
-                balloonBuilder.AutoDismissDuration = dismissDuration;
+                balloonBuilder.SetText(text);
+                balloonBuilder.SetAutoDismissDuration(dismissDuration);
                 Balloon balloon = balloonBuilder.Build();
                 balloon.ShowAlignTop(rootView);
                 return true;

@@ -15,10 +15,10 @@
     -->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;CS0114</NoWarn>
+    <NoWarn>1701;1702;BG8400;BG8605;BG8606;CS0114</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;CS0114</NoWarn>
+    <NoWarn>1701;1702;BG8400;BG8605;BG8606;CS0114</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.9.3.1" />
