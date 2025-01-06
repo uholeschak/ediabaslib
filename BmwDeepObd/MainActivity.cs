@@ -6740,12 +6740,20 @@ namespace BmwDeepObd
             builder.SetNegativeButton(Resource.String.button_abort, (sender, args) => { });
 
             AlertDialog alertDialog = builder.Create();
-            alertDialog.Show();
-
-            if (ActivityCommon.IsDocumentTreeSupported())
+            alertDialog.ShowEvent += (sender, args) =>
             {
-                ActivityCommon.ShowAlertDialogBallon(this, alertDialog, Resource.String.menu_hint_copy_folder);
-            }
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                if (ActivityCommon.IsDocumentTreeSupported())
+                {
+                    ActivityCommon.ShowAlertDialogBallon(this, alertDialog, Resource.String.menu_hint_copy_folder);
+                }
+            };
+
+            alertDialog.Show();
         }
 
         private void OpenDonateLink()
