@@ -14,4 +14,17 @@
 
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='TextForm']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='TextForm.Builder']" name="final">false</attr>
+
+  <attr path="/api/package[@name='com.skydoves.balloon.animations']/class[@name='BalloonRotateDirection']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='ArrowOrientation']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='ArrowOrientationRules']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='ArrowPositionRules']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='AwaitBalloonsKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonAlign']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonAnimation']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonCenterAlign']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonCenterAlign.WhenMappings']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonExtensionKt']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonHighlightAnimation']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonKt']" name="final">false</attr>
 </metadata>
