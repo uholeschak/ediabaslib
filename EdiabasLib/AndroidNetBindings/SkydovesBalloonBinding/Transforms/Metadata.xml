@@ -9,6 +9,15 @@
   <remove-node path="/api/package[@name='com.skydoves.balloon.databinding']/class[@name='BalloonLayoutOverlayBinding']" />
   <remove-node path="/api/package[@name='com.skydoves.balloon.databinding']/class[@name='BalloonLayoutBodyBinding']" />
 
+  <attr path="/api/package[@name='com.skydoves.balloon']" name="managedName">Skydoves.BalloonLib</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.animations']" name="managedName">Skydoves.BalloonLib.Animations</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.annotations']" name="managedName">Skydoves.BalloonLib.Annotations</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.extensions']" name="managedName">Skydoves.BalloonLib.Extensions</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.internals']" name="managedName">Skydoves.BalloonLib.Internals</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.overlay']" name="managedName">Skydoves.BalloonLib.Overlay</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.radius']" name="managedName">Skydoves.BalloonLib.Radius</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.vectortext']" name="managedName">Skydoves.BalloonLib.Vectortext</attr>
+
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='Balloon.Companion']" name="managedName">CompanionNet</attr>
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonPersistence.Companion']" name="managedName">CompanionNet</attr>
 

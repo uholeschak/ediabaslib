@@ -15,7 +15,7 @@ using BmwFileReader;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
 using BmwDeepObd.Dialogs;
-using Com.Skydoves.Balloon;
+using Skydoves.BalloonLib;
 
 namespace BmwDeepObd
 {

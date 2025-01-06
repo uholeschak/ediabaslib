@@ -5,8 +5,8 @@ using Android.Widget;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.View;
 using AndroidX.RecyclerView.Widget;
-using Com.Skydoves.Balloon;
 using Com.Woxthebox.Draglistview;
+using Skydoves.BalloonLib;
 
 namespace BmwDeepObd.Dialogs
 {
