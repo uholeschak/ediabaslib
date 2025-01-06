@@ -15,7 +15,7 @@ using Android.Widget;
 using AndroidX.Activity;
 using AndroidX.AppCompat.App;
 using AndroidX.Core.View;
-using Com.Skydoves.Balloon;
+using Skydoves.BalloonLib;
 
 namespace BmwDeepObd
 {

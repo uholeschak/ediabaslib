@@ -9,8 +9,8 @@ using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
 using AndroidX.Fragment.App;
-using Com.Skydoves.Balloon;
 using EdiabasLib;
+using Skydoves.BalloonLib;
 
 // ReSharper disable LoopCanBeConvertedToQuery
 
