@@ -15,9 +15,14 @@
     -->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;BG8400;BG8401;BG8605;BG8606;CS0114</NoWarn>
+    <NoWarn>1701;1702;CS0114</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;BG8400;BG8401;BG8605;BG8606;CS0114</NoWarn>
+    <NoWarn>1701;1702;CS0114</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.9.3.1" />
+    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.0.4" />
+    <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="8.7.3" />
+  </ItemGroup>
 </Project>
