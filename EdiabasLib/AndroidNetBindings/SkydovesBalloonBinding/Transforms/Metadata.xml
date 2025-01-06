@@ -6,4 +6,12 @@
   This sample removes the method: android.support.v4.content.CursorLoader.loadInBackground:
   <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='CursorLoader']/method[@name='loadInBackground']" />
   -->
+  <attr path="/api/package[@name='com.skydoves.balloon.animations']/class[@name='BalloonRotateAnimation']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.animations']/class[@name='BalloonRotateAnimation.Builder']" name="final">false</attr>
+
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='IconForm']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='IconForm.Builder']" name="final">false</attr>
+
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='TextForm']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='TextForm.Builder']" name="final">false</attr>
 </metadata>
