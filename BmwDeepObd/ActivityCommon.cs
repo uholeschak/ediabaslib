@@ -2739,6 +2739,7 @@ namespace BmwDeepObd
             balloonBuilder.SetPadding(10);
             balloonBuilder.SetArrowOrientation(ArrowOrientation.Bottom);
             balloonBuilder.SetArrowPosition(0.5f);
+            balloonBuilder.SetArrowOrientationRules(ArrowOrientationRules.AlignFixed);
             balloonBuilder.SetLifecycleOwner(ProcessLifecycleOwner.Get());
 
             return balloonBuilder;
