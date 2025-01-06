@@ -6,6 +6,9 @@
   This sample removes the method: android.support.v4.content.CursorLoader.loadInBackground:
   <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='CursorLoader']/method[@name='loadInBackground']" />
   -->
+  <remove-node path="/api/package[@name='com.skydoves.balloon.databinding']/class[@name='BalloonLayoutOverlayBinding']" />
+  <remove-node path="/api/package[@name='com.skydoves.balloon.databinding']/class[@name='BalloonLayoutBodyBinding']" />
+
   <attr path="/api/package[@name='com.skydoves.balloon.animations']/class[@name='BalloonRotateAnimation']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon.animations']/class[@name='BalloonRotateAnimation.Builder']" name="final">false</attr>
 
@@ -15,6 +18,10 @@
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='TextForm']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='TextForm.Builder']" name="final">false</attr>
 
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='Balloon']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='Balloon.Builder']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='Balloon.Companion']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='Balloon.WhenMappings']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon.animations']/class[@name='BalloonRotateDirection']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='ArrowOrientation']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='ArrowOrientationRules']" name="final">false</attr>
@@ -58,4 +65,5 @@
   <attr path="/api/package[@name='com.skydoves.balloon.radius']/class[@name='RadiusLayout']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='TextFormKt']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon.vectortext']/class[@name='VectorTextViewParams']" name="final">false</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon.vectortext']/class[@name='VectorTextView']" name="final">false</attr>
 </metadata>
