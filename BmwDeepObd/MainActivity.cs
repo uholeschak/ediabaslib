@@ -6774,12 +6774,10 @@ namespace BmwDeepObd
                 {
                     case BalloonAlligment.Top:
                         balloonBuilder.SetArrowOrientation(ArrowOrientation.Top);
-                        balloonBuilder.SetArrowOrientationRules(ArrowOrientationRules.AlignAnchor);
                         break;
 
                     case BalloonAlligment.Bottom:
                         balloonBuilder.SetArrowOrientation(ArrowOrientation.Bottom);
-                        balloonBuilder.SetArrowOrientationRules(ArrowOrientationRules.AlignAnchor);
                         break;
                 }
 
