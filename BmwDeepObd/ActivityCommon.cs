@@ -5020,7 +5020,7 @@ namespace BmwDeepObd
             {
             });
 
-            _selectManufacturerAlertDialog = builder.Show();
+            _selectManufacturerAlertDialog = builder.Create();
             if (_selectManufacturerAlertDialog != null)
             {
                 _selectManufacturerAlertDialog.ShowEvent += (sender, args) =>
@@ -5044,6 +5044,8 @@ namespace BmwDeepObd
                     _selectManufacturerAlertDialog = null;
                 };
             }
+
+            _selectManufacturerAlertDialog.Show();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
