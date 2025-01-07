@@ -2753,6 +2753,7 @@ namespace BmwDeepObd
                 Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
                 balloonBuilder.SetText(context.GetString(resId));
                 balloonBuilder.SetAutoDismissDuration(dismissDuration);
+                balloonBuilder.SetArrowOrientationRules(ArrowOrientationRules.AlignAnchor);
                 Balloon balloon = balloonBuilder.Build();
                 balloon.ShowAlignTop(rootView);
                 return true;
@@ -2769,6 +2770,7 @@ namespace BmwDeepObd
                 Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
                 balloonBuilder.SetText(text);
                 balloonBuilder.SetAutoDismissDuration(dismissDuration);
+                balloonBuilder.SetArrowOrientationRules(ArrowOrientationRules.AlignAnchor);
                 Balloon balloon = balloonBuilder.Build();
                 balloon.ShowAlignTop(rootView);
                 return true;
