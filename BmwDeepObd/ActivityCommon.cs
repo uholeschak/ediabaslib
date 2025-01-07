@@ -2747,14 +2747,14 @@ namespace BmwDeepObd
 
         public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, int resId, int dismissDuration = BalloonDismissDuration)
         {
-            View rootView = alertDialog.Window?.DecorView?.RootView;
-            if (rootView != null)
+            View decorView = alertDialog.Window?.DecorView;
+            if (decorView != null)
             {
                 Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
                 balloonBuilder.SetText(context.GetString(resId));
                 balloonBuilder.SetAutoDismissDuration(dismissDuration);
                 Balloon balloon = balloonBuilder.Build();
-                balloon.ShowAlignTop(rootView);
+                balloon.ShowAlignTop(decorView);
                 return true;
             }
 
@@ -2763,14 +2763,14 @@ namespace BmwDeepObd
 
         public static bool ShowAlertDialogBallon(Context context, AlertDialog alertDialog, string text, int dismissDuration = BalloonDismissDuration)
         {
-            View rootView = alertDialog.Window?.DecorView?.RootView;
-            if (rootView != null)
+            View decorView = alertDialog.Window?.DecorView;
+            if (decorView != null)
             {
                 Balloon.Builder balloonBuilder = GetBalloonBuilder(context);
                 balloonBuilder.SetText(text);
                 balloonBuilder.SetAutoDismissDuration(dismissDuration);
                 Balloon balloon = balloonBuilder.Build();
-                balloon.ShowAlignTop(rootView);
+                balloon.ShowAlignTop(decorView);
                 return true;
             }
 
