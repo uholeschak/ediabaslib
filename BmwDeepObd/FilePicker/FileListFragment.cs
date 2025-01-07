@@ -165,6 +165,7 @@ namespace BmwDeepObd.FilePicker
             {
                 Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(Activity);
                 balloonBuilder.SetText(_infoText);
+                balloonBuilder.SetArrowOrientationRules(ArrowOrientationRules.AlignAnchor);
                 Balloon balloon = balloonBuilder.Build();
                 balloon.ShowAlignTop(ListView);
             }
