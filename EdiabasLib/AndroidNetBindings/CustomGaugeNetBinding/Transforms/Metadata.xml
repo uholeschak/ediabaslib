@@ -6,5 +6,5 @@
   This sample removes the method: android.support.v4.content.CursorLoader.loadInBackground:
   <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='CursorLoader']/method[@name='loadInBackground']" />
   -->
-  <attr path="/api/package[@name='pl.pawelkleczkowski.customgauge']" name="managedName">Pl.Pawelkleczkowski.CGauge</attr>
+  <attr path="/api/package[@name='pl.pawelkleczkowski.customgauge']" name="managedName">Pawelkleczkowski.CGauge</attr>
 </metadata>
