@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
-using Pl.Pawelkleczkowski.CGauge;
+using Pawelkleczkowski.CGauge;
 
 namespace BmwDeepObd
 {
