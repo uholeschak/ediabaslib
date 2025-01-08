@@ -27,7 +27,7 @@ using AndroidX.Core.View;
 using AndroidX.RecyclerView.Widget;
 using BmwDeepObd.Dialogs;
 using BmwFileReader;
-using Com.Woxthebox.Draglistview;
+using Woxthebox.Draglistview;
 using Skydoves.BalloonLib;
 
 // ReSharper disable IdentifierTypo
