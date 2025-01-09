@@ -13,4 +13,4 @@ Result:
 HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\currentversion\uninstall\<GUID>
 
 Uninstall GUID manually:
-msiexec /x <GUID> /q IGNOREDEPENDENCIES=ALL
+msiexec /x <GUID> IGNOREDEPENDENCIES=ALL
