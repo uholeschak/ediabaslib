@@ -15,5 +15,5 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\currentversion\uninstall\<GUID>
 Uninstall MSI with GUID manually:
 msiexec /x <GUID> IGNOREDEPENDENCIES=ALL
 
-In the Assets folder the ECU package has to be copied.
+In the Assets folder the encrypted ECU package Ecu.bin has to be copied before the build.
 The ECU package could be extracted from an existing .aab file (which is a zip) at the location assets1\assets\Ecu.bin.
