@@ -74,6 +74,7 @@ namespace BmwDeepObd
         protected Configuration _currentConfiguration;
         private Android.App.ActivityManager _activityManager;
         protected View _decorView;
+        protected int? _currentThemeId;
         protected bool _allowTitleHiding = true;
         protected bool _allowFullScreenMode = true;
         protected bool _touchShowTitle = false;
@@ -705,6 +706,7 @@ namespace BmwDeepObd
             }
 
             SetTheme(themeId.Value);
+            _currentThemeId = themeId;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
