@@ -668,7 +668,12 @@ namespace BmwDeepObd
             UiMode nightModeFlags = Resources.Configuration.UiMode & UiMode.NightMask;
             bool isDarkModeOn = nightModeFlags == UiMode.NightYes;
             return isDarkModeOn;
-        } 
+        }
+
+        public void SetTheme()
+        {
+            SetTheme(ActivityCommon.SelectedThemeId);
+        }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public void EnableFullScreenMode(bool enable)

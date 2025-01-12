@@ -283,7 +283,7 @@ namespace BmwDeepObd
         {
             AddActivityToStack(this);
             ActivityCommon.GetThemeSettings();
-            SetTheme(ActivityCommon.SelectedThemeId);
+            SetTheme();
             base.OnCreate(savedInstanceState);
 
             try

@@ -67,7 +67,7 @@ namespace BmwDeepObd
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            SetTheme(ActivityCommon.SelectedThemeId);
+            SetTheme();
             base.OnCreate(savedInstanceState);
             _allowTitleHiding = false;
 

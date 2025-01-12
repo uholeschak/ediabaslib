@@ -23,7 +23,7 @@ public class ServiceBusyActivity : BaseActivity
 
     protected override void OnCreate(Bundle savedInstanceState)
     {
-        SetTheme(ActivityCommon.SelectedThemeId);
+        SetTheme();
         base.OnCreate(savedInstanceState);
         SetContentView(Resource.Layout.service_busy);
 
