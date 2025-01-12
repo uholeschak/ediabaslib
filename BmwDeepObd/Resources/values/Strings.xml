@@ -454,6 +454,7 @@
   <string name="settings_caption_theme">Theme</string>
   <string name="settings_theme_dark">Dark</string>
   <string name="settings_theme_light">Light</string>
+  <string name="settings_theme_system">System setting</string>
   <string name="settings_caption_title_bar">Title bar</string>
   <string name="settings_auto_hide_title_bar">Auto hide title bar on main page when connected (show with long click and release)</string>
   <string name="settings_suppress_title_bar">Suppress unused title bars (show with swipe gesture)</string>

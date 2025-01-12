@@ -446,6 +446,8 @@
   <string name="settings_caption_theme">Темы</string>
   <string name="settings_theme_dark">Темная</string>
   <string name="settings_theme_light">Светлая</string>
+  <!--Translate-->
+  <string name="settings_theme_system">Настройки системы</string>
   <string name="settings_caption_title_bar">Панель заглавия</string>
   <string name="settings_auto_hide_title_bar">Автоматически скрывать панель заглавия на главной странице (показать при отпускании после длинного нажатия)</string>
   <string name="settings_suppress_title_bar">Скрывать неиспользуемые панели заглавия  (показывать при помощи жеста смахивания)</string>

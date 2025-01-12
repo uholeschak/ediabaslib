@@ -73,6 +73,7 @@ namespace BmwDeepObd
         private RadioButton _radioButtonLocaleRu;
         private RadioButton _radioButtonThemeDark;
         private RadioButton _radioButtonThemeLight;
+        private RadioButton _radioButtonThemeSystem;
         private CheckBox _checkBoxAutoHideTitleBar;
         private CheckBox _checkBoxSuppressTitleBar;
         private CheckBox _checkBoxFullScreenMode;
@@ -183,6 +184,7 @@ namespace BmwDeepObd
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
+            _radioButtonThemeSystem = FindViewById<RadioButton>(Resource.Id.radioButtonThemeSystem);
 
             _checkBoxAutoHideTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxAutoHideTitleBar);
             _checkBoxSuppressTitleBar = FindViewById<CheckBox>(Resource.Id.checkBoxSuppressTitleBar);
@@ -660,6 +662,10 @@ namespace BmwDeepObd
                         _radioButtonThemeLight.Checked = true;
                         break;
 
+                    case ActivityCommon.ThemeType.System:
+                        _radioButtonThemeSystem.Checked = true;
+                        break;
+
                     default:
                         _radioButtonThemeDark.Checked = true;
                         break;
@@ -830,6 +836,10 @@ namespace BmwDeepObd
             else if (_radioButtonThemeDark.Checked)
             {
                 themeType = ActivityCommon.ThemeType.Dark;
+            }
+            else if (_radioButtonThemeSystem.Checked)
+            {
+                themeType = ActivityCommon.ThemeType.System;
             }
             ActivityCommon.SelectedTheme = themeType;
 

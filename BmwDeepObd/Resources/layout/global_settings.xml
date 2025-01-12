@@ -62,6 +62,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/settings_theme_light" />
+            <RadioButton
+              android:id="@+id/radioButtonThemeSystem"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/settings_theme_system" />
         </RadioGroup>
         <TextView
             android:text="@string/settings_caption_title_bar"
