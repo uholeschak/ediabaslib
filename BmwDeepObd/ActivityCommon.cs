@@ -670,6 +670,7 @@ namespace BmwDeepObd
         {
             [XmlEnum(Name = "Dark")] Dark,
             [XmlEnum(Name = "Light")] Light,
+            [XmlEnum(Name = "Auto")] Auto,
         }
 
         public enum InterfaceType
@@ -1578,26 +1579,6 @@ namespace BmwDeepObd
         public static string TraceInfo { get; set; }
 
         public static EdiabasThread EdiabasThread { get; set; }
-
-        public static int SelectedThemeId
-        {
-            get
-            {
-                if (SelectedTheme != null)
-                {
-                    switch (SelectedTheme)
-                    {
-                        case ThemeType.Dark:
-                            return Resource.Style.MyTheme;
-
-                        case ThemeType.Light:
-                            return Resource.Style.MyThemeLight;
-                    }
-                }
-
-                return Resource.Style.MyTheme;
-            }
-        }
 
         public InterfaceType SelectedInterface
         {

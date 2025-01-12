@@ -428,6 +428,7 @@ namespace BmwDeepObd
         {
             base.OnConfigurationChanged(newConfig);
             _currentConfiguration = newConfig;
+            SetTheme();
             SetLocale(this, ActivityCommon.GetLocaleSetting());
         }
 
@@ -672,7 +673,38 @@ namespace BmwDeepObd
 
         public void SetTheme()
         {
-            SetTheme(ActivityCommon.SelectedThemeId);
+            int? themeId = null;
+            if (ActivityCommon.SelectedTheme != null)
+            {
+                switch (ActivityCommon.SelectedTheme)
+                {
+                    case ActivityCommon.ThemeType.Dark:
+                        themeId = Resource.Style.MyTheme;
+                        break;
+
+                    case ActivityCommon.ThemeType.Light:
+                        themeId = Resource.Style.MyThemeLight;
+                        break;
+
+                    default:
+                        themeId = null;
+                        break;
+                }
+            }
+
+            if (themeId == null)
+            {
+                if (IsDarkModeOn())
+                {
+                    themeId = Resource.Style.MyTheme;
+                }
+                else
+                {
+                    themeId = Resource.Style.MyThemeLight;
+                }
+            }
+
+            SetTheme(themeId.Value);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
