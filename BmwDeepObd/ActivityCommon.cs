@@ -670,7 +670,7 @@ namespace BmwDeepObd
         {
             [XmlEnum(Name = "Dark")] Dark,
             [XmlEnum(Name = "Light")] Light,
-            [XmlEnum(Name = "Auto")] Auto,
+            [XmlEnum(Name = "System")] System,
         }
 
         public enum InterfaceType
