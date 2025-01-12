@@ -63,7 +63,7 @@ namespace BmwDeepObd
         private static List<Android.App.Activity> ActivityStack = new List<Android.App.Activity>();
         public const ConfigChanges ActivityConfigChanges =
             ConfigChanges.KeyboardHidden | ConfigChanges.Orientation | ConfigChanges.ScreenLayout |
-            ConfigChanges.ScreenSize | ConfigChanges.SmallestScreenSize;
+            ConfigChanges.ScreenSize | ConfigChanges.SmallestScreenSize | ConfigChanges.UiMode;
         private const int AutoFullScreenTimeout = 3000;
         private const int LongPressTimeout = 2000;
         public const string InstanceDataKeyDefault = "InstanceData";
@@ -662,6 +662,13 @@ namespace BmwDeepObd
             _instanceDataBase.LongClickShown = false;
             Finish();
         }
+
+        public bool IsDarkModeOn()
+        {
+            UiMode nightModeFlags = Resources.Configuration.UiMode & UiMode.NightMask;
+            bool isDarkModeOn = nightModeFlags == UiMode.NightYes;
+            return isDarkModeOn;
+        } 
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         public void EnableFullScreenMode(bool enable)
