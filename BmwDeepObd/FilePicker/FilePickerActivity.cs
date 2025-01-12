@@ -28,7 +28,7 @@ namespace BmwDeepObd.FilePicker
 
         protected override void OnCreate(Bundle bundle)
         {
-            SetTheme(ActivityCommon.SelectedThemeId);
+            SetTheme();
             base.OnCreate(bundle);
             _allowTitleHiding = false;
 
