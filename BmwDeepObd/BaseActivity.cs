@@ -710,9 +710,9 @@ namespace BmwDeepObd
                 bool isEmpty = IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
                 if (isEmpty && _currentThemeId != null && _currentThemeId.Value != themeId.Value)
                 {
+                    SetTheme(themeId.Value);
                     _currentThemeId = themeId;
-                    base.Finish();
-                    StartActivity(Intent);
+                    Recreate();
                 }
 
                 return;
