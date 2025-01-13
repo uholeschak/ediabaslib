@@ -705,19 +705,21 @@ namespace BmwDeepObd
                 }
             }
 
-            if (configChange && _currentThemeId != null)
+            if (configChange)
             {
-                if (_currentThemeId.Value != themeId.Value)
+                bool isEmpty = IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
+                if (isEmpty && _currentThemeId != null && _currentThemeId.Value != themeId.Value)
                 {
-                    Finish();
+                    _currentThemeId = themeId;
+                    base.Finish();
                     StartActivity(Intent);
                 }
+
+                return;
             }
-            else
-            {
-                SetTheme(themeId.Value);
-                _currentThemeId = themeId;
-            }
+
+            SetTheme(themeId.Value);
+            _currentThemeId = themeId;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
