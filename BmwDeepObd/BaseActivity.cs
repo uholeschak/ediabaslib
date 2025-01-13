@@ -707,8 +707,7 @@ namespace BmwDeepObd
 
             if (configChange)
             {
-                bool isEmpty = IsActivityListEmpty(new List<Type> { typeof(ActivityMain) });
-                if (isEmpty && _currentThemeId != null && _currentThemeId.Value != themeId.Value)
+                if (_currentThemeId != null && _currentThemeId.Value != themeId.Value)
                 {
                     SetTheme(themeId.Value);
                     _currentThemeId = themeId;
