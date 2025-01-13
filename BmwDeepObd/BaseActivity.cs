@@ -707,7 +707,7 @@ namespace BmwDeepObd
 
             if (configChange)
             {
-                if (IsRecreateAllowed() && _currentThemeId != null && _currentThemeId.Value != themeId.Value)
+                if (IsFinishAllowed() && _currentThemeId != null && _currentThemeId.Value != themeId.Value)
                 {
                     SetTheme(themeId.Value);
                     _currentThemeId = themeId;
@@ -721,7 +721,7 @@ namespace BmwDeepObd
             _currentThemeId = themeId;
         }
 
-        public virtual bool IsRecreateAllowed()
+        public virtual bool IsFinishAllowed()
         {
             return true;
         }

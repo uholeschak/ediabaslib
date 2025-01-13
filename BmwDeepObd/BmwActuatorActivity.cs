@@ -288,7 +288,7 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
-        public override bool IsRecreateAllowed()
+        public override bool IsFinishAllowed()
         {
             if (IsJobRunning())
             {

@@ -964,6 +964,15 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override bool IsFinishAllowed()
+        {
+            if (IsJobRunning())
+            {
+                return false;
+            }
+            return true;
+        }
+
         public override void CloseSearchView()
         {
             if (_searchView != null && !_searchView.Iconified)
