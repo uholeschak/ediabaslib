@@ -288,6 +288,15 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override bool IsRecreateAllowed()
+        {
+            if (IsJobRunning())
+            {
+                return false;
+            }
+            return true;
+        }
+
         public bool OnTouch(View v, MotionEvent e)
         {
             switch (e.Action)

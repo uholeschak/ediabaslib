@@ -707,7 +707,7 @@ namespace BmwDeepObd
 
             if (configChange)
             {
-                if (_currentThemeId != null && _currentThemeId.Value != themeId.Value)
+                if (IsRecreateAllowed() && _currentThemeId != null && _currentThemeId.Value != themeId.Value)
                 {
                     SetTheme(themeId.Value);
                     _currentThemeId = themeId;
@@ -719,6 +719,11 @@ namespace BmwDeepObd
 
             SetTheme(themeId.Value);
             _currentThemeId = themeId;
+        }
+
+        public virtual bool IsRecreateAllowed()
+        {
+            return true;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
