@@ -1892,12 +1892,27 @@ namespace BmwDeepObd
 
         public override bool IsFinishAllowed()
         {
+            if (_activityCommon == null)
+            {
+                return true;
+            }
+
             if (IsErrorEvalJobRunning())
             {
                 return false;
             }
 
             if (_checkAdapter.IsJobRunning())
+            {
+                return false;
+            }
+
+            if (_activityCommon.IsUdsReaderJobRunning())
+            {
+                return false;
+            }
+
+            if (_activityCommon.IsEcuFuncReaderJobRunning())
             {
                 return false;
             }

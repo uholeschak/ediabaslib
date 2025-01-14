@@ -1094,6 +1094,8 @@ namespace BmwDeepObd
         private readonly BackupManager _backupManager;
         private readonly Android.App.ActivityManager _activityManager;
         private readonly MtcServiceConnection _mtcServiceConnection;
+        private Thread _udsReaderThread;
+        private Thread _ecuFuncReaderThread;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -1864,6 +1866,17 @@ namespace BmwDeepObd
                 if (disposing)
                 {
                     StopMtcService();
+
+                    if (IsUdsReaderJobRunning())
+                    {
+                        _udsReaderThread.Join();
+                    }
+
+                    if (IsEcuFuncReaderJobRunning())
+                    {
+                        _ecuFuncReaderThread.Join();
+                    }
+
                     if (_btUpdateHandler != null)
                     {
                         try
@@ -12025,6 +12038,11 @@ using System.Threading;"
                 return false;
             }
 
+            if (IsUdsReaderJobRunning())
+            {
+                return false;
+            }
+
             if (!Directory.Exists(vagPath))
             {
                 AlertDialog altertDialog = new AlertDialog.Builder(_context)
@@ -12068,7 +12086,7 @@ using System.Threading;"
             };
             progress.Show();
             SetLock(LockTypeCommunication);
-            Thread initThread = new Thread(() =>
+            _udsReaderThread = new Thread(() =>
             {
                 long lastPercent = -1;
                 bool result = InitUdsReader(vagPath, out string errorMessage, percent =>
@@ -12127,7 +12145,6 @@ using System.Threading;"
                                 }
                                 handler?.Invoke(false);
                             };
-
                         }
 
                         return;
@@ -12136,8 +12153,22 @@ using System.Threading;"
                     handler?.Invoke(VagUdsActive);
                 });
             });
-            initThread.Start();
+            _udsReaderThread.Start();
             return true;
+        }
+
+        public bool IsUdsReaderJobRunning()
+        {
+            if (_udsReaderThread == null)
+            {
+                return false;
+            }
+            if (_udsReaderThread.IsAlive)
+            {
+                return true;
+            }
+            _udsReaderThread = null;
+            return false;
         }
 
         public static void ResetUdsReader()
@@ -12292,6 +12323,11 @@ using System.Threading;"
                 return false;
             }
 
+            if (IsEcuFuncReaderJobRunning())
+            {
+                return false;
+            }
+
             if (!Directory.Exists(bmwPath))
             {
                 AlertDialog altertDialog = new AlertDialog.Builder(_context)
@@ -12336,7 +12372,7 @@ using System.Threading;"
             };
             progress.Show();
             SetLock(LockTypeCommunication);
-            Thread initThread = new Thread(() =>
+            _ecuFuncReaderThread = new Thread(() =>
             {
                 long lastPercent = -1;
                 bool result = InitEcuFunctionReader(bmwPath, out string errorMessage, percent =>
@@ -12403,8 +12439,22 @@ using System.Threading;"
                     handler?.Invoke(EcuFunctionsActive);
                 });
             });
-            initThread.Start();
+            _ecuFuncReaderThread.Start();
             return true;
+        }
+
+        public bool IsEcuFuncReaderJobRunning()
+        {
+            if (_ecuFuncReaderThread == null)
+            {
+                return false;
+            }
+            if (_ecuFuncReaderThread.IsAlive)
+            {
+                return true;
+            }
+            _ecuFuncReaderThread = null;
+            return false;
         }
 
         public static void ResetEcuFunctionReader()
