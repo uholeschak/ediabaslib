@@ -1890,6 +1890,21 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override bool IsFinishAllowed()
+        {
+            if (IsErrorEvalJobRunning())
+            {
+                return false;
+            }
+
+            if (!_checkAdapter.IsJobRunning())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             if (_activityCommon == null)
