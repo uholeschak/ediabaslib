@@ -1656,6 +1656,15 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override bool IsFinishAllowed()
+        {
+            if (IsJobRunning())
+            {
+                return false;
+            }
+            return true;
+        }
+
         public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
         {
             if (_activityCommon == null)
