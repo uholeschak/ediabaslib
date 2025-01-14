@@ -417,7 +417,7 @@ public class CheckAdapter : IDisposable
         return true;
     }
 
-    private bool IsJobRunning()
+    public bool IsJobRunning()
     {
         if (_adapterThread == null)
         {

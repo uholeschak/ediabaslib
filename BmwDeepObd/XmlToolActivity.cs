@@ -1662,6 +1662,12 @@ namespace BmwDeepObd
             {
                 return false;
             }
+
+            if (!_checkAdapter.IsJobRunning())
+            {
+                return false;
+            }
+
             return true;
         }
 
