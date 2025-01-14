@@ -1045,6 +1045,7 @@ namespace BmwDeepObd
         };
 
         private bool _disposed;
+        private bool _terminating;
         private readonly Context _context;
         private readonly Android.App.Activity _activity;
         private readonly BaseActivity _baseActivity;
@@ -1865,6 +1866,7 @@ namespace BmwDeepObd
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    _terminating = true;
                     StopMtcService();
 
                     if (IsUdsReaderJobRunning())
@@ -12091,6 +12093,11 @@ using System.Threading;"
                 long lastPercent = -1;
                 bool result = InitUdsReader(vagPath, out string errorMessage, percent =>
                 {
+                    if (_terminating)
+                    {
+                        return true;
+                    }
+
                     if (lastPercent == percent)
                     {
                         return abortInit;
@@ -12377,6 +12384,11 @@ using System.Threading;"
                 long lastPercent = -1;
                 bool result = InitEcuFunctionReader(bmwPath, out string errorMessage, percent =>
                 {
+                    if (_terminating)
+                    {
+                        return true;
+                    }
+
                     if (lastPercent == percent)
                     {
                         return abortInit;
