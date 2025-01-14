@@ -1902,6 +1902,16 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (_downloadProgress != null)
+            {
+                return false;
+            }
+
+            if (_compileProgress != null)
+            {
+                return false;
+            }
+
             return true;
         }
 
