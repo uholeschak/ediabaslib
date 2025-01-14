@@ -1045,7 +1045,7 @@ namespace BmwDeepObd
         };
 
         private bool _disposed;
-        private bool _terminating;
+        private volatile bool _terminating;
         private readonly Context _context;
         private readonly Android.App.Activity _activity;
         private readonly BaseActivity _baseActivity;
