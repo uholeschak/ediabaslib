@@ -966,10 +966,21 @@ namespace BmwDeepObd
 
         public override bool IsFinishAllowed()
         {
+            if (_activityCommon == null)
+            {
+                return true;
+            }
+
             if (IsJobRunning())
             {
                 return false;
             }
+
+            if (_activityCommon.TranslateActive)
+            {
+                return false;
+            }
+
             return true;
         }
 
