@@ -944,7 +944,7 @@ namespace BmwDeepObd
             _ediabasJobAbort = true;
             if (IsJobRunning())
             {
-                _jobThread.Join();
+                _jobThread?.Join();
             }
             EdiabasClose();
             _activityCommon?.Dispose();

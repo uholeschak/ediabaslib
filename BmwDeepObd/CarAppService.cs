@@ -90,7 +90,7 @@ namespace BmwDeepObd
 
             if (IsErrorEvalJobRunning())
             {
-                _errorEvalThread.Join();
+                _errorEvalThread?.Join();
             }
 
             if (_activityCommon != null)
