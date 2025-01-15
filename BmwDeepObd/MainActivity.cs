@@ -1917,6 +1917,11 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (_activityCommon.TranslateActive)
+            {
+                return false;
+            }
+
             if (_downloadProgress != null)
             {
                 return false;

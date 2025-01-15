@@ -1157,6 +1157,8 @@ namespace BmwDeepObd
             }
         }
 
+        public bool TranslateActive => _translateProgress != null;
+
         public string ManufacturerEcuDirName
         {
             get
