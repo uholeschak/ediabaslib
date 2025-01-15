@@ -470,6 +470,21 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override bool IsFinishAllowed()
+        {
+            if (_activityCommon == null)
+            {
+                return true;
+            }
+
+            if (_activityCommon.TranslateActive)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public bool OnTouch(View v, MotionEvent e)
         {
             switch (e.Action)
