@@ -480,7 +480,7 @@ public class CheckAdapter : IDisposable
                 // Dispose managed resources.
                 if (IsJobRunning())
                 {
-                    _adapterThread.Join();
+                    _adapterThread?.Join();
                 }
 
                 EdiabasClose();

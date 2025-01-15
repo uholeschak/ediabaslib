@@ -6362,7 +6362,7 @@ namespace BmwDeepObd
                 // wait for thread to finish
                 if (IsJobRunning())
                 {
-                    _jobThread.Join();
+                    _jobThread?.Join();
                 }
                 TranslateAndSelectJobs(ecuInfo);
             }

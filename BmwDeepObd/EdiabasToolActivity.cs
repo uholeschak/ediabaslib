@@ -441,7 +441,7 @@ namespace BmwDeepObd
             _ediabasJobAbort = true;
             if (IsJobRunning())
             {
-                _jobThread.Join();
+                _jobThread?.Join();
             }
             EdiabasClose(true);
 
@@ -2557,7 +2557,7 @@ namespace BmwDeepObd
 
                     if (IsJobRunning())
                     {
-                        _jobThread.Join();
+                        _jobThread?.Join();
                     }
 
                     _jobListTranslated = false;
@@ -3030,7 +3030,7 @@ namespace BmwDeepObd
                     }
                     if (IsJobRunning())
                     {
-                        _jobThread.Join();
+                        _jobThread?.Join();
                     }
                     _activityCommon.SetLock(ActivityCommon.LockType.None);
                     UpdateOptionsMenu();

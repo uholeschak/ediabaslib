@@ -1235,7 +1235,7 @@ namespace BmwDeepObd
             if (IsEdiabasThreadRunning())
             {
                 // ReSharper disable once InconsistentlySynchronizedField
-                _ediabasThread.Join();
+                _ediabasThread?.Join();
                 // clear thread pointer
                 IsEdiabasThreadRunning();
             }

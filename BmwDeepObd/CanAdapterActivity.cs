@@ -389,7 +389,7 @@ namespace BmwDeepObd
 
             if (IsJobRunning())
             {
-                _adapterThread.Join();
+                _adapterThread?.Join();
             }
             EdiabasClose();
             _activityCommon?.Dispose();
@@ -1048,7 +1048,7 @@ namespace BmwDeepObd
 
                     if (IsJobRunning())
                     {
-                        _adapterThread.Join();
+                        _adapterThread?.Join();
                     }
 
                     progress.Dismiss();
@@ -1271,7 +1271,7 @@ namespace BmwDeepObd
 
                     if (IsJobRunning())
                     {
-                        _adapterThread.Join();
+                        _adapterThread?.Join();
                     }
 
                     progress.Dismiss();
@@ -1535,7 +1535,7 @@ namespace BmwDeepObd
 
                     if (IsJobRunning())
                     {
-                        _adapterThread.Join();
+                        _adapterThread?.Join();
                     }
 
                     progress.Dismiss();
