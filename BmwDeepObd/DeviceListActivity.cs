@@ -93,6 +93,7 @@ namespace BmwDeepObd
         // Member fields
         private InstanceData _instanceData = new InstanceData();
         private AdapterTypeDetect _adapterTypeDetect;
+        private Thread _detectThread;
         private BluetoothAdapter _btAdapter;
         private BtLeGattSpp _btLeGattSpp;
         private Timer _deviceUpdateTimer;
@@ -328,6 +329,11 @@ namespace BmwDeepObd
         {
             base.OnDestroy ();
 
+            if (IsJobRunning())
+            {
+                _detectThread?.Join();
+            }
+
             // Make sure we're not doing discovery anymore
             try
             {
@@ -385,6 +391,16 @@ namespace BmwDeepObd
                     return true;
             }
             return base.OnOptionsItemSelected(item);
+        }
+
+        public override bool IsFinishAllowed()
+        {
+            if (IsJobRunning())
+            {
+                return false;
+            }
+
+            return true;
         }
 
         protected override void OnActivityResult(int requestCode, Android.App.Result resultCode, Intent data)
@@ -993,6 +1009,11 @@ namespace BmwDeepObd
                 return;
             }
 
+            if (IsJobRunning())
+            {
+                return;
+            }
+
             _transmitCancelEvent.Reset();
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.detect_adapter));
@@ -1023,7 +1044,7 @@ namespace BmwDeepObd
 
             _activityCommon.ConnectMtcBtDevice(deviceAddress);
 
-            Thread detectThread = new Thread(() =>
+            _detectThread = new Thread(() =>
             {
                 AdapterTypeDetect.AdapterType adapterType = AdapterTypeDetect.AdapterType.Unknown;
                 try
@@ -1602,7 +1623,21 @@ namespace BmwDeepObd
             {
                 Priority = System.Threading.ThreadPriority.Normal
             };
-            detectThread.Start();
+            _detectThread.Start();
+        }
+
+        public bool IsJobRunning()
+        {
+            if (_detectThread == null)
+            {
+                return false;
+            }
+            if (_detectThread.IsAlive)
+            {
+                return true;
+            }
+            _detectThread = null;
+            return false;
         }
 
         private bool BluetoothConnect(BluetoothSocket bluetoothSocket, int timeout = 0)

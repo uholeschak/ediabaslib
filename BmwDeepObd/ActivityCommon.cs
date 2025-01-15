@@ -1873,12 +1873,12 @@ namespace BmwDeepObd
 
                     if (IsUdsReaderJobRunning())
                     {
-                        _udsReaderThread.Join();
+                        _udsReaderThread?.Join();
                     }
 
                     if (IsEcuFuncReaderJobRunning())
                     {
-                        _ecuFuncReaderThread.Join();
+                        _ecuFuncReaderThread?.Join();
                     }
 
                     if (_btUpdateHandler != null)
