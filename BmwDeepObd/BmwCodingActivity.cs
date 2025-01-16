@@ -807,8 +807,6 @@ namespace BmwDeepObd
                 });
             }
 
-            PackageInfo packageInfo = _activityCommon.GetPackageInfo();
-
             CustomProgressDialog progress = new CustomProgressDialog(this);
             progress.SetMessage(GetString(Resource.String.bmw_coding_connecting));
             progress.ButtonAbort.Enabled = false;
