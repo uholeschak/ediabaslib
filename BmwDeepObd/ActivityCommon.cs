@@ -1882,6 +1882,11 @@ namespace BmwDeepObd
                         _ecuFuncReaderThread?.Join();
                     }
 
+                    if (IsCopyDocumentJobRunning())
+                    {
+                        _copyDocumentThread?.Join();
+                    }
+
                     if (_btUpdateHandler != null)
                     {
                         try
