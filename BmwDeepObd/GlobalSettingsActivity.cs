@@ -436,6 +436,21 @@ namespace BmwDeepObd
             return base.OnOptionsItemSelected(item);
         }
 
+        public override bool IsFinishAllowed()
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            if (_activityCommon.IsCopyDocumentJobRunning())
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public bool OnTouch(View v, MotionEvent e)
         {
             if (_activityCommon == null)

@@ -1097,6 +1097,7 @@ namespace BmwDeepObd
         private readonly MtcServiceConnection _mtcServiceConnection;
         private Thread _udsReaderThread;
         private Thread _ecuFuncReaderThread;
+        private Thread _copyDocumentThread;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -1879,6 +1880,11 @@ namespace BmwDeepObd
                     if (IsEcuFuncReaderJobRunning())
                     {
                         _ecuFuncReaderThread?.Join();
+                    }
+
+                    if (IsCopyDocumentJobRunning())
+                    {
+                        _copyDocumentThread?.Join();
                     }
 
                     if (_btUpdateHandler != null)
@@ -13372,6 +13378,11 @@ using System.Threading;"
 
         public bool CopyDocumentsThread(DocumentFile documentSrc, DocumentFile documentDst, CopyDocumentsThreadFinishDelegate handler)
         {
+            if (IsCopyDocumentJobRunning())
+            {
+                return false;
+            }
+
             bool aborted = false;
             CustomProgressDialog progress = new CustomProgressDialog(_activity);
             progress.SetMessage(_activity.GetString(Resource.String.copy_documents_progress));
@@ -13384,7 +13395,7 @@ using System.Threading;"
             };
             progress.Show();
             SetLock(LockTypeCommunication);
-            Thread initThread = new Thread(() =>
+            _copyDocumentThread = new Thread(() =>
             {
                 bool result = false;
                 int docCount = GetDocumentCount(documentSrc, name =>
@@ -13453,8 +13464,22 @@ using System.Threading;"
                     handler?.Invoke(result, aborted);
                 });
             });
-            initThread.Start();
+            _copyDocumentThread.Start();
             return true;
+        }
+
+        public bool IsCopyDocumentJobRunning()
+        {
+            if (_copyDocumentThread == null)
+            {
+                return false;
+            }
+            if (_copyDocumentThread.IsAlive)
+            {
+                return true;
+            }
+            _copyDocumentThread = null;
+            return false;
         }
 
         public static bool CopyDocumentsRecursive(DocumentFile documentSrc, DocumentFile documentDst, ProgressDocumentCopyDelegate progressHandler)
