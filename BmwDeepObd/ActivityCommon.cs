@@ -1098,6 +1098,7 @@ namespace BmwDeepObd
         private Thread _udsReaderThread;
         private Thread _ecuFuncReaderThread;
         private Thread _copyDocumentThread;
+        private Thread _deleteDocumentThread;
         private PowerManager.WakeLock _wakeLockScreenBright;
         private PowerManager.WakeLock _wakeLockScreenDim;
         private PowerManager.WakeLock _wakeLockCpu;
@@ -1885,6 +1886,11 @@ namespace BmwDeepObd
                     if (IsCopyDocumentJobRunning())
                     {
                         _copyDocumentThread?.Join();
+                    }
+
+                    if (IsDeleteDocumentJobRunning())
+                    {
+                        _deleteDocumentThread?.Join();
                     }
 
                     if (_btUpdateHandler != null)
@@ -13654,6 +13660,11 @@ using System.Threading;"
 
         public bool DeleteDocumentsThread(DocumentFile documentFile, CopyDocumentsThreadFinishDelegate handler)
         {
+            if (IsDeleteDocumentJobRunning())
+            {
+                return false;
+            }
+
             bool aborted = false;
             CustomProgressDialog progress = new CustomProgressDialog(_activity);
             progress.SetMessage(_activity.GetString(Resource.String.del_documents_progress));
@@ -13664,7 +13675,7 @@ using System.Threading;"
             };
             progress.Show();
             SetLock(LockTypeCommunication);
-            Thread initThread = new Thread(() =>
+            _deleteDocumentThread = new Thread(() =>
             {
                 bool result = false;
                 if (documentFile.Exists())
@@ -13693,8 +13704,22 @@ using System.Threading;"
                     handler?.Invoke(result, aborted);
                 });
             });
-            initThread.Start();
+            _deleteDocumentThread.Start();
             return true;
+        }
+
+        public bool IsDeleteDocumentJobRunning()
+        {
+            if (_deleteDocumentThread == null)
+            {
+                return false;
+            }
+            if (_deleteDocumentThread.IsAlive)
+            {
+                return true;
+            }
+            _deleteDocumentThread = null;
+            return false;
         }
 
         public static int GetDocumentCount(DocumentFile document, ProgressDocumentCopyDelegate progressHandler)
