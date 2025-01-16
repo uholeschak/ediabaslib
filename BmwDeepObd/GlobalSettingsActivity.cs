@@ -448,6 +448,11 @@ namespace BmwDeepObd
                 return false;
             }
 
+            if (_activityCommon.IsDeleteDocumentJobRunning())
+            {
+                return false;
+            }
+
             return true;
         }
 
