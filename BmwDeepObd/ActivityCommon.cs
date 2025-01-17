@@ -9813,6 +9813,7 @@ namespace BmwDeepObd
                 {
                     System.Threading.Tasks.Task<HttpResponseMessage> taskTranslate;
                     int stringCount = 0;
+                    List<string> transRequestList = new List<string>();
                     HttpContent httpContent = null;
                     StringBuilder sbUrl = new StringBuilder();
 
@@ -9840,7 +9841,8 @@ namespace BmwDeepObd
                         sbUrl.Append("&q=");
                         for (int i = offset; i < _transReducedStringList.Count; i++)
                         {
-                            string line = _transReducedStringList[i].Replace("\n", " ").Replace("\r", string.Empty);
+                            string line = _transReducedStringList[i];
+                            transRequestList.Add(line);
                             if (stringCount > 0)
                             {
                                 line = "\n" + line;
@@ -9848,7 +9850,7 @@ namespace BmwDeepObd
 
                             sbUrl.Append(System.Uri.EscapeDataString(line));
                             stringCount++;
-                            if (sbUrl.Length > 1000)
+                            if (sbUrl.Length > 8000)
                             {
                                 break;
                             }
@@ -10236,7 +10238,7 @@ namespace BmwDeepObd
                                         break;
 
                                     case TranslatorType.GoogleApis:
-                                        transList = GetGoogleApisTranslations(responseTranslateResult);
+                                        transList = GetGoogleApisTranslations(responseTranslateResult, transRequestList);
                                         break;
                                 }
 
@@ -10887,7 +10889,7 @@ namespace BmwDeepObd
             }
         }
 
-        private List<string> GetGoogleApisTranslations(string jsonResult)
+        private List<string> GetGoogleApisTranslations(string jsonResult, List<string> transRequestList)
         {
             try
             {
@@ -10910,22 +10912,44 @@ namespace BmwDeepObd
                     return null;
                 }
 
+                int requestIndex = 0;
+                string sourceParts = string.Empty;
+                string translationParts = string.Empty;
+
                 for (int i = 0; i < itemCount; i++)
                 {
                     JsonElement element1 = element0[i];
-                    if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 1)
+                    if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 2)
                     {
                         return null;
                     }
 
-                    string translation = element1[0].GetString();
-                    if (string.IsNullOrEmpty(translation))
+                    if (requestIndex >= transRequestList.Count)
+                    {
+                        return null;
+                    }
+
+                    string requestString = transRequestList[requestIndex];
+                    string source = element1[1].GetString() ?? string.Empty;
+                    string translation = element1[0].GetString() ?? string.Empty;
+
+                    sourceParts += source;
+                    translationParts += translation;
+
+                    if (sourceParts.TrimEnd('\n').Length < requestString.Length)
                     {
                         continue;
                     }
 
-                    translation = translation.TrimEnd('\n');
-                    transList.Add(translation);
+                    transList.Add(translationParts.TrimEnd('\n'));
+                    requestIndex++;
+                    sourceParts = string.Empty;
+                    translationParts = string.Empty;
+                }
+
+                if (requestIndex != transRequestList.Count)
+                {
+                    return null;
                 }
 
                 return transList;

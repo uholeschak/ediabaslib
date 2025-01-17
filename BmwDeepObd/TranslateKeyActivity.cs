@@ -392,7 +392,7 @@ namespace BmwDeepObd
                     {
                         "Dieser Text wurde erfolgreich \x00fcbersetzt.",
                         "Es werden auch mehrere Zeilen gleichzeitig \x00fcbersetzt.",
-                        "Hier folgt eine weitere Zeile.",
+                        "Hier folgt eine weitere Zeile. Dies besteht aus zwei Teilen.",
                     }, list =>
                 {
                     if (_activityCommon == null)
