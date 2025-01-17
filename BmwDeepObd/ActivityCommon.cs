@@ -2126,6 +2126,9 @@ namespace BmwDeepObd
 
                 case TranslatorType.YandexCloud:
                     return _context.GetString(Resource.String.select_translator_yandex_cloud);
+
+                case TranslatorType.GoogleApis:
+                    return _context.GetString(Resource.String.select_translator_google_apis);
             }
             return string.Empty;
         }
@@ -8523,7 +8526,7 @@ namespace BmwDeepObd
             ScanAllEcus = false;
             CollectDebugInfo = false;
             CompressTrace = true;
-            Translator = TranslatorType.IbmWatson;
+            Translator = TranslatorType.Deepl;
         }
 
         public string GetCurrentLanguage(bool iso3 = false)
@@ -9535,6 +9538,9 @@ namespace BmwDeepObd
 
                 case TranslatorType.YandexCloud:
                     return !string.IsNullOrWhiteSpace(YandexCloudApiKey);
+
+                case TranslatorType.GoogleApis:
+                    return true;
             }
 
             return false;
@@ -9810,7 +9816,45 @@ namespace BmwDeepObd
                     HttpContent httpContent = null;
                     StringBuilder sbUrl = new StringBuilder();
 
-                    if (SelectedTranslator == TranslatorType.YandexCloud)
+                    if (SelectedTranslator == TranslatorType.GoogleApis)
+                    {
+                        if (_transLangList == null)
+                        {
+                            _transLangList = new List<string>()
+                            {
+                                "af", "sq", "am", "ar", "hy", "az", "eu", "be", "bn", "bs", "bg", "my", "ca", "ca",
+                                "ceb", "zh-cn", "co", "cs", "da", "nl", "nl", "en", "eo", "et", "fi", "fr", "fy", "ka",
+                                "de", "gd", "gd", "ga", "gl", "el", "gu", "ht", "ht", "ha", "haw", "he", "hi", "hr",
+                                "hu", "ig", "is", "id", "it", "jw", "ja", "kn", "kk", "km", "ky", "ky", "ko", "ku",
+                                "lo", "la", "lv", "lt", "lb", "lb", "mk", "ml", "mi", "mr", "ms", "mg", "mt", "mn",
+                                "ne", "no", "ny", "ny", "ny", "or", "pa", "pa", "fa", "pl", "pt", "ps", "ps", "ro",
+                                "ro", "ro", "ru", "si", "si", "sk", "sl", "sm", "sn", "sd", "so", "st", "es", "es",
+                                "sr", "su", "sw", "sv", "ta", "te", "tg", "tl", "th", "tr", "ug", "ug", "uk", "ur",
+                                "uz", "vi", "cy", "xh", "yi", "yo", "zu", "zh-CN", "zh-TW"
+                            };
+                        }
+
+                        string targetLang = _transCurrentLang;
+                        if (_transLangList.All(lang =>
+                                string.Compare(lang, targetLang, StringComparison.OrdinalIgnoreCase) != 0))
+                        {
+                            // language not found
+                            targetLang = "en";
+                        }
+
+                        sbUrl.Append(@"https://translate.googleapis.com/translate_a/single?client=gtx&dt=t");
+                        sbUrl.Append("&sl=de");
+                        sbUrl.Append("&tl=");
+                        sbUrl.Append(targetLang);
+                        int offset = _transList?.Count ?? 0;
+                        sbUrl.Append("&q=");
+                        sbUrl.Append(System.Uri.EscapeDataString(_transReducedStringList[offset]));
+
+                        _translateHttpClient.DefaultRequestHeaders.Authorization = null;
+                        _translateHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36");
+                        taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+                    }
+                    else if (SelectedTranslator == TranslatorType.YandexCloud)
                     {
                         JsonSerializerOptions jsonOptions = new()
                         {
