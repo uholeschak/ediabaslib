@@ -9835,10 +9835,24 @@ namespace BmwDeepObd
                         sbUrl.Append("&sl=de");
                         sbUrl.Append("&tl=");
                         sbUrl.Append(targetLang);
+
                         int offset = _transList?.Count ?? 0;
                         sbUrl.Append("&q=");
-                        sbUrl.Append(System.Uri.EscapeDataString(_transReducedStringList[offset]));
-                        stringCount++;
+                        for (int i = offset; i < _transReducedStringList.Count; i++)
+                        {
+                            string line = _transReducedStringList[i];
+                            if (stringCount > 0)
+                            {
+                                line = "\n" + line;
+                            }
+
+                            sbUrl.Append(System.Uri.EscapeDataString(line));
+                            stringCount++;
+                            if (sbUrl.Length > 1000)
+                            {
+                                break;
+                            }
+                        }
 
                         _translateHttpClient.DefaultRequestHeaders.Authorization = null;
                         _translateHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36");
@@ -10890,19 +10904,30 @@ namespace BmwDeepObd
                 }
 
                 JsonElement element0 = jsonDocument.RootElement[0];
-                if (element0.ValueKind != JsonValueKind.Array || element0.GetArrayLength() < 1)
+                int itemCount = element0.GetArrayLength();
+                if (element0.ValueKind != JsonValueKind.Array || itemCount < 1)
                 {
                     return null;
                 }
 
-                JsonElement element1 = element0[0];
-                if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 1)
+                for (int i = 0; i < itemCount; i++)
                 {
-                    return null;
+                    JsonElement element1 = element0[i];
+                    if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 1)
+                    {
+                        return null;
+                    }
+
+                    string translation = element1[0].GetString();
+                    if (string.IsNullOrEmpty(translation))
+                    {
+                        continue;
+                    }
+
+                    translation = translation.TrimEnd('\n');
+                    transList.Add(translation);
                 }
 
-                string translation = element1[0].GetString();
-                transList.Add(translation);
                 return transList;
             }
             catch (Exception)
