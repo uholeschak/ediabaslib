@@ -391,7 +391,8 @@ namespace BmwDeepObd
                 if (!_activityCommon.TranslateStrings(new List<string>
                     {
                         "Dieser Text wurde erfolgreich \x00fcbersetzt.",
-                        "Es werden auch mehrere Zeilen gleichzeitig \x00fcbersetzt."
+                        "Es werden auch mehrere Zeilen gleichzeitig \x00fcbersetzt.",
+                        "Hier folgt eine weitere Zeile.",
                     }, list =>
                 {
                     if (_activityCommon == null)
@@ -400,7 +401,16 @@ namespace BmwDeepObd
                     }
                     if (list != null && list.Count > 0)
                     {
-                        _textViewYandexApiKeyTestResult.Text = list[0];
+                        StringBuilder sb = new StringBuilder();
+                        foreach (string s in list)
+                        {
+                            if (sb.Length > 0)
+                            {
+                                sb.Append("\r\n");
+                            }
+                            sb.Append(s);
+                        }
+                        _textViewYandexApiKeyTestResult.Text = sb.ToString();
                     }
                     else
                     {
