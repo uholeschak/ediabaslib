@@ -580,6 +580,8 @@ namespace BmwDeepObd
                 _editTextApiUrl.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonApiUrlPaste.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
 
+                _buttonYandexApiKeyCreate.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
+                _buttonYandexApiKeyGet.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonYandexApiKeyPaste.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
                 _editTextYandexApiKey.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
 
