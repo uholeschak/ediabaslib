@@ -9849,6 +9849,7 @@ namespace BmwDeepObd
                         int offset = _transList?.Count ?? 0;
                         sbUrl.Append("&q=");
                         sbUrl.Append(System.Uri.EscapeDataString(_transReducedStringList[offset]));
+                        stringCount++;
 
                         _translateHttpClient.DefaultRequestHeaders.Authorization = null;
                         _translateHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36");
@@ -10142,6 +10143,9 @@ namespace BmwDeepObd
                         bool responseEvaluated = false;
                         switch (SelectedTranslator)
                         {
+                            case TranslatorType.GoogleApis:
+                                break;
+
                             case TranslatorType.YandexCloud:
                                 if (IsYandexCloudOauthToken(YandexCloudApiKey) && string.IsNullOrEmpty(_yandexCloudIamToken))
                                 {
@@ -10188,6 +10192,10 @@ namespace BmwDeepObd
                                     case TranslatorType.YandexCloud:
                                         _transLangList = GetYandexCloudLanguages(responseTranslateResult);
                                         break;
+
+                                    case TranslatorType.GoogleApis:
+                                        // fixed list
+                                        break;
                                 }
 
                                 if (_transLangList != null)
@@ -10222,6 +10230,10 @@ namespace BmwDeepObd
 
                                     case TranslatorType.YandexCloud:
                                         transList = GetYandexCloudTranslations(responseTranslateResult);
+                                        break;
+
+                                    case TranslatorType.GoogleApis:
+                                        transList = GetGoogleApisTranslations(responseTranslateResult);
                                         break;
                                 }
 
@@ -10846,6 +10858,44 @@ namespace BmwDeepObd
                     }
                 }
 
+                return transList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private List<string> GetGoogleApisTranslations(string jsonResult)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(jsonResult))
+                {
+                    return null;
+                }
+
+                JsonDocument jsonDocument = JsonDocument.Parse(jsonResult);
+                List<string> transList = new List<string>();
+                if (jsonDocument.RootElement.ValueKind != JsonValueKind.Array || jsonDocument.RootElement.GetArrayLength() < 1)
+                {
+                    return null;
+                }
+
+                JsonElement element0 = jsonDocument.RootElement[0];
+                if (element0.ValueKind != JsonValueKind.Array || element0.GetArrayLength() < 1)
+                {
+                    return null;
+                }
+
+                JsonElement element1 = element0[0];
+                if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 1)
+                {
+                    return null;
+                }
+
+                string translation = element1[0].GetString();
+                transList.Add(translation);
                 return transList;
             }
             catch (Exception)
