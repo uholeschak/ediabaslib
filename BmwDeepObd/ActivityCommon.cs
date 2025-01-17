@@ -9840,7 +9840,7 @@ namespace BmwDeepObd
                         sbUrl.Append("&q=");
                         for (int i = offset; i < _transReducedStringList.Count; i++)
                         {
-                            string line = _transReducedStringList[i];
+                            string line = _transReducedStringList[i].Replace("\n", " ").Replace("\r", string.Empty);
                             if (stringCount > 0)
                             {
                                 line = "\n" + line;
