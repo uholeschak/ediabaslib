@@ -45,6 +45,7 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private View _contentView;
         private TextView _textViewCaptionTranslator;
+        private RadioButton _radioButtonTranslatorGoogleApis;
         private RadioButton _radioButtonTranslatorYandexCloud;
         private RadioButton _radioButtonTranslatorYandexTranslate;
         private RadioButton _radioButtonTranslatorIbm;
@@ -101,6 +102,18 @@ namespace BmwDeepObd
             _activityCommon = new ActivityCommon(this);
 
             _textViewCaptionTranslator = FindViewById<TextView>(Resource.Id.textViewCaptionTranslator);
+
+
+            _radioButtonTranslatorGoogleApis = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorGoogleApis);
+            _radioButtonTranslatorGoogleApis.CheckedChange += (sender, e) =>
+            {
+                if (_ignoreChange)
+                {
+                    return;
+                }
+                UpdateTranslatorType();
+                UpdateDisplay();
+            };
 
             _radioButtonTranslatorYandexCloud = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandexCloud);
             _radioButtonTranslatorYandexCloud.CheckedChange += (sender, e) =>
@@ -541,6 +554,10 @@ namespace BmwDeepObd
                         _radioButtonTranslatorYandexCloud.Checked = true;
                         break;
 
+                    case ActivityCommon.TranslatorType.GoogleApis:
+                        _radioButtonTranslatorGoogleApis.Checked = true;
+                        break;
+
                     default:
                         _radioButtonTranslatorYandexTranslate.Checked = true;
                         break;
@@ -557,9 +574,14 @@ namespace BmwDeepObd
                 _buttonFolderIdPaste.Visibility = folderIdVisible ? ViewStates.Visible : ViewStates.Gone;
 
                 bool apiUrlVisible = ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson;
+                bool apiKeyVisible = ActivityCommon.SelectedTranslator != ActivityCommon.TranslatorType.GoogleApis;
+
                 _textViewApiUrlPasteTitle.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
                 _editTextApiUrl.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonApiUrlPaste.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
+
+                _buttonYandexApiKeyPaste.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
+                _editTextYandexApiKey.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
 
                 bool pasteEnable = false;
                 string clipText = _activityCommon.GetClipboardText();
@@ -570,7 +592,12 @@ namespace BmwDeepObd
 
                 _buttonYandexApiKeyPaste.Enabled = pasteEnable;
 
-                bool testEnabled = !string.IsNullOrWhiteSpace(_editTextYandexApiKey.Text);
+                bool testEnabled = true;
+                if (apiKeyVisible)
+                {
+                    testEnabled = !string.IsNullOrWhiteSpace(_editTextYandexApiKey.Text);
+                }
+
                 switch (ActivityCommon.SelectedTranslator)
                 {
                     case ActivityCommon.TranslatorType.IbmWatson:
@@ -710,6 +737,10 @@ namespace BmwDeepObd
             else if (_radioButtonTranslatorYandexCloud.Checked)
             {
                 translatorType = ActivityCommon.TranslatorType.YandexCloud;
+            }
+            else if (_radioButtonTranslatorGoogleApis.Checked)
+            {
+                translatorType = ActivityCommon.TranslatorType.GoogleApis;
             }
 
             _activityCommon.Translator = translatorType;

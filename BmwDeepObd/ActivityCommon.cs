@@ -735,6 +735,7 @@ namespace BmwDeepObd
             [XmlEnum(Name = "IbmWatson")] IbmWatson,                // IBM Watson Translator
             [XmlEnum(Name = "DeepL")] Deepl,                        // DeepL
             [XmlEnum(Name = "YandexCloud")] YandexCloud,            // Yandex cloud
+            [XmlEnum(Name = "GoogleApis")] GoogleApis,              // Google APIs
         }
 
         public enum LastAppState

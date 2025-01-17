@@ -38,6 +38,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/trans_translator_deepl" />
+            <RadioButton
+              android:id="@+id/radioButtonTranslatorGoogleApis"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/trans_translator_google_apis" />
         </RadioGroup>
         <TextView
             android:id="@+id/textViewTransKeyDesc"
