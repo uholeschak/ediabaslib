@@ -10904,19 +10904,30 @@ namespace BmwDeepObd
                 }
 
                 JsonElement element0 = jsonDocument.RootElement[0];
-                if (element0.ValueKind != JsonValueKind.Array || element0.GetArrayLength() < 1)
+                int itemCount = element0.GetArrayLength();
+                if (element0.ValueKind != JsonValueKind.Array || itemCount < 1)
                 {
                     return null;
                 }
 
-                JsonElement element1 = element0[0];
-                if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 1)
+                for (int i = 0; i < itemCount; i++)
                 {
-                    return null;
+                    JsonElement element1 = element0[i];
+                    if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 1)
+                    {
+                        return null;
+                    }
+
+                    string translation = element1[0].GetString();
+                    if (string.IsNullOrEmpty(translation))
+                    {
+                        continue;
+                    }
+
+                    translation = translation.TrimEnd('\n');
+                    transList.Add(translation);
                 }
 
-                string translation = element1[0].GetString();
-                transList.Add(translation);
                 return transList;
             }
             catch (Exception)

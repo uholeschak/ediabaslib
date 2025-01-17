@@ -388,7 +388,11 @@ namespace BmwDeepObd
                 UpdateSettings();
                 _textViewYandexApiKeyTestResult.Text = string.Empty;
 
-                if (!_activityCommon.TranslateStrings(new List<string> {"Dieser Text wurde erfolgreich \x00fcbersetzt"}, list =>
+                if (!_activityCommon.TranslateStrings(new List<string>
+                    {
+                        "Dieser Text wurde erfolgreich \x00fcbersetzt.",
+                        "Es werden auch mehrere Zeilen gleichzeitig \x00fcbersetzt."
+                    }, list =>
                 {
                     if (_activityCommon == null)
                     {
