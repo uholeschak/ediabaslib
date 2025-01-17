@@ -52,8 +52,10 @@ namespace BmwDeepObd
         private RadioButton _radioButtonTranslatorDeepl;
         private TextView _textViewTransKeyDesc;
         private LinearLayout _layoutYandexKey;
+        private TextView _textViewTransKeyCopyTitle;
         private Button _buttonYandexApiKeyCreate;
         private Button _buttonYandexApiKeyGet;
+        private TextView _textViewYandexKeyPasteTitle;
         private Button _buttonYandexApiKeyPaste;
         private EditText _editTextYandexApiKey;
         private TextView _textViewFolderIdPasteTitle;
@@ -176,6 +178,8 @@ namespace BmwDeepObd
             _textViewApiUrlPasteTitle = FindViewById<TextView>(Resource.Id.textViewApiUrlPasteTitle);
             _editTextApiUrl = FindViewById<EditText>(Resource.Id.editTextApiUrl);
 
+            _textViewTransKeyCopyTitle = FindViewById<TextView>(Resource.Id.textViewTransKeyCopyTitle);
+
             _buttonYandexApiKeyCreate = FindViewById<Button>(Resource.Id.buttonYandexKeyCreate);
             _buttonYandexApiKeyCreate.SetOnTouchListener(this);
             _buttonYandexApiKeyCreate.Click += (sender, args) =>
@@ -249,6 +253,8 @@ namespace BmwDeepObd
                     }
                 });
             };
+
+            _textViewYandexKeyPasteTitle = FindViewById<TextView>(Resource.Id.textViewYandexKeyPasteTitle);
 
             _buttonYandexApiKeyPaste = FindViewById<Button>(Resource.Id.buttonYandexKeyPaste);
             _buttonYandexApiKeyPaste.SetOnTouchListener(this);
@@ -580,8 +586,10 @@ namespace BmwDeepObd
                 _editTextApiUrl.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonApiUrlPaste.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
 
+                _textViewTransKeyCopyTitle.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonYandexApiKeyCreate.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonYandexApiKeyGet.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
+                _textViewYandexKeyPasteTitle.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonYandexApiKeyPaste.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
                 _editTextYandexApiKey.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
 
