@@ -9813,7 +9813,7 @@ namespace BmwDeepObd
                 {
                     System.Threading.Tasks.Task<HttpResponseMessage> taskTranslate;
                     int stringCount = 0;
-                    List<string> transRequestList = new List<string>();
+                    List<string> transRequestList = null;
                     HttpContent httpContent = null;
                     StringBuilder sbUrl = new StringBuilder();
 
@@ -9832,11 +9832,13 @@ namespace BmwDeepObd
                             targetLang = "en";
                         }
 
+#if false
                         sbUrl.Append(@"https://translate.googleapis.com/translate_a/single?client=gtx&dt=t");
                         sbUrl.Append("&sl=de");
                         sbUrl.Append("&tl=");
                         sbUrl.Append(targetLang);
 
+                        transRequestList = new List<string>();
                         int offset = _transList?.Count ?? 0;
                         sbUrl.Append("&q=");
                         for (int i = offset; i < _transReducedStringList.Count; i++)
@@ -9855,7 +9857,25 @@ namespace BmwDeepObd
                                 break;
                             }
                         }
+#else
+                        sbUrl.Append(@"https://clients5.google.com/translate_a/t?client=dict-chrome-ex");
+                        sbUrl.Append("&sl=de");
+                        sbUrl.Append("&tl=");
+                        sbUrl.Append(targetLang);
 
+                        int offset = _transList?.Count ?? 0;
+                        for (int i = offset; i < _transReducedStringList.Count; i++)
+                        {
+                            string line = _transReducedStringList[i];
+                            sbUrl.Append("&q=");
+                            sbUrl.Append(System.Uri.EscapeDataString(line));
+                            stringCount++;
+                            if (sbUrl.Length > 8000)
+                            {
+                                break;
+                            }
+                        }
+#endif
                         _translateHttpClient.DefaultRequestHeaders.Authorization = null;
                         _translateHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36");
                         taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
@@ -10905,54 +10925,71 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                JsonElement element0 = jsonDocument.RootElement[0];
-                int itemCount = element0.GetArrayLength();
-                if (element0.ValueKind != JsonValueKind.Array || itemCount < 1)
+                if (transRequestList != null)
                 {
-                    return null;
-                }
-
-                int requestIndex = 0;
-                string sourceParts = string.Empty;
-                string translationParts = string.Empty;
-
-                for (int i = 0; i < itemCount; i++)
-                {
-                    JsonElement element1 = element0[i];
-                    if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 2)
+                    JsonElement element0 = jsonDocument.RootElement[0];
+                    int itemCount = element0.GetArrayLength();
+                    if (element0.ValueKind != JsonValueKind.Array || itemCount < 1)
                     {
                         return null;
                     }
 
-                    if (requestIndex >= transRequestList.Count)
+                    int requestIndex = 0;
+                    string sourceParts = string.Empty;
+                    string translationParts = string.Empty;
+
+                    for (int i = 0; i < itemCount; i++)
+                    {
+                        JsonElement element1 = element0[i];
+                        if (element1.ValueKind != JsonValueKind.Array || element1.GetArrayLength() < 2)
+                        {
+                            return null;
+                        }
+
+                        if (requestIndex >= transRequestList.Count)
+                        {
+                            return null;
+                        }
+
+                        string requestCleaned = transRequestList[requestIndex].TrimEnd('\n').TrimEnd();
+                        string source = element1[1].GetString() ?? string.Empty;
+                        string translation = element1[0].GetString() ?? string.Empty;
+
+                        sourceParts += source;
+                        translationParts += translation;
+
+                        string sourceCleanded = sourceParts.TrimEnd('\n').TrimEnd();
+                        if (sourceCleanded.Length < requestCleaned.Length)
+                        {
+                            continue;
+                        }
+
+                        transList.Add(translationParts.TrimEnd('\n'));
+                        requestIndex++;
+                        sourceParts = string.Empty;
+                        translationParts = string.Empty;
+                    }
+
+                    if (requestIndex != transRequestList.Count)
                     {
                         return null;
                     }
-
-                    string requestCleaned = transRequestList[requestIndex].TrimEnd('\n').TrimEnd();
-                    string source = element1[1].GetString() ?? string.Empty;
-                    string translation = element1[0].GetString() ?? string.Empty;
-
-                    sourceParts += source;
-                    translationParts += translation;
-
-                    string sourceCleanded = sourceParts.TrimEnd('\n').TrimEnd();
-                    if (sourceCleanded.Length < requestCleaned.Length)
-                    {
-                        continue;
-                    }
-
-                    transList.Add(translationParts.TrimEnd('\n'));
-                    requestIndex++;
-                    sourceParts = string.Empty;
-                    translationParts = string.Empty;
                 }
-
-                if (requestIndex != transRequestList.Count)
+                else
                 {
-                    return null;
-                }
+                    int itemCount = jsonDocument.RootElement.GetArrayLength();
+                    for (int i = 0; i < itemCount; i++)
+                    {
+                        JsonElement element = jsonDocument.RootElement[i];
+                        if (element.ValueKind != JsonValueKind.String)
+                        {
+                            return null;
+                        }
 
+                        string translation = element.GetString() ?? string.Empty;
+                        transList.Add(translation);
+                    }
+                }
                 return transList;
             }
             catch (Exception)
