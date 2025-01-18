@@ -10929,14 +10929,15 @@ namespace BmwDeepObd
                         return null;
                     }
 
-                    string requestString = transRequestList[requestIndex];
+                    string requestCleaned = transRequestList[requestIndex].TrimEnd('\n').TrimEnd();
                     string source = element1[1].GetString() ?? string.Empty;
                     string translation = element1[0].GetString() ?? string.Empty;
 
                     sourceParts += source;
                     translationParts += translation;
 
-                    if (sourceParts.TrimEnd('\n').Length < requestString.Length)
+                    string sourceCleanded = sourceParts.TrimEnd('\n').TrimEnd();
+                    if (sourceCleanded.Length < requestCleaned.Length)
                     {
                         continue;
                     }
