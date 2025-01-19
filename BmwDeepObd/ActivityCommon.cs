@@ -9811,326 +9811,338 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    System.Threading.Tasks.Task<HttpResponseMessage> taskTranslate;
+                    System.Threading.Tasks.Task<HttpResponseMessage> taskTranslate = null;
                     int stringCount = 0;
                     List<string> transRequestList = null;
                     HttpContent httpContent = null;
                     StringBuilder sbUrl = new StringBuilder();
 
-                    if (SelectedTranslator == TranslatorType.GoogleApis)
+                    switch (SelectedTranslator)
                     {
-                        if (_transLangList == null)
+                        case TranslatorType.YandexTranslate:
                         {
-                            _transLangList = GetGoogleApisLanguages();
-                        }
-
-                        string targetLang = _transCurrentLang;
-                        if (_transLangList.All(lang =>
-                                string.Compare(lang, targetLang, StringComparison.OrdinalIgnoreCase) != 0))
-                        {
-                            // language not found
-                            targetLang = "en";
-                        }
-
-#if false
-                        sbUrl.Append(@"https://translate.googleapis.com/translate_a/single?client=gtx&dt=t");
-                        sbUrl.Append("&sl=de");
-                        sbUrl.Append("&tl=");
-                        sbUrl.Append(targetLang);
-
-                        transRequestList = new List<string>();
-                        int offset = _transList?.Count ?? 0;
-                        sbUrl.Append("&q=");
-                        for (int i = offset; i < _transReducedStringList.Count; i++)
-                        {
-                            string line = _transReducedStringList[i];
-                            transRequestList.Add(line);
-                            if (stringCount > 0)
+                            if (_transLangList == null)
                             {
-                                line = "\n" + line;
+                                // no language list present, get it first
+                                sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/getLangs?");
+                                sbUrl.Append("key=");
+                                sbUrl.Append(System.Uri.EscapeDataString(YandexApiKey));
                             }
-
-                            sbUrl.Append(System.Uri.EscapeDataString(line));
-                            stringCount++;
-                            if (sbUrl.Length > 8000)
+                            else
                             {
-                                break;
-                            }
-                        }
-#else
-                        sbUrl.Append(@"https://clients5.google.com/translate_a/t?client=dict-chrome-ex");
-                        sbUrl.Append("&sl=de");
-                        sbUrl.Append("&tl=");
-                        sbUrl.Append(targetLang);
-
-                        int offset = _transList?.Count ?? 0;
-                        for (int i = offset; i < _transReducedStringList.Count; i++)
-                        {
-                            string line = _transReducedStringList[i];
-                            sbUrl.Append("&q=");
-                            sbUrl.Append(System.Uri.EscapeDataString(line));
-                            stringCount++;
-                            if (sbUrl.Length > 8000)
-                            {
-                                break;
-                            }
-                        }
-#endif
-                        _translateHttpClient.DefaultRequestHeaders.Authorization = null;
-                        _translateHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36");
-                        taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
-                    }
-                    else if (SelectedTranslator == TranslatorType.YandexCloud)
-                    {
-                        JsonSerializerOptions jsonOptions = new()
-                        {
-                            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-                        };
-                        bool oauthToken = IsYandexCloudOauthToken(YandexCloudApiKey);
-                        string folderId = oauthToken ? YandexCloudFolderId : null;
-                        if (string.IsNullOrWhiteSpace(folderId))
-                        {
-                            folderId = null;
-                        }
-
-                        TimeSpan tokenAge = DateTime.Now - _yandexCloudIamTokenTime;
-                        if (tokenAge.TotalHours > 1)
-                        {
-                            ResetYandexIamToken();
-                        }
-
-                        if (oauthToken && string.IsNullOrEmpty(_yandexCloudIamToken))
-                        {
-                            ResetYandexIamToken();
-                            // no IAM Token present
-                            sbUrl.Append("https://iam.api.cloud.yandex.net/iam/v1/tokens");
-                            YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudApiKey);
-                            string jsonString = JsonSerializer.Serialize(languagesRequest, jsonOptions);
-                            httpContent = new StringContent(jsonString);
-                        }
-                        else if (_transLangList == null)
-                        {
-                            // no language list present, get it first
-                            sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/languages");
-                            YandexCloudListLanguagesRequest languagesRequest = new YandexCloudListLanguagesRequest(folderId);
-                            string jsonString = JsonSerializer.Serialize(languagesRequest, jsonOptions);
-                            httpContent = new StringContent(jsonString);
-                        }
-                        else
-                        {
-                            sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/translate");
-
-                            List<string> transList = new List<string>();
-                            int offset = _transList?.Count ?? 0;
-                            int sumLength = 0;
-                            for (int i = offset; i < _transReducedStringList.Count; i++)
-                            {
-                                string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
-                                sumLength += testString.Length;
-                                if (sumLength > 9000)
+                                string langPair = "de-" + _transCurrentLang;
+                                string langPairTemp = langPair;     // prevent warning
+                                if (_transLangList.All(lang => string.Compare(lang, langPairTemp, StringComparison.OrdinalIgnoreCase) != 0))
                                 {
-                                    break;
+                                    // language not found
+                                    langPair = "de-en";
                                 }
 
-                                transList.Add(_transReducedStringList[i]);
-                                stringCount++;
-                            }
-
-                            string targetLang = _transCurrentLang;
-                            if (_transLangList.All(lang => string.Compare(lang, _transCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
-                            {
-                                // language not found
-                                targetLang = "en";
-                            }
-
-                            YandexCloudTranslateRequest translateRequest = new YandexCloudTranslateRequest(transList.ToArray(), "de", targetLang, folderId);
-                            string jsonString = JsonSerializer.Serialize(translateRequest, jsonOptions);
-
-                            httpContent = new StringContent(jsonString);
-                        }
-
-                        httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-                        if (oauthToken)
-                        {
-                            if (!string.IsNullOrEmpty(_yandexCloudIamToken))
-                            {
-                                _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _yandexCloudIamToken);
-                            }
-                        }
-                        else
-                        {
-                            _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Api-Key", YandexCloudApiKey);
-                        }
-
-                        taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
-                    }
-                    else if (SelectedTranslator == TranslatorType.Deepl)
-                    {
-                        string deeplApiUrl = DeeplProUrl;
-                        if (!string.IsNullOrEmpty(DeeplApiKey))
-                        {
-                            if (DeeplApiKey.EndsWith(":fx"))
-                            {
-                                deeplApiUrl = DeeplFreeUrl;
-                            }
-                        }
-
-                        if (_transLangList == null)
-                        {
-                            // no language list present, get it first
-                            sbUrl.Append(deeplApiUrl);
-                            sbUrl.Append(DeeplIdentLang);
-                        }
-                        else
-                        {
-                            sbUrl.Append(deeplApiUrl);
-                            sbUrl.Append(DeeplTranslate);
-
-                            List<string> transList = new List<string>();
-                            int offset = _transList?.Count ?? 0;
-                            int sumLength = 0;
-                            for (int i = offset; i < _transReducedStringList.Count; i++)
-                            {
-                                string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
-                                sumLength += testString.Length;
-                                if (sumLength > 120 * 1024)
-                                {   // real limit is 128KiB
-                                    break;
-                                }
-
-                                transList.Add(_transReducedStringList[i]);
-                                stringCount++;
-                            }
-
-                            string targetLang = "EN-US";
-                            foreach (string lang in _transLangList)
-                            {
-                                if (lang.StartsWith(_transCurrentLang, StringComparison.OrdinalIgnoreCase))
+                                sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/translate?");
+                                sbUrl.Append("key=");
+                                sbUrl.Append(System.Uri.EscapeDataString(YandexApiKey));
+                                sbUrl.Append("&lang=");
+                                sbUrl.Append(langPair);
+                                int offset = _transList?.Count ?? 0;
+                                for (int i = offset; i < _transReducedStringList.Count; i++)
                                 {
-                                    targetLang = lang;
-                                    if (lang.Length == 2)
+                                    sbUrl.Append("&text=");
+                                    sbUrl.Append(System.Uri.EscapeDataString(_transReducedStringList[i]));
+                                    stringCount++;
+                                    if (sbUrl.Length > 8000)
                                     {
                                         break;
                                     }
                                 }
                             }
 
-                            DeeplTranslateRequest translateRequest = new DeeplTranslateRequest(transList.ToArray(), "DE", targetLang);
-                            string jsonString = JsonSerializer.Serialize(translateRequest);
-
-                            httpContent = new StringContent(jsonString);
-                            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                        }
-
-                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("DeepL-Auth-Key", DeeplApiKey);
-                        if (httpContent != null)
-                        {
-                            taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
-                        }
-                        else
-                        {
+                            _translateHttpClient.DefaultRequestHeaders.Authorization = null;
                             taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+                            break;
                         }
-                    }
-                    else if (SelectedTranslator == TranslatorType.IbmWatson)
-                    {
-                        if (_transLangList == null)
-                        {
-                            // no language list present, get it first
-                            sbUrl.Append(IbmTranslatorUrl);
-                            sbUrl.Append(IbmTransIdentLang);
-                            sbUrl.Append(@"?");
-                            sbUrl.Append(IbmTransVersion);
-                        }
-                        else
-                        {
-                            sbUrl.Append(IbmTranslatorUrl);
-                            sbUrl.Append(IbmTransTranslate);
-                            sbUrl.Append(@"?");
-                            sbUrl.Append(IbmTransVersion);
 
-                            List<string> transList = new List<string>();
-                            int offset = _transList?.Count ?? 0;
-                            int sumLength = 0;
-                            for (int i = offset; i < _transReducedStringList.Count; i++)
+                        case TranslatorType.IbmWatson:
+                        {
+                            if (_transLangList == null)
                             {
-                                string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
-                                sumLength += testString.Length;
-                                if (sumLength > 40000)
+                                // no language list present, get it first
+                                sbUrl.Append(IbmTranslatorUrl);
+                                sbUrl.Append(IbmTransIdentLang);
+                                sbUrl.Append(@"?");
+                                sbUrl.Append(IbmTransVersion);
+                            }
+                            else
+                            {
+                                sbUrl.Append(IbmTranslatorUrl);
+                                sbUrl.Append(IbmTransTranslate);
+                                sbUrl.Append(@"?");
+                                sbUrl.Append(IbmTransVersion);
+
+                                List<string> transList = new List<string>();
+                                int offset = _transList?.Count ?? 0;
+                                int sumLength = 0;
+                                for (int i = offset; i < _transReducedStringList.Count; i++)
                                 {
-                                    break;
+                                    string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
+                                    sumLength += testString.Length;
+                                    if (sumLength > 40000)
+                                    {
+                                        break;
+                                    }
+
+                                    transList.Add(_transReducedStringList[i]);
+                                    stringCount++;
                                 }
 
-                                transList.Add(_transReducedStringList[i]);
-                                stringCount++;
+                                string targetLang = _transCurrentLang;
+                                if (_transLangList.All(lang => string.Compare(lang, _transCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
+                                {
+                                    // language not found
+                                    targetLang = "en";
+                                }
+
+                                IbmTranslateRequest translateRequest = new IbmTranslateRequest(transList.ToArray(), "de", targetLang);
+                                string jsonString = JsonSerializer.Serialize(translateRequest);
+
+                                httpContent = new StringContent(jsonString);
+                                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                            }
+
+                            string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
+                            _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
+                            // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+                            if (httpContent != null)
+                            {
+                                taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
+                            }
+                            else
+                            {
+                                taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+                            }
+                            break;
+                        }
+
+                        case TranslatorType.Deepl:
+                        {
+                            string deeplApiUrl = DeeplProUrl;
+                            if (!string.IsNullOrEmpty(DeeplApiKey))
+                            {
+                                if (DeeplApiKey.EndsWith(":fx"))
+                                {
+                                    deeplApiUrl = DeeplFreeUrl;
+                                }
+                            }
+
+                            if (_transLangList == null)
+                            {
+                                // no language list present, get it first
+                                sbUrl.Append(deeplApiUrl);
+                                sbUrl.Append(DeeplIdentLang);
+                            }
+                            else
+                            {
+                                sbUrl.Append(deeplApiUrl);
+                                sbUrl.Append(DeeplTranslate);
+
+                                List<string> transList = new List<string>();
+                                int offset = _transList?.Count ?? 0;
+                                int sumLength = 0;
+                                for (int i = offset; i < _transReducedStringList.Count; i++)
+                                {
+                                    string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
+                                    sumLength += testString.Length;
+                                    if (sumLength > 120 * 1024)
+                                    {   // real limit is 128KiB
+                                        break;
+                                    }
+
+                                    transList.Add(_transReducedStringList[i]);
+                                    stringCount++;
+                                }
+
+                                string targetLang = "EN-US";
+                                foreach (string lang in _transLangList)
+                                {
+                                    if (lang.StartsWith(_transCurrentLang, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        targetLang = lang;
+                                        if (lang.Length == 2)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                DeeplTranslateRequest translateRequest = new DeeplTranslateRequest(transList.ToArray(), "DE", targetLang);
+                                string jsonString = JsonSerializer.Serialize(translateRequest);
+
+                                httpContent = new StringContent(jsonString);
+                                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                            }
+
+                            _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("DeepL-Auth-Key", DeeplApiKey);
+                            if (httpContent != null)
+                            {
+                                taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
+                            }
+                            else
+                            {
+                                taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+                            }
+                            break;
+                        }
+
+                        case TranslatorType.YandexCloud:
+                        {
+                            JsonSerializerOptions jsonOptions = new()
+                            {
+                                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                            };
+                            bool oauthToken = IsYandexCloudOauthToken(YandexCloudApiKey);
+                            string folderId = oauthToken ? YandexCloudFolderId : null;
+                            if (string.IsNullOrWhiteSpace(folderId))
+                            {
+                                folderId = null;
+                            }
+
+                            TimeSpan tokenAge = DateTime.Now - _yandexCloudIamTokenTime;
+                            if (tokenAge.TotalHours > 1)
+                            {
+                                ResetYandexIamToken();
+                            }
+
+                            if (oauthToken && string.IsNullOrEmpty(_yandexCloudIamToken))
+                            {
+                                ResetYandexIamToken();
+                                // no IAM Token present
+                                sbUrl.Append("https://iam.api.cloud.yandex.net/iam/v1/tokens");
+                                YandexCloudIamTokenRequest languagesRequest = new YandexCloudIamTokenRequest(YandexCloudApiKey);
+                                string jsonString = JsonSerializer.Serialize(languagesRequest, jsonOptions);
+                                httpContent = new StringContent(jsonString);
+                            }
+                            else if (_transLangList == null)
+                            {
+                                // no language list present, get it first
+                                sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/languages");
+                                YandexCloudListLanguagesRequest languagesRequest = new YandexCloudListLanguagesRequest(folderId);
+                                string jsonString = JsonSerializer.Serialize(languagesRequest, jsonOptions);
+                                httpContent = new StringContent(jsonString);
+                            }
+                            else
+                            {
+                                sbUrl.Append("https://translate.api.cloud.yandex.net/translate/v2/translate");
+
+                                List<string> transList = new List<string>();
+                                int offset = _transList?.Count ?? 0;
+                                int sumLength = 0;
+                                for (int i = offset; i < _transReducedStringList.Count; i++)
+                                {
+                                    string testString = "\"" + JsonEncodedText.Encode(_transReducedStringList[i]) + "\",";
+                                    sumLength += testString.Length;
+                                    if (sumLength > 9000)
+                                    {
+                                        break;
+                                    }
+
+                                    transList.Add(_transReducedStringList[i]);
+                                    stringCount++;
+                                }
+
+                                string targetLang = _transCurrentLang;
+                                if (_transLangList.All(lang => string.Compare(lang, _transCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
+                                {
+                                    // language not found
+                                    targetLang = "en";
+                                }
+
+                                YandexCloudTranslateRequest translateRequest = new YandexCloudTranslateRequest(transList.ToArray(), "de", targetLang, folderId);
+                                string jsonString = JsonSerializer.Serialize(translateRequest, jsonOptions);
+
+                                httpContent = new StringContent(jsonString);
+                            }
+
+                            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                            if (oauthToken)
+                            {
+                                if (!string.IsNullOrEmpty(_yandexCloudIamToken))
+                                {
+                                    _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _yandexCloudIamToken);
+                                }
+                            }
+                            else
+                            {
+                                _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Api-Key", YandexCloudApiKey);
+                            }
+
+                            taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
+                            break;
+                        }
+
+                        case TranslatorType.GoogleApis:
+                        {
+                            if (_transLangList == null)
+                            {
+                                _transLangList = GetGoogleApisLanguages();
                             }
 
                             string targetLang = _transCurrentLang;
-                            if (_transLangList.All(lang => string.Compare(lang, _transCurrentLang, StringComparison.OrdinalIgnoreCase) != 0))
+                            if (_transLangList.All(lang =>
+                                    string.Compare(lang, targetLang, StringComparison.OrdinalIgnoreCase) != 0))
                             {
                                 // language not found
                                 targetLang = "en";
                             }
 
-                            IbmTranslateRequest translateRequest = new IbmTranslateRequest(transList.ToArray(), "de", targetLang);
-                            string jsonString = JsonSerializer.Serialize(translateRequest);
+#if false
+                            sbUrl.Append(@"https://translate.googleapis.com/translate_a/single?client=gtx&dt=t");
+                            sbUrl.Append("&sl=de");
+                            sbUrl.Append("&tl=");
+                            sbUrl.Append(targetLang);
 
-                            httpContent = new StringContent(jsonString);
-                            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                        }
-
-                        string authParameter = Convert.ToBase64String(Encoding.UTF8.GetBytes(String.Format("apikey:{0}", IbmTranslatorApiKey)));
-                        _translateHttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authParameter);
-                        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                        if (httpContent != null)
-                        {
-                            taskTranslate = _translateHttpClient.PostAsync(sbUrl.ToString(), httpContent);
-                        }
-                        else
-                        {
-                            taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
-                        }
-                    }
-                    else
-                    {
-                        if (_transLangList == null)
-                        {
-                            // no language list present, get it first
-                            sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/getLangs?");
-                            sbUrl.Append("key=");
-                            sbUrl.Append(System.Uri.EscapeDataString(YandexApiKey));
-                        }
-                        else
-                        {
-                            string langPair = "de-" + _transCurrentLang;
-                            string langPairTemp = langPair;     // prevent warning
-                            if (_transLangList.All(lang => string.Compare(lang, langPairTemp, StringComparison.OrdinalIgnoreCase) != 0))
-                            {
-                                // language not found
-                                langPair = "de-en";
-                            }
-
-                            sbUrl.Append(@"https://translate.yandex.net/api/v1.5/tr/translate?");
-                            sbUrl.Append("key=");
-                            sbUrl.Append(System.Uri.EscapeDataString(YandexApiKey));
-                            sbUrl.Append("&lang=");
-                            sbUrl.Append(langPair);
+                            transRequestList = new List<string>();
                             int offset = _transList?.Count ?? 0;
+                            sbUrl.Append("&q=");
                             for (int i = offset; i < _transReducedStringList.Count; i++)
                             {
-                                sbUrl.Append("&text=");
-                                sbUrl.Append(System.Uri.EscapeDataString(_transReducedStringList[i]));
+                                string line = _transReducedStringList[i];
+                                transRequestList.Add(line);
+                                if (stringCount > 0)
+                                {
+                                    line = "\n" + line;
+                                }
+
+                                sbUrl.Append(System.Uri.EscapeDataString(line));
                                 stringCount++;
                                 if (sbUrl.Length > 8000)
                                 {
                                     break;
                                 }
                             }
-                        }
+#else
+                            sbUrl.Append(@"https://clients5.google.com/translate_a/t?client=dict-chrome-ex");
+                            sbUrl.Append("&sl=de");
+                            sbUrl.Append("&tl=");
+                            sbUrl.Append(targetLang);
 
-                        _translateHttpClient.DefaultRequestHeaders.Authorization = null;
-                        taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+                            int offset = _transList?.Count ?? 0;
+                            for (int i = offset; i < _transReducedStringList.Count; i++)
+                            {
+                                string line = _transReducedStringList[i];
+                                sbUrl.Append("&q=");
+                                sbUrl.Append(System.Uri.EscapeDataString(line));
+                                stringCount++;
+                                if (sbUrl.Length > 8000)
+                                {
+                                    break;
+                                }
+                            }
+#endif
+                            _translateHttpClient.DefaultRequestHeaders.Authorization = null;
+                            _translateHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36");
+                            taskTranslate = _translateHttpClient.GetAsync(sbUrl.ToString());
+                            break;
+                        }
                     }
 
                     _activity?.RunOnUiThread(() =>
@@ -10146,9 +10158,14 @@ namespace BmwDeepObd
                         }
                     });
 
-                    HttpResponseMessage responseTranslate = taskTranslate.Result;
-                    bool success = responseTranslate.IsSuccessStatusCode;
-                    string responseTranslateResult = responseTranslate.Content.ReadAsStringAsync().Result;
+                    bool success = false;
+                    string responseTranslateResult = string.Empty;
+                    if (taskTranslate != null)
+                    {
+                        HttpResponseMessage responseTranslate = taskTranslate.Result;
+                        success = responseTranslate.IsSuccessStatusCode;
+                        responseTranslateResult = responseTranslate.Content.ReadAsStringAsync().Result;
+                    }
 
                     _activity?.RunOnUiThread(() =>
                     {
