@@ -334,6 +334,7 @@ namespace BmwDeepObd
                 this.DeeplApiKey = ActivityCommon.DeeplApiKey;
                 this.YandexCloudApiKey = ActivityCommon.YandexCloudApiKey;
                 this.YandexCloudFolderId = ActivityCommon.YandexCloudFolderId;
+                this.GoogleApisUrl = ActivityCommon.GoogleApisUrl;
                 this.Translator = ActivityCommon.SelectedTranslator;
                 this.ShowBatteryVoltageWarning = ActivityCommon.ShowBatteryVoltageWarning;
                 this.BatteryWarnings = ActivityCommon.BatteryWarnings;
@@ -455,6 +456,7 @@ namespace BmwDeepObd
             [XmlElement("DeeplApiKey")] public string DeeplApiKey { get; set; }
             [XmlElement("YandexCloudApiKey")] public string YandexCloudApiKey { get; set; }
             [XmlElement("YandexCloudFolderId")] public string YandexCloudFolderId { get; set; }
+            [XmlElement("GoogleApisUrl")] public string GoogleApisUrl { get; set; }
             [XmlElement("Translator")] public TranslatorType Translator { get; set; }
             [XmlElement("ShowBatteryVoltageWarning")] public bool ShowBatteryVoltageWarning { get; set; }
             [XmlElement("BatteryWarnings")] public long BatteryWarnings { get; set; }
@@ -1505,6 +1507,8 @@ namespace BmwDeepObd
         public static string YandexCloudApiKey { get; set; }
 
         public static string YandexCloudFolderId { get; set; }
+
+        public static string GoogleApisUrl { get; set; }
 
         public static bool EnableTranslation { get; set; }
 
@@ -8486,6 +8490,7 @@ namespace BmwDeepObd
                 IbmTranslatorApiKey = string.Empty;
                 IbmTranslatorUrl = string.Empty;
                 DeeplApiKey = string.Empty;
+                GoogleApisUrl = string.Empty;
                 BatteryWarnings = 0;
                 BatteryWarningVoltage = 0;
                 AdapterBlacklist = string.Empty;
@@ -9540,7 +9545,7 @@ namespace BmwDeepObd
                     return !string.IsNullOrWhiteSpace(YandexCloudApiKey);
 
                 case TranslatorType.GoogleApis:
-                    return true;
+                    return !string.IsNullOrWhiteSpace(GoogleApisUrl);
             }
 
             return false;
@@ -12977,6 +12982,7 @@ using System.Threading;"
                 storageClassAttributes.Add(storageType, nameof(storageData.YandexApiKey), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorApiKey), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.IbmTranslatorUrl), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.GoogleApisUrl), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.EmailAddress), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.TraceInfo), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.DisableFileNameEncoding), ignoreXmlAttributes);
@@ -13142,6 +13148,7 @@ using System.Threading;"
                     DeeplApiKey = storageData.DeeplApiKey;
                     YandexCloudApiKey = storageData.YandexCloudApiKey;
                     YandexCloudFolderId = storageData.YandexCloudFolderId;
+                    GoogleApisUrl = storageData.GoogleApisUrl;
                     Translator = storageData.Translator;
                     ShowBatteryVoltageWarning = storageData.ShowBatteryVoltageWarning;
                     BatteryWarnings = storageData.BatteryWarnings;

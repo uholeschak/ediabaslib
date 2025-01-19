@@ -27,6 +27,7 @@ namespace BmwDeepObd
                 OldDeeplApiKey = string.Empty;
                 OldYandexCloudApiKey = string.Empty;
                 OldYandexCloudFolderId = string.Empty;
+                OldGoogleApisUrl = string.Empty;
             }
 
             public string OldTranslator { get; set; }
@@ -36,6 +37,7 @@ namespace BmwDeepObd
             public string OldDeeplApiKey { get; set; }
             public string OldYandexCloudApiKey { get; set; }
             public string OldYandexCloudFolderId { get; set; }
+            public string OldGoogleApisUrl { get; set; }
         }
 
         private InstanceData _instanceData = new InstanceData();
@@ -100,6 +102,7 @@ namespace BmwDeepObd
                 _instanceData.OldDeeplApiKey = ActivityCommon.DeeplApiKey ?? string.Empty;
                 _instanceData.OldYandexCloudApiKey = ActivityCommon.YandexCloudApiKey ?? string.Empty;
                 _instanceData.OldYandexCloudFolderId = ActivityCommon.YandexCloudFolderId ?? string.Empty;
+                _instanceData.OldGoogleApisUrl = ActivityCommon.GoogleApisUrl ?? string.Empty;
             }
 
             _activityCommon = new ActivityCommon(this);
@@ -684,6 +687,13 @@ namespace BmwDeepObd
                             }
                         }
                         break;
+
+                    case ActivityCommon.TranslatorType.GoogleApis:
+                        if (string.IsNullOrWhiteSpace(_editTextApiUrl.Text))
+                        {
+                            testEnabled = false;
+                        }
+                        break;
                 }
 
                 _buttonYandexApiKeyTest.Enabled = testEnabled;
@@ -723,6 +733,10 @@ namespace BmwDeepObd
                     case ActivityCommon.TranslatorType.YandexCloud:
                         _editTextYandexApiKey.Text = ActivityCommon.YandexCloudApiKey;
                         _editTextFolderId.Text = ActivityCommon.YandexCloudFolderId;
+                        break;
+
+                    case ActivityCommon.TranslatorType.GoogleApis:
+                        _editTextApiUrl.Text = ActivityCommon.GoogleApisUrl;
                         break;
 
                     default:
@@ -779,6 +793,10 @@ namespace BmwDeepObd
                     ActivityCommon.YandexCloudApiKey = _editTextYandexApiKey.Text.Trim();
                     ActivityCommon.YandexCloudFolderId = _editTextFolderId.Text.Trim();
                     break;
+
+                case ActivityCommon.TranslatorType.GoogleApis:
+                    ActivityCommon.GoogleApisUrl = _editTextApiUrl.Text.Trim();
+                    break;
             }
         }
 
@@ -827,6 +845,7 @@ namespace BmwDeepObd
             ActivityCommon.DeeplApiKey = _instanceData.OldDeeplApiKey ?? string.Empty;
             ActivityCommon.YandexCloudApiKey = _instanceData.OldYandexCloudApiKey ?? string.Empty;
             ActivityCommon.YandexCloudFolderId = _instanceData.OldYandexCloudFolderId ?? string.Empty;
+            ActivityCommon.GoogleApisUrl = _instanceData.OldGoogleApisUrl ?? string.Empty;
         }
 
         private bool SettingsChanged()
@@ -867,6 +886,11 @@ namespace BmwDeepObd
                 }
 
                 if (string.Compare(ActivityCommon.YandexCloudFolderId ?? string.Empty, _instanceData.OldYandexCloudFolderId ?? string.Empty, StringComparison.Ordinal) != 0)
+                {
+                    return true;
+                }
+
+                if (string.Compare(ActivityCommon.GoogleApisUrl ?? string.Empty, _instanceData.OldGoogleApisUrl ?? string.Empty, StringComparison.Ordinal) != 0)
                 {
                     return true;
                 }
