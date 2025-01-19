@@ -254,10 +254,6 @@ namespace BmwDeepObd
                         case ActivityCommon.TranslatorType.YandexCloud:
                             _activityCommon.OpenWebUrl("https://cloud.yandex.com/en/docs/iam/operations/iam-token/create");
                             break;
-
-                        case ActivityCommon.TranslatorType.GoogleApis:
-                            _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md#google-translation-apis");
-                            break;
                     }
                 });
             };
@@ -361,7 +357,7 @@ namespace BmwDeepObd
                     switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.GoogleApis:
-                            _activityCommon.OpenWebUrl("https://github.com/Animenosekai/translate/blob/main/translatepy/translators/google.py");
+                            _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md#google-translation-apis");
                             break;
                     }
                 });
