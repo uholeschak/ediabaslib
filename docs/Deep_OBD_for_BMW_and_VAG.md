@@ -93,7 +93,7 @@ If the port is ommitted in the IP settings, the default port is 23 in hotspot mo
 	* _Log data_: This checkbox enables logging of the display data to a log file. Only those lines are logged, that have a _log_tag_ property in the [configuration file](Page_specification.md). The _logfile_ property in the _page_ node has to be specified as well to activate logging. When using the [configuration generator](#ConfigurationGenerator) _log_tag_ is set by default to the job name and _logfile_ to the ECU name. Data will be logged in the _Log_ subdirectory.
 * _Translations_: (Only for non German languages) This menu opens a submenu that allows configuration of automatic ECU text translation with various translations engines. Most engines require an API key, but some have also special access tokens. Free translation if very limited in most cases and you have to pay for larger text amount.
 	* _Translate ECU text_: If this menu item is checked, automatic ECU text translation is active.
-	* _Translation configuration_: For automatic translation with various translation providers. For translation an API Key may be required. This menu assists to select and configure a translation provider.
+	* _Translation configuration_: For automatic translation with various translation providers. For translation an API Key may be required. This menu assists to select and configure a translation provider. For using [Google APIs](#google-apis) the URLs have to be copied first.
 	* _Clear translation cache_: To enforce a new translation this menu resets the translation cache.
 * _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
 	* _Send trace file_: Send the trace file from the last vehicle communication.
