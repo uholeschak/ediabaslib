@@ -113,7 +113,7 @@ Below are some screenshots from the example E61 configuration:
 
 ## Google APIs
 There are public undocumented Google APIs key, which could also be found in the project [translatepy](https://github.com/Animenosekai/translate).  
-Currently the basic URs are, but the could change woithout notice:
+You could copy the basic URLs from here, but they could change without any notice:
 ```
 https://translate.googleapis.com/translate_a/single?client=gtx&dt=t
 https://clients5.google.com/translate_a/t?client=dict-chrome-ex
