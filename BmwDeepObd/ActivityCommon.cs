@@ -10981,6 +10981,11 @@ namespace BmwDeepObd
                             continue;
                         }
 
+                        if (string.Compare(sourceCleanded, requestCleaned, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            return null;
+                        }
+
                         transList.Add(translationParts.TrimEnd('\n'));
                         requestIndex++;
                         sourceParts = string.Empty;
