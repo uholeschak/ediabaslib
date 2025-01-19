@@ -256,7 +256,7 @@ namespace BmwDeepObd
                             break;
 
                         case ActivityCommon.TranslatorType.GoogleApis:
-                            _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md#google-apis");
+                            _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md#google-translation-apis");
                             break;
                     }
                 });
