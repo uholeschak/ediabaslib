@@ -12,6 +12,7 @@ Table of contents:
 	* [Ediabas tool](EdiabasTool.md)
 	* [BMW coding](BMW_Coding.md)
 	* [Global settings](GlobalSettings.md)
+* [Google APIs](#google-apis)
 * [Log and trace files location](#log-and-trace-files-location)
 * [Android Auto](#android-auto)
 * [Background image](#background-image)
@@ -92,7 +93,7 @@ If the port is ommitted in the IP settings, the default port is 23 in hotspot mo
 	* _Log data_: This checkbox enables logging of the display data to a log file. Only those lines are logged, that have a _log_tag_ property in the [configuration file](Page_specification.md). The _logfile_ property in the _page_ node has to be specified as well to activate logging. When using the [configuration generator](#ConfigurationGenerator) _log_tag_ is set by default to the job name and _logfile_ to the ECU name. Data will be logged in the _Log_ subdirectory.
 * _Translations_: (Only for non German languages) This menu opens a submenu that allows configuration of automatic ECU text translation with various translations engines. Most engines require an API key, but some have also special access tokens. Free translation if very limited in most cases and you have to pay for larger text amount.
 	* _Translate ECU text_: If this menu item is checked, automatic ECU text translation is active.
-	* _Translation configuration_: For automatic translation with various translation providers. For translation a (free) API Key is required. This menu assists to select and configure a translation provider.
+	* _Translation configuration_: For automatic translation with various translation providers. For translation an API Key may be required. This menu assists to select and configure a translation provider. For using [Google APIs](#google-apis) the URLs have to be copied first.
 	* _Clear translation cache_: To enforce a new translation this menu resets the translation cache.
 * _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
 	* _Send trace file_: Send the trace file from the last vehicle communication.
@@ -109,6 +110,15 @@ If the port is ommitted in the IP settings, the default port is 23 in hotspot mo
 Below are some screenshots from the example E61 configuration:
 
 ![Motor page](Deep_OBD_for_BMW_and_VAG_AppMotorSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppMotorGraphSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppClimateSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppAxisSmall.png) ![Motor page](Deep_OBD_for_BMW_and_VAG_AppReadAllErrorsSmall.png)
+
+## Google APIs
+There are public undocumented Google APIs key, which could also be found in the project [translatepy](https://github.com/Animenosekai/translate).  
+You could copy the basic URLs from here, but they could change without any notice:
+```
+https://translate.googleapis.com/translate_a/single?client=gtx&dt=t
+https://clients5.google.com/translate_a/t?client=dict-chrome-ex
+```
+You could copy the URLs form here and paste them in the _Translation configuration_ Google APIs page.
 
 ## Log and trace files location
 The location of the log and trace files depends from the Android version.  

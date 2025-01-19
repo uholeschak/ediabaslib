@@ -127,8 +127,8 @@
             android:inputType="textUri"
             android:scrollbars = "vertical"
             android:fadeScrollbars="false"
-            android:minLines="1"
-            android:maxLines="2" />
+            android:minLines="2"
+            android:maxLines="5" />
         <TextView
             android:id="@+id/textViewYandexKeyTestTitle"
             android:text="@string/trans_key_test_title"
