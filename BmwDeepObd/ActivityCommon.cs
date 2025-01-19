@@ -10094,7 +10094,7 @@ namespace BmwDeepObd
                                 targetLang = "en";
                             }
 
-#if false
+#if true
                             sbUrl.Append(@"https://translate.googleapis.com/translate_a/single?client=gtx&dt=t");
                             sbUrl.Append("&sl=de");
                             sbUrl.Append("&tl=");
@@ -10105,7 +10105,7 @@ namespace BmwDeepObd
                             sbUrl.Append("&q=");
                             for (int i = offset; i < _transReducedStringList.Count; i++)
                             {
-                                string line = _transReducedStringList[i];
+                                string line = _transReducedStringList[i].TrimEnd();
                                 transRequestList.Add(line);
                                 if (stringCount > 0)
                                 {
@@ -10128,7 +10128,7 @@ namespace BmwDeepObd
                             int offset = _transList?.Count ?? 0;
                             for (int i = offset; i < _transReducedStringList.Count; i++)
                             {
-                                string line = _transReducedStringList[i];
+                                string line = _transReducedStringList[i].TrimEnd();
                                 sbUrl.Append("&q=");
                                 sbUrl.Append(System.Uri.EscapeDataString(line));
                                 stringCount++;
