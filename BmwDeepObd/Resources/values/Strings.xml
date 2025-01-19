@@ -247,6 +247,7 @@
   <string name="button_folder_id_paste">Paste folder ID</string>
   <string name="api_url_paste_title">API URL</string>
   <string name="button_api_url_paste">Paste API URL</string>
+  <string name="button_api_url_copy">Copy API URL</string>
   <string name="trans_key_test_title">Translate</string>
   <string name="button_api_key_test">Test translation</string>
   <string name="button_api_key_test_failed">Translation failed</string>
