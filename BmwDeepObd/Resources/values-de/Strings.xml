@@ -222,6 +222,7 @@
   <string name="button_folder_id_paste">Folder ID einfügen</string>
   <string name="api_url_paste_title">API URL</string>
   <string name="button_api_url_paste">API URL einfügen</string>
+  <string name="button_api_url_copy">API URL kopieren</string>
   <string name="trans_key_test_title">Translate</string>
   <string name="button_api_key_test">Übersetzung testen</string>
   <string name="button_api_key_test_failed">Übersetzung fehlgeschlagen</string>

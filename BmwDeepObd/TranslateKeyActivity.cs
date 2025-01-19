@@ -62,6 +62,7 @@ namespace BmwDeepObd
         private Button _buttonFolderIdPaste;
         private EditText _editTextFolderId;
         private TextView _textViewApiUrlPasteTitle;
+        private Button _buttonApiUrlCopy;
         private Button _buttonApiUrlPaste;
         private EditText _editTextApiUrl;
         private Button _buttonYandexApiKeyTest;
@@ -250,6 +251,10 @@ namespace BmwDeepObd
                         case ActivityCommon.TranslatorType.YandexCloud:
                             _activityCommon.OpenWebUrl("https://cloud.yandex.com/en/docs/iam/operations/iam-token/create");
                             break;
+
+                        case ActivityCommon.TranslatorType.GoogleApis:
+                            _activityCommon.OpenWebUrl("https://github.com/Animenosekai/translate/blob/main/translatepy/translators/google.py");
+                            break;
                     }
                 });
             };
@@ -334,6 +339,30 @@ namespace BmwDeepObd
                 UpdateButtonState();
             };
 
+            _buttonApiUrlCopy = FindViewById<Button>(Resource.Id.buttonApiUrlCopy);
+            _buttonApiUrlCopy.SetOnTouchListener(this);
+            _buttonApiUrlCopy.Click += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                _activityCommon.ShowWifiConnectedWarning(() =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    switch (ActivityCommon.SelectedTranslator)
+                    {
+                        case ActivityCommon.TranslatorType.GoogleApis:
+                            _activityCommon.OpenWebUrl("https://github.com/Animenosekai/translate/blob/main/translatepy/translators/google.py");
+                            break;
+                    }
+                });
+            };
 
             _buttonApiUrlPaste = FindViewById<Button>(Resource.Id.buttonApiUrlPaste);
             _buttonApiUrlPaste.SetOnTouchListener(this);
@@ -593,12 +622,27 @@ namespace BmwDeepObd
                 _editTextFolderId.Visibility = folderIdVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonFolderIdPaste.Visibility = folderIdVisible ? ViewStates.Visible : ViewStates.Gone;
 
-                bool apiUrlVisible = ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson;
-                bool apiKeyVisible = ActivityCommon.SelectedTranslator != ActivityCommon.TranslatorType.GoogleApis;
+                bool apiUrlVisible = false;
+                bool apiUrlCopyVisible = false;
+                bool apiKeyVisible = true;
+
+                switch (ActivityCommon.SelectedTranslator)
+                {
+                    case ActivityCommon.TranslatorType.IbmWatson:
+                        apiUrlVisible = true;
+                        break;
+
+                    case ActivityCommon.TranslatorType.GoogleApis:
+                        apiUrlVisible = true;
+                        apiUrlCopyVisible = true;
+                        apiKeyVisible = false;
+                        break;
+                }
 
                 _textViewApiUrlPasteTitle.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
                 _editTextApiUrl.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
-                _buttonApiUrlPaste.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
+                _buttonApiUrlCopy.Visibility = apiUrlVisible ? ViewStates.Visible : ViewStates.Gone;
+                _buttonApiUrlPaste.Visibility = apiUrlCopyVisible ? ViewStates.Visible : ViewStates.Gone;
 
                 _textViewTransKeyCopyTitle.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;
                 _buttonYandexApiKeyCreate.Visibility = apiKeyVisible ? ViewStates.Visible : ViewStates.Gone;

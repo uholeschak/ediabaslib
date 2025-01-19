@@ -109,6 +109,12 @@
             android:layout_height="wrap_content"
             style="@style/TextViewInnerCaption" />
         <Button
+            android:id="@+id/buttonApiUrlCopy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/button_api_url_copy"
+            android:layout_gravity="center" />
+        <Button
             android:id="@+id/buttonApiUrlPaste"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -119,7 +125,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textUri"
-            android:maxLines="1" />
+            android:scrollbars = "vertical"
+            android:fadeScrollbars="false"
+            android:minLines="1"
+            android:maxLines="2" />
         <TextView
             android:id="@+id/textViewYandexKeyTestTitle"
             android:text="@string/trans_key_test_title"
