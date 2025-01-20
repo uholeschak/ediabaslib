@@ -9816,15 +9816,10 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    List<string> transGoogleUrlList = new List<string>()
-                    {
-                        @"https://translate.googleapis.com/translate_a/single?client=gtx&dt=t",
-                        @"https://clients5.google.com/translate_a/t?client=dict-chrome-ex"
-                    };
-
                     System.Threading.Tasks.Task<HttpResponseMessage> taskTranslate = null;
                     int stringCount = 0;
                     int urlIndex = 0;
+                    List<string> transUrlList = null;
                     List<string> transRequestList = null;
                     HttpContent httpContent = null;
                     StringBuilder sbUrl = new StringBuilder();
@@ -10096,7 +10091,20 @@ namespace BmwDeepObd
                                 }
 
                             case TranslatorType.GoogleApis:
-                                {
+                            {
+                                    transUrlList = new List<string>();
+                                    if (!string.IsNullOrEmpty(GoogleApisUrl))
+                                    {
+                                        string[] urlList = GoogleApisUrl.Split('\n', '\r');
+                                        foreach (string url in urlList)
+                                        {
+                                            if (!string.IsNullOrEmpty(url))
+                                            {
+                                                transUrlList.Add(url);
+                                            }
+                                        }
+                                    }
+
                                     _transLangList = GetGoogleApisLanguages();
                                     string targetLang = _transCurrentLang;
                                     if (_transLangList.All(lang =>
@@ -10106,12 +10114,12 @@ namespace BmwDeepObd
                                         targetLang = "en";
                                     }
 
-                                    if (urlIndex >= transGoogleUrlList.Count)
+                                    if (urlIndex >= transUrlList.Count)
                                     {
                                         break;
                                     }
 
-                                    string transUrl = transGoogleUrlList[urlIndex];
+                                    string transUrl = transUrlList[urlIndex];
                                     int offset = _transList?.Count ?? 0;
                                     if (transUrl.Contains("client=gtx"))
                                     {
@@ -10205,7 +10213,7 @@ namespace BmwDeepObd
                             {
                                 case TranslatorType.GoogleApis:
                                     urlIndex++;
-                                    if (urlIndex < transGoogleUrlList.Count)
+                                    if (transUrlList != null && urlIndex < transUrlList.Count)
                                     {
                                         continue;
                                     }
