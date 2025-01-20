@@ -168,6 +168,8 @@ namespace BmwDeepObd
                 UpdateTranslatorType();
                 UpdateDisplay();
             };
+            _radioButtonTranslatorDeepl.Visibility =
+                ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson ? ViewStates.Visible : ViewStates.Gone;
 
             _textViewTransKeyDesc = FindViewById<TextView>(Resource.Id.textViewTransKeyDesc);
 
