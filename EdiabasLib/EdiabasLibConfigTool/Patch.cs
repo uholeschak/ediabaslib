@@ -917,7 +917,8 @@ namespace EdiabasLibConfigTool
                         if (key != null)
                         {
                             string[] valueNames = key.GetValueNames();
-                            if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart)))
+                            if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart, StringComparison.OrdinalIgnoreCase) &&
+                                                    string.Compare(x, RegKeyIstaBinPath, StringComparison.OrdinalIgnoreCase) != 0))
                             {
                                 return RegistryView.Registry32;
                             }
@@ -939,7 +940,8 @@ namespace EdiabasLibConfigTool
                         if (key != null)
                         {
                             string[] valueNames = key.GetValueNames();
-                            if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart)))
+                            if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart, StringComparison.OrdinalIgnoreCase) &&
+                                                    string.Compare(x, RegKeyIstaBinPath, StringComparison.OrdinalIgnoreCase) != 0))
                             {
                                 return RegistryView.Registry64;
                             }
