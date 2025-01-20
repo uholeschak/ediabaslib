@@ -37,6 +37,7 @@ namespace EdiabasLibConfigTool
         public const string ConfigFileName = @"EdiabasLib.config";
         public const string IniFileName = @"EDIABAS.INI";
         public const string RegKeyReingold = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
+        public const string RegKeyRheingoldNameStart = @"BMW.Rheingold.";
         public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
         public const string RegKeyIstaBinFull = RegKeyReingold + @": " + RegKeyIstaBinPath;
         public const string SectionConfig = @"Configuration";
@@ -916,7 +917,7 @@ namespace EdiabasLibConfigTool
                         if (key != null)
                         {
                             string[] valueNames = key.GetValueNames();
-                            if (valueNames.Any(x => x.StartsWith("BMW.Rheingold.")))
+                            if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart)))
                             {
                                 return RegistryView.Registry32;
                             }
@@ -938,7 +939,7 @@ namespace EdiabasLibConfigTool
                         if (key != null)
                         {
                             string[] valueNames = key.GetValueNames();
-                            if (valueNames.Any(x => x.StartsWith("BMW.Rheingold.")))
+                            if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart)))
                             {
                                 return RegistryView.Registry64;
                             }
