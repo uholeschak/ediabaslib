@@ -124,11 +124,11 @@
             android:id="@+id/editTextApiUrl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textUri"
+            android:inputType="textUri|textMultiLine"
             android:scrollbars = "vertical"
             android:fadeScrollbars="false"
-            android:minLines="2"
-            android:maxLines="5" />
+            android:lines="4"
+            android:minLines="2"/>
         <TextView
             android:id="@+id/textViewYandexKeyTestTitle"
             android:text="@string/trans_key_test_title"
