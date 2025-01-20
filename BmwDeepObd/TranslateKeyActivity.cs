@@ -47,11 +47,11 @@ namespace BmwDeepObd
         private ActivityCommon _activityCommon;
         private View _contentView;
         private TextView _textViewCaptionTranslator;
-        private RadioButton _radioButtonTranslatorGoogleApis;
         private RadioButton _radioButtonTranslatorYandexCloud;
         private RadioButton _radioButtonTranslatorYandexTranslate;
         private RadioButton _radioButtonTranslatorIbm;
         private RadioButton _radioButtonTranslatorDeepl;
+        private RadioButton _radioButtonTranslatorGoogleApis;
         private TextView _textViewTransKeyDesc;
         private LinearLayout _layoutYandexKey;
         private TextView _textViewTransKeyCopyTitle;
@@ -109,18 +109,6 @@ namespace BmwDeepObd
 
             _textViewCaptionTranslator = FindViewById<TextView>(Resource.Id.textViewCaptionTranslator);
 
-
-            _radioButtonTranslatorGoogleApis = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorGoogleApis);
-            _radioButtonTranslatorGoogleApis.CheckedChange += (sender, e) =>
-            {
-                if (_ignoreChange)
-                {
-                    return;
-                }
-                UpdateTranslatorType();
-                UpdateDisplay();
-            };
-
             _radioButtonTranslatorYandexCloud = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandexCloud);
             _radioButtonTranslatorYandexCloud.CheckedChange += (sender, e) =>
             {
@@ -146,6 +134,8 @@ namespace BmwDeepObd
             };
 
             _radioButtonTranslatorIbm = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorIbm);
+            _radioButtonTranslatorIbm.Visibility =
+                ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson ? ViewStates.Visible : ViewStates.Gone;
             _radioButtonTranslatorIbm.CheckedChange += (sender, e) =>
             {
                 if (_ignoreChange)
@@ -168,8 +158,17 @@ namespace BmwDeepObd
                 UpdateTranslatorType();
                 UpdateDisplay();
             };
-            _radioButtonTranslatorDeepl.Visibility =
-                ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson ? ViewStates.Visible : ViewStates.Gone;
+
+            _radioButtonTranslatorGoogleApis = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorGoogleApis);
+            _radioButtonTranslatorGoogleApis.CheckedChange += (sender, e) =>
+            {
+                if (_ignoreChange)
+                {
+                    return;
+                }
+                UpdateTranslatorType();
+                UpdateDisplay();
+            };
 
             _textViewTransKeyDesc = FindViewById<TextView>(Resource.Id.textViewTransKeyDesc);
 
