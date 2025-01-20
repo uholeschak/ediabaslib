@@ -113,10 +113,11 @@ Below are some screenshots from the example E61 configuration:
 
 ## Google translation APIs
 There are public undocumented Google translation APIs, which could also be found in the project [translatepy](https://github.com/Animenosekai/translate).  
-You could copy the basic URLs from here and paste them in the _Translation configuration_ Google APIs page, but they could change without any notice:
+You could copy the basic URLs from here and paste them in the _Translation configuration_ Google APIs page, but they could change without any notice.  
+If one API fails the next one is tried automatically.  
 ```
-https://translate.googleapis.com/translate_a/single?client=gtx&dt=t
 https://clients5.google.com/translate_a/t?client=dict-chrome-ex
+https://translate.googleapis.com/translate_a/single?client=gtx&dt=t
 ```
 
 ## Log and trace files location
