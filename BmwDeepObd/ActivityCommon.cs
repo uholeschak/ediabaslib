@@ -11018,14 +11018,14 @@ namespace BmwDeepObd
                             return null;
                         }
 
-                        string requestCleaned = transRequestList[requestIndex].TrimEnd('\n').TrimEnd();
+                        string requestCleaned = transRequestList[requestIndex].TrimEnd('\n').Replace(" ", string.Empty);
                         string source = element1[1].GetString() ?? string.Empty;
                         string translation = element1[0].GetString() ?? string.Empty;
 
                         sourceParts += source;
                         translationParts += translation;
 
-                        string sourceCleanded = sourceParts.TrimEnd('\n').TrimEnd();
+                        string sourceCleanded = sourceParts.TrimEnd('\n').Replace(" ", string.Empty);
                         if (sourceCleanded.Length < requestCleaned.Length)
                         {
                             continue;
@@ -11037,6 +11037,12 @@ namespace BmwDeepObd
                             {
                                 return null;
                             }
+                        }
+                        else
+                        {
+#if DEBUG
+                            Android.Util.Log.Info(Tag, string.Format("GetGoogleApisTranslations Mismatch: Source='{0}', Request='{1}'", sourceCleanded, requestCleaned));
+#endif
                         }
 
                         transList.Add(translationParts.TrimEnd('\n'));
