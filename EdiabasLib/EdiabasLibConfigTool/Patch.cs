@@ -915,7 +915,11 @@ namespace EdiabasLibConfigTool
                     {
                         if (key != null)
                         {
-                            return RegistryView.Registry32;
+                            string[] valueNames = key.GetValueNames();
+                            if (valueNames.Any(x => x.StartsWith("BMW.Rheingold.")))
+                            {
+                                return RegistryView.Registry32;
+                            }
                         }
                     }
                 }
@@ -925,7 +929,6 @@ namespace EdiabasLibConfigTool
                 // ignored
             }
 
-#if false
             try
             {
                 using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
@@ -934,7 +937,11 @@ namespace EdiabasLibConfigTool
                     {
                         if (key != null)
                         {
-                            return RegistryView.Registry64;
+                            string[] valueNames = key.GetValueNames();
+                            if (valueNames.Any(x => x.StartsWith("BMW.Rheingold.")))
+                            {
+                                return RegistryView.Registry64;
+                            }
                         }
                     }
                 }
@@ -943,7 +950,7 @@ namespace EdiabasLibConfigTool
             {
                 // ignored
             }
-#endif
+
             return null;
         }
 
