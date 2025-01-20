@@ -219,8 +219,9 @@
   <string name="translate_text">Translating text</string>
   <string name="translate_failed">Translation failed.\nPlease check your network connection.\nDo you want to retry the translation?</string>
   <string name="translate_failed_message">Translation failed with error:\n{0}.\nDo you want to retry the translation?</string>
-  <string name="translate_enable_request">Do you want to enable automatic ECU text translation with {0}?\nThis requires an account and an API Key.</string>
-  <string name="translate_store_key">Do you want to store the API Key?</string>
+  <string name="translate_enable_request">Do you want to enable automatic ECU text translation with {0}?</string>
+  <string name="translate_enable_request_key">This requires an account and an API Key.</string>
+  <string name="translate_store_settings">Do you want to store the settings?</string>
 
   <!-- Translate Menu -->
   <string name="menu_translation_submenu">Translations</string>

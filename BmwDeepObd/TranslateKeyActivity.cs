@@ -929,7 +929,7 @@ namespace BmwDeepObd
                     handler?.Invoke(sender, args);
                 })
                 .SetCancelable(true)
-                .SetMessage(Resource.String.translate_store_key)
+                .SetMessage(Resource.String.translate_store_settings)
                 .SetTitle(Resource.String.alert_title_question)
                 .Show();
             return false;
