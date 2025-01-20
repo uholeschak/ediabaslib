@@ -909,24 +909,6 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
-                {
-                    using (RegistryKey key = localMachine64.OpenSubKey(RegKeyReingold, false))
-                    {
-                        if (key != null)
-                        {
-                            return RegistryView.Registry64;
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            try
-            {
                 using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
                 {
                     using (RegistryKey key = localMachine32.OpenSubKey(RegKeyReingold, false))
@@ -943,6 +925,25 @@ namespace EdiabasLibConfigTool
                 // ignored
             }
 
+#if false
+            try
+            {
+                using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+                {
+                    using (RegistryKey key = localMachine64.OpenSubKey(RegKeyReingold, false))
+                    {
+                        if (key != null)
+                        {
+                            return RegistryView.Registry64;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+#endif
             return null;
         }
 
