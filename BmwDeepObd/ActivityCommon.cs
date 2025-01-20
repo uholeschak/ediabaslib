@@ -9701,6 +9701,11 @@ namespace BmwDeepObd
                 }
                 EnableTranslateRequested = true;
                 string message = string.Format(_context.GetString(Resource.String.translate_enable_request), TranslatorName());
+                if (SelectedTranslator != TranslatorType.GoogleApis)
+                {
+                    message += "\r\n" + _context.GetString(Resource.String.translate_enable_request_key);
+                }
+
                 AlertDialog alertDialog = new AlertDialog.Builder(_context)
                     .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
                     {

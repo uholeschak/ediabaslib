@@ -194,8 +194,9 @@
   <!-- Translate -->
   <string name="translate_text">Text wird übersetzt</string>
   <string name="translate_failed">Übersetzung fehlgeschlagen.\nBitte überprüfen Sie Ihre Netzwerkverbindung.\nWollen Sie die Übersetzung wiederholen?</string>
-  <string name="translate_enable_request">Wollen Sie automatisch die ECU Texte mit {0} übersetzen lassen?\nHierfür benötigen Sie einen Account und einen API Key.</string>
-  <string name="translate_store_key">Wollen Sie den API Key speichern?</string>
+  <string name="translate_enable_request">Wollen Sie automatisch die ECU Texte mit {0} übersetzen lassen?</string>
+  <string name="translate_enable_request_key">Hierfür benötigen Sie einen Account und einen API Key.</string>
+  <string name="translate_store_settings">Wollen Sie die Einstellungen speichern?</string>
 
   <!-- Translate Menu -->
   <string name="menu_translation_submenu">Übersetzungen</string>

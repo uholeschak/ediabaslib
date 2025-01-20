@@ -212,8 +212,10 @@
   <!-- Translate -->
   <string name="translate_text">Перевод текста</string>
   <string name="translate_failed">Ошибка перевода текста.\nПожалуйста, проверьте подключение к сети.\nХотите повторить перевод?</string>
-  <string name="translate_enable_request">Хотите автоматически перевести тексты ECU с помощью {0}?\nДля этого вам нужен аккаунт и ключ API.</string>
-  <string name="translate_store_key">Сохранить ключ?</string>
+  <string name="translate_enable_request">Хотите автоматически перевести тексты ECU с помощью {0}?</string>
+  <string name="translate_enable_request_key">Для этого вам нужен аккаунт и ключ API.</string>
+  <!--Translate-->
+  <string name="translate_store_settings">Хотите сохранить настройки?</string>
 
   <!-- Translate Menu -->
   <string name="menu_translation_submenu">Переводы</string>
