@@ -110,65 +110,21 @@ namespace BmwDeepObd
             _textViewCaptionTranslator = FindViewById<TextView>(Resource.Id.textViewCaptionTranslator);
 
             _radioButtonTranslatorYandexCloud = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandexCloud);
-            _radioButtonTranslatorYandexCloud.CheckedChange += (sender, e) =>
-            {
-                if (_ignoreChange)
-                {
-                    return;
-                }
-
-                UpdateTranslatorType();
-                UpdateDisplay();
-            };
+            _radioButtonTranslatorYandexCloud.CheckedChange += TranslatorChanged;
 
             _radioButtonTranslatorYandexTranslate = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorYandexTranslate);
-            _radioButtonTranslatorYandexTranslate.CheckedChange += (sender, e) =>
-            {
-                if (_ignoreChange)
-                {
-                    return;
-                }
-
-                UpdateTranslatorType();
-                UpdateDisplay();
-            };
+            _radioButtonTranslatorYandexTranslate.CheckedChange += TranslatorChanged;
 
             _radioButtonTranslatorIbm = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorIbm);
+            _radioButtonTranslatorIbm.CheckedChange += TranslatorChanged;
             _radioButtonTranslatorIbm.Visibility =
                 ActivityCommon.SelectedTranslator == ActivityCommon.TranslatorType.IbmWatson ? ViewStates.Visible : ViewStates.Gone;
-            _radioButtonTranslatorIbm.CheckedChange += (sender, e) =>
-            {
-                if (_ignoreChange)
-                {
-                    return;
-                }
-
-                UpdateTranslatorType();
-                UpdateDisplay();
-            };
 
             _radioButtonTranslatorDeepl = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorDeepl);
-            _radioButtonTranslatorDeepl.CheckedChange += (sender, e) =>
-            {
-                if (_ignoreChange)
-                {
-                    return;
-                }
-
-                UpdateTranslatorType();
-                UpdateDisplay();
-            };
+            _radioButtonTranslatorDeepl.CheckedChange += TranslatorChanged;
 
             _radioButtonTranslatorGoogleApis = FindViewById<RadioButton>(Resource.Id.radioButtonTranslatorGoogleApis);
-            _radioButtonTranslatorGoogleApis.CheckedChange += (sender, e) =>
-            {
-                if (_ignoreChange)
-                {
-                    return;
-                }
-                UpdateTranslatorType();
-                UpdateDisplay();
-            };
+            _radioButtonTranslatorGoogleApis.CheckedChange += TranslatorChanged;
 
             _textViewTransKeyDesc = FindViewById<TextView>(Resource.Id.textViewTransKeyDesc);
 
@@ -565,6 +521,17 @@ namespace BmwDeepObd
                 _clipboardCheckTimer.Dispose();
                 _clipboardCheckTimer = null;
             }
+        }
+
+        private void TranslatorChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            if (_ignoreChange)
+            {
+                return;
+            }
+
+            UpdateTranslatorType();
+            UpdateDisplay();
         }
 
         private void UpdateButtonState()
