@@ -1274,7 +1274,7 @@ static void LogExternal(const char far* prefix, const char far* text)
 {
     try
     {
-        String^ logText = ConvertCString(prefix) + ": " + ConvertCString(text);
+        String^ logText = "External (" + ConvertCString(prefix) + "): " + ConvertCString(text);
         Monitor::Enter(GlobalObjects::logLock);
         GlobalObjects::logBuffer->AppendLine(logText);
     }
