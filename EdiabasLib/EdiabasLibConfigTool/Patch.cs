@@ -37,6 +37,7 @@ namespace EdiabasLibConfigTool
         public const string ConfigFileName = @"EdiabasLib.config";
         public const string IniFileName = @"EDIABAS.INI";
         public const string RegKeyReingold = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
+        public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegKeyRheingoldNameStart = @"BMW.Rheingold.";
         public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
         public const string RegKeyIstaBinFull = RegKeyReingold + @": " + RegKeyIstaBinPath;
