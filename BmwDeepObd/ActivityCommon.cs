@@ -9551,6 +9551,17 @@ namespace BmwDeepObd
             return false;
         }
 
+        public static bool TranslationRequiresApiKey()
+        {
+            switch (SelectedTranslator)
+            {
+                case TranslatorType.GoogleApis:
+                    return false;
+            }
+
+            return true;
+        }
+
         public bool IsTranslationRequired()
         {
 #if true
@@ -9701,7 +9712,7 @@ namespace BmwDeepObd
                 }
                 EnableTranslateRequested = true;
                 string message = string.Format(_context.GetString(Resource.String.translate_enable_request), TranslatorName());
-                if (SelectedTranslator != TranslatorType.GoogleApis)
+                if (TranslationRequiresApiKey())
                 {
                     message += "\r\n" + _context.GetString(Resource.String.translate_enable_request_key);
                 }
