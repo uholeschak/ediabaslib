@@ -325,7 +325,23 @@ namespace EdiabasLibConfigTool
                         }
                     }
 
-                    using (RegistryKey key = localMachine32.OpenSubKey(@"SOFTWARE\BMWGroup\ISPI\ISTA"))
+                    using (RegistryKey key = localMachine32.OpenSubKey(Patch.RegKeyIsta))
+                    {
+                        string path = key?.GetValue("InstallLocation", null) as string;
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            string dirIstad = Path.Combine(path, @"Ediabas", @"BIN");
+                            if (Patch.IsValid(dirIstad))
+                            {
+                                _ediabasDirIstad = dirIstad;
+                            }
+                        }
+                    }
+                }
+
+                using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+                {
+                    using (RegistryKey key = localMachine64.OpenSubKey(Patch.RegKeyIsta))
                     {
                         string path = key?.GetValue("InstallLocation", null) as string;
                         if (!string.IsNullOrEmpty(path))
