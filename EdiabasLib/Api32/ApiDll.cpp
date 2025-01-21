@@ -1263,6 +1263,7 @@ DLLEXPORT void FAR PASCAL __logDebug(const char far* text)
 #pragma comment(linker, "/EXPORT:__logDebug=___logDebug@4")
 #endif
     GlobalInit();
+    String^ logText = ConvertCString(text);
 }
 
 DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
@@ -1271,6 +1272,7 @@ DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
 #pragma comment(linker, "/EXPORT:__logInfo=___logInfo@4")
 #endif
     GlobalInit();
+    String^ logText = ConvertCString(text);
 }
 
 DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
@@ -1279,6 +1281,7 @@ DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
 #pragma comment(linker, "/EXPORT:__logWarning=___logWarning@4")
 #endif
     GlobalInit();
+    String^ logText = ConvertCString(text);
 }
 
 DLLEXPORT void FAR PASCAL __logError(const char far* text)
@@ -1287,6 +1290,16 @@ DLLEXPORT void FAR PASCAL __logError(const char far* text)
 #pragma comment(linker, "/EXPORT:__logError=___logError@4")
 #endif
     GlobalInit();
+    String^ logText = ConvertCString(text);
+}
+
+DLLEXPORT void FAR PASCAL __logFatal(const char far* text)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:__logFatal=___logFatal@4")
+#endif
+    GlobalInit();
+    String^ logText = ConvertCString(text);
 }
 
 #ifdef __cplusplus
