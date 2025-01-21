@@ -152,7 +152,7 @@ ref class GlobalObjects
     public:
         static List<Ediabas::ApiInternal ^>^ handles = gcnew List<Ediabas::ApiInternal ^>();
         static Object ^ handleLock = gcnew Object();
-        static Text::StringBuilder^ logBuffer = gcnew Text::StringBuilder();
+        static Queue<String^>^ logQueue = gcnew Queue<String^>();
         static Object^ logLock = gcnew Object();
 
         static GlobalObjects()
@@ -245,22 +245,29 @@ ref class GlobalObjects
 
             if (apiInternal != nullptr)
             {
-                String^ logText = nullptr;
-                try
+                do
                 {
-                    Monitor::Enter(logLock);
-                    logText = logBuffer->ToString();
-                    logBuffer->Clear();
-                }
-                finally
-                {
-                    Monitor::Exit(logLock);
-                }
+                    String^ logText = nullptr;
+                    try
+                    {
+                        Monitor::Enter(logLock);
+                        if (logQueue->Count > 0)
+                        {
+                            logText = logQueue->Dequeue();
+                        }
+                    }
+                    finally
+                    {
+                        Monitor::Exit(logLock);
+                    }
 
-                if (!String::IsNullOrEmpty(logText))
-                {
+                    if (String::IsNullOrEmpty(logText))
+                    {
+                        break;
+                    }
+
                     apiInternal->logString(Ediabas::ApiInternal::ApiLogLevel::Normal, logText);
-                }
+                } while (true);
             }
 
             return apiInternal;
@@ -1274,9 +1281,9 @@ static void LogExternal(const char far* prefix, const char far* text)
 {
     try
     {
-        String^ logText = "External (" + ConvertCString(prefix) + "): " + ConvertCString(text);
+        String^ logText = "External [" + ConvertCString(prefix) + "]: " + ConvertCString(text);
         Monitor::Enter(GlobalObjects::logLock);
-        GlobalObjects::logBuffer->AppendLine(logText);
+        GlobalObjects::logQueue->Enqueue(logText);
     }
     finally
     {
