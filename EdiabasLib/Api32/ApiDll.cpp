@@ -1270,12 +1270,13 @@ DLLEXPORT void FAR PASCAL __logInit()
 }
 
 __declspec(noinline)
-static void LogExternal(String ^prefix, String ^text)
+static void LogExternal(const char far* prefix, const char far* text)
 {
     try
     {
+        String^ logText = ConvertCString(prefix) + ": " + ConvertCString(text);
         Monitor::Enter(GlobalObjects::logLock);
-        GlobalObjects::logBuffer->AppendLine(prefix + ": " + text);
+        GlobalObjects::logBuffer->AppendLine(logText);
     }
     finally
     {
@@ -1289,7 +1290,7 @@ DLLEXPORT void FAR PASCAL __logDebug(const char far* text)
 #pragma comment(linker, "/EXPORT:___logDebug=___logDebug@4")
 #endif
     GlobalInit();
-    LogExternal("Debug", ConvertCString(text));
+    LogExternal("Debug", text);
 }
 
 DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
@@ -1298,7 +1299,7 @@ DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
 #pragma comment(linker, "/EXPORT:___logInfo=___logInfo@4")
 #endif
     GlobalInit();
-    LogExternal("Info", ConvertCString(text));
+    LogExternal("Info", text);
 }
 
 DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
@@ -1307,7 +1308,7 @@ DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
 #pragma comment(linker, "/EXPORT:___logWarning=___logWarning@4")
 #endif
     GlobalInit();
-    LogExternal("Warning", ConvertCString(text));
+    LogExternal("Warning", text);
 }
 
 DLLEXPORT void FAR PASCAL __logError(const char far* text)
@@ -1316,7 +1317,7 @@ DLLEXPORT void FAR PASCAL __logError(const char far* text)
 #pragma comment(linker, "/EXPORT:___logError=___logError@4")
 #endif
     GlobalInit();
-    LogExternal("Error", ConvertCString(text));
+    LogExternal("Error", text);
 }
 
 DLLEXPORT void FAR PASCAL __logFatal(const char far* text)
@@ -1325,7 +1326,7 @@ DLLEXPORT void FAR PASCAL __logFatal(const char far* text)
 #pragma comment(linker, "/EXPORT:___logFatal=___logFatal@4")
 #endif
     GlobalInit();
-    LogExternal("Fatal", ConvertCString(text));
+    LogExternal("Fatal", text);
 }
 
 #ifdef __cplusplus
