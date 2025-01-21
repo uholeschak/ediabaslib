@@ -130,7 +130,9 @@ namespace AssemblyPatcher
                     }
 
                     if (baseName.EndsWith("interop", StringComparison.OrdinalIgnoreCase) ||
-                        baseName.EndsWith("IDESKernel", StringComparison.OrdinalIgnoreCase))
+                        baseName.EndsWith("IDESKernel", StringComparison.OrdinalIgnoreCase) ||
+                        baseName.EndsWith("procdump", StringComparison.OrdinalIgnoreCase) ||
+                        baseName.EndsWith("WebView2Loader", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
@@ -266,7 +268,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("'ENET::remotehost=' appears to have already been patched");
+                                    Console.WriteLine("'ENET::remotehost=' appears to have already been patched nor is not existing");
                                 }
                             }
                         }
