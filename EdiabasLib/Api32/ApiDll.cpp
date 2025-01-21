@@ -389,7 +389,7 @@ DLLEXPORT APIBOOL FAR PASCAL __apiInitExt(unsigned int far *handle,
 }
 
 __declspec(noinline)
-static  void ApiEnd(unsigned int handle)
+static void ApiEnd(unsigned int handle)
 {
     Ediabas::ApiInternal^ apiInternal = GlobalObjects::GetApiInstance(handle);
     if (apiInternal != nullptr)
@@ -1247,6 +1247,46 @@ DLLEXPORT APIBOOL FAR PASCAL enableMultiThreading(bool onOff)
 #endif
     GlobalInit();
     return EnableMultiThreading(onOff);
+}
+
+DLLEXPORT void FAR PASCAL __logInit()
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:__logInit=___logInit@0")
+#endif
+    GlobalInit();
+}
+
+DLLEXPORT void FAR PASCAL __logDebug(const char far* text)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:__logDebug=___logDebug@4")
+#endif
+    GlobalInit();
+}
+
+DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:__logInfo=___logInfo@4")
+#endif
+    GlobalInit();
+}
+
+DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:__logWarning=___logWarning@4")
+#endif
+    GlobalInit();
+}
+
+DLLEXPORT void FAR PASCAL __logError(const char far* text)
+{
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:__logError=___logError@4")
+#endif
+    GlobalInit();
 }
 
 #ifdef __cplusplus
