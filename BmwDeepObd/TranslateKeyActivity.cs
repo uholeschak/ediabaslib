@@ -545,7 +545,17 @@ namespace BmwDeepObd
             {
                 _ignoreChange = true;
                 StringBuilder sbDescription = new StringBuilder();
-                sbDescription.Append(string.Format(GetString(Resource.String.trans_key_desc), _activityCommon.TranslatorName()));
+                switch (ActivityCommon.SelectedTranslator)
+                {
+                    case ActivityCommon.TranslatorType.GoogleApis:
+                        sbDescription.Append(string.Format(GetString(Resource.String.trans_public_desc), _activityCommon.TranslatorName()));
+                        break;
+
+                    default:
+                        sbDescription.Append(string.Format(GetString(Resource.String.trans_key_desc), _activityCommon.TranslatorName()));
+                        break;
+                }
+
                 switch (ActivityCommon.SelectedTranslator)
                 {
                     case ActivityCommon.TranslatorType.YandexCloud:
