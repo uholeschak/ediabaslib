@@ -1480,7 +1480,7 @@ namespace Ediabas
             logString(logLevel, string.Format(Culture, format, args));
         }
 
-        private void logString(ApiLogLevel logLevel, string info)
+        public void logString(ApiLogLevel logLevel, string info)
         {
             updateLogLevel();
             if ((int)logLevel > _logLevelApi)
