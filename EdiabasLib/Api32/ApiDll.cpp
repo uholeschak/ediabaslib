@@ -152,6 +152,8 @@ ref class GlobalObjects
     public:
         static List<Ediabas::ApiInternal ^>^ handles = gcnew List<Ediabas::ApiInternal ^>();
         static Object ^ handleLock = gcnew Object();
+        static Text::StringBuilder^ logBuffer = gcnew Text::StringBuilder();
+        static Object^ logLock = gcnew Object();
 
         static GlobalObjects()
         {
@@ -226,20 +228,42 @@ ref class GlobalObjects
 
         static Ediabas::ApiInternal ^ GetApiInstance(int handle)
         {
+            Ediabas::ApiInternal^ apiInternal = nullptr;
             try
             {
                 Monitor::Enter( handleLock );
                 int index = handle - 1;
                 if (index >= 0 && index < handles->Count)
                 {
-                    return handles[index];
+                    apiInternal = handles[index];
                 }
             }
             finally
             {
                 Monitor::Exit( handleLock );
             }
-            return nullptr;
+
+            if (apiInternal != nullptr)
+            {
+                String^ logText = nullptr;
+                try
+                {
+                    Monitor::Enter(logLock);
+                    logText = logBuffer->ToString();
+                    logBuffer->Clear();
+                }
+                finally
+                {
+                    Monitor::Exit(logLock);
+                }
+
+                if (!String::IsNullOrEmpty(logText))
+                {
+                    apiInternal->logString(Ediabas::ApiInternal::ApiLogLevel::Normal, logText);
+                }
+            }
+
+            return apiInternal;
         }
 };
 
@@ -1246,23 +1270,19 @@ DLLEXPORT void FAR PASCAL __logInit()
 }
 
 __declspec(noinline)
-static void LogExternal(int level, const char far* text)
+static void LogExternal(String ^prefix, String ^text)
 {
-    Ediabas::ApiInternal^ apiInternal = nullptr;
     try
     {
-        apiInternal = gcnew Ediabas::ApiInternal();
-        apiInternal->logString(static_cast<Ediabas::ApiInternal::ApiLogLevel>(level), ConvertCString(text));
+        Monitor::Enter(GlobalObjects::logLock);
+        GlobalObjects::logBuffer->AppendLine(prefix + ": " + text);
     }
     catch (Exception^)
     {
     }
     finally
     {
-        if (apiInternal != nullptr)
-        {
-            delete apiInternal;
-        }
+        Monitor::Exit(GlobalObjects::logLock);
     }
 }
 
@@ -1272,7 +1292,7 @@ DLLEXPORT void FAR PASCAL __logDebug(const char far* text)
 #pragma comment(linker, "/EXPORT:___logDebug=___logDebug@4")
 #endif
     GlobalInit();
-    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 4, text);
+    LogExternal("Debug", ConvertCString(text));
 }
 
 DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
@@ -1281,7 +1301,7 @@ DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
 #pragma comment(linker, "/EXPORT:___logInfo=___logInfo@4")
 #endif
     GlobalInit();
-    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 3, text);
+    LogExternal("Info", ConvertCString(text));
 }
 
 DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
@@ -1290,7 +1310,7 @@ DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
 #pragma comment(linker, "/EXPORT:___logWarning=___logWarning@4")
 #endif
     GlobalInit();
-    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 2, text);
+    LogExternal("Warning", ConvertCString(text));
 }
 
 DLLEXPORT void FAR PASCAL __logError(const char far* text)
@@ -1299,7 +1319,7 @@ DLLEXPORT void FAR PASCAL __logError(const char far* text)
 #pragma comment(linker, "/EXPORT:___logError=___logError@4")
 #endif
     GlobalInit();
-    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 1, text);
+    LogExternal("Error", ConvertCString(text));
 }
 
 DLLEXPORT void FAR PASCAL __logFatal(const char far* text)
@@ -1308,7 +1328,7 @@ DLLEXPORT void FAR PASCAL __logFatal(const char far* text)
 #pragma comment(linker, "/EXPORT:___logFatal=___logFatal@4")
 #endif
     GlobalInit();
-    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 0, text);
+    LogExternal("Fatal", ConvertCString(text));
 }
 
 #ifdef __cplusplus
