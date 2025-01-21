@@ -1240,7 +1240,7 @@ DLLEXPORT APIBOOL FAR PASCAL enableMultiThreading(bool onOff)
 DLLEXPORT void FAR PASCAL __logInit()
 {
 #if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:__logInit=___logInit@0")
+#pragma comment(linker, "/EXPORT:___logInit=___logInit@0")
 #endif
     GlobalInit();
 }
@@ -1269,46 +1269,46 @@ static void LogExternal(int level, const char far* text)
 DLLEXPORT void FAR PASCAL __logDebug(const char far* text)
 {
 #if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:__logDebug=___logDebug@4")
+#pragma comment(linker, "/EXPORT:___logDebug=___logDebug@4")
 #endif
     GlobalInit();
-    LogExternal(0, text);
+    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 4, text);
 }
 
 DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
 {
 #if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:__logInfo=___logInfo@4")
+#pragma comment(linker, "/EXPORT:___logInfo=___logInfo@4")
 #endif
     GlobalInit();
-    LogExternal(1, text);
+    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 3, text);
 }
 
 DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
 {
 #if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:__logWarning=___logWarning@4")
+#pragma comment(linker, "/EXPORT:___logWarning=___logWarning@4")
 #endif
     GlobalInit();
-    LogExternal(2, text);
+    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 2, text);
 }
 
 DLLEXPORT void FAR PASCAL __logError(const char far* text)
 {
 #if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:__logError=___logError@4")
+#pragma comment(linker, "/EXPORT:___logError=___logError@4")
 #endif
     GlobalInit();
-    LogExternal(3, text);
+    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 1, text);
 }
 
 DLLEXPORT void FAR PASCAL __logFatal(const char far* text)
 {
 #if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:__logFatal=___logFatal@4")
+#pragma comment(linker, "/EXPORT:___logFatal=___logFatal@4")
 #endif
     GlobalInit();
-    LogExternal(4, text);
+    LogExternal(static_cast<int>(Ediabas::ApiInternal::ApiLogLevel::Normal) + 0, text);
 }
 
 #ifdef __cplusplus
