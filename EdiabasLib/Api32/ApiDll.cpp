@@ -1208,9 +1208,6 @@ DLLEXPORT void FAR PASCAL closeServer()
 __declspec(noinline)
 static APIBOOL EnableServer(APIBOOL onOff)
 {
-#if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:enableServer=_enableServer@4")
-#endif
     if (!Ediabas::ApiInternal::enableServer(onOff ? true : false))
     {
         return APIFALSE;
@@ -1230,9 +1227,6 @@ DLLEXPORT APIBOOL FAR PASCAL enableServer(APIBOOL onOff)
 __declspec(noinline)
 static APIBOOL EnableMultiThreading(bool onOff)
 {
-#if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:enableMultiThreading=_enableMultiThreading@4")
-#endif
     if (!Ediabas::ApiInternal::enableMultiThreading(onOff ? true : false))
     {
         return APIFALSE;
@@ -1257,13 +1251,35 @@ DLLEXPORT void FAR PASCAL __logInit()
     GlobalInit();
 }
 
+__declspec(noinline)
+static void LogExternal(int level, const char far* text)
+{
+    GlobalInit();
+
+    Ediabas::ApiInternal^ apiInternal = nullptr;
+    try
+    {
+        apiInternal = gcnew Ediabas::ApiInternal();
+        apiInternal->logString(static_cast<Ediabas::ApiInternal::ApiLogLevel>(level), ConvertCString(text));
+    }
+    catch (Exception^)
+    {
+    }
+    finally
+    {
+        if (apiInternal != nullptr)
+        {
+            delete apiInternal;
+        }
+    }
+}
+
 DLLEXPORT void FAR PASCAL __logDebug(const char far* text)
 {
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logDebug=___logDebug@4")
 #endif
-    GlobalInit();
-    String^ logText = ConvertCString(text);
+    LogExternal(0, text);
 }
 
 DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
@@ -1271,8 +1287,7 @@ DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logInfo=___logInfo@4")
 #endif
-    GlobalInit();
-    String^ logText = ConvertCString(text);
+    LogExternal(1, text);
 }
 
 DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
@@ -1280,8 +1295,7 @@ DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logWarning=___logWarning@4")
 #endif
-    GlobalInit();
-    String^ logText = ConvertCString(text);
+    LogExternal(2, text);
 }
 
 DLLEXPORT void FAR PASCAL __logError(const char far* text)
@@ -1289,8 +1303,7 @@ DLLEXPORT void FAR PASCAL __logError(const char far* text)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logError=___logError@4")
 #endif
-    GlobalInit();
-    String^ logText = ConvertCString(text);
+    LogExternal(3, text);
 }
 
 DLLEXPORT void FAR PASCAL __logFatal(const char far* text)
@@ -1298,8 +1311,7 @@ DLLEXPORT void FAR PASCAL __logFatal(const char far* text)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logFatal=___logFatal@4")
 #endif
-    GlobalInit();
-    String^ logText = ConvertCString(text);
+    LogExternal(4, text);
 }
 
 #ifdef __cplusplus
