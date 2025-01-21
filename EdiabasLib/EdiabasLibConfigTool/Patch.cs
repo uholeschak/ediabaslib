@@ -29,6 +29,8 @@ namespace EdiabasLibConfigTool
         public const string PassordWifiModBmw = @"12345678";
         public const string AdapterSsidUniCar = @"UniCarScan";
         public const string PassordWifiUniCar = @"12345678";
+        public const string EdiabasDirName = @"Ediabas";
+        public const string EdiabasBinDirName = @"Bin";
         public const string ApiDirName = @"Api32";
         public const string Api32DllName = @"api32.dll";
         public const string Api64DllName = @"api64.dll";

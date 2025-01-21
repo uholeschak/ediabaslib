@@ -330,7 +330,7 @@ namespace EdiabasLibConfigTool
                         string path = key?.GetValue("InstallLocation", null) as string;
                         if (!string.IsNullOrEmpty(path))
                         {
-                            string dirIstad = Path.Combine(path, @"Ediabas", @"BIN");
+                            string dirIstad = Path.Combine(path, Patch.EdiabasDirName, Patch.EdiabasBinDirName);
                             if (Patch.IsValid(dirIstad))
                             {
                                 _ediabasDirIstad = dirIstad;
@@ -346,7 +346,7 @@ namespace EdiabasLibConfigTool
                         string path = key?.GetValue("InstallLocation", null) as string;
                         if (!string.IsNullOrEmpty(path))
                         {
-                            string dirIstad = Path.Combine(path, @"Ediabas", @"BIN");
+                            string dirIstad = Path.Combine(path, Patch.EdiabasDirName, Patch.EdiabasBinDirName);
                             if (Patch.IsValid(dirIstad))
                             {
                                 _ediabasDirIstad = dirIstad;
