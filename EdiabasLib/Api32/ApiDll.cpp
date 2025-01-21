@@ -1166,9 +1166,6 @@ DLLEXPORT void FAR PASCAL __apiTrace(unsigned int handle,const char far *msg)
 __declspec(noinline)
 static APIBOOL ApiXSysSetConfig(const char far* cfgName, const char far* cfgValue)
 {
-#if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:___apiXSysSetConfig=___apiXSysSetConfig@8")
-#endif
     if (!Ediabas::ApiInternal::apiXSysSetConfig(
         ConvertCString(cfgName),
         ConvertCString(cfgValue)))
@@ -1190,9 +1187,6 @@ DLLEXPORT APIBOOL FAR PASCAL __apiXSysSetConfig(const char far *cfgName, const c
 __declspec(noinline)
 void CloseServer()
 {
-#if defined(_M_IX86)
-#pragma comment(linker, "/EXPORT:closeServer=_closeServer@0")
-#endif
     Ediabas::ApiInternal::closeServer();
 }
 
@@ -1254,8 +1248,6 @@ DLLEXPORT void FAR PASCAL __logInit()
 __declspec(noinline)
 static void LogExternal(int level, const char far* text)
 {
-    GlobalInit();
-
     Ediabas::ApiInternal^ apiInternal = nullptr;
     try
     {
@@ -1279,6 +1271,7 @@ DLLEXPORT void FAR PASCAL __logDebug(const char far* text)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logDebug=___logDebug@4")
 #endif
+    GlobalInit();
     LogExternal(0, text);
 }
 
@@ -1287,6 +1280,7 @@ DLLEXPORT void FAR PASCAL __logInfo(const char far* text)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logInfo=___logInfo@4")
 #endif
+    GlobalInit();
     LogExternal(1, text);
 }
 
@@ -1295,6 +1289,7 @@ DLLEXPORT void FAR PASCAL __logWarning(const char far* text)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logWarning=___logWarning@4")
 #endif
+    GlobalInit();
     LogExternal(2, text);
 }
 
@@ -1303,6 +1298,7 @@ DLLEXPORT void FAR PASCAL __logError(const char far* text)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logError=___logError@4")
 #endif
+    GlobalInit();
     LogExternal(3, text);
 }
 
@@ -1311,6 +1307,7 @@ DLLEXPORT void FAR PASCAL __logFatal(const char far* text)
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:__logFatal=___logFatal@4")
 #endif
+    GlobalInit();
     LogExternal(4, text);
 }
 
