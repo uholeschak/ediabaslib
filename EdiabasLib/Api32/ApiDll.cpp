@@ -1277,9 +1277,6 @@ static void LogExternal(String ^prefix, String ^text)
         Monitor::Enter(GlobalObjects::logLock);
         GlobalObjects::logBuffer->AppendLine(prefix + ": " + text);
     }
-    catch (Exception^)
-    {
-    }
     finally
     {
         Monitor::Exit(GlobalObjects::logLock);
