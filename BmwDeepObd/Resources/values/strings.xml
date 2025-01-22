@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ReSharper disable MarkupAttributeTypo -->
+<resources>
+  <string name="library_name">DeepObd</string>
+  <string name="app_name">Deep OBD</string>
+  <string name="button_connected">Connected</string>
+  <string name="button_disconnected">Disconnected</string>
+  <string name="button_yes">Yes</string>
+  <string name="button_no">No</string>
+  <string name="button_ok">Ok</string>
+  <string name="button_abort">Abort</string>
+  <string name="button_close">Close</string>
+  <string name="button_select">Select</string>
+  <string name="button_generate">Generate</string>
+  <string name="button_manually">Manually</string>
+  <string name="button_copy">Copy</string>
+  <string name="button_accept">Accept</string>
+  <string name="button_decline">Decline</string>
+  <string name="button_apply">Apply</string>
+  <string name="button_execute">Execute</string>
+  <string name="button_donate">Donate</string>
+  <string name="button_skip">Skip</string>
+  <string name="button_hide">Hide</string>
+  <string name="button_reset">Reset</string>
+  <string name="button_manufacturer">Manufacturer</string>
+  <string name="back_button_twice_for_exit">Press button twice in order to exit</string>
+  <string name="no_ext_storage">No external storage available</string>
+  <string name="access_denied_ext_storage">Access to the external storage is required to execute this app.\nDo you want to open the app settings?</string>
+  <string name="access_manage_files">Access to file management access is required,\nto access external storage.\nDo you want to open the management settings?</string>
+  <string name="overlay_permission_denied">For the background communication overlay drawing is required.\nDo you want to open the app settings?</string>
+  <string name="notification_permission_denied">For the background communication notification are required.\nDo you want to open the app settings?</string>
+  <string name="store_settings_failed">Storing settings failed. Please reinstall the application.</string>
+  <string name="store_settings_filename">The settings have been stored at:</string>
+  <string name="long_click_show_title">Long click to show title</string>
+  <string name="low_memory_detected">System memory is low!</string>
+  <string name="bt_enable">Bluetooth is not enabled.\nDo you want to enable it now?</string>
+  <string name="wifi_enable">Wi-Fi is not enabled.\nDo you want to enable it now or select the access point?</string>
+  <string name="bt_not_available">Bluetooth is not available.</string>
+  <string name="wifi_not_available">Wi-Fi is not available.</string>
+  <string name="config_select">No valid configuration is present.\nDo you want to generate or select a configuration now?</string>
+  <string name="config_manual_edit">The current configuration has been manually created and has to be closed first.</string>
+  <string name="bt_device_not_selected">No Bluetooth device has been selected.\nDo you want to select a device now?</string>
+  <string name="ecu_download_free_space">There is not enough free space ({0:fs1} &lt; {1:fs1}) on the device for storing the ECU files.\nDo you want to select a different storage media?</string>
+  <string name="ecu_not_found">No ECU files have been found.</string>
+  <string name="ecu_package">Updated ECU files are available for this application.</string>
+  <string name="ecu_download">Do you want to download the ECU files now (File size approx. {0:fs1})?</string>
+  <string name="storage_requirements">This is an expert tool.\nNo liability for malfunction or damage at the vehicle.\nThis app requires a fast storage memory with a minimum free space of {0:fs1}.\nThe usage of the app is not allowed if this requirement is not accepted.</string>
+  <string name="config_match_vehicle">Only use configurations that exactly match the vehicle.\nGenerate configurations with the configuration generator, there is no support for using foreign configurations.</string>
+  <string name="ecu_extract">The ECU files have to be extracted (Size approx. {0:fs1}),\nthis requires the download of update information.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
+  <string name="ecu_extract_confirm">To extract the ECU files (Size approx. {0:fs1})\nthe download of update information is required.\nIf the extraction is very slow please use a faster storage media.\nDo you want to continue?</string>
+  <string name="manufacturer_select">The current manufacturer is {0}, to choose a different one select \'Manufacturer\'.</string>
+  <string name="open_trace_file_failed">Unable to open trace file:\n{0}.</string>
+  <string name="no_ext_app_installed">Please install an app first, that could open {0} files.</string>
+  <string name="choose_file_app">Open file.</string>
+  <string name="no_xml_editor_installed">Please install a XML editor first.</string>
+  <string name="choose_xml_editor">Choose an XML editor.</string>
+  <string name="file_access_denied">Access to file denied.\nPlease check the file location and access rights.</string>
+  <string name="file_editing_failed">Editing file failed.</string>
+  <string name="display_order_edit_hint">Use long click and drag drop to change display order.</string>
+  <string name="display_line_original_position">Original position: {0}</string>
+  <string name="error_no_error">No errors present</string>
+  <string name="error_reading_errors">Reading error memory: {0}</string>
+  <string name="error_reading_relevant_only">(Only relevant data is displayed,\nchangeable in the global settings.)</string>
+  <string name="error_reading_state_init">Initializing</string>
+  <string name="error_reading_state_error">Error</string>
+  <string name="error_reading_state_detect">Detecting {0}%</string>
+  <string name="error_reading_state_read">Progress {0}%</string>
+  <string name="error_no_response">No response</string>
+  <string name="error_reset_condition">The error reset conditions have not been met.\nPlease stop the engine, turn on ignition and retry again.</string>
+  <string name="error_error_code">Error code</string>
+  <string name="error_info_code">Info code</string>
+  <string name="error_shadow">(Shadow)</string>
+  <string name="error_unknown">Unknown</string>
+  <string name="error_hidden">Hidden</string>
+  <string name="error_env_title">Environmental conditions:</string>
+  <string name="error_env_frequency">Frequency</string>
+  <string name="error_env_log_count">Logistics counter</string>
+  <string name="error_env_pcode">SAE code</string>
+  <string name="error_env_km">Mileage</string>
+  <string name="error_env_time">Error time</string>
+  <string formatted="false" name="version_change_info_message">This open source project is hosted at:
+\n&lt;a href=\'https://github.com/uholeschak/ediabaslib\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;
+\nFeel free to contribute or to report problems.
+\nA detailed documentation could also be found on this website.</string>
+  <string name="version_last_changes_header">Changes in this version:</string>
+  <string name="version_last_changes">- Added new translator.\n- Using Android app bundles.\n- Android 15 support.\n- Android Auto support.\n- Simulation file support.\n- Fixed minor problems</string>
+  <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
+  <string formatted="false" name="vag_mode_info">The VAG mode ist still experimental and only for vehicles until {0}.\nA &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;Deep OBD adapter&lt;/a&gt; with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.</string>
+  <string name="vag_mode_info_ballon">The VAG mode ist still experimental and only for vehicles until {0}.\nA Deep OBD adapter with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.</string>
+
+  <!-- Update info -->
+  <string name="update_header">An update is available at Google Play.</string>
+  <string name="update_version">App version: {0}</string>
+  <string name="update_info">Update information:</string>
+  <string name="update_show">Do you want to show the update?\nYou could also skip this app version.</string>
+
+  <!-- Expansion downloader -->
+  <string name="exp_down_paused_cellular">Would you like to enable downloading over cellular connections? Depending on your data plan, this may cost you money.</string>
+  <string name="exp_down_paused_cellular_2">If you choose not to enable downloading over cellular connections, the download will automatically resume when wi-fi is available.</string>
+  <string name="exp_down_button_resume_cellular">Resume download</string>
+  <string name="exp_down_button_wifi_settings">Wi-Fi settings</string>
+  <string name="exp_down_verifying_download">Verifying Download</string>
+  <string name="exp_down_validation_complete">XAPK File Validation Complete.</string>
+  <string name="exp_down_validation_failed">XAPK File Validation Failed.</string>
+  <string name="exp_down_button_pause">Pause Download</string>
+  <string name="exp_down_button_resume">Resume Download</string>
+  <string name="exp_down_button_cancel">Cancel</string>
+  <string name="exp_down_button_cancel_verify">Cancel Verification</string>
+  <string name="exp_down_obb_missing">The app has not been downloaded from Google Play and the expansion file is missing.\nDownload the OBB file with an APK downloader from Google Play and copy it with the name:\n\'{0}\'\nin one of the directories:\n{1}\nThere is no support, the usage of Google Play is the only recommend way.</string>
+  <string name="exp_down_time_remaining">Time remaining: {0}</string>
+  <string name="obb_missing_restart">The expansion file has not been found,\nthe app has to be restarted.</string>
+  <string name="obb_not_readable">The expansion file:\n{0}\nis not readable.\nCheck the access permissions or delete the file.</string>
+
+  <!-- Downloader library (modfications) -->
+  <string name="state_failed_unlicensed">Download failed because the app may not be downloaded from Google Play</string>
+
+  <!-- Error codes -->
+  <string name="error_code_error_temporary">Error temporary</string>
+  <string name="error_code_error_present">Error present</string>
+  <string name="error_code_error_stored">Error stored</string>
+
+  <!-- Alert titles -->
+  <string name="alert_title_info">Information</string>
+  <string name="alert_title_warning">Warning</string>
+  <string name="alert_title_error">Error</string>
+  <string name="alert_title_question">Question</string>
+
+  <!-- Notifications -->
+  <string name="notification_download">Download</string>
+  <string name="notification_communication">Communication</string>
+  <string name="notification_group_custom">Custom</string>
+  <string name="notification_custom_min">Custom minimum</string>
+  <string name="notification_custom_low">Custom low</string>
+  <string name="notification_custom_default">Custom default</string>
+  <string name="notification_custom_high">Custom high</string>
+  <string name="notification_custom_max">Custom maximum</string>
+
+  <!-- Service -->
+  <string name="service_notification_comm_active">The communication is active</string>
+  <string name="service_notification_comm_ok">Connection to the vehicle established</string>
+  <string name="service_notification_comm_error">No connection to the vehicle</string>
+  <string name="service_notification_idle">Inactive</string>
+  <string name="service_notification_wait_media">Waiting for storage media</string>
+  <string name="service_notification_load_settings">Reading settings</string>
+  <string name="service_notification_compile_code">Compiling user code</string>
+  <string name="service_notification_init_reader">Reading database</string>
+  <string name="service_notification_connecting">Establishing connection</string>
+  <string name="service_notification_error">Start failed</string>
+  <string name="service_notification_abort">Aborting</string>
+  <string name="service_stop_comm_app">Open App and stop communication</string>
+  <string name="service_stop_comm">Stop communication</string>
+  <string name="service_abort_operation">Abort operation</string>
+  <string name="service_status_caption">Please wait, the start service is active.</string>
+  <string name="service_status_info">Service status:</string>
+
+  <!-- Compile -->
+  <string name="compile_cpu_usage">Checking CPU usage</string>
+  <string name="compile_cpu_usage_value">CPU usage: {0}%</string>
+  <string name="compile_cpu_usage_high">The CPU idle usage is very high ({0}%), this could cause communication problems.\nPlease terminate background Apps that consume too much CPU power.</string>
+  <string name="compile_start">Compiling user code</string>
+  <string name="compile_missing_assemblies">Missing system assemblies:</string>
+  <string name="compile_crash">The app crashed during compilation of the user code.\nThere is a known compiler bug:\nDon\'t use complex initialized structures or arrays in the code,\ninitialize them in the constructor.</string>
+  <string name="compile_compat_id_warn">The configuration has been created with a different BWM database, some entries may be incompatible.\nTo correct this, open every ECU, that is marked with * in the page title, in the configuration generator, check the entries and store the configuration again.</string>
+
+  <!-- Download -->
+  <string formatted="false" name="download_manual">If you have problems with the automatic download of the ECU files you could download them from&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;and install them manually.&lt;br&gt;Do you want to use manual installation?</string>
+  <string name="select_ecu_zip">Select ECU Zip</string>
+  <string name="downloading_file">Downloading files</string>
+  <string name="download_failed">Download files failed.\nPlease check your network connection.</string>
+  <string name="download_proxy_config">A proxy has been configured in the network settings.\nThis could cause connection problems.\nRemove the proxy if possible.</string>
+  <string name="obb_offline_extract">Do you want to extract the ECU files offline?</string>
+  <string name="obb_offline_extract_title">Offline extract</string>
+  <string name="obb_offline_extract_message">Enter the offline key.\nTo get the key, send an e-mail with the\napp version: {0}\nand ID: {1}\nto: {2} .\nYou could paste the key with the context menu of the input field.</string>
+  <string name="obb_offline_key_invalid">The offline key is invalid.</string>
+  <string name="extract_cleanup">Removing old files</string>
+  <string name="decrypt_file">Preparing archive</string>
+  <string name="extract_file">Extracting files</string>
+  <string name="verify_files">Verify files</string>
+  <string name="extract_failed">Extracting files failed.\nThe zip file seems to be corrupted.\nIn most cases the reason is a defective storage media.</string>
+  <string name="extract_failed_io">Writing extracted files failed.\nIs the file system corrupted?\nIt\'s recommended to uninstall all file protection software (e.g. antivirus).</string>
+  <string name="write_files_failed">Writing files failed.\nIs there no space left on the device?\nIt\'s recommended to uninstall all file protection software (e.g. antivirus).</string>
+
+  <!-- Job reader -->
+  <string name="job_reader_read_xml_failed">Reading of the configuration file failed.</string>
+  <string name="job_reader_file_name_invalid">The file name is invalid.</string>
+
+  <!-- Init VAG UDS -->
+  <string name="vag_uds_init">Reading VAG files</string>
+  <string name="vag_uds_error">Reading VAG files failed</string>
+
+  <!-- Init BMW ECU functions -->
+  <string name="bmw_ecu_func_init">Reading BMW files</string>
+  <string name="bmw_ecu_func_error">Reading BMW files failed</string>
+
+  <!-- Documents processing -->
+  <string name="copy_documents_progress">Copying files</string>
+  <string name="copy_documents_error">Copying failed</string>
+  <string name="copy_documents_create">The file or folder:\n{0}\nwill be created.\nDo you want to continue?</string>
+  <string name="copy_documents_exists">The file:\n{0}\nalready exists.\nDo you want to override it?</string>
+  <string name="del_documents_progress">Deleting files</string>
+  <string name="del_documents_error">Deleting failed</string>
+  <string name="del_document_request">The file or folder:\n{0}\nwill be deleted.\nDo you want to continue?</string>
+
+  <!-- Send trace file -->
+  <string name="send_trace_file_request">Communication errors have occurred.\nDo you want to send a compressed and anonymous trace file (size {0:fs0}) to allow improvement of the product?</string>
+  <string name="send_message_request">Communication errors have occurred.\nDo you want to send anonymous data to allow improvement of the product?</string>
+  <string name="send_trace_file">Sending trace file</string>
+  <string name="compress_trace_file_failed">Compressing trace file failed.</string>
+  <string name="send_trace_file_failed">Sending trace file failed.</string>
+  <string name="send_trace_file_failed_retry">Sending trace file failed.\nPlease check your network connection.\nDo you want to retry sending?</string>
+  <string name="send_trace_backup_info">You could retry sending later, with the following function of the main menu:\nResend trace file.</string>
+  <string name="send_trace_file_failed_message">Do you want to retry sending?</string>
+  <string name="send_trace_message">Send optional information</string>
+  <string name="send_trace_email">E-mail:</string>
+  <string name="send_trace_info">Additional information (e.g. vehicle and adapter type, edge conditions):</string>
+  <string name="send_trace_send_info">Do you want to send the following optional information, to help improving the software?</string>
+
+  <!-- Translate -->
+  <string name="translate_text">Translating text</string>
+  <string name="translate_failed">Translation failed.\nPlease check your network connection.\nDo you want to retry the translation?</string>
+  <string name="translate_failed_message">Translation failed with error:\n{0}.\nDo you want to retry the translation?</string>
+  <string name="translate_enable_request">Do you want to enable automatic ECU text translation with {0}?</string>
+  <string name="translate_enable_request_key">This requires an account and an API Key.</string>
+  <string name="translate_store_settings">Do you want to store the settings?</string>
+
+  <!-- Translate Menu -->
+  <string name="menu_translation_submenu">Translations</string>
+  <string name="menu_translation_enable">Translate ECU text</string>
+  <string name="menu_translation_yandex_key">Translation configuration</string>
+  <string name="menu_translation_clear_cache">Clear translation cache</string>
+
+  <!-- Translate Key -->
+  <string name="trans_api_key_title">Translation configuration</string>
+  <string name="trans_caption_translator">Translator</string>
+  <string name="trans_translator_yandex_translate">Yandex.Translate</string>
+  <string name="trans_translator_ibm">IBM Watson</string>
+  <string name="trans_translator_deepl">DeepL</string>
+  <string name="trans_translator_yandex_cloud">Yandex Cloud</string>
+  <string name="trans_translator_google_apis">Google APIs</string>
+  <string name="trans_key_desc">For automatic translation with {0} a (free) API key and account is required, that allows a limited amount of translations per day.\nWith the buttons below log in to your account and create a key or display your existing ones.\nCopy the key from the web browser and paste it in the field below with the paste button.\nTo copy the key press and hold the first word, extend the selected range and choose copy.</string>
+  <string name="trans_public_desc">For automatic translation with {0}, public undocumented APIs are be used, which could change anytime without notice.\nWith the buttons below you could copy and paste the currently active API URLs.</string>
+  <string name="trans_key_yandex_cloud">Yandex Cloud additionally allows to use an OAuth token and a folder ID instead of an API key.</string>
+  <string name="trans_key_copy_title">Copy API Key</string>
+  <string name="button_api_key_create">Create API Key</string>
+  <string name="button_api_key_get">Display API Keys</string>
+  <string name="trans_key_paste_title">API Key</string>
+  <string name="button_api_key_paste">Paste API Key</string>
+  <string name="folder_id_paste_title">Folder ID</string>
+  <string name="button_folder_id_paste">Paste folder ID</string>
+  <string name="api_url_paste_title">API URL</string>
+  <string name="button_api_url_paste">Paste API URL</string>
+  <string name="button_api_url_copy">Copy API URL</string>
+  <string name="trans_key_test_title">Translate</string>
+  <string name="button_api_key_test">Test translation</string>
+  <string name="button_api_key_test_failed">Translation failed</string>
+
+  <!--  DeviceListActivity -->
+  <string name="scanning">Scanning for devices ...</string>
+  <string name="select_device">Select adapter</string>
+  <string name="none_paired">No devices have been paired</string>
+  <string name="none_found">No devices found</string>
+  <string name="bt_not_enabled">Bluetooth is not enabled</string>
+  <string name="bt_mtc_service_error">The Bluetooth service is connected, but delivers no data.\nA restricted mode will be used, please pair the devices in the phone menu.</string>
+  <string name="bt_mtc_antenna_info">For some Android radios it\'s recommended to replace the antenna cable of the internal Bluetooth module and lead it through the enclosure.\nThe antenna cable should have a length of 15.5 cm. For modules without cable a length of 16.0 cm seems to be optimal.</string>
+  <string name="bt_mtc_module_error">Android devices with Bluetooth module FSC-BW124 seem to have communication problems with the OBD adapters.\nConnection will probably not work correctly.</string>
+  <string name="bt_mtc_module_escape_mode">The Bluetooth module {0} has a limited communication channel and a special communication mode has to be use.\nFor technical reasons not all OBD protocols are supported in this mode and the latest adapter firmware is required.</string>
+  <string name="bt_mtc_module_pwd">The current Bluetooth pin {0} is not the default value {1} for the adapters.\nEither you change the adapter pin or the current Bluetooth pin.\nDo you want to change the current pin to {1}?</string>
+  <string formatted="false" name="bt_mtc_firmware_error">The current firmware version {0} is known to have Bluetooth communication problems.&lt;br&gt;Please downgrade or upgrade the firmware first (depending on availability).&lt;br&gt;&lt;a href=\'{1}\'&gt;Firmware download&lt;/a&gt;&lt;br&gt;&lt;a href=\'{2}\'&gt;Update instructions&lt;/a&gt;</string>
+  <string name="bt_module_name">(Bluetooth module: {0})</string>
+  <string name="title_paired_devices">Paired devices</string>
+  <string name="title_other_devices">Other available devices</string>
+  <string name="button_scan">Scan for devices</string>
+  <string name="button_bt_settings">Open Bluetooth settings</string>
+  <string name="detect_adapter">Detecting adapter type</string>
+  <string name="adapter_connection_mtc_failed">Bluetooth connection to the adapter failed.\nPlease try to delete the adapter and connect it again to fix this problem.\nReconnecting the smartphone may also help to improve the communication.\nUse OBD adapters with YC1021 (for newer Android radios) or BC417 (for older Android radios) Bluetooth chip.</string>
+  <string name="adapter_connection_failed">Bluetooth connection to the adapter failed.\nIf another app uses the connection terminate the app or reboot the android device.</string>
+  <string name="adapter_connection_generic">Connection to the adapter failed.</string>
+  <string name="unknown_adapter_type">Adapter type detection failed.\nDo you still want to use this adapter (the telegrams will be send unmodified)?</string>
+  <string name="unknown_adapter_generic">Adapter type detection failed.\nDo you still want to use this adapter?</string>
+  <string name="adapter_raw_warn">The direct communication mode is only useful for adapters without firmware or for flashing the adapter!\nCommunication with the car is not possible in the most cases!\nDo you want to continue anyway?</string>
+  <string name="invalid_adapter_type">The ELM327 adapter is not supporting all required commands and is incompatible with this software.</string>
+  <string name="fake_elm_adapter_type">The ELM327 adapter is a fake {0}.{1} version and is incompatible with this software.</string>
+  <string name="limited_elm_adapter_type">The ELM327 adapter is not original and is not supporting all functions. Not all operations are possible.</string>
+  <string name="elm_no_can">The vehicle has no D-CAN support, communication with the ELM327 adapter is not possible.</string>
+  <string name="fake_elm_try">Do you want to try anyway to use the adapter?</string>
+  <string formatted="false" name="recommened_adapter_type">It\'s recommended to use an ELM327 v1.4b, v1.5 or origin v2.1 adapter,&lt;br&gt;which is based on PIC18F25K80 processor (no MCP2515 chip).&lt;br&gt;At &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt; an improved firmware could be found.\nOriginal Deep OBD adapters also contain a license for coding of one BMW vehicle.</string>
+  <string formatted="false" name="adapter_elm_replacement">ELM327 adapters are slow and only support D-CAN (vehicles starting from 3/2007).&lt;br&gt;You could now buy adapters with a replacement firmware at&lt;br&gt;&lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md\'&gt;github.com/uholeschak/ediabaslib&lt;/a&gt;&lt;br&gt;that has many improvements.\nOriginal Deep OBD adapters also contain a license for coding of one BMW vehicle.</string>
+  <string name="adapter_stn_firmware">It\'s recommend to update the adapter firmware first.\nDo you want open the OBDLink app to perform the update?</string>
+  <string name="adapter_elm_firmware">It\'s recommend to update the ELM327 firmware with the replacement firmware.\nDo you want to open the adapter configuration page for firmware update?</string>
+  <string name="adapter_cfg_required">The adapter may require configuration.\nDo you want to open the adapter configuration page?</string>
+  <string name="adapter_fw_update">There is a firmware update available for this adapter.\nDo you want to open the adapter configuration page for update installation?</string>
+  <string name="adapter_no_escape_mode">For this Bluetooth module type a firmware update of the OBD adapter is required.</string>
+  <string name="access_permission_rejected">Without access permissions searching for Bluetooth devices is not possible.\nDo you want to open the app settings?</string>
+  <string name="location_provider_disabled_bt">The location services have to be enabled for Bluetooth device searching.\nDo you want to enable the location service?</string>
+  <string name="location_provider_disabled_wifi">The location services have to be enabled for Wi-Fi adapter detection.\nDo you want to enable the location service?</string>
+  <string name="bt_device_enter_mac">Enter the Bluetooth address of an already paired OBD adapter in the specified format</string>
+  <string name="bt_device_mac_invalid">The Bluetooth address has not the correct format</string>
+  <string name="bt_device_connected">(Connected)</string>
+  <string name="bt_device_menu_tite">Choose an operation for this device</string>
+  <string name="bt_device_select">Select OBD adapter</string>
+  <string name="bt_device_pair">Pair device</string>
+  <string name="bt_device_unpair">Unpair device</string>
+  <string name="bt_device_connect_obd">Connect as OBD adapter</string>
+  <string name="bt_device_connect_phone">Connect as phone</string>
+  <string name="bt_device_disconnect_phone">Disconnect phone</string>
+  <string name="bt_device_delete">Delete device</string>
+
+  <!-- tabs_activate -->
+  <string name="button_active">Active</string>
+  <string name="button_inactive">Inactive</string>
+
+  <!-- tabs_errors -->
+  <string name="button_error_reset">Reset errors</string>
+  <string name="button_error_reset_all">Reset all errors</string>
+  <string name="button_error_select_all">Select all</string>
+  <string name="button_error_deselect_all">Deselect all</string>
+
+  <!-- Options Menu -->
+  <string name="menu_settings">Settings</string>
+  <string name="menu_search">Search</string>
+  <string name="menu_connect">Connect</string>
+  <string name="menu_manufacturer">Manufacturer</string>
+  <string name="menu_adapter">Adapter</string>
+  <string name="menu_sel_sim_dir">Simulation directory</string>
+  <string name="menu_adapter_config">Adapter configuration</string>
+  <string name="menu_enet_ip">ENET IP</string>
+  <string name="menu_adapter_ip">Adapter IP</string>
+  <string name="menu_cfg_submenu">Configuration</string>
+  <string name="menu_recent_cfg_submenu">Recent configurations</string>
+  <string name="menu_recent_cfg_clear">Clear</string>
+  <string name="menu_cfg_page_functions">Page functions</string>
+  <string name="menu_cfg_page_ediabas">Ediabas tool</string>
+  <string name="menu_cfg_page_bmw_actuator">Actuator functions</string>
+  <string name="menu_cfg_page_bmw_service">Service functions</string>
+  <string name="menu_cfg_page_vag_coding">Coding</string>
+  <string name="menu_cfg_page_vag_coding2">Coding 2</string>
+  <string name="menu_cfg_page_vag_adaption">Adaption</string>
+  <string name="menu_cfg_page_vag_login">Login</string>
+  <string name="menu_cfg_page_vag_sec_access">Security access</string>
+  <string name="menu_cfg_sel">Select</string>
+  <string name="menu_cfg_edit">Edit</string>
+  <string name="menu_cfg_pages_edit">Edit pages list</string>
+  <string name="menu_cfg_page_menu">Edit current page</string>
+  <string name="menu_cfg_page_edit">Edit page</string>
+  <string name="menu_cfg_page_edit_fontsize">Font size</string>
+  <string name="menu_cfg_page_edit_gauges_landscape">Gauges landscape</string>
+  <string name="menu_cfg_page_edit_gauges_portrait">Gauges portrait</string>
+  <string name="menu_cfg_page_edit_display_order">Result display order</string>
+  <string name="menu_cfg_select_edit">Edit other file</string>
+  <string name="menu_cfg_edit_reset">Reset XML editor</string>
+  <string name="menu_cfg_close">Close</string>
+  <string name="menu_xml_tool">Configuration generator</string>
+  <string name="menu_ediabas_tool">Ediabas tool</string>
+  <string name="menu_bmw_coding">Coding</string>
+  <string name="menu_download_ecu">Download ECU files</string>
+  <string name="menu_extract_ecu">Extract ECU files</string>
+  <string name="menu_submenu_log">Data logging</string>
+  <string name="menu_trace_submenu">Trace file</string>
+  <string name="menu_send_trace">Send trace file</string>
+  <string name="menu_open_trace">Open trace file</string>
+  <string name="menu_send_last_trace">Resend trace file</string>
+  <string name="menu_open_last_trace">Open last trace file</string>
+  <string name="menu_global_settings">Global settings</string>
+  <string name="menu_submenu_help">Online help</string>
+  <string name="menu_info">App info</string>
+  <string name="menu_exit">Exit app</string>
+  <string name="menu_hint_copy_folder">You could copy files to and from the app directory in the global settings.</string>
+
+  <!-- Data logging -->
+  <string name="datalog_enable_trace">Create trace file</string>
+  <string name="datalog_append_trace">Append trace file</string>
+  <string name="datalog_enable_datalog">Log data</string>
+  <string name="datalog_append_datalog">Append log data</string>
+  <string name="datalog_no_tags">No data log tags are present.\nTo enable data logging, data log tags must be specified on the ECU page of the configuration generator.</string>
+  <string name="datalog_temporary">The data logging is only temporary.\nTo store the setting, activate the option \'Store log data settings\' in the global settings.</string>
+  <string name="datalog_date">Date</string>
+
+  <!-- FilePicker -->
+  <string name="select_file">Select file</string>
+  <string name="access_dir_failed">Access denied:</string>
+  <string name="file_picker_dir_select">Long click to select the directory or select \'.\' for the current one.</string>
+  <string name="file_picker_search">Search</string>
+
+  <!-- Storage media selection -->
+  <string name="select_media">Select storage media</string>
+  <string name="default_media">Default</string>
+  <string name="free_space">free</string>
+
+  <!-- Interface selection -->
+  <string name="select_interface">Select interface</string>
+  <string name="select_interface_bt">Bluetooth</string>
+  <string name="select_interface_enet">ENET / Deep OBD WIFI</string>
+  <string name="select_interface_elmwifi">ELM327 WIFI</string>
+  <string name="select_interface_deepobdwifi">Deep OBD ELM WIFI</string>
+  <string name="select_interface_ftdi">USB (FTDI)</string>
+  <string name="select_interface_simulation">Simulation</string>
+
+  <!-- Manufacturer selection -->
+  <string name="select_manufacturer">Select manufacturer</string>
+  <string name="select_manufacturer_bmw">BMW</string>
+  <string name="select_manufacturer_audi">Audi</string>
+  <string name="select_manufacturer_seat">Seat</string>
+  <string name="select_manufacturer_skoda">Skoda</string>
+  <string name="select_manufacturer_vw">VW</string>
+
+  <!-- Translator selection -->
+  <string name="select_translator_yantex">Yantex.Translate</string>
+  <string name="select_translator_ibm">IBM Watson</string>
+  <string name="select_translator_deepl">DeepL</string>
+  <string name="select_translator_yandex_cloud">Yandex Cloud</string>
+  <string name="select_translator_google_apis">Google APIs</string>
+
+  <!-- Bluetooth -->
+  <string name="mtc_disconnect_warn">For a stable communication with the adapter it is recommended to pair any additional smartphone with the radio.\nDo you want to continue anyway?</string>
+  <string name="mtc_not_bound_warn">The Bluetooth service is not active, please try to start the app again later.\nDo you want to continue anyway?</string>
+
+  <!-- Wi-Fi-->
+  <string name="connected_with_wifi_adapter">You are currently connected to a Wi-Fi adapter.\nFor internet access disconnection of the adapter is required.\nDo you want to disable Wi-Fi now?</string>
+
+  <!-- USB -->
+  <string name="ftdi_fake_device">The connected USB adapter uses a disabled fake FT232R chip.\nFor a stable connection it is recommended to use only original FTDI chips.</string>
+
+  <!-- ENET ip selection -->
+  <string name="select_enet_ip_search">Searching vehicles</string>
+  <string name="select_enet_ip">Select ENET IP address</string>
+  <string name="select_enet_ip_auto">Automatic</string>
+  <string name="select_enet_ip_none">Not configured</string>
+  <string name="select_enet_ip_edit">IP address</string>
+  <string name="select_enet_ip_port_edit">Port number (optional)</string>
+  <string name="select_enet_info_ip">Local IP</string>
+  <string name="select_enet_info_mask">Subnet mask</string>
+  <string name="select_enet_info_dhcp_srv">DHCP server</string>
+
+  <!-- ENET adapter config -->
+  <string name="enet_adapter_web_info">The default password for the adapter web interface is {0}.\nIf the adapter gets unreachable after configuration you have to open the adapter and press the reset button after the adapter has booted.</string>
+  <string name="enet_adapter_wifi_info">If you are using a Deep OBD BMW Wi-Fi adapter select the access point with the name \'Deep OBD BMW\', the default password is deepobdbmw.</string>
+  <string name="enet_adapter_ssid_warn">You are not connected with a Deep OBD BMW, Unichip ENET or modBMW Wi-Fi adapter.\nDo you want to select a different access point?</string>
+  <string name="enet_ethernet_hint">If you are using a direct Ethernet cable connection, you have configure the Android LAN adapter with an Auto IP address,\nfor example 169.254.1.10 / 255.255.0.0.</string>
+
+  <!-- ELM327 Wi-Fi -->
+  <string name="elmwifi_adapter_warn">You are not connected with an ELM327 Wi-Fi adapter.\nDo you want to select a different access point?</string>
+
+  <!-- Deep OBD Wi-Fi -->
+  <string name="deepobdwifi_adapter_warn">You are not connected with a Deep OBD Wi-Fi adapter.\nDo you want to select a different access point?</string>
+
+  <!-- AP mode -->
+  <string name="ap_mode_adapter_ip_error">In hotspot mode you have to specify the adapter IP manually in the app menu.\nDo you want to do this now?</string>
+
+  <!-- Battery voltage -->
+  <string name="battery_voltage_warn">The battery voltage is very high ({0}V),\nthis could destroy the OBD adapter.\nPlease check the vehicle voltage regulator.</string>
+
+  <!--  GlobalSettingsActivity -->
+  <string name="settings_title">Global Settings</string>
+  <string name="settings_caption_locale">Language</string>
+  <string name="settings_locale_default">Default</string>
+  <string name="settings_locale_en">English</string>
+  <string name="settings_locale_de">German</string>
+  <string name="settings_locale_ru">Russian</string>
+  <string name="settings_caption_theme">Theme</string>
+  <string name="settings_theme_dark">Dark</string>
+  <string name="settings_theme_light">Light</string>
+  <string name="settings_theme_system">System setting</string>
+  <string name="settings_caption_title_bar">Title bar</string>
+  <string name="settings_auto_hide_title_bar">Auto hide title bar on main page when connected (show with long click and release)</string>
+  <string name="settings_suppress_title_bar">Suppress unused title bars (show with swipe gesture)</string>
+  <string name="settings_full_screen_mode">Full screen mode</string>
+  <string name="settings_caption_multi_window">Multi window</string>
+  <string name="settings_swap_multi_window_orientation">Graphical display: Swap display orientation in multi window mode</string>
+  <string name="settings_caption_internet">For OBD network adapter internet connection via</string>
+  <string name="settings_internet_cellular">Mobile network</string>
+  <string name="settings_internet_wifi">Wi-Fi</string>
+  <string name="settings_internet_ethernet">Ethernet</string>
+  <string name="settings_caption_bluetooth_enable">Bluetooth enable</string>
+  <string name="settings_always_enable_bt">Always enable Bluetooth without request</string>
+  <string name="settings_ask_for_bt_enable">Ask for Bluetooth enable</string>
+  <string name="settings_no_bt_handling">No automatic Bluetooth handling</string>
+  <string name="settings_caption_bluetooth_disable">Bluetooth disable</string>
+  <string name="settings_disable_bt_at_exit">Disable Bluetooth at exit, if unused and enabled by app</string>
+  <string name="settings_caption_lock_communication">Lock during communication</string>
+  <string name="settings_caption_lock_logging">Lock during data logging</string>
+  <string name="settings_lock_none">Device enters energy saving mode and the communication will be stopped</string>
+  <string name="settings_lock_cpu">Keep CPU active</string>
+  <string name="settings_lock_dim">Screen dimmed</string>
+  <string name="settings_lock_bright">Screen bright</string>
+  <string name="settings_caption_logfiles">Data logging</string>
+  <string name="settings_store_data_log_settings">Store log data settings</string>
+  <string name="settings_caption_app_start">App start</string>
+  <string name="settings_start_offline">No connection establishment to vehicle</string>
+  <string name="settings_start_connect">Auto connection establishment to vehicle</string>
+  <string name="settings_start_connect_close">Auto connection establishment to vehicle and close App</string>
+  <string name="settings_start_boot">Auto start the service at boot time to restore the last connection state</string>
+  <string name="settings_caption_update">Update check</string>
+  <string name="settings_update_off">Never</string>
+  <string name="settings_update_1day">Every day</string>
+  <string name="settings_update_1week">Every week</string>
+  <string name="settings_caption_app_exit">App exit</string>
+  <string name="settings_sys_config">Configure app start</string>
+  <string name="settings_double_click_for_app_exit">Double click required for app exit</string>
+  <string name="settings_caption_broadcast">Broadcast</string>
+  <string name="settings_send_data_broadcast">Send data broadcast</string>
+  <string name="settings_caption_cpu_usage">CPU usage</string>
+  <string name="settings_check_cpu_usage">Check CPU usage at start</string>
+  <string name="settings_caption_check_ecu_files">Check ECU files</string>
+  <string name="settings_check_ecu_files">Check ECU files at startup</string>
+  <string name="settings_caption_battery_voltage_warning">Battery voltage warning</string>
+  <string name="settings_show_battery_voltage_warning">Show over voltage warning</string>
+  <string name="settings_caption_old_vag_mode">VAG mode</string>
+  <string name="settings_old_vag_mode">Use old VAG mode</string>
+  <string name="settings_caption_bmw_database">BMW database</string>
+  <string name="settings_use_bmw_database">Use BMW database</string>
+  <string name="settings_show_only_relevant_errors">Show only relevant errors</string>
+  <string name="settings_caption_scan_all_ecus">ECU detection</string>
+  <string name="settings_scan_all_ecus">For BMW vehicles with DS2 protocol always scan all ECUs (slow)</string>
+  <string name="settings_caption_file_manage">File management</string>
+  <string name="settings_storage_sel_public_dir">Select public directory</string>
+  <string name="settings_storage_sel_app_dir">Select app directory</string>
+  <string name="settings_storage_copy_tree_to_app">Copy directory to app</string>
+  <string name="settings_storage_copy_tree_from_app">Copy file or directory from app</string>
+  <string name="settings_storage_del_tree_from_app">Delete file or directory from app</string>
+  <string name="settings_caption_storage">Storage media</string>
+  <string name="settings_caption_notifications">Notifications</string>
+  <string name="settings_notification_settings">Notification settings</string>
+  <string name="settings_caption_debug">Debugging</string>
+  <string name="settings_collect_debug_info">Collect debug information for trace files</string>
+  <string name="settings_uncompressed_trace">Create uncompressed trace files (slow)</string>
+  <string name="settings_hci_snoop_log">Bluetooth HCI snoop log file:\n{0}</string>
+  <string name="settings_hci_snoop_log_config">Configure snoop log</string>
+  <string name="settings_options">Settings</string>
+  <string name="settings_default_settings">Default settings</string>
+  <string name="settings_export_settings">Export settings</string>
+  <string name="settings_import_settings">Import settings</string>
+  <string name="settings_import_no_file">The import file has not been found:</string>
+  <string name="settings_export_private">Do you also want to export private data?</string>
+  <string name="settings_mtc_boot_hint_title">The boot option is very often not working correctly on Android radios.</string>
+  <string name="settings_mtc_boot_hint_app_manger">It\'s recommended to configure Deep OBD in the app manager to stay active in standby.</string>
+  <string name="settings_mtc_boot_hint_start">It\'s recommended to choose the second start option and keep Deep OBD always in foreground to make the app remain active after standby.\nWith other tools (e.g. Automation, Macrodroid) the app has to be launched after booting.</string>
+  <string name="settings_internal_location_boot_hint">The boot option is only available if the app install location is internal.</string>
+  <string name="settings_start_app_failed">The app could not be started.</string>
+
+  <!--  EdiabasToolActivity -->
+  <string name="tool_title">Ediabas tool</string>
+  <string name="tool_select_sgbd">Select SGBD</string>
+  <string name="tool_read_sgbd">Read SGBD information</string>
+  <string name="tool_job_jobs">Jobs:</string>
+  <string name="tool_job_jobs_prompt">Select job</string>
+  <string name="tool_job_job">Job:</string>
+  <string name="tool_job_arguments">Arguments:</string>
+  <string name="tool_job_bin_args">Data (Hex optionally with space)</string>
+  <string name="tool_job_arg_assist">Argument assistant</string>
+  <string name="tool_job_arguments_error_detail">Without arguments all errors are read</string>
+  <string name="tool_job_arguments_info_detail">Without arguments all information are read</string>
+  <string name="tool_job_results">Results:</string>
+  <string name="tool_job_result">Result:</string>
+  <string name="tool_job_infos">Informations:</string>
+  <string name="tool_check_continuous">Continuous</string>
+  <string name="tool_read_errors_failure">Reading errors failed</string>
+  <string name="tool_no_errors">No errors</string>
+  <string name="tool_jobs_not_found_list">The following jobs could not be found in the ECU:</string>
+
+  <!--  Argument Assistant -->
+  <string name="arg_assist_title">Argument Assistant</string>
+  <string name="arg_assist_arg_type">Argument typ</string>
+  <string name="arg_assist_type_arg">Argument name (ARG)</string>
+  <string name="arg_assist_type_id">Argument Id (ID)</string>
+  <string name="arg_assist_control_param">Control parameter</string>
+  <string name="arg_assist_str">Start routine (STR)</string>
+  <string name="arg_assist_stpr">Stop routine (STPR)</string>
+  <string name="arg_assist_rrr">Request routine results (RRR)</string>
+  <string name="arg_assist_rctecu">Return control to ECU (RCTECU)</string>
+  <string name="arg_assist_rtd">Reset to default (RTD)</string>
+  <string name="arg_assist_fcs">Freeze current state (FCS)</string>
+  <string name="arg_assist_sta">Short term adjustment (STA)</string>
+  <string name="arg_assist_args">Arguments</string>
+  <string name="arg_assist_block_number">Block number</string>
+  <string name="arg_assist_define_new">Define block new</string>
+  <string name="arg_assist_control_arg">Argument</string>
+  <string name="arg_assist_control_arg_prompt">Select argument</string>
+  <string name="arg_assist_control_parameter">Parameter</string>
+  <string name="arg_assist_amount_limit">Depending on the ECU type the amount of arguments is limited.\nIf you select too many arguments no data will be transmitted.</string>
+  <string name="arg_assist_apply_args">Do you want to apply the selected arguments?</string>
+
+  <!-- Ediabas Tool Options Menu -->
+  <string name="menu_tool_sel_interface">Interface</string>
+  <string name="menu_tool_offline">Offline</string>
+  <string name="menu_tool_sel_sgbd_grp">SGBD (grp)</string>
+  <string name="menu_tool_sel_sgbd_prg">SGBD (prg)</string>
+
+  <!-- XML Tool Activity -->
+  <string name="xml_tool_title">Configuration generator</string>
+  <string name="button_xml_tool_read">Read</string>
+  <string name="button_xml_tool_edit">Edit</string>
+  <string name="button_xml_tool_save">Save</string>
+  <string name="xml_tool_analyze">Reading vehicle data</string>
+  <string name="xml_tool_continue_search">Do you want to continue the last aborted search?</string>
+  <string name="xml_tool_clear_ecus">Should the existing ECUs be removed?</string>
+  <string name="xml_tool_del_all_info">Should all information (including XML files) be removed for this configuration?</string>
+  <string name="xml_tool_reset_ecu_setting">Should all settings for this ECU be removed?</string>
+  <string name="xml_tool_read_ecu_again">Do you want to read the complete ECU list from the vehicle again?</string>
+  <string name="xml_tool_search_ecus">Searching for ECUs.\nDetected: {0}/{1}</string>
+  <string name="xml_tool_sel_mwtab_info">Multiple data tables have been found for this ECU.\nPlease choose the data table that best fits your ECU.\nIf the digit 7. and 8. of the VIN is present in the name, this table should be preferred.</string>
+  <string name="xml_tool_no_mwtab">No data tables have been found for this ECU</string>
+  <string name="xml_tool_select_sgbd">Select vehicle type</string>
+  <string name="xml_tool_no_response">No response from vehicle</string>
+  <string name="xml_tool_no_response_manual">No response from vehicle.\nFor motorbikes you should enable the detect motorbikes option in the menu.\nFor K-LINE vehicles an USB or Deep OBD adapter is required.\nHere you could find a list of <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/AdapterTypes.md'>supported adapters</a>.\nDo you want to switch to <a href='https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md'>manual configuration</a>?</string>
+  <string name="xml_tool_no_response_adapter">No response from vehicle.\nDo you want to check the adapter connection?</string>
+  <string name="xml_tool_no_response_raw">No response from vehicle.\nThe direct communication mode is active and could be the source of the problem.\nDo you want to select a different adapter?</string>
+  <string name="xml_tool_read_jobs_failed">Reading jobs failed</string>
+  <string name="xml_tool_aborting">Aborting operation</string>
+  <string name="xml_tool_read_ecu_info_failed">Reading ECU information failed</string>
+  <string name="xml_tool_save_xml_failed">Saving configuration failed</string>
+  <string name="xml_tool_msg_save_config">Do you want to save the configuration?</string>
+  <string name="xml_tool_msg_save_config_select">Do you want to save the configuration and use as active configuration?</string>
+  <string name="xml_tool_msg_save_config_empty">You have selected no data to display.\nClick the ECUs and select the desired jobs and results.\nDo you want to save the configuration anyway?</string>
+  <string name="xml_tool_msg_ecu_error">Unable to get valid information for some ECUs.</string>
+  <string name="xml_tool_msg_pin78">A connection of the adapter pins 7 and 8 is required to detect more ECUs.\nFor vehicles with OBD I socket in the engine bay additionally the pin 8 of the OBD II socket has to be connected at the vehicle side.</string>
+  <string name="xml_tool_msg_page_not_avail">The selected ECU page could not be opened.\nThe configuration has be to created with the configuration generator and the ECU must be reachable.</string>
+  <string name="xml_tool_msg_service_menu">To execute service functions for an ECU, open the context menu of the ECU and select the entry \'service functions\'.</string>
+  <string name="xml_tool_select_ecu_type">Select ECU type</string>
+  <string name="xml_tool_ecu_list">Detected ECUs</string>
+  <string name="xml_tool_info_sgbd">SGBD</string>
+  <string name="xml_tool_info_grp">Group</string>
+  <string name="xml_tool_info_vin">VIN</string>
+  <string name="xml_tool_errors_page">Errors</string>
+  <string name="xml_tool_auto_config">Automatic</string>
+  <string name="xml_tool_man_config">Manual</string>
+  <string name="xml_tool_job_read_mwblock">Read measurement value block</string>
+  <string name="xml_tool_job_read_vin">Read VIN</string>
+  <string name="xml_tool_result_vin">VIN</string>
+  <string name="xml_tool_service_open_jobs">Show {0} jobs</string>
+  <string name="xml_tool_service_jobs_warning">The service functions are still experimental!\nThe displayed jobs the Ediabas Tool may have only default arguments, that have to be adapted before job execution!\nIt\'s your responsibility to check the jobs before execution!\nThe argument assistant could be helpful in this case.\nBecause of data acquisition complexity it\'s possible, that in future the jobs require Deep OBD adapters for execution.\nDo you want to continue anyway?</string>
+  <string name="xml_tool_drag_list_hint">Long click the ECU to change the order.</string>
+  <string name="xml_tool_job_results">Job results:</string>
+  <string name="xml_tool_num_job_results">Number of job results: {0}</string>
+
+  <!-- XML Tool Options Menu -->
+  <string name="menu_xml_tool_add_errors_page">Add errors page</string>
+  <string name="menu_xml_tool_detect_motorbikes">Detect Motorbikes</string>
+  <string name="menu_xml_tool_cfg_type">Configuration</string>
+
+  <!-- XML Tool Edit Menu -->
+  <string name="menu_xml_tool_edit_detect">Detect ECUs</string>
+  <string name="menu_xml_tool_edit_grp">Add ECU (grp)</string>
+  <string name="menu_xml_tool_edit_prg">Add ECU (prg)</string>
+  <string name="menu_xml_tool_edit_del">Delete unused ECUs</string>
+  <string name="menu_xml_tool_edit_del_all">Delete all ECU information</string>
+
+  <!-- XML Tool context Menu -->
+  <string name="menu_xml_config_ecu">Configure ECU</string>
+  <string name="menu_xml_tool_move_top">Move to top</string>
+  <string name="menu_xml_tool_move_up">Move up</string>
+  <string name="menu_xml_tool_move_down">Move down</string>
+  <string name="menu_xml_tool_move_bottom">Move to bottom</string>
+  <string name="menu_xml_tool_ediabas_tool">Ediabas tool</string>
+  <string name="menu_xml_tool_bmw_actuator">Actuator functions</string>
+  <string name="menu_xml_tool_bmw_service">Service functions</string>
+  <string name="menu_xml_tool_vag_coding">Coding</string>
+  <string name="menu_xml_tool_vag_coding2">Coding 2</string>
+  <string name="menu_xml_tool_vag_adaption">Adaption</string>
+  <string name="menu_xml_tool_vag_login">Login</string>
+  <string name="menu_xml_tool_vag_sec_access">Security access</string>
+
+  <!-- XML Tool Ecu Activity -->
+  <string name="xml_tool_ecu_title">Jobs for ECU: {0}</string>
+  <string name="xml_tool_ecu_job_comments">Comments for job: {0}</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info">ECU information:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_addr">Address {0:X02}:</string>
+  <string name="xml_tool_ecu_job_comments_ecu_info_subsys">Subsystem {0}:</string>
+  <string name="xml_tool_ecu_result_comments">Comments for result: {0}</string>
+  <string name="xml_tool_ecu_result_type">Data type</string>
+  <string name="xml_tool_ecu_user_format">User</string>
+  <string name="xml_tool_ecu_format">Output format</string>
+  <string name="xml_tool_ecu_format_right">Right</string>
+  <string name="xml_tool_ecu_format_left">Left</string>
+  <string name="xml_tool_ecu_page_name">Page name</string>
+  <string name="xml_tool_ecu_ecu_name">ECU name</string>
+  <string name="xml_tool_ecu_display_type">Display type</string>
+  <string name="xml_tool_ecu_display_type_grid">Graphical display</string>
+  <string name="xml_tool_ecu_font_size">Font size</string>
+  <string name="xml_tool_ecu_font_size_small">Small</string>
+  <string name="xml_tool_ecu_font_size_medium">Medium</string>
+  <string name="xml_tool_ecu_font_size_large">Large</string>
+  <string name="xml_tool_ecu_grid_count">Graphical items per line</string>
+  <string name="xml_tool_ecu_grid_count_portrait_value">Portrait</string>
+  <string name="xml_tool_ecu_grid_count_landscape_value">Landscape</string>
+  <string name="xml_tool_ecu_jobs_name">Job list</string>
+  <string name="xml_tool_ecu_show_all_jobs">Show all jobs</string>
+  <string name="xml_tool_ecu_results">Job result</string>
+  <string name="xml_tool_ecu_show_all_results">Show all results</string>
+  <string name="xml_tool_ecu_arg_limit">Maximum arguments per request</string>
+  <string name="xml_tool_ecu_arg_limit_off">Unlimited</string>
+  <string name="xml_tool_ecu_display_text">Display text</string>
+  <string name="xml_tool_ecu_display_order">Display order</string>
+  <string name="xml_tool_ecu_log_tag">Tag for data logging</string>
+  <string name="xml_tool_ecu_grid_type">Graphical design</string>
+  <string name="xml_tool_ecu_grid_type_hidden">Hidden</string>
+  <string name="xml_tool_ecu_grid_type_text">Text only</string>
+  <string name="xml_tool_ecu_grid_type_simple_square">Simple gauge square</string>
+  <string name="xml_tool_ecu_grid_type_simple_round">Simple gauge round</string>
+  <string name="xml_tool_ecu_grid_type_simple_dot">Simple gauge with dot</string>
+  <string name="xml_tool_ecu_min_value">Min Value</string>
+  <string name="xml_tool_ecu_max_value">Max Value</string>
+  <string name="xml_tool_ecu_test_format">Test format</string>
+  <string name="xml_tool_button_test_format">Read</string>
+  <string name="xml_tool_ecu_add_functions">Additional functions</string>
+  <string name="xml_tool_button_ediabas_tool">Ediabas tool</string>
+  <string name="xml_tool_button_bmw_actuator">Actuator functions</string>
+  <string name="xml_tool_button_bmw_service">Service functions</string>
+  <string name="xml_tool_button_bmw_coding">Coding</string>
+  <string name="xml_tool_button_coding">Coding</string>
+  <string name="xml_tool_button_coding2">Coding 2</string>
+  <string name="xml_tool_button_adaption">Adaption</string>
+  <string name="xml_tool_button_login">Login</string>
+  <string name="xml_tool_button_sec_access">Security access</string>
+  <string name="xml_tool_execute_test_job">Executing job</string>
+  <string name="xml_tool_read_test_job_failed">Executing job failed</string>
+  <string name="xml_tool_ecu_msg_save_lock">Writing the configuration has been disabled in the configuration file.\nStoring of the modifications is not possible.</string>
+  <string name="xml_tool_ecu_msg_no_selection">You have selected no data to display.\nFor this select the desired jobs and results first from the list.\nDo you want to abort anyway?</string>
+  <string name="xml_tool_ecu_msg_no_grid_selection">You have activated the graphical display, but not selected any graphical design.\nNo gauge will be displayed.\nDo you want continue anyway?</string>
+  <string name="xml_tool_ecu_msg_func_not_avail">The selected function is not available.</string>
+  <string name="xml_tool_ecu_arg_limit_hint">The maximum number of arguments per request depends on the ECU type.\nIf the data is not displayed on the dashboard you have to reduce the \"Maximum arguments per request\".</string>
+
+  <!-- VAG Coding Activity -->
+  <string name="vag_coding_title_coding">Coding ECU: {0}</string>
+  <string name="vag_coding_title_login">Login ECU: {0}</string>
+  <string name="vag_coding_title_sec_access">Security access ECU: {0}</string>
+  <string name="vag_coding_subsystem_title">Subsystem</string>
+  <string name="vag_coding_short_title">Coding (dec): {0}-{1}</string>
+  <string name="vag_coding_login_title">Login (dec): {0}-{1}</string>
+  <string name="vag_coding_sec_access_title">Security access (dec): {0}-{1}</string>
+  <string name="vag_coding_comments_title">Hints</string>
+  <string name="vag_coding_raw_title">Coding (hex)</string>
+  <string name="vag_coding_workshop_number_title">Workshop code (dec): {0}-{1}</string>
+  <string name="vag_coding_importer_number_title">Importer number (dec): {0}-{1}</string>
+  <string name="vag_coding_equipment_number_title">Equipment number (dec): {0}-{1}</string>
+  <string name="vag_coding_ecu_reset">Perform ECU reset</string>
+  <string name="vag_coding_assistant_title">Coding assistant</string>
+  <string name="vag_coding_execute_title">Execute operation</string>
+  <string name="vag_coding_button_execute">Execute</string>
+  <string name="vag_coding_processing">Processing</string>
+  <string name="vag_coding_write_values_invalid">If the workshop code, importer number or equipment number is 0 or too large the ECU may reject the values.\nDo you want to continue anyway?</string>
+  <string name="vag_coding_write_coding_illegal_arguments">The job arguments are out of range</string>
+  <string name="vag_coding_write_coding_failed">The operation failed</string>
+  <string name="vag_coding_write_coding_access_denied">Access denied, you have to use security access first</string>
+  <string name="vag_coding_write_coding_reset_failed">The ECU reset failed</string>
+  <string name="vag_coding_write_coding_ok">Write coding successful</string>
+  <string name="vag_coding_write_coding2_failed">Write coding failed.\nIf the code was incorrect, switch the ignition off for 1-2 minutes before trying it again!</string>
+  <string name="vag_coding_login_job_failed">Login failed.\nIf the code was incorrect, switch the ignition off for 1-2 minutes before trying it again!</string>
+  <string name="vag_coding_login_job_ok">Login successful</string>
+  <string name="vag_coding_sec_access_job_failed">Security access failed.\nIf the code was incorrect, keep the ignition on for 10 minutes before trying it again!</string>
+  <string name="vag_coding_sec_access_job_ok">Security access successful</string>
+
+  <!-- VAG Adaption Activity -->
+  <string name="vag_adaption_title_adaption">Adaption ECU: {0}</string>
+  <string name="vag_adaption_channel_title">Documented channel</string>
+  <string name="vag_adaption_channel_select">Select adaption channel</string>
+  <string name="vag_adaption_channel_reset">Reset adaption values</string>
+  <string name="vag_adaption_channel_reset_info">Storing adaption channel 0 resets all adaption values</string>
+  <string name="vag_adaption_channel_number_title">Channel number</string>
+  <string name="vag_adaption_comments_title">Hints</string>
+  <string name="vag_adaption_value_current_title">Current adaption value</string>
+  <string name="vag_adaption_value_new_title">New adaption value</string>
+  <string name="vag_adaption_value_test_title">Tested adaption value</string>
+  <string name="vag_adaption_meas_value_title">Value {0}: {1}</string>
+  <string name="vag_adaption_workshop_number_title">Workshop code (dec): {0}-{1}</string>
+  <string name="vag_adaption_importer_number_title">Importer number (dec): {0}-{1}</string>
+  <string name="vag_adaption_equipment_number_title">Equipment number (dec): {0}-{1}</string>
+  <string name="vag_adaption_operation_title">Operations</string>
+  <string name="vag_adaption_service_id">Service ID:</string>
+  <string name="vag_adaption_button_read">Read</string>
+  <string name="vag_adaption_button_test">Test</string>
+  <string name="vag_adaption_button_store">Store</string>
+  <string name="vag_adaption_button_stop">Stop</string>
+  <string name="vag_adaption_ecu_reset">Perform ECU reset</string>
+  <string name="vag_adaption_change_coding_first">It\'s recommended to correct the coding in the ECU first.</string>
+
+  <!-- BMW Actuator Activity -->
+  <string name="bmw_actuator_title">Actuator ECU: {0}</string>
+  <string name="bmw_actuator_function_title">Function</string>
+  <string name="bmw_actuator_function_prompt">Select function</string>
+  <string name="bmw_actuator_comments_title">Hints</string>
+  <string name="bmw_actuator_status_title">Status</string>
+  <string name="bmw_actuator_operation_title">Operations</string>
+  <string name="bmw_actuator_button_execute_single">Execute once</string>
+  <string name="bmw_actuator_button_execute_continuous">Execute continuous</string>
+  <string name="bmw_actuator_button_stop">Stop</string>
+  <string name="bmw_actuator_operation_failed">The operation failed</string>
+
+  <!-- BMW Coding Activity -->
+  <string name="bmw_coding_title">BMW Coding</string>
+  <string name="bmw_coding_series">The current vehicle series is: {0}.</string>
+  <string name="bmw_coding_requirement">BMW coding is only available for F series or higher.</string>
+  <string name="bmw_coding_network_error">Loading web page failed, retrying.</string>
+  <string formatted="false" name="bmw_coding_connect_request">BMW coding is an online service and requires a fast and stable internet connection.\nIt\'s only available for F series or higher.\nWhile coding a high current charger is required.\nIn the testing phase it will be free, later a license will be required to pay the server costs.\nOriginal &lt;a href=\'https://github.com/uholeschak/ediabaslib/blob/master/docs/Replacement_firmware_for_ELM327.md#buy-a-preprogrammed-adapter\'&gt;Deep OBD adapters&lt;/a&gt; contain a license for coding of one vehicle.\nDo you want to continue?</string>
+  <string name="bmw_coding_connecting">Establish connection.</string>
+  <string name="bmw_coding_connect_failed">Establish connection failed.\nPlease check your network connection.</string>
+  <string name="bmw_coding_connect_url_failed">Connection to the server failed.\nDo you want to try it again?</string>
+  <string name="bmw_coding_connection_active">The connection to the vehicle is active.\nWhen leaving the page the communication will be interrupted.\nPlease close the connection first.\nDo you still want to leave the page?</string>
+  <string name="bmw_coding_mtc_reject">The Bluetooth connection of the Android radios is not stable enough for coding.\nPlease use a smartphone instead.</string>
+  <string name="bmw_coding_elm_reject">The ELM327 adapters are not stable enough for coding.\nPlease use a Deep OBD, ENET or FTDI adapter.</string>
+  <string name="bmw_coding_ssl_fail">Establishing of the encrypted connection failed, data will be transmitted unencrypted.</string>
+
+  <!-- CAN Adapter Activity -->
+  <string name="can_adapter_title">Adapter configuration</string>
+  <string name="can_adapter_mode_name">CAN mode</string>
+  <string name="can_adapter_sep_time">Separation time [ms]</string>
+  <string name="can_adapter_block_size">Block size</string>
+  <string name="can_adapter_bt_pin">Bluetooth pin</string>
+  <string name="can_adapter_bt_name">Bluetooth name</string>
+  <string name="can_adapter_ignition_state">Ignition</string>
+  <string name="can_adapter_bat_voltage">Battery voltage</string>
+  <string name="can_adapter_fw_version">Firmware version (current / available)</string>
+  <string name="can_adapter_ser_num">Serial number</string>
+  <string name="can_adapter_type">Adapter type</string>
+  <string name="can_adapter_type_unknown">Unknown</string>
+  <string name="can_adapter_expert">Expert mode</string>
+  <string name="can_adapter_comm_error">A communication error occurred</string>
+  <string name="can_adapter_comm_error_std">A communication error occurred.\nAdapter configuration is only possible,\nif the adapter LED is active after power on.</string>
+  <string name="can_adapter_blacklisted">The adapter is invalid.</string>
+  <string name="can_adapter_ignition_on">Ignition on</string>
+  <string name="can_adapter_ignition_off">Ignition off</string>
+  <string name="can_adapter_ignition_no_status">No status available</string>
+  <string name="can_adapter_text_off">0: Off (default)</string>
+  <string name="can_adapter_pin_length">The Bluetooth pin must be at least 4 digits long</string>
+  <string name="can_adapter_name_length">The UTF-8 Bluetooth name length invalid</string>
+  <string name="can_adapter_new_pin">The new Bluetooth pin {0} will get active after power cycle of the adapter</string>
+  <string name="can_adapter_new_name">The new Bluetooth name will get active after power cycle of the adapter</string>
+  <string name="can_adapter_processing">Processing</string>
+  <string name="can_adapter_fw_update_present">A firmware update for the adapter is available.\nDo you want to install the update now?</string>
+  <string name="can_adapter_fw_update_info">During the update the communication should be never interrupted.\nDo you want to continue?</string>
+  <string name="can_adapter_fw_update_info_ftdi">For the update it\'s required that the bootloader is already flashed into the device once.\nIf the application is not starting any more, you have to reset the processor during the connection phase, but the USB communication should not be interrupted.\nDo you want to continue?</string>
+  <string name="can_adapter_fw_elm_info">The ELM327{0} compatible firmware is provided without any support.\nPlease read the original ELM327{0} documentation for more details.</string>
+  <string name="can_adapter_fw_update_connect">Connecting to device, a processor reset may be required.</string>
+  <string name="can_adapter_fw_update_active">Firmware update in progress.\nDo not interrupt communication.</string>
+  <string name="can_adapter_fw_update_conn_failed">Unable to connect to adapter</string>
+  <string name="can_adapter_fw_update_failed">Firmware update failed.\nIf all adapter LEDs are active, the adapter is in bootloader mode and has to be flashed again for normal usage.</string>
+  <string name="can_adapter_fw_update_ok">Firmware update successful</string>
+  <string name="can_adapter_fw_update_ok_detect">The firmware update was successful.\nYou should restart the adapter, afterward you have to detect it again.</string>
+  <string name="can_adapter_fw_invalid">The firmware file is faulty.</string>
+  <string name="can_adapter_bt_not_reliable">Your Android device is known to have an unreliable Bluetooth connection.\nPlease use a different device.</string>
+  <string name="can_adapter_select_fw_file">Select firmware</string>
+  <string name="button_can_adapter_read">Read</string>
+  <string name="button_can_adapter_write">Write</string>
+  <string name="button_can_adapter_close">Close</string>
+  <string name="button_can_adapter_can_auto">Automatic</string>
+  <string name="button_can_adapter_can_500">D-CAN (from 3/2007)</string>
+  <string name="button_can_adapter_can_100">K-CAN (no standard)</string>
+  <string name="button_can_adapter_can_off">K-LINE (before 3/2007)</string>
+  <string name="button_can_adapter_fw_sel">Select firmware</string>
+  <string name="button_can_adapter_fw_update">Firmware update</string>
+  <string name="button_can_adapter_fw_change_elm">Flash ELM327 firmware</string>
+  <string name="button_can_adapter_fw_change_custom">Flash replacement firmware</string>
+
+  <!-- CarService -->
+  <string name="car_service_button_connect">Connect</string>
+  <string name="car_service_button_disconnect">Disconnect</string>
+  <string name="car_service_connected">The vehicle is connected.</string>
+  <string name="car_service_fg_service_disabled">The settings are invalid,\ndon\'t use the energy saving mode.</string>
+  <string name="car_service_disconnected">The vehicle is disconnected.\nConnect to the vehicle (in the app) first.</string>
+  <string name="car_service_no_config">No configuration loaded.\nA configuration has to be loaded in the app first.</string>
+  <string name="car_service_app_processing">Connection establishment active in the app on the smartphone.</string>
+  <string name="car_service_app_displayed">The app has been displayed on the smartphone.</string>
+  <string name="car_service_app_store_settings">The app on the smartphone is storing the settings.</string>
+  <string name="car_service_section_pages">Vehicle data</string>
+  <string name="car_service_page_list">Page list</string>
+  <string name="car_service_page_list_show">Show page list</string>
+  <string name="car_service_settings_lock_none">Energy saving mode</string>
+  <string name="car_service_settings_invalid_mode">Option invalid for Android Auto.</string>
+  <string name="car_service_active_page">Active page</string>
+  <string name="car_service_no_pages">No pages</string>
+  <string name="car_service_no_data">No data</string>
+  <string name="car_service_active_page_change">The active page has changed.</string>
+  <string name="car_service_active_data_amount_change">The data amount has changed.</string>
+  <string name="car_service_error_reset">Reset</string>
+  <string name="car_service_error_reset_active">The error reset is active.</string>
+  <string name="car_service_error_reset_started">The error reset has been started.</string>
+  <string name="car_service_test_info">- Android Auto test version available. Please contact the developer via the website.</string>
+</resources>
