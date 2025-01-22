@@ -43,7 +43,7 @@ namespace EdiabasLibConfigTool
         public const string RegKeyRheingoldNameStart = @"BMW.Rheingold.";
         public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
         public const string RegKeyIstaBinFull = RegKeyReingold + @": " + RegKeyIstaBinPath;
-        public const string RegKeyShowHiddenAdminGui = @"BMW.Rheingold.ISTAGUI.Dialogs.AdministrationDialog.ShowPTTSelection";
+        public const string RegKeyIstaOpMode = @"BMW.Rheingold.OperationalMode";
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
         public const string VcRedistLink = @"https://learn.microsoft.com/de-de/cpp/windows/latest-supported-vc-redist?view=msvc-170";
@@ -979,7 +979,7 @@ namespace EdiabasLibConfigTool
                             if (!string.IsNullOrEmpty(ediabasBinLocation))
                             {
                                 key.SetValue(RegKeyIstaBinPath, ediabasBinLocation);
-                                key.SetValue(RegKeyShowHiddenAdminGui, "True");     // show ediabas.ini option in ISTA
+                                key.SetValue(RegKeyIstaOpMode, "ISTA_PLUS");     // show ediabas.ini option in ISTA
                             }
                             else
                             {
