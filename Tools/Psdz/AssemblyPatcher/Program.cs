@@ -397,11 +397,25 @@ namespace AssemblyPatcher
 
                 var patchList = new List<(string Match, string Replace)>()
                 {
-                    ("\"BMW.Rheingold.ISTAGUI.enableENETprogramming\"", "    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />"),
+                    //("\"BMW.Rheingold.ISTAGUI.enableENETprogramming\"", "    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />"),
                     ("\"DebugLevel\"", "    <add key=\"DebugLevel\" value=\"5\" />"),
-                    ("\"TesterGUI.PreferEthernet\"", "    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />"),
+                    //("\"TesterGUI.PreferEthernet\"", "    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />"),
                     ("\"BMW.Rheingold.Programming.Prodias.LogLevel\"", "    <add key=\"BMW.Rheingold.Programming.Prodias.LogLevel\" value=\"TRACE\" />"),
                     ("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", "    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.RheingoldSessionController.FASTATransferMode\"", "    <add key=\"BMW.Rheingold.RheingoldSessionController.FASTATransferMode\" value=\"None\" />"),
+                    ("\"BMW.Rheingold.Diagnostics.VehicleIdent.ReadFASTAData\"", "    <add key=\"BMW.Rheingold.Diagnostics.VehicleIdent.ReadFASTAData\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.OperationalMode\"", "    <add key=\"BMW.Rheingold.OperationalMode\" value=\"ISTA_PLUS\" />"),
+                    ("\"BMW.Rheingold.ISTAGUI.Pages.StartPage.ShowDisclaimer\"", "    <add key=\"BMW.Rheingold.ISTAGUI.Pages.StartPage.ShowDisclaimer\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.ISTAGUI.App.DoInitialIpsAvailabilityCheck\"", "    <add key=\"BMW.Rheingold.ISTAGUI.App.DoInitialIpsAvailabilityCheck\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.Programming.ExpertMode\"", "    <add key=\"BMW.Rheingold.Programming.ExpertMode\" value=\"true\" />"),
+                    ("\"BMW.Rheingold.ISTAGUI.ShowHiddenDiagnosticObjects\"", "    <add key=\"BMW.Rheingold.ISTAGUI.ShowHiddenDiagnosticObjects\" value=\"true\" />"),
+                    ("\"BMW.Rheingold.OnlineMode\"", "    <add key=\"BMW.Rheingold.OnlineMode\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.Diagnostics.EnableRsuProcessHandling\"", "    <add key=\"BMW.Rheingold.Diagnostics.EnableRsuProcessHandling\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.ISTAGUI.Dialogs.AdministrationDialog.ShowPTTSelection\"", "    <add key=\"BMW.Rheingold.ISTAGUI.Dialogs.AdministrationDialog.ShowPTTSelection\" value=\"true\" />"),
+                    ("\"BMW.Rheingold.CoreFramework.TRICZentralActive\"", "    <add key=\"BMW.Rheingold.CoreFramework.TRICZentralActive\" value=\"false\" />"),
+                    ("\"EnableRelevanceFaultCode\"", "    <add key=\"EnableRelevanceFaultCode\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.Developer.guidebug\"", "    <add key=\"BMW.Rheingold.Developer.guidebug\" value=\"true\" />"),
+                    ("\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\"", "    <add key=\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\" value=\"false\" />"),
                 };
 
                 string[] fileLines = File.ReadAllLines(fileName);
