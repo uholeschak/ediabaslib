@@ -4002,7 +4002,7 @@ namespace BmwDeepObd
         {
             try
             {
-                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://holeschak.de"));
+                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://"));
                 if (intent.ResolveActivity(PackageManager) == null)
                 {
                     return false;
