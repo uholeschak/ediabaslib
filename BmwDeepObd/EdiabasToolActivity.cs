@@ -957,7 +957,7 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/EdiabasTool.md");
+                        _activityCommon.OpenWebUrl("https://uholeschak.github.io/ediabaslib/docs/EdiabasTool.html");
                     });
                     return true;
             }
