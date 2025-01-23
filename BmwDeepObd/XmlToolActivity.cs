@@ -1649,7 +1649,7 @@ namespace BmwDeepObd
                             return;
                         }
 
-                        _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Configuration_Generator.md");
+                        _activityCommon.OpenWebUrl("https://uholeschak.github.io/ediabaslib/docs/Configuration_Generator.html");
                     });
                     return true;
             }
