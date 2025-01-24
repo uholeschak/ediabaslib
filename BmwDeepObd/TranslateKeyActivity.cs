@@ -556,6 +556,9 @@ namespace BmwDeepObd
                         break;
                 }
 
+                sbDescription.Append("\r\n");
+                sbDescription.Append(GetString(Resource.String.trans_copy_hint));
+
                 switch (ActivityCommon.SelectedTranslator)
                 {
                     case ActivityCommon.TranslatorType.YandexCloud:
