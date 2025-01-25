@@ -129,7 +129,7 @@ namespace AssemblyPatcher
                     return 1;
                 }
 
-                string[] files = Directory.GetFiles(assemblyDir, "*.*", SearchOption.TopDirectoryOnly);
+                string[] files = Directory.GetFiles(assemblyDir, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
                     string baseName = Path.GetFileNameWithoutExtension(file);
