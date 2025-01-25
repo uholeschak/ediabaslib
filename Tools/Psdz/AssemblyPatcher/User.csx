@@ -57,9 +57,12 @@ public class UserTemplate
     {
         string patchCtorNamespace = string.Empty;
         string patchCtorClass = string.Empty;
-        string patchMethodNamespace = string.Empty;
-        string patchMethodClass = string.Empty;
-        string patchMethodName = string.Empty;
+        string patchMethod1Namespace = string.Empty;
+        string patchMethod1Class = string.Empty;
+        string patchMethod1Name = string.Empty;
+        string patchMethod2Namespace = string.Empty;
+        string patchMethod2Class = string.Empty;
+        string patchMethod2Name = string.Empty;
         string licFileName = string.Empty;
 
         try
@@ -87,28 +90,53 @@ public class UserTemplate
                     }
                 }
 
-                XmlNode nodeMethod = doc.SelectSingleNode("/patch_info/method");
-                if (nodeMethod != null)
+                XmlNode nodeMethod1 = doc.SelectSingleNode("/patch_info/method1");
+                if (nodeMethod1 != null)
                 {
-                    XmlAttribute attribNamespace = nodeMethod.Attributes["namespace"];
+                    XmlAttribute attribNamespace = nodeMethod1.Attributes["namespace"];
                     if (attribNamespace != null)
                     {
-                        patchMethodNamespace = attribNamespace.Value;
-                        logWriter.WriteLine($"Method: Namespace={patchMethodNamespace}");
+                        patchMethod1Namespace = attribNamespace.Value;
+                        logWriter.WriteLine($"Method1: Namespace={patchMethod1Namespace}");
                     }
 
-                    XmlAttribute attribClass = nodeMethod.Attributes["class"];
+                    XmlAttribute attribClass = nodeMethod1.Attributes["class"];
                     if (attribClass != null)
                     {
-                        patchMethodClass = attribClass.Value;
-                        logWriter.WriteLine($"Method: Class={patchMethodClass}");
+                        patchMethod1Class = attribClass.Value;
+                        logWriter.WriteLine($"Method1: Class={patchMethod1Class}");
                     }
 
-                    XmlAttribute attribName = nodeMethod.Attributes["name"];
+                    XmlAttribute attribName = nodeMethod1.Attributes["name"];
                     if (attribName != null)
                     {
-                        patchMethodName = attribName.Value;
-                        logWriter.WriteLine($"Method: Name={patchMethodName}");
+                        patchMethod1Name = attribName.Value;
+                        logWriter.WriteLine($"Method1: Name={patchMethod1Name}");
+                    }
+                }
+
+                XmlNode nodeMethod2 = doc.SelectSingleNode("/patch_info/method2");
+                if (nodeMethod2 != null)
+                {
+                    XmlAttribute attribNamespace = nodeMethod2.Attributes["namespace"];
+                    if (attribNamespace != null)
+                    {
+                        patchMethod2Namespace = attribNamespace.Value;
+                        logWriter.WriteLine($"Method2: Namespace={patchMethod2Namespace}");
+                    }
+
+                    XmlAttribute attribClass = nodeMethod2.Attributes["class"];
+                    if (attribClass != null)
+                    {
+                        patchMethod2Class = attribClass.Value;
+                        logWriter.WriteLine($"Method2: Class={patchMethod2Class}");
+                    }
+
+                    XmlAttribute attribName = nodeMethod2.Attributes["name"];
+                    if (attribName != null)
+                    {
+                        patchMethod2Name = attribName.Value;
+                        logWriter.WriteLine($"Method2: Name={patchMethod2Name}");
                     }
                 }
 
@@ -135,8 +163,10 @@ public class UserTemplate
         }
 
         bool xmlOk = !string.IsNullOrEmpty(patchCtorNamespace) && !string.IsNullOrEmpty(patchCtorClass) &&
-                     !string.IsNullOrEmpty(patchMethodNamespace) && !string.IsNullOrEmpty(patchMethodClass) &&
-                     !string.IsNullOrEmpty(patchMethodName) &&
+                     !string.IsNullOrEmpty(patchMethod1Namespace) && !string.IsNullOrEmpty(patchMethod1Class) &&
+                     !string.IsNullOrEmpty(patchMethod1Name) &&
+                     !string.IsNullOrEmpty(patchMethod2Namespace) && !string.IsNullOrEmpty(patchMethod2Class) &&
+                     !string.IsNullOrEmpty(patchMethod2Name) &&
                      !string.IsNullOrEmpty(licFileName);
 
         if (!xmlOk)
@@ -158,12 +188,20 @@ public class UserTemplate
                             logWriter.WriteLine($"Ctor: Namespace={patchCtorNamespace}, Class={patchCtorClass}");
                         }
 
-                        if (infoDict.PatchInfo.TryGetValue("Method", out Info methodInfo))
+                        if (infoDict.PatchInfo.TryGetValue("Method1", out Info methodInfo1))
                         {
-                            patchMethodNamespace = methodInfo.Namespace;
-                            patchMethodClass = methodInfo.Class;
-                            patchMethodName = methodInfo.Name;
-                            logWriter.WriteLine($"Method: Namespace={patchMethodNamespace}, Class={patchMethodClass}, Name={patchMethodName}");
+                            patchMethod1Namespace = methodInfo1.Namespace;
+                            patchMethod1Class = methodInfo1.Class;
+                            patchMethod1Name = methodInfo1.Name;
+                            logWriter.WriteLine($"Method: Namespace={patchMethod1Namespace}, Class={patchMethod1Class}, Name={patchMethod1Name}");
+                        }
+
+                        if (infoDict.PatchInfo.TryGetValue("Method2", out Info methodInfo2))
+                        {
+                            patchMethod2Namespace = methodInfo2.Namespace;
+                            patchMethod2Class = methodInfo2.Class;
+                            patchMethod2Name = methodInfo2.Name;
+                            logWriter.WriteLine($"Method: Namespace={patchMethod2Namespace}, Class={patchMethod2Class}, Name={patchMethod2Name}");
                         }
 
                         if (infoDict.PatchInfo.TryGetValue("License", out Info licInfo))
@@ -190,9 +228,12 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 <appSettings>
     <add key=""PatchCtorNamespace"" value=""{patchCtorNamespace}""/>
     <add key=""PatchCtorClass"" value=""{patchCtorClass}""/>
-    <add key=""PatchMethodNamespace"" value=""{patchMethodNamespace}""/>
-    <add key=""PatchMethodClass"" value=""{patchMethodClass}""/>
-    <add key=""PatchMethodName"" value=""{patchMethodName}""/>
+    <add key=""PatchMethod1Namespace"" value=""{patchMethod1Namespace}""/>
+    <add key=""PatchMethod1Class"" value=""{patchMethod1Class}""/>
+    <add key=""PatchMethod1Name"" value=""{patchMethod1Name}""/>
+    <add key=""PatchMethod2Namespace"" value=""{patchMethod2Namespace}""/>
+    <add key=""PatchMethod2Class"" value=""{patchMethod2Class}""/>
+    <add key=""PatchMethod2Name"" value=""{patchMethod2Name}""/>
     <add key=""LicFileName"" value=""{licFileName}""/>
 </appSettings>");
 
