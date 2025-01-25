@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using dnlib.DotNet.Emit;
 using dnpatch;
@@ -186,19 +187,16 @@ namespace AssemblyPatcher
                     }
 
                     FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(file);
-                    if (fvi == null)
+                    long? fileVersion = null;
+                    string versionString = null;
+                    if (!string.IsNullOrEmpty(fvi?.FileVersion) && !string.IsNullOrEmpty(fvi?.CompanyName))
                     {
-                        Console.WriteLine("Assembly version info not found: {0}", file);
-                        continue;
+                        if (fvi.CompanyName.Contains("BMW", StringComparison.OrdinalIgnoreCase))
+                        {
+                            fileVersion = (fvi.FileMajorPart << 24) + (fvi.FileMinorPart << 16) + fvi.FileBuildPart;
+                            versionString = string.Format(CultureInfo.InvariantCulture,  "{0}.{1}.{2}", fvi.FileMajorPart, fvi.FileMinorPart, fvi.FileBuildPart);
+                        }
                     }
-
-                    if (string.IsNullOrEmpty(fvi.FileVersion))
-                    {
-                        Console.WriteLine("Assembly version not found: {0}", file);
-                        continue;
-                    }
-
-                    Console.WriteLine("Assembly version of file {0}: {1}", baseName, fvi.FileVersion);
 
                     try
                     {
@@ -444,11 +442,11 @@ namespace AssemblyPatcher
                             try
                             {
                                 patcher.Save(true);
-                                Console.WriteLine("Patched: {0}", file);
+                                Console.WriteLine("Patched: {0} Version={1}", relPath, versionString ?? string.Empty);
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine("Patch exception: File={0}, Msg={1}", file, ex.Message);
+                                Console.WriteLine("Patch exception: File={0}, Msg={1}", relPath, ex.Message);
                             }
                         }
 #endif
