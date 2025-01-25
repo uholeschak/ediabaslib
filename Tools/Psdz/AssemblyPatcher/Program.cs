@@ -13,6 +13,8 @@ namespace AssemblyPatcher
 {
     internal class Program
     {
+        public const long FileVersion450 = (4 << 24) + (50 << 16) + 0;
+
         static int Main(string[] args)
         {
             try
@@ -362,7 +364,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    if (fileVersion == null || fileVersion.Value < (4 << 24) + (50 << 16) + 0)
+                                    if (fileVersion == null || fileVersion.Value < FileVersion450)
                                     {
                                         Console.WriteLine("'ENET::remotehost=' appears to have already been patched or is not existing");
                                     }
