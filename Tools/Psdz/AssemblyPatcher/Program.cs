@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet.Emit;
 using dnpatch;
@@ -183,6 +184,21 @@ namespace AssemblyPatcher
                         Console.WriteLine("Assembly already patched: {0}", file);
                         continue;
                     }
+
+                    FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(file);
+                    if (fvi == null)
+                    {
+                        Console.WriteLine("Assembly version info not found: {0}", file);
+                        continue;
+                    }
+
+                    if (string.IsNullOrEmpty(fvi.FileVersion))
+                    {
+                        Console.WriteLine("Assembly version not found: {0}", file);
+                        continue;
+                    }
+
+                    Console.WriteLine("Assembly version of file {0}: {1}", baseName, fvi.FileVersion);
 
                     try
                     {
