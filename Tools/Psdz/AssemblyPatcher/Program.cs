@@ -188,10 +188,13 @@ namespace AssemblyPatcher
 
                     FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(file);
                     long? fileVersion = null;
+                    string companyName = fvi?.CompanyName ?? string.Empty;
+                    string legalCopyright = fvi?.LegalCopyright ?? string.Empty;
                     string versionString = null;
-                    if (!string.IsNullOrEmpty(fvi?.FileVersion) && !string.IsNullOrEmpty(fvi?.CompanyName))
+                    if (!string.IsNullOrEmpty(fvi?.FileVersion))
                     {
-                        if (fvi.CompanyName.Contains("BMW", StringComparison.OrdinalIgnoreCase))
+                        if (companyName.Contains("BMW", StringComparison.OrdinalIgnoreCase) ||
+                            legalCopyright.Contains("Bayerische", StringComparison.OrdinalIgnoreCase))
                         {
                             fileVersion = (fvi.FileMajorPart << 24) + (fvi.FileMinorPart << 16) + fvi.FileBuildPart;
                             versionString = string.Format(CultureInfo.InvariantCulture,  "{0}.{1}.{2}", fvi.FileMajorPart, fvi.FileMinorPart, fvi.FileBuildPart);
@@ -359,7 +362,10 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("'ENET::remotehost=' appears to have already been patched or is not existing");
+                                    if (fileVersion == null || fileVersion.Value < (4 << 24) + (50 << 16) + 0)
+                                    {
+                                        Console.WriteLine("'ENET::remotehost=' appears to have already been patched or is not existing");
+                                    }
                                 }
                             }
                         }
@@ -436,20 +442,20 @@ namespace AssemblyPatcher
                             // ignored
                         }
 
-#if true
                         if (patched)
                         {
                             try
                             {
+#if true
                                 patcher.Save(true);
-                                Console.WriteLine("Patched: {0} Version={1}", relPath, versionString ?? string.Empty);
+#endif
+                                Console.WriteLine("Patched: {0} Version={1} '{2}'", relPath, versionString ?? string.Empty, companyName);
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine("Patch exception: File={0}, Msg={1}", relPath, ex.Message);
                             }
                         }
-#endif
                     }
                     catch (NullReferenceException)
                     {
