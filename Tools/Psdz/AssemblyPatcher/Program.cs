@@ -132,6 +132,12 @@ namespace AssemblyPatcher
                 string[] files = Directory.GetFiles(assemblyDir, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
+                    string relPath = Path.GetRelativePath(assemblyDir, file);
+                    if (string.IsNullOrEmpty(relPath))
+                    {
+                        continue;
+                    }
+
                     string baseName = Path.GetFileNameWithoutExtension(file);
                     if (string.IsNullOrEmpty(baseName))
                     {
@@ -146,6 +152,13 @@ namespace AssemblyPatcher
 
                     if ((string.Compare(ext, ".exe", StringComparison.OrdinalIgnoreCase) != 0) &&
                         (string.Compare(ext, ".dll", StringComparison.OrdinalIgnoreCase) != 0))
+                    {
+                        continue;
+                    }
+
+                    if (relPath.StartsWith("runtimes") ||
+                        relPath.StartsWith("x86") ||
+                        relPath.StartsWith("x64"))
                     {
                         continue;
                     }
