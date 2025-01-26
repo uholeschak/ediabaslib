@@ -111,6 +111,7 @@ namespace AssemblyPatcher
                     return 1;
                 }
 
+                // Stored in HKEY_CURRENT_USER\Software\BMWGroup\ISPI\Rheingold\License
                 string licFileSrc = Path.Combine(appDir, "Data", licFileName);
                 string licFileDst = Path.Combine(assemblyDir, licFileName);
                 if (File.Exists(licFileSrc) && !File.Exists(licFileDst))
