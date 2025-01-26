@@ -522,9 +522,7 @@ namespace AssemblyPatcher
 
                 var patchList = new List<(string Match, string Replace)>()
                 {
-                    //("\"BMW.Rheingold.ISTAGUI.enableENETprogramming\"", "    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />"),
                     ("\"DebugLevel\"", "    <add key=\"DebugLevel\" value=\"5\" />"),
-                    //("\"TesterGUI.PreferEthernet\"", "    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />"),
                     ("\"BMW.Rheingold.Programming.Prodias.LogLevel\"", "    <add key=\"BMW.Rheingold.Programming.Prodias.LogLevel\" value=\"TRACE\" />"),
                     ("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", "    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"false\" />"),
                     ("\"BMW.Rheingold.RheingoldSessionController.FASTATransferMode\"", "    <add key=\"BMW.Rheingold.RheingoldSessionController.FASTATransferMode\" value=\"None\" />"),
@@ -542,6 +540,12 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.Developer.guidebug\"", "    <add key=\"BMW.Rheingold.Developer.guidebug\" value=\"true\" />"),
                     ("\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\"", "    <add key=\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\" value=\"false\" />"),
                 };
+
+                if (fileVersion.Value < FileVersion450)
+                {
+                    patchList.Add(("\"BMW.Rheingold.ISTAGUI.enableENETprogramming\"", "    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />"));
+                    patchList.Add(("\"TesterGUI.PreferEthernet\"", "    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />"));
+                }
 
                 string[] fileLines = File.ReadAllLines(configFileName);
                 List<string> outputLines = new List<string>();
