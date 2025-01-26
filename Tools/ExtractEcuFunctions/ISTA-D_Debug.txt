@@ -187,6 +187,7 @@ TimeoutConnect   = 2000
 Remove Environment variable: COMPLUS_MDA
 If the dealer number is 0 execute RCleanerV4.4.exe once.
 Export before if required:
+[HKEY_LOCAL_MACHINE\SOFTWARE\BMWGroup]
 [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup]
 [HKEY_CURRENT_USER\SOFTWARE\BMWGroup\ISPI\Rheingold]
 
