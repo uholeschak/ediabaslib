@@ -126,10 +126,10 @@ namespace AssemblyPatcher
                     }
                 }
 
-                string exeConfigFile = Path.Combine(assemblyDir, "ISTAGUI.exe.config");
-                if (!UpdateExeConfig(exeConfigFile))
+                string exeFile = Path.Combine(assemblyDir, "ISTAGUI.exe");
+                if (!UpdateExeConfig(exeFile))
                 {
-                    Console.WriteLine("Update config file failed: {0}", exeConfigFile);
+                    Console.WriteLine("Update config file failed for: {0}", exeFile);
                     return 1;
                 }
 
@@ -477,20 +477,46 @@ namespace AssemblyPatcher
             return 0;
         }
 
-        static bool UpdateExeConfig(string fileName)
+        static bool UpdateExeConfig(string exeFileName)
         {
             try
             {
-                if (!File.Exists(fileName))
+                if (!File.Exists(exeFileName))
                 {
-                    Console.WriteLine("UpdateExeConfig Config file not existing: {0}", fileName);
+                    Console.WriteLine("UpdateExeConfig Executable file not existing: {0}", exeFileName);
                     return false;
                 }
 
-                string backupFile = fileName + ".bak";
+                string configFileName = exeFileName + ".config";
+                if (!File.Exists(configFileName))
+                {
+                    Console.WriteLine("UpdateExeConfig Config file not existing: {0}", configFileName);
+                    return false;
+                }
+
+                FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(exeFileName);
+                long? fileVersion = null;
+                string companyName = fvi?.CompanyName ?? string.Empty;
+                string legalCopyright = fvi?.LegalCopyright ?? string.Empty;
+                if (!string.IsNullOrEmpty(fvi?.FileVersion))
+                {
+                    if (companyName.Contains("BMW", StringComparison.OrdinalIgnoreCase) ||
+                        legalCopyright.Contains("Bayerische", StringComparison.OrdinalIgnoreCase))
+                    {
+                        fileVersion = (fvi.FileMajorPart << 24) + (fvi.FileMinorPart << 16) + fvi.FileBuildPart;
+                    }
+                }
+
+                if (fileVersion == null)
+                {
+                    Console.WriteLine("UpdateExeConfig Missing file version for: {0}", exeFileName);
+                    return false;
+                }
+
+                string backupFile = configFileName + ".bak";
                 if (File.Exists(backupFile))
                 {
-                    Console.WriteLine("UpdateExeConfig Config file already modified: {0}", fileName);
+                    Console.WriteLine("UpdateExeConfig Config file already modified: {0}", configFileName);
                     return true;
                 }
 
@@ -517,7 +543,7 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\"", "    <add key=\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\" value=\"false\" />"),
                 };
 
-                string[] fileLines = File.ReadAllLines(fileName);
+                string[] fileLines = File.ReadAllLines(configFileName);
                 List<string> outputLines = new List<string>();
                 foreach (string line in fileLines)
                 {
@@ -551,8 +577,8 @@ namespace AssemblyPatcher
                     outputLines.Add(line);
                 }
 
-                File.Copy(fileName, backupFile, true);
-                File.WriteAllLines(fileName, outputLines);
+                File.Copy(configFileName, backupFile, true);
+                File.WriteAllLines(configFileName, outputLines);
             }
             catch (Exception e)
             {
