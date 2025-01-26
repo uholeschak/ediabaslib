@@ -281,6 +281,7 @@ namespace AssemblyPatcher
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
                             if (instructions != null)
                             {
+                                // Hard coded "BMW.Rheingold.ISTAGUI.enableENETprogramming", not option required
                                 Console.WriteLine("TherapyPlanCalculated.IsConnectedViaENETAndBrandIsToyota found");
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_1));
                                 instructions.Insert(1, Instruction.Create(OpCodes.Ret));
@@ -543,7 +544,9 @@ namespace AssemblyPatcher
 
                 if (fileVersion.Value < FileVersion450)
                 {
+                    // hard coded, not option required
                     patchList.Add(("\"BMW.Rheingold.ISTAGUI.enableENETprogramming\"", "    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />"));
+                    // not existing anymore
                     patchList.Add(("\"TesterGUI.PreferEthernet\"", "    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />"));
                 }
 

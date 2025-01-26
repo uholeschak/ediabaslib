@@ -3,6 +3,8 @@ Debugging of ISTA-D:
 
 Decompile ISTA-D:
 =================
+[For the current IST version this is not required any more.]
+
 git clone --recursive https://github.com/0xd4d/de4dot.git
 Build de4dot.netframework.sln as Release
 The binary is in the subfolder: Release\net45\de4dot-x64.exe
