@@ -468,6 +468,9 @@ namespace AssemblyPatcher
                                         instructions.Insert(patchIndex + 11, Instruction.Create(OpCodes.Pop));
                                         //patcher.Save(file.Replace(".dll", "Test.dll"));
                                         patched = true;
+
+                                        Console.WriteLine("To show the message box at startup:");
+                                        Console.WriteLine("In dnSpy disable the ignore option: IsDebuggerPresent");
                                     }
                                 }
                             }
