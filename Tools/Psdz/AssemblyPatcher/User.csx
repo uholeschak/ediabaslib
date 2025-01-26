@@ -16,6 +16,7 @@ public class UserTemplate
         public string Namespace { set; get; }
         public string Class { set; get; }
         public string Name { set; get; }
+        public string Name2 { set; get; }
         public string Filename { set; get; }
     }
 
@@ -60,6 +61,7 @@ public class UserTemplate
         string patchMethod1Namespace = string.Empty;
         string patchMethod1Class = string.Empty;
         string patchMethod1Name = string.Empty;
+        string patchMethod1Name2 = string.Empty;
         string patchMethod2Namespace = string.Empty;
         string patchMethod2Class = string.Empty;
         string patchMethod2Name = string.Empty;
@@ -112,6 +114,13 @@ public class UserTemplate
                     {
                         patchMethod1Name = attribName.Value;
                         logWriter.WriteLine($"Method1: Name={patchMethod1Name}");
+                    }
+
+                    XmlAttribute attribName2 = nodeMethod1.Attributes["name2"];
+                    if (attribName2 != null)
+                    {
+                        patchMethod1Name2 = attribName2.Value;
+                        logWriter.WriteLine($"Method1_2: Name={patchMethod1Name2}");
                     }
                 }
 
@@ -193,7 +202,8 @@ public class UserTemplate
                             patchMethod1Namespace = methodInfo1.Namespace;
                             patchMethod1Class = methodInfo1.Class;
                             patchMethod1Name = methodInfo1.Name;
-                            logWriter.WriteLine($"Method: Namespace={patchMethod1Namespace}, Class={patchMethod1Class}, Name={patchMethod1Name}");
+                            patchMethod1Name2 = methodInfo1.Name2;
+                            logWriter.WriteLine($"Method: Namespace={patchMethod1Namespace}, Class={patchMethod1Class}, Name={patchMethod1Name}, Name2={patchMethod1Name2}");
                         }
 
                         if (infoDict.PatchInfo.TryGetValue("Method2", out Info methodInfo2))
@@ -231,6 +241,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
     <add key=""PatchMethod1Namespace"" value=""{patchMethod1Namespace}""/>
     <add key=""PatchMethod1Class"" value=""{patchMethod1Class}""/>
     <add key=""PatchMethod1Name"" value=""{patchMethod1Name}""/>
+    <add key=""PatchMethod1Name2"" value=""{patchMethod1Name2}""/>
     <add key=""PatchMethod2Namespace"" value=""{patchMethod2Namespace}""/>
     <add key=""PatchMethod2Class"" value=""{patchMethod2Class}""/>
     <add key=""PatchMethod2Name"" value=""{patchMethod2Name}""/>

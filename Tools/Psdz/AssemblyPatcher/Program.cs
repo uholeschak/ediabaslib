@@ -67,6 +67,12 @@ namespace AssemblyPatcher
                     return 1;
                 }
 
+                string patchMethod1Name2 = ConfigurationManager.AppSettings["PatchMethod1Name2"];
+                if (string.IsNullOrEmpty(patchMethod1Name2))
+                {
+                    Console.WriteLine("Warning: PatchMethod1Name2 not configured");
+                }
+
                 string patchMethod2Namespace = ConfigurationManager.AppSettings["PatchMethod2Namespace"];
                 if (string.IsNullOrEmpty(patchMethod2Namespace))
                 {
@@ -248,6 +254,31 @@ namespace AssemblyPatcher
                         catch (Exception)
                         {
                             // ignored
+                        }
+
+                        if (!string.IsNullOrEmpty(patchMethod1Name2))
+                        {   // optional
+                            try
+                            {
+                                Target target = new Target
+                                {
+                                    Namespace = patchMethod1Namespace,
+                                    Class = patchMethod1Class,
+                                    Method = patchMethod1Name2,
+                                };
+                                IList<Instruction> instructions = patcher.GetInstructionList(target);
+                                if (instructions != null)
+                                {
+                                    instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
+                                    instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                    patched = true;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
                         }
 
                         try
