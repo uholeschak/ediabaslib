@@ -4,6 +4,9 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using dnlib.DotNet.Emit;
 using dnpatch;
 
@@ -101,7 +104,7 @@ namespace AssemblyPatcher
                     return 1;
                 }
 
-                string codeBase = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
                 if (string.IsNullOrEmpty(codeBase))
                 {
                     Console.WriteLine("Assembly location not found");

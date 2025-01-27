@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzClientLibrary", "PsdzCl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VehicleTestServer", "VehicleTestServer\VehicleTestServer.csproj", "{66FDF0E2-F789-4362-A5DF-B114ED7C8D4B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssemblyPatcher", "AssemblyPatcher\AssemblyPatcher.csproj", "{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyPatcher", "AssemblyPatcher\AssemblyPatcher.csproj", "{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnpatch", "dnpatch\dnpatch.csproj", "{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}"
 EndProject
