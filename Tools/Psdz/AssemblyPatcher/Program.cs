@@ -467,7 +467,10 @@ namespace AssemblyPatcher
                                         }
                                         */
 
-                                        patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI");
+                                        if (!patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI"))
+                                        {
+                                            Console.WriteLine("Path InsertDebugMessageBox failed");
+                                        }
                                         //patcher.Save(file.Replace(".dll", "Test.dll"));
                                         patched = true;
 
