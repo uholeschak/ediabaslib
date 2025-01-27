@@ -278,5 +278,38 @@ namespace dnpatch
         {
             return _patcher.GetEntryPoint();
         }
+
+        public bool InsertDebugMessageBox(ref IList<Instruction> instructions, int patchIndex, string message, string caption)
+        {
+            try
+            {
+                instructions.Insert(patchIndex,
+                    Instruction.Create(OpCodes.Call,
+                        BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
+                instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Brfalse_S, instructions[patchIndex + 1]));
+                instructions.Insert(patchIndex + 2,
+                    Instruction.Create(OpCodes.Newobj, BuildInstance(typeof(System.Windows.Forms.Form), null)));
+                instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Dup));
+                instructions.Insert(patchIndex + 4, Instruction.Create(OpCodes.Ldc_I4_1));
+                instructions.Insert(patchIndex + 5,
+                    Instruction.Create(OpCodes.Callvirt,
+                        BuildCall(typeof(System.Windows.Forms.Form), "set_TopMost", typeof(void), new[] { typeof(bool) })));
+                instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, message));
+                instructions.Insert(patchIndex + 7, Instruction.Create(OpCodes.Ldstr, caption));
+                instructions.Insert(patchIndex + 8, Instruction.Create(OpCodes.Ldc_I4_0));
+                instructions.Insert(patchIndex + 9, Instruction.Create(OpCodes.Ldc_I4_S, (sbyte)0x40));
+                instructions.Insert(patchIndex + 10,
+                    Instruction.Create(OpCodes.Call,
+                        BuildCall(typeof(System.Windows.Forms.MessageBox), "Show", typeof(System.Windows.Forms.DialogResult),
+                            new[] { typeof(System.Windows.Forms.IWin32Window), typeof(string), typeof(string), typeof(System.Windows.Forms.MessageBoxButtons), typeof(System.Windows.Forms.MessageBoxIcon) })));
+                instructions.Insert(patchIndex + 11, Instruction.Create(OpCodes.Pop));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }

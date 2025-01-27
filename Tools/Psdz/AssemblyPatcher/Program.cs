@@ -467,27 +467,7 @@ namespace AssemblyPatcher
                                         }
                                         */
 
-                                        instructions.Insert(patchIndex,
-                                            Instruction.Create(OpCodes.Call,
-                                                patcher.BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
-                                        instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Brfalse_S, instructions[patchIndex + 1]));
-                                        instructions.Insert(patchIndex + 2,
-                                            Instruction.Create(OpCodes.Newobj,
-                                                patcher.BuildInstance(typeof(System.Windows.Forms.Form), null)));
-                                        instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Dup));
-                                        instructions.Insert(patchIndex + 4, Instruction.Create(OpCodes.Ldc_I4_1));
-                                        instructions.Insert(patchIndex + 5,
-                                            Instruction.Create(OpCodes.Callvirt,
-                                                patcher.BuildCall(typeof(System.Windows.Forms.Form), "set_TopMost", typeof(void), new []{ typeof(bool) })));
-                                        instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, "IstaOperation started. Attach to IstaOperation.exe now."));
-                                        instructions.Insert(patchIndex + 7, Instruction.Create(OpCodes.Ldstr, "ISTAGUI"));
-                                        instructions.Insert(patchIndex + 8, Instruction.Create(OpCodes.Ldc_I4_0));
-                                        instructions.Insert(patchIndex + 9, Instruction.Create(OpCodes.Ldc_I4_S, (sbyte) 0x40));
-                                        instructions.Insert(patchIndex + 10,
-                                            Instruction.Create(OpCodes.Call,
-                                                patcher.BuildCall(typeof(System.Windows.Forms.MessageBox), "Show", typeof(System.Windows.Forms.DialogResult), 
-                                                    new []{ typeof(System.Windows.Forms.IWin32Window), typeof(string), typeof(string), typeof(System.Windows.Forms.MessageBoxButtons), typeof(System.Windows.Forms.MessageBoxIcon) })));
-                                        instructions.Insert(patchIndex + 11, Instruction.Create(OpCodes.Pop));
+                                        patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI");
                                         //patcher.Save(file.Replace(".dll", "Test.dll"));
                                         patched = true;
 
