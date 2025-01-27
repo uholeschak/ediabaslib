@@ -228,8 +228,23 @@ namespace Ediabas
 
         public static void InterfaceDisconnect()
         {
-            EdBluetoothInterface.InterfaceDisconnect(true);
-            EdCustomWiFiInterface.InterfaceDisconnect(true);
+            try
+            {
+                EdBluetoothInterface.InterfaceDisconnect(true);
+            }
+            catch (Exception)
+            {
+                // could happen if Bluetooth is not loaded at startup
+            }
+
+            try
+            {
+                EdCustomWiFiInterface.InterfaceDisconnect(true);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         public static bool apiCheckVersion(int versionCompatibility, out string versionInfo)
