@@ -459,14 +459,6 @@ namespace AssemblyPatcher
                                     else
                                     {
 #if false
-                                        /*
-                                        Add debug code:
-                                        if (Debugger.IsAttached)
-                                        {
-                                            System.Windows.Forms.MessageBox.Show(new System.Windows.Forms.Form { TopMost = true },
-                                                "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
-                                        }
-                                        */
                                         if (!patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI"))
                                         {
                                             Console.WriteLine("Path InsertDebugMessageBox failed");
@@ -479,7 +471,11 @@ namespace AssemblyPatcher
                                             Console.WriteLine();
                                         }
 #else
-                                        instructions.Insert(patchIndex, Instruction.Create(OpCodes.Break));
+                                        instructions.Insert(patchIndex,
+                                            Instruction.Create(OpCodes.Call,
+                                                patcher.BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
+                                        instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Brfalse_S, instructions[patchIndex + 1]));
+                                        instructions.Insert(patchIndex+2, Instruction.Create(OpCodes.Break));
 #endif
                                         //patcher.Save(file.Replace(".dll", "Test.dll"));
                                         patched = true;

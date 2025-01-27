@@ -283,6 +283,14 @@ namespace dnpatch
         {
             try
             {
+                /*
+                Add debug code:
+                if (Debugger.IsAttached)
+                {
+                    System.Windows.Forms.MessageBox.Show(new System.Windows.Forms.Form { TopMost = true },
+                        message, caption, System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
+                }
+                */
                 instructions.Insert(patchIndex,
                     Instruction.Create(OpCodes.Call,
                         BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
