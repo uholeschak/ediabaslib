@@ -235,6 +235,7 @@ namespace Ediabas
             catch (Exception)
             {
                 // could happen if Bluetooth is not loaded at startup
+                // resolving the assembly will fail here
             }
 
             try
