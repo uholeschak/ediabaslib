@@ -458,6 +458,7 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
+#if false
                                         /*
                                         Add debug code:
                                         if (Debugger.IsAttached)
@@ -466,16 +467,22 @@ namespace AssemblyPatcher
                                                 "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
                                         }
                                         */
-
                                         if (!patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI"))
                                         {
                                             Console.WriteLine("Path InsertDebugMessageBox failed");
                                         }
+                                        else
+                                        {
+                                            Console.WriteLine();
+                                            Console.WriteLine("To show the message box at startup:");
+                                            Console.WriteLine("In dnSpy disable the ignore option: IsDebuggerPresent");
+                                            Console.WriteLine();
+                                        }
+#else
+                                        instructions.Insert(patchIndex, Instruction.Create(OpCodes.Break));
+#endif
                                         //patcher.Save(file.Replace(".dll", "Test.dll"));
                                         patched = true;
-
-                                        Console.WriteLine("To show the message box at startup:");
-                                        Console.WriteLine("In dnSpy disable the ignore option: IsDebuggerPresent");
                                     }
                                 }
                             }
