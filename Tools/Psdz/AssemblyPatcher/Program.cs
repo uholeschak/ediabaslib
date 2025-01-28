@@ -28,7 +28,7 @@ namespace AssemblyPatcher
             [Option('i', "inputdir", Required = true, HelpText = "Input directory.")]
             public string InputDir { get; set; }
 
-            [Option('d', "debug", Required = false, HelpText = "Option for debug code injection")]
+            [Option('d', "debug", Required = false, HelpText = "Option for debug code injection (MsgBox, Break)")]
             public DebugOption DebugOpt { get; set; }
         }
 
@@ -44,6 +44,7 @@ namespace AssemblyPatcher
                     //ignore case for enum values
                     with.CaseInsensitiveEnumValues = true;
                     with.EnableDashDash = true;
+                    with.HelpWriter = Console.Out;
                 });
 
                 parser.ParseArguments<Options>(args)
