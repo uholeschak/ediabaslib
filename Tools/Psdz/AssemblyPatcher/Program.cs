@@ -21,7 +21,7 @@ namespace AssemblyPatcher
             [Option('i', "inputdir", Required = true, HelpText = "Input directory.")]
             public string InputDir { get; set; }
 
-            [Option('m', "msgbox", Required = false, HelpText = "Patch debug message box.")]
+            [Option('m', "msgbox", Required = false, HelpText = "Inject debug message box.")]
             public bool MsgBox { get; set; }
         }
 
@@ -48,16 +48,9 @@ namespace AssemblyPatcher
                     return 1;
                 }
 
-                if (args.Length == 0)
+                if (string.IsNullOrEmpty(inputDir) || !Directory.Exists(inputDir))
                 {
-                    Console.WriteLine("No directory specified");
-                    return 1;
-                }
-
-                string assemblyDir = args[0];
-                if (string.IsNullOrEmpty(assemblyDir) || !Directory.Exists(assemblyDir))
-                {
-                    Console.WriteLine("Directory not existing: {0}", assemblyDir);
+                    Console.WriteLine("Directory not existing: {0}", inputDir);
                     return 1;
                 }
 
@@ -148,7 +141,7 @@ namespace AssemblyPatcher
 
                 // Stored in HKEY_CURRENT_USER\Software\BMWGroup\ISPI\Rheingold\License
                 string licFileSrc = Path.Combine(appDir, "Data", licFileName);
-                string licFileDst = Path.Combine(assemblyDir, licFileName);
+                string licFileDst = Path.Combine(inputDir, licFileName);
                 if (File.Exists(licFileSrc) && !File.Exists(licFileDst))
                 {
                     try
@@ -162,17 +155,17 @@ namespace AssemblyPatcher
                     }
                 }
 
-                string exeFile = Path.Combine(assemblyDir, "ISTAGUI.exe");
+                string exeFile = Path.Combine(inputDir, "ISTAGUI.exe");
                 if (!UpdateExeConfig(exeFile))
                 {
                     Console.WriteLine("Update config file failed for: {0}", exeFile);
                     return 1;
                 }
 
-                string[] files = Directory.GetFiles(assemblyDir, "*.*", SearchOption.AllDirectories);
+                string[] files = Directory.GetFiles(inputDir, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
-                    string relPath = GetRelativePath(assemblyDir, file);
+                    string relPath = GetRelativePath(inputDir, file);
                     if (string.IsNullOrEmpty(relPath))
                     {
                         continue;
@@ -217,7 +210,7 @@ namespace AssemblyPatcher
                         return 1;
                     }
 
-                    string assemblyPathBak = Path.Combine(assemblyDir, file + ".bak");
+                    string assemblyPathBak = Path.Combine(inputDir, file + ".bak");
                     if (File.Exists(assemblyPathBak))
                     {
                         Console.WriteLine("Assembly already patched: {0}", file);
@@ -487,25 +480,32 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
-#if false
-                                        if (!patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI"))
+                                        if (msgBox)
                                         {
-                                            Console.WriteLine("Path InsertDebugMessageBox failed");
+                                            if (!patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI"))
+                                            {
+                                                Console.WriteLine("Path InsertDebugMessageBox failed");
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine();
+                                                Console.WriteLine("To show the message box at startup:");
+                                                Console.WriteLine("In dnSpy disable the ignore option: IsDebuggerPresent");
+                                                Console.WriteLine();
+                                            }
                                         }
                                         else
                                         {
+                                            instructions.Insert(patchIndex,
+                                                Instruction.Create(OpCodes.Call,
+                                                    patcher.BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
+                                            instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Brfalse_S, instructions[patchIndex + 1]));
+                                            instructions.Insert(patchIndex + 2, Instruction.Create(OpCodes.Break));
                                             Console.WriteLine();
-                                            Console.WriteLine("To show the message box at startup:");
-                                            Console.WriteLine("In dnSpy disable the ignore option: IsDebuggerPresent");
+                                            Console.WriteLine("When running in debugger attach IstaOperation.exe when the break point has been reached");
                                             Console.WriteLine();
                                         }
-#else
-                                        instructions.Insert(patchIndex,
-                                            Instruction.Create(OpCodes.Call,
-                                                patcher.BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
-                                        instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Brfalse_S, instructions[patchIndex + 1]));
-                                        instructions.Insert(patchIndex+2, Instruction.Create(OpCodes.Break));
-#endif
+
                                         //patcher.Save(file.Replace(".dll", "Test.dll"));
                                         patched = true;
                                     }
