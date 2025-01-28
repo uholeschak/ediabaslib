@@ -55,7 +55,7 @@ namespace AssemblyPatcher
                     })
                     .WithNotParsed(errs =>
                     {
-                        Console.WriteLine("Option errors:\n{0}", string.Join("\n", errs));
+                        Console.WriteLine("Option parsing errors:\n{0}", string.Join("\n", errs));
                         hasErrors = true;
                     });
 
@@ -69,6 +69,9 @@ namespace AssemblyPatcher
                     Console.WriteLine("Directory not existing: {0}", inputDir);
                     return 1;
                 }
+
+                Console.WriteLine("Input directory: '{0}'", inputDir);
+                Console.WriteLine("Debug option: '{0}'", debugOpt.ToString());
 
                 string patchCtorNamespace = ConfigurationManager.AppSettings["PatchCtorNamespace"];
                 if (string.IsNullOrEmpty(patchCtorNamespace))
