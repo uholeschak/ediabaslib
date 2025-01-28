@@ -18,11 +18,18 @@ namespace AssemblyPatcher
 
         public class Options
         {
+            public enum DebugOption
+            {
+                None,
+                MsgBox,
+                Break,
+            }
+
             [Option('i', "inputdir", Required = true, HelpText = "Input directory.")]
             public string InputDir { get; set; }
 
-            [Option('m', "msgbox", Required = false, HelpText = "Inject debug message box.")]
-            public bool MsgBox { get; set; }
+            [Option('d', "debug", Required = false, HelpText = "Option for debug code injection")]
+            public DebugOption DebugOpt { get; set; }
         }
 
         static int Main(string[] args)
@@ -30,13 +37,19 @@ namespace AssemblyPatcher
             try
             {
                 string inputDir = null;
-                bool msgBox = false;
+                Options.DebugOption debugOpt = Options.DebugOption.None;
                 bool hasErrors = false;
-                Parser.Default.ParseArguments<Options>(args)
+                Parser parser = new Parser(with =>
+                {
+                    //ignore case for enum values
+                    with.CaseInsensitiveEnumValues = true;
+                });
+
+                parser.ParseArguments<Options>(args)
                     .WithParsed<Options>(o =>
                     {
                         inputDir = o.InputDir;
-                        msgBox = o.MsgBox;
+                        debugOpt = o.DebugOpt;
                     })
                     .WithNotParsed(e =>
                     {
@@ -45,6 +58,7 @@ namespace AssemblyPatcher
 
                 if (hasErrors)
                 {
+                    Console.WriteLine("Invalid options specified");
                     return 1;
                 }
 
@@ -480,30 +494,32 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
-                                        if (msgBox)
+                                        switch (debugOpt)
                                         {
-                                            if (!patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI"))
-                                            {
-                                                Console.WriteLine("Path InsertDebugMessageBox failed");
-                                            }
-                                            else
-                                            {
+                                            case Options.DebugOption.MsgBox:
+                                                if (!patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI"))
+                                                {
+                                                    Console.WriteLine("Path InsertDebugMessageBox failed");
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine();
+                                                    Console.WriteLine("To show the message box at startup:");
+                                                    Console.WriteLine("In dnSpy disable the ignore option: IsDebuggerPresent");
+                                                    Console.WriteLine();
+                                                }
+                                                break;
+
+                                            case Options.DebugOption.Break:
+                                                instructions.Insert(patchIndex,
+                                                    Instruction.Create(OpCodes.Call,
+                                                        patcher.BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
+                                                instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Brfalse_S, instructions[patchIndex + 1]));
+                                                instructions.Insert(patchIndex + 2, Instruction.Create(OpCodes.Break));
                                                 Console.WriteLine();
-                                                Console.WriteLine("To show the message box at startup:");
-                                                Console.WriteLine("In dnSpy disable the ignore option: IsDebuggerPresent");
+                                                Console.WriteLine("When running in debugger attach IstaOperation.exe when the break point has been reached");
                                                 Console.WriteLine();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            instructions.Insert(patchIndex,
-                                                Instruction.Create(OpCodes.Call,
-                                                    patcher.BuildCall(typeof(System.Diagnostics.Debugger), "get_IsAttached", typeof(bool), null)));
-                                            instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Brfalse_S, instructions[patchIndex + 1]));
-                                            instructions.Insert(patchIndex + 2, Instruction.Create(OpCodes.Break));
-                                            Console.WriteLine();
-                                            Console.WriteLine("When running in debugger attach IstaOperation.exe when the break point has been reached");
-                                            Console.WriteLine();
+                                                break;
                                         }
 
                                         //patcher.Save(file.Replace(".dll", "Test.dll"));
