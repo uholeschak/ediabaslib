@@ -43,6 +43,7 @@ namespace AssemblyPatcher
                 {
                     //ignore case for enum values
                     with.CaseInsensitiveEnumValues = true;
+                    with.EnableDashDash = true;
                 });
 
                 parser.ParseArguments<Options>(args)
@@ -51,14 +52,14 @@ namespace AssemblyPatcher
                         inputDir = o.InputDir;
                         debugOpt = o.DebugOpt;
                     })
-                    .WithNotParsed(e =>
+                    .WithNotParsed(errs =>
                     {
+                        Console.WriteLine("Option errors:\n{0}", string.Join("\n", errs));
                         hasErrors = true;
                     });
 
                 if (hasErrors)
                 {
-                    Console.WriteLine("Invalid options specified");
                     return 1;
                 }
 
