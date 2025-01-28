@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using CommandLine;
 using dnlib.DotNet.Emit;
 using dnpatch;
 
@@ -15,10 +16,38 @@ namespace AssemblyPatcher
     {
         public const long FileVersion450 = (4 << 24) + (50 << 16) + 0;
 
+        public class Options
+        {
+            [Option('i', "inputdir", Required = true, HelpText = "Input directory.")]
+            public string InputDir { get; set; }
+
+            [Option('m', "msgbox", Required = false, HelpText = "Patch debug message box.")]
+            public bool MsgBox { get; set; }
+        }
+
         static int Main(string[] args)
         {
             try
             {
+                string inputDir = null;
+                bool msgBox = false;
+                bool hasErrors = false;
+                Parser.Default.ParseArguments<Options>(args)
+                    .WithParsed<Options>(o =>
+                    {
+                        inputDir = o.InputDir;
+                        msgBox = o.MsgBox;
+                    })
+                    .WithNotParsed(e =>
+                    {
+                        hasErrors = true;
+                    });
+
+                if (hasErrors)
+                {
+                    return 1;
+                }
+
                 if (args.Length == 0)
                 {
                     Console.WriteLine("No directory specified");
