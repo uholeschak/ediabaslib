@@ -146,7 +146,7 @@ namespace AssemblyPatcher
                 string[] files = Directory.GetFiles(assemblyDir, "*.*", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
-                    string relPath = Path.GetRelativePath(assemblyDir, file);
+                    string relPath = GetRelativePath(assemblyDir, file);
                     if (string.IsNullOrEmpty(relPath))
                     {
                         continue;
@@ -205,8 +205,8 @@ namespace AssemblyPatcher
                     string versionString = null;
                     if (!string.IsNullOrEmpty(fvi?.FileVersion))
                     {
-                        if (companyName.Contains("BMW", StringComparison.OrdinalIgnoreCase) ||
-                            legalCopyright.Contains("Bayerische", StringComparison.OrdinalIgnoreCase))
+                        if (companyName.IndexOf("BMW", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                            legalCopyright.IndexOf("Bayerische", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
                             fileVersion = (fvi.FileMajorPart << 24) + (fvi.FileMinorPart << 16) + fvi.FileBuildPart;
                             versionString = string.Format(CultureInfo.InvariantCulture,  "{0}.{1}.{2}", fvi.FileMajorPart, fvi.FileMinorPart, fvi.FileBuildPart);
@@ -547,8 +547,8 @@ namespace AssemblyPatcher
                 string legalCopyright = fvi?.LegalCopyright ?? string.Empty;
                 if (!string.IsNullOrEmpty(fvi?.FileVersion))
                 {
-                    if (companyName.Contains("BMW", StringComparison.OrdinalIgnoreCase) ||
-                        legalCopyright.Contains("Bayerische", StringComparison.OrdinalIgnoreCase))
+                    if (companyName.IndexOf("BMW", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        legalCopyright.IndexOf("Bayerische", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         fileVersion = (fvi.FileMajorPart << 24) + (fvi.FileMinorPart << 16) + fvi.FileBuildPart;
                     }
@@ -639,6 +639,22 @@ namespace AssemblyPatcher
                 return false;
             }
             return true;
+        }
+        public static string GetRelativePath(string basePath, string fullPath)
+        {
+            // Require trailing backslash for path
+            if (!basePath.EndsWith("\\"))
+            {
+                basePath += "\\";
+            }
+
+            Uri baseUri = new Uri(basePath);
+            Uri fullUri = new Uri(fullPath);
+
+            Uri relativeUri = baseUri.MakeRelativeUri(fullUri);
+
+            // Uri's use forward slashes so convert back to backward slashes
+            return relativeUri.ToString().Replace("/", "\\");
         }
     }
 }
