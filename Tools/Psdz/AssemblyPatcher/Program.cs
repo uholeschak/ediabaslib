@@ -510,7 +510,7 @@ namespace AssemblyPatcher
                                                 {
                                                     Console.WriteLine();
                                                     Console.WriteLine("To show the message box at startup:");
-                                                    Console.WriteLine("In dnSpy disable the ignore option: IsDebuggerPresent");
+                                                    Console.WriteLine("In dnSpy disable the ignore options: IsDebuggerPresent and System.Diagnostics.Debugger");
                                                     Console.WriteLine();
                                                 }
                                                 break;

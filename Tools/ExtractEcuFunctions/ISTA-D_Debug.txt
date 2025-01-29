@@ -198,6 +198,7 @@ After message box has been shown, attach to process IstaOperation.exe
 Interesting breakpoints in RheingoldDiagnostics.dll:
 BMW.Rheingold.RheingoldSessionController.Logic.StartVehicleTest() or
 BMW.Rheingold.Diagnostics.VehicleIdent.DoVehicleIdentStep1() and BMW.Rheingold.Diagnostics.VehicleIdent.DoVehicleIdentStep2()
+BMW.Rheingold.Diagnostics.VehicleIdent.ExecuteEdiabasJobsForVehicleIdentification()
 BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuTest.Perform()
 BMW.Rheingold.Diagnostics.VehicleIdent.doECUReadFS()
 BMW.Rheingold.Diagnostics.VehicleIdent.doECUReadFS_Functional()
