@@ -329,4 +329,7 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
 Включить доступ к местоположению для этого приложения в системе.
 Нажмите здесь, чтобы открыть системное приложение: {0}</value>
   </data>
+  <data name="PatchIstadInfoEnet" xml:space="preserve">
+    <value>Для программирования необходимо выбрать 'локальная сеть HO-ICOM / ENET'.</value>
+  </data>
 </root>

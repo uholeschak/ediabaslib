@@ -462,6 +462,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die For programming you have to select &apos;HO-ICOM / ENET local network&apos; ähnelt.
+        /// </summary>
+        internal static string PatchIstadInfoEnet {
+            get {
+                return ResourceManager.GetString("PatchIstadInfoEnet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Unable to load {0}.
         ///Has the archive been extracted correctly?
         ///Is the VC++ runtime

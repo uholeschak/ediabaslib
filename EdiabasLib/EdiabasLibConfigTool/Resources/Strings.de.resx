@@ -333,4 +333,7 @@ fehlgeschlagen.</value>
 Erlauben Sie den Standortzugriff für diese Applikation im System.
 Hier klicken um die System App zu öffnen: {0}</value>
   </data>
+  <data name="PatchIstadInfoEnet" xml:space="preserve">
+    <value>Zum Programmieren müssen Sie 'HO-ICOM / ENET lokales Netzwerk' wählen.</value>
+  </data>
 </root>
