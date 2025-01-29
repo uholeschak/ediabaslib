@@ -504,7 +504,7 @@ namespace AssemblyPatcher
                                             case Options.DebugOption.MsgBox:
                                                 if (!patcher.InsertDebugMessageBox(ref instructions, patchIndex, "IstaOperation started. Attach to IstaOperation.exe now.", "ISTAGUI"))
                                                 {
-                                                    Console.WriteLine("Path InsertDebugMessageBox failed");
+                                                    Console.WriteLine("Patch InsertDebugMessageBox failed");
                                                 }
                                                 else
                                                 {
