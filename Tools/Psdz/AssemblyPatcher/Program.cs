@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using CommandLine;
 using dnlib.DotNet.Emit;
 using dnpatch;
@@ -55,7 +56,13 @@ namespace AssemblyPatcher
                     })
                     .WithNotParsed(errs =>
                     {
-                        Console.WriteLine("Option parsing errors:\n{0}", string.Join("\n", errs));
+                        string errors = string.Join("\n", errs);
+                        Console.WriteLine("Option parsing errors:\n{0}", string.Join("\n", errors));
+                        if (errors.IndexOf("BadFormatConversion", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Console.WriteLine("Valid debug options are: {0}", string.Join(", ", Enum.GetNames(typeof(Options.DebugOption)).ToList()));
+                        }
+
                         hasErrors = true;
                     });
 
