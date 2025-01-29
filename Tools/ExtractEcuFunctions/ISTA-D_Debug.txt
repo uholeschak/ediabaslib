@@ -496,14 +496,14 @@ obd.log contains the api and ifh log.
 
 BMW ICOM:
 =========
-Get IP from ISTA+ search dialog
+Get IP from ISTA+ search dialog or iToolRadar:
 Standard settings:
 X.X.X.X:58000
 
 Firmware update:
 X.X.X.X:60080
-name: root
-pw: NZY11502
+Name: root
+PW: NZY11502 (A1) or NZY1150263 (A2)
 
 Firmware Images:
 C:\ProgramData\BMW\ISPI\data\TRIC\ICOM\ICOM-Image-XXXX
