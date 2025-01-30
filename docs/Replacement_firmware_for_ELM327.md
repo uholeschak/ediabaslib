@@ -43,6 +43,8 @@ and [VS C++ Runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [
 * For ISTA-D: You have to select the `EDIABAS\bin\api32.dll` inside ISTA-D first.  
 ![EdiabasLib Config Tool](Replacement_firmware_for_ELM327_ConfigToolBluetoothSmall.png)
 * For ISTA-D: In _Administration_ -> `VCI Config` select as `Interface type`: `Ediabas default settings (ediabas.ini)`  
+For programming the option 'HO-ICOM / ENET local network' is required, which is only available for LAN connections. This option is only working with LAN and not with D-CAN connections!
+
 ![EdiabasLib Config Tool](Replacement_firmware_for_ELM327_IstaSettings.png)
 
 ## Programming ELM327 adapter with Deep OBD firmware
