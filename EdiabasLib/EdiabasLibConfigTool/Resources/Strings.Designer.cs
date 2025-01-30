@@ -453,11 +453,21 @@ namespace EdiabasLibConfigTool.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type:
-        ///Ediabas default settings (ediabas.ini). ähnelt.
+        ///&apos;Ediabas default settings (ediabas.ini)&apos; ähnelt.
         /// </summary>
         internal static string PatchInstadInfo {
             get {
                 return ResourceManager.GetString("PatchInstadInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die For programming you have to select:
+        ///&apos;HO-ICOM / ENET local network&apos; ähnelt.
+        /// </summary>
+        internal static string PatchIstadInfoEnet {
+            get {
+                return ResourceManager.GetString("PatchIstadInfoEnet", resourceCulture);
             }
         }
         

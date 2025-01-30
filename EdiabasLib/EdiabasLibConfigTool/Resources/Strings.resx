@@ -274,7 +274,7 @@ istalled?</value>
   </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type:
-Ediabas default settings (ediabas.ini).</value>
+'Ediabas default settings (ediabas.ini)'</value>
   </data>
   <data name="PatchVaspcInfo" xml:space="preserve">
     <value>Hint: In VAS-PC only "Guided Fault Finding" and "Guided Functions"
@@ -331,5 +331,9 @@ failed.</value>
     <value>Wi-Fi access has been rejected.
 Enable location access for this app in the system.
 Click here to open the system app: {0}</value>
+  </data>
+  <data name="PatchIstadInfoEnet" xml:space="preserve">
+    <value>For programming you have to select:
+'HO-ICOM / ENET local network'</value>
   </data>
 </root>
