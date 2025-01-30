@@ -52,6 +52,7 @@ and [VS C++ Runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [
 * Download the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package and extract the .zip file. Start `Api32\EdiabasLibConfigTool.exe` and follow the instructions in the status window: Search the adapter, select it, optionally click `Connect`, click `Check Connection` and patch the required EDIABAS installations.
 * For ISTA-D: You have to select the `EDIABAS\bin` directory inside ISTA-D first.
 * Optionally you could also open the adapter configuration page in the web browser.
-* For ISTA-D: In `Administration` -> `VCI Config` select as `Interface type`: `Ediabas default settings (ediabas.ini)`
+* For ISTA-D: In `Administration` -> `VCI Config` select as `Interface type`: `Ediabas default settings (ediabas.ini)`  
+For programming the option 'HO-ICOM / ENET local network is required'. This option is only working with LAN connetions!
 
 ![EdiabasLib Config Tool](ENET_WiFi_Adapter_ConfigToolWiFiSmall.png)
