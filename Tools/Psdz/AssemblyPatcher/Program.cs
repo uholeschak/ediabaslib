@@ -23,7 +23,7 @@ namespace AssemblyPatcher
             {
                 InputDir = string.Empty;
                 DebugOpt = DebugOption.None;
-                IcomVerCheck = true;
+                NoIcomCheck = false;
             }
 
             public enum DebugOption
@@ -39,8 +39,8 @@ namespace AssemblyPatcher
             [Option('d', "debug", Required = false, HelpText = "Option for debug code injection (MsgBox, Break)")]
             public DebugOption DebugOpt { get; set; }
 
-            [Option('c', "icom_check", Required = false, HelpText = "ICOM version check, default is true")]
-            public bool IcomVerCheck { get; set; }
+            [Option('c', "no_icom_check", Required = false, HelpText = "No ICOM version check")]
+            public bool NoIcomCheck { get; set; }
         }
 
         static int Main(string[] args)
@@ -49,7 +49,7 @@ namespace AssemblyPatcher
             {
                 string inputDir = null;
                 Options.DebugOption debugOpt = Options.DebugOption.None;
-                bool icomVerCheck = true;
+                bool noIcomVerCheck = true;
                 bool hasErrors = false;
                 Parser parser = new Parser(with =>
                 {
@@ -64,7 +64,7 @@ namespace AssemblyPatcher
                     {
                         inputDir = o.InputDir;
                         debugOpt = o.DebugOpt;
-                        icomVerCheck = o.IcomVerCheck;
+                        noIcomVerCheck = o.NoIcomCheck;
                     })
                     .WithNotParsed(errs =>
                     {
@@ -91,7 +91,7 @@ namespace AssemblyPatcher
 
                 Console.WriteLine("Input directory: '{0}'", inputDir);
                 Console.WriteLine("Debug option: '{0}'", debugOpt.ToString());
-                Console.WriteLine("ICOM version check: '{0}'", icomVerCheck.ToString());
+                Console.WriteLine("No ICOM version check: '{0}'", noIcomVerCheck.ToString());
 
                 string patchCtorNamespace = ConfigurationManager.AppSettings["PatchCtorNamespace"];
                 if (string.IsNullOrEmpty(patchCtorNamespace))
@@ -195,7 +195,7 @@ namespace AssemblyPatcher
                 }
 
                 string exeFile = Path.Combine(inputDir, "ISTAGUI.exe");
-                if (!UpdateExeConfig(exeFile, icomVerCheck))
+                if (!UpdateExeConfig(exeFile, noIcomVerCheck))
                 {
                     Console.WriteLine("Update config file failed for: {0}", exeFile);
                     return 1;
@@ -591,7 +591,7 @@ namespace AssemblyPatcher
             return 0;
         }
 
-        static bool UpdateExeConfig(string exeFileName, bool icomVerCheck)
+        static bool UpdateExeConfig(string exeFileName, bool noIcomVerCheck)
         {
             try
             {
@@ -654,7 +654,7 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\"", "    <add key=\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\" value=\"false\" />"),
                 };
 
-                if (!icomVerCheck)
+                if (noIcomVerCheck)
                 {
                     patchList.Add(("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", "    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"false\" />"));
                 }
