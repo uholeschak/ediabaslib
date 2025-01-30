@@ -273,7 +273,7 @@
   </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Указание: В ISTA-D администрировании -&gt; VCI конфигурация выберите тип интерфейса:
-Ediabas настройки по умолчанию (ediabas.ini).</value>
+'Ediabas настройки по умолчанию (ediabas.ini)'</value>
   </data>
   <data name="PatchVaspcInfo" xml:space="preserve">
     <value>В VAS-PC с EdiabasLib поддерживаются только "Вед. поиск неисправн." и "Ведомые функции".</value>
@@ -330,6 +330,7 @@ Ediabas настройки по умолчанию (ediabas.ini).</value>
 Нажмите здесь, чтобы открыть системное приложение: {0}</value>
   </data>
   <data name="PatchIstadInfoEnet" xml:space="preserve">
-    <value>Для программирования необходимо выбрать 'локальная сеть HO-ICOM / ENET'.</value>
+    <value>Для программирования необходимо выбрать:
+'HO-ICOM / ENET local network'</value>
   </data>
 </root>
