@@ -19,6 +19,13 @@ namespace AssemblyPatcher
 
         public class Options
         {
+            public Options()
+            {
+                InputDir = string.Empty;
+                DebugOpt = DebugOption.None;
+                IcomVerCheck = true;
+            }
+
             public enum DebugOption
             {
                 None,
@@ -31,6 +38,9 @@ namespace AssemblyPatcher
 
             [Option('d', "debug", Required = false, HelpText = "Option for debug code injection (MsgBox, Break)")]
             public DebugOption DebugOpt { get; set; }
+
+            [Option('c', "icom_check", Required = false, HelpText = "ICOM version check, default is true")]
+            public bool IcomVerCheck { get; set; }
         }
 
         static int Main(string[] args)
@@ -39,6 +49,7 @@ namespace AssemblyPatcher
             {
                 string inputDir = null;
                 Options.DebugOption debugOpt = Options.DebugOption.None;
+                bool icomVerCheck = true;
                 bool hasErrors = false;
                 Parser parser = new Parser(with =>
                 {
@@ -53,6 +64,7 @@ namespace AssemblyPatcher
                     {
                         inputDir = o.InputDir;
                         debugOpt = o.DebugOpt;
+                        icomVerCheck = o.IcomVerCheck;
                     })
                     .WithNotParsed(errs =>
                     {
@@ -79,6 +91,7 @@ namespace AssemblyPatcher
 
                 Console.WriteLine("Input directory: '{0}'", inputDir);
                 Console.WriteLine("Debug option: '{0}'", debugOpt.ToString());
+                Console.WriteLine("ICOM version check: '{0}'", icomVerCheck.ToString());
 
                 string patchCtorNamespace = ConfigurationManager.AppSettings["PatchCtorNamespace"];
                 if (string.IsNullOrEmpty(patchCtorNamespace))
@@ -182,7 +195,7 @@ namespace AssemblyPatcher
                 }
 
                 string exeFile = Path.Combine(inputDir, "ISTAGUI.exe");
-                if (!UpdateExeConfig(exeFile))
+                if (!UpdateExeConfig(exeFile, icomVerCheck))
                 {
                     Console.WriteLine("Update config file failed for: {0}", exeFile);
                     return 1;
@@ -578,7 +591,7 @@ namespace AssemblyPatcher
             return 0;
         }
 
-        static bool UpdateExeConfig(string exeFileName)
+        static bool UpdateExeConfig(string exeFileName, bool icomVerCheck)
         {
             try
             {
@@ -625,7 +638,6 @@ namespace AssemblyPatcher
                 {
                     ("\"DebugLevel\"", "    <add key=\"DebugLevel\" value=\"5\" />"),
                     ("\"BMW.Rheingold.Programming.Prodias.LogLevel\"", "    <add key=\"BMW.Rheingold.Programming.Prodias.LogLevel\" value=\"TRACE\" />"),
-                    ("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", "    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"false\" />"),
                     ("\"BMW.Rheingold.RheingoldSessionController.FASTATransferMode\"", "    <add key=\"BMW.Rheingold.RheingoldSessionController.FASTATransferMode\" value=\"None\" />"),
                     ("\"BMW.Rheingold.Diagnostics.VehicleIdent.ReadFASTAData\"", "    <add key=\"BMW.Rheingold.Diagnostics.VehicleIdent.ReadFASTAData\" value=\"false\" />"),
                     ("\"BMW.Rheingold.OperationalMode\"", "    <add key=\"BMW.Rheingold.OperationalMode\" value=\"ISTA_PLUS\" />"),
@@ -641,6 +653,11 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.Developer.guidebug\"", "    <add key=\"BMW.Rheingold.Developer.guidebug\" value=\"true\" />"),
                     ("\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\"", "    <add key=\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\" value=\"false\" />"),
                 };
+
+                if (!icomVerCheck)
+                {
+                    patchList.Add(("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", "    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"false\" />"));
+                }
 
                 if (fileVersion.Value < FileVersion450)
                 {
