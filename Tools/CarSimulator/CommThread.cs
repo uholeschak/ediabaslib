@@ -2364,10 +2364,13 @@ namespace CarSimulator
                     bool isDhcpUp = ipIcomDhcpLocal != null && networkMaskIcomDhcp != null;
                     if (isDhcpUp)
                     {
+                        IPAddress ipNetMaskDhcp = new IPAddress(networkMaskIcomDhcp);
                         Debug.WriteLine("ICOM DHCP is up");
+                        Debug.WriteLine("ICOM DHCP IP:{0} / {1}", ipIcomDhcp.ToString(), ipNetMaskDhcp.ToString());
+
                         if (_icomDhcpServer == null)
                         {
-                            _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, new IPAddress(networkMaskIcomDhcp));
+                            _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, ipNetMaskDhcp);
                         }
                         if (!_icomDhcpServer.IsRunning)
                         {
