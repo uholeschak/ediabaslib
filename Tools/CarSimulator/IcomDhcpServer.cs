@@ -88,7 +88,7 @@ namespace CarSimulator
 
         protected override DhcpDiscoverResult OnDiscoverReceived(DhcpMessage message)
         {
-            Debug.WriteLine(message.ToString());
+            Debug.WriteLine("DCHP discover: {0}", (object)message.ToString());
 
             IPAddress ip;
             PhysicalAddress mac = message.ClientMacAddress;
@@ -104,7 +104,7 @@ namespace CarSimulator
                         return null;
                     }
 
-                    Debug.WriteLine("Added new client IP: {0} / {1}", mac, ip);
+                    Debug.WriteLine("Added new DHCP client. MAC:{0}, IP: {1}", mac, ip);
                     _clientMap[mac] = ip;
                 }
             }

@@ -2365,8 +2365,8 @@ namespace CarSimulator
                     if (isDhcpUp)
                     {
                         IPAddress ipNetMaskDhcp = new IPAddress(networkMaskIcomDhcp);
-                        Debug.WriteLine("ICOM DHCP is up");
-                        Debug.WriteLine("ICOM DHCP IP:{0} / {1}", ipIcomDhcp.ToString(), ipNetMaskDhcp.ToString());
+                        Debug.WriteLine("ICOM DHCP server is up");
+                        Debug.WriteLine("ICOM DHCP server IP:{0} / {1}", ipIcomDhcp.ToString(), ipNetMaskDhcp.ToString());
 
                         if (_icomDhcpServer == null)
                         {
@@ -2379,7 +2379,7 @@ namespace CarSimulator
                     }
                     else
                     {
-                        Debug.WriteLine("ICOM DHCP is down");
+                        Debug.WriteLine("ICOM DHCP server is down, Adapter must be configured with IP: {0}", (object)ipIcomDhcp.ToString());
                         if (_icomDhcpServer != null && _icomDhcpServer.IsRunning)
                         {
                             _icomDhcpServer.Stop();
