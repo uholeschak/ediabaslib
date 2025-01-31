@@ -2361,8 +2361,7 @@ namespace CarSimulator
                 {
                     IPAddress ipIcomDhcp = IPAddress.Parse(IcomDhcpAddress);
                     IPAddress ipIcomDhcpLocal = GetLocalIpAddress(ipIcomDhcp, false, out _, out byte[] networkMaskIcomDhcp);
-                    IPAddress ipIcomDhcpBroadcast = GetLocalIpAddress(ipIcomDhcp, true, out _, out _);
-                    bool isDhcpUp = ipIcomDhcpLocal != null && ipIcomDhcpBroadcast != null && networkMaskIcomDhcp != null;
+                    bool isDhcpUp = ipIcomDhcpLocal != null && networkMaskIcomDhcp != null;
                     if (isDhcpUp)
                     {
                         IPAddress ipNetMaskDhcp = new IPAddress(networkMaskIcomDhcp);
@@ -2371,7 +2370,7 @@ namespace CarSimulator
 
                         if (_icomDhcpServer == null)
                         {
-                            _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, ipNetMaskDhcp, ipIcomDhcpLocal, () =>
+                            _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, ipNetMaskDhcp, () =>
                             {
                                 Debug.WriteLine("Disconnected, ICOM DHCP server stopped");
                             });
@@ -2383,7 +2382,8 @@ namespace CarSimulator
                     }
                     else
                     {
-                        Debug.WriteLine("ICOM DHCP server is down, Adapter must be configured with IP: {0}", (object)ipIcomDhcp.ToString());
+                        Debug.WriteLine("ICOM DHCP server is down, adapter must be configured with IP: {0} / 24", (object)ipIcomDhcp.ToString());
+                        Debug.WriteLine("Allow private and public firewall access for this app.");
                         if (_icomDhcpServer != null && _icomDhcpServer.IsRunning)
                         {
                             _icomDhcpServer.Stop();
