@@ -2372,8 +2372,7 @@ namespace CarSimulator
                         {
                             _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, ipNetMaskDhcp, () =>
                             {
-                                Debug.WriteLine("Disconnected, stopping ICOM DHCP server");
-                                _icomDhcpServer?.Stop();
+                                Debug.WriteLine("Disconnected, ICOM DHCP server stopped");
                             });
                         }
                         if (!_icomDhcpServer.IsRunning)
