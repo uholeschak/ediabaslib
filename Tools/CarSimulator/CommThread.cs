@@ -2361,7 +2361,8 @@ namespace CarSimulator
                 {
                     IPAddress ipIcomDhcp = IPAddress.Parse(IcomDhcpAddress);
                     IPAddress ipIcomDhcpLocal = GetLocalIpAddress(ipIcomDhcp, false, out _, out byte[] networkMaskIcomDhcp);
-                    bool isDhcpUp = ipIcomDhcpLocal != null && networkMaskIcomDhcp != null;
+                    IPAddress ipIcomDhcpBroadcast = GetLocalIpAddress(ipIcomDhcp, true, out _, out _);
+                    bool isDhcpUp = ipIcomDhcpLocal != null && ipIcomDhcpBroadcast != null && networkMaskIcomDhcp != null;
                     if (isDhcpUp)
                     {
                         IPAddress ipNetMaskDhcp = new IPAddress(networkMaskIcomDhcp);
@@ -2370,7 +2371,7 @@ namespace CarSimulator
 
                         if (_icomDhcpServer == null)
                         {
-                            _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, ipNetMaskDhcp, () =>
+                            _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, ipNetMaskDhcp, ipIcomDhcpLocal, () =>
                             {
                                 Debug.WriteLine("Disconnected, ICOM DHCP server stopped");
                             });

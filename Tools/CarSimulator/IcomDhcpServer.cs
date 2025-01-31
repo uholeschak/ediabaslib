@@ -26,13 +26,13 @@ namespace CarSimulator
         public event Action<PhysicalAddress> DiscoverReceived = delegate { };
         public delegate void DisconnectedHandler();
 
-        public IcomDhcpServer(IPAddress listeningAddress, IPAddress subnetMask, DisconnectedHandler disconnectedHandler) : base(listeningAddress, subnetMask)
+        public IcomDhcpServer(IPAddress listeningAddress, IPAddress subnetMask, IPAddress adapterAddress, DisconnectedHandler disconnectedHandler) : base(listeningAddress, subnetMask)
         {
             _clientMap = new Dictionary<PhysicalAddress, IPAddress>();
             _availableIpAddresses = new List<IPAddress>();
             _disconnectedHandler = disconnectedHandler;
 
-            byte[] ipBytesRemote = listeningAddress.GetAddressBytes();
+            byte[] ipBytesRemote = adapterAddress.GetAddressBytes();
             byte[] maskBytes = subnetMask.GetAddressBytes();
 
             for (int i = 0; i < ipBytesRemote.Length; i++)
@@ -46,7 +46,7 @@ namespace CarSimulator
                 {
                     ipBytesRemote[ipBytesRemote.Length - 1] = (byte)i;
                     IPAddress ipAddress = new IPAddress(ipBytesRemote);
-                    if (!ipAddress.Equals(listeningAddress))
+                    if (!ipAddress.Equals(adapterAddress))
                     {
                         _availableIpAddresses.Add(ipAddress);
                     }
