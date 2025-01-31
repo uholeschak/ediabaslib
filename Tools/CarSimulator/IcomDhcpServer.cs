@@ -19,16 +19,18 @@ namespace CarSimulator
         // mapping values:
         private readonly Dictionary<PhysicalAddress, IPAddress> _clientMap;
         private readonly List<IPAddress> _availableIpAddresses;
+        private readonly DisconnectedHandler _disconnectedHandler;
 
         private readonly object _syncRoot = new object();
 
         public event Action<PhysicalAddress> DiscoverReceived = delegate { };
-        public event Action Disconnected = delegate { };
+        public delegate void DisconnectedHandler();
 
-        public IcomDhcpServer(IPAddress listeningAddress, IPAddress subnetMask) : base(listeningAddress, subnetMask)
+        public IcomDhcpServer(IPAddress listeningAddress, IPAddress subnetMask, DisconnectedHandler disconnectedHandler) : base(listeningAddress, subnetMask)
         {
             _clientMap = new Dictionary<PhysicalAddress, IPAddress>();
             _availableIpAddresses = new List<IPAddress>();
+            _disconnectedHandler = disconnectedHandler;
 
             byte[] ipBytesRemote = listeningAddress.GetAddressBytes();
             byte[] maskBytes = subnetMask.GetAddressBytes();
@@ -193,7 +195,7 @@ namespace CarSimulator
         protected override void OnSocketError(SocketException ex)
         {
             Debug.WriteLine("Socket error: {0}", (object) ex.Message);
-            Disconnected.Invoke();
+            _disconnectedHandler?.Invoke();
         }
 
         private IPAddress GetNextAvailableIPAddress()

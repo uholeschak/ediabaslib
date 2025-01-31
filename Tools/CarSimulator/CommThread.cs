@@ -2370,7 +2370,11 @@ namespace CarSimulator
 
                         if (_icomDhcpServer == null)
                         {
-                            _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, ipNetMaskDhcp);
+                            _icomDhcpServer = new IcomDhcpServer(ipIcomDhcpLocal, ipNetMaskDhcp, () =>
+                            {
+                                Debug.WriteLine("Disconnected, stopping ICOM DHCP server");
+                                _icomDhcpServer?.Stop();
+                            });
                         }
                         if (!_icomDhcpServer.IsRunning)
                         {
