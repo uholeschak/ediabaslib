@@ -147,12 +147,12 @@ namespace CarSimulator
 
         protected override void OnReleaseReceived(DhcpMessage message)
         {
-            Debug.WriteLine(message);
+            Debug.WriteLine("DHCP release: {0}", (object) message);
         }
 
         protected override void OnDeclineReceived(DhcpMessage message)
         {
-            Debug.WriteLine(message);
+            Debug.WriteLine("DHCP decline: {0}", (object)message);
 
             var ip = message.Options.RequestedIPAddress;
             var mac = message.ClientMacAddress;
@@ -177,12 +177,12 @@ namespace CarSimulator
 
         protected override void OnInformReceived(DhcpMessage message)
         {
-            Debug.WriteLine(message);
+            Debug.WriteLine("DHCP inform: {0}", (object)message);
         }
 
         protected override void OnResponseSent(DhcpMessage message)
         {
-            Debug.WriteLine(message);
+            Debug.WriteLine("DHCP response send: {0}", (object)message);
         }
 
         protected override void OnMessageError(Exception ex)
