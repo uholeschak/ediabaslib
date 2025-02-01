@@ -39,7 +39,7 @@ namespace AssemblyPatcher
             [Option('d', "debug", Required = false, HelpText = "Option for debug code injection (MsgBox, Break)")]
             public DebugOption DebugOpt { get; set; }
 
-            [Option('c', "no_icom_check", Required = false, HelpText = "No ICOM version check")]
+            [Option('c', "no_icom_check", Required = false, HelpText = "Disable ICOM version check")]
             public bool NoIcomCheck { get; set; }
         }
 
@@ -91,7 +91,7 @@ namespace AssemblyPatcher
 
                 Console.WriteLine("Input directory: '{0}'", inputDir);
                 Console.WriteLine("Debug option: '{0}'", debugOpt.ToString());
-                Console.WriteLine("No ICOM version check: '{0}'", noIcomVerCheck.ToString());
+                Console.WriteLine("Disable ICOM version check: '{0}'", noIcomVerCheck.ToString());
 
                 string patchCtorNamespace = ConfigurationManager.AppSettings["PatchCtorNamespace"];
                 if (string.IsNullOrEmpty(patchCtorNamespace))
@@ -634,6 +634,7 @@ namespace AssemblyPatcher
                     return true;
                 }
 
+                string dirtyFlagValue = noIcomVerCheck ? "false" : "true";
                 var patchList = new List<(string Match, string Replace)>()
                 {
                     ("\"DebugLevel\"", "    <add key=\"DebugLevel\" value=\"5\" />"),
@@ -652,12 +653,8 @@ namespace AssemblyPatcher
                     ("\"EnableRelevanceFaultCode\"", "    <add key=\"EnableRelevanceFaultCode\" value=\"false\" />"),
                     ("\"BMW.Rheingold.Developer.guidebug\"", "    <add key=\"BMW.Rheingold.Developer.guidebug\" value=\"true\" />"),
                     ("\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\"", "    <add key=\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", $"    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"{dirtyFlagValue}\" />"),
                 };
-
-                if (noIcomVerCheck)
-                {
-                    patchList.Add(("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", "    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"false\" />"));
-                }
 
                 if (fileVersion.Value < FileVersion450)
                 {
