@@ -39,6 +39,9 @@ namespace AssemblyPatcher
             [Option('d', "debug", Required = false, HelpText = "Option for debug code injection (MsgBox, Break)")]
             public DebugOption DebugOpt { get; set; }
 
+            [Option('o', "overwrite_config", Required = false, HelpText = "Overwrite already patched config file")]
+            public bool OverwriteConfig { get; set; }
+
             [Option('c', "no_icom_check", Required = false, HelpText = "Disable ICOM version check")]
             public bool NoIcomCheck { get; set; }
         }
@@ -49,6 +52,7 @@ namespace AssemblyPatcher
             {
                 string inputDir = null;
                 Options.DebugOption debugOpt = Options.DebugOption.None;
+                bool overwriteConfig = false;
                 bool noIcomVerCheck = true;
                 bool hasErrors = false;
                 Parser parser = new Parser(with =>
@@ -64,6 +68,7 @@ namespace AssemblyPatcher
                     {
                         inputDir = o.InputDir;
                         debugOpt = o.DebugOpt;
+                        overwriteConfig = o.OverwriteConfig;
                         noIcomVerCheck = o.NoIcomCheck;
                     })
                     .WithNotParsed(errs =>
@@ -91,6 +96,7 @@ namespace AssemblyPatcher
 
                 Console.WriteLine("Input directory: '{0}'", inputDir);
                 Console.WriteLine("Debug option: '{0}'", debugOpt.ToString());
+                Console.WriteLine("Overwrite config: '{0}'", overwriteConfig.ToString());
                 Console.WriteLine("Disable ICOM version check: '{0}'", noIcomVerCheck.ToString());
 
                 string patchCtorNamespace = ConfigurationManager.AppSettings["PatchCtorNamespace"];
@@ -195,7 +201,7 @@ namespace AssemblyPatcher
                 }
 
                 string exeFile = Path.Combine(inputDir, "ISTAGUI.exe");
-                if (!UpdateExeConfig(exeFile, noIcomVerCheck))
+                if (!UpdateExeConfig(exeFile, noIcomVerCheck, overwriteConfig))
                 {
                     Console.WriteLine("Update config file failed for: {0}", exeFile);
                     return 1;
@@ -591,7 +597,7 @@ namespace AssemblyPatcher
             return 0;
         }
 
-        static bool UpdateExeConfig(string exeFileName, bool noIcomVerCheck)
+        static bool UpdateExeConfig(string exeFileName, bool noIcomVerCheck, bool overwriteConfig)
         {
             try
             {
@@ -630,8 +636,15 @@ namespace AssemblyPatcher
                 string backupFile = configFileName + ".bak";
                 if (File.Exists(backupFile))
                 {
-                    Console.WriteLine("UpdateExeConfig Config file already modified: {0}", configFileName);
-                    return true;
+                    if (overwriteConfig)
+                    {
+                        Console.WriteLine("UpdateExeConfig Overwriting modified config file: {0}", configFileName);
+                    }
+                    else
+                    {
+                        Console.WriteLine("UpdateExeConfig Config file already modified: {0}", configFileName);
+                        return true;
+                    }
                 }
 
                 string dirtyFlagValue = noIcomVerCheck ? "false" : "true";
@@ -698,7 +711,11 @@ namespace AssemblyPatcher
                     outputLines.Add(line);
                 }
 
-                File.Copy(configFileName, backupFile, true);
+                if (!File.Exists(backupFile))
+                {
+                    File.Copy(configFileName, backupFile, false);
+                }
+
                 File.WriteAllLines(configFileName, outputLines);
             }
             catch (Exception e)
