@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -348,12 +349,19 @@ namespace Ediabas
                         if (!string.IsNullOrEmpty(remoteHost) && !string.IsNullOrEmpty(reportPort))
                         {
                             logFormat(ApiLogLevel.Normal, "Host: {0}, Port={1}", remoteHost, reportPort);
+
+                            bool validConfig = true;
+                            if (!IPAddress.TryParse(remoteHost, out _))
+                            {
+                                logFormat(ApiLogLevel.Normal, "Invalid Host: {0}", remoteHost);
+                                validConfig = false;
+                            }
+
                             if (!Int64.TryParse(reportPort, out Int64 portValue))
                             {
                                 portValue = -1;
                             }
 
-                            bool validConfig = true;
                             if (portValue != 6801)
                             {
                                 logFormat(ApiLogLevel.Normal, "Invalid Port: {0}", portValue);
