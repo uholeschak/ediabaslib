@@ -314,6 +314,49 @@ namespace Ediabas
                     logFormat(ApiLogLevel.Normal, "Ignoring REMOTE");
                     ifh = null;
                 }
+                if (ifhParts.Length > 0 && string.Compare(ifhParts[0], "RPLUS", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    logFormat(ApiLogLevel.Normal, "RPLUS detected");
+                    // The command line format is: RPLUS:ICOM_P:Remotehost=X.X.X.X;Port=X
+                    if (ifhParts.Length >= 3 && string.Compare(ifhParts[1], "ICOM_P", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        string remoteHost = null;
+                        string reportPort = null;
+                        string arguments = ifhParts[2];
+                        string[] argumentParts = arguments.Split(';');
+                        if (argumentParts.Length >= 2)
+                        {
+                            foreach (string argumentPart in argumentParts)
+                            {
+                                string[] argumentSubParts = argumentPart.Split('=');
+                                if (argumentSubParts.Length > 1)
+                                {
+                                    string argName = argumentSubParts[0];
+                                    string argValue = argumentSubParts[1];
+                                    if (string.Compare(argName, "Remotehost", StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        remoteHost = argValue;
+                                    }
+                                    else if (string.Compare(argName, "Port", StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        reportPort = argValue;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(remoteHost) && !string.IsNullOrEmpty(reportPort))
+                        {
+                            ifh = string.Format(CultureInfo.InvariantCulture, "ENET:{0}:50160:50161", remoteHost);
+                            logFormat(ApiLogLevel.Normal, "redirecting RPLUS:ICOM_P to ENET: {0}", ifh);
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(ifh))
+                    {
+                        logFormat(ApiLogLevel.Normal, "RPLUS arguments invalid");
+                    }
+                }
             }
 
             if (string.IsNullOrEmpty(ifh))
