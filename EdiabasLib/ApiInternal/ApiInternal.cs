@@ -334,11 +334,11 @@ namespace Ediabas
                                 {
                                     string argName = argumentSubParts[0];
                                     string argValue = argumentSubParts[1];
-                                    if (string.Compare(argName, "Remotehost", StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (string.Compare(argName, "Remotehost", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         remoteHost = argValue;
                                     }
-                                    else if (string.Compare(argName, "Port", StringComparison.OrdinalIgnoreCase) != 0)
+                                    else if (string.Compare(argName, "Port", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         reportPort = argValue;
                                     }
