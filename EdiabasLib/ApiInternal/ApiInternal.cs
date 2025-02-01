@@ -347,8 +347,21 @@ namespace Ediabas
 
                         if (!string.IsNullOrEmpty(remoteHost) && !string.IsNullOrEmpty(reportPort))
                         {
-                            ifh = string.Format(CultureInfo.InvariantCulture, "ENET:{0}:50160:50161", remoteHost);
-                            logFormat(ApiLogLevel.Normal, "redirecting RPLUS:ICOM_P to ENET: {0}", ifh);
+                            logFormat(ApiLogLevel.Normal, "Host: {0}, Port={1}", remoteHost, reportPort);
+                            if (!Int64.TryParse(reportPort, out Int64 portValue))
+                            {
+                                portValue = -1;
+                            }
+
+                            if (portValue >= 6801)
+                            {
+                                logFormat(ApiLogLevel.Normal, "Invalid Port: {0}", portValue);
+                            }
+                            else
+                            {
+                                ifh = string.Format(CultureInfo.InvariantCulture, "ENET:{0}:50160:50161", remoteHost);
+                                logFormat(ApiLogLevel.Normal, "redirecting RPLUS:ICOM_P to ENET: {0}", ifh);
+                            }
                         }
                     }
 
