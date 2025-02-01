@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -333,11 +334,11 @@ namespace Ediabas
                                 {
                                     string argName = argumentSubParts[0];
                                     string argValue = argumentSubParts[1];
-                                    if (string.Compare(argName, "Remotehost", StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (string.Compare(argName, "Remotehost", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         remoteHost = argValue;
                                     }
-                                    else if (string.Compare(argName, "Port", StringComparison.OrdinalIgnoreCase) != 0)
+                                    else if (string.Compare(argName, "Port", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         reportPort = argValue;
                                     }
@@ -347,8 +348,31 @@ namespace Ediabas
 
                         if (!string.IsNullOrEmpty(remoteHost) && !string.IsNullOrEmpty(reportPort))
                         {
-                            ifh = string.Format(CultureInfo.InvariantCulture, "ENET:{0}:50160:50161", remoteHost);
-                            logFormat(ApiLogLevel.Normal, "redirecting RPLUS:ICOM_P to ENET: {0}", ifh);
+                            logFormat(ApiLogLevel.Normal, "Host: {0}, Port={1}", remoteHost, reportPort);
+
+                            bool validConfig = true;
+                            if (!IPAddress.TryParse(remoteHost, out _))
+                            {
+                                logFormat(ApiLogLevel.Normal, "Invalid Host: {0}", remoteHost);
+                                validConfig = false;
+                            }
+
+                            if (!Int64.TryParse(reportPort, out Int64 portValue))
+                            {
+                                portValue = -1;
+                            }
+
+                            if (portValue != 6801)
+                            {
+                                logFormat(ApiLogLevel.Normal, "Invalid Port: {0}", portValue);
+                                validConfig = false;
+                            }
+
+                            if (validConfig)
+                            {
+                                ifh = string.Format(CultureInfo.InvariantCulture, "ENET:{0}:50160:50161", remoteHost);
+                                logFormat(ApiLogLevel.Normal, "redirecting RPLUS:ICOM_P to ENET: {0}", ifh);
+                            }
                         }
                     }
 
