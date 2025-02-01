@@ -314,6 +314,36 @@ namespace Ediabas
                     logFormat(ApiLogLevel.Normal, "Ignoring REMOTE");
                     ifh = null;
                 }
+                if (ifhParts.Length > 0 && string.Compare(ifhParts[0], "RPLUS", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    logFormat(ApiLogLevel.Normal, "RPLUS detected");
+                    // The command line format is: RPLUS:ICOM_P:Remotehost=X.X.X.X;Port=X
+                    if (ifhParts.Length >= 3 && string.Compare(ifhParts[1], "ICOM_P", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        string remoteHost = null;
+                        string arguments = ifhParts[2];
+                        string[] argumentParts = arguments.Split(';');
+                        if (argumentParts.Length >= 2)
+                        {
+                            string[] remoteHostParts = argumentParts[0].Split('=');
+                            if (remoteHostParts.Length > 1)
+                            {
+                                remoteHost = remoteHostParts[1];
+                            }
+                        }
+
+                        if (!string.IsNullOrEmpty(remoteHost))
+                        {
+                            ifh = string.Format(CultureInfo.InvariantCulture, "ENET:{0}:50160:50161", remoteHost);
+                            logFormat(ApiLogLevel.Normal, "redirecting RPLUS:ICOM_P to ENET: {0}", ifh);
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(ifh))
+                    {
+                        logFormat(ApiLogLevel.Normal, "RPLUS arguments invalid");
+                    }
+                }
             }
 
             if (string.IsNullOrEmpty(ifh))
