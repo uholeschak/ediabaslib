@@ -2320,6 +2320,7 @@ namespace EdiabasLib
                     });
                 }
 
+                // IVMUtils.ReserveVCIDeviceIcom, IVMUtils.ReleaseVCIDeviceIcom
                 MultipartFormDataContent formAllocate = new MultipartFormDataContent();
                 string xmlHeader =
                     "<?xml version='1.0'?><!DOCTYPE wddxPacket SYSTEM 'http://www.openwddx.org/downloads/dtd/wddx_dtd_10.txt'>" +
@@ -2350,6 +2351,7 @@ namespace EdiabasLib
 
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
+                    // IVMUtils.CreateRemoteClient
                     string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
                     System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate, cts.Token);
                     SharedDataActive.IcomAllocateActive = true;
