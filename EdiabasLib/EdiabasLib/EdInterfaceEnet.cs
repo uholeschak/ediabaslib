@@ -377,7 +377,7 @@ namespace EdiabasLib
         protected const int UdpDetectRetries = 3;
         protected const string IniFileEnetSection = "XEthernet";
         protected const string IniFileSslSection = "SSL";
-        protected const string IcomOwner = "DeepObd";
+        protected const string IcomOwner = "EXPERT";
         protected static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         protected static readonly byte[] ByteArray0 = new byte[0];
         protected static readonly byte[] UdpIdentReq =
