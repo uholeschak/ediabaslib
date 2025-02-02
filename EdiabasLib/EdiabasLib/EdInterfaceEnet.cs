@@ -14,7 +14,6 @@ using System.Net.Http;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -377,7 +376,7 @@ namespace EdiabasLib
         protected const int UdpDetectRetries = 3;
         protected const string IniFileEnetSection = "XEthernet";
         protected const string IniFileSslSection = "SSL";
-        protected const string IcomOwner = "DeepObd";
+        protected const string IcomOwner = "EXPERT";
         protected static readonly CultureInfo Culture = CultureInfo.InvariantCulture;
         protected static readonly byte[] ByteArray0 = new byte[0];
         protected static readonly byte[] UdpIdentReq =
@@ -2352,6 +2351,9 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     // IVMUtils.CreateRemoteClient
+                    IcomAllocateDeviceHttpClient.DefaultRequestHeaders.Authorization = null;
+                    IcomAllocateDeviceHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Jakarta Commons-HttpClient/3.1");
+
                     string deviceUrl = "http://" + ipParts[0] + ":5302/nVm";
                     System.Threading.Tasks.Task<HttpResponseMessage> taskAllocate = IcomAllocateDeviceHttpClient.PostAsync(deviceUrl, formAllocate, cts.Token);
                     SharedDataActive.IcomAllocateActive = true;
@@ -2766,7 +2768,7 @@ namespace EdiabasLib
                         authenticationOptions.TargetHost = string.Empty;
                         authenticationOptions.ClientCertificates = clientCertificates;
                         authenticationOptions.CertificateRevocationCheckMode = X509RevocationMode.NoCheck;
-                        Task authTask = sslStream.AuthenticateAsClientAsync(authenticationOptions, cts.Token);
+                        System.Threading.Tasks.Task authTask = sslStream.AuthenticateAsClientAsync(authenticationOptions, cts.Token);
                         if (cancelEvent != null)
                         {
                             WaitHandle[] waitHandles = { threadFinishEvent, cancelEvent };
@@ -2786,7 +2788,7 @@ namespace EdiabasLib
                             cts.Cancel();
                         }
 
-                        if (authTask.Status != TaskStatus.RanToCompletion || cts.IsCancellationRequested)
+                        if (authTask.Status != System.Threading.Tasks.TaskStatus.RanToCompletion || cts.IsCancellationRequested)
                         {
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream auth timeout");
                             sslStream.Close();
