@@ -2317,6 +2317,7 @@ namespace EdiabasLib
                     {
                         UseProxy = false
                     });
+                    IcomAllocateDeviceHttpClient.Timeout = TimeSpan.FromSeconds(5);
                 }
 
                 // IVMUtils.ReserveVCIDeviceIcom, IVMUtils.ReleaseVCIDeviceIcom
