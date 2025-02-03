@@ -1476,52 +1476,43 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
 
-                for (int retryCount = 0; retryCount < 2; retryCount++)
+                IcomEvent?.Reset();
+                using (CancellationTokenSource cts = new CancellationTokenSource())
                 {
-                    IcomEvent?.Reset();
-                    using (CancellationTokenSource cts = new CancellationTokenSource())
-                    {
-                        if (!IcomAllocateDevice(SharedDataActive.EnetHostConn.IpAddress.ToString(), false, cts, (success, code) =>
+                    if (!IcomAllocateDevice(SharedDataActive.EnetHostConn.IpAddress.ToString(), false, cts, (success, code) =>
+                        {
+                            if (success)
                             {
-                                if (success)
-                                {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM ok: Code={0}", code);
-                                }
-                                else
-                                {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM rejected: Code={0}", code);
-                                }
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM ok: Code={0}", code);
+                            }
+                            else
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM rejected: Code={0}", code);
+                            }
 
-                                IcomEvent?.Set();
-                            }))
+                            IcomEvent?.Set();
+                        }))
+                    {
+                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM error");
+                    }
+
+                    // don't use cancell event here, because this could be set.
+                    int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent }, 2000);
+                    if (waitResult != 0)
+                    {
+                        if (waitResult == WaitHandle.WaitTimeout)
+                        {
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
+                        }
+                        else
                         {
                             EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM error");
                         }
 
-                        bool retryOperation = false;
-                        int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent, SharedDataActive.TransmitCancelEvent }, 2000);
-                        if (waitResult != 0)
-                        {
-                            if (waitResult == WaitHandle.WaitTimeout)
-                            {
-                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
-                                retryOperation = true;
-                            }
-                            else
-                            {
-                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM cancelled");
-                            }
-
-                            cts.Cancel();
-                            IcomEvent?.WaitOne(1000);
-                            // reset allocate active after cancel
-                            SharedDataActive.IcomAllocateActive = false;
-                        }
-
-                        if (!retryOperation)
-                        {
-                            break;
-                        }
+                        cts.Cancel();
+                        IcomEvent?.WaitOne(1000);
+                        // reset allocate active after cancel
+                        SharedDataActive.IcomAllocateActive = false;
                     }
                 }
 
