@@ -2320,7 +2320,8 @@ namespace EdiabasLib
                     IcomAllocateDeviceHttpClient.Timeout = TimeSpan.FromSeconds(5);
                 }
 
-                // IVMUtils.ReserveVCIDeviceIcom, IVMUtils.ReleaseVCIDeviceIcom
+                // ISTA: IVMUtils.ReserveVCIDeviceIcom, IVMUtils.ReleaseVCIDeviceIcom
+                // The code here is base on iToolRadar and assigns only a device owner
                 MultipartFormDataContent formAllocate = new MultipartFormDataContent();
                 string xmlHeader =
                     "<?xml version='1.0'?><!DOCTYPE wddxPacket SYSTEM 'http://www.openwddx.org/downloads/dtd/wddx_dtd_10.txt'>" +
@@ -2351,7 +2352,8 @@ namespace EdiabasLib
 
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    // IVMUtils.CreateRemoteClient
+                    // ISTA: IVMUtils.CreateRemoteClient
+                    // The code here is base on iToolRadar and assigns only a device owner
                     IcomAllocateDeviceHttpClient.DefaultRequestHeaders.Authorization = null;
                     IcomAllocateDeviceHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Jakarta Commons-HttpClient/3.1");
 
