@@ -1496,7 +1496,7 @@ namespace EdiabasLib
                         EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM error");
                     }
 
-                    // don't use cancell event here, because this could be set.
+                    // don't use cancel event in disconnect, because it could be set.
                     int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent }, 2000);
                     if (waitResult != 0)
                     {
@@ -2318,11 +2318,10 @@ namespace EdiabasLib
                     {
                         UseProxy = false
                     });
-                    IcomAllocateDeviceHttpClient.Timeout = TimeSpan.FromSeconds(5);
                 }
 
                 // ISTA: IVMUtils.ReserveVCIDeviceIcom, IVMUtils.ReleaseVCIDeviceIcom
-                // The code here is base on iToolRadar and assigns only a device owner
+                // The code here is based on iToolRadar and assigns only a device owner
                 MultipartFormDataContent formAllocate = new MultipartFormDataContent();
                 string xmlHeader =
                     "<?xml version='1.0'?><!DOCTYPE wddxPacket SYSTEM 'http://www.openwddx.org/downloads/dtd/wddx_dtd_10.txt'>" +
@@ -2354,7 +2353,7 @@ namespace EdiabasLib
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
                     // ISTA: IVMUtils.CreateRemoteClient
-                    // The code here is base on iToolRadar and assigns only a device owner
+                    // The code here is based on iToolRadar and assigns only a device owner
                     IcomAllocateDeviceHttpClient.DefaultRequestHeaders.Authorization = null;
                     IcomAllocateDeviceHttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Jakarta Commons-HttpClient/3.1");
 
