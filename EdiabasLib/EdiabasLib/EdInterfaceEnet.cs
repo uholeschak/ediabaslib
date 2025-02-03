@@ -1476,42 +1476,52 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
 
-                IcomEvent?.Reset();
-                using (CancellationTokenSource cts = new CancellationTokenSource())
+                for (int retryCount = 0; retryCount < 2; retryCount++)
                 {
-                    if (!IcomAllocateDevice(SharedDataActive.EnetHostConn.IpAddress.ToString(), false, cts, (success, code) =>
+                    IcomEvent?.Reset();
+                    using (CancellationTokenSource cts = new CancellationTokenSource())
                     {
-                        if (success)
+                        if (!IcomAllocateDevice(SharedDataActive.EnetHostConn.IpAddress.ToString(), false, cts, (success, code) =>
+                            {
+                                if (success)
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM ok: Code={0}", code);
+                                }
+                                else
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM rejected: Code={0}", code);
+                                }
+
+                                IcomEvent?.Set();
+                            }))
                         {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM ok: Code={0}", code);
-                        }
-                        else
-                        {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM rejected: Code={0}", code);
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM error");
                         }
 
-                        IcomEvent?.Set();
-                    }))
-                    {
-                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM error");
-                    }
-
-                    int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent, SharedDataActive.TransmitCancelEvent }, 2000);
-                    if (waitResult != 0)
-                    {
-                        if (waitResult == WaitHandle.WaitTimeout)
+                        bool retryOperation = false;
+                        int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent, SharedDataActive.TransmitCancelEvent }, 2000);
+                        if (waitResult != 0)
                         {
-                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
-                        }
-                        else
-                        {
-                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM cancelled");
+                            if (waitResult == WaitHandle.WaitTimeout)
+                            {
+                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM timeout");
+                                retryOperation = true;
+                            }
+                            else
+                            {
+                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM cancelled");
+                            }
+
+                            cts.Cancel();
+                            IcomEvent?.WaitOne(1000);
+                            // reset allocate active after cancel
+                            SharedDataActive.IcomAllocateActive = false;
                         }
 
-                        cts.Cancel();
-                        IcomEvent?.WaitOne(1000);
-                        // reset allocate active after cancel
-                        SharedDataActive.IcomAllocateActive = false;
+                        if (!retryOperation)
+                        {
+                            break;
+                        }
                     }
                 }
 
