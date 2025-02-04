@@ -33,7 +33,7 @@ namespace EdiabasLibConfigTool
         private const int EspLinkPort = 23;
         private readonly FormMain _form;
         private BluetoothClient _btClient;
-        private NetworkStream _dataStream;
+        private Stream _dataStream;
         private Stream _dataStreamWrite;
         private HttpClient _httpClient;
         private SerialPort _serialPort;
@@ -282,6 +282,11 @@ namespace EdiabasLibConfigTool
                         Thread.CurrentThread.CurrentCulture = cultureInfo;
                         Thread.CurrentThread.CurrentUICulture = cultureInfo;
                         _form.UpdateStatusText(Resources.Strings.Connecting);
+                        if (!ConnectUsbDevice(comPort))
+                        {
+                            _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                            return;
+                        }
                         TestOk = RunUsbTest(comPort);
                     }
                     finally
@@ -427,10 +432,8 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        private bool RunUsbTest(string comPort)
+        private bool ConnectUsbDevice(string comPort)
         {
-            StringBuilder sr = new StringBuilder();
-
             try
             {
                 _serialPort.PortName = comPort;
@@ -439,22 +442,45 @@ namespace EdiabasLibConfigTool
                 _serialPort.DataBits = 8;
                 _serialPort.StopBits = StopBits.One;
                 _serialPort.Handshake = Handshake.None;
-                _serialPort.ReadTimeout = 2000;
+                _serialPort.ReadTimeout = 1000;
 
                 _serialPort.Open();
                 if (!_serialPort.IsOpen)
                 {
-                    _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                    DisconnectStream();
                     return false;
                 }
 
+                _dataStream = _serialPort.BaseStream;
+                return true;
+            }
+            catch (Exception)
+            {
+                _serialPort.Close();
+                return false;
+            }
+        }
+
+        private bool RunUsbTest(string comPort)
+        {
+            StringBuilder sr = new StringBuilder();
+
+            try
+            {
                 sr.Append(Resources.Strings.Connected);
-                List<byte> getFwRequest = new List<byte> { 0x81, 0xF1, 0xF1, 0xFD, 0xFD };
-                getFwRequest.Add(CalcChecksumBmwFast(getFwRequest.ToArray(), getFwRequest.Count));
-                _serialPort.DiscardInBuffer();
-                _serialPort.Write(getFwRequest.ToArray(), 0, getFwRequest.Count);
-                byte[] firmware = new byte[0x100];
-                int recBytes = _serialPort.Read(firmware, 0, firmware.Length);
+                byte[] firmware = AdapterCommandCustom(0xFD, new byte[] { 0xFD });
+                if ((firmware == null) || (firmware.Length < 4))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.ReadFirmwareVersionFailed);
+                    _form.UpdateStatusText(sr.ToString());
+                    return false;
+                }
+
+                sr.Append("\r\n");
+                sr.Append(Resources.Strings.FirmwareVersion);
+                sr.Append(string.Format(" {0}.{1}", firmware[2], firmware[3]));
+                AdapterType = (firmware[0] << 8) + firmware[1];
 
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.TestOk);
@@ -465,10 +491,6 @@ namespace EdiabasLibConfigTool
             {
                 _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                 return false;
-            }
-            finally
-            {
-                _serialPort.Close();
             }
         }
 
@@ -743,6 +765,18 @@ namespace EdiabasLibConfigTool
             {
                 _btClient = null;
             }
+
+            try
+            {
+                if (_serialPort.IsOpen)
+                {
+                    _serialPort.Close();
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private byte[] AdapterCommandCustom(byte command, byte[] data)
@@ -825,6 +859,7 @@ namespace EdiabasLibConfigTool
             }
             try
             {
+                NetworkStream networkStream = _dataStream as NetworkStream;
                 // header byte
                 _dataStream.ReadTimeout = 1000;
                 for (int i = 0; i < 4; i++)
@@ -840,15 +875,18 @@ namespace EdiabasLibConfigTool
                     }
                     if (data < 0)
                     {
-                        while (_dataStream.DataAvailable)
+                        if (networkStream != null)
                         {
-                            try
+                            while (networkStream.DataAvailable)
                             {
-                                _dataStream.ReadByte();
-                            }
-                            catch (Exception)
-                            {
-                                break;
+                                try
+                                {
+                                    networkStream.ReadByte();
+                                }
+                                catch (Exception)
+                                {
+                                    break;
+                                }
                             }
                         }
                         return 0;
@@ -858,19 +896,23 @@ namespace EdiabasLibConfigTool
 
                 if ((receiveData[0] & 0xC0) != 0x80)
                 {   // 0xC0: Broadcast
-                    while (_dataStream.DataAvailable)
+                    if (networkStream != null)
                     {
-                        try
+                        while (networkStream.DataAvailable)
                         {
-                            _dataStream.ReadByte();
-                        }
-                        catch (Exception)
-                        {
-                            break;
+                            try
+                            {
+                                networkStream.ReadByte();
+                            }
+                            catch (Exception)
+                            {
+                                break;
+                            }
                         }
                     }
                     return 0;
                 }
+
                 int recLength = receiveData[0] & 0x3F;
                 if (recLength == 0)
                 {   // with length byte
@@ -894,15 +936,18 @@ namespace EdiabasLibConfigTool
                     }
                     if (data < 0)
                     {
-                        while (_dataStream.DataAvailable)
+                        if (networkStream != null)
                         {
-                            try
+                            while (networkStream.DataAvailable)
                             {
-                                _dataStream.ReadByte();
-                            }
-                            catch (Exception)
-                            {
-                                break;
+                                try
+                                {
+                                    networkStream.ReadByte();
+                                }
+                                catch (Exception)
+                                {
+                                    break;
+                                }
                             }
                         }
                         return 0;
@@ -912,15 +957,18 @@ namespace EdiabasLibConfigTool
 
                 if (CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
-                    while (_dataStream.DataAvailable)
+                    if (networkStream != null)
                     {
-                        try
+                        while (networkStream.DataAvailable)
                         {
-                            _dataStream.ReadByte();
-                        }
-                        catch (Exception)
-                        {
-                            break;
+                            try
+                            {
+                                networkStream.ReadByte();
+                            }
+                            catch (Exception)
+                            {
+                                break;
+                            }
                         }
                     }
                     return 0;
@@ -985,6 +1033,7 @@ namespace EdiabasLibConfigTool
 
             try
             {
+                NetworkStream networkStream = _dataStream as NetworkStream;
                 string response = null;
                 StringBuilder stringBuilder = new StringBuilder();
                 _dataStream.ReadTimeout = 1000;
@@ -1002,15 +1051,18 @@ namespace EdiabasLibConfigTool
 
                     if (data < 0)
                     {
-                        while (_dataStream.DataAvailable)
+                        if (networkStream != null)
                         {
-                            try
+                            while (networkStream.DataAvailable)
                             {
-                                _dataStream.ReadByte();
-                            }
-                            catch (Exception)
-                            {
-                                break;
+                                try
+                                {
+                                    networkStream.ReadByte();
+                                }
+                                catch (Exception)
+                                {
+                                    break;
+                                }
                             }
                         }
                         return null;
