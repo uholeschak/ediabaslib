@@ -530,7 +530,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        private bool AddFtdiDevices()
+        private bool AddFtdiDevices(ListView listView)
         {
             try
             {
@@ -567,6 +567,13 @@ namespace EdiabasLibConfigTool
                         {
 
                         }
+
+                        ListViewItem listViewItem =
+                            new ListViewItem(new[] { serialString, descriptionString })
+                            {
+                                Tag = deviceId
+                            };
+                        listView.Items.Add(listViewItem);
                     }
                 }
             }
@@ -586,7 +593,6 @@ namespace EdiabasLibConfigTool
             }
 
             UpdateStatusText(Resources.Strings.Searching);
-            AddFtdiDevices();
             _vehicleTaskActive = true;
             _detectedVehicles = null;
             SearchVehiclesTask().ContinueWith(task =>
@@ -719,6 +725,7 @@ namespace EdiabasLibConfigTool
             listViewDevices.Items.Clear();
             AddDetectedVehicles(listViewDevices);
             AddWifiAdapters(listViewDevices);
+            AddFtdiDevices(listViewDevices);
             if (devices != null)
             {
                 if (completed)
