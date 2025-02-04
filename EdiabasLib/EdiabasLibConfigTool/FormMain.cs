@@ -551,9 +551,12 @@ namespace EdiabasLibConfigTool
                     byte[] serialNumber = new byte[16];
                     byte[] description = new byte[64];
                     ftStatus = Ftd2Xx.FT_GetDeviceInfoDetail(index, out UInt32 deviceFlags, out Ftd2Xx.FT_DEVICE deviceType,
-                        out UInt32 deviceId, out UInt32 deviceLocId, serialNumber, description, out IntPtr handleTemp);
+                        out UInt32 idValue, out UInt32 deviceLocId, serialNumber, description, out IntPtr handleTemp);
                     if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
                     {
+                        uint deviceId = idValue & 0xFFFF;
+                        uint vendorId = (idValue >> 16) & 0xFFFF;
+
                         int serialNullIdx = Array.IndexOf(serialNumber, (byte)0);
                         serialNullIdx = serialNullIdx >= 0 ? serialNullIdx : serialNumber.Length;
                         string serialString = Encoding.ASCII.GetString(serialNumber, 0, serialNullIdx);
@@ -583,7 +586,23 @@ namespace EdiabasLibConfigTool
                             Ftd2Xx.FT_Close(handleFtdi);
                         }
 
-                        if (!string.IsNullOrEmpty(comPortString))
+                        bool validDevice = !string.IsNullOrEmpty(comPortString);
+                        if (deviceType != Ftd2Xx.FT_DEVICE.FT_DEVICE_232R)
+                        {
+                            validDevice = false;
+                        }
+
+                        if (deviceId != 0x6001 && deviceId != 0x6015)
+                        {
+                            validDevice = false;
+                        }
+
+                        if (vendorId != 0x0403)
+                        {
+                            validDevice = false;
+                        }
+
+                        if (validDevice)
                         {
                             StringBuilder sbInfo = new StringBuilder();
                             if (!string.IsNullOrEmpty(descriptionString))
