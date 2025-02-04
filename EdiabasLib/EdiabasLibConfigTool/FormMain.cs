@@ -937,6 +937,16 @@ namespace EdiabasLibConfigTool
             return ap;
         }
 
+        public string GetSelectedComPort()
+        {
+            string comPort = null;
+            if (listViewDevices.SelectedItems.Count > 0)
+            {
+                comPort = listViewDevices.SelectedItems[0].Tag as string;
+            }
+            return comPort;
+        }
+
         public void UpdateButtonStatus()
         {
             if (InvokeRequired)
@@ -958,7 +968,8 @@ namespace EdiabasLibConfigTool
             WlanInterface wlanIface = GetSelectedWifiDevice();
             EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
             AccessPoint ap = GetSelectedAp();
-            buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null)) && !_test.ThreadActive;
+            string comPort = GetSelectedComPort();
+            buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null) || !string.IsNullOrEmpty(comPort)) && !_test.ThreadActive;
 
             bool allowPatch = false;
             if (!processing)
