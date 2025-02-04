@@ -550,10 +550,23 @@ namespace EdiabasLibConfigTool
                 {
                     byte[] serialNumber = new byte[16];
                     byte[] description = new byte[64];
-                    ftStatus = Ftd2Xx.FT_GetDeviceInfoDetail(index, out uint deviceFlags, out Ftd2Xx.FT_DEVICE deviceType,
-                        out uint deviceId, out uint deviceLocId, serialNumber, description, out IntPtr handle);
+                    ftStatus = Ftd2Xx.FT_GetDeviceInfoDetail(index, out UInt32 deviceFlags, out Ftd2Xx.FT_DEVICE deviceType,
+                        out UInt32 deviceId, out UInt32 deviceLocId, serialNumber, description, out IntPtr handle);
                     if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
                     {
+                        int serialNullIdx = Array.IndexOf(serialNumber, (byte)0);
+                        serialNullIdx = serialNullIdx >= 0 ? serialNullIdx : serialNumber.Length;
+                        string serialString = Encoding.ASCII.GetString(serialNumber, 0, serialNullIdx);
+
+                        int descNullIdx = Array.IndexOf(description, (byte)0);
+                        descNullIdx = descNullIdx >= 0 ? descNullIdx : description.Length;
+                        string descriptionString = Encoding.ASCII.GetString(description, 0, descNullIdx);
+
+                        ftStatus = Ftd2Xx.FT_GetComPortNumber(handle, out UInt32 comPort);
+                        if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                        {
+
+                        }
                     }
                 }
             }
