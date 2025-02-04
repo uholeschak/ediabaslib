@@ -575,10 +575,13 @@ namespace EdiabasLibConfigTool
                         int latencyTime = -1;
                         if (handleFtdi != IntPtr.Zero)
                         {
-                            ftStatus = Ftd2Xx.FT_GetComPortNumber(handleFtdi, out UInt32 comPort);
+                            ftStatus = Ftd2Xx.FT_GetComPortNumber(handleFtdi, out Int32 comPort);
                             if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
                             {
-                                comPortString = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
+                                if (comPort >= 0)
+                                {
+                                    comPortString = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
+                                }
                             }
 
                             ftStatus = Ftd2Xx.FT_GetLatencyTimer(handleFtdi, out byte latency);

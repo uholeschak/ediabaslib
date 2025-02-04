@@ -117,73 +117,73 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="$this.Text" xml:space="preserve">
-    <value>EdiabasLib утилита для настроек</value>
+  <data name="columnHeaderAddress.Text" xml:space="preserve">
+    <value>Адрес</value>
   </data>
-  <data name="buttonRestoreIstad.Text" xml:space="preserve">
-    <value>Восстановить</value>
-  </data>
-  <data name="buttonPatchIstad.Text" xml:space="preserve">
-    <value>Установить заплатку</value>
+  <data name="columnHeaderName.Text" xml:space="preserve">
+    <value>Имя</value>
   </data>
   <data name="buttonSearch.Text" xml:space="preserve">
     <value>Поиск</value>
   </data>
-  <data name="labelWiFiPassword.Text" xml:space="preserve">
-    <value>Deep OBD Wi-Fi Пароль:</value>
+  <data name="buttonClose.Text" xml:space="preserve">
+    <value>Закрыть</value>
   </data>
-  <data name="columnHeaderAddress.Text" xml:space="preserve">
-    <value>Адрес</value>
+  <data name="labelStatus.Text" xml:space="preserve">
+    <value>Статус:</value>
   </data>
-  <data name="buttonRestoreEdiabas.Text" xml:space="preserve">
-    <value>Восстановить</value>
+  <data name="buttonTest.Text" xml:space="preserve">
+    <value>Тестировать</value>
   </data>
   <data name="labelBluetoothPin.Text" xml:space="preserve">
     <value>Bluetooth PIN(пароль):</value>
   </data>
   <data name="labelBtDevices.Text" xml:space="preserve">
-    <value>Bluetooth/Wi-Fi устройства:</value>
+    <value>Bluetooth/Wi-Fi/USB устройства:</value>
   </data>
-  <data name="columnHeaderName.Text" xml:space="preserve">
-    <value>Имя</value>
-  </data>
-  <data name="buttonTest.Text" xml:space="preserve">
-    <value>Тестировать</value>
-  </data>
-  <data name="buttonDirIstad.Text" xml:space="preserve">
-    <value>Выбор места хранения</value>
-  </data>
-  <data name="buttonPatchVasPc.Text" xml:space="preserve">
+  <data name="buttonPatchEdiabas.Text" xml:space="preserve">
     <value>Установить заплатку</value>
   </data>
   <data name="openFileDialogConfigFile.Filter" xml:space="preserve">
     <value>Api32.dll файл|Api32.dll</value>
   </data>
-  <data name="groupBoxIstad.Text" xml:space="preserve">
-    <value>ISTA-D</value>
+  <data name="openFileDialogConfigFile.Title" xml:space="preserve">
+    <value>ISTA-D EDIABAS\bin выбор каталога</value>
   </data>
-  <data name="groupBoxVasPc.Text" xml:space="preserve">
-    <value>VAS-PC</value>
+  <data name="labelWiFiPassword.Text" xml:space="preserve">
+    <value>Deep OBD Wi-Fi Пароль:</value>
+  </data>
+  <data name="buttonRestoreEdiabas.Text" xml:space="preserve">
+    <value>Восстановить</value>
   </data>
   <data name="groupBoxEdiabas.Text" xml:space="preserve">
     <value>EDIABAS</value>
   </data>
-  <data name="buttonPatchEdiabas.Text" xml:space="preserve">
+  <data name="buttonPatchVasPc.Text" xml:space="preserve">
     <value>Установить заплатку</value>
-  </data>
-  <data name="labelStatus.Text" xml:space="preserve">
-    <value>Статус:</value>
   </data>
   <data name="buttonRestoreVasPc.Text" xml:space="preserve">
     <value>Восстановить</value>
   </data>
-  <data name="buttonClose.Text" xml:space="preserve">
-    <value>Закрыть</value>
+  <data name="groupBoxVasPc.Text" xml:space="preserve">
+    <value>VAS-PC</value>
   </data>
-  <data name="openFileDialogConfigFile.Title" xml:space="preserve">
-    <value>ISTA-D EDIABAS\bin выбор каталога</value>
+  <data name="buttonDirIstad.Text" xml:space="preserve">
+    <value>Выбор места хранения</value>
+  </data>
+  <data name="buttonPatchIstad.Text" xml:space="preserve">
+    <value>Установить заплатку</value>
+  </data>
+  <data name="buttonRestoreIstad.Text" xml:space="preserve">
+    <value>Восстановить</value>
+  </data>
+  <data name="groupBoxIstad.Text" xml:space="preserve">
+    <value>ISTA-D</value>
   </data>
   <data name="labelLanguage.Text" xml:space="preserve">
     <value>язык:</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>EdiabasLib утилита для настроек</value>
   </data>
 </root>
