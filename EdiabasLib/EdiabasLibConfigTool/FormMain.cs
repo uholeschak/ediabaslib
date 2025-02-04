@@ -530,6 +530,33 @@ namespace EdiabasLibConfigTool
             }
         }
 
+        private bool AddFtdiDevices()
+        {
+            try
+            {
+                IntPtr deviceCount = (IntPtr)0;
+                IntPtr dummy = (IntPtr)0;
+
+                Ftd2Xx.FT_STATUS ftStatus = Ftd2Xx.FT_ListDevices(ref deviceCount, ref dummy, Ftd2Xx.FT_LIST_NUMBER_ONLY);
+                if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+
+                int devices = deviceCount.ToInt32();
+                if (devices <= 0)
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private bool StartDeviceSearch()
         {
             if (_searching)
@@ -538,6 +565,7 @@ namespace EdiabasLibConfigTool
             }
 
             UpdateStatusText(Resources.Strings.Searching);
+            AddFtdiDevices();
             _vehicleTaskActive = true;
             _detectedVehicles = null;
             SearchVehiclesTask().ContinueWith(task =>
