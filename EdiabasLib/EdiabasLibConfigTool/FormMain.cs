@@ -622,7 +622,7 @@ namespace EdiabasLibConfigTool
                             ListViewItem listViewItem =
                                 new ListViewItem(new[] { comPortString, sbInfo.ToString()})
                                 {
-                                    Tag = deviceLocId
+                                    Tag = comPortString
                                 };
                             listView.Items.Add(listViewItem);
                         }
