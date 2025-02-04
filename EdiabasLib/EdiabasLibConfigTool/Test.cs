@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -34,6 +36,7 @@ namespace EdiabasLibConfigTool
         private NetworkStream _dataStream;
         private Stream _dataStreamWrite;
         private HttpClient _httpClient;
+        private SerialPort _serialPort;
         private volatile Thread _testThread;
         private bool _disposed;
         public bool TestOk { get; set; }
@@ -53,6 +56,15 @@ namespace EdiabasLibConfigTool
         {
             _form = form;
             _form.UpdateStatusText(string.Empty);
+
+            try
+            {
+                _serialPort = new SerialPort();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         public void Dispose()
@@ -83,6 +95,12 @@ namespace EdiabasLibConfigTool
                         _httpClient.Dispose();
                         _httpClient = null;
                     }
+
+                    if (_serialPort != null)
+                    {
+                        _serialPort.Dispose();
+                        _serialPort = null;
+                    }
                 }
 
                 // Note disposing has been done.
@@ -102,6 +120,7 @@ namespace EdiabasLibConfigTool
             TestOk = false;
             ConfigPossible = false;
             AdapterType = -1;
+
             AccessPoint ap = _form.GetSelectedAp();
             if (ap != null)
             {
@@ -221,38 +240,62 @@ namespace EdiabasLibConfigTool
             }
 
             BluetoothDeviceInfo devInfo = _form.GetSelectedBtDevice();
-            if (devInfo == null)
+            if (devInfo != null)
             {
-                return false;
+                string pin = _form.BluetoothPin;
+                _testThread = new Thread(() =>
+                {
+                    try
+                    {
+                        Thread.CurrentThread.CurrentCulture = cultureInfo;
+                        Thread.CurrentThread.CurrentUICulture = cultureInfo;
+                        _form.UpdateStatusText(Resources.Strings.Connecting);
+                        if (!ConnectBtDevice(devInfo, pin))
+                        {
+                            _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                            return;
+                        }
+                        TestOk = RunBtTest(configure, out bool configRequired);
+                        if (TestOk && configRequired)
+                        {
+                            ConfigPossible = true;
+                        }
+                    }
+                    finally
+                    {
+                        DisconnectStream();
+                        _testThread = null;
+                        _form.UpdateButtonStatus();
+                    }
+                });
+                _testThread.Start();
+                return true;
             }
-            string pin = _form.BluetoothPin;
-            _testThread = new Thread(() =>
+
+            string comPort = _form.GetSelectedComPort();
+            if (!string.IsNullOrEmpty(comPort))
             {
-                try
+                _testThread = new Thread(() =>
                 {
-                    Thread.CurrentThread.CurrentCulture = cultureInfo;
-                    Thread.CurrentThread.CurrentUICulture = cultureInfo;
-                    _form.UpdateStatusText(Resources.Strings.Connecting);
-                    if (!ConnectBtDevice(devInfo, pin))
+                    try
                     {
-                        _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
-                        return;
+                        Thread.CurrentThread.CurrentCulture = cultureInfo;
+                        Thread.CurrentThread.CurrentUICulture = cultureInfo;
+                        _form.UpdateStatusText(Resources.Strings.Connecting);
+                        TestOk = RunUsbTest(comPort);
                     }
-                    TestOk = RunBtTest(configure, out bool configRequired);
-                    if (TestOk && configRequired)
+                    finally
                     {
-                        ConfigPossible = true;
+                        DisconnectStream();
+                        _testThread = null;
+                        _form.UpdateButtonStatus();
                     }
-                }
-                finally
-                {
-                    DisconnectStream();
-                    _testThread = null;
-                    _form.UpdateButtonStatus();
-                }
-            });
-            _testThread.Start();
-            return true;
+                });
+                _testThread.Start();
+                return true;
+            }
+
+            return false;
         }
 
         private bool RunWifiTestEnetRetry(string ipAddr, out bool configRequired)
@@ -381,6 +424,51 @@ namespace EdiabasLibConfigTool
             finally
             {
                 DisconnectStream();
+            }
+        }
+
+        private bool RunUsbTest(string comPort)
+        {
+            StringBuilder sr = new StringBuilder();
+
+            try
+            {
+                _serialPort.PortName = comPort;
+                _serialPort.BaudRate = 115200;
+                _serialPort.Parity = Parity.None;
+                _serialPort.DataBits = 8;
+                _serialPort.StopBits = StopBits.One;
+                _serialPort.Handshake = Handshake.None;
+                _serialPort.ReadTimeout = 2000;
+
+                _serialPort.Open();
+                if (!_serialPort.IsOpen)
+                {
+                    _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                    return false;
+                }
+
+                sr.Append(Resources.Strings.Connected);
+                List<byte> getFwRequest = new List<byte> { 0x81, 0xF1, 0xF1, 0xFD, 0xFD };
+                getFwRequest.Add(CalcChecksumBmwFast(getFwRequest.ToArray(), getFwRequest.Count));
+                _serialPort.DiscardInBuffer();
+                _serialPort.Write(getFwRequest.ToArray(), 0, getFwRequest.Count);
+                byte[] firmware = new byte[0x100];
+                int recBytes = _serialPort.Read(firmware, 0, firmware.Length);
+
+                sr.Append("\r\n");
+                sr.Append(Resources.Strings.TestOk);
+                _form.UpdateStatusText(sr.ToString());
+                return true;
+            }
+            catch (Exception)
+            {
+                _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                return false;
+            }
+            finally
+            {
+                _serialPort.Close();
             }
         }
 
