@@ -889,6 +889,13 @@ namespace EdiabasLibConfigTool
                                 }
                             }
                         }
+                        else
+                        {
+                            if (_serialPort.IsOpen)
+                            {
+                                _serialPort.DiscardInBuffer();
+                            }
+                        }
                         return 0;
                     }
                     receiveData[i] = (byte)data;
@@ -908,6 +915,13 @@ namespace EdiabasLibConfigTool
                             {
                                 break;
                             }
+                        }
+                    }
+                    else
+                    {
+                        if (_serialPort.IsOpen)
+                        {
+                            _serialPort.DiscardInBuffer();
                         }
                     }
                     return 0;
@@ -950,6 +964,13 @@ namespace EdiabasLibConfigTool
                                 }
                             }
                         }
+                        else
+                        {
+                            if (_serialPort.IsOpen)
+                            {
+                                _serialPort.DiscardInBuffer();
+                            }
+                        }
                         return 0;
                     }
                     receiveData[i + 4] = (byte)data;
@@ -969,6 +990,13 @@ namespace EdiabasLibConfigTool
                             {
                                 break;
                             }
+                        }
+                    }
+                    else
+                    {
+                        if (_serialPort.IsOpen)
+                        {
+                            _serialPort.DiscardInBuffer();
                         }
                     }
                     return 0;
@@ -1063,6 +1091,13 @@ namespace EdiabasLibConfigTool
                                 {
                                     break;
                                 }
+                            }
+                        }
+                        else
+                        {
+                            if (_serialPort.IsOpen)
+                            {
+                                _serialPort.DiscardInBuffer();
                             }
                         }
                         return null;
