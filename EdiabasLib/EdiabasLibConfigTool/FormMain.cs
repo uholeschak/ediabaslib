@@ -587,9 +587,15 @@ namespace EdiabasLibConfigTool
                         }
 
                         bool validDevice = !string.IsNullOrEmpty(comPortString);
-                        if (deviceType != Ftd2Xx.FT_DEVICE.FT_DEVICE_232R)
+                        switch (deviceType)
                         {
-                            validDevice = false;
+                            case Ftd2Xx.FT_DEVICE.FT_DEVICE_232R:
+                            case Ftd2Xx.FT_DEVICE.FT_DEVICE_X_SERIES:
+                                break;
+
+                            default:
+                                validDevice = false;
+                                break;
                         }
 
                         if (deviceId != 0x6001 && deviceId != 0x6015)
