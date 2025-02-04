@@ -307,7 +307,7 @@ namespace EdiabasLib
         public static extern FT_STATUS FT_GetDeviceInfoDetail(UInt32 dwIndex, out UInt32 lpdwFlags, out FT_DEVICE lpdwType, out UInt32 lpdwId, out UInt32 lpdwLocId, byte[] lpSerialNumber, byte[] lpDescription, out IntPtr pftHandle);
 
         [DllImport("ftd2xx")]
-        public static extern FT_STATUS FT_GetComPortNumber(IntPtr ftHandle, out UInt32 lplComPortNumber);
+        public static extern FT_STATUS FT_GetComPortNumber(IntPtr ftHandle, out Int32 lplComPortNumber);
 
         #endregion Normal Functions
 
