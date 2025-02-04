@@ -551,7 +551,7 @@ namespace EdiabasLibConfigTool
                     byte[] serialNumber = new byte[16];
                     byte[] description = new byte[64];
                     ftStatus = Ftd2Xx.FT_GetDeviceInfoDetail(index, out UInt32 deviceFlags, out Ftd2Xx.FT_DEVICE deviceType,
-                        out UInt32 deviceId, out UInt32 deviceLocId, serialNumber, description, out IntPtr handle);
+                        out UInt32 deviceId, out UInt32 deviceLocId, serialNumber, description, out IntPtr handleTemp);
                     if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
                     {
                         int serialNullIdx = Array.IndexOf(serialNumber, (byte)0);
@@ -562,18 +562,51 @@ namespace EdiabasLibConfigTool
                         descNullIdx = descNullIdx >= 0 ? descNullIdx : description.Length;
                         string descriptionString = Encoding.ASCII.GetString(description, 0, descNullIdx);
 
-                        ftStatus = Ftd2Xx.FT_GetComPortNumber(handle, out UInt32 comPort);
-                        if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                        ftStatus = Ftd2Xx.FT_OpenEx((IntPtr)deviceLocId, Ftd2Xx.FT_OPEN_BY_LOCATION, out IntPtr handleFtdi);
+                        if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
                         {
-
+                            handleFtdi = IntPtr.Zero;
                         }
 
-                        ListViewItem listViewItem =
-                            new ListViewItem(new[] { serialString, descriptionString })
+                        string comPortString = string.Empty;
+                        if (handleFtdi != IntPtr.Zero)
+                        {
+                            ftStatus = Ftd2Xx.FT_GetComPortNumber(handleFtdi, out UInt32 comPort);
+                            if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
                             {
-                                Tag = deviceId
-                            };
-                        listView.Items.Add(listViewItem);
+                                comPortString = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
+                            }
+                        }
+
+                        if (handleFtdi != IntPtr.Zero)
+                        {
+                            Ftd2Xx.FT_Close(handleFtdi);
+                        }
+
+                        if (!string.IsNullOrEmpty(comPortString))
+                        {
+                            StringBuilder sbInfo = new StringBuilder();
+                            if (!string.IsNullOrEmpty(descriptionString))
+                            {
+                                sbInfo.Append(descriptionString);
+                            }
+
+                            if (!string.IsNullOrEmpty(serialString))
+                            {
+                                if (sbInfo.Length > 0)
+                                {
+                                    sbInfo.Append(" / ");
+                                }
+                                sbInfo.Append(serialString);
+                            }
+
+                            ListViewItem listViewItem =
+                                new ListViewItem(new[] { comPortString, sbInfo.ToString()})
+                                {
+                                    Tag = deviceLocId
+                                };
+                            listView.Items.Add(listViewItem);
+                        }
                     }
                 }
             }
