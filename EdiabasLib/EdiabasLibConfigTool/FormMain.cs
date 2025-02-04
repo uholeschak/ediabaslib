@@ -530,6 +530,41 @@ namespace EdiabasLibConfigTool
             }
         }
 
+        private bool AddFtdiDevices()
+        {
+            try
+            {
+                UInt32 deviceCount = 0;
+                Ftd2Xx.FT_STATUS ftStatus = Ftd2Xx.FT_CreateDeviceInfoList(ref deviceCount);
+                if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
+                {
+                    return false;
+                }
+
+                if (deviceCount < 1)
+                {
+                    return false;
+                }
+
+                for (uint index = 0; index < deviceCount; index++)
+                {
+                    byte[] serialNumber = new byte[16];
+                    byte[] description = new byte[64];
+                    ftStatus = Ftd2Xx.FT_GetDeviceInfoDetail(index, out uint deviceFlags, out Ftd2Xx.FT_DEVICE deviceType,
+                        out uint deviceId, out uint deviceLocId, serialNumber, description, out IntPtr handle);
+                    if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                    {
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private bool StartDeviceSearch()
         {
             if (_searching)
@@ -538,6 +573,7 @@ namespace EdiabasLibConfigTool
             }
 
             UpdateStatusText(Resources.Strings.Searching);
+            AddFtdiDevices();
             _vehicleTaskActive = true;
             _detectedVehicles = null;
             SearchVehiclesTask().ContinueWith(task =>
