@@ -301,6 +301,9 @@ namespace EdiabasLib
         public static extern FT_STATUS FT_ResetPort(IntPtr ftHandle);
 
         [DllImport("ftd2xx")]
+        public static extern FT_STATUS FT_CreateDeviceInfoList(ref UInt32 lpdwNumDevs);
+
+        [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_GetDeviceInfoDetail(UInt32 dwIndex, out UInt32 lpdwFlags, out FT_DEVICE lpdwType, out UInt32 lpdwId, out UInt32 lpdwLocId, byte[] lpSerialNumber, byte[] lpDescription, out IntPtr pftHandle);
 
         #endregion Normal Functions

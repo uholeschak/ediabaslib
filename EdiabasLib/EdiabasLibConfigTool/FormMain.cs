@@ -534,19 +534,27 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                IntPtr deviceCount = (IntPtr)0;
-                IntPtr dummy = (IntPtr)0;
-
-                Ftd2Xx.FT_STATUS ftStatus = Ftd2Xx.FT_ListDevices(ref deviceCount, ref dummy, Ftd2Xx.FT_LIST_NUMBER_ONLY);
+                UInt32 deviceCount = 0;
+                Ftd2Xx.FT_STATUS ftStatus = Ftd2Xx.FT_CreateDeviceInfoList(ref deviceCount);
                 if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
                 {
                     return false;
                 }
 
-                int devices = deviceCount.ToInt32();
-                if (devices <= 0)
+                if (deviceCount < 1)
                 {
                     return false;
+                }
+
+                for (uint index = 0; index < deviceCount; index++)
+                {
+                    byte[] serialNumber = new byte[16];
+                    byte[] description = new byte[64];
+                    ftStatus = Ftd2Xx.FT_GetDeviceInfoDetail(index, out uint deviceFlags, out Ftd2Xx.FT_DEVICE deviceType,
+                        out uint deviceId, out uint deviceLocId, serialNumber, description, out IntPtr handle);
+                    if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                    {
+                    }
                 }
             }
             catch (Exception)
