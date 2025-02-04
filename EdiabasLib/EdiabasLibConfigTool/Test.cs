@@ -768,7 +768,7 @@ namespace EdiabasLibConfigTool
 
             try
             {
-                if (_serialPort.IsOpen)
+                if (_serialPort != null && _serialPort.IsOpen)
                 {
                     _serialPort.Close();
                 }
