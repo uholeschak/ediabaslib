@@ -25,6 +25,10 @@ namespace EdiabasLibConfigTool
     [SupportedOSPlatform("windows")]
     public partial class FormMain : Form
     {
+        public const int FtdiDefaultVid = 0x0403;
+        public const int FtdiDefaultPid232R = 0x6001;
+        public const int FtdiDefaultPidXSer = 0x6015;
+
         private readonly BluetoothClient _cli;
         private readonly List<BluetoothDeviceInfo> _deviceList;
         private readonly Wifi _wifi;
@@ -626,12 +630,12 @@ namespace EdiabasLibConfigTool
                                 validDevice = false;
                             }
 
-                            if (deviceId != 0x6001 && deviceId != 0x6015)
+                            if (vendorId != FtdiDefaultVid)
                             {
                                 validDevice = false;
                             }
 
-                            if (vendorId != 0x0403)
+                            if (deviceId != FtdiDefaultPid232R && deviceId != FtdiDefaultPidXSer)
                             {
                                 validDevice = false;
                             }
