@@ -196,8 +196,9 @@ namespace EdiabasLibConfigTool
 
                             try
                             {
-                                Process.Start(new ProcessStartInfo(url)
+                                Process.Start(new ProcessStartInfo()
                                 {
+                                    FileName = url,
                                     UseShellExecute = true,
                                 });
                             }
