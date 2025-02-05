@@ -1092,7 +1092,9 @@ namespace EdiabasLibConfigTool
                 if (_removedUsbDevices > 0)
                 {
                     sb.Append("\r\n");
-                    sb.Append(Resources.Strings.UsbAdaptersRemoved);
+                    string ftdiVid = string.Format(CultureInfo.InvariantCulture, "{0:X4}h", FtdiDefaultVid);
+                    string ftdiPids232R = string.Format(CultureInfo.InvariantCulture, "{0:X4}h/{1:X4}h", FtdiDefaultPid232R, FtdiDefaultPidXSer);
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, Resources.Strings.UsbAdaptersRemoved, ftdiVid, ftdiPids232R));
                 }
 
                 UpdateStatusText(sb.ToString());

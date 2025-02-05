@@ -340,7 +340,7 @@ Click here to open the system app: {0}</value>
     <value>Only USB adapters with EdiabasLib firmware are supported.</value>
   </data>
   <data name="UsbAdaptersRemoved" xml:space="preserve">
-    <value>Only USB adapters are displayed, which have a default FTDI VID and PID.
+    <value>Only USB adapters are displayed, which have VID {0} and PID {1}.
 Additionally the latency time has to be set manually to 1ms.</value>
   </data>
 </root>
