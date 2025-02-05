@@ -1327,12 +1327,14 @@ namespace EdiabasLibConfigTool
                 return;
             }
 
-            if (url.StartsWith("https://"))
+            if (url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
+                url.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {
-                    Process.Start(new ProcessStartInfo(url)
+                    Process.Start(new ProcessStartInfo()
                     {
+                        FileName = url,
                         UseShellExecute = true,
                     });
                 }
