@@ -336,4 +336,8 @@
   <data name="SupportedUsbAdapters" xml:space="preserve">
     <value>Поддерживаются только USB-адаптеры с прошивкой EdiabasLib.</value>
   </data>
+  <data name="UsbAdaptersRemoved" xml:space="preserve">
+    <value>Отображаются только USB-адаптеры, имеющие FTDI VID и PID по умолчанию.
+Кроме того, время задержки необходимо установить вручную на 1 мс.</value>
+  </data>
 </root>

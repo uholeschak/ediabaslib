@@ -44,6 +44,7 @@ namespace EdiabasLibConfigTool
         private List<EdInterfaceEnet.EnetConnection> _detectedVehicles;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
+        private int _removedUsbDevices;
 
         public string BluetoothPin => textBoxBluetoothPin.Text;
         public string WifiPassword => textBoxWifiPassword.Text;
@@ -537,20 +538,21 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        private bool AddFtdiDevices(ListView listView)
+        private void AddFtdiDevices(ListView listView)
         {
             try
             {
+                _removedUsbDevices = 0;
                 UInt32 deviceCount = 0;
                 Ftd2Xx.FT_STATUS ftStatus = Ftd2Xx.FT_CreateDeviceInfoList(ref deviceCount);
                 if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
                 {
-                    return false;
+                    return;
                 }
 
                 if (deviceCount < 1)
                 {
-                    return false;
+                    return;
                 }
 
                 List<ListViewItem> addItems = new List<ListViewItem>();
@@ -658,6 +660,10 @@ namespace EdiabasLibConfigTool
                                     };
                                 addItems.Add(listViewItem);
                             }
+                            else
+                            {
+                                _removedUsbDevices++;
+                            }
                         }
                     }
                     catch (Exception)
@@ -673,10 +679,8 @@ namespace EdiabasLibConfigTool
             }
             catch (Exception)
             {
-                return false;
+                // ignored
             }
-
-            return true;
         }
 
         private bool StartDeviceSearch()
@@ -1079,7 +1083,15 @@ namespace EdiabasLibConfigTool
         {
             if (!_searching && !_vehicleTaskActive)
             {
-                UpdateStatusText(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
+                StringBuilder sb = new StringBuilder();
+                sb.Append(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
+                if (_removedUsbDevices > 0)
+                {
+                    sb.Append("\r\n");
+                    sb.Append(Resources.Strings.UsbAdaptersRemoved);
+                }
+
+                UpdateStatusText(sb.ToString());
             }
         }
 

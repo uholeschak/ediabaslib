@@ -652,6 +652,16 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Only USB adapters are displayed, which have a default FTDI VID and PID.
+        ///Additionally the latency time has to be set manually to 1ms. ähnelt.
+        /// </summary>
+        internal static string UsbAdaptersRemoved {
+            get {
+                return ResourceManager.GetString("UsbAdaptersRemoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Wi-Fi access has been rejected.
         ///Enable location access for this app in the system.
         ///Click here to open the system app: {0} ähnelt.
