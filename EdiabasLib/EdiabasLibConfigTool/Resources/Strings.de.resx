@@ -337,4 +337,7 @@ Hier klicken um die System App zu öffnen: {0}</value>
     <value>Zum Programmieren müssen Sie wählen:
 'HO-ICOM / ENET lokales Netzwerk'</value>
   </data>
+  <data name="SupportedUsbAdapters" xml:space="preserve">
+    <value>Es werden nur USB Adapter mit EdiabasLib Firmware unterstützt.</value>
+  </data>
 </root>

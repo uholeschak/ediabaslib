@@ -473,6 +473,10 @@ namespace EdiabasLibConfigTool
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.ReadFirmwareVersionFailed);
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.SupportedUsbAdapters);
+                    sr.Append("\r\n");
+                    sr.Append(Patch.DcanKlineLink);
                     _form.UpdateStatusText(sr.ToString());
                     return false;
                 }

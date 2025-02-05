@@ -625,6 +625,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Only USB adapters with EdiabasLib firmware are supported. ähnelt.
+        /// </summary>
+        internal static string SupportedUsbAdapters {
+            get {
+                return ResourceManager.GetString("SupportedUsbAdapters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Test OK ähnelt.
         /// </summary>
         internal static string TestOk {

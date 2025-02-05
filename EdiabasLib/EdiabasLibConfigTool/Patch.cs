@@ -47,6 +47,7 @@ namespace EdiabasLibConfigTool
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
         public const string VcRedistLink = @"https://learn.microsoft.com/de-de/cpp/windows/latest-supported-vc-redist?view=msvc-170";
+        public const string DcanKlineLink = @"https://uholeschak.github.io/ediabaslib/docs/Build_Bluetooth_D-CAN_adapter.html";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
         static class NativeMethods
