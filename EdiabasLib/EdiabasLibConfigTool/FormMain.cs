@@ -1001,7 +1001,7 @@ namespace EdiabasLibConfigTool
                 }
                 else
                 {
-                    allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null));
+                    allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null) || !string.IsNullOrEmpty(comPort));
                 }
             }
 
@@ -1201,10 +1201,12 @@ namespace EdiabasLibConfigTool
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
             EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
-            if (devInfo == null && wlanIface == null && enetConnection == null)
+            string comPort = GetSelectedComPort();
+            if (devInfo == null && wlanIface == null && enetConnection == null && string.IsNullOrEmpty(comPort))
             {
                 return;
             }
+
             string dirName = null;
             Patch.PatchType patchType = Patch.PatchType.Ediabas;
             if (sender == buttonPatchEdiabas)
@@ -1250,7 +1252,7 @@ namespace EdiabasLibConfigTool
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
-                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, enetConnection, textBoxBluetoothPin.Text);
+                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, enetConnection, comPort, textBoxBluetoothPin.Text);
                 UpdateStatusText(sr.ToString());
             }
             UpdateButtonStatus();

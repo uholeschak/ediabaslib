@@ -378,7 +378,8 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        public static bool UpdateConfigFile(string configFile, string iniFile, int adapterType, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
+        public static bool UpdateConfigFile(string configFile, string iniFile, int adapterType,
+            BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string comPort, string pin)
         {
             try
             {
@@ -448,6 +449,13 @@ namespace EdiabasLibConfigTool
                     UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
                     UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                     UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
+                    UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
+                }
+                else if (!string.IsNullOrEmpty(comPort))
+                {
+                    UpdateConfigNode(settingsNode, @"ObdComPort", comPort);
+                    UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
+                    UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else
@@ -796,7 +804,8 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName, BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string pin)
+        public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName,
+            BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string comPort, string pin)
         {
             if (string.IsNullOrEmpty(dirName))
             {
@@ -837,7 +846,7 @@ namespace EdiabasLibConfigTool
                 }
 
                 string configFile = Path.Combine(dirName, ConfigFileName);
-                if (!UpdateConfigFile(configFile, null, adapterType, devInfo, wlanIface, enetConnection, pin))
+                if (!UpdateConfigFile(configFile, null, adapterType, devInfo, wlanIface, enetConnection, comPort, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
