@@ -501,6 +501,7 @@ namespace EdiabasLibConfigTool
                 return;
             }
 
+            List<ListViewItem> addItems = new List<ListViewItem>();
             foreach (EdInterfaceEnet.EnetConnection enetConnection in _detectedVehicles)
             {
                 string ipAddress = enetConnection.ToString();
@@ -527,7 +528,12 @@ namespace EdiabasLibConfigTool
                     {
                         Tag = enetConnection
                     };
-                listView.Items.Add(listViewItem);
+                addItems.Add(listViewItem);
+            }
+
+            foreach (ListViewItem addItem in addItems.OrderBy(x => ((EdInterfaceEnet.EnetConnection)x.Tag)?.ToString() ?? string.Empty))
+            {
+                listView.Items.Add(addItem);
             }
         }
 
