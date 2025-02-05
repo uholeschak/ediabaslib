@@ -333,4 +333,7 @@
     <value>Для программирования необходимо выбрать:
 'HO-ICOM / ENET local network'</value>
   </data>
+  <data name="SupportedUsbAdapters" xml:space="preserve">
+    <value>Поддерживаются только USB-адаптеры с прошивкой EdiabasLib.</value>
+  </data>
 </root>
