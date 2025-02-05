@@ -5,6 +5,8 @@ You could still use the firmware as a replacement for FTDI based adapters (Only 
 This chapter describes how to build a D-CAN/K-Line adapter with bluetooth support.  
 **This firmware is not supported any more, use it at your own risk!**
 
+There is also an external [flashing manual](https://www.sfbmwcoding.com/files/flashing_compatible_cable_ediabaslib.pdf) available.
+
 ![](Build_Bluetooth_D-CAN_adapter_AdapterSmall.png)
 
 Basically two components are required:
