@@ -18,6 +18,7 @@ using EdiabasLib;
 using System.Runtime.Versioning;
 using System.Drawing;
 using Windows.Foundation;
+using System.Diagnostics;
 
 namespace EdiabasLibConfigTool
 {
@@ -1323,6 +1324,22 @@ namespace EdiabasLibConfigTool
             if (url.Contains("privacy-location"))
             {
                 StartSettingsApp("privacy-location");
+                return;
+            }
+
+            if (url.StartsWith("https://"))
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo(url)
+                    {
+                        UseShellExecute = true,
+                    });
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
         }
     }
