@@ -575,7 +575,7 @@ namespace EdiabasLibConfigTool
                                 handleFtdi = IntPtr.Zero;
                             }
 
-                            string comPortString = string.Empty;
+                            Patch.UsbInfo usbInfo = null;
                             int latencyTime = -1;
                             if (handleFtdi != IntPtr.Zero)
                             {
@@ -584,7 +584,8 @@ namespace EdiabasLibConfigTool
                                 {
                                     if (comPort >= 0)
                                     {
-                                        comPortString = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
+                                        string comPortName = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
+                                        usbInfo = new Patch.UsbInfo(comPort, comPortName);
                                     }
                                 }
 
@@ -600,7 +601,7 @@ namespace EdiabasLibConfigTool
                                 Ftd2Xx.FT_Close(handleFtdi);
                             }
 
-                            bool validDevice = !string.IsNullOrEmpty(comPortString);
+                            bool validDevice = usbInfo != null;
                             switch (deviceType)
                             {
                                 case Ftd2Xx.FT_DEVICE.FT_DEVICE_232R:
@@ -645,9 +646,9 @@ namespace EdiabasLibConfigTool
                                 }
 
                                 ListViewItem listViewItem =
-                                    new ListViewItem(new[] { comPortString, sbInfo.ToString() })
+                                    new ListViewItem(new[] { usbInfo.ComPortName, sbInfo.ToString() })
                                     {
-                                        Tag = comPortString
+                                        Tag = usbInfo
                                     };
                                 addItems.Add(listViewItem);
                             }
@@ -659,7 +660,7 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                foreach (ListViewItem addItem in addItems.OrderBy(x => x.Tag))
+                foreach (ListViewItem addItem in addItems.OrderBy(x => ((Patch.UsbInfo) x.Tag)?.ComPortNum ?? 0))
                 {
                     listView.Items.Add(addItem);
                 }
@@ -972,14 +973,14 @@ namespace EdiabasLibConfigTool
             return ap;
         }
 
-        public string GetSelectedComPort()
+        public Patch.UsbInfo GetSelectedUsbInfo()
         {
-            string comPort = null;
+            Patch.UsbInfo usbInfo = null;
             if (listViewDevices.SelectedItems.Count > 0)
             {
-                comPort = listViewDevices.SelectedItems[0].Tag as string;
+                usbInfo = listViewDevices.SelectedItems[0].Tag as Patch.UsbInfo;
             }
-            return comPort;
+            return usbInfo;
         }
 
         public void UpdateButtonStatus()
@@ -1003,8 +1004,8 @@ namespace EdiabasLibConfigTool
             WlanInterface wlanIface = GetSelectedWifiDevice();
             EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
             AccessPoint ap = GetSelectedAp();
-            string comPort = GetSelectedComPort();
-            buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null) || !string.IsNullOrEmpty(comPort)) && !_test.ThreadActive;
+            Patch.UsbInfo usbInfo = GetSelectedUsbInfo();
+            buttonTest.Enabled = buttonSearch.Enabled && ((devInfo != null) || (wlanIface != null) || (ap != null) || (usbInfo != null)) && !_test.ThreadActive;
 
             bool allowPatch = false;
             if (!processing)
@@ -1015,7 +1016,7 @@ namespace EdiabasLibConfigTool
                 }
                 else
                 {
-                    allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null) || !string.IsNullOrEmpty(comPort));
+                    allowPatch = buttonTest.Enabled && _test.TestOk && ((wlanIface != null) || (devInfo != null) || (usbInfo != null));
                 }
             }
 
@@ -1215,8 +1216,8 @@ namespace EdiabasLibConfigTool
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
             EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
-            string comPort = GetSelectedComPort();
-            if (devInfo == null && wlanIface == null && enetConnection == null && string.IsNullOrEmpty(comPort))
+            Patch.UsbInfo usbInfo = GetSelectedUsbInfo();
+            if (devInfo == null && wlanIface == null && enetConnection == null && usbInfo == null)
             {
                 return;
             }
@@ -1266,7 +1267,7 @@ namespace EdiabasLibConfigTool
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
-                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, enetConnection, comPort, textBoxBluetoothPin.Text);
+                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, enetConnection, usbInfo, textBoxBluetoothPin.Text);
                 UpdateStatusText(sr.ToString());
             }
             UpdateButtonStatus();
