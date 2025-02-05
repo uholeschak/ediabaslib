@@ -1088,14 +1088,18 @@ namespace EdiabasLibConfigTool
             if (!_searching && !_vehicleTaskActive)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
                 if (_removedUsbDevices > 0)
                 {
-                    sb.Append("\r\n");
                     string ftdiVid = string.Format(CultureInfo.InvariantCulture, "{0:X4}h", FtdiDefaultVid);
                     string ftdiPids232R = string.Format(CultureInfo.InvariantCulture, "{0:X4}h/{1:X4}h", FtdiDefaultPid232R, FtdiDefaultPidXSer);
                     sb.Append(string.Format(CultureInfo.InvariantCulture, Resources.Strings.UsbAdaptersRemoved, ftdiVid, ftdiPids232R));
                 }
+
+                if (sb.Length > 0)
+                {
+                    sb.Append("\r\n");
+                }
+                sb.Append(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
 
                 UpdateStatusText(sb.ToString());
             }
