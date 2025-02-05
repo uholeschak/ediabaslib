@@ -547,108 +547,121 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
+                List<ListViewItem> addItems = new List<ListViewItem>();
                 for (uint index = 0; index < deviceCount; index++)
                 {
-                    byte[] serialNumber = new byte[16];
-                    byte[] description = new byte[64];
-                    ftStatus = Ftd2Xx.FT_GetDeviceInfoDetail(index, out UInt32 deviceFlags, out Ftd2Xx.FT_DEVICE deviceType,
-                        out UInt32 idValue, out UInt32 deviceLocId, serialNumber, description, out IntPtr handleTemp);
-                    if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                    try
                     {
-                        uint deviceId = idValue & 0xFFFF;
-                        uint vendorId = (idValue >> 16) & 0xFFFF;
-
-                        int serialNullIdx = Array.IndexOf(serialNumber, (byte)0);
-                        serialNullIdx = serialNullIdx >= 0 ? serialNullIdx : serialNumber.Length;
-                        string serialString = Encoding.ASCII.GetString(serialNumber, 0, serialNullIdx);
-
-                        int descNullIdx = Array.IndexOf(description, (byte)0);
-                        descNullIdx = descNullIdx >= 0 ? descNullIdx : description.Length;
-                        string descriptionString = Encoding.ASCII.GetString(description, 0, descNullIdx);
-
-                        ftStatus = Ftd2Xx.FT_OpenEx((IntPtr)deviceLocId, Ftd2Xx.FT_OPEN_BY_LOCATION, out IntPtr handleFtdi);
-                        if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
+                        byte[] serialNumber = new byte[16];
+                        byte[] description = new byte[64];
+                        ftStatus = Ftd2Xx.FT_GetDeviceInfoDetail(index, out UInt32 deviceFlags, out Ftd2Xx.FT_DEVICE deviceType,
+                            out UInt32 idValue, out UInt32 deviceLocId, serialNumber, description, out IntPtr handleTemp);
+                        if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
                         {
-                            handleFtdi = IntPtr.Zero;
-                        }
+                            uint deviceId = idValue & 0xFFFF;
+                            uint vendorId = (idValue >> 16) & 0xFFFF;
 
-                        string comPortString = string.Empty;
-                        int latencyTime = -1;
-                        if (handleFtdi != IntPtr.Zero)
-                        {
-                            ftStatus = Ftd2Xx.FT_GetComPortNumber(handleFtdi, out Int32 comPort);
-                            if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                            int serialNullIdx = Array.IndexOf(serialNumber, (byte)0);
+                            serialNullIdx = serialNullIdx >= 0 ? serialNullIdx : serialNumber.Length;
+                            string serialString = Encoding.ASCII.GetString(serialNumber, 0, serialNullIdx);
+
+                            int descNullIdx = Array.IndexOf(description, (byte)0);
+                            descNullIdx = descNullIdx >= 0 ? descNullIdx : description.Length;
+                            string descriptionString = Encoding.ASCII.GetString(description, 0, descNullIdx);
+
+                            ftStatus = Ftd2Xx.FT_OpenEx((IntPtr)deviceLocId, Ftd2Xx.FT_OPEN_BY_LOCATION, out IntPtr handleFtdi);
+                            if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
                             {
-                                if (comPort >= 0)
+                                handleFtdi = IntPtr.Zero;
+                            }
+
+                            string comPortString = string.Empty;
+                            int latencyTime = -1;
+                            if (handleFtdi != IntPtr.Zero)
+                            {
+                                ftStatus = Ftd2Xx.FT_GetComPortNumber(handleFtdi, out Int32 comPort);
+                                if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
                                 {
-                                    comPortString = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
+                                    if (comPort >= 0)
+                                    {
+                                        comPortString = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
+                                    }
+                                }
+
+                                ftStatus = Ftd2Xx.FT_GetLatencyTimer(handleFtdi, out byte latency);
+                                if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                                {
+                                    latencyTime = latency;
                                 }
                             }
 
-                            ftStatus = Ftd2Xx.FT_GetLatencyTimer(handleFtdi, out byte latency);
-                            if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                            if (handleFtdi != IntPtr.Zero)
                             {
-                                latencyTime = latency;
+                                Ftd2Xx.FT_Close(handleFtdi);
                             }
-                        }
 
-                        if (handleFtdi != IntPtr.Zero)
-                        {
-                            Ftd2Xx.FT_Close(handleFtdi);
-                        }
+                            bool validDevice = !string.IsNullOrEmpty(comPortString);
+                            switch (deviceType)
+                            {
+                                case Ftd2Xx.FT_DEVICE.FT_DEVICE_232R:
+                                case Ftd2Xx.FT_DEVICE.FT_DEVICE_X_SERIES:
+                                    break;
 
-                        bool validDevice = !string.IsNullOrEmpty(comPortString);
-                        switch (deviceType)
-                        {
-                            case Ftd2Xx.FT_DEVICE.FT_DEVICE_232R:
-                            case Ftd2Xx.FT_DEVICE.FT_DEVICE_X_SERIES:
-                                break;
+                                default:
+                                    validDevice = false;
+                                    break;
+                            }
 
-                            default:
+                            if (latencyTime != 1)
+                            {
                                 validDevice = false;
-                                break;
-                        }
-
-                        if (latencyTime != 1)
-                        {
-                            validDevice = false;
-                        }
-
-                        if (deviceId != 0x6001 && deviceId != 0x6015)
-                        {
-                            validDevice = false;
-                        }
-
-                        if (vendorId != 0x0403)
-                        {
-                            validDevice = false;
-                        }
-
-                        if (validDevice)
-                        {
-                            StringBuilder sbInfo = new StringBuilder();
-                            if (!string.IsNullOrEmpty(descriptionString))
-                            {
-                                sbInfo.Append(descriptionString);
                             }
 
-                            if (!string.IsNullOrEmpty(serialString))
+                            if (deviceId != 0x6001 && deviceId != 0x6015)
                             {
-                                if (sbInfo.Length > 0)
+                                validDevice = false;
+                            }
+
+                            if (vendorId != 0x0403)
+                            {
+                                validDevice = false;
+                            }
+
+                            if (validDevice)
+                            {
+                                StringBuilder sbInfo = new StringBuilder();
+                                if (!string.IsNullOrEmpty(descriptionString))
                                 {
-                                    sbInfo.Append(" / ");
+                                    sbInfo.Append(descriptionString);
                                 }
-                                sbInfo.Append(serialString);
-                            }
 
-                            ListViewItem listViewItem =
-                                new ListViewItem(new[] { comPortString, sbInfo.ToString()})
+                                if (!string.IsNullOrEmpty(serialString))
                                 {
-                                    Tag = comPortString
-                                };
-                            listView.Items.Add(listViewItem);
+                                    if (sbInfo.Length > 0)
+                                    {
+                                        sbInfo.Append(" / ");
+                                    }
+                                    sbInfo.Append(serialString);
+                                }
+
+                                ListViewItem listViewItem =
+                                    new ListViewItem(new[] { comPortString, sbInfo.ToString() })
+                                    {
+                                        Tag = comPortString
+                                    };
+                                addItems.Add(listViewItem);
+                            }
                         }
                     }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                foreach (ListViewItem addItem in addItems.OrderBy(x => x.Tag))
+                {
+                    listView.Items.Add(addItem);
                 }
             }
             catch (Exception)
@@ -1327,8 +1340,8 @@ namespace EdiabasLibConfigTool
                 return;
             }
 
-            if (url.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
-                url.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            if (url.StartsWith(@"https://", StringComparison.OrdinalIgnoreCase) ||
+                url.StartsWith(@"http://", StringComparison.OrdinalIgnoreCase))
             {
                 try
                 {
