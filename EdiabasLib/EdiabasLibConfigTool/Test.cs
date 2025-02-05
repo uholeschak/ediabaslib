@@ -285,8 +285,8 @@ namespace EdiabasLibConfigTool
                 return true;
             }
 
-            string comPort = _form.GetSelectedComPort();
-            if (!string.IsNullOrEmpty(comPort))
+            Patch.UsbInfo usbInfo = _form.GetSelectedUsbInfo();
+            if (usbInfo != null)
             {
                 _testThread = new Thread(() =>
                 {
@@ -295,12 +295,12 @@ namespace EdiabasLibConfigTool
                         Thread.CurrentThread.CurrentCulture = cultureInfo;
                         Thread.CurrentThread.CurrentUICulture = cultureInfo;
                         _form.UpdateStatusText(Resources.Strings.Connecting);
-                        if (!ConnectUsbDevice(comPort))
+                        if (!ConnectUsbDevice(usbInfo.ComPortName))
                         {
                             _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                             return;
                         }
-                        TestOk = RunUsbTest(comPort);
+                        TestOk = RunUsbTest();
                     }
                     finally
                     {
@@ -474,7 +474,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        private bool RunUsbTest(string comPort)
+        private bool RunUsbTest()
         {
             StringBuilder sr = new StringBuilder();
 

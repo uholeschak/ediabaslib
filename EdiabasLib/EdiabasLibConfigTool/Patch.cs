@@ -99,6 +99,18 @@ namespace EdiabasLibConfigTool
             IstadExt,
         }
 
+        public class UsbInfo
+        {
+            public UsbInfo(int comPortNum, string comPortName)
+            {
+                ComPortNum = comPortNum;
+                ComPortName = comPortName;
+            }
+
+            public int ComPortNum { get; set; }
+            public string ComPortName { get; set; }
+        }
+
         public static string AssemblyDirectory
         {
             get
@@ -380,7 +392,7 @@ namespace EdiabasLibConfigTool
         }
 
         public static bool UpdateConfigFile(string configFile, string iniFile, int adapterType,
-            BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string comPort, string pin)
+            BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
         {
             try
             {
@@ -452,9 +464,9 @@ namespace EdiabasLibConfigTool
                     UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
-                else if (!string.IsNullOrEmpty(comPort))
+                else if (usbInfo != null)
                 {
-                    UpdateConfigNode(settingsNode, @"ObdComPort", comPort);
+                    UpdateConfigNode(settingsNode, @"ObdComPort", usbInfo.ComPortName);
                     UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
                     UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
@@ -806,7 +818,7 @@ namespace EdiabasLibConfigTool
         }
 
         public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName,
-            BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, string comPort, string pin)
+            BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
         {
             if (string.IsNullOrEmpty(dirName))
             {
@@ -847,7 +859,7 @@ namespace EdiabasLibConfigTool
                 }
 
                 string configFile = Path.Combine(dirName, ConfigFileName);
-                if (!UpdateConfigFile(configFile, null, adapterType, devInfo, wlanIface, enetConnection, comPort, pin))
+                if (!UpdateConfigFile(configFile, null, adapterType, devInfo, wlanIface, enetConnection, usbInfo, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
