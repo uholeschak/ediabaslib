@@ -610,7 +610,17 @@ namespace EdiabasLibConfigTool
                             switch (deviceType)
                             {
                                 case Ftd2Xx.FT_DEVICE.FT_DEVICE_232R:
+                                    if (deviceId != FtdiDefaultPid232R)
+                                    {
+                                        validDevice = false;
+                                    }
+                                    break;
+
                                 case Ftd2Xx.FT_DEVICE.FT_DEVICE_X_SERIES:
+                                    if (deviceId != FtdiDefaultPidXSer)
+                                    {
+                                        validDevice = false;
+                                    }
                                     break;
 
                                 default:
@@ -623,12 +633,7 @@ namespace EdiabasLibConfigTool
                                 validDevice = false;
                             }
 
-                            if (deviceId != FtdiDefaultPid232R && deviceId != FtdiDefaultPidXSer)
-                            {
-                                validDevice = false;
-                            }
-
-                            if (validDevice && usbInfo != null)
+                            if (validDevice)
                             {
                                 int? latencyTimer = Patch.GetFtdiLatencyTimer(usbInfo.ComPortName);
                                 if (latencyTimer == null)
@@ -1089,7 +1094,7 @@ namespace EdiabasLibConfigTool
                 {
                     string ftdiVid = string.Format(CultureInfo.InvariantCulture, "{0:X4}h", FtdiDefaultVid);
                     string ftdiPids232R = string.Format(CultureInfo.InvariantCulture, "{0:X4}h/{1:X4}h", FtdiDefaultPid232R, FtdiDefaultPidXSer);
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, Resources.Strings.UsbAdaptersRemoved, ftdiVid, ftdiPids232R));
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, Resources.Strings.UsbAdaptersHidden, ftdiVid, ftdiPids232R));
                 }
 
                 if (sb.Length > 0)

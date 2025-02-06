@@ -339,9 +339,8 @@ Click here to open the system app: {0}</value>
   <data name="SupportedUsbAdapters" xml:space="preserve">
     <value>Only USB adapters with EdiabasLib firmware are supported.</value>
   </data>
-  <data name="UsbAdaptersRemoved" xml:space="preserve">
-    <value>Only USB adapters are displayed, which have VID {0} and PID {1}.
-Additionally the latency time has to be set manually to 1ms.</value>
+  <data name="UsbAdaptersHidden" xml:space="preserve">
+    <value>Only USB adapters are displayed, which have VID {0} and PID {1}.</value>
   </data>
   <data name="PatchingLatencyTime" xml:space="preserve">
     <value>Correcting invalid latency time: {0}ms -&gt;{1}ms</value>

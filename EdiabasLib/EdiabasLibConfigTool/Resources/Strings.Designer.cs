@@ -670,12 +670,11 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Only USB adapters are displayed, which have VID {0} and PID {1}.
-        ///Additionally the latency time has to be set manually to 1ms. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Only USB adapters are displayed, which have VID {0} and PID {1}. ähnelt.
         /// </summary>
-        internal static string UsbAdaptersRemoved {
+        internal static string UsbAdaptersHidden {
             get {
-                return ResourceManager.GetString("UsbAdaptersRemoved", resourceCulture);
+                return ResourceManager.GetString("UsbAdaptersHidden", resourceCulture);
             }
         }
         
