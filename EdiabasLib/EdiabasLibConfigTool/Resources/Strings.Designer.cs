@@ -452,6 +452,24 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Correcting invalid latency time: {0}ms -&gt;{1}ms ähnelt.
+        /// </summary>
+        internal static string PatchingLatencyTime {
+            get {
+                return ResourceManager.GetString("PatchingLatencyTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Changing latency time failed. Please correct it manually. ähnelt.
+        /// </summary>
+        internal static string PatchingLatencyTimeFailed {
+            get {
+                return ResourceManager.GetString("PatchingLatencyTimeFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type:
         ///&apos;Ediabas default settings (ediabas.ini)&apos; ähnelt.
         /// </summary>

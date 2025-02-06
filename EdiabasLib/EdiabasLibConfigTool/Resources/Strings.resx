@@ -343,4 +343,10 @@ Click here to open the system app: {0}</value>
     <value>Only USB adapters are displayed, which have VID {0} and PID {1}.
 Additionally the latency time has to be set manually to 1ms.</value>
   </data>
+  <data name="PatchingLatencyTime" xml:space="preserve">
+    <value>Correcting invalid latency time: {0}ms -&gt;{1}ms</value>
+  </data>
+  <data name="PatchingLatencyTimeFailed" xml:space="preserve">
+    <value>Changing latency time failed. Please correct it manually.</value>
+  </data>
 </root>
