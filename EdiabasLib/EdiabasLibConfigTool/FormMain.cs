@@ -588,7 +588,6 @@ namespace EdiabasLibConfigTool
                             }
 
                             Patch.UsbInfo usbInfo = null;
-                            int latencyTime = -1;
                             if (handleFtdi != IntPtr.Zero)
                             {
                                 ftStatus = Ftd2Xx.FT_GetComPortNumber(handleFtdi, out Int32 comPort);
@@ -599,12 +598,6 @@ namespace EdiabasLibConfigTool
                                         string comPortName = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
                                         usbInfo = new Patch.UsbInfo(comPort, comPortName);
                                     }
-                                }
-
-                                ftStatus = Ftd2Xx.FT_GetLatencyTimer(handleFtdi, out byte latency);
-                                if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
-                                {
-                                    latencyTime = latency;
                                 }
                             }
 
@@ -625,11 +618,6 @@ namespace EdiabasLibConfigTool
                                     break;
                             }
 
-                            if (latencyTime != 1)
-                            {
-                                validDevice = false;
-                            }
-
                             if (vendorId != FtdiDefaultVid)
                             {
                                 validDevice = false;
@@ -638,6 +626,15 @@ namespace EdiabasLibConfigTool
                             if (deviceId != FtdiDefaultPid232R && deviceId != FtdiDefaultPidXSer)
                             {
                                 validDevice = false;
+                            }
+
+                            if (validDevice && usbInfo != null)
+                            {
+                                int? latencyTimer = Patch.GetFtdiLatencyTimer(usbInfo.ComPortName);
+                                if (latencyTimer == null)
+                                {
+                                    validDevice = false;
+                                }
                             }
 
                             if (validDevice)
