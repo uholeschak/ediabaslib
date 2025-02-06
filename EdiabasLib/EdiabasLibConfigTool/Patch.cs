@@ -39,6 +39,8 @@ namespace EdiabasLibConfigTool
         public const string ConfigFileName = @"EdiabasLib.config";
         public const string IniFileName = @"EDIABAS.INI";
         public const string RegKeyReingold = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
+        public const string RegKeyFtdiBus = @"SYSTEM\CurrentControlSet\Enum\FTDIBUS";
+        public const string RegValueFtdiLatencyTimer = @"LatencyTimer";
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegKeyRheingoldNameStart = @"BMW.Rheingold.";
         public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
@@ -740,6 +742,101 @@ namespace EdiabasLibConfigTool
             }
 
             return true;
+        }
+
+        public static string GetFtdiRegKey(string comPort)
+        {
+            if (string.IsNullOrEmpty(comPort))
+            {
+                return null;
+            }
+
+            try
+            {
+                using (RegistryKey ftdiBusKey = Registry.LocalMachine.OpenSubKey(RegKeyFtdiBus, false))
+                {
+                    if (ftdiBusKey != null)
+                    {
+                        foreach (string subKeyName in ftdiBusKey.GetSubKeyNames())
+                        {
+                            string paramKeyName = subKeyName + @"\0000\Device Parameters";
+                            using (RegistryKey paramKey = ftdiBusKey.OpenSubKey(paramKeyName))
+                            {
+                                if (paramKey != null)
+                                {
+                                    string portName = paramKey.GetValue("PortName") as string;
+                                    if (string.Compare(portName, comPort, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        return RegKeyFtdiBus + @"\" + paramKeyName;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
+        public static int? GetFtdiLatencyTimer(string comPort)
+        {
+            string regKey = GetFtdiRegKey(comPort);
+            if (string.IsNullOrEmpty(regKey))
+            {
+                return null;
+            }
+
+            try
+            {
+                using (RegistryKey ftdiKey = Registry.LocalMachine.OpenSubKey(regKey, false))
+                {
+                    if (ftdiKey != null)
+                    {
+                        object latencyTimer = ftdiKey.GetValue(RegValueFtdiLatencyTimer);
+                        if (latencyTimer is int latencyValue)
+                        {
+                            return latencyValue;
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
+        public static bool SetFtdiLatencyTimer(string comPort, int value)
+        {
+            string regKey = GetFtdiRegKey(comPort);
+            if (string.IsNullOrEmpty(regKey))
+            {
+                return false;
+            }
+
+            try
+            {
+                using (RegistryKey ftdiKey = Registry.LocalMachine.OpenSubKey(regKey, true))
+                {
+                    if (ftdiKey != null)
+                    {
+                        ftdiKey.SetValue(RegValueFtdiLatencyTimer, value, RegistryValueKind.DWord);
+                        return true;
+                    }
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static bool IsValid(string dirName)
