@@ -340,4 +340,10 @@
     <value>Отображаются только USB-адаптеры с VID {0} и PID {1}.
 Кроме того, время задержки необходимо установить вручную на 1 мс.</value>
   </data>
+  <data name="PatchingLatencyTime" xml:space="preserve">
+    <value>Исправление недопустимого времени задержки: {0}ms -&gt;{1}ms</value>
+  </data>
+  <data name="PatchingLatencyTimeFailed" xml:space="preserve">
+    <value>Не удалось изменить время задержки. Пожалуйста, исправьте вручную.</value>
+  </data>
 </root>

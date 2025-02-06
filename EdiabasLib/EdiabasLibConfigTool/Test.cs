@@ -27,6 +27,7 @@ namespace EdiabasLibConfigTool
     public class Test : IDisposable
     {
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+        public const int FtdiLatencyTimer = 1;
         private const string ElmIp = @"192.168.0.10";
         private const int ElmPort = 35000;
         private const string EspLinkIp = @"192.168.4.1";
@@ -295,12 +296,12 @@ namespace EdiabasLibConfigTool
                         Thread.CurrentThread.CurrentCulture = cultureInfo;
                         Thread.CurrentThread.CurrentUICulture = cultureInfo;
                         _form.UpdateStatusText(Resources.Strings.Connecting);
-                        if (!ConnectUsbDevice(usbInfo.ComPortName))
+                        if (!ConnectUsbDevice(usbInfo))
                         {
                             _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                             return;
                         }
-                        TestOk = RunUsbTest();
+                        TestOk = RunUsbTest(usbInfo);
                     }
                     finally
                     {
@@ -445,11 +446,16 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        private bool ConnectUsbDevice(string comPort)
+        private bool ConnectUsbDevice(Patch.UsbInfo usbInfo)
         {
+            if (usbInfo == null)
+            {
+                return false;
+            }
+
             try
             {
-                _serialPort.PortName = comPort;
+                _serialPort.PortName = usbInfo.ComPortName;
                 _serialPort.BaudRate = 115200;
                 _serialPort.Parity = Parity.None;
                 _serialPort.DataBits = 8;
@@ -474,7 +480,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        private bool RunUsbTest()
+        private bool RunUsbTest(Patch.UsbInfo usbInfo)
         {
             StringBuilder sr = new StringBuilder();
 
@@ -498,6 +504,22 @@ namespace EdiabasLibConfigTool
                 sr.Append(Resources.Strings.FirmwareVersion);
                 sr.Append(string.Format(" {0}.{1}", firmware[2], firmware[3]));
                 AdapterType = (firmware[0] << 8) + firmware[1];
+
+                if (usbInfo != null)
+                {
+                    int? latencyTimer = Patch.GetFtdiLatencyTimer(usbInfo.ComPortName);
+                    if (latencyTimer == null || latencyTimer.Value != FtdiLatencyTimer)
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchingLatencyTime, latencyTimer ?? 0, FtdiLatencyTimer));
+                        if (!Patch.SetFtdiLatencyTimer(usbInfo.ComPortName, FtdiLatencyTimer))
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(Resources.Strings.PatchingLatencyTimeFailed);
+                            return false;
+                        }
+                    }
+                }
 
                 sr.Append("\r\n");
                 sr.Append(Resources.Strings.TestOk);

@@ -344,4 +344,10 @@ Hier klicken um die System App zu öffnen: {0}</value>
     <value>Es werden nur USB Adapter angezeigt, welche ein VID {0} und PID {1} besitzen.
 Ebenso muss die Latenzzeit manuell auf 1ms eingestellt sein.</value>
   </data>
+  <data name="PatchingLatencyTime" xml:space="preserve">
+    <value>Ungültige Latenzzeit wird korrigiert: {0}ms -&gt; {1}ms</value>
+  </data>
+  <data name="PatchingLatencyTimeFailed" xml:space="preserve">
+    <value>Ändern der Latenzzeit fehlgeschlagen. Bitte manuell korrigieren.</value>
+  </data>
 </root>
