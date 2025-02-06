@@ -336,9 +336,8 @@
   <data name="SupportedUsbAdapters" xml:space="preserve">
     <value>Поддерживаются только USB-адаптеры с прошивкой EdiabasLib.</value>
   </data>
-  <data name="UsbAdaptersRemoved" xml:space="preserve">
-    <value>Отображаются только USB-адаптеры с VID {0} и PID {1}.
-Кроме того, время задержки необходимо установить вручную на 1 мс.</value>
+  <data name="UsbAdaptersHidden" xml:space="preserve">
+    <value>Отображаются только USB-адаптеры с VID {0} и PID {1}.</value>
   </data>
   <data name="PatchingLatencyTime" xml:space="preserve">
     <value>Исправление недопустимого времени задержки: {0}ms -&gt;{1}ms</value>
