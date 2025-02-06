@@ -103,12 +103,14 @@ namespace EdiabasLibConfigTool
 
         public class UsbInfo
         {
-            public UsbInfo(int comPortNum, string comPortName)
+            public UsbInfo(uint locationId, int comPortNum, string comPortName)
             {
+                LocationId = locationId;
                 ComPortNum = comPortNum;
                 ComPortName = comPortName;
             }
 
+            public uint LocationId { get; set; }
             public int ComPortNum { get; set; }
             public string ComPortName { get; set; }
         }
