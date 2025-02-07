@@ -301,6 +301,7 @@ namespace EdiabasLibConfigTool
                             _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
                             return;
                         }
+
                         TestOk = RunUsbTest(usbInfo);
                     }
                     finally
@@ -486,6 +487,7 @@ namespace EdiabasLibConfigTool
 
             try
             {
+                bool resetRequired = false;
                 sr.Append(Resources.Strings.Connected);
                 byte[] firmware = AdapterCommandCustom(0xFD, new byte[] { 0xFD });
                 if ((firmware == null) || (firmware.Length < 4))
@@ -516,8 +518,23 @@ namespace EdiabasLibConfigTool
                         {
                             sr.Append("\r\n");
                             sr.Append(Resources.Strings.PatchingLatencyTimeFailed);
+                            _form.UpdateStatusText(sr.ToString());
                             return false;
                         }
+
+                        resetRequired = true;
+                    }
+                }
+
+                if (resetRequired)
+                {
+                    DisconnectStream();
+                    if (!Patch.ResetFtdiDevice(usbInfo))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(Resources.Strings.PatchingLatencyTimeFailed);
+                        _form.UpdateStatusText(sr.ToString());
+                        return false;
                     }
                 }
 

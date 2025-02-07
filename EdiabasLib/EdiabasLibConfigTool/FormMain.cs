@@ -596,7 +596,7 @@ namespace EdiabasLibConfigTool
                                     if (comPort >= 0)
                                     {
                                         string comPortName = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
-                                        usbInfo = new Patch.UsbInfo(comPort, comPortName);
+                                        usbInfo = new Patch.UsbInfo(deviceLocId, comPort, comPortName);
                                     }
                                 }
                             }

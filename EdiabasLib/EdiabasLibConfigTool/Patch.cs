@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -103,12 +104,14 @@ namespace EdiabasLibConfigTool
 
         public class UsbInfo
         {
-            public UsbInfo(int comPortNum, string comPortName)
+            public UsbInfo(uint locationId, int comPortNum, string comPortName)
             {
+                LocationId = locationId;
                 ComPortNum = comPortNum;
                 ComPortName = comPortName;
             }
 
+            public uint LocationId { get; set; }
             public int ComPortNum { get; set; }
             public string ComPortName { get; set; }
         }
@@ -836,6 +839,47 @@ namespace EdiabasLibConfigTool
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public static bool ResetFtdiDevice(UsbInfo usbInfo)
+        {
+            if (usbInfo == null)
+            {
+                return false;
+            }
+
+            IntPtr handleFtdi = IntPtr.Zero;
+            try
+            {
+                Ftd2Xx.FT_STATUS ftStatus = Ftd2Xx.FT_OpenEx((IntPtr)usbInfo.LocationId, Ftd2Xx.FT_OPEN_BY_LOCATION, out handleFtdi);
+                if (ftStatus != Ftd2Xx.FT_STATUS.FT_OK)
+                {
+                    handleFtdi = IntPtr.Zero;
+                    return false;
+                }
+
+                if (handleFtdi != IntPtr.Zero)
+                {
+                    ftStatus = Ftd2Xx.FT_CyclePort(handleFtdi);
+                    if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                if (handleFtdi != IntPtr.Zero)
+                {
+                    Ftd2Xx.FT_Close(handleFtdi);
+                }
             }
         }
 
