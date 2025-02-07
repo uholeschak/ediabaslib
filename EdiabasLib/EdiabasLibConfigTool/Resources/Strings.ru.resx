@@ -345,4 +345,7 @@
   <data name="PatchingLatencyTimeFailed" xml:space="preserve">
     <value>Не удалось изменить время задержки. Пожалуйста, исправьте вручную.</value>
   </data>
+  <data name="ResetUsbDeviceFailed" xml:space="preserve">
+    <value>Сброс USB-устройства не удался. Отсоедините устройство для ручного сброса.</value>
+  </data>
 </root>

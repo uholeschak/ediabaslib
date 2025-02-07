@@ -348,4 +348,7 @@ Click here to open the system app: {0}</value>
   <data name="PatchingLatencyTimeFailed" xml:space="preserve">
     <value>Changing latency time failed. Please correct it manually.</value>
   </data>
+  <data name="ResetUsbDeviceFailed" xml:space="preserve">
+    <value>Resetting USB device failed. Disconnect device for manual reset.</value>
+  </data>
 </root>

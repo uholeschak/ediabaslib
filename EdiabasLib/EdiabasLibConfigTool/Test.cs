@@ -532,7 +532,7 @@ namespace EdiabasLibConfigTool
                     if (!Patch.ResetFtdiDevice(usbInfo))
                     {
                         sr.Append("\r\n");
-                        sr.Append(Resources.Strings.PatchingLatencyTimeFailed);
+                        sr.Append(Resources.Strings.ResetUsbDeviceFailed);
                         _form.UpdateStatusText(sr.ToString());
                         return false;
                     }

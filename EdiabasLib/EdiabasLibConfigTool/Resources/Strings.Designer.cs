@@ -580,6 +580,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Resetting USB device failed. Disconnect device for manual reset. ähnelt.
+        /// </summary>
+        internal static string ResetUsbDeviceFailed {
+            get {
+                return ResourceManager.GetString("ResetUsbDeviceFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Restoring original {0} file failed. ähnelt.
         /// </summary>
         internal static string RestoreApiDllFailed {
