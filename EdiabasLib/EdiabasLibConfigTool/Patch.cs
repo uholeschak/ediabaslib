@@ -747,13 +747,14 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static string GetFtdiRegKey(string comPort)
+        public static List<string> GetFtdiRegKeys(string comPort)
         {
             if (string.IsNullOrEmpty(comPort))
             {
                 return null;
             }
 
+            List<string> regKeys = new List<string>();
             try
             {
                 using (RegistryKey ftdiBusKey = Registry.LocalMachine.OpenSubKey(RegKeyFtdiBus, false))
@@ -770,7 +771,7 @@ namespace EdiabasLibConfigTool
                                     string portName = paramKey.GetValue("PortName") as string;
                                     if (string.Compare(portName, comPort, StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        return RegKeyFtdiBus + @"\" + paramKeyName;
+                                        regKeys.Add(RegKeyFtdiBus + @"\" + paramKeyName);
                                     }
                                 }
                             }
@@ -783,63 +784,72 @@ namespace EdiabasLibConfigTool
                 // ignored
             }
 
-            return null;
+            return regKeys;
         }
 
-        public static int? GetFtdiLatencyTimer(string comPort)
+        public static List<int> GetFtdiLatencyTimer(string comPort)
         {
-            string regKey = GetFtdiRegKey(comPort);
-            if (string.IsNullOrEmpty(regKey))
+            List<string> regKeys = GetFtdiRegKeys(comPort);
+            if (regKeys == null)
             {
                 return null;
             }
 
-            try
+            List<int> latencyTimers = new List<int>();
+            foreach (string regKey in regKeys)
             {
-                using (RegistryKey ftdiKey = Registry.LocalMachine.OpenSubKey(regKey, false))
+                try
                 {
-                    if (ftdiKey != null)
+                    using (RegistryKey ftdiKey = Registry.LocalMachine.OpenSubKey(regKey, false))
                     {
-                        object latencyTimer = ftdiKey.GetValue(RegValueFtdiLatencyTimer);
-                        if (latencyTimer is int latencyValue)
+                        if (ftdiKey != null)
                         {
-                            return latencyValue;
+                            object latencyTimer = ftdiKey.GetValue(RegValueFtdiLatencyTimer);
+                            if (latencyTimer is int latencyValue)
+                            {
+                                latencyTimers.Add(latencyValue);
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
-                // ignored
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
 
-            return null;
+            return latencyTimers;
         }
 
         public static bool SetFtdiLatencyTimer(string comPort, int value)
         {
-            string regKey = GetFtdiRegKey(comPort);
-            if (string.IsNullOrEmpty(regKey))
+            List<string> regKeys = GetFtdiRegKeys(comPort);
+            if (regKeys == null)
             {
                 return false;
             }
 
-            try
+            bool result = false;
+            foreach (string regKey in regKeys)
             {
-                using (RegistryKey ftdiKey = Registry.LocalMachine.OpenSubKey(regKey, true))
+                try
                 {
-                    if (ftdiKey != null)
+                    using (RegistryKey ftdiKey = Registry.LocalMachine.OpenSubKey(regKey, true))
                     {
-                        ftdiKey.SetValue(RegValueFtdiLatencyTimer, value, RegistryValueKind.DWord);
-                        return true;
+                        if (ftdiKey != null)
+                        {
+                            ftdiKey.SetValue(RegValueFtdiLatencyTimer, value, RegistryValueKind.DWord);
+                            result = true;
+                        }
                     }
                 }
-                return false;
+                catch (Exception)
+                {
+                    return false;
+                }
             }
-            catch (Exception)
-            {
-                return false;
-            }
+
+            return result;
         }
 
         public static bool ResetFtdiDevice(UsbInfo usbInfo)

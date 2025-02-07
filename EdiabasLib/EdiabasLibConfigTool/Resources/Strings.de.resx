@@ -272,6 +272,9 @@ installiert?</value>
   <data name="LanguageRu" xml:space="preserve">
     <value>Pусский</value>
   </data>
+  <data name="LanguageFr" xml:space="preserve">
+    <value>Français</value>
+  </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Hinweis: In ISTA-D Administration -&gt; VCI Konfiguration als Interface Typ auswählen:
 'Ediabas Standardeinstellungen (ediabas.ini)'</value>

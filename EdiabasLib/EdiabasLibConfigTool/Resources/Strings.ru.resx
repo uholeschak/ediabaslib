@@ -271,6 +271,9 @@
   <data name="LanguageRu" xml:space="preserve">
     <value>Pусский</value>
   </data>
+  <data name="LanguageFr" xml:space="preserve">
+    <value>Français</value>
+  </data>
   <data name="PatchInstadInfo" xml:space="preserve">
     <value>Указание: В ISTA-D администрировании -&gt; VCI конфигурация выберите тип интерфейса:
 'Ediabas настройки по умолчанию (ediabas.ini)'</value>
