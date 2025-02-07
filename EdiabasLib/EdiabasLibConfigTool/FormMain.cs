@@ -591,14 +591,26 @@ namespace EdiabasLibConfigTool
                             Patch.UsbInfo usbInfo = null;
                             if (handleFtdi != IntPtr.Zero)
                             {
+                                string comPortName = null;
                                 ftStatus = Ftd2Xx.FT_GetComPortNumber(handleFtdi, out Int32 comPort);
                                 if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
                                 {
                                     if (comPort >= 0)
                                     {
-                                        string comPortName = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
-                                        usbInfo = new Patch.UsbInfo(deviceLocId, comPort, comPortName);
+                                        comPortName = "COM" + comPort.ToString(CultureInfo.InvariantCulture);
                                     }
+                                }
+
+                                int? latencyTimer = null;
+                                ftStatus = Ftd2Xx.FT_GetLatencyTimer(handleFtdi, out byte latency);
+                                if (ftStatus == Ftd2Xx.FT_STATUS.FT_OK)
+                                {
+                                    latencyTimer = latency;
+                                }
+
+                                if (!string.IsNullOrEmpty(comPortName) && latencyTimer != null)
+                                {
+                                    usbInfo = new Patch.UsbInfo(deviceLocId, comPort, comPortName, latencyTimer.Value);
                                 }
                             }
 
