@@ -333,6 +333,15 @@ namespace EdiabasLibConfigTool.Resources {
                 return ResourceManager.GetString("LanguageRu", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Pусский ähnelt.
+        /// </summary>
+        internal static string LanguageFr {
+            get {
+                return ResourceManager.GetString("LanguageFr", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die This application requires .NET Framework {0} or higher. ähnelt.
