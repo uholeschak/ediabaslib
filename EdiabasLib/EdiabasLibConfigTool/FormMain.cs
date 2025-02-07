@@ -636,8 +636,8 @@ namespace EdiabasLibConfigTool
 
                             if (validDevice)
                             {
-                                int? latencyTimer = Patch.GetFtdiLatencyTimer(usbInfo.ComPortName);
-                                if (latencyTimer == null)
+                                List<int> latencyTimers = Patch.GetFtdiLatencyTimer(usbInfo.ComPortName);
+                                if (latencyTimers == null)
                                 {
                                     validDevice = false;
                                 }
