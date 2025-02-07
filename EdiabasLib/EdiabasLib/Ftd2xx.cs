@@ -309,6 +309,9 @@ namespace EdiabasLib
         [DllImport("ftd2xx")]
         public static extern FT_STATUS FT_GetComPortNumber(IntPtr ftHandle, out Int32 lplComPortNumber);
 
+        [DllImport("ftd2xx")]
+        public static extern FT_STATUS FT_CyclePort(IntPtr ftHandle);
+
         #endregion Normal Functions
 
         #region Helper Functions
