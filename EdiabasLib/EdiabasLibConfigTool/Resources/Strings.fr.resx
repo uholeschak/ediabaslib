@@ -1,0 +1,357 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BtInitError" xml:space="preserve">
+    <value>Initialisation du Bluetooth échouée: {0}</value>
+  </data>
+  <data name="ButtonTestCheck" xml:space="preserve">
+    <value>Test de Connection</value>
+  </data>
+  <data name="ButtonTestConfiguration" xml:space="preserve">
+    <value>Configuration de l'Adaptater</value>
+  </data>
+  <data name="ButtonTestConnect" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="CanMode" xml:space="preserve">
+    <value>Mode de l'Adaptater:</value>
+  </data>
+  <data name="CanMode100" xml:space="preserve">
+    <value>K-CAN</value>
+  </data>
+  <data name="CanMode500" xml:space="preserve">
+    <value>D-CAN</value>
+  </data>
+  <data name="CanModeAuto" xml:space="preserve">
+    <value>Automatique</value>
+  </data>
+  <data name="CanModeChangeAuto" xml:space="preserve">
+    <value>Changement du mode CAN en automatique</value>
+  </data>
+  <data name="CanModeChangeFailed" xml:space="preserve">
+    <value>Changement du mode CAN échoué</value>
+  </data>
+  <data name="CanModeNotAuto" xml:space="preserve">
+    <value>Il est recommendé d'utiliser le mode automatique de l'adaptateur.</value>
+  </data>
+  <data name="CanModeOff" xml:space="preserve">
+    <value>K-LINE</value>
+  </data>
+  <data name="CanModeUnknown" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="Connected" xml:space="preserve">
+    <value>Connecté</value>
+  </data>
+  <data name="Connecting" xml:space="preserve">
+    <value>Connection ...</value>
+  </data>
+  <data name="ConnectionFailed" xml:space="preserve">
+    <value>Connection échouée</value>
+  </data>
+  <data name="DevicesFound" xml:space="preserve">
+    <value>Selectionner un appareil pour réaliser une opération.</value>
+  </data>
+  <data name="DevicesNotFound" xml:space="preserve">
+    <value>Aucun appareil trouvé.</value>
+  </data>
+  <data name="DisconnectedAdapter" xml:space="preserve">
+    <value>adaptater Wi-Fi déconnecté</value>
+  </data>
+  <data name="FirmwareTooOld" xml:space="preserve">
+    <value>Firmware trop ancien, merci de mettre à jour le firmware avec l'application Deep OBD.</value>
+  </data>
+  <data name="FirmwareVersion" xml:space="preserve">
+    <value>Firmware:</value>
+  </data>
+  <data name="HttpResponseIncorrect" xml:space="preserve">
+    <value>Réponse HTTP invalide</value>
+  </data>
+  <data name="HttpResponseOk" xml:space="preserve">
+    <value>Réponse HTTP OK</value>
+  </data>
+  <data name="PatchApiDllMissing" xml:space="preserve">
+    <value>Le file EdiabasLib {0} est manquant.</value>
+  </data>
+  <data name="PatchBackupFileExisting" xml:space="preserve">
+    <value>Le fichier de sauvegarde {0} existe déjà.</value>
+  </data>
+  <data name="PatchConfigExisting" xml:space="preserve">
+    <value>Le fichier EdiabasLib.config existe déjà.</value>
+  </data>
+  <data name="PatchConfigMissing" xml:space="preserve">
+    <value>Le fichier EdiabasLib.config  est manquant.</value>
+  </data>
+  <data name="PatchConfigUpdateFailed" xml:space="preserve">
+    <value>Mise à jour du fichier de configuration échouée.</value>
+  </data>
+  <data name="PatchConfigUpdateOk" xml:space="preserve">
+    <value>Mise à jour du fichier de configuration réussie.</value>
+  </data>
+  <data name="PatchCopyFailed" xml:space="preserve">
+    <value>Copie des fichiers échouée.</value>
+  </data>
+  <data name="PatchCreateBackupFile" xml:space="preserve">
+    <value>Création du fichier de sauvegarde {0}.</value>
+  </data>
+  <data name="PatchDirectory" xml:space="preserve">
+    <value>Patch de EDIABAS à : '{0}'</value>
+  </data>
+  <data name="ReadFirmwareVersionFailed" xml:space="preserve">
+    <value>Lecture de la version du firmware échouée</value>
+  </data>
+  <data name="ReadModeFailed" xml:space="preserve">
+    <value>Lecture du mode de l'adaptateur échouée</value>
+  </data>
+  <data name="RestoreApiDllFailed" xml:space="preserve">
+    <value>Restoration du fichier original {0} échouée.</value>
+  </data>
+  <data name="RestoredApiDll" xml:space="preserve">
+    <value>Fichier original {0} restauré.</value>
+  </data>
+  <data name="RestoreDirectory" xml:space="preserve">
+    <value>Restoration de EDIABAS à : '{0}'</value>
+  </data>
+  <data name="RestoreNoBackupFile" xml:space="preserve">
+    <value>Aucun fichier de sauvegarde {0} existant.</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Recherche ...</value>
+  </data>
+  <data name="SearchingFailed" xml:space="preserve">
+    <value>Recherche échouée</value>
+  </data>
+  <data name="SearchingFailedMessage" xml:space="preserve">
+    <value>Recherche échouée : {0}</value>
+  </data>
+  <data name="TestOk" xml:space="preserve">
+    <value>Test OK</value>
+  </data>
+  <data name="WifiAdapterError" xml:space="preserve">
+    <value>Aucun adaptateur Wi-Fi adapter trouvé.</value>
+  </data>
+  <data name="WifiUrlOk" xml:space="preserve">
+    <value>La page de configuration de l'adaptateur va s'ouvrir dans le navigateur web.
+Le mot de passe root par défaut est {0}.</value>
+  </data>
+  <data name="PatchApiVersion" xml:space="preserve">
+    <value>Version API : {0}</value>
+  </data>
+  <data name="PatchLoadApiDllFailed" xml:space="preserve">
+    <value>Impossible de charger {0}.
+L'archive a-t-elle été extraite correctement ?
+Le VC++ runtime
+'{1}'
+est-il installé ?</value>
+  </data>
+  <data name="PatchNoValidBackupFile" xml:space="preserve">
+    <value>Le fichier de sauvegarde {0} est non valide.</value>
+  </data>
+  <data name="LanguageDe" xml:space="preserve">
+    <value>Allemand</value>
+  </data>
+  <data name="LanguageEn" xml:space="preserve">
+    <value>Anglais</value>
+  </data>
+  <data name="LanguageRu" xml:space="preserve">
+    <value>Russe</value>
+  </data>
+  <data name="LanguageFr" xml:space="preserve">
+    <value>Français</value>
+  </data>
+  <data name="PatchInstadInfo" xml:space="preserve">
+    <value>Astuce : Dans ISTA-D Administration -&gt; selectionner le type d'interface de véhicule comme suit :
+'Réglages standards Ediabas (ediabas.ini)'</value>
+  </data>
+  <data name="PatchVaspcInfo" xml:space="preserve">
+    <value>Astuce : Dans VAS-PC Seulement "Guided Fault Finding" et "Guided Functions"
+sont supportés avec EdiabasLib.</value>
+  </data>
+  <data name="PatchCopyRuntime" xml:space="preserve">
+    <value>Aucun fichier VC runtime installé, copie des fichiers localement.</value>
+  </data>
+  <data name="ElmAdapterConnected" xml:space="preserve">
+    <value>L'adaptateur utilise le firmware ELM327, seul le firmware modifié est supporté.</value>
+  </data>
+  <data name="FlashReplacementFirmware" xml:space="preserve">
+    <value>L'adaptateur utilise le firmware ELM327, veuillez d'abord flasher le firmware modifié avec l'application.</value>
+  </data>
+  <data name="WriteModeFailed" xml:space="preserve">
+    <value>Ecriture du mode de adaptater échouée</value>
+  </data>
+  <data name="PatchOriginalApiDllMissing" xml:space="preserve">
+    <value>Le fichier Ediabas {0} est manquant.</value>
+  </data>
+  <data name="PatchApiVersionUnknown" xml:space="preserve">
+    <value>Attention: Version API inconnue.</value>
+  </data>
+  <data name="IstaRegExtMessage" xml:space="preserve">
+    <value>Il est recommandé de cibler la clé de registre ISTA-D :
+'{0}'
+vers une instance externe EdiabsLib à :
+'{1}'.
+Voulez vous l'effectuer ?</value>
+  </data>
+  <data name="IstaRegExtTitle" xml:space="preserve">
+    <value>Emplacement du stockage</value>
+  </data>
+  <data name="PatchRegistry" xml:space="preserve">
+    <value>Patch de la clé de registre :
+'{0}'</value>
+  </data>
+  <data name="RemoveRegKeyFailed" xml:space="preserve">
+    <value>Suppression de la clé de registre
+'{0}'
+échouée.</value>
+  </data>
+  <data name="RemovingRegKey" xml:space="preserve">
+    <value>SUppression de la clé de registre :
+'{0}'.</value>
+  </data>
+  <data name="NetFrameworkMissing" xml:space="preserve">
+    <value>Cette application nécessite .NET Framework {0} ou plus récent.</value>
+  </data>
+  <data name="TitleError" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="WifiAccessRejected" xml:space="preserve">
+    <value>L'accès Wi-Fi a été refusé.
+Activer l'accès à la localisation pour cette application dans le système.
+Cliquer ici pour ouvrir l'application système : {0}</value>
+  </data>
+  <data name="PatchIstadInfoEnet" xml:space="preserve">
+    <value>Pour programmer vous devez sélectionner :
+'Réseau local HO-ICOM / ENET'</value>
+  </data>
+  <data name="SupportedUsbAdapters" xml:space="preserve">
+    <value>Seul les adaptateurs USB avec le firmware EdiabasLib sont supportés.</value>
+  </data>
+  <data name="UsbAdaptersHidden" xml:space="preserve">
+    <value>Seul les adaptateurs USB sont affichés, qui possèdent les VID {0} et PID {1}.</value>
+  </data>
+  <data name="PatchingLatencyTime" xml:space="preserve">
+    <value>Correctiion de la valeur du temps de latence invalide : {0}ms -&gt;{1}ms</value>
+  </data>
+  <data name="PatchingLatencyTimeFailed" xml:space="preserve">
+    <value>Changement de la valeur du temps de latence échouée. Veuillez la corriger manuellement.</value>
+  </data>
+  <data name="ResetUsbDeviceFailed" xml:space="preserve">
+    <value>Réinitialisation du péfiphérique USB échouée. Déconnecter le périphérique pour un reset manuel.</value>
+  </data>
+</root>
