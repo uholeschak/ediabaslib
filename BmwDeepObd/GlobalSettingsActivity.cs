@@ -45,6 +45,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestDevelopmentSettings,
+            RequestLocaleSettings,
             RequestApplicationSettings,
             RequestNotificationSettings,
             RequestOpenDocumentTreeToApp,
@@ -550,6 +551,10 @@ namespace BmwDeepObd
             switch ((ActivityRequest) requestCode)
             {
                 case ActivityRequest.RequestDevelopmentSettings:
+                    UpdateDisplay();
+                    break;
+
+                case ActivityRequest.RequestLocaleSettings:
                     UpdateDisplay();
                     break;
 
@@ -1149,7 +1154,7 @@ namespace BmwDeepObd
             try
             {
                 Intent intent = new Intent(Android.Provider.Settings.ActionLocaleSettings);
-                StartActivityForResult(intent, (int)ActivityRequest.RequestDevelopmentSettings);
+                StartActivityForResult(intent, (int)ActivityRequest.RequestLocaleSettings);
                 return true;
             }
             catch (Exception)
