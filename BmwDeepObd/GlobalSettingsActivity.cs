@@ -1143,6 +1143,21 @@ namespace BmwDeepObd
             }
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool ShowLocaleSettings()
+        {
+            try
+            {
+                Intent intent = new Intent(Android.Provider.Settings.ActionLocaleSettings);
+                StartActivityForResult(intent, (int)ActivityRequest.RequestDevelopmentSettings);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private bool SelectCopyDocumentTree(bool fromApp)
         {
