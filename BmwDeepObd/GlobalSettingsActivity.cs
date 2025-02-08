@@ -183,47 +183,6 @@ namespace BmwDeepObd
             _radioButtonLocaleDe = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDe);
             _radioButtonLocaleRu = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleRu);
 
-            try
-            {
-                AndroidX.Core.OS.LocaleListCompat localeList = null;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-                {
-                    Configuration systemConfiguration = Resources.System?.Configuration;
-                    if (systemConfiguration != null)
-                    {
-                        localeList = AndroidX.Core.OS.ConfigurationCompat.GetLocales(systemConfiguration);
-                    }
-                }
-
-                _radioButtonLocaleEn.Text = GetString(Resource.String.settings_locale_en);
-                _radioButtonLocaleDe.Text = GetString(Resource.String.settings_locale_de);
-                _radioButtonLocaleRu.Text = GetString(Resource.String.settings_locale_ru);
-
-                if (localeList != null && !localeList.IsEmpty)
-                {
-                    string hintText = " ("+ GetString(Resource.String.settings_language_missing) + ")";
-                    string[] locales = localeList.ToLanguageTags().Split(',');
-                    if (!locales.Any(x => x.StartsWith("en", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _radioButtonLocaleEn.Text += hintText;
-                    }
-
-                    if (!locales.Any(x => x.StartsWith("de", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _radioButtonLocaleDe.Text += hintText;
-                    }
-
-                    if (!locales.Any(x => x.StartsWith("ru", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _radioButtonLocaleRu.Text += hintText;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
             _radioButtonThemeSystem = FindViewById<RadioButton>(Resource.Id.radioButtonThemeSystem);
@@ -1062,6 +1021,47 @@ namespace BmwDeepObd
             if (_activityCommon == null)
             {
                 return;
+            }
+
+            try
+            {
+                AndroidX.Core.OS.LocaleListCompat localeList = null;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                {
+                    Configuration systemConfiguration = Resources.System?.Configuration;
+                    if (systemConfiguration != null)
+                    {
+                        localeList = AndroidX.Core.OS.ConfigurationCompat.GetLocales(systemConfiguration);
+                    }
+                }
+
+                _radioButtonLocaleEn.Text = GetString(Resource.String.settings_locale_en);
+                _radioButtonLocaleDe.Text = GetString(Resource.String.settings_locale_de);
+                _radioButtonLocaleRu.Text = GetString(Resource.String.settings_locale_ru);
+
+                if (localeList != null && !localeList.IsEmpty)
+                {
+                    string hintText = " (" + GetString(Resource.String.settings_language_missing) + ")";
+                    string[] locales = localeList.ToLanguageTags().Split(',');
+                    if (!locales.Any(x => x.StartsWith("en", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        _radioButtonLocaleEn.Text += hintText;
+                    }
+
+                    if (!locales.Any(x => x.StartsWith("de", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        _radioButtonLocaleDe.Text += hintText;
+                    }
+
+                    if (!locales.Any(x => x.StartsWith("ru", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        _radioButtonLocaleRu.Text += hintText;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             string displayName = GetString(Resource.String.default_media);
