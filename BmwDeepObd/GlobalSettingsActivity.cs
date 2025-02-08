@@ -2,6 +2,7 @@
 using System.IO;
 using Android.Content;
 using Android.Content.PM;
+using Android.Content.Res;
 using Android.OS;
 using Android.OS.Storage;
 using Android.Views;
@@ -181,6 +182,30 @@ namespace BmwDeepObd
             _radioButtonLocaleEn = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleEn);
             _radioButtonLocaleDe = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDe);
             _radioButtonLocaleRu = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleRu);
+
+            try
+            {
+                AndroidX.Core.OS.LocaleListCompat localeList = null;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                {
+                    Configuration systemConfiguration = Resources.System?.Configuration;
+                    if (systemConfiguration != null)
+                    {
+                        localeList = AndroidX.Core.OS.ConfigurationCompat.GetLocales(systemConfiguration);
+                    }
+                }
+
+                if (localeList != null && !localeList.IsEmpty)
+                {
+                    _radioButtonLocaleEn.Enabled = localeList.GetFirstMatch(["en"]) != null;
+                    _radioButtonLocaleDe.Enabled = localeList.GetFirstMatch(["de"]) != null;
+                    _radioButtonLocaleRu.Enabled = localeList.GetFirstMatch(["ru"]) != null;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
