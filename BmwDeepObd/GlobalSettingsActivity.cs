@@ -1039,6 +1039,10 @@ namespace BmwDeepObd
                 _radioButtonLocaleDe.Text = GetString(Resource.String.settings_locale_de);
                 _radioButtonLocaleRu.Text = GetString(Resource.String.settings_locale_ru);
 
+                _radioButtonLocaleEn.Tag = true;
+                _radioButtonLocaleDe.Tag = true;
+                _radioButtonLocaleRu.Tag = true;
+
                 if (localeList != null && !localeList.IsEmpty)
                 {
                     string hintText = " (" + GetString(Resource.String.settings_language_missing) + ")";
@@ -1046,16 +1050,19 @@ namespace BmwDeepObd
                     if (!locales.Any(x => x.StartsWith("en", StringComparison.OrdinalIgnoreCase)))
                     {
                         _radioButtonLocaleEn.Text += hintText;
+                        _radioButtonLocaleEn.Tag = false;
                     }
 
                     if (!locales.Any(x => x.StartsWith("de", StringComparison.OrdinalIgnoreCase)))
                     {
                         _radioButtonLocaleDe.Text += hintText;
+                        _radioButtonLocaleDe.Tag = false;
                     }
 
                     if (!locales.Any(x => x.StartsWith("ru", StringComparison.OrdinalIgnoreCase)))
                     {
                         _radioButtonLocaleRu.Text += hintText;
+                        _radioButtonLocaleRu.Tag = false;
                     }
                 }
             }
