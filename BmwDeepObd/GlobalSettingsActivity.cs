@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Android.Content;
-using Android.Content.PM;
 using Android.Content.Res;
 using Android.OS;
-using Android.OS.Storage;
 using Android.Views;
 using Android.Widget;
 using AndroidX.AppCompat.App;
@@ -198,17 +197,18 @@ namespace BmwDeepObd
                 if (localeList != null && !localeList.IsEmpty)
                 {
                     string hintText = " ("+ GetString(Resource.String.settings_language_missing) + ")";
-                    if (localeList.GetFirstMatch(["en"]) == null)
+                    string[] locales = localeList.ToLanguageTags().Split(',');
+                    if (!locales.Any(x => x.StartsWith("en", StringComparison.OrdinalIgnoreCase)))
                     {
                         _radioButtonLocaleEn.Text += hintText;
                     }
 
-                    if (localeList.GetFirstMatch(["de"]) == null)
+                    if (!locales.Any(x => x.StartsWith("de", StringComparison.OrdinalIgnoreCase)))
                     {
                         _radioButtonLocaleDe.Text += hintText;
                     }
 
-                    if (localeList.GetFirstMatch(["ru"]) == null)
+                    if (!locales.Any(x => x.StartsWith("ru", StringComparison.OrdinalIgnoreCase)))
                     {
                         _radioButtonLocaleRu.Text += hintText;
                     }
