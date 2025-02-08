@@ -197,9 +197,21 @@ namespace BmwDeepObd
 
                 if (localeList != null && !localeList.IsEmpty)
                 {
-                    _radioButtonLocaleEn.Enabled = localeList.GetFirstMatch(["en"]) != null;
-                    _radioButtonLocaleDe.Enabled = localeList.GetFirstMatch(["de"]) != null;
-                    _radioButtonLocaleRu.Enabled = localeList.GetFirstMatch(["ru"]) != null;
+                    string hintText = " ("+ GetString(Resource.String.settings_language_missing) + ")";
+                    if (localeList.GetFirstMatch(["en"]) == null)
+                    {
+                        _radioButtonLocaleEn.Text += hintText;
+                    }
+
+                    if (localeList.GetFirstMatch(["de"]) == null)
+                    {
+                        _radioButtonLocaleDe.Text += hintText;
+                    }
+
+                    if (localeList.GetFirstMatch(["ru"]) == null)
+                    {
+                        _radioButtonLocaleRu.Text += hintText;
+                    }
                 }
             }
             catch (Exception)
