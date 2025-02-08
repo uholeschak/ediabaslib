@@ -45,6 +45,7 @@ namespace BmwDeepObd
         private enum ActivityRequest
         {
             RequestDevelopmentSettings,
+            RequestLocaleSettings,
             RequestApplicationSettings,
             RequestNotificationSettings,
             RequestOpenDocumentTreeToApp,
@@ -193,6 +194,10 @@ namespace BmwDeepObd
                         localeList = AndroidX.Core.OS.ConfigurationCompat.GetLocales(systemConfiguration);
                     }
                 }
+
+                _radioButtonLocaleEn.Text = GetString(Resource.String.settings_locale_en);
+                _radioButtonLocaleDe.Text = GetString(Resource.String.settings_locale_de);
+                _radioButtonLocaleRu.Text = GetString(Resource.String.settings_locale_ru);
 
                 if (localeList != null && !localeList.IsEmpty)
                 {
@@ -550,6 +555,10 @@ namespace BmwDeepObd
             switch ((ActivityRequest) requestCode)
             {
                 case ActivityRequest.RequestDevelopmentSettings:
+                    UpdateDisplay();
+                    break;
+
+                case ActivityRequest.RequestLocaleSettings:
                     UpdateDisplay();
                     break;
 
@@ -1135,6 +1144,21 @@ namespace BmwDeepObd
             {
                 Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDevelopmentSettings);
                 StartActivityForResult(intent, (int)ActivityRequest.RequestDevelopmentSettings);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        // ReSharper disable once UnusedMethodReturnValue.Local
+        private bool ShowLocaleSettings()
+        {
+            try
+            {
+                Intent intent = new Intent(Android.Provider.Settings.ActionLocaleSettings);
+                StartActivityForResult(intent, (int)ActivityRequest.RequestLocaleSettings);
                 return true;
             }
             catch (Exception)
