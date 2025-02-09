@@ -23,6 +23,7 @@
   <string name="button_skip">Überspringen</string>
   <string name="button_hide">Verbergen</string>
   <string name="button_reset">Zurücksetzen</string>
+  <string name="button_ignore">Ignorieren</string>
   <string name="button_manufacturer">Hersteller</string>
   <string name="back_button_twice_for_exit">Die Schaltfläche zwei mal drücken zum Beenden</string>
   <string name="no_ext_storage">Kein externer Speicher verfügbar</string>
@@ -513,7 +514,7 @@
   <string name="settings_internal_location_boot_hint">Die Bootoption ist nur verfügbar, wenn die App im internen Speicher installiert ist.</string>
   <string name="settings_start_app_failed">Die App konnte nicht gestartet werden.</string>
   <string name="settings_language_missing">Nicht installiert</string>
-  <string name="settings_install_language">Die Sprache wird nicht angezeigt, weil die Systemsprache nicht installiert ist.\nWollen Sie die Spracheneinstellungen öffnen?</string>
+  <string name="settings_install_language">Die Sprache wird möglicherweise nicht angezeigt werden, weil die Systemsprache nicht installiert ist.\nWollen Sie die Spracheneinstellungen öffnen?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>

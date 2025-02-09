@@ -179,16 +179,16 @@ namespace BmwDeepObd
             }
 
             _radioButtonLocaleDefault = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDefault);
-            _radioButtonLocaleDefault.CheckedChange += LanguageChanged;
+            _radioButtonLocaleDefault.CheckedChange += LocaleChanged;
 
             _radioButtonLocaleEn = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleEn);
-            _radioButtonLocaleEn.CheckedChange += LanguageChanged;
+            _radioButtonLocaleEn.CheckedChange += LocaleChanged;
 
             _radioButtonLocaleDe = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDe);
-            _radioButtonLocaleDe.CheckedChange += LanguageChanged;
+            _radioButtonLocaleDe.CheckedChange += LocaleChanged;
 
             _radioButtonLocaleRu = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleRu);
-            _radioButtonLocaleRu.CheckedChange += LanguageChanged;
+            _radioButtonLocaleRu.CheckedChange += LocaleChanged;
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
@@ -1136,7 +1136,7 @@ namespace BmwDeepObd
             _checkBoxShowOnlyRelevantErrors.Visibility = _checkBoxUseBmwDatabase.Checked ? ViewStates.Visible : ViewStates.Gone;
         }
 
-        private void LanguageChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
+        private void LocaleChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
             if (_activityCommon == null)
             {
@@ -1170,6 +1170,9 @@ namespace BmwDeepObd
                         .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
                         {
                             UpdateDisplay();
+                        })
+                        .SetNeutralButton(Resource.String.button_ignore, (o, eventArgs) =>
+                        {
                         })
                         .SetCancelable(true)
                         .SetMessage(Resource.String.settings_install_language)
