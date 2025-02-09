@@ -308,7 +308,6 @@ namespace BmwDeepObd
             public void InitCommonData()
             {
                 this.LastAppState = LastAppState.Init;
-                this.SelectedLocale = ActivityCommon.SelectedLocale ?? string.Empty;
                 this.SelectedTheme = ActivityCommon.SelectedTheme ?? ThemeDefault;
                 this.DeviceName = string.Empty;
                 this.DeviceAddress = string.Empty;
@@ -424,7 +423,6 @@ namespace BmwDeepObd
 
             [XmlElement("LastAppState")] public LastAppState LastAppState { get; set; }
             [XmlElement("LastSelectedJobIndex")] public int LastSelectedJobIndex { get; set; }
-            [XmlElement("Locale")] public string SelectedLocale { get; set; }
             [XmlElement("Theme")] public ThemeType SelectedTheme { get; set; }
             [XmlElement("EnetIp")] public string SelectedEnetIp { get; set; }
             [XmlElement("ElmWifiIp")] public string SelectedElmWifiIp { get; set; }
@@ -1424,8 +1422,6 @@ namespace BmwDeepObd
         public static bool MtcBtConnectState { get; set; }
 
         public static bool BtInitiallyEnabled { get; set; }
-
-        public static string SelectedLocale { get; set; }
 
         public static ThemeType? SelectedTheme { get; set; }
 
@@ -8559,9 +8555,10 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(SelectedLocale))
+                    string selectedLocale = GetLocaleSetting();
+                    if (!string.IsNullOrEmpty(selectedLocale))
                     {
-                        locale = new Java.Util.Locale(SelectedLocale);
+                        locale = new Java.Util.Locale(selectedLocale);
                     }
                 }
 
@@ -13027,6 +13024,7 @@ using System.Threading;"
         {
             try
             {
+                string selectedLocale = string.Empty;
                 AndroidX.Core.OS.LocaleListCompat appLocales = AppCompatDelegate.ApplicationLocales;
                 string languageTags = appLocales.ToLanguageTags();
                 if (!string.IsNullOrEmpty(languageTags))
@@ -13042,34 +13040,17 @@ using System.Threading;"
 
                         if (language.Length == 2)
                         {
-                            SelectedLocale = language;
+                            selectedLocale = language;
                         }
-                    }
-                }
-                else
-                {
-                    SelectedLocale = string.Empty;
-                }
-
-                if (instanceData == null)
-                {
-                    if (SelectedLocale == null)
-                    {
-                        GetLocaleThemeSettings(true, false);
-                    }
-
-                    if (SelectedLocale != null)
-                    {
-                        return SelectedLocale;
                     }
                 }
 
                 if (instanceData != null)
                 {
-                    instanceData.LastLocale = SelectedLocale;
+                    instanceData.LastLocale = selectedLocale;
                 }
 
-                return SelectedLocale;
+                return selectedLocale;
             }
             catch (Exception)
             {
@@ -13077,14 +13058,9 @@ using System.Threading;"
             }
         }
 
-        public static bool GetLocaleThemeSettings(bool updateLocale, bool updateTheme)
+        public static bool GetStorageThemeSettings(bool updateTheme)
         {
             StorageData storageData = GetStorageData();
-
-            if (updateLocale)
-            {
-                SelectedLocale = storageData.SelectedLocale;
-            }
 
             if (updateTheme)
             {
@@ -13102,7 +13078,7 @@ using System.Threading;"
                 {
                     if (SelectedTheme == null)
                     {
-                        GetLocaleThemeSettings(false, true);
+                        GetStorageThemeSettings(true);
                     }
 
                     return;
@@ -13188,7 +13164,6 @@ using System.Threading;"
                     instanceData.XmlEditorPackageName = storageData.XmlEditorPackageName;
                     instanceData.XmlEditorClassName = storageData.XmlEditorClassName;
 
-                    SelectedLocale = storageData.SelectedLocale;
                     SelectedTheme = storageData.SelectedTheme;
 
                     SetRecentConfigList(storageData.RecentConfigFiles);
@@ -13252,7 +13227,6 @@ using System.Threading;"
 
                 if (!import)
                 {
-                    instanceData.LastLocale = SelectedLocale;
                     instanceData.LastThemeType = SelectedTheme;
                 }
 

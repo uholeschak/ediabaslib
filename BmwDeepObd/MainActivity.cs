@@ -1213,7 +1213,7 @@ namespace BmwDeepObd
 
                         _activityCommon.SetPreferredNetworkInterface();
                         if ((_instanceData.LastThemeType ?? ActivityCommon.ThemeDefault) != (ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault) ||
-                            string.Compare(_instanceData.LastLocale ?? string.Empty, ActivityCommon.SelectedLocale ?? string.Empty, StringComparison.OrdinalIgnoreCase) != 0)
+                            string.Compare(_instanceData.LastLocale ?? string.Empty, ActivityCommon.GetLocaleSetting(), StringComparison.OrdinalIgnoreCase) != 0)
                         {
                             StoreSettings();
                             // update translations
