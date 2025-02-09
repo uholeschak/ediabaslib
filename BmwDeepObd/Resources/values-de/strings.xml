@@ -513,8 +513,6 @@
   <string name="settings_mtc_boot_hint_start">Es wird empfohlen die zweite Startoption wählen und Deep OBD immer im Vordergrund zu lassen, damit die App nach dem Standby aktiv bleibt.\nMit anderen Tools (z.B. Automation, Macrodroid) muss der App-Start nach dem Booten ausgeführt werden.</string>
   <string name="settings_internal_location_boot_hint">Die Bootoption ist nur verfügbar, wenn die App im internen Speicher installiert ist.</string>
   <string name="settings_start_app_failed">Die App konnte nicht gestartet werden.</string>
-  <string name="settings_language_missing">Nicht installiert</string>
-  <string name="settings_install_language">Die Sprache wird möglicherweise nicht angezeigt werden, weil die Systemsprache nicht installiert ist.\nWollen Sie die Spracheneinstellungen öffnen?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas Tool</string>

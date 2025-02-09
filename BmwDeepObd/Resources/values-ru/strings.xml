@@ -535,10 +535,6 @@
   <string name="settings_mtc_boot_hint_start">Рекомендуется выбрать второй вариант запуска и всегда держать Deep OBD на переднем плане, чтобы приложение оставалось активным после режима ожидания.\nПри использовании других инструментов (например, Automation, Macrodroid) приложение необходимо запускать после загрузки.</string>
   <string name="settings_internal_location_boot_hint">Параметр загрузки доступен только в том случае, если приложение установлено на внутреннюю память.</string>
   <string name="settings_start_app_failed">Ошибка запуска приложения.</string>
-  <!--Translate-->
-  <string name="settings_language_missing">Не установлено</string>
-  <!--Translate-->
-  <string name="settings_install_language">Язык может не отображаться, так как системный язык не установлен..\nХотите открыть настройки системного языка?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>

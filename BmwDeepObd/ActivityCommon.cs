@@ -13042,9 +13042,13 @@ using System.Threading;"
 
                         if (language.Length == 2)
                         {
-                            return language;
+                            SelectedLocale = language;
                         }
                     }
+                }
+                else
+                {
+                    SelectedLocale = string.Empty;
                 }
 
                 if (instanceData == null)
@@ -13064,6 +13068,7 @@ using System.Threading;"
                 {
                     instanceData.LastLocale = SelectedLocale;
                 }
+
                 return SelectedLocale;
             }
             catch (Exception)
