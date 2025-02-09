@@ -23,6 +23,8 @@
   <string name="button_skip">Пропустить</string>
   <string name="button_hide">Скрыть</string>
   <string name="button_reset">Сброс настроек</string>
+  <!--Translate-->
+  <string name="button_ignore">Игнорировать</string>
   <string name="button_manufacturer">Производитель</string>
   <string name="back_button_twice_for_exit">Дважды нажмите кнопку, чтобы выйти</string>
   <string name="no_ext_storage">Внешняя память недоступна</string>
@@ -536,7 +538,7 @@
   <!--Translate-->
   <string name="settings_language_missing">Не установлено</string>
   <!--Translate-->
-  <string name="settings_install_language">Язык не будет отображаться, так как системный язык не установлен.\nХотите открыть настройки системного языка?</string>
+  <string name="settings_install_language">Язык может не отображаться, так как системный язык не установлен..\nХотите открыть настройки системного языка?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
