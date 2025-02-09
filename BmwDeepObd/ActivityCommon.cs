@@ -13034,7 +13034,16 @@ using System.Threading;"
                     string[] languages = languageTags.Split(',');
                     if (languages.Length > 0)
                     {
-                        return languages[0];
+                        string language = languages[0];
+                        if (language.Length > 2)
+                        {
+                            language = language.Substring(0, 2);
+                        }
+
+                        if (language.Length == 2)
+                        {
+                            return language;
+                        }
                     }
                 }
 
