@@ -179,50 +179,15 @@ namespace BmwDeepObd
             }
 
             _radioButtonLocaleDefault = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDefault);
+
             _radioButtonLocaleEn = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleEn);
+            _radioButtonLocaleEn.CheckedChange += LanguageChanged;
+
             _radioButtonLocaleDe = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDe);
+            _radioButtonLocaleDe.CheckedChange += LanguageChanged;
+
             _radioButtonLocaleRu = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleRu);
-
-            try
-            {
-                AndroidX.Core.OS.LocaleListCompat localeList = null;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-                {
-                    Configuration systemConfiguration = Resources.System?.Configuration;
-                    if (systemConfiguration != null)
-                    {
-                        localeList = AndroidX.Core.OS.ConfigurationCompat.GetLocales(systemConfiguration);
-                    }
-                }
-
-                _radioButtonLocaleEn.Text = GetString(Resource.String.settings_locale_en);
-                _radioButtonLocaleDe.Text = GetString(Resource.String.settings_locale_de);
-                _radioButtonLocaleRu.Text = GetString(Resource.String.settings_locale_ru);
-
-                if (localeList != null && !localeList.IsEmpty)
-                {
-                    string hintText = " ("+ GetString(Resource.String.settings_language_missing) + ")";
-                    string[] locales = localeList.ToLanguageTags().Split(',');
-                    if (!locales.Any(x => x.StartsWith("en", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _radioButtonLocaleEn.Text += hintText;
-                    }
-
-                    if (!locales.Any(x => x.StartsWith("de", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _radioButtonLocaleDe.Text += hintText;
-                    }
-
-                    if (!locales.Any(x => x.StartsWith("ru", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _radioButtonLocaleRu.Text += hintText;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            _radioButtonLocaleRu.CheckedChange += LanguageChanged;
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
@@ -1064,6 +1029,54 @@ namespace BmwDeepObd
                 return;
             }
 
+            try
+            {
+                AndroidX.Core.OS.LocaleListCompat localeList = null;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+                {
+                    Configuration systemConfiguration = Resources.System?.Configuration;
+                    if (systemConfiguration != null)
+                    {
+                        localeList = AndroidX.Core.OS.ConfigurationCompat.GetLocales(systemConfiguration);
+                    }
+                }
+
+                _radioButtonLocaleEn.Text = GetString(Resource.String.settings_locale_en);
+                _radioButtonLocaleDe.Text = GetString(Resource.String.settings_locale_de);
+                _radioButtonLocaleRu.Text = GetString(Resource.String.settings_locale_ru);
+
+                _radioButtonLocaleEn.Tag = Java.Lang.Boolean.True;
+                _radioButtonLocaleDe.Tag = Java.Lang.Boolean.True;
+                _radioButtonLocaleRu.Tag = Java.Lang.Boolean.True;
+
+                if (localeList != null && !localeList.IsEmpty)
+                {
+                    string hintText = " (" + GetString(Resource.String.settings_language_missing) + ")";
+                    string[] locales = localeList.ToLanguageTags().Split(',');
+                    if (!locales.Any(x => x.StartsWith("en", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        _radioButtonLocaleEn.Text += hintText;
+                        _radioButtonLocaleEn.Tag = Java.Lang.Boolean.False;
+                    }
+
+                    if (!locales.Any(x => x.StartsWith("de", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        _radioButtonLocaleDe.Text += hintText;
+                        _radioButtonLocaleDe.Tag = Java.Lang.Boolean.False;
+                    }
+
+                    if (!locales.Any(x => x.StartsWith("ru", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        _radioButtonLocaleRu.Text += hintText;
+                        _radioButtonLocaleRu.Tag = Java.Lang.Boolean.False;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             string displayName = GetString(Resource.String.default_media);
             if (!string.IsNullOrEmpty(ActivityCommon.CustomStorageMedia))
             {
@@ -1091,6 +1104,32 @@ namespace BmwDeepObd
             _checkBoxHciSnoopLog.Text = string.Format(GetString(Resource.String.settings_hci_snoop_log), logFileName ?? "-");
 
             _checkBoxShowOnlyRelevantErrors.Visibility = _checkBoxUseBmwDatabase.Checked ? ViewStates.Visible : ViewStates.Gone;
+        }
+
+        private void LanguageChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
+        {
+            if (_ignoreCheckChange)
+            {
+                return;
+            }
+
+            if (!(sender is CompoundButton compoundButton))
+            {
+                return;
+            }
+
+            if (!(compoundButton.Tag is Java.Lang.Boolean tag))
+            {
+                return;
+            }
+
+            if (compoundButton.Selected)
+            {
+                if (tag == Java.Lang.Boolean.False)
+                {
+                    ShowLocaleSettings();
+                }
+            }
         }
 
         private void SelectMedia()
