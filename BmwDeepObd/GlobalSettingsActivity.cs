@@ -179,6 +179,7 @@ namespace BmwDeepObd
             }
 
             _radioButtonLocaleDefault = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDefault);
+            _radioButtonLocaleDefault.CheckedChange += LanguageChanged;
 
             _radioButtonLocaleEn = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleEn);
             _radioButtonLocaleEn.CheckedChange += LanguageChanged;
@@ -1049,6 +1050,7 @@ namespace BmwDeepObd
                 _radioButtonLocaleDe.Tag = Java.Lang.Boolean.True;
                 _radioButtonLocaleRu.Tag = Java.Lang.Boolean.True;
 
+                bool setDefault = false;
                 if (localeList != null && !localeList.IsEmpty)
                 {
                     string hintText = " (" + GetString(Resource.String.settings_language_missing) + ")";
@@ -1057,18 +1059,46 @@ namespace BmwDeepObd
                     {
                         _radioButtonLocaleEn.Text += hintText;
                         _radioButtonLocaleEn.Tag = Java.Lang.Boolean.False;
+                        if (_radioButtonLocaleEn.Checked)
+                        {
+                            setDefault = true;
+                        }
                     }
 
                     if (!locales.Any(x => x.StartsWith("de", StringComparison.OrdinalIgnoreCase)))
                     {
                         _radioButtonLocaleDe.Text += hintText;
                         _radioButtonLocaleDe.Tag = Java.Lang.Boolean.False;
+                        if (_radioButtonLocaleDe.Checked)
+                        {
+                            setDefault = true;
+                        }
                     }
 
                     if (!locales.Any(x => x.StartsWith("ru", StringComparison.OrdinalIgnoreCase)))
                     {
                         _radioButtonLocaleRu.Text += hintText;
                         _radioButtonLocaleRu.Tag = Java.Lang.Boolean.False;
+                        if (_radioButtonLocaleRu.Checked)
+                        {
+                            setDefault = true;
+                        }
+                    }
+                }
+
+                if (setDefault)
+                {
+                    try
+                    {
+                        _ignoreCheckChange = true;
+                        _radioButtonLocaleEn.Checked = false;
+                        _radioButtonLocaleDe.Checked = false;
+                        _radioButtonLocaleRu.Checked = false;
+                        _radioButtonLocaleDefault.Checked = true;
+                    }
+                    finally
+                    {
+                        _ignoreCheckChange = false;
                     }
                 }
             }
@@ -1108,6 +1138,11 @@ namespace BmwDeepObd
 
         private void LanguageChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (_ignoreCheckChange)
             {
                 return;
@@ -1134,6 +1169,7 @@ namespace BmwDeepObd
                         })
                         .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
                         {
+                            UpdateDisplay();
                         })
                         .SetCancelable(true)
                         .SetMessage(Resource.String.settings_install_language)
