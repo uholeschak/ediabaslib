@@ -179,16 +179,9 @@ namespace BmwDeepObd
             }
 
             _radioButtonLocaleDefault = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDefault);
-            _radioButtonLocaleDefault.CheckedChange += LocaleChanged;
-
             _radioButtonLocaleEn = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleEn);
-            _radioButtonLocaleEn.CheckedChange += LocaleChanged;
-
             _radioButtonLocaleDe = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleDe);
-            _radioButtonLocaleDe.CheckedChange += LocaleChanged;
-
             _radioButtonLocaleRu = FindViewById<RadioButton>(Resource.Id.radioButtonLocaleRu);
-            _radioButtonLocaleRu.CheckedChange += LocaleChanged;
 
             _radioButtonThemeDark = FindViewById<RadioButton>(Resource.Id.radioButtonThemeDark);
             _radioButtonThemeLight = FindViewById<RadioButton>(Resource.Id.radioButtonThemeLight);
@@ -860,6 +853,16 @@ namespace BmwDeepObd
             }
             ActivityCommon.SelectedLocale = locale;
 
+            // update locale settings in system
+            if (string.IsNullOrEmpty(locale))
+            {
+                AppCompatDelegate.ApplicationLocales = AndroidX.Core.OS.LocaleListCompat.EmptyLocaleList;
+            }
+            else
+            {
+                AppCompatDelegate.ApplicationLocales = AndroidX.Core.OS.LocaleListCompat.ForLanguageTags(locale);
+            }
+
             ActivityCommon.ThemeType themeType = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
             if (_radioButtonThemeLight.Checked)
             {
@@ -1021,32 +1024,6 @@ namespace BmwDeepObd
             ActivityCommon.ScanAllEcus = _checkBoxScanAllEcus.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
             ActivityCommon.CompressTrace = !_checkBoxUncompressedTrace.Checked;
-
-            // update locale settings in system
-            if (string.IsNullOrEmpty(locale))
-            {
-                AppCompatDelegate.ApplicationLocales = AndroidX.Core.OS.LocaleListCompat.EmptyLocaleList;
-            }
-            else
-            {
-                AppCompatDelegate.ApplicationLocales = AndroidX.Core.OS.LocaleListCompat.ForLanguageTags(locale);
-            }
-        }
-
-        private void SetDefaultLocale()
-        {
-            try
-            {
-                _ignoreCheckChange = true;
-                _radioButtonLocaleEn.Checked = false;
-                _radioButtonLocaleDe.Checked = false;
-                _radioButtonLocaleRu.Checked = false;
-                _radioButtonLocaleDefault.Checked = true;
-            }
-            finally
-            {
-                _ignoreCheckChange = false;
-            }
         }
 
         private void UpdateDisplay()
@@ -1054,54 +1031,6 @@ namespace BmwDeepObd
             if (_activityCommon == null)
             {
                 return;
-            }
-
-            try
-            {
-                AndroidX.Core.OS.LocaleListCompat localeList = null;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
-                {
-                    Configuration systemConfiguration = Resources.System?.Configuration;
-                    if (systemConfiguration != null)
-                    {
-                        localeList = AndroidX.Core.OS.ConfigurationCompat.GetLocales(systemConfiguration);
-                    }
-                }
-
-                _radioButtonLocaleEn.Text = GetString(Resource.String.settings_locale_en);
-                _radioButtonLocaleDe.Text = GetString(Resource.String.settings_locale_de);
-                _radioButtonLocaleRu.Text = GetString(Resource.String.settings_locale_ru);
-
-                _radioButtonLocaleEn.Tag = Java.Lang.Boolean.True;
-                _radioButtonLocaleDe.Tag = Java.Lang.Boolean.True;
-                _radioButtonLocaleRu.Tag = Java.Lang.Boolean.True;
-
-                if (localeList != null && !localeList.IsEmpty)
-                {
-                    string hintText = " (" + GetString(Resource.String.settings_language_missing) + ")";
-                    string[] locales = localeList.ToLanguageTags().Split(',');
-                    if (!locales.Any(x => x.StartsWith("en", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _radioButtonLocaleEn.Text += hintText;
-                        _radioButtonLocaleEn.Tag = Java.Lang.Boolean.False;
-                    }
-
-                    if (!locales.Any(x => x.StartsWith("de", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _radioButtonLocaleDe.Text += hintText;
-                        _radioButtonLocaleDe.Tag = Java.Lang.Boolean.False;
-                    }
-
-                    if (!locales.Any(x => x.StartsWith("ru", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        _radioButtonLocaleRu.Text += hintText;
-                        _radioButtonLocaleRu.Tag = Java.Lang.Boolean.False;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
             }
 
             string displayName = GetString(Resource.String.default_media);
@@ -1131,52 +1060,6 @@ namespace BmwDeepObd
             _checkBoxHciSnoopLog.Text = string.Format(GetString(Resource.String.settings_hci_snoop_log), logFileName ?? "-");
 
             _checkBoxShowOnlyRelevantErrors.Visibility = _checkBoxUseBmwDatabase.Checked ? ViewStates.Visible : ViewStates.Gone;
-        }
-
-        private void LocaleChanged(object sender, CompoundButton.CheckedChangeEventArgs e)
-        {
-            if (_activityCommon == null)
-            {
-                return;
-            }
-
-            if (_ignoreCheckChange)
-            {
-                return;
-            }
-
-            if (!(sender is CompoundButton compoundButton))
-            {
-                return;
-            }
-
-            if (!(compoundButton.Tag is Java.Lang.Boolean tag))
-            {
-                return;
-            }
-
-            if (compoundButton.Checked)
-            {
-                if (tag == Java.Lang.Boolean.False)
-                {
-                    new AlertDialog.Builder(this)
-                        .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
-                        {
-                            ShowLocaleSettings();
-                        })
-                        .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
-                        {
-                            SetDefaultLocale();
-                        })
-                        .SetNeutralButton(Resource.String.button_ignore, (o, eventArgs) =>
-                        {
-                        })
-                        .SetCancelable(true)
-                        .SetMessage(Resource.String.settings_install_language)
-                        .SetTitle(Resource.String.alert_title_warning)
-                        .Show();
-                }
-            }
         }
 
         private void SelectMedia()
