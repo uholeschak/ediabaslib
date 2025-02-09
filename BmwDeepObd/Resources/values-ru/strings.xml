@@ -535,6 +535,8 @@
   <string name="settings_start_app_failed">Ошибка запуска приложения.</string>
   <!--Translate-->
   <string name="settings_language_missing">Не установлено</string>
+  <!--Translate-->
+  <string name="settings_install_language">Язык не будет отображаться, так как системный язык не установлен.\nХотите открыть настройки системного языка?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas утилита</string>
