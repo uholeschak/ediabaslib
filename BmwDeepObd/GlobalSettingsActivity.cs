@@ -1021,6 +1021,16 @@ namespace BmwDeepObd
             ActivityCommon.ScanAllEcus = _checkBoxScanAllEcus.Checked;
             ActivityCommon.CollectDebugInfo = _checkBoxCollectDebugInfo.Checked;
             ActivityCommon.CompressTrace = !_checkBoxUncompressedTrace.Checked;
+
+            // update locale settings in system
+            if (string.IsNullOrEmpty(locale))
+            {
+                AppCompatDelegate.ApplicationLocales = AndroidX.Core.OS.LocaleListCompat.EmptyLocaleList;
+            }
+            else
+            {
+                AppCompatDelegate.ApplicationLocales = AndroidX.Core.OS.LocaleListCompat.ForLanguageTags(locale);
+            }
         }
 
         private void SetDefaultLocale()
