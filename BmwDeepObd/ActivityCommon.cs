@@ -13027,6 +13027,17 @@ using System.Threading;"
         {
             try
             {
+                AndroidX.Core.OS.LocaleListCompat appLocales = AppCompatDelegate.ApplicationLocales;
+                string languageTags = appLocales.ToLanguageTags();
+                if (!string.IsNullOrEmpty(languageTags))
+                {
+                    string[] languages = languageTags.Split(',');
+                    if (languages.Length > 0)
+                    {
+                        return languages[0];
+                    }
+                }
+
                 if (instanceData == null)
                 {
                     if (SelectedLocale == null)
