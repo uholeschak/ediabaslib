@@ -538,6 +538,7 @@
   <string name="settings_internal_location_boot_hint">The boot option is only available if the app install location is internal.</string>
   <string name="settings_start_app_failed">The app could not be started.</string>
   <string name="settings_language_missing">Not installed</string>
+  <string name="settings_install_language">The language will not be displayed, because the system language is not installed.\nDo you want to open the system language settings?</string>
 
   <!--  EdiabasToolActivity -->
   <string name="tool_title">Ediabas tool</string>

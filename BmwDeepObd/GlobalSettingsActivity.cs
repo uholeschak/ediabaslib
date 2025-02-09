@@ -1123,11 +1123,22 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (compoundButton.Selected)
+            if (compoundButton.Checked)
             {
                 if (tag == Java.Lang.Boolean.False)
                 {
-                    ShowLocaleSettings();
+                    new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
+                        {
+                            ShowLocaleSettings();
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.settings_install_language)
+                        .SetTitle(Resource.String.alert_title_warning)
+                        .Show();
                 }
             }
         }
