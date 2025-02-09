@@ -13,6 +13,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using Android.Content.Res;
+using Screen = AndroidX.Car.App.Screen;
 
 namespace BmwDeepObd
 {
@@ -209,7 +211,7 @@ namespace BmwDeepObd
 
                 if (e == Lifecycle.Event.OnCreate)
                 {
-                    ResourceContext = BaseActivity.SetLocale(CarContext, ActivityCommon.GetLocaleSetting());
+                    ResourceContext = GetLocaleContext(CarContext);
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(CarContext).RegisterReceiver(_bcReceiver, new IntentFilter(CarSessionBroadcastAction));
                 }
                 else if (e == Lifecycle.Event.OnDestroy)
@@ -223,6 +225,38 @@ namespace BmwDeepObd
                 LogFormat("CarSession: OnCreateScreen, Api={0}", CarContext.CarAppApiLevel);
                 MainScreenInst = new MainScreen(CarContext, _carService, this);
                 return MainScreenInst;
+            }
+
+            public static Context GetLocaleContext(Context context)
+            {
+                try
+                {
+                    string language = ActivityCommon.GetLocaleSetting();
+                    if (string.IsNullOrEmpty(language))
+                    {
+                        return context;
+                    }
+
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
+                    {
+                        return context;
+                    }
+
+                    Java.Util.Locale locale = new Java.Util.Locale(language);
+                    Resources resources = context.Resources;
+                    Configuration configuration = resources?.Configuration;
+                    if (configuration != null)
+                    {
+                        configuration.SetLocale(locale);
+                        return context.CreateConfigurationContext(configuration);
+                    }
+
+                    return context;
+                }
+                catch (Exception)
+                {
+                    return context;
+                }
             }
 
             public static bool LogFormat(string format, params object[] args)

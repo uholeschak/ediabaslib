@@ -755,64 +755,6 @@ namespace BmwDeepObd
             }
         }
 
-        public static Context SetLocale(Context context, string language)
-        {
-            try
-            {
-                Java.Util.Locale locale = null;
-                if (string.IsNullOrEmpty(language))
-                {
-                    AndroidX.Core.OS.LocaleListCompat localeList =
-                        AndroidX.Core.OS.ConfigurationCompat.GetLocales(Resources.System.Configuration);
-                    if (localeList.Size() > 0)
-                    {
-                        locale = localeList.Get(0);
-                    }
-                }
-
-                if (locale == null)
-                {
-                    locale = new Java.Util.Locale(!string.IsNullOrEmpty(language) ? language : "en");
-                }
-
-                Resources resources = context.Resources;
-                Configuration configuration = resources?.Configuration;
-                if (configuration != null)
-                {
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
-                    {
-#pragma warning disable CS0618
-#pragma warning disable CA1422
-                        configuration.Locale = locale;
-#pragma warning restore CA1422
-#pragma warning restore CS0618
-                    }
-                    else
-                    {
-                        configuration.SetLocale(locale);
-                    }
-
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
-                    {
-    #pragma warning disable 618
-    #pragma warning disable CA1422
-                        resources.UpdateConfiguration(configuration, resources.DisplayMetrics);
-    #pragma warning restore CA1422
-    #pragma warning restore 618
-                        return context;
-                    }
-
-                    return context.CreateConfigurationContext(configuration);
-                }
-
-                return context;
-            }
-            catch (Exception)
-            {
-                return context;
-            }
-        }
-
         public static object GetInstanceState(Bundle savedInstanceState, object lastInstanceData, string key = InstanceDataKeyDefault)
         {
             if (savedInstanceState != null)
