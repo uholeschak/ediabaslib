@@ -595,7 +595,6 @@ namespace BmwDeepObd
         {
             public InstanceDataCommon()
             {
-                this.LastLocale = string.Empty;
                 this.LastAppState = LastAppState.Init;
                 this.LastSelectedJobIndex = -1;
                 this.LastSettingsHash = string.Empty;
@@ -614,7 +613,6 @@ namespace BmwDeepObd
                 this.SelectedDeepObdWifiIp = string.Empty;
             }
 
-            public string LastLocale { get; set; }
             public ThemeType? LastThemeType { get; set; }
             public LastAppState LastAppState { get; set; }
             public int LastSelectedJobIndex { get; set; }
@@ -13043,11 +13041,6 @@ using System.Threading;"
                             selectedLocale = language;
                         }
                     }
-                }
-
-                if (instanceData != null)
-                {
-                    instanceData.LastLocale = selectedLocale;
                 }
 
                 return selectedLocale;
