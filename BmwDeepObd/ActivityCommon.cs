@@ -8544,24 +8544,10 @@ namespace BmwDeepObd
             try
             {
                 Java.Util.Locale locale = Java.Util.Locale.Default;
-                Configuration configuration = context?.Resources?.Configuration;
-
-                if (configuration != null)
+                string selectedLocale = GetLocaleSetting(context);
+                if (!string.IsNullOrEmpty(selectedLocale))
                 {
-                    AndroidX.Core.OS.LocaleListCompat localeList =
-                        AndroidX.Core.OS.ConfigurationCompat.GetLocales(configuration);
-                    if (localeList.Size() > 0)
-                    {
-                        locale = localeList.Get(0);
-                    }
-                }
-                else
-                {
-                    string selectedLocale = GetLocaleSetting(context);
-                    if (!string.IsNullOrEmpty(selectedLocale))
-                    {
-                        locale = new Java.Util.Locale(selectedLocale);
-                    }
+                    locale = new Java.Util.Locale(selectedLocale);
                 }
 
                 string language = locale?.Language;
