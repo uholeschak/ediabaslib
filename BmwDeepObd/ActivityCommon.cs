@@ -13027,7 +13027,7 @@ using System.Threading;"
         {
             try
             {
-                bool useStorage = false;
+                bool useRecent = false;
                 string languageTags = null;
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                 {
@@ -13035,13 +13035,11 @@ using System.Threading;"
                     {
 #pragma warning disable CA1416
                         Android.App.LocaleManager localeManager = context.GetSystemService(Java.Lang.Class.FromType(typeof(Android.App.LocaleManager))) as Android.App.LocaleManager;
-                        if (localeManager == null)
+                        if (localeManager != null)
                         {
-                            return string.Empty;
+                            LocaleList appLocales = localeManager.ApplicationLocales;
+                            languageTags = appLocales.ToLanguageTags();
                         }
-
-                        LocaleList appLocales = localeManager.ApplicationLocales;
-                        languageTags = appLocales.ToLanguageTags();
 #pragma warning restore CA1416
                     }
                 }
@@ -13050,7 +13048,7 @@ using System.Threading;"
                 {
                     AndroidX.Core.OS.LocaleListCompat appLocales = AppCompatDelegate.ApplicationLocales;
                     languageTags = appLocales.ToLanguageTags();
-                    useStorage = true;
+                    useRecent = true;
                 }
 
                 if (!string.IsNullOrEmpty(languageTags))
@@ -13081,9 +13079,9 @@ using System.Threading;"
                     return string.Empty;
                 }
 
-                if (useStorage)
+                if (useRecent && RecentLocale != null)
                 {
-                    return RecentLocale ?? string.Empty;
+                    return RecentLocale;
                 }
 
                 return string.Empty;
