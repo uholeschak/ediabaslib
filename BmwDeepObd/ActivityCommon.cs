@@ -397,7 +397,7 @@ namespace BmwDeepObd
                 this.DataLogAppend = instanceData.DataLogAppend;
                 if (storage)
                 {
-                    this.RecentLocale = GetLocaleSetting(activityCommon.Context);
+                    this.RecentLocale = GetLocaleSetting(activityCommon.Context, true);
                     this.RecentConfigFiles = GetRecentConfigList();
                     this.SerialInfo = GetSerialInfoList();
                 }
@@ -1422,6 +1422,8 @@ namespace BmwDeepObd
         public static bool MtcBtConnectState { get; set; }
 
         public static bool BtInitiallyEnabled { get; set; }
+
+        public static string RecentLocale { get; set; }
 
         public static ThemeType? SelectedTheme { get; set; }
 
@@ -13005,6 +13007,7 @@ using System.Threading;"
                 storageClassAttributes.Add(storageType, nameof(storageData.ConfigFileName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorPackageName), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.XmlEditorClassName), ignoreXmlAttributes);
+                storageClassAttributes.Add(storageType, nameof(storageData.RecentLocale), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.RecentConfigFiles), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.CustomStorageMedia), ignoreXmlAttributes);
                 storageClassAttributes.Add(storageType, nameof(storageData.UsbFirmwareFileName), ignoreXmlAttributes);
@@ -13020,7 +13023,7 @@ using System.Threading;"
             return storageClassAttributes;
         }
 
-        public static string GetLocaleSetting(Context context = null)
+        public static string GetLocaleSetting(Context context = null, bool updateRecent = false)
         {
             try
             {
@@ -13063,14 +13066,24 @@ using System.Threading;"
 
                         if (language.Length == 2)
                         {
+                            if (updateRecent)
+                            {
+                                RecentLocale = language;
+                            }
                             return language;
                         }
                     }
                 }
 
+                if (updateRecent)
+                {
+                    RecentLocale = string.Empty;
+                    return string.Empty;
+                }
+
                 if (useStorage)
                 {
-                    return GetStorageLocale();
+                    return RecentLocale ?? string.Empty;
                 }
 
                 return string.Empty;
@@ -13091,12 +13104,6 @@ using System.Threading;"
             }
 
             return true;
-        }
-
-        public static string GetStorageLocale()
-        {
-            StorageData storageData = GetStorageData();
-            return storageData.RecentLocale ?? string.Empty;
         }
 
         public static void GetThemeSettings(InstanceDataCommon instanceData = null)
@@ -13194,7 +13201,7 @@ using System.Threading;"
                     instanceData.XmlEditorClassName = storageData.XmlEditorClassName;
 
                     SelectedTheme = storageData.SelectedTheme;
-
+                    RecentLocale = storageData.RecentLocale;
                     SetRecentConfigList(storageData.RecentConfigFiles);
                     CustomStorageMedia = storageData.CustomStorageMedia;
                     CopyToAppSrc = storageData.CopyToAppSrc;
