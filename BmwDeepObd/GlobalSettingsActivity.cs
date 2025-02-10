@@ -661,7 +661,7 @@ namespace BmwDeepObd
             try
             {
                 _ignoreCheckChange = true;
-                string locale = ActivityCommon.GetLocaleSetting();
+                string locale = ActivityCommon.GetLocaleSetting(this);
                 switch (locale.ToLowerInvariant())
                 {
                     case "en":
@@ -834,7 +834,7 @@ namespace BmwDeepObd
 
         private void StoreSettings()
         {
-            string locale = ActivityCommon.GetLocaleSetting();
+            string locale = ActivityCommon.GetLocaleSetting(this);
             if (_radioButtonLocaleEn.Checked)
             {
                 locale = "en";

@@ -397,6 +397,7 @@ namespace BmwDeepObd
                 this.DataLogAppend = instanceData.DataLogAppend;
                 if (storage)
                 {
+                    this.RecentLocale = GetLocaleSetting();
                     this.RecentConfigFiles = GetRecentConfigList();
                     this.SerialInfo = GetSerialInfoList();
                 }
@@ -440,6 +441,7 @@ namespace BmwDeepObd
             [XmlElement("DataLogActive")] public bool DataLogActive { get; set; }
             [XmlElement("DataLogAppend")] public bool DataLogAppend { get; set; }
 
+            [XmlElement("RecentLocale")] public string RecentLocale { get; set; }
             [XmlElement("RecentConfigFiles")] public List<string> RecentConfigFiles { get; set; }
             [XmlElement("StorageMedia")] public string CustomStorageMedia { get; set; }
             [XmlElement("CopyToAppSrc")] public string CopyToAppSrc { get; set; }
@@ -8553,7 +8555,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    string selectedLocale = GetLocaleSetting();
+                    string selectedLocale = GetLocaleSetting(context);
                     if (!string.IsNullOrEmpty(selectedLocale))
                     {
                         locale = new Java.Util.Locale(selectedLocale);
@@ -13018,13 +13020,34 @@ using System.Threading;"
             return storageClassAttributes;
         }
 
-        public static string GetLocaleSetting(InstanceDataCommon instanceData = null)
+        public static string GetLocaleSetting(Context context = null)
         {
             try
             {
-                string selectedLocale = string.Empty;
-                AndroidX.Core.OS.LocaleListCompat appLocales = AppCompatDelegate.ApplicationLocales;
-                string languageTags = appLocales.ToLanguageTags();
+                string languageTags = null;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+                {
+                    if (context != null)
+                    {
+#pragma warning disable CA1416
+                        Android.App.LocaleManager localeManager = context.GetSystemService(Java.Lang.Class.FromType(typeof(Android.App.LocaleManager))) as Android.App.LocaleManager;
+                        if (localeManager == null)
+                        {
+                            return string.Empty;
+                        }
+
+                        LocaleList appLocales = localeManager.ApplicationLocales;
+                        languageTags = appLocales.ToLanguageTags();
+#pragma warning restore CA1416
+                    }
+                }
+
+                if (languageTags == null)
+                {
+                    AndroidX.Core.OS.LocaleListCompat appLocales = AppCompatDelegate.ApplicationLocales;
+                    languageTags = appLocales.ToLanguageTags();
+                }
+
                 if (!string.IsNullOrEmpty(languageTags))
                 {
                     string[] languages = languageTags.Split(',');
@@ -13038,12 +13061,12 @@ using System.Threading;"
 
                         if (language.Length == 2)
                         {
-                            selectedLocale = language;
+                            return language;
                         }
                     }
                 }
 
-                return selectedLocale;
+                return GetStorageLocale();
             }
             catch (Exception)
             {
@@ -13061,6 +13084,12 @@ using System.Threading;"
             }
 
             return true;
+        }
+
+        public static string GetStorageLocale()
+        {
+            StorageData storageData = GetStorageData();
+            return storageData.RecentLocale ?? string.Empty;
         }
 
         public static void GetThemeSettings(InstanceDataCommon instanceData = null)
