@@ -275,13 +275,7 @@ namespace BmwDeepObd
                     return string.Empty;
                 }
 
-                string packageName = Android.App.Application.Context.PackageName;
-                if (string.IsNullOrEmpty(packageName))
-                {
-                    return string.Empty;
-                }
-
-                LocaleList appLocales = localeManager.GetApplicationLocales(packageName);
+                LocaleList appLocales = localeManager.ApplicationLocales;
                 string languageTags = appLocales.ToLanguageTags();
                 if (!string.IsNullOrEmpty(languageTags))
                 {
