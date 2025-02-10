@@ -229,16 +229,7 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    string selectedLocale = null;
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
-                    {
-                        selectedLocale = ActivityCommon.GetLocaleSetting();
-                    }
-                    else
-                    {
-                        selectedLocale = GetAppLocale(context);
-                    }
-
+                    string selectedLocale = GetAppLocale(context);
                     if (string.IsNullOrEmpty(selectedLocale))
                     {
                         return context;
@@ -263,40 +254,7 @@ namespace BmwDeepObd
 
             public static string GetAppLocale(Context context)
             {
-                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
-                {
-                    return string.Empty;
-                }
-
-#pragma warning disable CA1416
-                Android.App.LocaleManager localeManager = context.GetSystemService(Java.Lang.Class.FromType(typeof(Android.App.LocaleManager))) as Android.App.LocaleManager;
-                if (localeManager == null)
-                {
-                    return string.Empty;
-                }
-
-                LocaleList appLocales = localeManager.ApplicationLocales;
-                string languageTags = appLocales.ToLanguageTags();
-                if (!string.IsNullOrEmpty(languageTags))
-                {
-                    string[] languages = languageTags.Split(',');
-                    if (languages.Length > 0)
-                    {
-                        string language = languages[0];
-                        if (language.Length > 2)
-                        {
-                            language = language.Substring(0, 2);
-                        }
-
-                        if (language.Length == 2)
-                        {
-                            return language;
-                        }
-                    }
-                }
-
-                return string.Empty;
-#pragma warning restore CA1416
+                return ActivityCommon.GetLocaleSetting(context);
             }
 
             public static bool LogFormat(string format, params object[] args)
@@ -483,11 +441,6 @@ namespace BmwDeepObd
             public virtual string GetForegroundServiceStatus()
             {
                 return ForegroundService.GetStatusText(ResourceContext);
-            }
-
-            public virtual string GetLocaleSetting()
-            {
-                return ActivityCommon.GetLocaleSetting() ?? string.Empty;
             }
 
             public int GetContentLimit(int contentLimitType, int defaultValue)
