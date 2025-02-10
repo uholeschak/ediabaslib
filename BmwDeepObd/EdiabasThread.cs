@@ -922,7 +922,7 @@ namespace BmwDeepObd
                         if (errorCode != 0x0000)
                         {
                             envCondLabelList = ActivityCommon.EcuFunctionReader.GetEnvCondLabelList(errorCode, errorReport.ReadIs, ecuVariant);
-                            List<string> faultResultList = ConvertFaultCodeError(errorCode, errorReport.ReadIs, errorReport, ecuVariant);
+                            List<string> faultResultList = ConvertFaultCodeError(context, errorCode, errorReport.ReadIs, errorReport, ecuVariant);
 
                             if (faultResultList != null && faultResultList.Count == 2)
                             {
@@ -2967,10 +2967,10 @@ namespace BmwDeepObd
             }
         }
 
-        public static List<string> ConvertFaultCodeError(Int64 errorCode, bool info, EdiabasErrorReport errorReport, EcuFunctionStructs.EcuVariant ecuVariant)
+        public static List<string> ConvertFaultCodeError(Context context, Int64 errorCode, bool info, EdiabasErrorReport errorReport, EcuFunctionStructs.EcuVariant ecuVariant)
         {
             List<string> resultList = new List<string>();
-            string language = ActivityCommon.GetCurrentLanguageStatic();
+            string language = ActivityCommon.GetCurrentLanguageStatic(false, context);
             EcuFunctionStructs.EcuFaultCodeLabel ecuFaultCodeLabel = ActivityCommon.EcuFunctionReader.GetFaultCodeLabel(errorCode, info, ecuVariant);
             if (ecuFaultCodeLabel != null)
             {
@@ -3072,7 +3072,7 @@ namespace BmwDeepObd
                 Dictionary<string, int> envCountTestDict = new Dictionary<string, int>();
                 foreach (EcuFunctionStructs.EcuEnvCondLabel envCondLabel in envCondLabelList)
                 {
-                    string language = ActivityCommon.GetCurrentLanguageStatic();
+                    string language = ActivityCommon.GetCurrentLanguageStatic(false, context);
                     if (envCondLabel.EcuResultStateValueList != null && envCondLabel.EcuResultStateValueList.Count > 0)
                     {
                         string envName = envCondLabel.Title?.GetTitle(language);
@@ -3149,7 +3149,7 @@ namespace BmwDeepObd
                 return false;
             }
 
-            string language = ActivityCommon.GetCurrentLanguageStatic();
+            string language = ActivityCommon.GetCurrentLanguageStatic(false, context);
             Int64 envCount = ActivityMain.GetResultInt64(errorDetail, "F_UW_ANZ", out bool countFound);
             if (!countFound || envCount < 1)
             {
@@ -3230,7 +3230,7 @@ namespace BmwDeepObd
         public static bool ConvertEnvCondErrorStd(ref Dictionary<string, int> envCountDict, ref OrderedDictionary detailDict, Context context, EdiabasErrorReport errorReport, Dictionary<string, EdiabasNet.ResultData> errorDetail, List<EcuFunctionStructs.EcuEnvCondLabel> envCondLabelList)
         {
             DateTime? lifeStartDate = errorReport.LifeStartDate;
-            string language = ActivityCommon.GetCurrentLanguageStatic();
+            string language = ActivityCommon.GetCurrentLanguageStatic(false, context);
             int envCondIndex = 0;
             foreach (EnvCondResultInfo envCondResult in ErrorEnvCondResultList)
             {
