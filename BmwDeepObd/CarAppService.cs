@@ -236,40 +236,8 @@ namespace BmwDeepObd
                     }
                     else
                     {
-#pragma warning disable CA1416
-                        Android.App.LocaleManager localeManager = context.GetSystemService(Java.Lang.Class.FromType(typeof(Android.App.LocaleManager))) as Android.App.LocaleManager;
-                        if (localeManager == null)
-                        {
-                            return context;
-                        }
-
-                        string packageName = Android.App.Application.Context.PackageName;
-                        if (string.IsNullOrEmpty(packageName))
-                        {
-                            return context;
-                        }
-
-                        LocaleList appLocales = localeManager.GetApplicationLocales(packageName);
-                        string languageTags = appLocales.ToLanguageTags();
-                        if (!string.IsNullOrEmpty(languageTags))
-                        {
-                            string[] languages = languageTags.Split(',');
-                            if (languages.Length > 0)
-                            {
-                                string language = languages[0];
-                                if (language.Length > 2)
-                                {
-                                    language = language.Substring(0, 2);
-                                }
-
-                                if (language.Length == 2)
-                                {
-                                    selectedLocale = language;
-                                }
-                            }
-                        }
+                        selectedLocale = GetAppLocale(context);
                     }
-#pragma warning restore CA1416
 
                     if (string.IsNullOrEmpty(selectedLocale))
                     {
@@ -291,6 +259,50 @@ namespace BmwDeepObd
                 {
                     return context;
                 }
+            }
+
+            public static string GetAppLocale(Context context)
+            {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                {
+                    return string.Empty;
+                }
+
+#pragma warning disable CA1416
+                Android.App.LocaleManager localeManager = context.GetSystemService(Java.Lang.Class.FromType(typeof(Android.App.LocaleManager))) as Android.App.LocaleManager;
+                if (localeManager == null)
+                {
+                    return string.Empty;
+                }
+
+                string packageName = Android.App.Application.Context.PackageName;
+                if (string.IsNullOrEmpty(packageName))
+                {
+                    return string.Empty;
+                }
+
+                LocaleList appLocales = localeManager.GetApplicationLocales(packageName);
+                string languageTags = appLocales.ToLanguageTags();
+                if (!string.IsNullOrEmpty(languageTags))
+                {
+                    string[] languages = languageTags.Split(',');
+                    if (languages.Length > 0)
+                    {
+                        string language = languages[0];
+                        if (language.Length > 2)
+                        {
+                            language = language.Substring(0, 2);
+                        }
+
+                        if (language.Length == 2)
+                        {
+                            return language;
+                        }
+                    }
+                }
+
+                return string.Empty;
+#pragma warning restore CA1416
             }
 
             public static bool LogFormat(string format, params object[] args)
@@ -830,7 +842,7 @@ namespace BmwDeepObd
                     ActivityCommon.LockType lockTypeComm = ActivityCommon.LockTypeCommunication;
                     ActivityCommon.LockType lockTypeLogging = ActivityCommon.LockTypeLogging;
 
-                    sbStructureContent.AppendLine(GetLocaleSetting());
+                    sbStructureContent.AppendLine(CarSession.GetAppLocale(CarContext));
                     sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list));
 
                     sbValueContent.AppendLine();
