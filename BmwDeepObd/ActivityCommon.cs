@@ -13024,6 +13024,7 @@ using System.Threading;"
         {
             try
             {
+                bool useStorage = false;
                 string languageTags = null;
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                 {
@@ -13046,6 +13047,7 @@ using System.Threading;"
                 {
                     AndroidX.Core.OS.LocaleListCompat appLocales = AppCompatDelegate.ApplicationLocales;
                     languageTags = appLocales.ToLanguageTags();
+                    useStorage = true;
                 }
 
                 if (!string.IsNullOrEmpty(languageTags))
@@ -13066,7 +13068,12 @@ using System.Threading;"
                     }
                 }
 
-                return GetStorageLocale();
+                if (useStorage)
+                {
+                    return GetStorageLocale();
+                }
+
+                return string.Empty;
             }
             catch (Exception)
             {
