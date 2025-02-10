@@ -13,8 +13,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using Android.Content.Res;
-using Screen = AndroidX.Car.App.Screen;
 
 namespace BmwDeepObd
 {
@@ -231,20 +229,56 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    string language = ActivityCommon.GetLocaleSetting();
-                    if (string.IsNullOrEmpty(language))
+                    string selectedLocale = null;
+                    if (Build.VERSION.SdkInt < BuildVersionCodes.Tiramisu)
+                    {
+                        selectedLocale = ActivityCommon.GetLocaleSetting();
+                    }
+                    else
+                    {
+#pragma warning disable CA1416
+                        Android.App.LocaleManager localeManager = context.GetSystemService(Java.Lang.Class.FromType(typeof(Android.App.LocaleManager))) as Android.App.LocaleManager;
+                        if (localeManager == null)
+                        {
+                            return context;
+                        }
+
+                        string packageName = Android.App.Application.Context.PackageName;
+                        if (string.IsNullOrEmpty(packageName))
+                        {
+                            return context;
+                        }
+
+                        LocaleList appLocales = localeManager.GetApplicationLocales(packageName);
+                        string languageTags = appLocales.ToLanguageTags();
+                        if (!string.IsNullOrEmpty(languageTags))
+                        {
+                            string[] languages = languageTags.Split(',');
+                            if (languages.Length > 0)
+                            {
+                                string language = languages[0];
+                                if (language.Length > 2)
+                                {
+                                    language = language.Substring(0, 2);
+                                }
+
+                                if (language.Length == 2)
+                                {
+                                    selectedLocale = language;
+                                }
+                            }
+                        }
+                    }
+#pragma warning restore CA1416
+
+                    if (string.IsNullOrEmpty(selectedLocale))
                     {
                         return context;
                     }
 
-                    if (Build.VERSION.SdkInt < BuildVersionCodes.JellyBeanMr1)
-                    {
-                        return context;
-                    }
-
-                    Java.Util.Locale locale = new Java.Util.Locale(language);
-                    Resources resources = context.Resources;
-                    Configuration configuration = resources?.Configuration;
+                    Java.Util.Locale locale = new Java.Util.Locale(selectedLocale);
+                    Android.Content.Res.Resources resources = context.Resources;
+                    Android.Content.Res.Configuration configuration = resources?.Configuration;
                     if (configuration != null)
                     {
                         configuration.SetLocale(locale);
