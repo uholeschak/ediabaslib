@@ -856,10 +856,12 @@ namespace BmwDeepObd
             if (string.IsNullOrEmpty(locale))
             {
                 AppCompatDelegate.ApplicationLocales = AndroidX.Core.OS.LocaleListCompat.EmptyLocaleList;
+                ActivityCommon.RecentLocale = string.Empty;
             }
             else
             {
                 AppCompatDelegate.ApplicationLocales = AndroidX.Core.OS.LocaleListCompat.ForLanguageTags(locale);
+                ActivityCommon.RecentLocale = locale;
             }
 
             ActivityCommon.ThemeType themeType = ActivityCommon.SelectedTheme ?? ActivityCommon.ThemeDefault;
