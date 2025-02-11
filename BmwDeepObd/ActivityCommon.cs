@@ -13020,8 +13020,7 @@ using System.Threading;"
                     if (context != null)
                     {
 #pragma warning disable CA1416
-                        Android.App.LocaleManager localeManager = context.GetSystemService(Java.Lang.Class.FromType(typeof(Android.App.LocaleManager))) as Android.App.LocaleManager;
-                        if (localeManager != null)
+                        if (context.ApplicationContext?.GetSystemService(Java.Lang.Class.FromType(typeof(Android.App.LocaleManager))) is Android.App.LocaleManager localeManager)
                         {
                             LocaleList appLocales = localeManager.ApplicationLocales;
                             languageTags = appLocales.ToLanguageTags();
