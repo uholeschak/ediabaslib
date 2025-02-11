@@ -608,9 +608,10 @@ namespace EdiabasLibConfigTool
                                     latencyTimer = latency;
                                 }
 
-                                if (!string.IsNullOrEmpty(comPortName) && latencyTimer != null)
+                                List<int> regLatencyTimers = Patch.GetFtdiLatencyTimer(comPortName);
+                                if (!string.IsNullOrEmpty(comPortName) && latencyTimer != null && regLatencyTimers != null)
                                 {
-                                    usbInfo = new Patch.UsbInfo(deviceLocId, comPort, comPortName, latencyTimer.Value);
+                                    usbInfo = new Patch.UsbInfo(deviceLocId, comPort, comPortName, latencyTimer.Value, regLatencyTimers);
                                 }
                             }
 
@@ -644,15 +645,6 @@ namespace EdiabasLibConfigTool
                             if (vendorId != FtdiDefaultVid)
                             {
                                 validDevice = false;
-                            }
-
-                            if (validDevice)
-                            {
-                                List<int> latencyTimers = Patch.GetFtdiLatencyTimer(usbInfo.ComPortName);
-                                if (latencyTimers == null)
-                                {
-                                    validDevice = false;
-                                }
                             }
 
                             if (validDevice)

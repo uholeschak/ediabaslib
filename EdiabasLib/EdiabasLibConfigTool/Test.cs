@@ -509,8 +509,7 @@ namespace EdiabasLibConfigTool
 
                 if (usbInfo != null)
                 {
-                    List<int> latencyTimers = Patch.GetFtdiLatencyTimer(usbInfo.ComPortName);
-                    if (latencyTimers == null || latencyTimers.Any(x => x != FtdiLatencyTimer) || usbInfo.LatencyTimer != FtdiLatencyTimer)
+                    if (usbInfo.LatencyTimer != FtdiLatencyTimer || usbInfo.RegLatencyTimers.Any(x => x != FtdiLatencyTimer))
                     {
                         sr.Append("\r\n");
                         sr.Append(string.Format(Resources.Strings.PatchingLatencyTime, usbInfo.LatencyTimer, FtdiLatencyTimer));
