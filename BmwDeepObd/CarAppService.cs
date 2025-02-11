@@ -209,7 +209,7 @@ namespace BmwDeepObd
 
                 if (e == Lifecycle.Event.OnCreate)
                 {
-                    ResourceContext = GetLocaleContext(CarContext);
+                    ResourceContext = ActivityCommon.GetLocaleContext(CarContext);
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(CarContext).RegisterReceiver(_bcReceiver, new IntentFilter(CarSessionBroadcastAction));
                 }
                 else if (e == Lifecycle.Event.OnDestroy)
@@ -223,38 +223,6 @@ namespace BmwDeepObd
                 LogFormat("CarSession: OnCreateScreen, Api={0}", CarContext.CarAppApiLevel);
                 MainScreenInst = new MainScreen(CarContext, _carService, this);
                 return MainScreenInst;
-            }
-
-            public static Context GetLocaleContext(Context context)
-            {
-                try
-                {
-                    string selectedLocale = GetAppLocale(context);
-                    if (string.IsNullOrEmpty(selectedLocale))
-                    {
-                        return context;
-                    }
-
-                    Java.Util.Locale locale = new Java.Util.Locale(selectedLocale);
-                    Android.Content.Res.Resources resources = context.Resources;
-                    Android.Content.Res.Configuration configuration = resources?.Configuration;
-                    if (configuration != null)
-                    {
-                        configuration.SetLocale(locale);
-                        return context.CreateConfigurationContext(configuration);
-                    }
-
-                    return context;
-                }
-                catch (Exception)
-                {
-                    return context;
-                }
-            }
-
-            public static string GetAppLocale(Context context)
-            {
-                return ActivityCommon.GetLocaleSetting(context);
             }
 
             public static bool LogFormat(string format, params object[] args)
@@ -789,7 +757,7 @@ namespace BmwDeepObd
                     ActivityCommon.LockType lockTypeComm = ActivityCommon.LockTypeCommunication;
                     ActivityCommon.LockType lockTypeLogging = ActivityCommon.LockTypeLogging;
 
-                    sbStructureContent.AppendLine(CarSession.GetAppLocale(CarContext));
+                    sbStructureContent.AppendLine(ActivityCommon.GetLocaleSetting(CarContext));
                     sbStructureContent.AppendLine(ResourceContext.GetString(Resource.String.car_service_page_list));
 
                     sbValueContent.AppendLine();
