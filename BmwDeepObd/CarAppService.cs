@@ -124,7 +124,7 @@ namespace BmwDeepObd
             return false;
         }
 
-        public bool EvaluateErrorMessages(JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult, ErrorMessageResultDelegate resultHandler)
+        public bool EvaluateErrorMessages(Context resourceContext, JobReader.PageInfo pageInfo, List<EdiabasThread.EdiabasErrorReport> errorReportList, MethodInfo formatErrorResult, ErrorMessageResultDelegate resultHandler)
         {
             if (IsErrorEvalJobRunning())
             {
@@ -147,7 +147,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    string message = GenerateErrorMessage(pageInfo, errorReport, errorIndex, formatErrorResult, ref dtcList);
+                    string message = GenerateErrorMessage(resourceContext, pageInfo, errorReport, errorIndex, formatErrorResult, ref dtcList);
                     errorList.Add(new ErrorMessageEntry(errorReport, message));
                     errorIndex++;
                 }
@@ -166,10 +166,10 @@ namespace BmwDeepObd
             return true;
         }
 
-        private string GenerateErrorMessage(JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<ActivityCommon.VagDtcEntry> dtcList)
+        private string GenerateErrorMessage(Context resourceContext, JobReader.PageInfo pageInfo, EdiabasThread.EdiabasErrorReport errorReport, int errorIndex, MethodInfo formatErrorResult, ref List<ActivityCommon.VagDtcEntry> dtcList)
         {
             List<string> translationList = new List<string>();
-            string errorMessage = ActivityCommon.EdiabasThread?.GenerateErrorMessage(this, _activityCommon, pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList,
+            string errorMessage = ActivityCommon.EdiabasThread?.GenerateErrorMessage(resourceContext, _activityCommon, pageInfo, errorReport, errorIndex, formatErrorResult, ref translationList,
                 null, ref dtcList);
 
             if (errorMessage == null)
@@ -1663,7 +1663,7 @@ namespace BmwDeepObd
                             }
                             else
                             {
-                                CarServiceInst.EvaluateErrorMessages(pageInfoActive, errorReportList, null,
+                                CarServiceInst.EvaluateErrorMessages(ResourceContext, pageInfoActive, errorReportList, null,
                                     list =>
                                     {
                                         lock (_lockObject)
