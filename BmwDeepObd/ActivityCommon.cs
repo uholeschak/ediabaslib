@@ -13111,6 +13111,33 @@ using System.Threading;"
             }
         }
 
+        public static Context GetLocaleContext(Context context)
+        {
+            try
+            {
+                string selectedLocale = GetLocaleSetting(context);
+                if (string.IsNullOrEmpty(selectedLocale))
+                {
+                    return context;
+                }
+
+                Java.Util.Locale locale = new Java.Util.Locale(selectedLocale);
+                Resources resources = context.Resources;
+                Configuration configuration = resources?.Configuration;
+                if (configuration != null)
+                {
+                    configuration.SetLocale(locale);
+                    return context.CreateConfigurationContext(configuration);
+                }
+
+                return context;
+            }
+            catch (Exception)
+            {
+                return context;
+            }
+        }
+
         public void CheckSettingsVersionChange(InstanceDataCommon instanceData)
         {
             if (instanceData.LastVersionCode != VersionCode)
