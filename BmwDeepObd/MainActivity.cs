@@ -367,7 +367,7 @@ namespace BmwDeepObd
                     _lastCompileCrash = true;
                     _instanceData.LastAppState = ActivityCommon.LastAppState.Init;
                     _instanceData.ConfigFileName = string.Empty;
-                    StoreSettings();
+                    // store settings in OnResume to keep the correct seelcted lanuage
                 }
             }
 
@@ -751,6 +751,10 @@ namespace BmwDeepObd
             {
                 _onResumeExecuted = true;
                 RequestStoragePermissions();
+                if (_lastCompileCrash)
+                {
+                    StoreSettings();
+                }
             }
 
             if (_storageAccessGranted)
