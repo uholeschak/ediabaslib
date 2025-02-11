@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Widget;
 using AndroidX.Core.App;
 using AndroidX.Core.Content;
 
@@ -57,6 +55,7 @@ namespace BmwDeepObd
 
         private bool _isStarted;
         private ActivityCommon _activityCommon;
+        private Context _resourceContext;
         private ActivityCommon.InstanceDataCommon _instanceData;
         private Handler _stopHandler;
         private Java.Lang.Runnable _stopRunnable;
@@ -110,6 +109,7 @@ namespace BmwDeepObd
             _notificationRunnable = new UpdateNotificationRunnable(this);
             _activityCommon = new ActivityCommon(this, null, BroadcastReceived);
             _activityCommon?.SetLock(ActivityCommon.LockType.Cpu);
+            _resourceContext = ActivityCommon.GetLocaleContext(this);
             _instanceData = null;
             _notificationUpdateTime = DateTime.MinValue.Ticks;
             _progressValue = -1;
@@ -312,16 +312,16 @@ namespace BmwDeepObd
             base.OnDestroy();
         }
 
-        public static string GetStatusText(Context context)
+        public static string GetStatusText(Context resourceContext)
         {
-            if (context == null)
+            if (resourceContext == null)
             {
                 return string.Empty;
             }
 
             bool checkAbort = true;
             bool showProgress = false;
-            string message = context.Resources.GetString(Resource.String.service_notification_comm_active);
+            string message = resourceContext.GetString(Resource.String.service_notification_comm_active);
 
             switch (_startState)
             {
@@ -329,7 +329,7 @@ namespace BmwDeepObd
                     checkAbort = false;
                     if (!ActivityCommon.CommActive)
                     {
-                        message = context.Resources.GetString(Resource.String.service_notification_idle);
+                        message = resourceContext.GetString(Resource.String.service_notification_idle);
                         break;
                     }
 
@@ -340,46 +340,46 @@ namespace BmwDeepObd
 
                         case EdiabasThread.UpdateState.ReadErrors:
                         case EdiabasThread.UpdateState.Connected:
-                            message = context.Resources.GetString(Resource.String.service_notification_comm_ok);
+                            message = resourceContext.GetString(Resource.String.service_notification_comm_ok);
                             break;
 
                         default:
-                            message = context.Resources.GetString(Resource.String.service_notification_comm_error);
+                            message = resourceContext.GetString(Resource.String.service_notification_comm_error);
                             break;
                     }
                     break;
 
                 case StartState.WaitMedia:
-                    message = context.Resources.GetString(Resource.String.service_notification_wait_media);
+                    message = resourceContext.GetString(Resource.String.service_notification_wait_media);
                     break;
 
                 case StartState.LoadSettings:
-                    message = context.Resources.GetString(Resource.String.service_notification_load_settings);
+                    message = resourceContext.GetString(Resource.String.service_notification_load_settings);
                     break;
 
                 case StartState.CompileCode:
-                    message = context.Resources.GetString(Resource.String.service_notification_compile_code);
+                    message = resourceContext.GetString(Resource.String.service_notification_compile_code);
                     showProgress = true;
                     break;
 
                 case StartState.InitReader:
-                    message = context.Resources.GetString(Resource.String.service_notification_init_reader);
+                    message = resourceContext.GetString(Resource.String.service_notification_init_reader);
                     showProgress = true;
                     break;
 
                 case StartState.StartComm:
-                    message = context.Resources.GetString(Resource.String.service_notification_connecting);
+                    message = resourceContext.GetString(Resource.String.service_notification_connecting);
                     break;
 
                 case StartState.Error:
                     checkAbort = false;
-                    message = context.Resources.GetString(Resource.String.service_notification_error);
+                    message = resourceContext.GetString(Resource.String.service_notification_error);
                     break;
             }
 
             if (checkAbort && AbortThread)
             {
-                message = context.Resources.GetString(Resource.String.service_notification_abort);
+                message = resourceContext.GetString(Resource.String.service_notification_abort);
             }
 
             if (showProgress)
@@ -426,10 +426,10 @@ namespace BmwDeepObd
 
         private Android.App.Notification GetNotification()
         {
-            string message = GetStatusText(this);
+            string message = GetStatusText(_resourceContext);
 
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this, ActivityCommon.NotificationChannelCommunication)
-                .SetContentTitle(Resources.GetString(Resource.String.app_name))
+                .SetContentTitle(_resourceContext.GetString(Resource.String.app_name))
                 .SetContentText(message)
                 .SetSmallIcon(Resource.Drawable.ic_stat_obd)
                 .SetContentIntent(BuildIntentToShowMainActivity())
@@ -1144,7 +1144,7 @@ namespace BmwDeepObd
             string message;
             if (ActivityCommon.CommActive)
             {
-                message = Resources.GetString(Resource.String.service_stop_comm);
+                message = _resourceContext.GetString(Resource.String.service_stop_comm);
             }
             else
             {
@@ -1155,7 +1155,7 @@ namespace BmwDeepObd
                         return null;
 
                     default:
-                        message = Resources.GetString(Resource.String.service_abort_operation);
+                        message = _resourceContext.GetString(Resource.String.service_abort_operation);
                         break;
                 }
             }
