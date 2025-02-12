@@ -321,6 +321,7 @@ namespace EdiabasLibConfigTool
                         return;
                     }
 
+                    _form.UpdateStatusText(Resources.Strings.ResettingUsbDevice, true);
                     bool resetFailed = Patch.ResetFtdiDevice(usbInfo);
                     Thread.Sleep(2000);
                     _testThread = null;
@@ -330,7 +331,7 @@ namespace EdiabasLibConfigTool
                         _form.UpdateButtonStatus();
                         if (resetFailed)
                         {
-                            _form.UpdateStatusText(Resources.Strings.ResetUsbDeviceFailed);
+                            _form.UpdateStatusText(Resources.Strings.ResetUsbDeviceFailed, true);
                         }
                         else
                         {
@@ -555,14 +556,6 @@ namespace EdiabasLibConfigTool
                     {
                         resetRequired = true;
                     }
-                }
-
-                if (resetRequired)
-                {
-                    sr.Append("\r\n");
-                    sr.Append(Resources.Strings.ResettingUsbDevice);
-                    _form.UpdateStatusText(sr.ToString());
-                    return false;
                 }
 
                 sr.Append("\r\n");
