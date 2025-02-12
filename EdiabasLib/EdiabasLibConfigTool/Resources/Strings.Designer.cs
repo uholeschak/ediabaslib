@@ -326,20 +326,20 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die French ähnelt.
+        /// </summary>
+        internal static string LanguageFr {
+            get {
+                return ResourceManager.GetString("LanguageFr", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Pусский ähnelt.
         /// </summary>
         internal static string LanguageRu {
             get {
                 return ResourceManager.GetString("LanguageRu", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Pусский ähnelt.
-        /// </summary>
-        internal static string LanguageFr {
-            get {
-                return ResourceManager.GetString("LanguageFr", resourceCulture);
             }
         }
         
@@ -585,6 +585,15 @@ namespace EdiabasLibConfigTool.Resources {
         internal static string RemovingRegKey {
             get {
                 return ResourceManager.GetString("RemovingRegKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Resetting USB device ... ähnelt.
+        /// </summary>
+        internal static string ResettingUsbDevice {
+            get {
+                return ResourceManager.GetString("ResettingUsbDevice", resourceCulture);
             }
         }
         

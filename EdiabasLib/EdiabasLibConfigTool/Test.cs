@@ -291,6 +291,7 @@ namespace EdiabasLibConfigTool
             {
                 _testThread = new Thread(() =>
                 {
+                    bool resetRequired = false;
                     try
                     {
                         Thread.CurrentThread.CurrentCulture = cultureInfo;
@@ -302,14 +303,33 @@ namespace EdiabasLibConfigTool
                             return;
                         }
 
-                        TestOk = RunUsbTest(usbInfo);
+                        TestOk = RunUsbTest(usbInfo, out resetRequired);
+                        if (TestOk && !resetRequired)
+                        {
+                            ConfigPossible = true;
+                        }
                     }
                     finally
                     {
                         DisconnectStream();
+                    }
+
+                    if (!resetRequired)
+                    {
                         _testThread = null;
                         _form.UpdateButtonStatus();
+                        return;
                     }
+
+                    Patch.ResetFtdiDevice(usbInfo);
+                    Thread.Sleep(2000);
+                    _testThread = null;
+
+                    _form.BeginInvoke((Action)(() =>
+                    {
+                        _form.UpdateButtonStatus();
+                        _form.PerformSearch();
+                    }));
                 });
                 _testThread.Start();
                 return true;
@@ -481,13 +501,13 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        private bool RunUsbTest(Patch.UsbInfo usbInfo)
+        private bool RunUsbTest(Patch.UsbInfo usbInfo, out bool resetRequired)
         {
+            resetRequired = false;
             StringBuilder sr = new StringBuilder();
 
             try
             {
-                bool resetRequired = false;
                 sr.Append(Resources.Strings.Connected);
                 byte[] firmware = AdapterCommandCustom(0xFD, new byte[] { 0xFD });
                 if ((firmware == null) || (firmware.Length < 4))
@@ -532,14 +552,10 @@ namespace EdiabasLibConfigTool
 
                 if (resetRequired)
                 {
-                    DisconnectStream();
-                    if (!Patch.ResetFtdiDevice(usbInfo))
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(Resources.Strings.ResetUsbDeviceFailed);
-                        _form.UpdateStatusText(sr.ToString());
-                        return false;
-                    }
+                    sr.Append("\r\n");
+                    sr.Append(Resources.Strings.ResettingUsbDevice);
+                    _form.UpdateStatusText(sr.ToString());
+                    return false;
                 }
 
                 sr.Append("\r\n");

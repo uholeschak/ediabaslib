@@ -351,4 +351,7 @@
   <data name="ResetUsbDeviceFailed" xml:space="preserve">
     <value>Сброс USB-устройства не удался. Отсоедините устройство для ручного сброса.</value>
   </data>
+  <data name="ResettingUsbDevice" xml:space="preserve">
+    <value>Сброс настроек USB-устройства...</value>
+  </data>
 </root>

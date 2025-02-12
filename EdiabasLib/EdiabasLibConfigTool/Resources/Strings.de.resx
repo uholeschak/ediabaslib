@@ -355,4 +355,7 @@ Hier klicken um die System App zu öffnen: {0}</value>
   <data name="ResetUsbDeviceFailed" xml:space="preserve">
     <value>Das USB Gerät konnte nicht zurückgesetzt werden. Trennen Sie das Gerät für einen manuellen Reset.</value>
   </data>
+  <data name="ResettingUsbDevice" xml:space="preserve">
+    <value>Das USB Gerät wird zurückgesetzt ...</value>
+  </data>
 </root>
