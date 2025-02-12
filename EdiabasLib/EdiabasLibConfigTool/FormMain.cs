@@ -1119,7 +1119,7 @@ namespace EdiabasLibConfigTool
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateStatusText(text);
+                    UpdateStatusText(text, appendText);
                 }));
                 return;
             }
