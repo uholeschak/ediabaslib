@@ -1112,7 +1112,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        public void UpdateStatusText(string text)
+        public void UpdateStatusText(string text, bool appendText = false)
         {
             if (InvokeRequired)
             {
@@ -1122,13 +1122,34 @@ namespace EdiabasLibConfigTool
                 }));
                 return;
             }
-            string message = text;
-            if (!string.IsNullOrEmpty(_initMessage))
+
+            StringBuilder sb = new StringBuilder();
+            if (appendText)
             {
-                message = _initMessage + "\r\n" + text;
+                string lastText = richTextBoxStatus.Text;
+                if (!string.IsNullOrEmpty(lastText))
+                {
+                    sb.Append(lastText);
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(_initMessage))
+                {
+                    sb.Append(_initMessage);
+                }
             }
 
-            richTextBoxStatus.Text = message;
+            if (!string.IsNullOrEmpty(text))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append("\r\n");
+                }
+                sb.Append(text);
+            }
+
+            richTextBoxStatus.Text = sb.ToString();
             richTextBoxStatus.SelectionStart = richTextBoxStatus.TextLength;
             richTextBoxStatus.Update();
             richTextBoxStatus.ScrollToCaret();
