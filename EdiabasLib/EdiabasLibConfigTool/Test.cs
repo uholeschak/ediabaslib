@@ -322,14 +322,14 @@ namespace EdiabasLibConfigTool
                     }
 
                     _form.UpdateStatusText(Resources.Strings.ResettingUsbDevice, true);
-                    bool resetFailed = Patch.ResetFtdiDevice(usbInfo);
+                    bool resetOk = Patch.ResetFtdiDevice(usbInfo);
                     Thread.Sleep(2000);
                     _testThread = null;
 
                     _form.BeginInvoke((Action)(() =>
                     {
                         _form.UpdateButtonStatus();
-                        if (resetFailed)
+                        if (!resetOk)
                         {
                             _form.UpdateStatusText(Resources.Strings.ResetUsbDeviceFailed, true);
                         }
@@ -537,7 +537,7 @@ namespace EdiabasLibConfigTool
 
                 if (usbInfo != null)
                 {
-                    if (usbInfo.LatencyTimer != FtdiLatencyTimer || usbInfo.MaxRegLatencyTimer != FtdiLatencyTimer)
+                    if (usbInfo.MaxRegLatencyTimer != FtdiLatencyTimer)
                     {
                         sr.Append("\r\n");
                         sr.Append(string.Format(Resources.Strings.PatchingLatencyTime, usbInfo.MaxRegLatencyTimer, FtdiLatencyTimer));
