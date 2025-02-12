@@ -537,10 +537,11 @@ namespace EdiabasLibConfigTool
 
                 if (usbInfo != null)
                 {
-                    if (usbInfo.MaxRegLatencyTimer != FtdiLatencyTimer)
+                    int maxLatencyTimer = Math.Max(usbInfo.LatencyTimer, usbInfo.MaxRegLatencyTimer);
+                    if (maxLatencyTimer != FtdiLatencyTimer)
                     {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchingLatencyTime, usbInfo.MaxRegLatencyTimer, FtdiLatencyTimer));
+                        sr.Append(string.Format(Resources.Strings.PatchingLatencyTime, maxLatencyTimer, FtdiLatencyTimer));
                         if (!Patch.SetFtdiLatencyTimer(usbInfo.ComPortName, FtdiLatencyTimer))
                         {
                             sr.Append("\r\n");
@@ -549,11 +550,6 @@ namespace EdiabasLibConfigTool
                             return false;
                         }
 
-                        resetRequired = true;
-                    }
-
-                    if (usbInfo.LatencyTimer != FtdiLatencyTimer)
-                    {
                         resetRequired = true;
                     }
                 }
