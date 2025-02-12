@@ -354,4 +354,7 @@ Cliquer ici pour ouvrir l'application système : {0}</value>
   <data name="ResetUsbDeviceFailed" xml:space="preserve">
     <value>Réinitialisation du péfiphérique USB échouée. Déconnecter le périphérique pour un reset manuel.</value>
   </data>
+  <data name="ResettingUsbDevice" xml:space="preserve">
+    <value>Réinitialisation du périphérique USB...</value>
+  </data>
 </root>

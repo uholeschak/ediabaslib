@@ -354,4 +354,7 @@ Click here to open the system app: {0}</value>
   <data name="ResetUsbDeviceFailed" xml:space="preserve">
     <value>Resetting USB device failed. Disconnect device for manual reset.</value>
   </data>
+  <data name="ResettingUsbDevice" xml:space="preserve">
+    <value>Resetting USB device ...</value>
+  </data>
 </root>
