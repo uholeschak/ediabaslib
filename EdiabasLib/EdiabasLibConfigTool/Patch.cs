@@ -104,20 +104,20 @@ namespace EdiabasLibConfigTool
 
         public class UsbInfo
         {
-            public UsbInfo(uint locationId, int comPortNum, string comPortName, int latencyTimer, List<int> regLatencyTimers)
+            public UsbInfo(uint locationId, int comPortNum, string comPortName, int latencyTimer, int maxRegLatencyTimer)
             {
                 LocationId = locationId;
                 ComPortNum = comPortNum;
                 ComPortName = comPortName;
                 LatencyTimer = latencyTimer;
-                RegLatencyTimers = regLatencyTimers;
+                MaxRegLatencyTimer = maxRegLatencyTimer;
             }
 
             public uint LocationId { get; }
             public int ComPortNum { get; }
             public string ComPortName { get; }
             public int LatencyTimer { get; }
-            public List<int> RegLatencyTimers { get; }
+            public int MaxRegLatencyTimer { get; }
         }
 
         public static string AssemblyDirectory

@@ -537,10 +537,10 @@ namespace EdiabasLibConfigTool
 
                 if (usbInfo != null)
                 {
-                    if (usbInfo.LatencyTimer != FtdiLatencyTimer || usbInfo.RegLatencyTimers.Any(x => x != FtdiLatencyTimer))
+                    if (usbInfo.LatencyTimer != FtdiLatencyTimer || usbInfo.MaxRegLatencyTimer != FtdiLatencyTimer)
                     {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchingLatencyTime, usbInfo.LatencyTimer, FtdiLatencyTimer));
+                        sr.Append(string.Format(Resources.Strings.PatchingLatencyTime, usbInfo.MaxRegLatencyTimer, FtdiLatencyTimer));
                         if (!Patch.SetFtdiLatencyTimer(usbInfo.ComPortName, FtdiLatencyTimer))
                         {
                             sr.Append("\r\n");
