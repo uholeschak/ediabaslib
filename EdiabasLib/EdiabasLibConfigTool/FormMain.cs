@@ -611,7 +611,8 @@ namespace EdiabasLibConfigTool
                                 List<int> regLatencyTimers = Patch.GetFtdiLatencyTimer(comPortName);
                                 if (!string.IsNullOrEmpty(comPortName) && latencyTimer != null && regLatencyTimers != null)
                                 {
-                                    usbInfo = new Patch.UsbInfo(deviceLocId, comPort, comPortName, latencyTimer.Value, regLatencyTimers);
+                                    int maxRegLatencyTimer = regLatencyTimers.Max();
+                                    usbInfo = new Patch.UsbInfo(deviceLocId, comPort, comPortName, latencyTimer.Value, maxRegLatencyTimer);
                                 }
                             }
 
