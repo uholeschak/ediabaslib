@@ -321,14 +321,21 @@ namespace EdiabasLibConfigTool
                         return;
                     }
 
-                    Patch.ResetFtdiDevice(usbInfo);
+                    bool resetFailed = Patch.ResetFtdiDevice(usbInfo);
                     Thread.Sleep(2000);
                     _testThread = null;
 
                     _form.BeginInvoke((Action)(() =>
                     {
                         _form.UpdateButtonStatus();
-                        _form.PerformSearch();
+                        if (resetFailed)
+                        {
+                            _form.UpdateStatusText(Resources.Strings.ResetUsbDeviceFailed);
+                        }
+                        else
+                        {
+                            _form.PerformSearch();
+                        }
                     }));
                 });
                 _testThread.Start();
