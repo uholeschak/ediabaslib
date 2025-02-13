@@ -665,6 +665,13 @@ namespace EdiabasLibConfigTool
                                     sbInfo.Append(serialString);
                                 }
 
+                                int maxLatencyTimer = Math.Max(usbInfo.LatencyTimer, usbInfo.MaxRegLatencyTimer);
+                                if (sbInfo.Length > 0)
+                                {
+                                    sbInfo.Append(" / ");
+                                }
+                                sbInfo.Append(string.Format("{0}ms", maxLatencyTimer));
+
                                 ListViewItem listViewItem =
                                     new ListViewItem(new[] { usbInfo.ComPortName, sbInfo.ToString() })
                                     {
