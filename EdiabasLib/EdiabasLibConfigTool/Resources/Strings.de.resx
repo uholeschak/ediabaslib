@@ -358,4 +358,7 @@ Hier klicken um die System App zu öffnen: {0}</value>
   <data name="ResettingUsbDevice" xml:space="preserve">
     <value>Das USB Gerät wird zurückgesetzt ...</value>
   </data>
+  <data name="LatencyTime" xml:space="preserve">
+    <value>Latenzzeit: {0}ms</value>
+  </data>
 </root>

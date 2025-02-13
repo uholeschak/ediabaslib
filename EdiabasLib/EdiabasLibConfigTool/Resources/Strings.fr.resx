@@ -357,4 +357,7 @@ Cliquer ici pour ouvrir l'application système : {0}</value>
   <data name="ResettingUsbDevice" xml:space="preserve">
     <value>Réinitialisation du périphérique USB...</value>
   </data>
+  <data name="LatencyTime" xml:space="preserve">
+    <value>Temps de latence : {0}ms</value>
+  </data>
 </root>

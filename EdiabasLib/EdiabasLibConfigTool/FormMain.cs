@@ -670,7 +670,7 @@ namespace EdiabasLibConfigTool
                                 {
                                     sbInfo.Append(" / ");
                                 }
-                                sbInfo.Append(string.Format("{0}ms", maxLatencyTimer));
+                                sbInfo.Append(string.Format(Resources.Strings.LatencyTime, maxLatencyTimer));
 
                                 ListViewItem listViewItem =
                                     new ListViewItem(new[] { usbInfo.ComPortName, sbInfo.ToString() })

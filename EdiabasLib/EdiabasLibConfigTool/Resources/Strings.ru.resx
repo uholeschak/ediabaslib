@@ -354,4 +354,7 @@
   <data name="ResettingUsbDevice" xml:space="preserve">
     <value>Сброс настроек USB-устройства...</value>
   </data>
+  <data name="LatencyTime" xml:space="preserve">
+    <value>Время задержки: {0}ms</value>
+  </data>
 </root>
