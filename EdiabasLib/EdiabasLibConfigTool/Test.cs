@@ -323,7 +323,7 @@ namespace EdiabasLibConfigTool
 
                     _form.UpdateStatusText(Resources.Strings.ResettingUsbDevice, true);
                     bool resetOk = Patch.ResetFtdiDevice(usbInfo);
-                    Thread.Sleep(2000);
+                    Thread.Sleep(3000);
                     _testThread = null;
 
                     _form.BeginInvoke((Action)(() =>
@@ -535,6 +535,9 @@ namespace EdiabasLibConfigTool
                 sr.Append(string.Format(" {0}.{1}", firmware[2], firmware[3]));
                 AdapterType = (firmware[0] << 8) + firmware[1];
 
+                sr.Append("\r\n");
+                sr.Append(Resources.Strings.TestOk);
+
                 if (usbInfo != null)
                 {
                     int maxLatencyTimer = Math.Max(usbInfo.LatencyTimer, usbInfo.MaxRegLatencyTimer);
@@ -554,8 +557,6 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                sr.Append("\r\n");
-                sr.Append(Resources.Strings.TestOk);
                 _form.UpdateStatusText(sr.ToString());
                 return true;
             }
