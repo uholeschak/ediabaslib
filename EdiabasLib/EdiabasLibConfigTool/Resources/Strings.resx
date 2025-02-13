@@ -346,10 +346,10 @@ Click here to open the system app: {0}</value>
     <value>Only USB adapters are displayed, which have VID {0} and PID {1}.</value>
   </data>
   <data name="PatchingLatencyTime" xml:space="preserve">
-    <value>Correcting invalid latency time: {0}ms -&gt;{1}ms</value>
+    <value>Correcting invalid delay time: {0} ms -&gt; {1} ms</value>
   </data>
   <data name="PatchingLatencyTimeFailed" xml:space="preserve">
-    <value>Changing latency time failed. Please correct it manually.</value>
+    <value>Changing delay time failed. Please correct it manually.</value>
   </data>
   <data name="ResetUsbDeviceFailed" xml:space="preserve">
     <value>Resetting USB device failed. Disconnect device for manual reset.</value>
@@ -358,6 +358,6 @@ Click here to open the system app: {0}</value>
     <value>Resetting USB device ...</value>
   </data>
   <data name="LatencyTime" xml:space="preserve">
-    <value>Latency time: {0}ms</value>
+    <value>Delay time: {0} ms</value>
   </data>
 </root>

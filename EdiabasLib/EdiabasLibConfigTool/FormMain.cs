@@ -660,9 +660,11 @@ namespace EdiabasLibConfigTool
                                 {
                                     if (sbInfo.Length > 0)
                                     {
-                                        sbInfo.Append(" / ");
+                                        sbInfo.Append(" ");
                                     }
+                                    sbInfo.Append("(");
                                     sbInfo.Append(serialString);
+                                    sbInfo.Append(")");
                                 }
 
                                 int maxLatencyTimer = Math.Max(usbInfo.LatencyTimer, usbInfo.MaxRegLatencyTimer);

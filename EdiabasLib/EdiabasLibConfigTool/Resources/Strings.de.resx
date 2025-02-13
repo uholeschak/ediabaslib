@@ -347,10 +347,10 @@ Hier klicken um die System App zu öffnen: {0}</value>
     <value>Es werden nur USB Adapter angezeigt, welche ein VID {0} und PID {1} besitzen.</value>
   </data>
   <data name="PatchingLatencyTime" xml:space="preserve">
-    <value>Ungültige Latenzzeit wird korrigiert: {0}ms -&gt; {1}ms</value>
+    <value>Ungültige Wartezeit wird korrigiert: {0} ms -&gt; {1} ms</value>
   </data>
   <data name="PatchingLatencyTimeFailed" xml:space="preserve">
-    <value>Ändern der Latenzzeit fehlgeschlagen. Bitte manuell korrigieren.</value>
+    <value>Ändern der Wartezeit fehlgeschlagen. Bitte manuell korrigieren.</value>
   </data>
   <data name="ResetUsbDeviceFailed" xml:space="preserve">
     <value>Das USB Gerät konnte nicht zurückgesetzt werden. Trennen Sie das Gerät für einen manuellen Reset.</value>
@@ -359,6 +359,6 @@ Hier klicken um die System App zu öffnen: {0}</value>
     <value>Das USB Gerät wird zurückgesetzt ...</value>
   </data>
   <data name="LatencyTime" xml:space="preserve">
-    <value>Latenzzeit: {0}ms</value>
+    <value>Wartezeit: {0} ms</value>
   </data>
 </root>
