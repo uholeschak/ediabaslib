@@ -344,7 +344,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Latency time: {0}ms ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Delay time: {0} ms ähnelt.
         /// </summary>
         internal static string LatencyTime {
             get {
@@ -470,7 +470,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Correcting invalid latency time: {0}ms -&gt;{1}ms ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Correcting invalid delay time: {0} ms -&gt; {1} ms ähnelt.
         /// </summary>
         internal static string PatchingLatencyTime {
             get {
@@ -479,7 +479,7 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Changing latency time failed. Please correct it manually. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Changing delay time failed. Please correct it manually. ähnelt.
         /// </summary>
         internal static string PatchingLatencyTimeFailed {
             get {

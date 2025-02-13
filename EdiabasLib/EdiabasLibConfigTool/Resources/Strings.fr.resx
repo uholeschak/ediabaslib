@@ -346,10 +346,10 @@ Cliquer ici pour ouvrir l'application système : {0}</value>
     <value>Seul les adaptateurs USB sont affichés, qui possèdent les VID {0} et PID {1}.</value>
   </data>
   <data name="PatchingLatencyTime" xml:space="preserve">
-    <value>Correctiion de la valeur du temps de latence invalide : {0}ms -&gt;{1}ms</value>
+    <value>Correction du délai non valide : {0} ms -&gt; {1} ms</value>
   </data>
   <data name="PatchingLatencyTimeFailed" xml:space="preserve">
-    <value>Changement de la valeur du temps de latence échouée. Veuillez la corriger manuellement.</value>
+    <value>La modification du délai a échoué. Veuillez le corriger manuellement.</value>
   </data>
   <data name="ResetUsbDeviceFailed" xml:space="preserve">
     <value>Réinitialisation du péfiphérique USB échouée. Déconnecter le périphérique pour un reset manuel.</value>
@@ -358,6 +358,6 @@ Cliquer ici pour ouvrir l'application système : {0}</value>
     <value>Réinitialisation du périphérique USB...</value>
   </data>
   <data name="LatencyTime" xml:space="preserve">
-    <value>Temps de latence : {0}ms</value>
+    <value>Délai de réponse : {0} ms</value>
   </data>
 </root>
