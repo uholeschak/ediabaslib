@@ -538,7 +538,7 @@ namespace EdiabasLibConfigTool
                 if (usbInfo != null)
                 {
                     int maxLatencyTimer = Math.Max(usbInfo.LatencyTimer, usbInfo.MaxRegLatencyTimer);
-                    if (maxLatencyTimer != FtdiLatencyTimer)
+                    if (maxLatencyTimer > FtdiLatencyTimer)
                     {
                         sr.Append("\r\n");
                         sr.Append(string.Format(Resources.Strings.PatchingLatencyTime, maxLatencyTimer, FtdiLatencyTimer));
