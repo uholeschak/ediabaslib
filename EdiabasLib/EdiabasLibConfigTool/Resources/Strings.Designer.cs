@@ -344,6 +344,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Latency time: {0}ms ähnelt.
+        /// </summary>
+        internal static string LatencyTime {
+            get {
+                return ResourceManager.GetString("LatencyTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die This application requires .NET Framework {0} or higher. ähnelt.
         /// </summary>
         internal static string NetFrameworkMissing {
