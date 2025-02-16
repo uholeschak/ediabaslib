@@ -498,6 +498,65 @@ namespace AssemblyPatcher
                             // ignored
                         }
 
+                        if (noIcomVerCheck)
+                        {
+                            try
+                            {
+                                Target target = new Target
+                                {
+                                    Namespace = "BMW.Rheingold.xVM",
+                                    Class = "SLP",
+                                    Method = "ScanDeviceFromAttrList",
+                                };
+                                IList<Instruction> instructions = patcher.GetInstructionList(target);
+                                if (instructions != null)
+                                {
+                                    Console.WriteLine("SLP.ScanDeviceFromAttrList found");
+                                    int patchIndex = -1;
+                                    for (int index = 0; index < instructions.Count; index++)
+                                    {
+                                        Instruction instruction = instructions[index];
+                                        if (instruction.OpCode == OpCodes.Ldstr &&
+                                            string.Compare(instruction.Operand.ToString(), "ICOM", StringComparison.OrdinalIgnoreCase) == 0 &&
+                                            index + 3 < instructions.Count)
+                                        {
+                                            if (instructions[index + 1].OpCode != OpCodes.Callvirt)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (instructions[index + 2].OpCode != OpCodes.Ldloc_1)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (instructions[index + 3].OpCode != OpCodes.Ldc_I4_1)
+                                            {
+                                                continue;
+                                            }
+
+                                            patchIndex = index + 3;
+                                            break;
+                                        }
+                                    }
+
+                                    if (patchIndex >= 0)
+                                    {
+                                        instructions[patchIndex] = Instruction.Create(OpCodes.Ldc_I4_2);    // DeviceTypeDetail = ICOMNext
+                                        patched = true;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Patching ICOM type failed");
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+
                         try
                         {
                             Target target = new Target
