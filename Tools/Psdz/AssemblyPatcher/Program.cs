@@ -542,7 +542,7 @@ namespace AssemblyPatcher
 
                                     if (patchIndex >= 0)
                                     {
-                                        instructions[patchIndex] = Instruction.Create(OpCodes.Ldc_I4_2);    // DeviceTypeDetail = ICOMNext
+                                        instructions[patchIndex] = Instruction.Create(OpCodes.Ldc_I4_0);    // DeviceTypeDetail = Undefined
                                         patched = true;
                                     }
                                     else
