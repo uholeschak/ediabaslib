@@ -5547,6 +5547,7 @@ namespace CarSimulator
         private int GetClientConnections()
         {
             int enetConnections = 0;
+            int controlConnections = 0;
             int doIpConnections = 0;
             int sslConnections = 0;
 
@@ -5565,9 +5566,20 @@ namespace CarSimulator
                         }
                     }
 
+                    if (bmwTcpChannel.TcpServerDiag != null)
+                    {
+                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientControlList)
+                        {
+                            if (bmwTcpClientData.TcpClientStream != null)
+                            {
+                                controlConnections++;
+                            }
+                        }
+                    }
+
                     if (bmwTcpChannel.TcpServerDoIp != null)
                     {
-                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
+                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDoIpList)
                         {
                             if (bmwTcpClientData.TcpClientStream != null)
                             {
@@ -5578,7 +5590,7 @@ namespace CarSimulator
 
                     if (bmwTcpChannel.TcpServerDoIpSsl != null)
                     {
-                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
+                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDoIpSslList)
                         {
                             if (bmwTcpClientData.TcpClientStream != null)
                             {
@@ -5589,7 +5601,8 @@ namespace CarSimulator
                 }
             }
 
-            Debug.WriteLine("Client connections ENET={0}, DoIp={1}, SSL={2}", (object)enetConnections, (object)doIpConnections, (object)sslConnections);
+            Debug.WriteLine("Client connections ENET={0}, Control={1}, DoIp={2}, SSL={3}",
+                (object)enetConnections, (object)controlConnections, (object)doIpConnections, (object)sslConnections);
             return enetConnections + doIpConnections + sslConnections;
         }
 
