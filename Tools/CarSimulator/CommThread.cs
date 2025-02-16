@@ -390,8 +390,7 @@ namespace CarSimulator
         private readonly Stopwatch _receiveStopWatch;
 
         private const string TestMac = "D8182B890A8B";
-        private const string TestVinEnet = "WBAJM71000B055940";
-        private const string TestVinDoIp = "WBAJM71000B055941";
+        private const string TestVin = "WBAJM71000B055940";
         private const string IcomVehicleAddress = "192.168.11.1";
         private const string IcomDhcpAddress = "192.168.201.1";
 
@@ -2100,7 +2099,7 @@ namespace CarSimulator
             identMessage[idx++] = (byte)'I';
             identMessage[idx++] = (byte)'N';
 
-            byte[] vinBytes = Encoding.ASCII.GetBytes(TestVinEnet);
+            byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
             int vinLen = vinBytes.Length;
             Array.Copy(vinBytes, 0, identMessage, idx, vinLen);
             idx += vinLen;
@@ -2199,7 +2198,8 @@ namespace CarSimulator
                 {
                     // ident response
                     resPayloadType = 0x0004;
-                    byte[] vinBytes = Encoding.ASCII.GetBytes(TestVinDoIp);
+                    byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
+                    vinBytes[^1]++;
                     resData.AddRange(vinBytes);
                     // log address
                     resData.Add((byte)(_doIpGwAddr >> 8));
@@ -2572,7 +2572,7 @@ namespace CarSimulator
 
                     string attributs =
                         string.Format("(DevId=G31),(Serial={2}{0}),(MacAddress={1}),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=12000),(Kl30Voltage=12000),(VIN={2}),(PowerSupply=12000),(VciChannels=[0?;1?;2?;3+]),(IPAddress={3})",
-                            BitConverter.ToString(localIp.GetAddressBytes()).Replace("-", ""), TestMac, TestVinEnet, localIp);
+                            BitConverter.ToString(localIp.GetAddressBytes()).Replace("-", ""), TestMac, TestVin, localIp);
                     byte[] attrBytes = Encoding.ASCII.GetBytes(attributs);
                     int attrLen = attrBytes.Length;
                     response.Add((byte)(attrLen >> 8));      // List length

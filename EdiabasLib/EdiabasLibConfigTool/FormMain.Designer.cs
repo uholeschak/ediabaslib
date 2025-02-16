@@ -239,8 +239,8 @@
             // 
             // richTextBoxStatus
             // 
-            richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             resources.ApplyResources(richTextBoxStatus, "richTextBoxStatus");
+            richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.LinkClicked += richTextBoxStatus_LinkClicked;
