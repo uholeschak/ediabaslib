@@ -2623,6 +2623,8 @@ namespace CarSimulator
             {
                 // ignored
             }
+
+            GetClientConnections();
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -2725,6 +2727,8 @@ namespace CarSimulator
             {
                 // ignored
             }
+
+            GetClientConnections();
         }
 
         private bool ReceiveEnet(byte[] receiveData, BmwTcpClientData bmwTcpClientData)
@@ -3017,6 +3021,8 @@ namespace CarSimulator
             {
                 // ignored
             }
+
+            GetClientConnections();
         }
 
         private bool ReceiveDoIp(byte[] receiveData, BmwTcpClientData bmwTcpClientData)
@@ -5512,6 +5518,53 @@ namespace CarSimulator
         {
             byte result = (byte) ((value % 10) + ((value / 10) << 4));
             return result;
+        }
+
+        private int GetClientConnections()
+        {
+            int connections = 0;
+
+            if (_bmwTcpChannels.Count > 0)
+            {
+                foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
+                {
+                    if (bmwTcpChannel.TcpServerDiag != null)
+                    {
+                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
+                        {
+                            if (bmwTcpClientData.TcpClientStream != null)
+                            {
+                                connections++;
+                            }
+                        }
+                    }
+
+                    if (bmwTcpChannel.TcpServerDoIp != null)
+                    {
+                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
+                        {
+                            if (bmwTcpClientData.TcpClientStream != null)
+                            {
+                                connections++;
+                            }
+                        }
+                    }
+
+                    if (bmwTcpChannel.TcpServerDoIpSsl != null)
+                    {
+                        foreach (BmwTcpClientData bmwTcpClientData in bmwTcpChannel.TcpClientDiagList)
+                        {
+                            if (bmwTcpClientData.TcpClientStream != null)
+                            {
+                                connections++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Debug.WriteLine("Client connections {0}", (object)connections);
+            return connections;
         }
 
         private void SerialTransmission()
