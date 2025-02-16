@@ -2597,12 +2597,14 @@ namespace CarSimulator
 
         private void EnetControlClose(BmwTcpClientData bmwTcpClientData)
         {
+            bool changed = false;
             try
             {
                 if (bmwTcpClientData.TcpClientStream != null)
                 {
                     bmwTcpClientData.TcpClientStream.Close();
                     bmwTcpClientData.TcpClientStream = null;
+                    changed = true;
                 }
             }
             catch (Exception)
@@ -2617,6 +2619,7 @@ namespace CarSimulator
                     Debug.WriteLine("Control Closed [{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.ControlPort);
                     bmwTcpClientData.TcpClientConnection.Close();
                     bmwTcpClientData.TcpClientConnection = null;
+                    changed = true;
                 }
             }
             catch (Exception)
@@ -2624,7 +2627,10 @@ namespace CarSimulator
                 // ignored
             }
 
-            GetClientConnections();
+            if (changed)
+            {
+                GetClientConnections();
+            }
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
@@ -2650,6 +2656,8 @@ namespace CarSimulator
                         bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.ControlPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
                         bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
+
+                    GetClientConnections();
                 }
             }
             catch (Exception)
@@ -2701,12 +2709,14 @@ namespace CarSimulator
 
         private void EnetDiagClose(BmwTcpClientData bmwTcpClientData)
         {
+            bool changed = false;
             try
             {
                 if (bmwTcpClientData.TcpClientStream != null)
                 {
                     bmwTcpClientData.TcpClientStream.Close();
                     bmwTcpClientData.TcpClientStream = null;
+                    changed = true;
                 }
             }
             catch (Exception)
@@ -2721,6 +2731,7 @@ namespace CarSimulator
                     Debug.WriteLine("Diag Closed[{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort);
                     bmwTcpClientData.TcpClientConnection.Close();
                     bmwTcpClientData.TcpClientConnection = null;
+                    changed = true;
                 }
             }
             catch (Exception)
@@ -2728,7 +2739,10 @@ namespace CarSimulator
                 // ignored
             }
 
-            GetClientConnections();
+            if (changed)
+            {
+                GetClientConnections();
+            }
         }
 
         private bool ReceiveEnet(byte[] receiveData, BmwTcpClientData bmwTcpClientData)
@@ -2767,6 +2781,8 @@ namespace CarSimulator
                         bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
                         bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
+
+                    GetClientConnections();
                 }
             }
             catch (Exception ex)
@@ -2995,12 +3011,14 @@ namespace CarSimulator
 
         private void DoIpClose(BmwTcpClientData bmwTcpClientData)
         {
+            bool changed = false;
             try
             {
                 if (bmwTcpClientData.TcpClientStream != null)
                 {
                     bmwTcpClientData.TcpClientStream.Close();
                     bmwTcpClientData.TcpClientStream = null;
+                    changed = true;
                 }
             }
             catch (Exception)
@@ -3015,6 +3033,7 @@ namespace CarSimulator
                     Debug.WriteLine("DoIp Closed[{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort);
                     bmwTcpClientData.TcpClientConnection.Close();
                     bmwTcpClientData.TcpClientConnection = null;
+                    changed = true;
                 }
             }
             catch (Exception)
@@ -3022,7 +3041,10 @@ namespace CarSimulator
                 // ignored
             }
 
-            GetClientConnections();
+            if (changed)
+            {
+                GetClientConnections();
+            }
         }
 
         private bool ReceiveDoIp(byte[] receiveData, BmwTcpClientData bmwTcpClientData)
@@ -3069,6 +3091,8 @@ namespace CarSimulator
                         bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
                         bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
+
+                    GetClientConnections();
                 }
             }
             catch (Exception ex)
@@ -5522,7 +5546,9 @@ namespace CarSimulator
 
         private int GetClientConnections()
         {
-            int connections = 0;
+            int enetConnections = 0;
+            int doIpConnections = 0;
+            int sslConnections = 0;
 
             if (_bmwTcpChannels.Count > 0)
             {
@@ -5534,7 +5560,7 @@ namespace CarSimulator
                         {
                             if (bmwTcpClientData.TcpClientStream != null)
                             {
-                                connections++;
+                                enetConnections++;
                             }
                         }
                     }
@@ -5545,7 +5571,7 @@ namespace CarSimulator
                         {
                             if (bmwTcpClientData.TcpClientStream != null)
                             {
-                                connections++;
+                                doIpConnections++;
                             }
                         }
                     }
@@ -5556,15 +5582,15 @@ namespace CarSimulator
                         {
                             if (bmwTcpClientData.TcpClientStream != null)
                             {
-                                connections++;
+                                sslConnections++;
                             }
                         }
                     }
                 }
             }
 
-            Debug.WriteLine("Client connections {0}", (object)connections);
-            return connections;
+            Debug.WriteLine("Client connections ENET={0}, DoIp={1}, SSL={2}", (object)enetConnections, (object)doIpConnections, (object)sslConnections);
+            return enetConnections + doIpConnections + sslConnections;
         }
 
         private void SerialTransmission()
