@@ -104,6 +104,13 @@ namespace EdiabasLibConfigTool
             IstadExt,
         }
 
+        [Flags]
+        public enum PatchRegType
+        {
+            Standard = 0x01,
+            Ides = 0x02,
+        }
+
         public class UsbInfo
         {
             public UsbInfo(uint locationId, int comPortNum, string comPortName, int latencyTimer, int maxRegLatencyTimer)
@@ -1153,7 +1160,7 @@ namespace EdiabasLibConfigTool
             return null;
         }
 
-        public static bool PatchIstaReg(RegistryView? registryViewIsta, string ediabasBinLocation = null)
+        public static bool PatchIstaReg(RegistryView? registryViewIsta, string ediabasBinLocation = null, PatchRegType patchRegType = PatchRegType.Standard | PatchRegType.Ides)
         {
             if (registryViewIsta == null)
             {
@@ -1170,14 +1177,29 @@ namespace EdiabasLibConfigTool
                         {
                             if (!string.IsNullOrEmpty(ediabasBinLocation))
                             {
-                                key.SetValue(RegKeyIstaBinPath, ediabasBinLocation);
-                                key.SetValue(RegKeyIstaIdesBinPath, ediabasBinLocation);
+                                if ((patchRegType & PatchRegType.Standard) != 0)
+                                {
+                                    key.SetValue(RegKeyIstaBinPath, ediabasBinLocation);
+                                }
+
+                                if ((patchRegType & PatchRegType.Ides) != 0)
+                                {
+                                    key.SetValue(RegKeyIstaIdesBinPath, ediabasBinLocation);
+                                }
+
                                 key.SetValue(RegKeyIstaOpMode, "ISTA_PLUS");     // show ediabas.ini option in ISTA
                             }
                             else
                             {
-                                key.DeleteValue(RegKeyIstaBinPath, false);
-                                key.DeleteValue(RegKeyIstaIdesBinPath, false);
+                                if ((patchRegType & PatchRegType.Standard) != 0)
+                                {
+                                    key.DeleteValue(RegKeyIstaBinPath, false);
+                                }
+
+                                if ((patchRegType & PatchRegType.Ides) != 0)
+                                {
+                                    key.DeleteValue(RegKeyIstaIdesBinPath, false);
+                                }
                             }
                             return true;
                         }
