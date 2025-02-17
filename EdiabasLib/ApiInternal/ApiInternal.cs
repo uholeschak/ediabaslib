@@ -1639,10 +1639,7 @@ namespace Ediabas
                                         AutoFlush = buffering == 0
                                     };
 
-                                    if (!appendFile)
-                                    {
-                                        _firstLog = false;
-                                    }
+                                    _firstLog = false;
                                     break;
                                 }
                                 catch (Exception)
