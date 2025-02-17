@@ -1604,18 +1604,19 @@ namespace Ediabas
 
                             for (int fileIdx = 0; fileIdx < 10; fileIdx++)
                             {
+                                bool appendFile = appendTrace != 0;
                                 string suffix = (fileIdx > 0) ? "_" + fileIdx : string.Empty;
                                 string idxFileName = Path.GetFileNameWithoutExtension(traceFileName) + suffix + Path.GetExtension(traceFileName);
                                 string traceFile = Path.Combine(tracePath, idxFileName);
                                 try
                                 {
-                                    if (appendTrace != 0 && File.Exists(traceFile))
+                                    if (appendFile && File.Exists(traceFile))
                                     {
                                         DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
                                         TimeSpan diffTime = DateTime.Now - lastWriteTime;
                                         if (diffTime.Hours > EdiabasNet.TraceAppendDiffHours)
                                         {
-                                            appendTrace = 0;
+                                            appendFile = false;
                                         }
                                     }
                                 }
@@ -1626,7 +1627,7 @@ namespace Ediabas
 
                                 Directory.CreateDirectory(tracePath);
                                 FileMode fileMode = FileMode.Append;
-                                if (_firstLog && appendTrace == 0)
+                                if (_firstLog && !appendFile)
                                 {
                                     _firstLog = false;
                                     fileMode = FileMode.Create;
