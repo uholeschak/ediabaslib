@@ -6518,6 +6518,7 @@ namespace EdiabasLib
                         {
                             string currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
                             _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "Date: {0}", currDateTime));
+                            _swLog.WriteLine(string.Format(CultureInfo.InvariantCulture, "64 bit process: {0}", Environment.Is64BitProcess));
 
                             string logInfo = LogInfo;
                             if (!string.IsNullOrEmpty(logInfo))
