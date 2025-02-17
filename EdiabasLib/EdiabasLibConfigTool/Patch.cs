@@ -107,6 +107,7 @@ namespace EdiabasLibConfigTool
         [Flags]
         public enum PatchRegType
         {
+            None = 0x00,
             Standard = 0x01,
             Ides = 0x02,
         }
@@ -997,13 +998,15 @@ namespace EdiabasLibConfigTool
 
             try
             {
-                RegistryView? registryViewIstaSet = null;
-                RegistryView? registryViewIstaDel = null;
+                bool copyOnly = false;
+                RegistryView? registryViewIsta = null;
+                PatchRegType patchRegTypeSet = PatchRegType.None;
 
                 switch (patchType)
                 {
                     case PatchType.Istad:
-                        registryViewIstaDel = GetIstaReg();
+                        registryViewIsta = GetIstaReg();
+                        patchRegTypeSet = PatchRegType.Ides;
                         break;
 
                     case PatchType.IstadExt:
@@ -1012,14 +1015,16 @@ namespace EdiabasLibConfigTool
                             Directory.CreateDirectory(dirName);
                         }
 
-                        registryViewIstaSet = GetIstaReg();
+                        copyOnly = true;
+                        registryViewIsta = GetIstaReg();
+                        patchRegTypeSet = PatchRegType.Standard | PatchRegType.Ides;
                         break;
                 }
 
                 sr.AppendFormat(Resources.Strings.PatchDirectory, dirName);
-                RemoveIstaReg(sr, registryViewIstaDel);
+                RemoveIstaReg(sr, registryViewIsta);
 
-                if (!PatchFiles(sr, dirName, registryViewIstaSet != null))
+                if (!PatchFiles(sr, dirName, copyOnly))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
@@ -1034,14 +1039,22 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
-                if (registryViewIstaSet != null)
+                if (registryViewIsta != null)
                 {
-                    sr.Append("\r\n");
-                    sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyIstaBinFull);
-                    sr.Append("\r\n");
-                    sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyIstaIdesBinFull);
+                    if ((patchRegTypeSet & PatchRegType.Standard) != PatchRegType.None)
+                    {
+                        sr.Append("\r\n");
+                        sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyIstaBinFull);
+                    }
+
+                    if ((patchRegTypeSet & PatchRegType.Ides) != PatchRegType.None)
+                    {
+                        sr.Append("\r\n");
+                        sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyIstaIdesBinFull);
+                    }
+
                     string ediabasBinPath = Path.GetDirectoryName(configFile);
-                    if (!PatchIstaReg(registryViewIstaSet, ediabasBinPath))
+                    if (!PatchIstaReg(registryViewIsta, ediabasBinPath, patchRegTypeSet))
                     {
                         sr.Append("\r\n");
                         sr.Append(Resources.Strings.PatchConfigUpdateFailed);
@@ -1177,12 +1190,12 @@ namespace EdiabasLibConfigTool
                         {
                             if (!string.IsNullOrEmpty(ediabasBinLocation))
                             {
-                                if ((patchRegType & PatchRegType.Standard) != 0)
+                                if ((patchRegType & PatchRegType.Standard) != PatchRegType.None)
                                 {
                                     key.SetValue(RegKeyIstaBinPath, ediabasBinLocation);
                                 }
 
-                                if ((patchRegType & PatchRegType.Ides) != 0)
+                                if ((patchRegType & PatchRegType.Ides) != PatchRegType.None)
                                 {
                                     key.SetValue(RegKeyIstaIdesBinPath, ediabasBinLocation);
                                 }
@@ -1191,12 +1204,12 @@ namespace EdiabasLibConfigTool
                             }
                             else
                             {
-                                if ((patchRegType & PatchRegType.Standard) != 0)
+                                if ((patchRegType & PatchRegType.Standard) != PatchRegType.None)
                                 {
                                     key.DeleteValue(RegKeyIstaBinPath, false);
                                 }
 
-                                if ((patchRegType & PatchRegType.Ides) != 0)
+                                if ((patchRegType & PatchRegType.Ides) != PatchRegType.None)
                                 {
                                     key.DeleteValue(RegKeyIstaIdesBinPath, false);
                                 }
