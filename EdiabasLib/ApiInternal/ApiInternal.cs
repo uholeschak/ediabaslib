@@ -1638,8 +1638,6 @@ namespace Ediabas
                                     {
                                         AutoFlush = buffering == 0
                                     };
-
-                                    _firstLog = false;
                                     break;
                                 }
                                 catch (Exception)
@@ -1649,8 +1647,10 @@ namespace Ediabas
                             }
                         }
                     }
+
                     if (_swLog != null)
                     {
+                        _firstLog = false;
                         _swLog.WriteLine(info);
                     }
                 }
