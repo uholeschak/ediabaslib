@@ -745,18 +745,34 @@ namespace EdiabasLibConfigTool
         {
             if (registryViewIsta != null)
             {
-                if (IsIstaRegPresent(registryViewIsta))
+                PatchRegType patchRegType = IsIstaRegPresent(registryViewIsta);
+                if (patchRegType != PatchRegType.None)
                 {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.RemovingRegKey, RegKeyIstaBinFull));
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.RemovingRegKey, RegKeyIstaIdesBinFull));
-                    if (!PatchIstaReg(registryViewIsta))
+                    if ((patchRegType & PatchRegType.Standard) != PatchRegType.None)
                     {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
+                        sr.Append(string.Format(Resources.Strings.RemovingRegKey, RegKeyIstaBinFull));
+                    }
+
+                    if ((patchRegType & PatchRegType.Ides) != PatchRegType.None)
+                    {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaIdesBinFull));
+                        sr.Append(string.Format(Resources.Strings.RemovingRegKey, RegKeyIstaIdesBinFull));
+                    }
+
+                    if (!PatchIstaReg(registryViewIsta, null, patchRegType))
+                    {
+                        if ((patchRegType & PatchRegType.Standard) != PatchRegType.None)
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
+                        }
+
+                        if ((patchRegType & PatchRegType.Ides) != PatchRegType.None)
+                        {
+                            sr.Append("\r\n");
+                            sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaIdesBinFull));
+                        }
                         return false;
                     }
                 }
@@ -941,7 +957,7 @@ namespace EdiabasLibConfigTool
                     case PatchType.Istad:
                     case PatchType.IstadExt:
                         RegistryView? registryViewIsta = GetIstaReg();
-                        if (IsIstaRegPresent(registryViewIsta))
+                        if (IsIstaRegPresent(registryViewIsta) != PatchRegType.None)
                         {
                             return true;
                         }
@@ -1227,13 +1243,14 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        public static bool IsIstaRegPresent(RegistryView? registryViewIsta, bool idesBin = false)
+        public static PatchRegType IsIstaRegPresent(RegistryView? registryViewIsta, bool idesBin = false)
         {
             if (registryViewIsta == null)
             {
-                return false;
+                return PatchRegType.None;
             }
 
+            PatchRegType patchRegType = PatchRegType.None;
             try
             {
                 using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryViewIsta.Value))
@@ -1244,11 +1261,11 @@ namespace EdiabasLibConfigTool
                         {
                             if (key.GetValue(RegKeyIstaBinPath) != null)
                             {
-                                return true;
+                                patchRegType |= PatchRegType.Standard;
                             }
                             if (key.GetValue(RegKeyIstaIdesBinPath) != null)
                             {
-                                return true;
+                                patchRegType |= PatchRegType.Ides;
                             }
                         }
                     }
@@ -1259,7 +1276,7 @@ namespace EdiabasLibConfigTool
                 // ignored
             }
 
-            return false;
+            return patchRegType;
         }
     }
 }
