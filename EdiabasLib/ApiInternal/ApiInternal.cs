@@ -293,8 +293,8 @@ namespace Ediabas
             setLocalError(EDIABAS_ERR_NONE);
 
             _ediabas = new EdiabasNet(config);
-            logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
             logFormat(ApiLogLevel.Normal, "64 bit process: {0}", Environment.Is64BitProcess);
+            logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
 
             if (!string.IsNullOrEmpty(unit))
             {
@@ -1602,6 +1602,7 @@ namespace Ediabas
                                 traceFileName = propName;
                             }
 
+                            Directory.CreateDirectory(tracePath);
                             for (int fileIdx = 0; fileIdx < 10; fileIdx++)
                             {
                                 bool appendFile = appendTrace != 0;
@@ -1625,11 +1626,9 @@ namespace Ediabas
                                     // ignored
                                 }
 
-                                Directory.CreateDirectory(tracePath);
                                 FileMode fileMode = FileMode.Append;
                                 if (_firstLog && !appendFile)
                                 {
-                                    _firstLog = false;
                                     fileMode = FileMode.Create;
                                 }
 
@@ -1639,6 +1638,11 @@ namespace Ediabas
                                     {
                                         AutoFlush = buffering == 0
                                     };
+
+                                    if (!appendFile)
+                                    {
+                                        _firstLog = false;
+                                    }
                                     break;
                                 }
                                 catch (Exception)
