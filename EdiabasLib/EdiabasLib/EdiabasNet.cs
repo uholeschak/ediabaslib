@@ -6362,7 +6362,6 @@ namespace EdiabasLib
                                 buffering = StringToValue(traceBuffering);
                             }
 
-                            bool allowAppend = !_firstLog || appendTrace != 0;
 #if COMPRESS_TRACE
                             int compressTrace = 0;
                             string propCompress = GetConfigProperty("CompressTrace");
@@ -6373,6 +6372,7 @@ namespace EdiabasLib
 
                             if (compressTrace != 0)
                             {
+                                bool allowAppend = !_firstLog || appendTrace != 0;
                                 bool createBom = false;
                                 if (_zipStream == null)
                                 {
@@ -6461,59 +6461,72 @@ namespace EdiabasLib
                             else
 #endif
                             {
-                                long fileSize = 0;
-                                string traceFile = Path.Combine(tracePath, traceFileName);
-                                if (allowAppend)
+                                for (int fileIdx = 0; fileIdx < 10; fileIdx++)
                                 {
-                                    try
+                                    long fileSize = 0;
+                                    bool allowAppend = !_firstLog || appendTrace != 0;
+                                    string suffix = (fileIdx > 0) ? "_" + fileIdx : string.Empty;
+                                    string idxFileName = Path.GetFileNameWithoutExtension(traceFileName) + suffix + Path.GetExtension(traceFileName);
+                                    string traceFile = Path.Combine(tracePath, idxFileName);
+                                    if (allowAppend)
                                     {
-                                        if (File.Exists(traceFile))
+                                        try
                                         {
-                                            FileInfo fileInfo = new FileInfo(traceFile);
-                                            fileSize = fileInfo.Length;
-
-                                            if (appendTrace != 0)
+                                            if (File.Exists(traceFile))
                                             {
-                                                DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
-                                                TimeSpan diffTime = DateTime.Now - lastWriteTime;
-                                                if (diffTime.Hours > TraceAppendDiffHours)
+                                                FileInfo fileInfo = new FileInfo(traceFile);
+                                                fileSize = fileInfo.Length;
+
+                                                if (appendTrace != 0)
                                                 {
-                                                    allowAppend = false;
+                                                    DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
+                                                    TimeSpan diffTime = DateTime.Now - lastWriteTime;
+                                                    if (diffTime.Hours > TraceAppendDiffHours)
+                                                    {
+                                                        allowAppend = false;
+                                                    }
                                                 }
                                             }
+                                            else
+                                            {
+                                                allowAppend = false;
+                                            }
                                         }
-                                        else
+                                        catch (Exception)
                                         {
                                             allowAppend = false;
                                         }
                                     }
+
+                                    FileMode fileMode = FileMode.Append;
+                                    if (!allowAppend)
+                                    {
+                                        fileMode = FileMode.Create;
+                                        fileSize = 0;
+                                    }
+
+                                    bool createBom = fileSize == 0;
+                                    newFile = true;
+                                    try
+                                    {
+                                        _swLog = new StreamWriter(new FileStream(traceFile, fileMode, FileAccess.Write, FileShare.ReadWrite), new UTF8Encoding(createBom))
+                                        {
+                                            AutoFlush = buffering == 0
+                                        };
+                                        break;
+                                    }
                                     catch (Exception)
                                     {
-                                        allowAppend = false;
+                                        // ignored
                                     }
                                 }
-
-                                FileMode fileMode = FileMode.Append;
-                                if (!allowAppend)
-                                {
-                                    fileMode = FileMode.Create;
-                                    fileSize = 0;
-                                }
-
-                                bool createBom = fileSize == 0;
-                                newFile = true;
-                                _swLog = new StreamWriter(new FileStream(traceFile, fileMode, FileAccess.Write, FileShare.ReadWrite), new UTF8Encoding(createBom))
-                                    {
-                                        AutoFlush = buffering == 0
-                                    };
                             }
-
-                            _firstLog = false;
                         }
                     }
 
                     if (_swLog != null)
                     {
+                        _firstLog = false;
                         if (newFile)
                         {
                             string currDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
