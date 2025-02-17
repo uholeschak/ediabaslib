@@ -1602,36 +1602,50 @@ namespace Ediabas
                                 traceFileName = propName;
                             }
 
-                            string traceFile = Path.Combine(tracePath, traceFileName);
-                            try
+                            for (int fileIdx = 0; fileIdx < 10; fileIdx++)
                             {
-                                if (appendTrace != 0 && File.Exists(traceFile))
+                                bool appendFile = appendTrace != 0;
+                                string suffix = (fileIdx > 0) ? "_" + fileIdx : string.Empty;
+                                string idxFileName = Path.GetFileNameWithoutExtension(traceFileName) + suffix + Path.GetExtension(traceFileName);
+                                string traceFile = Path.Combine(tracePath, idxFileName);
+                                try
                                 {
-                                    DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
-                                    TimeSpan diffTime = DateTime.Now - lastWriteTime;
-                                    if (diffTime.Hours > EdiabasNet.TraceAppendDiffHours)
+                                    if (appendFile && File.Exists(traceFile))
                                     {
-                                        appendTrace = 0;
+                                        DateTime lastWriteTime = File.GetLastWriteTime(traceFile);
+                                        TimeSpan diffTime = DateTime.Now - lastWriteTime;
+                                        if (diffTime.Hours > EdiabasNet.TraceAppendDiffHours)
+                                        {
+                                            appendFile = false;
+                                        }
                                     }
                                 }
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
-
-                            Directory.CreateDirectory(tracePath);
-                            FileMode fileMode = FileMode.Append;
-                            if (_firstLog && appendTrace == 0)
-                            {
-                                _firstLog = false;
-                                fileMode = FileMode.Create;
-                            }
-                            _swLog = new StreamWriter(
-                                new FileStream(traceFile, fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
+                                catch (Exception)
                                 {
-                                    AutoFlush = buffering == 0
-                                };
+                                    // ignored
+                                }
+
+                                Directory.CreateDirectory(tracePath);
+                                FileMode fileMode = FileMode.Append;
+                                if (_firstLog && !appendFile)
+                                {
+                                    _firstLog = false;
+                                    fileMode = FileMode.Create;
+                                }
+
+                                try
+                                {
+                                    _swLog = new StreamWriter(new FileStream(traceFile, fileMode, FileAccess.Write, FileShare.ReadWrite), Encoding)
+                                    {
+                                        AutoFlush = buffering == 0
+                                    };
+                                    break;
+                                }
+                                catch (Exception)
+                                {
+                                    // ignored
+                                }
+                            }
                         }
                     }
                     if (_swLog != null)
