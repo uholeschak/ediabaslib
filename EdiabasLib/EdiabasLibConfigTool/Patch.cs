@@ -45,7 +45,9 @@ namespace EdiabasLibConfigTool
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegKeyRheingoldNameStart = @"BMW.Rheingold.";
         public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
+        public const string RegKeyIstaIdesBinPath = @"BMW.Rheingold.ISTAGUI.EdiabasIDESBinPathModifications";
         public const string RegKeyIstaBinFull = RegKeyReingold + @": " + RegKeyIstaBinPath;
+        public const string RegKeyIstaIdesBinFull = RegKeyReingold + @": " + RegKeyIstaIdesBinPath;
         public const string RegKeyIstaOpMode = @"BMW.Rheingold.OperationalMode";
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
@@ -739,10 +741,14 @@ namespace EdiabasLibConfigTool
                 {
                     sr.Append("\r\n");
                     sr.Append(string.Format(Resources.Strings.RemovingRegKey, RegKeyIstaBinFull));
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Resources.Strings.RemovingRegKey, RegKeyIstaIdesBinFull));
                     if (!PatchIstaReg(registryViewIsta))
                     {
                         sr.Append("\r\n");
                         sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaBinFull));
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.RemoveRegKeyFailed, RegKeyIstaIdesBinFull));
                         return false;
                     }
                 }
@@ -1025,6 +1031,8 @@ namespace EdiabasLibConfigTool
                 {
                     sr.Append("\r\n");
                     sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyIstaBinFull);
+                    sr.Append("\r\n");
+                    sr.AppendFormat(Resources.Strings.PatchRegistry, RegKeyIstaIdesBinFull);
                     string ediabasBinPath = Path.GetDirectoryName(configFile);
                     if (!PatchIstaReg(registryViewIstaSet, ediabasBinPath))
                     {
@@ -1104,7 +1112,8 @@ namespace EdiabasLibConfigTool
                         {
                             string[] valueNames = key.GetValueNames();
                             if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart, StringComparison.OrdinalIgnoreCase) &&
-                                                    string.Compare(x, RegKeyIstaBinPath, StringComparison.OrdinalIgnoreCase) != 0))
+                                                    (string.Compare(x, RegKeyIstaBinPath, StringComparison.OrdinalIgnoreCase) != 0 ||
+                                                    string.Compare(x, RegKeyIstaIdesBinPath, StringComparison.OrdinalIgnoreCase) != 0)))
                             {
                                 return RegistryView.Registry32;
                             }
@@ -1127,7 +1136,8 @@ namespace EdiabasLibConfigTool
                         {
                             string[] valueNames = key.GetValueNames();
                             if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart, StringComparison.OrdinalIgnoreCase) &&
-                                                    string.Compare(x, RegKeyIstaBinPath, StringComparison.OrdinalIgnoreCase) != 0))
+                                                    (string.Compare(x, RegKeyIstaBinPath, StringComparison.OrdinalIgnoreCase) != 0 ||
+                                                     string.Compare(x, RegKeyIstaIdesBinPath, StringComparison.OrdinalIgnoreCase) != 0)))
                             {
                                 return RegistryView.Registry64;
                             }
@@ -1161,11 +1171,13 @@ namespace EdiabasLibConfigTool
                             if (!string.IsNullOrEmpty(ediabasBinLocation))
                             {
                                 key.SetValue(RegKeyIstaBinPath, ediabasBinLocation);
+                                key.SetValue(RegKeyIstaIdesBinPath, ediabasBinLocation);
                                 key.SetValue(RegKeyIstaOpMode, "ISTA_PLUS");     // show ediabas.ini option in ISTA
                             }
                             else
                             {
                                 key.DeleteValue(RegKeyIstaBinPath, false);
+                                key.DeleteValue(RegKeyIstaIdesBinPath, false);
                             }
                             return true;
                         }
@@ -1180,7 +1192,7 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        public static bool IsIstaRegPresent(RegistryView? registryViewIsta)
+        public static bool IsIstaRegPresent(RegistryView? registryViewIsta, bool idesBin = false)
         {
             if (registryViewIsta == null)
             {
@@ -1196,6 +1208,10 @@ namespace EdiabasLibConfigTool
                         if (key != null)
                         {
                             if (key.GetValue(RegKeyIstaBinPath) != null)
+                            {
+                                return true;
+                            }
+                            if (key.GetValue(RegKeyIstaIdesBinPath) != null)
                             {
                                 return true;
                             }
