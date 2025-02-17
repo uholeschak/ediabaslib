@@ -294,6 +294,7 @@ namespace Ediabas
 
             _ediabas = new EdiabasNet(config);
             logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
+            logFormat(ApiLogLevel.Normal, "64 bit process: {0}", Environment.Is64BitProcess);
 
             if (!string.IsNullOrEmpty(unit))
             {

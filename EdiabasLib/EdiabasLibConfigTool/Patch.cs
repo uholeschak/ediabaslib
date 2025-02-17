@@ -1021,9 +1021,23 @@ namespace EdiabasLibConfigTool
                 switch (patchType)
                 {
                     case PatchType.Istad:
+                    {
                         registryViewIsta = GetIstaReg();
-                        patchRegTypeSet = PatchRegType.Ides;
+                        string dirNameParent1 = Directory.GetParent(dirName)?.FullName;
+                        if (!string.IsNullOrEmpty(dirNameParent1))
+                        {
+                            string dirNameParent2 = Directory.GetParent(dirNameParent1)?.FullName;
+                            if (!string.IsNullOrEmpty(dirNameParent2))
+                            {
+                                string api32Ides = Path.Combine(dirNameParent2, "EdiabasForIDES", "bin", Api32DllName);
+                                if (File.Exists(api32Ides))
+                                {
+                                    patchRegTypeSet |= PatchRegType.Ides;
+                                }
+                            }
+                        }
                         break;
+                    }
 
                     case PatchType.IstadExt:
                         if (!Directory.Exists(dirName))
