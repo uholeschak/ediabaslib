@@ -6370,9 +6370,9 @@ namespace EdiabasLib
                                 compressTrace = (int)StringToValue(propCompress);
                             }
 
+                            bool allowAppend = !_firstLog || appendTrace != 0;
                             if (compressTrace != 0)
                             {
-                                bool allowAppend = !_firstLog || appendTrace != 0;
                                 bool createBom = false;
                                 if (_zipStream == null)
                                 {
@@ -6464,11 +6464,11 @@ namespace EdiabasLib
                                 for (int fileIdx = 0; fileIdx < 10; fileIdx++)
                                 {
                                     long fileSize = 0;
-                                    bool allowAppend = !_firstLog || appendTrace != 0;
+                                    bool allowAppendLocal = allowAppend;
                                     string suffix = (fileIdx > 0) ? "_" + fileIdx : string.Empty;
                                     string idxFileName = Path.GetFileNameWithoutExtension(traceFileName) + suffix + Path.GetExtension(traceFileName);
                                     string traceFile = Path.Combine(tracePath, idxFileName);
-                                    if (allowAppend)
+                                    if (allowAppendLocal)
                                     {
                                         try
                                         {
@@ -6483,23 +6483,23 @@ namespace EdiabasLib
                                                     TimeSpan diffTime = DateTime.Now - lastWriteTime;
                                                     if (diffTime.Hours > TraceAppendDiffHours)
                                                     {
-                                                        allowAppend = false;
+                                                        allowAppendLocal = false;
                                                     }
                                                 }
                                             }
                                             else
                                             {
-                                                allowAppend = false;
+                                                allowAppendLocal = false;
                                             }
                                         }
                                         catch (Exception)
                                         {
-                                            allowAppend = false;
+                                            allowAppendLocal = false;
                                         }
                                     }
 
                                     FileMode fileMode = FileMode.Append;
-                                    if (!allowAppend)
+                                    if (!allowAppendLocal)
                                     {
                                         fileMode = FileMode.Create;
                                         fileSize = 0;
