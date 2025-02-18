@@ -6362,6 +6362,7 @@ namespace EdiabasLib
                                 buffering = StringToValue(traceBuffering);
                             }
 
+                            bool allowAppend = !_firstLog || appendTrace != 0;
 #if COMPRESS_TRACE
                             int compressTrace = 0;
                             string propCompress = GetConfigProperty("CompressTrace");
@@ -6370,7 +6371,6 @@ namespace EdiabasLib
                                 compressTrace = (int)StringToValue(propCompress);
                             }
 
-                            bool allowAppend = !_firstLog || appendTrace != 0;
                             if (compressTrace != 0)
                             {
                                 bool createBom = false;
