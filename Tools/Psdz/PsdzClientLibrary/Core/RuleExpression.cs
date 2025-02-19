@@ -95,7 +95,8 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public static RuleExpression Deserialize(Stream ms, Vehicle vec)
         {
-            EExpressionType eExpressionType = (EExpressionType)(byte)ms.ReadByte();
+            byte b = (byte)ms.ReadByte();
+            EExpressionType eExpressionType = (EExpressionType)b;
             switch (eExpressionType)
             {
                 case EExpressionType.COMP:
@@ -139,17 +140,18 @@ namespace PsdzClient.Core
             {
                 internalResult = new ValidationRuleInternalResults();
             }
-            if (!(exp is AndExpression) && !(exp is OrExpression) && !(exp is CharacteristicExpression) && !(exp is DateExpression) && !(exp is EcuCliqueExpression) && !(exp is NotExpression) && !(exp is SaLaPaExpression) && !(exp is CountryExpression) && !(exp is IStufeExpression) && !(exp is IStufeXExpression) && !(exp is EquipmentExpression) && !(exp is ValidFromExpression) && !(exp is ValidToExpression) && !(exp is SiFaExpression) && !(exp is EcuRepresentativeExpression) && !(exp is ManufactoringDateExpression) && !(exp is EcuVariantExpression) && !(exp is EcuProgrammingVariantExpression))
+            if (exp is AndExpression || exp is OrExpression || exp is CharacteristicExpression || exp is DateExpression || exp is EcuCliqueExpression || exp is NotExpression || exp is SaLaPaExpression || exp is CountryExpression || exp is IStufeExpression || exp is IStufeXExpression || exp is EquipmentExpression || exp is ValidFromExpression || exp is ValidToExpression || exp is SiFaExpression || exp is EcuRepresentativeExpression || exp is ManufactoringDateExpression || exp is EcuVariantExpression || exp is EcuProgrammingVariantExpression)
             {
-                Log.Error("RuleExpression.Evaluate(Vehicle vec, RuleExpression exp)", "RuleExpression {0} not implemented.", exp.ToString());
-                return false;
+                return exp.Evaluate(vec, ffmResolver, internalResult);
             }
-            return exp.Evaluate(vec, ffmResolver, internalResult);
+            Log.Error("RuleExpression.Evaluate(Vehicle vec, RuleExpression exp)", "RuleExpression {0} not implemented.", exp.ToString());
+            return false;
         }
 
         public static string ParseAndSerializeVariantRule(string rule)
 		{
-			return RuleExpression.SerializeToString(VariantRuleParser.Parse(rule));
+            RuleExpression expression = VariantRuleParser.Parse(rule);
+            return SerializeToString(expression);
 		}
 
 		public static RuleExpression ParseEmpiricalRule(string rule)
@@ -183,7 +185,8 @@ namespace PsdzClient.Core
 
 		public virtual bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
 		{
-			return false;
+            Log.Error("RuleExpression.Evaluate(Vehicle vec)", "method Evaluate(Vehicle vec) is missing."); 
+            return false;
 		}
 
 		public virtual EEvaluationResult EvaluateEmpiricalRule(long[] premises)
