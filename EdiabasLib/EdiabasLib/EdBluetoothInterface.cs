@@ -212,7 +212,7 @@ namespace EdiabasLib
 
         public static bool InterfaceDisconnect(bool forceClose)
         {
-            if (!forceClose && !EdiabasNet.Unloading && Ediabas != null)
+            if (!forceClose && Ediabas != null && !Ediabas.Unloading)
             {
                 int keepConnectionOpen = 0;
                 string prop = Ediabas.GetConfigProperty("ObdKeepConnectionOpen");
