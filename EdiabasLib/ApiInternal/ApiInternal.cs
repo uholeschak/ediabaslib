@@ -1249,9 +1249,9 @@ namespace Ediabas
             }
             if (string.Compare(cfgName, "EDIABASUnload", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                if (EdiabasNet.StringToValue(cfgValue) != 0)
+                if (EdiabasNet.Unloading)
                 {
-                    logFormat(ApiLogLevel.Normal, "Unload: Disconnecting interfaces");
+                    logFormat(ApiLogLevel.Normal, "Unloading: Disconnecting interfaces");
                     InterfaceDisconnect();
                 }
 

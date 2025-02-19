@@ -2382,6 +2382,7 @@ namespace EdiabasLib
         };
 
         private bool _disposed;
+        private static bool _unloading;
         private readonly object _apiLock = new object();
         private bool _jobRunning;
         private bool _jobStd;
@@ -2493,6 +2494,11 @@ namespace EdiabasLib
         public bool IsDisposed
         {
             get { return _disposed; }
+        }
+
+        public static bool Unloading
+        {
+            get { return _unloading; }
         }
 
         public bool JobRunning
@@ -3599,6 +3605,16 @@ namespace EdiabasLib
             }
 
             bool closeLog = false;
+            if (string.Compare(key, "EDIABASUnload", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                bool unload = StringToValue(value) != 0;
+                if (unload)
+                {
+                    _unloading = true;
+                    closeLog = true;
+                }
+            }
+
             bool valueChanged = string.Compare(oldValue ?? string.Empty, value ?? string.Empty, StringComparison.Ordinal) != 0;
 
             if (valueChanged)
