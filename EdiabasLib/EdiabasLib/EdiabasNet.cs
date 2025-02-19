@@ -3604,18 +3604,17 @@ namespace EdiabasLib
                 }
             }
 
-            bool closeLog = false;
             if (string.Compare(key, "EDIABASUnload", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 bool unload = StringToValue(value) != 0;
                 if (unload)
                 {
                     _unloading = true;
-                    closeLog = true;
                 }
             }
 
             bool valueChanged = string.Compare(oldValue ?? string.Empty, value ?? string.Empty, StringComparison.Ordinal) != 0;
+            bool closeLog = false;
 
             if (valueChanged)
             {
