@@ -451,15 +451,23 @@ namespace Ediabas
 
             if (_ediabas != null)
             {
-                _abortJob = true;
-                while (_jobThread != null)
+                try
                 {
-                    Thread.Sleep(10);
+                    _abortJob = true;
+                    while (_jobThread != null)
+                    {
+                        Thread.Sleep(10);
+                    }
+                    closeLog();
+                    _ediabas.Dispose();
                 }
-                closeLog();
-                _ediabas.Dispose();
+                catch (Exception ex)
+                {
+                    logFormat(ApiLogLevel.Normal, "apiEnd() Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                }
                 _ediabas = null;
             }
+            logFormat(ApiLogLevel.Normal, "apiEnd() done");
         }
 
         public bool apiSwitchDevice(string unit, string app)
@@ -1246,14 +1254,6 @@ namespace Ediabas
             if (string.Compare(cfgName, "ApiTraceName", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 closeLog();
-            }
-            if (string.Compare(cfgName, "EDIABASUnload", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                if (_ediabas.Unloading)
-                {
-                    logFormat(ApiLogLevel.Normal, "Unloading: Disconnecting interfaces");
-                    InterfaceDisconnect();
-                }
             }
 
             logFormat(ApiLogLevel.Normal, "={0} ()", true);
