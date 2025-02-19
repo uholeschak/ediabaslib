@@ -2382,7 +2382,7 @@ namespace EdiabasLib
         };
 
         private bool _disposed;
-        private static bool _unloading;
+        private bool _unloading;
         private readonly object _apiLock = new object();
         private bool _jobRunning;
         private bool _jobStd;
@@ -2496,7 +2496,7 @@ namespace EdiabasLib
             get { return _disposed; }
         }
 
-        public static bool Unloading
+        public bool Unloading
         {
             get { return _unloading; }
         }
