@@ -301,15 +301,15 @@ namespace PsdzClient.Core
             {
                 switch (vecInfo.Baureihenverbund.ToUpper())
                 {
+                    case "K01X":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "K024":
+                    case "KH24":
+                        return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "K001":
                     case "KS01":
                     case "KE01":
-                        return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-BIKE-K001.xml", vecInfo);
-                    case "K024":
-                    case "KH24":
-                        return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-BIKE-K024.xml", vecInfo);
-                    case "K01X":
-                        return GetEcuCharacteristics("BNT-XML-BIKE-K01X.xml", vecInfo);
+                        return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                 }
             }
             if (!string.IsNullOrEmpty(vecInfo.Ereihe))
