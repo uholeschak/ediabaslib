@@ -461,13 +461,13 @@ namespace Ediabas
                     closeLog();
                     _ediabas.Dispose();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    logFormat(ApiLogLevel.Normal, "apiEnd() Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                    // ignored
                 }
+
                 _ediabas = null;
             }
-            logFormat(ApiLogLevel.Normal, "apiEnd() done");
         }
 
         public bool apiSwitchDevice(string unit, string app)
@@ -1584,7 +1584,7 @@ namespace Ediabas
             {
                 lock (_apiLogLock)
                 {
-                    if (_swLog == null)
+                    if (_swLog == null && _ediabas != null)
                     {
                         string tracePath = _ediabas.GetConfigProperty("TracePath");
                         if (tracePath != null)
