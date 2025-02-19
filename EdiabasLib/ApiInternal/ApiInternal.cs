@@ -1254,8 +1254,6 @@ namespace Ediabas
                     logFormat(ApiLogLevel.Normal, "Unloading: Disconnecting interfaces");
                     InterfaceDisconnect();
                 }
-
-                closeLog();
             }
 
             logFormat(ApiLogLevel.Normal, "={0} ()", true);
