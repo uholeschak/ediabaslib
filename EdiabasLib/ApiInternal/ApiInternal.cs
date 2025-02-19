@@ -1247,6 +1247,16 @@ namespace Ediabas
             {
                 closeLog();
             }
+            if (string.Compare(cfgName, "EDIABASUnload", StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                if (EdiabasNet.StringToValue(cfgValue) != 0)
+                {
+                    logFormat(ApiLogLevel.Normal, "Unload: Disconnecting interfaces");
+                    InterfaceDisconnect();
+                }
+
+                closeLog();
+            }
 
             logFormat(ApiLogLevel.Normal, "={0} ()", true);
             return true;
