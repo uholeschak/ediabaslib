@@ -424,7 +424,7 @@ namespace Ediabas
                 edInterface = new EdInterfaceObd();
             }
 
-            if (!edInterface.InterfaceLock())
+            if (!edInterface.InterfaceLock(2000))
             {
                 setLocalError((int)EdiabasNet.ErrorCodes.EDIABAS_API_0006);
                 edInterface.Dispose();

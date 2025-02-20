@@ -83,7 +83,7 @@ namespace EdiabasLib
 
         public abstract bool IsValidInterfaceName(string name);
 
-        public virtual bool InterfaceLock()
+        public virtual bool InterfaceLock(int timeout = 0)
         {
             lock (MutexLock)
             {
@@ -93,7 +93,7 @@ namespace EdiabasLib
                 }
                 try
                 {
-                    if (!InterfaceMutex.WaitOne(0))
+                    if (!InterfaceMutex.WaitOne(timeout))
                     {
                         return false;
                     }
