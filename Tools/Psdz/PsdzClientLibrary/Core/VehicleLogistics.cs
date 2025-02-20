@@ -63,6 +63,18 @@ namespace PsdzClient.Core
 			return null;
         }
 
+        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback(string storedXmlFileName, Vehicle vecInfo)
+        {
+            Log.Info(Log.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
+            return CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, storedXmlFileName, storedXmlFileName);
+        }
+
+        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
+        {
+            Log.Info(Log.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
+            return CreateCharacteristicsInstance<T>(vecInfo, storedXmlFileName, storedXmlFileName);
+        }
+
         public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name) where T : BaseEcuCharacteristics
         {
             try
@@ -316,89 +328,186 @@ namespace PsdzClient.Core
             {
                 switch (vecInfo.Ereihe.ToUpper())
                 {
-                    case "M12":
-                        return GetEcuCharacteristics<E89EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "E39":
-                        return GetEcuCharacteristics<E39EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "K17":
-                    case "K07":
-                        return GetEcuCharacteristics("MRKE01EcuCharacteristics.xml", vecInfo);
-                    case "E38":
-                        return GetEcuCharacteristics<E38EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "E53":
-                        return GetEcuCharacteristics<E53EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "E36":
-                        return GetEcuCharacteristics<E36EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "E46":
-                        return GetEcuCharacteristics<E46EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "E52":
-                        return GetEcuCharacteristics<E52EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "F01":
+                    case "F02":
+                    case "F03":
+                    case "F04":
+                    case "F06":
+                    case "F07":
+                    case "F10":
+                    case "F11":
+                    case "F12":
+                    case "F13":
+                    case "F18":
+                        if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < service.DTimeF01Lci)
+                        {
+                            return GetEcuCharacteristics<F01EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                        }
+                        if (vecInfo.ECU != null)
+                        {
+                            ECU eCU = vecInfo.getECU(16L);
+                            if (eCU != null && eCU.SubBUS != null && eCU.SubBUS.Contains(BusType.MOST))
+                            {
+                                return GetEcuCharacteristics<F01EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                            }
+                        }
+                        return GetEcuCharacteristics<F01_1307EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "F14":
+                    case "F15":
+                    case "F16":
+                    case "F85":
+                    case "F86":
+                        return GetEcuCharacteristics<F15EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "F25":
+                        if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < service.DTimeF25Lci)
+                        {
+                            return GetEcuCharacteristics<F25EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                        }
+                        return GetEcuCharacteristics<F25_1404EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "F26":
+                        return GetEcuCharacteristics<F25_1404EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "F20":
+                    case "F21":
+                    case "F22":
+                    case "F23":
+                    case "F30":
+                    case "F31":
+                    case "F32":
+                    case "F33":
+                    case "F34":
+                    case "F35":
+                    case "F36":
+                    case "F80":
+                    case "F81":
+                    case "F82":
+                    case "F83":
+                    case "F87":
+                        return GetEcuCharacteristics<F20EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "F01BN2K":
                         return GetEcuCharacteristics<F01EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "R50":
-                    case "R52":
-                    case "R53":
-                        return GetEcuCharacteristics<R50EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "F25":
-                        if (vecInfo.C_DATETIME.HasValue && !(vecInfo.C_DATETIME < service.DTimeF25Lci))
-                        {
-                            return GetEcuCharacteristics<F25_1404EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                        }
-                        return GetEcuCharacteristics<F25EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "RR4":
+                    case "RR5":
+                    case "RR6":
+                        return GetEcuCharacteristics<RR6EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "F40":
+                    case "F44":
+                    case "G22":
+                    case "G23":
+                    case "G42":
+                    case "G80":
+                    case "G81":
+                    case "G82":
+                    case "G83":
+                    case "G87":
+                    case "G20":
+                    case "G21":
+                    case "G26":
+                    case "G28":
+                    case "G29":
+                    case "J29":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "F45":
+                    case "F46":
+                    case "F47":
+                    case "F48":
+                    case "F49":
+                    case "F52":
+                    case "F54":
+                    case "F55":
+                    case "F57":
+                    case "F60":
+                    case "M13":
+                    case "F39":
+                        return GetEcuCharacteristics<F56EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "F56":
                         if (vecInfo.IsBev())
                         {
                             return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                         }
                         return GetEcuCharacteristics<F56EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "F26":
-                        return GetEcuCharacteristics<F25_1404EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "RR5":
-                    case "RR4":
-                    case "RR6":
-                        return GetEcuCharacteristics<RR6EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "RR1":
-                    case "RR3":
-                    case "RR2":
-                        if (vecInfo.C_DATETIME.HasValue && !(vecInfo.C_DATETIME < service.DTimeRR_S2))
+                    case "I01":
+                    case "I12":
+                    case "I15":
+                    case "I20":
+                    case "U06":
+                    case "U10":
+                    case "U11":
+                    case "U12":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "G01":
+                    case "G02":
+                    case "F97":
+                    case "F98":
+                        if (vecInfo.HasHuMgu())
                         {
-                            return GetEcuCharacteristics<RR2EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                            return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                         }
-                        return GetEcuCharacteristics<RREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                        return GetEcuCharacteristics<BNT_G01_G02_G08_F97_F98_SP2015>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "G08":
+                        if (vecInfo.IsBev() || vecInfo.HasHuMgu())
+                        {
+                            return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                        }
+                        return GetEcuCharacteristics<BNT_G01_G02_G08_F97_F98_SP2015>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "G30":
+                    case "G31":
+                    case "G32":
+                    case "G38":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "F90":
+                    case "G11":
+                    case "G12":
+                        if (vecInfo.HasNbtevo())
+                        {
+                            return GetEcuCharacteristics<BNT_G11_G12_G3X_SP2015>("BNT-XML-FALLBACK.xml", vecInfo);
+                        }
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "G05":
+                    case "G06":
+                    case "G07":
+                    case "G18":
+                    case "F95":
+                    case "F96":
+                    case "G14":
+                    case "G15":
+                    case "G16":
+                    case "F91":
+                    case "F92":
+                    case "F93":
+                    case "RR11":
+                    case "RR12":
+                    case "RR31":
+                    case "RR21":
+                    case "RR22":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "M12":
+                        return GetEcuCharacteristics<E89EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E81":
+                    case "E82":
+                    case "E84":
+                    case "E87":
+                    case "E88":
+                    case "E89":
+                    case "E90":
+                    case "E91":
+                    case "E92":
+                    case "E93":
+                        return GetEcuCharacteristics<E89EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E60":
+                    case "E61":
+                    case "E63":
+                    case "E64":
+                        return GetEcuCharacteristics<E60EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "R55":
                     case "R56":
                     case "R57":
                     case "R58":
                     case "R59":
-                    case "R61":
                     case "R60":
+                    case "R61":
                         return GetEcuCharacteristics<R55EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "G08":
-                        if (!vecInfo.IsBev() && !vecInfo.HasHuMgu())
-                        {
-                            return GetEcuCharacteristics<BNT_G01_G02_G08_F97_F98_SP2015>("BNT-XML-FALLBACK.xml", vecInfo);
-                        }
-                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "G38":
-                    case "G31":
-                    case "G32":
-                    case "G30":
-                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "K19":
-                    case "K18":
-                    case "K21":
-                        if (service.GetBNType(vecInfo) == BNType.BN2000_MOTORBIKE)
-                        {
-                            return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-BIKE-K024.xml", vecInfo);
-                        }
-                        return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-BIKE-K001.xml", vecInfo);
-                    case "E61":
-                    case "E60":
-                    case "E63":
-                    case "E64":
-                        return GetEcuCharacteristics<E60EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "E71":
                     case "E70":
+                    case "E71":
                         if (vecInfo.HasAmpt70())
                         {
                             return GetEcuCharacteristics<E70EcuCharacteristicsAMPT>("BNT-XML-FALLBACK.xml", vecInfo);
@@ -408,233 +517,141 @@ namespace PsdzClient.Core
                             return GetEcuCharacteristics<E70EcuCharacteristicsAMPH>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
                         return GetEcuCharacteristics<E70EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "K46":
-                        if (service.GetBNType(vecInfo) == BNType.BN2020_MOTORBIKE)
-                        {
-                            return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-BIKE-K001.xml", vecInfo);
-                        }
-                        return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-BIKE-K024.xml", vecInfo);
-                    case "V98":
-                    case "MRK24":
-                    case "A67":
-                    case "K29":
-                    case "K28":
-                    case "K75":
-                    case "K73":
-                    case "K72":
-                    case "K71":
-                    case "K70":
-                    case "K42":
-                    case "K43":
-                    case "K40":
-                    case "K25":
-                    case "K26":
-                    case "K27":
-                    case "K44":
-                        return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-BIKE-K024.xml", vecInfo);
                     case "E72":
                         return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "RR1":
+                    case "RR2":
+                    case "RR3":
+                        if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < service.DTimeRR_S2)
+                        {
+                            return GetEcuCharacteristics<RREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                        }
+                        return GetEcuCharacteristics<RR2EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E65":
                     case "E66":
                     case "E67":
-                    case "E65":
                     case "E68":
                         return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                     case "E83":
-                        return GetEcuCharacteristics<E83EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E46":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                     case "E85":
                     case "E86":
-                        return GetEcuCharacteristics<E85EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "E88":
-                    case "E89":
-                    case "E81":
-                    case "E82":
-                    case "E84":
-                    case "E93":
-                    case "E92":
-                    case "E91":
-                    case "E87":
-                    case "E90":
-                        return GetEcuCharacteristics<E89EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E52":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E53":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E36":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E38":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E39":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "R50":
+                    case "R52":
+                    case "R53":
+                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "K18":
+                    case "K19":
+                    case "K21":
+                        if (service.GetBNType(vecInfo) == BNType.BN2000_MOTORBIKE)
+                        {
+                            return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                        }
+                        return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "A67":
+                    case "K25":
+                    case "K26":
+                    case "K27":
+                    case "K28":
+                    case "K29":
+                    case "K40":
+                    case "K42":
+                    case "K43":
+                    case "K44":
+                    case "K70":
+                    case "K71":
+                    case "K72":
+                    case "K73":
+                    case "K75":
+                    case "MRK24":
+                    case "V98":
+                        return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "K46":
+                        if (service.GetBNType(vecInfo) == BNType.BN2020_MOTORBIKE)
+                        {
+                            return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                        }
+                        return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "H61":
                     case "H91":
                         return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "I20":
-                    case "I15":
-                    case "I12":
-                    case "U12":
-                    case "U06":
-                    case "U11":
-                    case "U10":
-                    case "I01":
-                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "G11":
-                    case "G12":
-                    case "F90":
-                        if (vecInfo.HasNbtevo())
-                        {
-                            return GetEcuCharacteristics<BNT_G11_G12_G3X_SP2015>("BNT-XML-FALLBACK.xml", vecInfo);
-                        }
-                        return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "K66":
-                    case "K67":
-                    case "K60":
-                    case "K61":
-                    case "K69":
-                    case "K63":
-                    case "K09":
-                    case "K08":
-                    case "K03":
-                    case "K02":
-                    case "V99":
-                    case "K84":
-                    case "K82":
-                    case "K83":
-                    case "K48":
-                    case "K80":
-                    case "K81":
-                    case "K49":
-                    case "K22":
-                    case "K33":
-                    case "K23":
-                    case "K32":
-                    case "K54":
-                    case "K47":
-                    case "K51":
-                    case "K35":
-                    case "K50":
-                    case "K34":
-                    case "K52":
-                    case "K53":
-                    case "X_K001":
-                        return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-BIKE-K001.xml", vecInfo);
-                    case "G02":
-                    case "G01":
-                    case "F97":
-                    case "F98":
-                        if (vecInfo.HasHuMgu())
-                        {
-                            return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                        }
-                        return GetEcuCharacteristics<BNT_G01_G02_G08_F97_F98_SP2015>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "F86":
-                    case "F85":
-                    case "F15":
-                    case "F14":
-                    case "F16":
-                        return GetEcuCharacteristics<F15EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "F10":
-                    case "F18":
-                    case "F12":
-                    case "F11":
-                    case "F03":
-                    case "F13":
-                    case "F02":
-                    case "F01":
-                    case "F06":
-                    case "F07":
-                    case "F04":
-                        if (vecInfo.C_DATETIME.HasValue && !(vecInfo.C_DATETIME < service.DTimeF01Lci))
-                        {
-                            if (vecInfo.ECU != null)
-                            {
-                                ECU eCU = vecInfo.getECU(16L);
-                                if (eCU != null && eCU.SubBUS != null && eCU.SubBUS.Contains(BusType.MOST))
-                                {
-                                    return GetEcuCharacteristics<F01EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                                }
-                            }
-                            return GetEcuCharacteristics<F01_1307EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                        }
-                        return GetEcuCharacteristics<F01EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "M13":
-                    case "F54":
-                    case "F55":
-                    case "F57":
-                    case "F47":
-                    case "F46":
-                    case "F45":
-                    case "F52":
-                    case "F49":
-                    case "F48":
-                    case "F39":
-                    case "F60":
-                        return GetEcuCharacteristics<F56EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "F21":
-                    case "F23":
-                    case "F20":
-                    case "F22":
-                    case "F83":
-                    case "F82":
-                    case "F80":
-                    case "F81":
-                    case "F87":
-                    case "F36":
-                    case "F35":
-                    case "F34":
-                    case "F32":
-                    case "F33":
-                    case "F31":
-                    case "F30":
-                        return GetEcuCharacteristics<F20EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "C01":
+                    case "247":
+                    case "247E":
+                    case "248":
+                    case "259":
+                    case "259C":
+                    case "259E":
+                    case "259R":
+                    case "259S":
+                    case "E169":
+                    case "E189":
                     case "K14":
                     case "K15":
                     case "K16":
-                    case "259":
-                    case "247":
-                    case "K599":
-                    case "248":
-                    case "259R":
-                    case "259S":
-                    case "R21":
-                    case "259C":
-                    case "R22":
-                    case "259E":
-                    case "R28":
                     case "K41":
-                    case "K30":
                     case "K569":
-                    case "C01":
                     case "K589":
-                    case "247E":
-                    case "E189":
-                    case "E169":
+                    case "K599":
                     case "R13":
-                        return GetEcuCharacteristics("BNT-XML-BIKE-K01X.xml", vecInfo);
-                    case "G14":
-                    case "G06":
-                    case "G15":
-                    case "G16":
-                    case "G07":
-                    case "G05":
-                    case "G18":
-                    case "RR11":
-                    case "RR12":
-                    case "F92":
-                    case "F91":
-                    case "F93":
-                    case "F95":
-                    case "F96":
-                    case "RR31":
-                    case "RR21":
-                    case "RR22":
+                    case "R21":
+                    case "R22":
+                    case "R28":
+                    case "K30":
                         return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                    case "F44":
-                    case "F40":
-                    case "G83":
-                    case "G82":
-                    case "G81":
-                    case "G80":
-                    case "G87":
-                    case "J29":
-                    case "G42":
-                    case "G28":
-                    case "G26":
-                    case "G29":
-                    case "G21":
-                    case "G20":
-                    case "G23":
-                    case "G22":
+                    case "X_K001":
+                    case "K02":
+                    case "K03":
+                    case "K08":
+                    case "K09":
+                    case "K22":
+                    case "K23":
+                    case "K32":
+                    case "K33":
+                    case "K34":
+                    case "K35":
+                    case "K47":
+                    case "K48":
+                    case "K49":
+                    case "K50":
+                    case "K51":
+                    case "K52":
+                    case "K53":
+                    case "K54":
+                    case "K60":
+                    case "K63":
+                    case "K66":
+                    case "K80":
+                    case "K81":
+                    case "K82":
+                    case "K83":
+                    case "K84":
+                    case "K61":
+                    case "K67":
+                    case "K69":
+                    case "V99":
+                        return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "K07":
+                    case "K17":
                         return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    case "E30":
+                    case "E31":
+                    case "E32":
+                    case "E34":
+                        return GetEcuCharacteristicsFromFallback("iBusEcuCharacteristics.xml", vecInfo);
                 }
                 Log.Info("VehicleLogistics.GetCharacteristics()", "cannot retrieve bordnet configuration using ereihe");
             }
