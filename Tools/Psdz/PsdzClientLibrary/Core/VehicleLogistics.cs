@@ -30,7 +30,8 @@ namespace PsdzClient.Core
         }
 
         public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
-		{
+        {
+            Log.Info(Log.CurrentMethod(), $"Reading bordnet configuration with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}, target type: {typeof(T).Name}. The fallback xml file is: {storedXmlFileName}");
             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
             if (database == null)
             {
@@ -52,15 +53,15 @@ namespace PsdzClient.Core
                 string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
                 if (!string.IsNullOrWhiteSpace(xml))
                 {
-                    BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, xml, storedXmlFileName);
-                    if (baseEcuCharacteristics != null)
+                    BaseEcuCharacteristics ecuCharacteristicsFromFallback = GetEcuCharacteristicsFromFallback<T>(storedXmlFileName, vecInfo);
+                    if (ecuCharacteristicsFromFallback != null)
                     {
-                        return baseEcuCharacteristics;
+                        return ecuCharacteristicsFromFallback;
                     }
                 }
-			}
-
-			return null;
+            }
+            Log.Error(Log.CurrentMethod(), "No bordnet could be loaded.");
+            return null;
         }
 
         private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback(string storedXmlFileName, Vehicle vecInfo)
