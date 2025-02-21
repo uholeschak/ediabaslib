@@ -657,28 +657,24 @@ namespace PsdzClient.Core
             }
             switch (vecInfo.BNType)
             {
+                case BNType.BN2000_MOTORBIKE:
+                    return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                case BNType.BNK01X_MOTORBIKE:
+                    return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                case BNType.BN2020_MOTORBIKE:
+                    return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
+                case BNType.IBUS:
+                    return GetEcuCharacteristics("iBusEcuCharacteristics.xml", vecInfo);
                 default:
-#if false
-                    if (readFromDatabase)
+                {
+                    BaseEcuCharacteristics baseEcuCharacteristics = GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    if (baseEcuCharacteristics != null)
                     {
-                        BaseEcuCharacteristics baseEcuCharacteristics = GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                        if (baseEcuCharacteristics != null)
-                        {
-                            return baseEcuCharacteristics;
-                        }
+                        return baseEcuCharacteristics;
                     }
                     Log.Warning("VehicleLogistics.GetCharacteristics()", $"No configuration found for vehicle with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}");
                     return null;
-#endif
-                    return GetEcuCharacteristics(string.Empty, vecInfo);
-                case BNType.IBUS:
-                    return GetEcuCharacteristics("iBusEcuCharacteristics.xml", vecInfo);
-                case BNType.BN2000_MOTORBIKE:
-                    return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-BIKE-K024.xml", vecInfo);
-                case BNType.BN2020_MOTORBIKE:
-                    return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-BIKE-K001.xml", vecInfo);
-                case BNType.BNK01X_MOTORBIKE:
-                    return GetEcuCharacteristics("BNT-XML-BIKE-K01X.xml", vecInfo);
+                }
             }
         }
 
