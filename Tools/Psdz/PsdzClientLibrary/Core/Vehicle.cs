@@ -90,7 +90,7 @@ namespace PsdzClient.Core
             clamp15MinValue = 0.0;
             clamp30MinValue = 9.95; //new VoltageThreshold(BatteryEnum.Pb).MinError;
             //RxSwin = new RxSwinData();
-            Reactor = new Reactor(this, new MultisourceLogger(), new DataHolder());
+            Reactor = new Reactor(this, new Logger(), new DataHolder());
         }
 
 #if false

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace PsdzClientLibrary.Core
 {
@@ -16,6 +17,6 @@ namespace PsdzClientLibrary.Core
 
         void WarningException(string method, Exception exception);
 
-        string CurrentMethod();
+        string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null);
     }
 }
