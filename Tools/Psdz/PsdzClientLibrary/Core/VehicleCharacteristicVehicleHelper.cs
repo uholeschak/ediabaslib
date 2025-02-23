@@ -11,24 +11,23 @@ namespace PsdzClient.Core
 {
 	public class VehicleCharacteristicVehicleHelper : VehicleCharacteristicAbstract
 	{
-        public VehicleCharacteristicVehicleHelper(Vehicle vec)
+        public VehicleCharacteristicVehicleHelper(IVehicleRuleEvaluation vehicle)
         {
             //dbConnector = DatabaseProviderFactory.Instance;
             characteristicValue = string.Empty;
-            characteristicRoots = null;
-            vehicle = vec;
+            this.vehicle = vehicle;
             internalResult = new ValidationRuleInternalResults();
         }
 
-        public bool GetISTACharacteristics(PsdzDatabase.CharacteristicRoots characteristicRoots, out string value, decimal id, Vehicle vec, long dataValueId, ValidationRuleInternalResults internalResult)
+        public bool GetISTACharacteristics(string characteristicRootsNodeClass, out string value, decimal id, IVehicleRuleEvaluation vehicle, long dataValueId, ValidationRuleInternalResults internalResult)
         {
-            this.characteristicRoots = characteristicRoots;
+            this.characteristicRootsNodeClass = characteristicRootsNodeClass;
             characteristicId = id;
-            this.vehicle = vec;
+            this.vehicle = vehicle;
             datavalueId = dataValueId;
             this.internalResult = internalResult;
-            database = ClientContext.GetDatabase(vehicle);
-            bool result = ComputeCharacteristic(characteristicRoots.NodeClass);
+            database = ClientContext.GetDatabase(vehicle as Vehicle);
+            bool result = ComputeCharacteristic(characteristicRootsNodeClass);
             value = characteristicValue;
             return result;
         }
@@ -149,7 +148,6 @@ namespace PsdzClient.Core
         protected override bool ComputeDefault(params object[] parameters)
         {
             characteristicValue = "???";
-            Log.Warning("Vehicle.getISTACharactersitics()", "failed to evaluate characteristic: {0} (id: {1})", characteristicRoots?.EcuTranslation?.TextDe ?? string.Empty, characteristicId);
             return false;
         }
 
@@ -215,12 +213,12 @@ namespace PsdzClient.Core
 
         protected override bool ComputeEngine2(params object[] parameters)
         {
-            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTBaureihe, datavalueId, internalResult, out characteristicValue, characteristicRoots.NodeClass, new decimal(99999999712L));
+            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTBaureihe, datavalueId, internalResult, out characteristicValue, characteristicRootsNodeClass, 99999999712m);
         }
 
         protected override bool ComputeEngineLabel2(params object[] parameters)
         {
-            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTBezeichnung, datavalueId, internalResult, out characteristicValue, characteristicRoots.NodeClass, new decimal(99999999711L));
+            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTBezeichnung, datavalueId, internalResult, out characteristicValue, characteristicRootsNodeClass, 99999999711m);
         }
 
         protected override bool ComputeEreihe(params object[] parameters)
@@ -239,32 +237,32 @@ namespace PsdzClient.Core
 
         protected override bool ComputeHeatMOTFortlaufendeNum(params object[] parameters)
         {
-            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTFortlaufendeNum, datavalueId, internalResult, out characteristicValue, characteristicRoots.NodeClass, new decimal(99999999715L));
+            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTFortlaufendeNum, datavalueId, internalResult, out characteristicValue, characteristicRootsNodeClass, 99999999715m);
         }
 
         protected override bool ComputeHeatMOTKraftstoffart(params object[] parameters)
         {
-            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTKraftstoffart, datavalueId, internalResult, out characteristicValue, characteristicRoots.NodeClass, new decimal(99999999718L));
+            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTKraftstoffart, datavalueId, internalResult, out characteristicValue, characteristicRootsNodeClass, 99999999718m);
         }
 
         protected override bool ComputeHeatMOTLebenszyklus(params object[] parameters)
         {
-            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTLebenszyklus, datavalueId, internalResult, out characteristicValue, characteristicRoots.NodeClass, new decimal(99999999717L));
+            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTLebenszyklus, datavalueId, internalResult, out characteristicValue, characteristicRootsNodeClass, 99999999717m);
         }
 
         protected override bool ComputeHeatMOTLeistungsklasse(params object[] parameters)
         {
-            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTLeistungsklasse, datavalueId, internalResult, out characteristicValue, characteristicRoots.NodeClass, new decimal(99999999716L));
+            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTLeistungsklasse, datavalueId, internalResult, out characteristicValue, characteristicRootsNodeClass, 99999999716m);
         }
 
         protected override bool ComputeHeatMOTPlatzhalter1(params object[] parameters)
         {
-            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTPlatzhalter1, datavalueId, internalResult, out characteristicValue, characteristicRoots.NodeClass, new decimal(99999999713L));
+            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTPlatzhalter1, datavalueId, internalResult, out characteristicValue, characteristicRootsNodeClass, 99999999713m);
         }
 
         protected override bool ComputeHeatMOTPlatzhalter2(params object[] parameters)
         {
-            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTPlatzhalter2, datavalueId, internalResult, out characteristicValue, characteristicRoots.NodeClass, new decimal(99999999714L));
+            return HandleHeatMotorCharacteristic((HeatMotor hm) => hm.HeatMOTPlatzhalter2, datavalueId, internalResult, out characteristicValue, characteristicRootsNodeClass, 99999999714m);
         }
 
         protected override bool ComputeHubraum(params object[] parameters)
@@ -477,13 +475,13 @@ namespace PsdzClient.Core
 
 		private string characteristicValue;
 
-		private PsdzDatabase.CharacteristicRoots characteristicRoots;
+        private string characteristicRootsNodeClass;
 
-		private decimal characteristicId;
+        private decimal characteristicId;
 
-		private Vehicle vehicle;
+        private IVehicleRuleEvaluation vehicle;
 
-		private long datavalueId;
+        private long datavalueId;
 
 		private ValidationRuleInternalResults internalResult;
 	}

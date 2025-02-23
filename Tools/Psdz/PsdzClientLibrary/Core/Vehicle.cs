@@ -1696,7 +1696,7 @@ namespace PsdzClient.Core
             PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
 			if (characteristicRootsById != null)
 			{
-				return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById, out value, id, this, datavalueId, internalResult);
+				return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, this, datavalueId, internalResult);
 			}
 			value = "???";
 			return false;
