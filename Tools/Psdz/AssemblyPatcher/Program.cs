@@ -536,7 +536,7 @@ namespace AssemblyPatcher
                                             continue;
                                         }
 
-                                        patchIndex = index + 2;
+                                        patchIndex = index + 1;
                                         break;
                                     }
                                 }
@@ -599,10 +599,8 @@ namespace AssemblyPatcher
 
                                 if (patchIndex >= 0)
                                 {
-                                    Instruction[] switchInstructionsNew = new Instruction[switchInstructions.Length];
-                                    Array.Copy(switchInstructions, switchInstructionsNew, switchInstructions.Length);
-                                    switchInstructionsNew[2] = switchInstructionsNew[5];  // use BNType.BNK01X_MOTORBIKE
-                                    //instructions[patchIndex] = Instruction.Create(OpCodes.Switch, switchInstructionsNew);
+                                    switchInstructions[2] = switchInstructions[5];  // use BNType.BNK01X_MOTORBIKE
+                                    instructions[patchIndex] = Instruction.Create(OpCodes.Switch, switchInstructions);
                                     patched = true;
                                 }
                                 else
