@@ -9,13 +9,13 @@ namespace PsdzClientLibrary.Core
 
         private readonly DataHolder dataHolder;
 
-        private readonly IMultisourceLogger log;
+        private readonly ILogger log;
 
         private readonly IValueValidator valueValidator;
 
         public bool Enabled { get; set; }
 
-        public MultisourceLogic(DataHolder dataHolder, IMultisourceLogger log, IMultisourceProperties multisourceProperties, IValueValidator valueValidator)
+        public MultisourceLogic(DataHolder dataHolder, ILogger log, IMultisourceProperties multisourceProperties, IValueValidator valueValidator)
         {
             this.dataHolder = dataHolder;
             this.log = log;

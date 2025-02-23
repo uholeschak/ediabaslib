@@ -403,7 +403,7 @@
             }
         }
 
-        public static List<DataSource> GetPriorities(string propertyName, IMultisourceLogger log)
+        public static List<DataSource> GetPriorities(string propertyName, ILogger log)
         {
             List<DataSource> result = defaultPriorities;
             if (priorities.ContainsKey(propertyName))

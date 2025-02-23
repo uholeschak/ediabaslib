@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	public class EMotor : INotifyPropertyChanged
-	{
+	public class EMotor : INotifyPropertyChanged, IEMotor
+    {
 		public string EMOTBaureihe
 		{
 			get

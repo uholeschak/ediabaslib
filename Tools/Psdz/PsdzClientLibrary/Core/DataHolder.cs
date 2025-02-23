@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
-using System.Xml.Serialization;
+
 
 namespace PsdzClientLibrary.Core
 {
     public class DataHolder
     {
+        [JsonProperty(PropertyName = "DataHolder")]
         public List<DataHolderItem> Data { get; set; } = new List<DataHolderItem>();
-
 
         public IList<PropertyData<T>> GetPropertyCollection<T>(string propertyName)
         {
@@ -28,27 +28,15 @@ namespace PsdzClientLibrary.Core
             return list;
         }
 
-        public string SerializeToXml(IMultisourceLogger log)
+        public string ToJson(ILogger log)
         {
             try
             {
-                Type[] extraTypes = Data.Select((DataHolderItem d) => d.Values.GetType()).Distinct().ToArray();
-                using (StringWriter stringWriter = new StringWriter())
-                {
-                    using (XmlWriter xmlWriter = XmlWriter.Create(stringWriter, new XmlWriterSettings
-                           {
-                               Indent = true
-                           }))
-                    {
-                        XmlSerializer xmlSerializer = new XmlSerializer(typeof(DataHolder), null, extraTypes, new XmlRootAttribute("DataHolder"), "");
-                        xmlSerializer.Serialize(xmlWriter, this);
-                        return stringWriter.ToString();
-                    }
-                }
+                return JsonConvert.SerializeObject(this, Formatting.Indented);
             }
             catch (Exception ex)
             {
-                log.Error(log.CurrentMethod(), "Failed to serialize the Fusion Reactor data.", ex);
+                log.Error("DataHolder.ToJson", "Failed to serialize the Fusion Reactor data.", ex);
                 return string.Empty;
             }
         }

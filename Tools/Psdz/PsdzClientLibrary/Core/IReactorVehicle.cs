@@ -19,7 +19,7 @@ namespace PsdzClientLibrary.Core
 
         string Marke { get; set; }
 
-        FA FA { get; set; }
+        IReactorFa FA { get; set; }
 
         string Antrieb { get; set; }
 
@@ -95,7 +95,7 @@ namespace PsdzClientLibrary.Core
 
         string Drehmoment { get; set; }
 
-        EMotor EMotor { get; set; }
+        IEMotor EMotor { get; set; }
 
         string VINRangeType { get; set; }
 
@@ -114,5 +114,17 @@ namespace PsdzClientLibrary.Core
         string ProgmanVersion { get; set; }
 
         string ECTypeApproval { get; set; }
+
+        string TypeKey { get; set; }
+
+        string TypeKeyLead { get; set; }
+
+        string TypeKeyBasic { get; set; }
+
+        string ESeriesLifeCycle { get; set; }
+
+        string LifeCycle { get; set; }
+
+        string Sportausfuehrung { get; set; }
     }
 }

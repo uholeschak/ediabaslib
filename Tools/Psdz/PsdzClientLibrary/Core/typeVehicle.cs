@@ -105,6 +105,22 @@ namespace PsdzClient.Core
             }
         }
 
+        public bool IsSendOBFCMDataForbidden
+        {
+            get
+            {
+                return isSendOBFCMDataForbidden;
+            }
+            set
+            {
+                if (!isSendOBFCMDataForbidden.Equals(value))
+                {
+                    isSendOBFCMDataForbidden = value;
+                    OnPropertyChanged("IsSendOBFCMDataForbidden");
+                }
+            }
+        }
+
         public string ChassisCode
         {
             get
@@ -2269,6 +2285,24 @@ namespace PsdzClient.Core
         }
 
         [DefaultValue(false)]
+        [XmlIgnore]
+        public bool Ssl2RequestFailed
+        {
+            get
+            {
+                return ssl2RequestFailedField;
+            }
+            set
+            {
+                if (!ssl2RequestFailedField.Equals(value))
+                {
+                    ssl2RequestFailedField = value;
+                    OnPropertyChanged("Ssl2RequestFailed");
+                }
+            }
+        }
+
+        [DefaultValue(false)]
         public bool CVDRequestFailed
         {
             get
@@ -2447,6 +2481,23 @@ namespace PsdzClient.Core
                 {
                     vehicleLifeStartDate = value;
                     OnPropertyChanged("VehicleLifeStartDate");
+                }
+            }
+        }
+
+
+        public double VehicleSystemTime
+        {
+            get
+            {
+                return vehicleSystemTime;
+            }
+            set
+            {
+                if (!vehicleSystemTime.Equals(value))
+                {
+                    vehicleSystemTime = value;
+                    OnPropertyChanged("VehicleSystemTime");
                 }
             }
         }
@@ -2726,6 +2777,8 @@ namespace PsdzClient.Core
 
         private bool dOMRequestFailedField;
 
+        private bool ssl2RequestFailedField;
+
         private bool cVDRequestFailedField;
 
         private bool cvsRequestFailedField;
@@ -2746,6 +2799,8 @@ namespace PsdzClient.Core
 
         private DateTime vehicleLifeStartDate;
 
+        private double vehicleSystemTime;
+
         private List<DealerSessionProperty> dealerSessionProperties;
 
         private DateTime productionDate;
@@ -2759,6 +2814,10 @@ namespace PsdzClient.Core
         private string chassisCode;
 
         private bool orderDataRequestFailed;
+
+        //private BackendsAvailabilityIndicator backendsAvailabilityIndicator;
+
+        private bool isSendOBFCMDataForbidden;
 
         private ClientContext _clientContext;
 	}

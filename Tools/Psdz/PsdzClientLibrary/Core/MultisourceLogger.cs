@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PsdzClientLibrary.Core
 {
-    public class MultisourceLogger : IMultisourceLogger
+    public class MultisourceLogger : ILogger
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(MultisourceLogger));
 

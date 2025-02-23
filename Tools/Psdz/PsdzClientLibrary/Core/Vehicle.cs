@@ -22,7 +22,56 @@ namespace PsdzClient.Core
 {
 	public class Vehicle : typeVehicle, INotifyPropertyChanged, IVehicle, IReactorVehicle
     {
-		public Vehicle(ClientContext clientContext) : base(clientContext)
+        [Obsolete("Is not used anymore in Testmodules. Will be removed in 4.48!")]
+        [XmlIgnore]
+        public BNMixed BNMixed { get; set; }
+
+        [XmlIgnore]
+        IReactorFa IReactorVehicle.FA
+        {
+            get
+            {
+                return base.FA;
+            }
+            set
+            {
+                if (base.FA != value)
+                {
+                    base.FA = (FA)value;
+                }
+            }
+        }
+
+        [XmlIgnore]
+        IEMotor IReactorVehicle.EMotor
+        {
+            get
+            {
+                return base.EMotor;
+            }
+            set
+            {
+                if (base.EMotor != value)
+                {
+                    base.EMotor = (EMotor)value;
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public BordnetType BordnetType
+        {
+            get
+            {
+                return (BordnetType)base.BNType;
+            }
+            set
+            {
+                base.BNType = (BNType)value;
+            }
+        }
+
+        public Vehicle(ClientContext clientContext) : base(clientContext)
         {
             TransmissionDataType = new TransmissionDataType();
             base.ConnectState = VisibilityType.Collapsed;
@@ -41,7 +90,7 @@ namespace PsdzClient.Core
             clamp15MinValue = 0.0;
             clamp30MinValue = 9.95; //new VoltageThreshold(BatteryEnum.Pb).MinError;
             //RxSwin = new RxSwinData();
-            Reactor = new Reactor(this, new DataHolder());
+            Reactor = new Reactor(this, new MultisourceLogger(), new DataHolder());
         }
 
 #if false
@@ -68,6 +117,49 @@ namespace PsdzClient.Core
 #endif
 
         [XmlIgnore]
+        public List<IEcu> SvtECU { get; set; } = new List<IEcu>();
+
+        [XmlIgnore]
+        public bool IsDoIP { get; set; }
+
+        [XmlIgnore]
+        public DateTime? LastProgramDate { get; set; }
+
+        [XmlIgnore]
+        public PsdzDatabase.BordnetsData BordnetsData
+        {
+            get
+            {
+                return bordnetsData;
+            }
+            set
+            {
+                if (bordnetsData != value)
+                {
+                    bordnetsData = value;
+                    OnPropertyChanged("BordnetsData");
+                }
+            }
+        }
+
+        public string VerkaufsBezeichnung
+        {
+            get
+            {
+                return verkaufsBezeichnungField;
+            }
+            set
+            {
+                if (verkaufsBezeichnungField != value)
+                {
+                    verkaufsBezeichnungField = value;
+                    OnPropertyChanged("VerkaufsBezeichnung");
+                    SalesDesignationBadgeUIText = value;
+                }
+            }
+        }
+
+        [XmlIgnore]
         public bool Sp2021Enabled
         {
             get
@@ -77,6 +169,19 @@ namespace PsdzClient.Core
             set
             {
                 sp2021Enabled = value;
+            }
+        }
+
+        [XmlIgnore]
+        public bool Sp2025Enabled
+        {
+            get
+            {
+                return sp2025Enabled;
+            }
+            set
+            {
+                sp2025Enabled = value;
             }
         }
 
@@ -440,6 +545,108 @@ namespace PsdzClient.Core
                 }
             }
         }
+
+        [XmlIgnore]
+        public List<string> sxCodes { get; set; } = new List<string>();
+
+        [XmlIgnore]
+        public string TypeKey
+        {
+            get
+            {
+                return typeKey;
+            }
+            set
+            {
+                if (typeKey != value)
+                {
+                    typeKey = value;
+                    OnPropertyChanged("TypeKey");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public string TypeKeyLead
+        {
+            get
+            {
+                return typeKeyLead;
+            }
+            set
+            {
+                if (typeKeyLead != value)
+                {
+                    typeKeyLead = value;
+                    OnPropertyChanged("TypeKeyLead");
+                }
+            }
+        }
+
+        public string TypeKeyBasic
+        {
+            get
+            {
+                return typeKeyBasic;
+            }
+            set
+            {
+                if (typeKeyBasic != value)
+                {
+                    typeKeyBasic = value;
+                    OnPropertyChanged("TypeKeyBasic");
+                }
+            }
+        }
+
+        public string ESeriesLifeCycle
+        {
+            get
+            {
+                return eSeriesLifeCycle;
+            }
+            set
+            {
+                if (eSeriesLifeCycle != value)
+                {
+                    eSeriesLifeCycle = value;
+                    OnPropertyChanged("ESeriesLifeCycle");
+                }
+            }
+        }
+
+        public string LifeCycle
+        {
+            get
+            {
+                return lifeCycle;
+            }
+            set
+            {
+                if (lifeCycle != value)
+                {
+                    lifeCycle = value;
+                    OnPropertyChanged("LifeCycle");
+                }
+            }
+        }
+
+        public string Sportausfuehrung
+        {
+            get
+            {
+                return sportausfuehrung;
+            }
+            set
+            {
+                if (sportausfuehrung != value)
+                {
+                    sportausfuehrung = value;
+                    OnPropertyChanged("Sportausfuehrung");
+                }
+            }
+        }
+
 #if false
 		[XmlIgnore]
 		public IList<Fault> FaultList
@@ -1021,15 +1228,14 @@ namespace PsdzClient.Core
             {
                 foreach (string item in fA.SA)
                 {
-                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.Compare(item, checkSA, StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        if (item.Length == 4 && string.Compare(item.Substring(1), checkSA, StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            return true;
-                        }
-                        continue;
+                        return true;
                     }
-                    return true;
+                    if (item.Length == 4 && string.Compare(item.Substring(1), checkSA, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return true;
+                    }
                 }
             }
             if (fA.E_WORT != null)
@@ -1051,10 +1257,6 @@ namespace PsdzClient.Core
                         return true;
                     }
                 }
-            }
-            if (fA.DealerInstalledSA != null && fA.DealerInstalledSA.Any((string item) => string.Equals(item, checkSA, StringComparison.OrdinalIgnoreCase)))
-            {
-                return true;
             }
             return false;
         }
@@ -1208,8 +1410,12 @@ namespace PsdzClient.Core
             return null;
         }
 
-        public ECU getECUbyTITLE_ECUTREE(string grobName)
+        public IEcu getECUbyTITLE_ECUTREE(string grobName)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
             if (string.IsNullOrEmpty(grobName))
             {
                 return null;
@@ -2177,7 +2383,9 @@ namespace PsdzClient.Core
 
         private bool isClosingOperationActive;
 
-		private bool powerSafeModeByOldEcus;
+        private string verkaufsBezeichnungField;
+
+        private bool powerSafeModeByOldEcus;
 
 		private bool powerSafeModeByNewEcus;
 
@@ -2213,9 +2421,25 @@ namespace PsdzClient.Core
 
 		private bool sp2021Enabled;
 
+        private bool sp2025Enabled;
+
         private string kraftstoffartEinbaulage;
 
         private string baustand;
+
+        private string typeKey;
+
+        private string typeKeyLead;
+
+        private string typeKeyBasic;
+
+        private string eSeriesLifeCycle;
+
+        private string lifeCycle;
+
+        private string sportausfuehrung;
+
+        private PsdzDatabase.BordnetsData bordnetsData;
 
         private static readonly DateTime lciRRS2 = DateTime.Parse("2012-05-31", CultureInfo.InvariantCulture);
     }

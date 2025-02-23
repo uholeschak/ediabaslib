@@ -14,26 +14,27 @@ using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
-	public class FA : INotifyPropertyChanged, IFa
-	{
-		public FA()
+	public class FA : INotifyPropertyChanged, IFa, IFARuleEvaluation, IReactorFa
+    {
+        public FA()
 		{
-			this.zUSBAU_WORTField = new ObservableCollection<string>();
-			this.hO_WORTField = new ObservableCollection<string>();
-			this.e_WORTField = new ObservableCollection<string>();
-			this.dealerInstalledOptionsField = new ObservableCollection<SALAPALocalizedEntry>();
-			this.sALAPAField = new ObservableCollection<SALAPALocalizedEntry>();
-			this.dealerInstalledSAField = new ObservableCollection<string>();
-			this.saField = new ObservableCollection<string>();
-			this.saLocalizedItemsField = new ObservableCollection<LocalizedSAItem>();
-			this.sA_ANZField = new short?(0);
-			this.e_WORT_ANZField = new short?(0);
-			this.hO_WORT_ANZField = new short?(0);
-			this.zUSBAU_ANZField = new short?(0);
-			this.alreadyDoneField = false;
+            zUSBAU_WORTField = new ObservableCollection<string>();
+            hO_WORTField = new ObservableCollection<string>();
+            e_WORTField = new ObservableCollection<string>();
+            sALAPAField = new ObservableCollection<SALAPALocalizedEntry>();
+            saField = new ObservableCollection<string>();
+            saLocalizedItemsField = new ObservableCollection<LocalizedSAItem>();
+            sA_ANZField = 0;
+            e_WORT_ANZField = 0;
+            hO_WORT_ANZField = 0;
+            zUSBAU_ANZField = 0;
+            alreadyDoneField = false;
+            sTANDARD_FAField = string.Empty;
+            lACKField = string.Empty;
+            pOLSTERField = string.Empty;
 		}
 
-		public short? SA_ANZ
+        public short? SA_ANZ
 		{
 			get
 			{
@@ -83,31 +84,6 @@ namespace PsdzClient.Core
 			}
 		}
 
-		public ObservableCollection<string> DealerInstalledSA
-		{
-			get
-			{
-				return this.dealerInstalledSAField;
-			}
-			set
-			{
-				if (this.dealerInstalledSAField != null)
-				{
-					if (!this.dealerInstalledSAField.Equals(value))
-					{
-						this.dealerInstalledSAField = value;
-						this.OnPropertyChanged("DealerInstalledSA");
-						return;
-					}
-				}
-				else
-				{
-					this.dealerInstalledSAField = value;
-					this.OnPropertyChanged("DealerInstalledSA");
-				}
-			}
-		}
-
 		public ObservableCollection<SALAPALocalizedEntry> SALAPA
 		{
 			get
@@ -129,31 +105,6 @@ namespace PsdzClient.Core
 				{
 					this.sALAPAField = value;
 					this.OnPropertyChanged("SALAPA");
-				}
-			}
-		}
-
-		public ObservableCollection<SALAPALocalizedEntry> DealerInstalledOptions
-		{
-			get
-			{
-				return this.dealerInstalledOptionsField;
-			}
-			set
-			{
-				if (this.dealerInstalledOptionsField != null)
-				{
-					if (!this.dealerInstalledOptionsField.Equals(value))
-					{
-						this.dealerInstalledOptionsField = value;
-						this.OnPropertyChanged("DealerInstalledOptions");
-						return;
-					}
-				}
-				else
-				{
-					this.dealerInstalledOptionsField = value;
-					this.OnPropertyChanged("DealerInstalledOptions");
 				}
 			}
 		}
@@ -458,7 +409,54 @@ namespace PsdzClient.Core
 			}
 		}
 
-		public string VERSION
+        public string FAHRZEUG_KATEGORIE
+        {
+            get
+            {
+                return fAHRZEUG_KATEGORIEField;
+            }
+            set
+            {
+                if (fAHRZEUG_KATEGORIEField != null)
+                {
+                    if (!fAHRZEUG_KATEGORIEField.Equals(value))
+                    {
+                        fAHRZEUG_KATEGORIEField = value;
+                        OnPropertyChanged("FAHRZEUG_KATEGORIE");
+                    }
+                }
+                else
+                {
+                    fAHRZEUG_KATEGORIEField = value;
+                    OnPropertyChanged("FAHRZEUG_KATEGORIE");
+                }
+            }
+        }
+
+        public string KONTROLL_KLASSE
+        {
+            get
+            {
+                return kONTROLL_KLASSEField;
+            }
+            set
+            {
+                if (kONTROLL_KLASSEField != null)
+                {
+                    if (!kONTROLL_KLASSEField.Equals(value))
+                    {
+                        kONTROLL_KLASSEField = value;
+                        OnPropertyChanged("KONTROLL_KLASSE");
+                    }
+                }
+                else
+                {
+                    kONTROLL_KLASSEField = value;
+                    OnPropertyChanged("KONTROLL_KLASSE");
+                }
+            }
+        }
+        public string VERSION
 		{
 			get
 			{
@@ -611,52 +609,34 @@ namespace PsdzClient.Core
 			}
 		}
 
-		[XmlIgnore]
-		IEnumerable<string> IFa.DealerInstalledSA
-		{
-			get
-			{
-				return this.DealerInstalledSA;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<string> IFa.DealerInstalledSA => null;
 
-		[XmlIgnore]
-		IEnumerable<string> IFa.E_WORT
-		{
-			get
-			{
-				return this.E_WORT;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<string> IFa.E_WORT => E_WORT;
 
-		[XmlIgnore]
-		IEnumerable<string> IFa.HO_WORT
-		{
-			get
-			{
-				return this.HO_WORT;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<string> IFa.HO_WORT => HO_WORT;
 
-		[XmlIgnore]
-		IEnumerable<string> IFa.SA
-		{
-			get
-			{
-				return this.SA;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<string> IFa.SA => SA;
 
-		[XmlIgnore]
-		IEnumerable<string> IFa.ZUSBAU_WORT
-		{
-			get
-			{
-				return this.ZUSBAU_WORT;
-			}
-		}
+        [XmlIgnore]
+        IEnumerable<string> IFa.ZUSBAU_WORT => ZUSBAU_WORT;
 
-		public override string ToString()
+        [XmlIgnore]
+        ICollection<LocalizedSAItem> IFa.SaLocalizedItems => SaLocalizedItems;
+
+        [XmlIgnore]
+        IEnumerable<string> IFARuleEvaluation.SA => SA;
+
+        [XmlIgnore]
+        IEnumerable<string> IFARuleEvaluation.E_WORT => E_WORT;
+
+        [XmlIgnore]
+        IEnumerable<string> IFARuleEvaluation.HO_WORT => HO_WORT;
+
+        public override string ToString()
 		{
 			return string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}{5}{6}{7}", new object[]
 			{
@@ -742,59 +722,51 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-        [XmlIgnore]
-		ICollection<LocalizedSAItem> IFa.SaLocalizedItems
-		{
-			get
-			{
-				return this.SaLocalizedItems;
-			}
-		}
+        private short? sA_ANZField;
 
-		private short? sA_ANZField;
+        private ObservableCollection<string> saField;
 
-		private ObservableCollection<string> saField;
+        private ObservableCollection<LocalizedSAItem> saLocalizedItemsField;
 
-		private ObservableCollection<LocalizedSAItem> saLocalizedItemsField;
+        private ObservableCollection<SALAPALocalizedEntry> sALAPAField;
 
-		private ObservableCollection<string> dealerInstalledSAField;
+        private short? e_WORT_ANZField;
 
-		private ObservableCollection<SALAPALocalizedEntry> sALAPAField;
+        private ObservableCollection<string> e_WORTField;
 
-		private ObservableCollection<SALAPALocalizedEntry> dealerInstalledOptionsField;
+        private short? hO_WORT_ANZField;
 
-		private short? e_WORT_ANZField;
+        private ObservableCollection<string> hO_WORTField;
 
-		private ObservableCollection<string> e_WORTField;
+        private short? zUSBAU_ANZField;
 
-		private short? hO_WORT_ANZField;
+        private ObservableCollection<string> zUSBAU_WORTField;
 
-		private ObservableCollection<string> hO_WORTField;
+        private string pOLSTERField;
 
-		private short? zUSBAU_ANZField;
+        private string pOLSTER_TEXTField;
 
-		private ObservableCollection<string> zUSBAU_WORTField;
+        private string lACKField;
 
-		private string pOLSTERField;
+        private string lACK_TEXTField;
 
-		private string pOLSTER_TEXTField;
+        private string fAHRZEUG_KATEGORIEField;
 
-		private string lACKField;
+        private string kONTROLL_KLASSEField;
 
-		private string lACK_TEXTField;
+        private string c_DATEField;
 
-		private string c_DATEField;
+        private DateTime? c_DATETIMEField;
 
-		private DateTime? c_DATETIMEField;
+        private string vERSIONField;
 
-		private string vERSIONField;
+        private string brField;
 
-		private string brField;
+        private string sTANDARD_FAField;
 
-		private string sTANDARD_FAField;
+        private string tYPEField;
 
-		private string tYPEField;
+        private bool alreadyDoneField;
 
-		private bool alreadyDoneField;
 	}
 }
