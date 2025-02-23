@@ -498,6 +498,65 @@ namespace AssemblyPatcher
                             // ignored
                         }
 
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.Diagnostics",
+                                Class = "VehicleIdent",
+                                Method = "doVehicleShortTest",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("VehicleIdent.doVehicleShortTest found");
+                                int patchIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldarg_0 && index + 4 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Ldc_I4_0)     // false
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 2].OpCode != OpCodes.Call)     // HandleMissingEcus
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldarg_0)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 4].OpCode != OpCodes.Call)     // doReadGwsz
+                                        {
+                                            continue;
+                                        }
+
+                                        patchIndex = index + 2;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    instructions[patchIndex] = Instruction.Create(OpCodes.Ldc_I4_1);    // true
+                                    patched = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Patching doVehicleShortTest failed");
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
                         if (noIcomVerCheck)
                         {
                             try
