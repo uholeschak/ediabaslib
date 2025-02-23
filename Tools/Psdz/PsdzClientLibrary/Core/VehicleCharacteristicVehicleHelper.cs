@@ -397,7 +397,8 @@ namespace PsdzClient.Core
             foreach (HeatMotor hm2 in vehicle.HeatMotors)
             {
                 ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm2.DriveId && r.Type == ValidationRuleInternalResult.CharacteristicType.HeatMotor && r.CharacteristicId == rootClassValue);
-                bool flag = dataProvider.LookupVehicleCharIdByName(getProperty(hm2), characteristicNodeclass) == (decimal)datavalueId;
+                decimal num = dataProvider.LookupVehicleCharIdByName(getProperty(hm2), characteristicNodeclass);
+                bool flag = num == (decimal)datavalueId;
                 if (validationRuleInternalResult == null)
                 {
                     validationRuleInternalResult = new ValidationRuleInternalResult
