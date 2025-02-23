@@ -133,9 +133,11 @@
     <Compile Include="Core\DateTimePreciseSafeImmutable.cs" />
     <Compile Include="Core\FallbackMechanisms.cs" />
     <Compile Include="Core\Fasta2Service.cs" />
+    <Compile Include="Core\FFMResultRuleEvaluation.cs" />
     <Compile Include="Core\IEMotor.cs" />
     <Compile Include="Core\IFARuleEvaluation.cs" />
     <Compile Include="Core\IFasta2Service.cs" />
+    <Compile Include="Core\IFfmResultRuleEvaluation.cs" />
     <Compile Include="Core\IIdentEcu.cs" />
     <Compile Include="Core\IInteractionModel.cs" />
     <Compile Include="Core\IInteractionMotorcycleMRMA24Model.cs" />

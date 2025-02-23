@@ -12,8 +12,8 @@ using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
-	public class VCIDevice : INotifyPropertyChanged, IVciDevice, ICloneable, IComparable
-	{
+	public class VCIDevice : IComparable, IVciDevice, INotifyPropertyChanged, IVciDeviceRuleEvaluation, ICloneable
+    {
         public enum DeviceTypeDetails
         {
             ICOM = 1,

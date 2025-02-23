@@ -22,9 +22,23 @@ namespace PsdzClient.Core
 {
 	public class Vehicle : typeVehicle, INotifyPropertyChanged, IVehicle, IReactorVehicle
     {
+        [XmlIgnore]
+        IVciDeviceRuleEvaluation IVehicleRuleEvaluation.VCI => base.VCI;
+
+        [XmlIgnore]
+        IList<IIdentEcu> IVehicleRuleEvaluation.ECU => base.ECU.Cast<IIdentEcu>().ToList();
+
+        [XmlIgnore]
+        IFARuleEvaluation IVehicleRuleEvaluation.FA => base.FA;
+
+        [XmlIgnore]
+        IFARuleEvaluation IVehicleRuleEvaluation.TargetFA => TargetFA;
+
         [Obsolete("Is not used anymore in Testmodules. Will be removed in 4.48!")]
         [XmlIgnore]
         public BNMixed BNMixed { get; set; }
+
+        IEMotor IVehicleRuleEvaluation.EMotor => base.EMotor;
 
         [XmlIgnore]
         IReactorFa IReactorVehicle.FA
@@ -1298,7 +1312,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        public void AddOrUpdateFFM(FFMResult ffm)
+        public void AddOrUpdateFFM(IFfmResultRuleEvaluation ffm)
         {
             if (base.FFM == null || ffm == null)
             {
@@ -1315,7 +1329,7 @@ namespace PsdzClient.Core
                     return;
                 }
             }
-            base.FFM.Add(ffm);
+            base.FFM.Add(new FFMResult(ffm));
         }
 
         public ECU getECU(long? sgAdr)
