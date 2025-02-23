@@ -557,6 +557,66 @@ namespace AssemblyPatcher
                             // ignored
                         }
 
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.Diagnostics",
+                                Class = "VehicleIdent",
+                                Method = "ECUIdentShortTest",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("VehicleIdent.ECUIdentShortTest found");
+                                int patchIndex = -1;
+                                Instruction[] switchInstructions = null;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Switch && index + 1 < instructions.Count)
+                                    {
+                                        switchInstructions = instruction.Operand as Instruction[];
+                                        if (switchInstructions == null)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (switchInstructions.Length < 7)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 1].OpCode != OpCodes.Ret)     // false
+                                        {
+                                            continue;
+                                        }
+
+                                        patchIndex = index;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    Instruction[] switchInstructionsNew = new Instruction[switchInstructions.Length];
+                                    Array.Copy(switchInstructions, switchInstructionsNew, switchInstructions.Length);
+                                    switchInstructionsNew[2] = switchInstructionsNew[5];  // use BNType.BNK01X_MOTORBIKE
+                                    //instructions[patchIndex] = Instruction.Create(OpCodes.Switch, switchInstructionsNew);
+                                    patched = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Patching ECUIdentShortTest failed");
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+
                         if (noIcomVerCheck)
                         {
                             try
