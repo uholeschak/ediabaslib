@@ -159,7 +159,7 @@ namespace PsdzClient.Core
 
         public DateTime DTime2023_07 => DateTime.ParseExact("01.07.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
 
-        public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        public void ReadILevelBn2020(Vehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
             // [UH] get reactor from vehicle
             Reactor instance = (vecInfo as Vehicle)?.Reactor;

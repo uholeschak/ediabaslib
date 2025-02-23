@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using PsdzClient.Contracts;
 using PsdzClient.Core;
+using PsdzClientLibrary.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
@@ -112,7 +113,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     }
 
     [AuthorAPI(SelectableTypeDeclaration = true)]
-    public interface IVehicle : INotifyPropertyChanged
+    public interface IVehicle : INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle
     {
         bool IsEcuIdentSuccessfull { get; set; }
 
