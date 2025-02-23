@@ -79,9 +79,9 @@ namespace PsdzClient.Core
 
         string ReadVinForMotorcycles(BNType bNType, IEcuKom ecuKom);
 
-        //decimal? ReadGwszForGroupCars(IVehicle vecInfo, IEcuKom ecuKom);
+        decimal? ReadGwszForGroupCars(IVehicle vecInfo, IEcuKom ecuKom);
 
-        //decimal? ReadGwszForGroupMotorbike(IVehicle vehicle, IEcuKom ecuKom, int retryCount, Action<string> protocolUnit, Action<IVehicle, string, string> logIfEcuMissing);
+        decimal? ReadGwszForGroupMotorbike(IVehicle vehicle, IEcuKom ecuKom, int retryCount, Action<string> protocolUnit, Action<IVehicle, string, string> logIfEcuMissing);
 
         string GetFourCharEreihe(string ereihe);
 

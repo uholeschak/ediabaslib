@@ -234,6 +234,256 @@ namespace PsdzClient.Core
 
         DateTime IDiagnosticsBusinessData.DTimeF01Lci => DiagnosticsBusinessDataCore.DTimeF01Lci;
 
+        public decimal? ReadGwszForGroupCars(IVehicle vecInfo, IEcuKom ecuKom)
+        {
+            Dictionary<string, EcuKomConfig> dictionary = new Dictionary<string, EcuKomConfig>();
+            dictionary.Add("G_KOMBI_V1", new EcuKomConfig("G_KOMBI", "STATUS_GWSZ_ANZEIGE", string.Empty, 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("G_KOMBI_V2", new EcuKomConfig("G_KOMBI", "STATUS_LESEN", "ARG;GWSZ_ANZEIGE_WERT", 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("G_VIP", new EcuKomConfig("G_VIP", "STATUS_LESEN", "ARG;GWSZ_ANZEIGE_WERT", 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("G_ZGW", new EcuKomConfig("G_ZGW", "STATUS_LESEN", "ARG;GWSZ_ANZEIGE_WERT", 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("G_MMI", new EcuKomConfig("G_MMI", "STATUS_LESEN", "ARG;GWSZ_ANZEIGE_WERT", 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("G_CAS", new EcuKomConfig("G_CAS", "STATUS_KILOMETERSTAND", string.Empty, 1, "STAT_KILOMETERSTAND_WERT"));
+            dictionary.Add("IPF1_FAR", new EcuKomConfig("IPF1_FAR", "status_lesen", "ARG;GWSZ_ANZEIGE_WERT", 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("KOMBI65", new EcuKomConfig("KOMBI65", "STATUS_ANGEZEIGTER_GWSZ", string.Empty, 1, "STAT_GWSZ"));
+            dictionary.Add("KOMB65_2", new EcuKomConfig("KOMB65_2", "STATUS_ANGEZEIGTER_GWSZ", string.Empty, 1, "STAT_GWSZ"));
+            dictionary.Add("KOMBRR", new EcuKomConfig("KOMBRR", "STATUS_ANGEZEIGTER_GWSZ", string.Empty, 1, "STAT_GWSZ"));
+            dictionary.Add("KOMBRR_2", new EcuKomConfig("KOMBRR_2", "STATUS_ANGEZEIGTER_GWSZ", string.Empty, 1, "STAT_GWSZ"));
+            dictionary.Add("KOMB56", new EcuKomConfig("KOMB56", "STATUS_GWSZ_ANZEIGE", string.Empty, 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("KOMB60", new EcuKomConfig("KOMB60", "STATUS_GWSZ_ANZEIGE", string.Empty, 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("KOMB70", new EcuKomConfig("KOMB70", "STATUS_GWSZ_ANZEIGE", string.Empty, 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("KOMB87", new EcuKomConfig("KOMB87", "STATUS_GWSZ_ANZEIGE", string.Empty, 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("D_KOMBI_FB1", new EcuKomConfig("D_KOMBI", "STATUS_ANGEZEIGTER_GWSZ", string.Empty, 1, "STAT_GWSZ"));
+            dictionary.Add("D_KOMBI_FB2", new EcuKomConfig("D_KOMBI", "STATUS_GWSZ_ANZEIGE", string.Empty, 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("D_0080", new EcuKomConfig("D_0080", "GWSZ_MINUS_OFFSET_LESEN", string.Empty, 1, "STAT_GWSZ_MINUS_OFFSET_WERT"));
+            dictionary.Add("KOMBI36C", new EcuKomConfig("KOMBI36C", "AIF_GWSZ_LESEN", string.Empty, 1, "STAT_GWSZ_WERT"));
+            dictionary.Add("KOMBI85", new EcuKomConfig("KOMBI85", "STATUS_AIF_GWSZ_LESEN", string.Empty, 1, "STAT_GWSZ_WERT"));
+            List<EcuKomConfig> list = new List<EcuKomConfig>();
+            if (vecInfo != null)
+            {
+                if (vecInfo.BNType == BNType.BN2020)
+                {
+                    if (vecInfo.Produktlinie == "PL5-alt")
+                    {
+                        IEcu eCUbyECU_GRUPPE = vecInfo.getECUbyECU_GRUPPE("D_KOMBI");
+                        if (eCUbyECU_GRUPPE != null && eCUbyECU_GRUPPE.VARIANTE.ToUpper() == "KOMBRR_2")
+                        {
+                            list.Add(dictionary["KOMBRR_2"]);
+                        }
+                    }
+                    if (vecInfo.Sp2021Enabled)
+                    {
+                        list.Add(dictionary["G_VIP"]);
+                        list.Add(dictionary["G_ZGW"]);
+                    }
+                    if (IsEES25Vehicle(vecInfo))
+                    {
+                        list.Add(dictionary["IPF1_FAR"]);
+                    }
+                    if (vecInfo.getECUbyECU_GRUPPE("G_KOMBI") == null)
+                    {
+                        list.Add(dictionary["G_MMI"]);
+                    }
+                    list.Add(dictionary["G_KOMBI_V1"]);
+                    list.Add(dictionary["G_KOMBI_V2"]);
+                    list.Add(dictionary["G_CAS"]);
+                }
+                else if (vecInfo.BNType == BNType.BEV2010 || vecInfo.BNType == BNType.BN2000)
+                {
+                    IEcu eCUbyECU_GRUPPE2 = vecInfo.getECUbyECU_GRUPPE("D_KOMBI");
+                    if (eCUbyECU_GRUPPE2 != null)
+                    {
+                        string key = eCUbyECU_GRUPPE2.VARIANTE.ToUpper();
+                        list.Add(dictionary[key]);
+                    }
+                    else
+                    {
+                        list.Add(dictionary["D_KOMBI_FB1"]);
+                        list.Add(dictionary["D_KOMBI_FB2"]);
+                    }
+                }
+                else if (vecInfo.BNType == BNType.IBUS)
+                {
+                    IEcu eCUbyECU_GRUPPE3 = vecInfo.getECUbyECU_GRUPPE("D_0080");
+                    if (eCUbyECU_GRUPPE3 != null)
+                    {
+                        string text = eCUbyECU_GRUPPE3.VARIANTE?.ToUpper();
+                        if (text == "KOMBI36C")
+                        {
+                            list.Add(dictionary["KOMBI36C"]);
+                        }
+                        else if (text == "KOMBI85")
+                        {
+                            list.Add(dictionary["KOMBI85"]);
+                        }
+                        else
+                        {
+                            list.Add(dictionary["D_0080"]);
+                        }
+                    }
+                }
+            }
+            if (list.Count <= 0)
+            {
+                foreach (KeyValuePair<string, EcuKomConfig> item in dictionary)
+                {
+                    list.Add(item.Value);
+                }
+            }
+            return ReadGwszFromEcus(ecuKom, list);
+        }
+
+        public decimal? ReadGwszForGroupMotorbike(IVehicle vehicle, IEcuKom ecuKom, int retryCount, Action<string> protocolUnit, Action<IVehicle, string, string> logIfEcuMissing)
+        {
+            Vehicle vehicle2 = (Vehicle)vehicle;
+            switch (vehicle2.BNType)
+            {
+                case BNType.BN2000_MOTORBIKE:
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(vehicle2.getECUbyECU_GRUPPE("D_MRKOMB")?.VARIANTE))
+                        {
+                            IEcuJob ecuJob2 = ecuKom.ApiJob("D_MRKOMB", "STATUS_GWSZ_ANZEIGE", string.Empty, string.Empty, retryCount);
+                            if (ecuJob2.IsOkay())
+                            {
+                                decimal num = 1m;
+                                if (ecuJob2.getResultFormat("STAT_GWSZ_ANZEIGE_WERT") != -1)
+                                {
+                                    string stringResult = ecuJob2.getStringResult("STAT_GWSZ_ANZEIGE_EINH");
+                                    protocolUnit(stringResult);
+                                    if (!string.IsNullOrEmpty(stringResult) && string.Compare("miles", stringResult, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        num = 1.609344m;
+                                    }
+                                    decimal value = num;
+                                    decimal? mileageFromJob = GetMileageFromJob(ecuJob2, "STAT_GWSZ_ANZEIGE_WERT", (ushort)1);
+                                    return (decimal?)value * mileageFromJob;
+                                }
+                                if (ecuJob2.getResultFormat("GWSZ") != -1)
+                                {
+                                    string stringResult2 = ecuJob2.getStringResult("STAT_GWSZ_ANZEIGE_EINH");
+                                    protocolUnit(stringResult2);
+                                    if ("miles".Equals(stringResult2, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        num = 1.609344m;
+                                    }
+                                    decimal value = num;
+                                    decimal? mileageFromJob2 = GetMileageFromJob(ecuJob2, "GWSZ", (ushort)1);
+                                    return (decimal?)value * mileageFromJob2;
+                                }
+                                if (ecuJob2.getResultFormat("STAT_GWSZ") != -1)
+                                {
+                                    string stringResult3 = ecuJob2.getStringResult("STAT_GWSZ_ANZEIGE_EINH");
+                                    protocolUnit(stringResult3);
+                                    if ("miles".Equals(stringResult3, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        num = 1.609344m;
+                                    }
+                                    decimal value = num;
+                                    decimal? mileageFromJob2 = GetMileageFromJob(ecuJob2, "STAT_GWSZ", (ushort)1);
+                                    vehicle2.Gwsz = (decimal?)value * mileageFromJob2;
+                                }
+                            }
+                            else
+                            {
+                                Log.Warning("VehicleIdent.doReadGwsz()", "GWSZ readout failed for BN2000_MOTORBIKE");
+                            }
+                        }
+                        else
+                        {
+                            Log.Warning("VehicleIdent.doReadGwsz()", "Failed to identify KOMBI for BN2000_MOTORBIKE");
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.WarningException("VehicleIdent.doReadGwsz()", exception);
+                    }
+                    break;
+                case BNType.BN2020_MOTORBIKE:
+                    {
+                        logIfEcuMissing(vehicle2, "G_MRKOMB", "STATUS_LESEN");
+                        IEcuJob ecuJob = ecuKom.ApiJob("G_MRKOMB", "STATUS_LESEN", "ARG;GWSZ_MR", string.Empty, cacheAdding: false);
+                        if (!ecuJob.IsOkay())
+                        {
+                            ecuJob = ecuKom.ApiJob("G_MRZGW", "STATUS_LESEN", "ARG;GWSZ_MR", string.Empty, cacheAdding: false);
+                        }
+                        if (ecuJob.IsOkay())
+                        {
+                            return GetMileageFromJob(ecuJob, "STAT_GWSZ_WERT", null).GetValueOrDefault();
+                        }
+                        break;
+                    }
+                case BNType.BNK01X_MOTORBIKE:
+                    Log.Info("VehicleIdent.doReadGwsz()", "no gwsz readout available for BNK10X motor cycles");
+                    break;
+            }
+            return null;
+        }
+
+        private decimal? GetMileageFromJob(IEcuJob job, string resultName, ushort? set = null)
+        {
+            object obj = ((!set.HasValue) ? job.getResult(resultName) : job.getResult(set.Value, resultName));
+            if (obj != null)
+            {
+                try
+                {
+                    return Convert.ToDecimal(obj);
+                }
+                catch (Exception ex)
+                {
+                    Log.Warning(Log.CurrentMethod(), string.Format("Error converting mileage value '{0}'. Job: {1}, result name: '{2}'. Error: {3}", (obj == null) ? "null" : obj.ToString(), job.JobName, resultName, ex));
+                }
+            }
+            else
+            {
+                Log.Info(Log.CurrentMethod(), "Mileage could not be retrieved from job: '" + job.JobName + "' using result name: '" + resultName + "'");
+            }
+            return null;
+        }
+
+
+        internal decimal? ReadGwszFromEcus(IEcuKom ecuKom, List<EcuKomConfig> ecuKomconfigs)
+        {
+            foreach (EcuKomConfig ecuKomconfig in ecuKomconfigs)
+            {
+                try
+                {
+                    Log.Info("VehicleIdent.GetGwsz()", "trying to get Gwsz from {0} with {1}", ecuKomconfig.Ecu, ecuKomconfig.Job);
+                    IEcuJob ecuJob = ecuKom.ApiJob(ecuKomconfig.Ecu, ecuKomconfig.Job, ecuKomconfig.Param, string.Empty);
+                    if (!ecuJob.IsOkay())
+                    {
+                        continue;
+                    }
+                    object result = ecuJob.getResult(ecuKomconfig.Set, ecuKomconfig.Result);
+                    if (result != null)
+                    {
+                        decimal num = Convert.ToDecimal(result);
+                        if (ecuKomconfig.Ecu == "KOMBI85")
+                        {
+                            EcuKomConfig ecuKomConfig = new EcuKomConfig("KOMBI85", "STATUS_GWSZ_OFFSET_LESEN", string.Empty, 1, "STAT_GWSZ_OFFSET_WERT");
+                            IEcuJob ecuJob2 = ecuKom.ApiJob(ecuKomConfig.Ecu, ecuKomConfig.Job, ecuKomConfig.Param, string.Empty);
+                            if (ecuJob2.IsOkay())
+                            {
+                                object result2 = ecuJob2.getResult(ecuKomConfig.Result);
+                                if (result2 != null)
+                                {
+                                    decimal num2 = Convert.ToDecimal(result2);
+                                    return num - num2;
+                                }
+                            }
+                        }
+                        return num;
+                    }
+                    Log.Warning("ReadGwszFromEcus()", "(Ecu: {0}, Job: {1}, Parameter: {2}, set: {3}) - JobResult {4} was null.", ecuKomconfig.Ecu, ecuKomconfig.Job, ecuKomconfig.Param, ecuKomconfig.Set, ecuKomconfig.Result);
+                }
+                catch (Exception exception)
+                {
+                    Log.WarningException("DiagnosticsBusinessData.ReadGwszFromEcus()", exception);
+                }
+            }
+            return null;
+        }
+
+
         public void ReadILevelBn2020(Vehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
             // [UH] get reactor from vehicle
