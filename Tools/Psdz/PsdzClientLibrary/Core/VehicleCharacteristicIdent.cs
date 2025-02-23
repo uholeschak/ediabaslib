@@ -10,18 +10,27 @@ using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
-	public class VehicleCharacteristicIdent : VehicleCharacteristicAbstract
-	{
-        public bool AssignVehicleCharacteristic(string vehicleCode, Vehicle vehicle, PsdzDatabase.Characteristics characteristic)
+    public class VehicleCharacteristicIdent : VehicleCharacteristicAbstract
+    {
+        public const string DefaultEmptyCharacteristicValue = "-";
+
+        private IIdentVehicle vecInfo;
+
+        private PsdzDatabase.Characteristics characteristic;
+
+        private ReactorEngine reactor;
+
+        private readonly ILogger log;
+
+        public VehicleCharacteristicIdent(ILogger log)
         {
-            return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
+            //this.reactor = reactor;
+            this.log = log;
         }
 
-        protected override bool ComputeAbgas(params object[] parameters)
+        public bool AssignVehicleCharacteristic(string vehicleCode, IIdentVehicle vehicle, PsdzDatabase.Characteristics characteristic)
         {
-            GetIdentParameters(parameters);
-            vecInfo.Abgas = characteristic.Name;
-            return true;
+            return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
         }
 
         protected override bool ComputeAEBezeichnung(params object[] parameters)
@@ -111,29 +120,29 @@ namespace PsdzClient.Core
                 case "BMW PKW":
                     reactor.SetBrandName(BrandName.BMWPKW, DataSource.Database);
                     break;
-                case "BMW I":
-                    reactor.SetBrandName(BrandName.BMWi, DataSource.Database);
-                    break;
-                case "TOYOTA":
-                    reactor.SetBrandName(BrandName.TOYOTA, DataSource.Database);
-                    break;
-                case "BMW M GMBH PKW":
-                    reactor.SetBrandName(BrandName.BMWMGmbHPKW, DataSource.Database);
-                    break;
                 case "MINI PKW":
                     reactor.SetBrandName(BrandName.MINIPKW, DataSource.Database);
                     break;
                 case "ROLLS-ROYCE PKW":
                     reactor.SetBrandName(BrandName.ROLLSROYCEPKW, DataSource.Database);
                     break;
+                case "BMW MOTORRAD":
+                    reactor.SetBrandName(BrandName.BMWMOTORRAD, DataSource.Database);
+                    break;
+                case "BMW M GMBH PKW":
+                    reactor.SetBrandName(BrandName.BMWMGmbHPKW, DataSource.Database);
+                    break;
                 case "BMW USA PKW":
                     reactor.SetBrandName(BrandName.BMWUSAPKW, DataSource.Database);
                     break;
-                default:
-                    Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown brand name: {0}", characteristic.Name);
+                case "BMW I":
+                    reactor.SetBrandName(BrandName.BMWi, DataSource.Database);
                     break;
-                case "BMW MOTORRAD":
-                    reactor.SetBrandName(BrandName.BMWMOTORRAD, DataSource.Database);
+                case "TOYOTA":
+                    reactor.SetBrandName(BrandName.TOYOTA, DataSource.Database);
+                    break;
+                default:
+                    log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown brand name: {0}", characteristic.Name);
                     break;
             }
             return true;
@@ -163,28 +172,15 @@ namespace PsdzClient.Core
         protected override bool ComputeEreihe(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            decimal? istaVisible = null;
-            if (decimal.TryParse(this.characteristic.IstaVisible, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal visible))
-            {
-                istaVisible = visible;
-            }
-            if (!((istaVisible.GetValueOrDefault() == default(decimal)) & istaVisible.HasValue))
-            {
-                reactor.SetEreihe(characteristic.Name, DataSource.Database);
-                vecInfo.EBezeichnungUIText = characteristic.Name;
-            }
-            else
-            {
-                reactor.SetEreihe(characteristic.Name, DataSource.Database);
-                vecInfo.EBezeichnungUIText = "-";
-            }
+            reactor.SetEreihe(characteristic.Name, DataSource.Database);
             return true;
         }
 
         protected override bool ComputeGetriebe(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            GearboxUtility.SetGearboxTypeFromCharacteristics(vecInfo, characteristic);
+            reactor.SetGetriebe(characteristic.Name, DataSource.Database);
+            log.Info("GearboxUtility.SetGearboxTypeFromCharacteristics()", "Gearbox type: '" + characteristic.Name + "' found in the xep_characteristics table.");
             return true;
         }
 
@@ -295,10 +291,6 @@ namespace PsdzClient.Core
         {
             GetIdentParameters(parameters);
             reactor.SetEMOTBaureihe(characteristic.Name, DataSource.Database);
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || vecInfo.GenericMotor.Engine2 == "-")
-            {
-                vecInfo.GenericMotor.Engine2 = characteristic.Name;
-            }
             return true;
         }
 
@@ -306,10 +298,6 @@ namespace PsdzClient.Core
         {
             GetIdentParameters(parameters);
             reactor.SetEMOTBezeichnung(characteristic.Name, DataSource.Database);
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || vecInfo.GenericMotor.EngineLabel2 == "-")
-            {
-                vecInfo.GenericMotor.EngineLabel2 = characteristic.Name;
-            }
             return true;
         }
 
@@ -408,10 +396,6 @@ namespace PsdzClient.Core
         {
             GetIdentParameters(parameters);
             GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTBaureihe = characteristic.Name;
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || characteristic.Name != "-")
-            {
-                vecInfo.GenericMotor.Engine2 = string.Join(",", vecInfo.HeatMotors.Select((HeatMotor v) => v.HeatMOTBaureihe));
-            }
             return true;
         }
 
@@ -420,10 +404,6 @@ namespace PsdzClient.Core
             GetIdentParameters(parameters);
             GetHeatMotorByDriveId(characteristic.DriveId).HeatMOTBezeichnung = characteristic.Name;
             reactor.AddInfoToDataholderAboutHeatMotors(vecInfo.HeatMotors, DataSource.Database);
-            if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || characteristic.Name != "-")
-            {
-                vecInfo.GenericMotor.EngineLabel2 = string.Join(",", vecInfo.HeatMotors.Select((HeatMotor v) => v.HeatMOTBezeichnung));
-            }
             return true;
         }
 
@@ -469,19 +449,53 @@ namespace PsdzClient.Core
             return true;
         }
 
+        protected override bool ComputeTypeKeyLead(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetTypeKeyLead(characteristic.Name, DataSource.Database);
+            return true;
+        }
+
+        protected override bool ComputeTypeKeyBasic(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetTypeKeyBasic(characteristic.Name, DataSource.Database);
+            return true;
+        }
+
+        protected override bool ComputeESeriesLifeCycle(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetESeriesLifeCycle(characteristic.Name, DataSource.Database);
+            return true;
+        }
+
+        protected override bool ComputeLifeCycle(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetLifeCycle(characteristic.Name, DataSource.Database);
+            return true;
+        }
+
+        protected override bool ComputeSportausfuehrung(params object[] parameters)
+        {
+            GetIdentParameters(parameters);
+            reactor.SetSportausfuehrung(characteristic.Name, DataSource.Database);
+            return true;
+        }
 
         protected override bool ComputeDefault(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown key:{0} value: {1}", characteristic.RootNodeClass, characteristic.Name);
+            log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown key:{0} value: {1}", characteristic.RootNodeClass, characteristic.Name);
             return false;
         }
 
         private void GetIdentParameters(params object[] parameters)
         {
-            vecInfo = (Vehicle)parameters[0];
+            vecInfo = (IIdentVehicle)parameters[0];
             // [UH] get reactor from vehicle
-            reactor = vecInfo.Reactor;
+            reactor = (vecInfo as Vehicle)?.Reactor;
             characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
 
@@ -499,13 +513,5 @@ namespace PsdzClient.Core
             vecInfo.HeatMotors.Add(heatMotor);
             return heatMotor;
         }
-
-        public const string DefaultEmptyCharacteristicValue = "-";
-
-		private Vehicle vecInfo;
-
-		private PsdzDatabase.Characteristics characteristic;
-
-        private Reactor reactor;
     }
 }

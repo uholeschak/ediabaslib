@@ -226,6 +226,7 @@ namespace PsdzClientLibrary.Core
             }
         }
 
+        // ToDo: Check on update
         public string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo, ILogger logger)
         {
             logger.Info(logger.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional");

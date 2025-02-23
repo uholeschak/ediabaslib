@@ -33,12 +33,6 @@ namespace PsdzClient.Core
             return result;
         }
 
-        protected override bool ComputeAbgas(params object[] parameters)
-        {
-            characteristicValue = vehicle.Abgas;
-            return database.LookupVehicleCharIdByName(vehicle.Abgas, 68771232130L) == (decimal)datavalueId;
-        }
-
         protected override bool ComputeAEBezeichnung(params object[] parameters)
         {
             characteristicValue = vehicle.AEBezeichnung;
@@ -396,6 +390,36 @@ namespace PsdzClient.Core
             return database.LookupVehicleCharIdByName(vehicle.VerkaufsBezeichnung, 40122114) == (decimal)datavalueId;
         }
 
+        protected override bool ComputeTypeKeyLead(params object[] parameters)
+        {
+            characteristicValue = vehicle.BasicType;
+            return database.LookupVehicleCharIdByName(vehicle.TypeKeyLead, 99999999912L) == (decimal)datavalueId;
+        }
+
+        protected override bool ComputeTypeKeyBasic(params object[] parameters)
+        {
+            characteristicValue = vehicle.TypeKeyBasic;
+            return database.LookupVehicleCharIdByName(vehicle.TypeKeyBasic, 40135043) == (decimal)datavalueId;
+        }
+
+        protected override bool ComputeESeriesLifeCycle(params object[] parameters)
+        {
+            characteristicValue = vehicle.ESeriesLifeCycle;
+            return database.LookupVehicleCharIdByName(vehicle.ESeriesLifeCycle, 99999999859L) == (decimal)datavalueId;
+        }
+
+        protected override bool ComputeLifeCycle(params object[] parameters)
+        {
+            characteristicValue = vehicle.LifeCycle;
+            return database.LookupVehicleCharIdByName(vehicle.LifeCycle, 99999999857L) == (decimal)datavalueId;
+        }
+
+        protected override bool ComputeSportausfuehrung(params object[] parameters)
+        {
+            characteristicValue = vehicle.Sportausfuehrung;
+            return database.LookupVehicleCharIdByName(vehicle.Sportausfuehrung, 99999999847L) == (decimal)datavalueId;
+        }
+
         private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, long datavalueId, ValidationRuleInternalResults internalResult, out string value, string rootNodeClass, decimal characteristicNodeclass)
         {
             if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal rootClassValue))
@@ -421,12 +445,13 @@ namespace PsdzClient.Core
                     }
                     internalResult.Add(validationRuleInternalResult);
                 }
-                RuleExpression ruleExpression = internalResult.RuleExpression;
-                if (!(ruleExpression is AndExpression))
+                IRuleExpression ruleExpression = internalResult.RuleExpression;
+                IRuleExpression ruleExpression2 = ruleExpression;
+                if (!(ruleExpression2 is AndExpression))
                 {
-                    if (!(ruleExpression is OrExpression))
+                    if (!(ruleExpression2 is OrExpression))
                     {
-                        if (ruleExpression is NotExpression)
+                        if (ruleExpression2 is NotExpression)
                         {
                             validationRuleInternalResult.IsValid &= !flag;
                         }
@@ -444,14 +469,10 @@ namespace PsdzClient.Core
             value = string.Join(",", vehicle.HeatMotors.Select((HeatMotor hm) => getProperty(hm)));
             bool flag2 = (from r in internalResult
                 group r by r.Id).Any((IGrouping<string, ValidationRuleInternalResult> g) => g.All((ValidationRuleInternalResult c) => c.IsValid));
-            if (!(internalResult.RuleExpression is NotExpression))
-            {
-                return flag2;
-            }
-            return !flag2;
+            return (internalResult.RuleExpression is NotExpression) ? (!flag2) : flag2;
         }
 
-        //private IDatabaseProvider dbConnector;
+        //	private IDataProviderRuleEvaluation dataProvider;
         PsdzDatabase database;
 
 		private string characteristicValue;

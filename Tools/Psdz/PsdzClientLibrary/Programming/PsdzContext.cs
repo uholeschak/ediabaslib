@@ -747,7 +747,7 @@ namespace PsdzClient.Programming
                 return false; 
             }
 
-            VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent();
+            VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent(new NugetLogger());
             foreach (PsdzDatabase.Characteristics characteristic in characteristics)
             {
                 if (string.IsNullOrEmpty(vehicle.VerkaufsBezeichnung) || !(characteristic.RootNodeClass == "40143490"))
