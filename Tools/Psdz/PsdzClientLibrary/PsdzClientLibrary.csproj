@@ -131,6 +131,7 @@
     <Compile Include="Core\DataSourcePriority.cs" />
     <Compile Include="Core\DateTimePrecise.cs" />
     <Compile Include="Core\DateTimePreciseSafeImmutable.cs" />
+    <Compile Include="Core\DiagnosticsBusinessDataCore.cs" />
     <Compile Include="Core\FallbackMechanisms.cs" />
     <Compile Include="Core\Fasta2Service.cs" />
     <Compile Include="Core\FFMResultRuleEvaluation.cs" />

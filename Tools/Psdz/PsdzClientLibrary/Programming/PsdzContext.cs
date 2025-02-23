@@ -812,10 +812,6 @@ namespace PsdzClient.Programming
                     IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
                     VecInfo.BNType = service.GetBNType(VecInfo);
                 }
-                if (VecInfo.BNMixed == BNMixed.UNKNOWN)
-                {
-                    VecInfo.BNMixed = VehicleLogistics.getBNMixed(VecInfo.Ereihe, VecInfo.FA);
-                }
                 if (string.IsNullOrEmpty(VecInfo.Prodart))
                 {
                     if (!VecInfo.IsMotorcycle())

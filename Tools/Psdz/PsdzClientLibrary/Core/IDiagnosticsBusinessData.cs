@@ -97,10 +97,10 @@ namespace PsdzClient.Core
 
         //void CheckEcusFor14DigitSerialNumber(IEcuKom ecuKom, IEnumerable<IEcu> ecus);
 
-        //string[] GetMaxEcuList(BrandName brand, string ereihe);
+        string[] GetMaxEcuList(BrandName brand, string ereihe);
 
         //bool ShouldNotValidateFAForOldCars(string ereihe, DateTime constructionDate);
 
-        //bool IsEES25Vehicle(IVehicle vecInfo);
+        bool IsEES25Vehicle(IVehicle vecInfo);
     }
 }

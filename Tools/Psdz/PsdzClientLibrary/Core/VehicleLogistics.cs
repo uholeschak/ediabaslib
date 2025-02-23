@@ -652,43 +652,6 @@ namespace PsdzClient.Core
             }
         }
 
-        // ToDo: Check on update
-        public static BNMixed getBNMixed(string br, FA fa)
-        {
-            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
-            if (string.IsNullOrEmpty(br))
-            {
-                return BNMixed.UNKNOWN;
-            }
-            switch (br.ToUpper())
-            {
-                case "M12":
-                case "AERO":
-                    return BNMixed.HETEROGENEOUS;
-                case "RR1":
-                case "RR2":
-                case "RR3":
-                    if (fa != null && fa.AlreadyDone && fa.C_DATETIME >= service.DTimeRR_S2)
-                    {
-                        return BNMixed.HETEROGENEOUS;
-                    }
-                    return BNMixed.HOMOGENEOUS;
-                default:
-                    return BNMixed.HOMOGENEOUS;
-                case "F01":
-                case "F02":
-                case "F03":
-                case "F04":
-                case "F06":
-                case "F07":
-                    if (fa != null && fa.AlreadyDone && fa.C_DATETIME > service.DTimeF01BN2020MostDomain)
-                    {
-                        return BNMixed.HETEROGENEOUS;
-                    }
-                    return BNMixed.HOMOGENEOUS;
-            }
-        }
-
         public static string getBrSgbd(Vehicle vecInfo)
         {
             IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
