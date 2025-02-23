@@ -38,7 +38,6 @@ namespace PsdzClient.Core
             zFS_SUCCESSFULLYField = false;
             prodartField = "P";
             bNTypeField = BNType.UNKNOWN;
-            bNMixedField = BNMixed.UNKNOWN;
             chassisTypeField = ChassisType.UNKNOWN;
             gwszField = null;
             gwszUnitField = GwszUnitType.km;
@@ -604,22 +603,6 @@ namespace PsdzClient.Core
             }
         }
 
-        public BNMixed BNMixed
-        {
-            get
-            {
-                return bNMixedField;
-            }
-            set
-            {
-                if (!bNMixedField.Equals(value))
-                {
-                    bNMixedField = value;
-                    OnPropertyChanged("BNMixed");
-                }
-            }
-        }
-
         public string Baureihe
         {
             get
@@ -632,22 +615,6 @@ namespace PsdzClient.Core
                 {
                     baureiheField = value;
                     OnPropertyChanged("Baureihe");
-                }
-            }
-        }
-
-        public string VerkaufsBezeichnung
-        {
-            get
-            {
-                return verkaufsBezeichnungField;
-            }
-            set
-            {
-                if (verkaufsBezeichnungField != value)
-                {
-                    verkaufsBezeichnungField = value;
-                    OnPropertyChanged("VerkaufsBezeichnung");
                 }
             }
         }
@@ -2597,11 +2564,7 @@ namespace PsdzClient.Core
 
         private BNType bNTypeField;
 
-        private BNMixed bNMixedField;
-
         private string baureiheField;
-
-        private string verkaufsBezeichnungField;
 
         private string roadMapField;
 

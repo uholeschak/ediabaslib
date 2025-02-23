@@ -9,9 +9,9 @@ using System.Windows.Interop;
 
 namespace PsdzClientLibrary.Core
 {
-    public class Logger : ILogger
+    public class NugetLogger : ILogger
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(Logger));
+        private static readonly ILog log = LogManager.GetLogger(typeof(NugetLogger));
 
         // [UH] replaced
         public string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null)

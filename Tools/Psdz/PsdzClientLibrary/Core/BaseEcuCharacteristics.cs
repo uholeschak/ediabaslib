@@ -408,38 +408,64 @@ namespace PsdzClient.Core
 			return -1;
 		}
 
-		public virtual string getECU_GROBNAME(long? sgAdr)
-		{
-			ValidateIfDiagnosticsHasValidLicense();
-			if (!sgAdr.HasValue)
-			{
-				Log.Info(GetType().Name + ".getECU_GROBNAME()", "sgAdr was null");
-				return null;
-			}
-			if (sgAdr < 0L && sgAdr > 255L)
-			{
-				Log.Info(GetType().Name + ".getECU_GROBNAME()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
-				return null;
-			}
-			try
-			{
-				foreach (IEcuLogisticsEntry item in ecuTable)
-				{
-					if (item.DiagAddress == sgAdr)
-					{
-						return item.Name;
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException(GetType().Name + ".getECU_GROBNAME()", exception);
-			}
-			Log.Info(GetType().Name + ".getECU_GROBNAME()", "no ECU_GROBNAME found for ecu address: {0}", FormatConverter.Dec2Hex(sgAdr));
-			return null;
-		}
+        public virtual string getECU_GROBNAME(long? sgAdr)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            if (!sgAdr.HasValue)
+            {
+                Log.Info(GetType().Name + ".getECU_GROBNAME()", "sgAdr was null");
+                return null;
+            }
+            if (sgAdr < 0 && sgAdr > 255)
+            {
+                Log.Info(GetType().Name + ".getECU_GROBNAME()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+                return null;
+            }
+            try
+            {
+                foreach (IEcuLogisticsEntry item in ecuTable)
+                {
+                    if (item.DiagAddress == sgAdr)
+                    {
+                        return item.Name;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(GetType().Name + ".getECU_GROBNAME()", exception);
+            }
+            Log.Info(GetType().Name + ".getECU_GROBNAME()", "no ECU_GROBNAME found for ecu address: {0}", FormatConverterBase.Dec2Hex(sgAdr));
+            return null;
+        }
 
-		public virtual string getECU_GRUPPE(long? sgAdr)
+        public virtual string getECU_GROBNAMEByEcuGroup(string ecuGroup)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            if (string.IsNullOrEmpty(ecuGroup))
+            {
+                Log.Info(Log.CurrentMethod(), "The Ecu Group was null or empty");
+                return null;
+            }
+            try
+            {
+                foreach (IEcuLogisticsEntry item in ecuTable)
+                {
+                    if (item.GroupSgbd == ecuGroup)
+                    {
+                        return item.Name;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(Log.CurrentMethod(), exception);
+            }
+            Log.Info(Log.CurrentMethod(), "no ECU_GROBNAME found for ECu Group: {0}", ecuGroup);
+            return null;
+        }
+
+        public virtual string getECU_GRUPPE(long? sgAdr)
 		{
 			ValidateIfDiagnosticsHasValidLicense();
 			if (!sgAdr.HasValue)

@@ -134,11 +134,13 @@
     <Compile Include="Core\FallbackMechanisms.cs" />
     <Compile Include="Core\Fasta2Service.cs" />
     <Compile Include="Core\FFMResultRuleEvaluation.cs" />
+    <Compile Include="Core\FormatConverterBase.cs" />
     <Compile Include="Core\IEMotor.cs" />
     <Compile Include="Core\IFARuleEvaluation.cs" />
     <Compile Include="Core\IFasta2Service.cs" />
     <Compile Include="Core\IFfmResultRuleEvaluation.cs" />
     <Compile Include="Core\IIdentEcu.cs" />
+    <Compile Include="Core\IIdentVehicle.cs" />
     <Compile Include="Core\IInteractionModel.cs" />
     <Compile Include="Core\IInteractionMotorcycleMRMA24Model.cs" />
     <Compile Include="Core\IInteractionService.cs" />
@@ -222,7 +224,7 @@
     <Compile Include="Core\ManufactoringDateExpression.cs" />
     <Compile Include="Core\Container\MultipleChoice.cs" />
     <Compile Include="Core\Container\MultipleValue.cs" />
-    <Compile Include="Core\Logger.cs" />
+    <Compile Include="Core\NugetLogger.cs" />
     <Compile Include="Core\MultisourceLogic.cs" />
     <Compile Include="Core\MultisourceProperties.cs" />
     <Compile Include="Core\NotExpression.cs" />

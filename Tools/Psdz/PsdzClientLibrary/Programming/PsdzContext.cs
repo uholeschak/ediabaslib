@@ -786,10 +786,6 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
-            string typsnr = !string.IsNullOrEmpty(vehicle.Typ) ? vehicle.Typ : vehicle.VINType;
-            service.SpecialTreatmentBasedOnEreihe(typsnr, vehicle);
-
             if (!UpdateAlpinaCharacteristics(database, vehicle))
             {
                 return false;

@@ -6,6 +6,15 @@ using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
+    public enum TestModuleName
+    {
+        CheckVoltage,
+        RequestApplicationNumberAndUpgrade,
+        ServiceHistoryAction,
+        RsuStop,
+        RsuStart
+    }
+
     public interface IDiagnosticsBusinessData
     {
         List<string> ProductLinesEpmBlacklist { get; }
@@ -26,15 +35,17 @@ namespace PsdzClient.Core
 
         void SetSp2021Enabled(IVehicle vecInfo);
 
-        string GetMainSeriesSgbd(IVehicle vecInfo);
+        //void SetSp2025Enabled(IVehicle vecInfo);
 
-        void UpdateCharacteristics(IVehicle vecInfo, string typsnr, IEcuKom ecuKom, bool isVorSerie, IProgressMonitor monitor, int retryCount, Func<BNType, int, IProgressMonitor, IEcuJob> doECUReadFA);
+        //bool IsNewFaultMemoryEnabled(IVehicle vecInfo);
 
-        string GetMainSeriesSgbdAdditional(IVehicle vecInfo);
+        string GetMainSeriesSgbd(IIdentVehicle vecInfo);
 
-        void SpecialTreatmentBasedOnEreihe(string typsnr, IVehicle vecInfo);
+        string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo);
 
         List<int> GetGatewayEcuAdresses(IVehicle vecInfo);
+
+        //void ShowIsarPopup(IVehicle vecInfo, IFFMDynamicResolver FFMResolver, IInteractionService services);
 
         BNType GetBNType(IVehicle vehicle);
 
@@ -46,17 +57,17 @@ namespace PsdzClient.Core
 
         void HandleECUGroups(IVehicle vecInfo, IEcuKom ecuKom, List<IEcu> ecusToRemoveKMM);
 
-        void AddServiceCode(string methodName, int identifier);
-
         void SetVehicleLifeStartDate(IVehicle vehicle, IEcuKom ecuKom);
 
         void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob);
 
         bool CheckForSpecificModelPopUpForElectricalChecks(string ereihe);
 
-        void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
+        //void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
 
         bool ProcessILevelJobResults(Reactor reactor, IVehicle vecInfo, IEcuJob iJob);
+
+        //bool ProcessILevelJobResultsEES25(Reactor reactor, IVehicle vecInfo, IEcuJob iJob);
 
         bool IsSp2021Gateway(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
 
@@ -64,10 +75,32 @@ namespace PsdzClient.Core
 
         string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom);
 
+        //string ReadVinForGroupCarsNcar(BNType bNType, IEcuKom ecuKom);
+
         string ReadVinForMotorcycles(BNType bNType, IEcuKom ecuKom);
+
+        //decimal? ReadGwszForGroupCars(IVehicle vecInfo, IEcuKom ecuKom);
+
+        //decimal? ReadGwszForGroupMotorbike(IVehicle vehicle, IEcuKom ecuKom, int retryCount, Action<string> protocolUnit, Action<IVehicle, string, string> logIfEcuMissing);
 
         string GetFourCharEreihe(string ereihe);
 
-        void ShowAdapterHintMotorCycle(IProgressMonitor monitor, IOperationServices services, string eReihe, string basicType);
+        //string GetServiceProgramName(TestModuleName testmodulename);
+
+        //IEcuJob SendJobToKombiOrMmi(IVehicle vecInfo, IEcuKom ecuKom, string job, string param, string resultFilter, int retries);
+
+        //IEcuJob SendStatusLesenCcmJobToKombiOrMmi(IVehicle vecInfo, IEcuKom ecuKom);
+
+        //List<string> RemoveFirstDigitOfSalapaIfLengthIs4(List<string> salapa);
+
+        //void Add14DigitFakeSerialNumberToFstdat(IVehicle vecInfo, IEnumerable<IEcuJob> jobList);
+
+        //void CheckEcusFor14DigitSerialNumber(IEcuKom ecuKom, IEnumerable<IEcu> ecus);
+
+        //string[] GetMaxEcuList(BrandName brand, string ereihe);
+
+        //bool ShouldNotValidateFAForOldCars(string ereihe, DateTime constructionDate);
+
+        //bool IsEES25Vehicle(IVehicle vecInfo);
     }
 }

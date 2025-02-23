@@ -695,7 +695,6 @@ namespace PsdzClient.Core
             string text = service.GetMainSeriesSgbd(vecInfo);
             if (string.IsNullOrEmpty(text))
             {
-                service.AddServiceCode(Log.CurrentMethod(), 1);
                 text = GetCharacteristics(vecInfo)?.brSgbd;
             }
             return text;
@@ -711,25 +710,14 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-        public static int getECUAdrByECU_GRUPPE(Vehicle vecInfo, string grp)
+        public static string getECU_GROBNAMEByEcuGroup(Vehicle vecInfo, string ecuGroup)
         {
-            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
-            if (vecInfo != null && !string.IsNullOrEmpty(grp))
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
             {
-                PsdzDatabase.EcuGroup ecuGroupByName = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupByName(grp);
-                if (ecuGroupByName != null)
-                {
-                    Int64 diagAddrValue = ecuGroupByName.DiagAddr.ConvertToInt();
-                    if (diagAddrValue != -1)
-                    {
-                        return (int) diagAddrValue;
-                    }
-                }
-                Log.Info(Log.CurrentMethod(), "No diagnostic address can be retrieved from database by group name: " + grp);
-                service.AddServiceCode(Log.CurrentMethod(), 1);
-                return GetCharacteristics(vecInfo)?.getECUAdrByECU_GRUPPE(grp) ?? (-1);
+                return characteristics.getECU_GROBNAMEByEcuGroup(ecuGroup);
             }
-            return -1;
+            return string.Empty;
         }
     }
 }

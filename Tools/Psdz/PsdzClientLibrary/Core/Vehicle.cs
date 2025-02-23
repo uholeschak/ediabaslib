@@ -20,7 +20,7 @@ using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
-	public class Vehicle : typeVehicle, INotifyPropertyChanged, IVehicle, IReactorVehicle
+	public class Vehicle : typeVehicle, IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle
     {
         [XmlIgnore]
         IVciDeviceRuleEvaluation IVehicleRuleEvaluation.VCI => base.VCI;
@@ -104,7 +104,7 @@ namespace PsdzClient.Core
             clamp15MinValue = 0.0;
             clamp30MinValue = 9.95; //new VoltageThreshold(BatteryEnum.Pb).MinError;
             //RxSwin = new RxSwinData();
-            Reactor = new Reactor(this, new Logger(), new DataHolder());
+            Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
         }
 
 #if false
@@ -1617,6 +1617,43 @@ namespace PsdzClient.Core
             base.ECU.Add(ecu);
         }
 
+        public void AddEcu(IIdentEcu ecu)
+        {
+            if ((base.VehicleIdentLevel != IdentificationLevel.VINVehicleReadout && base.VehicleIdentLevel != IdentificationLevel.VINVehicleReadoutOnlineUpdated) || base.BNType == BNType.BNK01X_MOTORBIKE)
+            {
+                ECU eCU = new ECU
+                {
+                    ProgrammingVariantName = ecu.ProgrammingVariantName,
+                    SERIENNUMMER = ecu.SERIENNUMMER,
+                    ID_SG_ADR = ecu.ID_SG_ADR,
+                    ECU_SGBD = ecu.ECU_SGBD,
+                    VARIANTE = ecu.VARIANTE,
+                    ECU_ADR = ecu.ECU_ADR,
+                    ECU_GRUPPE = ecu.ECU_GRUPPE,
+                    TITLE_ECUTREE = ecu.TITLE_ECUTREE,
+                    ECUTreeColor = ecu.ECUTreeColor,
+                    ECUTitle = ecu.ECUTitle
+                };
+#if false
+                IXepEcuCliques xepEcuClique = ecu.XepEcuClique;
+                if (xepEcuClique != null && xepEcuClique.IsValid)
+                {
+                    eCU.XepEcuClique = new XEP_ECUCLIQUES(ecu.XepEcuClique);
+                }
+                else
+                {
+                    eCU.XepEcuClique = new InvalidEcuClique();
+                }
+                if (ecu.XepEcuVariant != null)
+                {
+                    eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
+                }
+#endif
+                AddOrUpdateECU(eCU);
+            }
+        }
+
+
         public bool AddOrUpdateECU(ECU nECU)
         {
             try
@@ -2353,6 +2390,11 @@ namespace PsdzClient.Core
                 num *= num2;
             }
             return num;
+        }
+
+        public IReactorFa GetFaInstance()
+        {
+            return new FA();
         }
 
         // [UH] local reactor

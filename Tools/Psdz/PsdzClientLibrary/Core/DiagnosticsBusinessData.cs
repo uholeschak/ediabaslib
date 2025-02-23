@@ -295,112 +295,177 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
-        public string GetMainSeriesSgbd(IVehicle vecInfo)
+        public string GetMainSeriesSgbd(IIdentVehicle vecInfo)
         {
-            switch (vecInfo.BNType)
+            switch (vecInfo.BordnetType)
             {
-                case BNType.BEV2010:
+                case BordnetType.BEV2010:
                     return "E89X";
+                case BordnetType.IBUS:
+                    return "-";
                 default:
-                    if (vecInfo.Prodart == "P")
                     {
-                        if (!string.IsNullOrEmpty(vecInfo.Produktlinie))
+                        if (((IReactorVehicle)vecInfo).Prodart == "P")
                         {
-                            switch (vecInfo.Produktlinie.ToUpper())
+                            if (!string.IsNullOrEmpty(((IReactorVehicle)vecInfo).Produktlinie))
                             {
-                                case "PL2":
-                                    return "E89X";
-                                case "PL3":
-                                    return "R56";
-                                case "PL0":
-                                    break;
-                                case "PL6-ALT":
-                                    return "E60";
-                                case "PL4":
-                                    return "E70";
-                                case "PL3-ALT":
-                                    return "ZCS_ALL";
+                                string text = ((IReactorVehicle)vecInfo).Produktlinie.ToUpper();
+                                if (text != null)
+                                {
+                                    int length = text.Length;
+                                    if (length != 3)
+                                    {
+                                        if (length == 7)
+                                        {
+                                            switch (text[2])
+                                            {
+                                                case '3':
+                                                    if (!(text == "PL3-ALT"))
+                                                    {
+                                                        break;
+                                                    }
+                                                    return "ZCS_ALL";
+                                                case '5':
+                                                    if (!(text == "PL5-ALT"))
+                                                    {
+                                                        break;
+                                                    }
+                                                    return "RR1";
+                                                case '6':
+                                                    if (!(text == "PL6-ALT"))
+                                                    {
+                                                        break;
+                                                    }
+                                                    return "E60";
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        switch (text[2])
+                                        {
+                                            case '0':
+                                                break;
+                                            case '2':
+                                                if (!(text == "PL2"))
+                                                {
+                                                    goto IL_026c;
+                                                }
+                                                return "E89X";
+                                            case '3':
+                                                if (!(text == "PL3"))
+                                                {
+                                                    goto IL_026c;
+                                                }
+                                                return "R56";
+                                            case '4':
+                                                if (!(text == "PL4"))
+                                                {
+                                                    goto IL_026c;
+                                                }
+                                                return "E70";
+                                            default:
+                                                goto IL_026c;
+                                        }
+                                        if (text == "PL0")
+                                        {
+                                            if (((IReactorVehicle)vecInfo).Ereihe == "E38" || ((IReactorVehicle)vecInfo).Ereihe == "E46" || ((IReactorVehicle)vecInfo).Ereihe == "E83" || ((IReactorVehicle)vecInfo).Ereihe == "E85" || ((IReactorVehicle)vecInfo).Ereihe == "E86" || ((IReactorVehicle)vecInfo).Ereihe == "E36" || ((IReactorVehicle)vecInfo).Ereihe == "E39" || ((IReactorVehicle)vecInfo).Ereihe == "E52" || ((IReactorVehicle)vecInfo).Ereihe == "E53")
+                                            {
+                                                return "ZCS_ALL";
+                                            }
+                                            if (((IReactorVehicle)vecInfo).Ereihe == "E65" || ((IReactorVehicle)vecInfo).Ereihe == "E66" || ((IReactorVehicle)vecInfo).Ereihe == "E67" || ((IReactorVehicle)vecInfo).Ereihe == "E68")
+                                            {
+                                                return "E65";
+                                            }
+                                            goto IL_0272;
+                                        }
+                                    }
+                                }
+                                goto IL_026c;
+                            }
+                            goto IL_0272;
+                        }
+                        if (((IReactorVehicle)vecInfo).Prodart == "M")
+                        {
+                            switch (vecInfo.BordnetType)
+                            {
+                                case BordnetType.BN2000_MOTORBIKE:
+                                case BordnetType.BNK01X_MOTORBIKE:
+                                    return "MRK24";
+                                case BordnetType.BN2020_MOTORBIKE:
+                                    switch (((IReactorVehicle)vecInfo).Baureihenverbund)
+                                    {
+                                        case "K001":
+                                        case "KE01":
+                                            return "X_K001";
+                                        case "X001":
+                                        case "XS01":
+                                            return "X_X001";
+                                        case "KS01":
+                                            return "X_KS01";
+                                        default:
+                                            return "X_X001";
+                                    }
                                 default:
-                                    return "F01";
-                                case "PL5-ALT":
-                                    return "RR1";
-                            }
-                            if (vecInfo.Ereihe == "E38" || vecInfo.Ereihe == "E46" || vecInfo.Ereihe == "E83" || vecInfo.Ereihe == "E85" || vecInfo.Ereihe == "E86" || vecInfo.Ereihe == "E36" || vecInfo.Ereihe == "E39" || vecInfo.Ereihe == "E52" || vecInfo.Ereihe == "E53")
-                            {
-                                return "ZCS_ALL";
-                            }
-                            if (vecInfo.Ereihe == "E65" || vecInfo.Ereihe == "E66" || vecInfo.Ereihe == "E67" || vecInfo.Ereihe == "E68")
-                            {
-                                return "E65";
+                                    return "-";
                             }
                         }
-                        AddServiceCode(Log.CurrentMethod(), 1);
-                        return "-";
+                        return "";
                     }
-                    if (vecInfo.Prodart == "M")
-                    {
-                        switch (vecInfo.BNType)
-                        {
-                            default:
-                                AddServiceCode(Log.CurrentMethod(), 2);
-                                return "-";
-                            case BNType.BN2000_MOTORBIKE:
-                                return "MRK24";
-                            case BNType.BN2020_MOTORBIKE:
-                                return "X_K001";
-                            case BNType.BNK01X_MOTORBIKE:
-                                return "MRK24";
-                        }
-                    }
-                    AddServiceCode(Log.CurrentMethod(), 3);
-                    return "";
-                case BNType.IBUS:
+                IL_026c:
+                    return "F01";
+                IL_0272:
                     return "-";
             }
         }
 
-        public string GetMainSeriesSgbdAdditional(IVehicle vecInfo)
+        public string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo)
         {
-            Log.Info(Log.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional");
-            if (vecInfo.Prodart == "P")
+            return GetMainSeriesSgbdAdditional(vecInfo, new NugetLogger());
+        }
+
+        public string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo, ILogger logger)
+        {
+            logger.Info(logger.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional");
+            if (((IReactorVehicle)vecInfo).Prodart == "P")
             {
-                if (!string.IsNullOrEmpty(vecInfo.Produktlinie))
+                if (!string.IsNullOrEmpty(((IReactorVehicle)vecInfo).Produktlinie))
                 {
-                    string text = vecInfo.Produktlinie.ToUpper();
+                    string text = ((IReactorVehicle)vecInfo).Produktlinie.ToUpper();
                     if (!(text == "PL5-ALT"))
                     {
-                        if (!(text == "PL6"))
+                        if (text == "PL6")
                         {
-                            AddServiceCode(Log.CurrentMethod(), 3);
-                            Log.Info(Log.CurrentMethod(), "Reached default block, produck line: " + vecInfo.Produktlinie);
-                        }
-                        else if (!vecInfo.C_DATETIME.HasValue)
-                        {
-                            AddServiceCode(Log.CurrentMethod(), 2);
-                            Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
-                            if (vecInfo.Ereihe == "F01" || vecInfo.Ereihe == "F02" || vecInfo.Ereihe == "F03" || vecInfo.Ereihe == "F04" || vecInfo.Ereihe == "F06" || vecInfo.Ereihe == "F07" || vecInfo.Ereihe == "F10" || vecInfo.Ereihe == "F11" || vecInfo.Ereihe == "F12" || vecInfo.Ereihe == "F13" || vecInfo.Ereihe == "F18")
+                            if (!vecInfo.C_DATETIME.HasValue)
                             {
-                                Log.Info(Log.CurrentMethod(), "Ereihe: " + vecInfo.Ereihe + ", returning F01BN2K");
+                                logger.Info(logger.CurrentMethod(), "Product line: " + ((IReactorVehicle)vecInfo).Produktlinie + ", C_DATETIME is null");
+                                if (((IReactorVehicle)vecInfo).Ereihe == "F01" || ((IReactorVehicle)vecInfo).Ereihe == "F02" || ((IReactorVehicle)vecInfo).Ereihe == "F03" || ((IReactorVehicle)vecInfo).Ereihe == "F04" || ((IReactorVehicle)vecInfo).Ereihe == "F06" || ((IReactorVehicle)vecInfo).Ereihe == "F07" || ((IReactorVehicle)vecInfo).Ereihe == "F10" || ((IReactorVehicle)vecInfo).Ereihe == "F11" || ((IReactorVehicle)vecInfo).Ereihe == "F12" || ((IReactorVehicle)vecInfo).Ereihe == "F13" || ((IReactorVehicle)vecInfo).Ereihe == "F18")
+                                {
+                                    logger.Info(logger.CurrentMethod(), "Ereihe: " + ((IReactorVehicle)vecInfo).Ereihe + ", returning F01BN2K");
+                                    return "F01BN2K";
+                                }
+                            }
+                            else if (vecInfo.C_DATETIME < DTimeF01Lci)
+                            {
+                                logger.Info(logger.CurrentMethod(), "Product line: " + ((IReactorVehicle)vecInfo).Produktlinie + ", C_DATETIME is earlier than DTimeF01Lci");
                                 return "F01BN2K";
                             }
                         }
-                        else if (vecInfo.C_DATETIME < DTimeF01Lci)
+                        else
                         {
-                            Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is earlier than DTimeF01Lci");
-                            return "F01BN2K";
+                            logger.Info(logger.CurrentMethod(), "Reached default block, produck line: " + ((IReactorVehicle)vecInfo).Produktlinie);
                         }
                     }
                     else
                     {
                         if (!vecInfo.C_DATETIME.HasValue)
                         {
-                            AddServiceCode(Log.CurrentMethod(), 1);
-                            Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null");
+                            logger.Info(logger.CurrentMethod(), "Product line: " + ((IReactorVehicle)vecInfo).Produktlinie + ", C_DATETIME is null");
                             return "RR1_2020";
                         }
                         if (vecInfo.C_DATETIME >= DTimeRR_S2)
                         {
-                            Log.Info(Log.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is later than DTimeRR_S2");
+                            logger.Info(logger.CurrentMethod(), "Product line: " + ((IReactorVehicle)vecInfo).Produktlinie + ", C_DATETIME is later than DTimeRR_S2");
                             return "RR1_2020";
                         }
                     }
@@ -408,9 +473,9 @@ namespace PsdzClient.Core
             }
             else
             {
-                _ = vecInfo.Prodart == "M";
+                _ = ((IReactorVehicle)vecInfo).Prodart == "M";
             }
-            Log.Info(Log.CurrentMethod(), "Returning null for product line: " + vecInfo?.Produktlinie + ", ereihe: " + vecInfo.Ereihe);
+            logger.Info(logger.CurrentMethod(), "Returning null for product line: " + ((IReactorVehicle)vecInfo)?.Produktlinie + ", ereihe: " + ((IReactorVehicle)vecInfo).Ereihe);
             return null;
         }
 
@@ -809,61 +874,6 @@ namespace PsdzClient.Core
             else
             {
                 Log.Warning("VehicleIdent.UpdateVehicleCharactersitics()", "failed when executing FZGIDENT:grundmerkmale_lesen with typsnr: {0} errorcode:{1} - {2}", typsnr, ecuJob.JobErrorCode, ecuJob.JobErrorText);
-            }
-        }
-
-        // ToDo: Check on update
-        public void SpecialTreatmentBasedOnEreihe(string typsnr, IVehicle vecInfo)
-        {
-            if ((string.Compare(vecInfo.Ereihe, "M12", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "M2_", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && string.Compare(typsnr, "CZ31", StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                AddServiceCode(Log.CurrentMethod(), 1);
-                vecInfo.VerkaufsBezeichnung = "ACTIVEE";
-                vecInfo.Motor = "IB1";
-                vecInfo.Leistung = "23";
-                vecInfo.Hubraum = "0";
-                vecInfo.Karosserie = "SAV";
-                vecInfo.Antrieb = "RWD";
-                GearboxUtility.SetGearboxType(vecInfo, "MECH", "SpecialTreatmentBasedOnEreihe");
-                vecInfo.Baureihe = "X'";
-                vecInfo.Lenkung = "LL";
-                vecInfo.Land = "CHN";
-                vecInfo.Ereihe = "M12";
-                vecInfo.BNType = BNType.BEV2010;
-                vecInfo.BNMixed = BNMixed.HETEROGENEOUS;
-                vecInfo.Ueberarbeitung = "0";
-                vecInfo.MOTBezeichnung = "IB1P23M0";
-                vecInfo.Baureihenverbund = "M012";
-                vecInfo.Abgas = "KAT";
-            }
-            if ((string.Compare(vecInfo.Ereihe, "E82", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(vecInfo.Ereihe, "UNBEK", StringComparison.OrdinalIgnoreCase) == 0) && (string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP33", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP3C", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "UP9C", StringComparison.OrdinalIgnoreCase) == 0))
-            {
-                AddServiceCode(Log.CurrentMethod(), 2);
-                vecInfo.VerkaufsBezeichnung = "ActiveE";
-                vecInfo.Motor = "IB1";
-                vecInfo.Leistung = "23";
-                vecInfo.Hubraum = "0";
-                vecInfo.Karosserie = "COU";
-                vecInfo.Antrieb = "RWD";
-                GearboxUtility.SetGearboxType(vecInfo, "MECH", "SpecialTreatmentBasedOnEreihe");
-                vecInfo.Baureihe = "1'";
-                vecInfo.Lenkung = "LL";
-                if (string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) != 0 && string.Compare(typsnr, "UP31", StringComparison.OrdinalIgnoreCase) != 0)
-                {
-                    vecInfo.Land = "USA";
-                }
-                else
-                {
-                    vecInfo.Land = "EUR";
-                }
-            }
-            if (string.Compare(vecInfo.Ereihe, "R56", StringComparison.OrdinalIgnoreCase) == 0 && (string.Compare(typsnr, "MF74", StringComparison.OrdinalIgnoreCase) == 0 || string.Compare(typsnr, "MF84", StringComparison.OrdinalIgnoreCase) == 0))
-            {
-                AddServiceCode(Log.CurrentMethod(), 3);
-                vecInfo.VerkaufsBezeichnung = "MINI E";
-                vecInfo.Motor = "I15";
-                vecInfo.Leistung = "140";
-                vecInfo.Hubraum = "0";
             }
         }
 
