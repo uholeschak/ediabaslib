@@ -1240,15 +1240,13 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    foreach (ECUResult item in enumerable)
+                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (item.Format != 0)
+                        if (item.Format == 0)
                         {
-                            Log.Warning("ECUJob.getcharResult()", "(set={0},resultName={1}) has different format type!!! You selected char but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
-                            continue;
+                            return (char)item.Value;
                         }
-                        return (char)item.Value;
+                        Log.Warning("ECUJob.getcharResult()", "(set={0},resultName={1}) has different format type!!! You selected char but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                     }
                 }
                 else
@@ -1269,15 +1267,13 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    foreach (ECUResult item in enumerable)
+                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (item.Format != 0)
+                        if (item.Format == 0)
                         {
-                            Log.Warning("ECUJob.getcharResult()", "(resultName={0}) has different format type!!! You selected char but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
-                            continue;
+                            return (char)item.Value;
                         }
-                        return (char)item.Value;
+                        Log.Warning("ECUJob.getcharResult()", "(resultName={0}) has different format type!!! You selected char but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                     }
                 }
                 else
@@ -1298,25 +1294,9 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    foreach (ECUResult item in enumerable)
-                    {
-                        if (item.Format != 8)
-                        {
-                            if (item.Format != 6)
-                            {
-                                Log.Warning("ECUJob.getdoubleResult()", "(set={0},resultName={1}) has different format type!!! You selected double but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
-                                continue;
-                            }
-                            return double.Parse((string)item.Value, CultureInfo.InvariantCulture);
-                        }
-                        return (double)item.Value;
-                    }
+                    return getResultsAs<double?>(resultName, null, set);
                 }
-                else
-                {
-                    Log.Warning("ECUJob.getdoubleResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
-                }
+                Log.Warning("ECUJob.getdoubleResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
             }
             catch (Exception ex)
             {
@@ -1331,15 +1311,13 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    foreach (ECUResult item in enumerable)
+                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (item.Format != 8)
+                        if (item.Format == 8)
                         {
-                            Log.Warning("ECUJob.getdoubleResult()", "(resultName={0}) has different format type!!! You selected double but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
-                            continue;
+                            return (double)item.Value;
                         }
-                        return (double)item.Value;
+                        Log.Warning("ECUJob.getdoubleResult()", "(resultName={0}) has different format type!!! You selected double but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                     }
                 }
                 else
@@ -1356,10 +1334,6 @@ namespace PsdzClient.Core.Container
 
         public virtual long? getlongResult(ushort set, string resultName)
         {
-            if (!VehicleCommunication.validLicense)
-            {
-                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-            }
             if (string.IsNullOrEmpty(resultName))
             {
                 Log.Warning("ECUKom.getintResult(ushort set, string resultName)", "failed due to resultName was empty or null.");
@@ -1382,10 +1356,6 @@ namespace PsdzClient.Core.Container
 
         public virtual long? getlongResult(string resultName)
         {
-            if (!VehicleCommunication.validLicense)
-            {
-                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-            }
             if (string.IsNullOrEmpty(resultName))
             {
                 Log.Warning("ECUKom.getintResult(string resultName)", "failed due to resultName was empty or null.");

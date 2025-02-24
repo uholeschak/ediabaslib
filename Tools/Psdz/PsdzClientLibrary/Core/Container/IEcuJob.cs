@@ -44,7 +44,7 @@ namespace PsdzClient.Core.Container
 
         bool IsOkay(ushort set);
 
-        string ToString();
+        new string ToString();
 
         byte[] getByteArrayResult(ushort set, string resultName, out uint len);
 
@@ -63,6 +63,8 @@ namespace PsdzClient.Core.Container
         object getResult(ushort set, string resultName);
 
         object getResult(string resultName, bool getLast = false);
+
+        T getResultsAs<T>(string resultName, T defaultRes = default(T), int set = -1);
 
         T getResultAs<T>(ushort set, string resultName, T defaultRes = default(T));
 
@@ -89,6 +91,10 @@ namespace PsdzClient.Core.Container
         double? getdoubleResult(ushort set, string resultName);
 
         double? getdoubleResult(string resultName);
+
+        long? getlongResult(ushort set, string resultName);
+
+        long? getlongResult(string resultName);
 
         int? getintResult(ushort set, string resultName);
 
