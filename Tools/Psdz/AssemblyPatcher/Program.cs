@@ -511,32 +511,69 @@ namespace AssemblyPatcher
                             {
                                 Console.WriteLine("VehicleIdent.doVehicleShortTest found");
                                 int patchIndex = -1;
+                                int getBnTypeIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
                                     Instruction instruction = instructions[index];
                                     if (instruction.OpCode == OpCodes.Ldarg_0 && index + 4 < instructions.Count)
                                     {
-                                        if (instructions[index + 1].OpCode != OpCodes.Ldc_I4_0)     // false
+                                        if (instructions[index + 1].OpCode != OpCodes.Call)
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 2].OpCode != OpCodes.Call)     // HandleMissingEcus
+                                        if (instructions[index + 2].OpCode != OpCodes.Callvirt)     // IsPreDS2Vehicle
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 3].OpCode != OpCodes.Ldarg_0)
+                                        if (instructions[index + 3].OpCode != OpCodes.Brtrue_S)
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 4].OpCode != OpCodes.Call)     // doReadGwsz
+                                        if (instructions[index + 4].OpCode != OpCodes.Ldarg_0)
                                         {
                                             continue;
                                         }
 
-                                        patchIndex = index + 1;
+                                        if (instructions[index + 5].OpCode != OpCodes.Call)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 6].OpCode != OpCodes.Callvirt)     // get_BNType
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 7].OpCode != OpCodes.Ldc_I4_2)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 8].OpCode != OpCodes.Bne_Un_S)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 9].OpCode != OpCodes.Ldarg_0)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 10].OpCode != OpCodes.Ldc_I4_0)     // false
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 11].OpCode != OpCodes.Call)     // HandleMissingEcus
+                                        {
+                                            continue;
+                                        }
+
+                                        patchIndex = index + 10;
+                                        getBnTypeIndex = index + 6;
                                         break;
                                     }
                                 }
