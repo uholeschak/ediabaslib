@@ -599,7 +599,6 @@ namespace PsdzClient.Core.Container
                     ECUResult eCUResult = base.JobResult.FirstOrDefault((ECUResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase));
                     if (eCUResult != null)
                     {
-                        eCUResult.FASTARelevant = true;
                         return eCUResult.Value;
                     }
                     Log.Warning("ECUJob.getResult()", "({0},{1}) - result not found in JobResult list.", set, resultName);
@@ -625,7 +624,6 @@ namespace PsdzClient.Core.Container
                     ECUResult eCUResult = (getLast ? base.JobResult.LastOrDefault((ECUResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)) : base.JobResult.FirstOrDefault((ECUResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)));
                     if (eCUResult != null)
                     {
-                        eCUResult.FASTARelevant = true;
                         return eCUResult.Value;
                     }
                     Log.Warning("ECUJob.getResult()", "no matching result found for result name: {0}", resultName);
@@ -667,8 +665,8 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUJob.getISTAResult(ushort set, string resultName)", exception);
+                return defaultRes;
             }
-            return defaultRes;
         }
 
         public T getResultAs<T>(string resultName, T defaultRes = default(T), bool getLast = false)
@@ -699,8 +697,8 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUJob.getISTAResultAs(string resultName)", exception);
+                return defaultRes;
             }
-            return defaultRes;
         }
 
         public T getResultsAs<T>(string resultName, T defaultRes = default(T), int set = -1)
@@ -1011,13 +1009,11 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    using (IEnumerator<ECUResult> enumerator = enumerable.GetEnumerator())
+                    using (IEnumerator<ECUResult> enumerator = base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)).GetEnumerator())
                     {
                         if (enumerator.MoveNext())
                         {
-                            ECUResult current = enumerator.Current;
-                            return current.Format;
+                            return enumerator.Current.Format;
                         }
                     }
                     Log.Warning("ECUJob.getResultFormat()", "(resultName={0}) - no matching result found in JobResult.", resultName);
@@ -1041,20 +1037,9 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    using (IEnumerator<ECUResult> enumerator = enumerable.GetEnumerator())
-                    {
-                        if (enumerator.MoveNext())
-                        {
-                            ECUResult current = enumerator.Current;
-                            return current.Format;
-                        }
-                    }
+                    return getResultsAs(resultName, 0);
                 }
-                else
-                {
-                    Log.Warning("ECUJob.getResultFormat()", "({0}) - JobResult was null.", resultName);
-                }
+                Log.Warning("ECUJob.getResultFormat()", "({0}) - JobResult was null.", resultName);
             }
             catch (Exception ex)
             {
@@ -1070,8 +1055,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => result.Set == set);
-                    foreach (ECUResult item in enumerable)
+                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => result.Set == set))
                     {
                         list.Add(item);
                     }
@@ -1098,8 +1082,7 @@ namespace PsdzClient.Core.Container
                     ASCIIEncoding aSCIIEncoding = new ASCIIEncoding();
                     StringBuilder stringBuilder = new StringBuilder();
                     byte[] bytes = aSCIIEncoding.GetBytes(text);
-                    byte[] array = bytes;
-                    foreach (byte b in array)
+                    foreach (byte b in bytes)
                     {
                         stringBuilder.AppendFormat(format, b);
                     }
@@ -1170,25 +1153,14 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    foreach (ECUResult item in enumerable)
+                    string resultsAs = getResultsAs<string>(resultName, null, set);
+                    if (resultsAs == null)
                     {
-                        if (item.Format != 6)
-                        {
-                            if (item.Format != 2)
-                            {
-                                Log.Warning("ECUJob.getStringResult()", "(set={0},resultName={1}) has different format type!!! You selected string but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
-                                continue;
-                            }
-                            return ((short)item.Value).ToString(CultureInfo.InvariantCulture);
-                        }
-                        return (string)item.Value;
+                        return null;
                     }
+                    return resultsAs;
                 }
-                else
-                {
-                    Log.Warning("ECUJob.getStringResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
-                }
+                Log.Warning("ECUJob.getStringResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
             }
             catch (Exception ex)
             {
@@ -1203,29 +1175,14 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    foreach (ECUResult item in enumerable)
+                    string resultsAs = getResultsAs<string>(resultName);
+                    if (resultsAs == null)
                     {
-                        if (item.Format != 6)
-                        {
-                            if (item.Format != 2)
-                            {
-                                if (item.Format != 4)
-                                {
-                                    Log.Warning("ECUJob.getStringResult()", "(resultName={0}) has different format type!!! You selected string but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
-                                    continue;
-                                }
-                                return ((int)item.Value).ToString(CultureInfo.InvariantCulture);
-                            }
-                            return ((short)item.Value).ToString(CultureInfo.InvariantCulture);
-                        }
-                        return (string)item.Value;
+                        return null;
                     }
+                    return resultsAs;
                 }
-                else
-                {
-                    Log.Warning("ECUJob.getStringResult()", "(resultName={0}) - JobResult was null.", resultName);
-                }
+                Log.Warning("ECUJob.getStringResult()", "(resultName={0}) - JobResult was null.", resultName);
             }
             catch (Exception ex)
             {
@@ -1233,6 +1190,7 @@ namespace PsdzClient.Core.Container
             }
             return null;
         }
+
 
         public char? getcharResult(ushort set, string resultName)
         {
