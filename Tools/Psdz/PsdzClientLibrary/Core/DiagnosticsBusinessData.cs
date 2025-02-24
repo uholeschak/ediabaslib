@@ -1091,9 +1091,15 @@ namespace PsdzClient.Core
             }
         }
 
-        private void SetVehicleLifeStartDateWithJobResult(IVehicle vehicle, int? result)
+        private void SetVehicleLifeStartDateWithJobResult(IVehicle vehicle, long seconds, long? milliseconds)
         {
-            vehicle.VehicleLifeStartDate = DateTime.Now.AddSeconds(-result.Value);
+            DateTime vehicleLifeStartDate = DateTime.Now.AddSeconds(-seconds);
+            if (milliseconds.HasValue)
+            {
+                vehicleLifeStartDate = vehicleLifeStartDate.AddMilliseconds(-milliseconds.Value);
+            }
+            vehicle.VehicleLifeStartDate = vehicleLifeStartDate;
+            vehicle.VehicleSystemTime = (double)seconds + (milliseconds.HasValue ? ((double)milliseconds.Value / 1000.0) : 0.0);
         }
 
         private void MaskResultFASTARelevant(IEcuJob ecuJob, ushort startSet, int stopSet, IList<string> fsLesenExpertResultNames)
@@ -1104,48 +1110,35 @@ namespace PsdzClient.Core
             });
         }
 
-        private bool SetVehicleLifeStartDateWithAlternativeResult(IVehicle vehicle, string alternativeResult, ECUJob job)
-        {
-            bool result = false;
-            if (string.IsNullOrEmpty(alternativeResult))
-            {
-                Log.Warning(Log.CurrentMethod(), "VehicleLifeStartdate could not be read out of the vehicle because the alternative Resultname was empty!");
-            }
-            else
-            {
-                int? result2 = job.getintResult(1, alternativeResult);
-                if (result2.HasValue)
-                {
-                    SetVehicleLifeStartDateWithJobResult(vehicle, result2);
-                    result = true;
-                }
-                else
-                {
-                    Log.Warning(Log.CurrentMethod(), "VehicleLifeStartdate could not be read out of the vehicle with the Job {0} , params {1} and resultname {2}", job.JobName, job.JobParam, alternativeResult);
-                }
-            }
-            return result;
-        }
-
-        private bool ExecuteVehicleLifeStartDateJobAndProcessResults(string sgbd, string jobName, string jobParams, int retryCount, string resultname, IEcuKom ecuKom, IVehicle vehicle, string alternativeResult = "")
+        private bool ExecuteVehicleLifeStartDateJobAndProcessResults(string sgbd, string jobName, string jobParams, int retryCount, string resultname, IEcuKom ecuKom, IVehicle vehicle, string alternativeResult = null, string supremeResultName = null, string alternativeSupremeResultName = null)
         {
             bool result = false;
             ECUJob eCUJob = ecuKom.ApiJobWithRetries(sgbd, jobName, jobParams, string.Empty, retryCount) as ECUJob;
             if (eCUJob.IsOkay())
             {
-                int? result2 = eCUJob.getintResult(1, resultname);
-                if (result2.HasValue)
+                long? num = eCUJob.getlongResult(1, resultname);
+                if (!num.HasValue && !string.IsNullOrWhiteSpace(alternativeResult))
                 {
-                    SetVehicleLifeStartDateWithJobResult(vehicle, result2);
+                    num = eCUJob.getlongResult(1, alternativeResult);
+                }
+                long? milliseconds = eCUJob.getlongResult(supremeResultName);
+                if (!milliseconds.HasValue && !string.IsNullOrWhiteSpace(alternativeSupremeResultName))
+                {
+                    milliseconds = eCUJob.getlongResult(alternativeSupremeResultName);
+                }
+                if (num.HasValue)
+                {
+                    SetVehicleLifeStartDateWithJobResult(vehicle, num.Value, milliseconds);
                     result = true;
                 }
                 else
                 {
-                    result = SetVehicleLifeStartDateWithAlternativeResult(vehicle, alternativeResult, eCUJob);
+                    Log.Warning(Log.CurrentMethod(), "VehicleLifeStartdate could not be read out of the vehicle with the Job " + eCUJob.JobName + ", params " + eCUJob.JobParam + " and resultnames: " + resultname + ", " + alternativeResult + ", " + supremeResultName + ", " + alternativeSupremeResultName);
                 }
             }
             return result;
         }
+
 
         public IEcuJob ClampShutdownManagement(IVehicle vecInfo, IEcuKom ecuKom, int retryCount = 2, int i_geschw_schwelle = 30)
         {
@@ -1154,42 +1147,48 @@ namespace PsdzClient.Core
             {
                 switch (vecInfo.BNType)
                 {
+                    case BNType.BN2000:
+                    case BNType.BEV2010:
+                        clampJob = ecuKom.ApiJobWithRetries("D_CAS", "STEUERN_KL15_ABSCHALTUNG", i_geschw_schwelle.ToString(CultureInfo.InvariantCulture), string.Empty, retryCount);
+                        break;
                     case BNType.BN2020:
                         {
                             string variante = null;
                             DetermineBn2020CentralEcuVariant(vecInfo, ecuKom, retryCount, ref clampJob, ref variante);
                             switch (variante)
                             {
-                                default:
-                                    Log.Info(Log.CurrentMethod(), "Unexpected Variant for clamp shutdown management appeared: " + variante);
+                                case "CAS4_2":
+                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ID;0xAC51;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                    break;
+                                case "FEM_20":
+                                case "BDC":
+                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                    break;
+                                case "BDC_G05":
+                                case "BDC_G11":
+                                    vecInfo.PADVehicle = true;
                                     ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
-                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KLEMME15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
                                     break;
                                 case "BCP_SP21":
                                     vecInfo.PADVehicle = true;
                                     ecuKom.ApiJobWithRetries("G_ZGW", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
                                     clampJob = ecuKom.ApiJobWithRetries("G_ZGW", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
                                     break;
-                                case "BDC_G11":
-                                case "BDC_G05":
+                                case "IPB_APP1":
                                     vecInfo.PADVehicle = true;
+                                    clampJob = ecuKom.ApiJobWithRetries("IPB_APP1", "STEUERN_ROUTINE", "ARG;Zustand_Fahrzeug;STR;7", string.Empty, retryCount);
+                                    ecuKom.ApiJobWithRetries("IPB_APP1", "STATUS_LESEN", "ARG;Zustand_Fahrzeug", string.Empty, retryCount);
+                                    clampJob = ecuKom.ApiJobWithRetries("IPB_APP1", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;3;", string.Empty, retryCount);
+                                    break;
+                                default:
+                                    Log.Info(Log.CurrentMethod(), "Unexpected Variant for clamp shutdown management appeared: " + variante);
                                     ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
-                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
-                                    break;
-                                case "BDC":
-                                case "FEM_20":
-                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
-                                    break;
-                                case "CAS4_2":
-                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ID;0xAC51;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KLEMME15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
                                     break;
                             }
                             break;
                         }
-                    case BNType.BN2000:
-                    case BNType.BEV2010:
-                        clampJob = ecuKom.ApiJobWithRetries("D_CAS", "STEUERN_KL15_ABSCHALTUNG", i_geschw_schwelle.ToString(CultureInfo.InvariantCulture), string.Empty, retryCount);
-                        break;
                 }
             }
             return clampJob;

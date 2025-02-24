@@ -703,6 +703,308 @@ namespace PsdzClient.Core.Container
             return defaultRes;
         }
 
+        public T getResultsAs<T>(string resultName, T defaultRes = default(T), int set = -1)
+        {
+            object obj = null;
+            try
+            {
+                if (string.IsNullOrEmpty(resultName))
+                {
+                    Log.Warning("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "resultName is null! returning default value.");
+                    return defaultRes;
+                }
+                bool flag = set <= -2;
+                bool flag2 = set == -1;
+                int relevantSet = set;
+                int num = resultName.Length - resultName.Replace("[]", "-").Length;
+                bool flag3 = num > 0;
+                bool flag4 = false;
+                Log.Debug("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "ECUJob.getResultsAs(string resultName, T defaultRes, int set) -> result: {0}, set: {1}, fields: {2}", resultName, set, num);
+                Dictionary<ECUResult, List<int>> dictionary = new Dictionary<ECUResult, List<int>>();
+                List<int> list = new List<int>();
+                if (flag)
+                {
+                    list.Add(base.JobResultSets);
+                }
+                Regex regex = new Regex("^" + resultName.Replace("[].", "[(\\d+)]\\.").Replace("[", "\\[").Replace("]", "\\]") + "$", RegexOptions.IgnoreCase);
+                foreach (ECUResult item in base.JobResult)
+                {
+                    Match match = regex.Match(item.Name);
+                    if (!match.Success)
+                    {
+                        continue;
+                    }
+                    if (flag2)
+                    {
+                        if (item.Set < relevantSet)
+                        {
+                            continue;
+                        }
+                        relevantSet = item.Set;
+                    }
+                    else if (!flag && item.Set != set)
+                    {
+                        continue;
+                    }
+                    bool flag5 = false;
+                    List<int> list2 = new List<int>();
+                    if (flag)
+                    {
+                        int num2 = item.Set - 1;
+                        if (num2 < 0)
+                        {
+                            flag5 = true;
+                        }
+                        list2.Add(num2);
+                        num2++;
+                    }
+                    if (flag3)
+                    {
+                        for (int i = 1; i < match.Groups.Count; i++)
+                        {
+                            string value = match.Groups[i].Value;
+                            if (IsDigitsOnly(value))
+                            {
+                                int num3 = Convert.ToInt32(value);
+                                list2.Add(num3);
+                                num3++;
+                                if (list.Count < list2.Count)
+                                {
+                                    list.Add(num3);
+                                }
+                                else if (list[list2.Count - 1] < num3)
+                                {
+                                    list[list2.Count - 1] = num3;
+                                }
+                                continue;
+                            }
+                            flag5 = true;
+                            Log.Error("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "Error during processing jobresult: {0}", item.Name);
+                            break;
+                        }
+                    }
+                    if (flag5)
+                    {
+                        continue;
+                    }
+                    if (item.Value.GetType() == typeof(byte[]))
+                    {
+                        flag4 = true;
+                        list2.Add(0);
+                        int length = (item.Value as Array).Length;
+                        if (list.Count < list2.Count)
+                        {
+                            list.Add(length);
+                        }
+                        else if (list[list2.Count - 1] < length)
+                        {
+                            list[list2.Count - 1] = length;
+                        }
+                    }
+                    dictionary[item] = list2;
+                }
+                if (dictionary.Count == 0)
+                {
+                    Log.Warning("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", $"No job results with name {resultName} found for set {set}. Returning default result.");
+                    return defaultRes;
+                }
+                Type typeFromHandle = typeof(T);
+                Type type = null;
+                bool flag6 = false;
+                if (typeFromHandle.BaseType == typeof(Array))
+                {
+                    List<int> list3 = new List<int>();
+                    type = typeFromHandle.GetElementType();
+                    int arrayRank = typeFromHandle.GetArrayRank();
+                    if (defaultRes != null)
+                    {
+                        Array array = defaultRes as Array;
+                        for (int j = 0; j < arrayRank; j++)
+                        {
+                            list3.Add(array.GetLength(j));
+                        }
+                        if (list3.Count == list.Count)
+                        {
+                            for (int k = 0; k < arrayRank; k++)
+                            {
+                                if (list3[k] < list[k])
+                                {
+                                    flag6 = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            flag6 = true;
+                        }
+                    }
+                    else
+                    {
+                        flag6 = true;
+                    }
+                }
+                else
+                {
+                    type = typeFromHandle;
+                }
+                if (!flag && !flag3)
+                {
+                    obj = null;
+                    ECUResult eCUResult = dictionary.Keys.FirstOrDefault((ECUResult item) => item.Set == relevantSet);
+                    if (eCUResult != null)
+                    {
+                        obj = eCUResult.Value;
+                    }
+                    if (obj == null)
+                    {
+                        Log.Error("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
+                        return defaultRes;
+                    }
+                    if (obj.GetType() != typeFromHandle)
+                    {
+                        if (Nullable.GetUnderlyingType(typeFromHandle) != null)
+                        {
+                            return (T)Convert.ChangeType(obj, Nullable.GetUnderlyingType(typeFromHandle), CultureInfo.InvariantCulture);
+                        }
+                        Log.Debug("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "result: {0} obj type is {1} targetType is: {2}", resultName, obj.GetType().ToString(), typeFromHandle.ToString());
+                        return (T)Convert.ChangeType(obj, typeFromHandle);
+                    }
+                    return (T)obj;
+                }
+                Array array2 = null;
+                if (flag6)
+                {
+                    Dictionary<Type, object> dictionary2 = new Dictionary<Type, object>
+                {
+                    {
+                        typeof(bool),
+                        false
+                    },
+                    {
+                        typeof(sbyte),
+                        sbyte.MaxValue
+                    },
+                    {
+                        typeof(byte),
+                        byte.MaxValue
+                    },
+                    {
+                        typeof(short),
+                        short.MaxValue
+                    },
+                    {
+                        typeof(ushort),
+                        ushort.MaxValue
+                    },
+                    {
+                        typeof(int),
+                        int.MaxValue
+                    },
+                    {
+                        typeof(uint),
+                        uint.MaxValue
+                    },
+                    {
+                        typeof(long),
+                        long.MaxValue
+                    },
+                    {
+                        typeof(ulong),
+                        ulong.MaxValue
+                    },
+                    {
+                        typeof(string),
+                        null
+                    }
+                };
+                    array2 = ((!dictionary2.ContainsKey(type)) ? __initArray<T>(list.ToArray(), default(T)) : __initArray<T>(list.ToArray(), dictionary2[type]));
+                }
+                array2 = array2 ?? (defaultRes as Array);
+                foreach (ECUResult key in dictionary.Keys)
+                {
+                    if (!flag && relevantSet != key.Set)
+                    {
+                        continue;
+                    }
+                    obj = key.Value;
+                    if (!flag4)
+                    {
+                        obj = Convert.ChangeType(obj, type);
+                        int[] indices = dictionary[key].ToArray();
+                        array2.SetValue(obj, indices);
+                        continue;
+                    }
+                    obj = Convert.ChangeType(obj, typeof(byte[]));
+                    int[] array3 = dictionary[key].ToArray();
+                    byte[] array4 = obj as byte[];
+                    foreach (byte b in array4)
+                    {
+                        array2.SetValue(b, array3);
+                        array3[array3.Length - 1]++;
+                    }
+                }
+                return (T)Convert.ChangeType(array2, typeFromHandle);
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", exception);
+                return defaultRes;
+            }
+        }
+
+        internal bool IsDigitsOnly(string str)
+        {
+            return str.All(char.IsDigit);
+        }
+
+        internal Array __initArray<T>(int[] sizes, object initValue)
+        {
+            Array array = null;
+            try
+            {
+                Type type = typeof(T);
+                if (type.BaseType == typeof(Array))
+                {
+                    type = type.GetElementType();
+                }
+                array = Array.CreateInstance(type, sizes);
+                object value = default(T);
+                if (initValue != null && type.IsAssignableFrom(initValue.GetType()))
+                {
+                    value = Convert.ChangeType(initValue, type);
+                }
+                int num = sizes[0];
+                for (int i = 1; i < sizes.Length; i++)
+                {
+                    num *= sizes[i];
+                }
+                int[] array2 = new int[sizes.Length];
+                for (int j = 0; j < num; j++)
+                {
+                    array.SetValue(value, array2);
+                    array2[sizes.Length - 1]++;
+                    for (int num2 = sizes.Length - 1; num2 >= 0; num2--)
+                    {
+                        if (array2[num2] == sizes[num2])
+                        {
+                            array2[num2] = 0;
+                            if (num2 > 0)
+                            {
+                                array2[num2 - 1]++;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException("ISTAModule.__initArray<T>(int[], object)", exception);
+            }
+            return array;
+        }
+
+
         public int getResultFormat(ushort set, string resultName)
         {
             try
@@ -1048,6 +1350,58 @@ namespace PsdzClient.Core.Container
             catch (Exception ex)
             {
                 Log.Warning("ECUJob.getdoubleResult()", "({0}) - failed with exception {1}", resultName, ex.ToString());
+            }
+            return null;
+        }
+
+        public virtual long? getlongResult(ushort set, string resultName)
+        {
+            if (!VehicleCommunication.validLicense)
+            {
+                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
+            }
+            if (string.IsNullOrEmpty(resultName))
+            {
+                Log.Warning("ECUKom.getintResult(ushort set, string resultName)", "failed due to resultName was empty or null.");
+                return null;
+            }
+            try
+            {
+                if (base.JobResult != null)
+                {
+                    return getResultsAs<long?>(resultName, null, set);
+                }
+                Log.Warning("ECUJob.getintResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("ECUJob.getintResult()", "({0},{1}) - failed with exception {2}", set, resultName, ex.ToString());
+            }
+            return null;
+        }
+
+        public virtual long? getlongResult(string resultName)
+        {
+            if (!VehicleCommunication.validLicense)
+            {
+                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
+            }
+            if (string.IsNullOrEmpty(resultName))
+            {
+                Log.Warning("ECUKom.getintResult(string resultName)", "failed due to resultName was empty or null.");
+                return null;
+            }
+            try
+            {
+                if (base.JobResult != null)
+                {
+                    return getResultsAs<long?>(resultName, null);
+                }
+                Log.Warning("ECUJob.getintResult()", "resultName={0} - JobResult was null.", resultName);
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("ECUJob.getintResult()", exception);
             }
             return null;
         }
