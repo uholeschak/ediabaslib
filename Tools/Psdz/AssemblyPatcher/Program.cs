@@ -510,7 +510,7 @@ namespace AssemblyPatcher
                             if (instructions != null)
                             {
                                 Console.WriteLine("VehicleIdent.doVehicleShortTest found");
-                                int patchIndex1 = -1;
+                                int removeIndex = -1;
                                 int getBnTypeIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
@@ -572,13 +572,13 @@ namespace AssemblyPatcher
                                             continue;
                                         }
 
-                                        patchIndex1 = index + 10;
+                                        removeIndex = index;
                                         getBnTypeIndex = index + 4;
                                         break;
                                     }
                                 }
 
-                                int patchIndex2 = -1;
+                                int insertIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
                                     Instruction instruction = instructions[index];
@@ -619,15 +619,13 @@ namespace AssemblyPatcher
                                             continue;
                                         }
 
-                                        patchIndex2 = index + 2;
+                                        insertIndex = index + 2;
                                         break;
                                     }
                                 }
 
-                                if (patchIndex1 >= 0 && patchIndex2 >= 0)
+                                if (removeIndex >= 0 && insertIndex >= 0)
                                 {
-                                    instructions[patchIndex1] = Instruction.Create(OpCodes.Ldc_I4_1);    // true
-
                                     //  copy Ldarg_0, Call, Callvirt, Ldc_I4_2
                                     List<Instruction> insertInstructions = new List<Instruction>();
                                     int pos;
@@ -636,13 +634,18 @@ namespace AssemblyPatcher
                                         Instruction instruction = instructions[getBnTypeIndex + pos];
                                         insertInstructions.Add(instruction.Clone());
                                     }
-                                    insertInstructions.Add(new Instruction(OpCodes.Beq_S, instructions[patchIndex2 + 3]));
+                                    insertInstructions.Add(new Instruction(OpCodes.Beq_S, instructions[insertIndex + 3]));
 
                                     int offset = 0;
                                     foreach (Instruction insertInstruction in insertInstructions)
                                     {
-                                        instructions.Insert(patchIndex2 + offset, insertInstruction);
+                                        instructions.Insert(insertIndex + offset, insertInstruction);
                                         offset++;
+                                    }
+
+                                    for (int idx = 0; idx < 12; idx++)
+                                    {
+                                        instructions.RemoveAt(removeIndex + offset);
                                     }
 
                                     patched = true;
