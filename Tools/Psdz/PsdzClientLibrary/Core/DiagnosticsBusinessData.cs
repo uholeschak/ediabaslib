@@ -1244,6 +1244,20 @@ namespace PsdzClient.Core
             return ecuKom.ApiJobWithRetries("G_KOMBI", job, param, resultFilter, retries);
         }
 
+        public IEcuJob SendStatusLesenCcmJobToKombiOrMmi(IVehicle vecInfo, IEcuKom ecuKom)
+        {
+            string job = "STATUS_LESEN";
+            string param = "ARG;BMW_CC_DATENSAETZE";
+            IEcu ecu = vecInfo.getECUbyECU_GRUPPE("G_KOMBI") ?? vecInfo.getECUbyECU_GRUPPE("G_MMI");
+            if (ecu == null)
+            {
+                Log.Info(Log.CurrentMethod(), "No G_KOMBI and G_MMI ecu group exists in the vehicle. CCM readout will be skipped.");
+                return null;
+            }
+            Log.Info(Log.CurrentMethod(), "CCM readout will use '" + ecu.VARIANTE + "' ecu.");
+            return ecuKom.ApiJobWithRetries(ecu.VARIANTE, job, param, string.Empty, 1);
+        }
+
         public string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom)
         {
             Dictionary<string, EcuKomConfig> dictionary = new Dictionary<string, EcuKomConfig>();
@@ -1291,6 +1305,15 @@ namespace PsdzClient.Core
                     }
                     break;
             }
+            return ReadVinFromEcus(ecuKom, list);
+        }
+
+        public string ReadVinForGroupCarsNcar(BNType bNType, IEcuKom ecuKom)
+        {
+            Dictionary<string, EcuKomConfig> dictionary = new Dictionary<string, EcuKomConfig>();
+            List<EcuKomConfig> list = new List<EcuKomConfig>();
+            dictionary.Add("IPB_APP1", new EcuKomConfig("IPB_APP1", "STATUS_LESEN", "ARG;VIN", 1, "STAT_VIN_TEXT"));
+            list.Add(dictionary["IPB_APP1"]);
             return ReadVinFromEcus(ecuKom, list);
         }
 
@@ -1349,5 +1372,6 @@ namespace PsdzClient.Core
                 }
             }
             return null;
-        } }
+        }
+    }
 }
