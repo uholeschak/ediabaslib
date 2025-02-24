@@ -599,9 +599,35 @@ namespace AssemblyPatcher
 
                                 if (patchIndex >= 0)
                                 {
-                                    switchInstructions[2] = switchInstructions[5];  // use BNType.BNK01X_MOTORBIKE
-                                    instructions[patchIndex] = Instruction.Create(OpCodes.Switch, switchInstructions);
-                                    patched = true;
+                                    int motorbikeInst = instructions.IndexOf(switchInstructions[5]);
+                                    if (motorbikeInst < 0)
+                                    {
+                                        Console.WriteLine("Patching ECUIdentShortTest switch BNK01X_MOTORBIKE not valid");
+                                    }
+                                    else
+                                    {
+                                        int instructCount = instructions.Count;
+                                        int insertIndex = instructCount;
+                                        for (int pos = 0; ; pos++)
+                                        {
+                                            if (motorbikeInst + pos >= instructCount)
+                                            {
+                                                break;
+                                            }
+
+                                            Instruction instruction = instructions[motorbikeInst + pos];
+                                            Instruction insertInstruction = instruction.Clone();
+                                            instructions.Insert(insertIndex + pos, insertInstruction);
+                                            if (instruction.OpCode == OpCodes.Ret)
+                                            {
+                                                break;
+                                            }
+                                        }
+
+                                        switchInstructions[2] = instructions[insertIndex];  // point to copied instructions
+                                        instructions[patchIndex] = Instruction.Create(OpCodes.Switch, switchInstructions);
+                                        patched = true;
+                                    }
                                 }
                                 else
                                 {
