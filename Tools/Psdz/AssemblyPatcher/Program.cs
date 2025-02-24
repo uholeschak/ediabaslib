@@ -616,7 +616,15 @@ namespace AssemblyPatcher
                                             }
 
                                             Instruction instruction = instructions[motorbikeInst + pos];
-                                            Instruction insertInstruction = instruction.Clone();
+                                            Instruction insertInstruction;
+                                            if (instruction.OpCode == OpCodes.Ldarg_1)
+                                            {
+                                                insertInstruction = new Instruction(OpCodes.Ldstr, "");
+                                            }
+                                            else
+                                            {
+                                                insertInstruction = instruction.Clone();
+                                            }
                                             instructions.Insert(insertIndex + pos, insertInstruction);
                                             if (instruction.OpCode == OpCodes.Ret)
                                             {
