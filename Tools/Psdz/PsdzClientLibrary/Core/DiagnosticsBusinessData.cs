@@ -505,6 +505,14 @@ namespace PsdzClient.Core
                     HandleReadILevelForSp2021Fallback(instance, vecInfo, ecuKom, retryCount);
                 }
             }
+            else if (IsEES25Vehicle(vecInfo))
+            {
+                ecuJob = ecuKom.ApiJobWithRetries("IPB_APP2", "STATUS_LESEN", "ARG;VCM_DID_ISTUFE", string.Empty, retryCount);
+                if (ecuJob.IsOkay())
+                {
+                    ProcessILevelJobResultsEES25(instance, vecInfo, ecuJob);
+                }
+            }
             else
             {
                 ecuJob = ecuKom.ApiJobWithRetries("g_zgw", "STATUS_VCM_I_STUFE_LESEN", string.Empty, string.Empty, retryCount);
@@ -517,17 +525,21 @@ namespace PsdzClient.Core
                     HandleReadIlevelBackup(instance, vecInfo, ecuKom, retryCount);
                 }
             }
-            if (!string.IsNullOrEmpty(vecInfo.ILevel))
+        }
+
+        public bool ProcessILevelJobResultsEES25(Reactor reactor, IVehicle vecInfo, IEcuJob iJob)
+        {
+            string text = ReadingOutILevelJobResult(iJob, "I_STUFE_HO.SERIES_GROUP", "I_STUFE_HO.YEAR", "I_STUFE_HO.MONTH", "I_STUFE_HO.I_LEVEL_IDENTIFICATION_NUMBER");
+            string text2 = ReadingOutILevelJobResult(iJob, "I_STUFE_WERK.SERIES_GROUP", "I_STUFE_WERK.YEAR", "I_STUFE_WERK.MONTH", "I_STUFE_WERK.I_LEVEL_IDENTIFICATION_NUMBER");
+            string text3 = ReadingOutILevelJobResult(iJob, "I_STUFE_HO_BACKUP.SERIES_GROUP", "I_STUFE_HO_BACKUP.YEAR", "I_STUFE_HO_BACKUP.MONTH", "I_STUFE_HO_BACKUP.I_LEVEL_IDENTIFICATION_NUMBER");
+            if (IsExcludedFromILevelValidation(iJob) || (ValidateILevelWithRegexPattern(text2, "ILevelWerk") && ValidateILevelWithRegexPattern(text, "ILevelHO") && ValidateILevelWithRegexPattern(text3, "ILevelHOBackup")))
             {
-                if (vecInfo.ILevel.Length < 4 || vecInfo.ILevel.Contains("UNBEK"))
-                {
-                    vecInfo.ILevel = vecInfo.ILevelWerk;
-                }
+                reactor.SetILevelWerk(text2, DataSource.Vehicle);
+                reactor.SetILevel(text, DataSource.Vehicle);
+                vecInfo.ILevelBackup = text3;
+                return true;
             }
-            else
-            {
-                vecInfo.ILevel = vecInfo.ILevelWerk;
-            }
+            return false;
         }
 
         public bool ProcessILevelJobResults(Reactor reactor, IVehicle vecInfo, IEcuJob iJob)
@@ -535,14 +547,24 @@ namespace PsdzClient.Core
             string stringResult = iJob.getStringResult(1, "STAT_I_STUFE_WERK");
             string stringResult2 = iJob.getStringResult(1, "STAT_I_STUFE_HO");
             string stringResult3 = iJob.getStringResult(1, "STAT_I_STUFE_HO_BACKUP");
-            if (!IsExcludedFromILevelValidation(iJob) && (!ValidateILevelWithRegexPattern(stringResult, "ILevelWerk") || !ValidateILevelWithRegexPattern(stringResult2, "ILevelHO") || !ValidateILevelWithRegexPattern(stringResult3, "ILevelHOBackup")))
+            if (IsExcludedFromILevelValidation(iJob) || (ValidateILevelWithRegexPattern(stringResult, "ILevelWerk") && ValidateILevelWithRegexPattern(stringResult2, "ILevelHO") && ValidateILevelWithRegexPattern(stringResult3, "ILevelHOBackup")))
             {
-                return false;
+                reactor.SetILevelWerk(stringResult, DataSource.Vehicle);
+                reactor.SetILevel(stringResult2, DataSource.Vehicle);
+                vecInfo.ILevelBackup = stringResult3;
+                return true;
             }
-            reactor.SetILevelWerk(stringResult, DataSource.Vehicle);
-            reactor.SetILevel(stringResult2, DataSource.Vehicle);
-            vecInfo.ILevelBackup = stringResult3;
-            return true;
+            return false;
+        }
+
+        private static string ReadingOutILevelJobResult(IEcuJob iJob, string seriesResultName, string yearResultName, string monthResultName, string i_level_identification_numberResultName)
+        {
+            string stringResult = iJob.getStringResult(1, seriesResultName);
+            string text = iJob.getuintResult(1, yearResultName).ToString();
+            string text2 = iJob.getuintResult(1, monthResultName).ToString();
+            string text3 = iJob.getuintResult(1, i_level_identification_numberResultName).ToString();
+            text2 = ((text2.Length == 1) ? ("0" + text2) : text2);
+            return stringResult + "-" + text + "-" + text2 + "-" + text3;
         }
 
         private void HandleReadIlevelBackup(Reactor reactor, IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
@@ -556,7 +578,7 @@ namespace PsdzClient.Core
 
         private void HandleReadILevelForSp2021Fallback(Reactor reactor, IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
-            IEcuJob ecuJob = ecuKom.ApiJobWithRetries("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", string.Empty, string.Empty, retryCount);
+            IEcuJob ecuJob = SendJobToKombiOrMmi(vecInfo, ecuKom, "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", string.Empty, string.Empty, retryCount);
             if (ecuJob.IsOkay())
             {
                 ProcessILevelJobResults(reactor, vecInfo, ecuJob);
@@ -1205,6 +1227,21 @@ namespace PsdzClient.Core
                     variante = clampJob.getStringResult("VARIANTE");
                 }
             }
+        }
+
+        public IEcuJob SendJobToKombiOrMmi(IVehicle vecInfo, IEcuKom ecuKom, string job, string param, string resultFilter, int retries)
+        {
+            IEcu eCUbyECU_GRUPPE = vecInfo.getECUbyECU_GRUPPE("G_MMI");
+            IEcu eCUbyECU_GRUPPE2 = vecInfo.getECUbyECU_GRUPPE("G_KOMBI");
+            if (eCUbyECU_GRUPPE != null && eCUbyECU_GRUPPE2 == null)
+            {
+                if (job == "STATUS_GWSZ_ANZEIGE")
+                {
+                    param = "ARG;GWSZ_ANZEIGE_WERT";
+                }
+                return ecuKom.ApiJobWithRetries("G_MMI", Mapping[job], param, resultFilter, retries);
+            }
+            return ecuKom.ApiJobWithRetries("G_KOMBI", job, param, resultFilter, retries);
         }
 
         public string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom)
