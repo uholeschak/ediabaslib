@@ -510,12 +510,12 @@ namespace AssemblyPatcher
                             if (instructions != null)
                             {
                                 Console.WriteLine("VehicleIdent.doVehicleShortTest found");
-                                int patchIndex = -1;
+                                int patchIndex1 = -1;
                                 int getBnTypeIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
                                     Instruction instruction = instructions[index];
-                                    if (instruction.OpCode == OpCodes.Ldarg_0 && index + 4 < instructions.Count)
+                                    if (instruction.OpCode == OpCodes.Ldarg_0 && index + 11 < instructions.Count)
                                     {
                                         if (instructions[index + 1].OpCode != OpCodes.Call)
                                         {
@@ -572,15 +572,61 @@ namespace AssemblyPatcher
                                             continue;
                                         }
 
-                                        patchIndex = index + 10;
+                                        patchIndex1 = index + 10;
                                         getBnTypeIndex = index + 6;
                                         break;
                                     }
                                 }
 
-                                if (patchIndex >= 0)
+                                int patchIndex2 = -1;
+                                for (int index = 0; index < instructions.Count; index++)
                                 {
-                                    instructions[patchIndex] = Instruction.Create(OpCodes.Ldc_I4_1);    // true
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Callvirt && index + 7 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Brtrue_S)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 2].OpCode != OpCodes.Ldloc_S)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldc_I4_0)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 4].OpCode != OpCodes.Callvirt)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 5].OpCode != OpCodes.Ldloc_S)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 6].OpCode != OpCodes.Ldc_I4_0)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 7].OpCode != OpCodes.Callvirt)
+                                        {
+                                            continue;
+                                        }
+
+                                        patchIndex2 = index + 2;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex1 >= 0 && patchIndex2 >= 0)
+                                {
+                                    instructions[patchIndex1] = Instruction.Create(OpCodes.Ldc_I4_1);    // true
                                     patched = true;
                                 }
                                 else
