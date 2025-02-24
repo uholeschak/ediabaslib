@@ -573,7 +573,7 @@ namespace AssemblyPatcher
                                         }
 
                                         patchIndex1 = index + 10;
-                                        getBnTypeIndex = index + 6;
+                                        getBnTypeIndex = index + 4;
                                         break;
                                     }
                                 }
@@ -599,7 +599,7 @@ namespace AssemblyPatcher
                                             continue;
                                         }
 
-                                        if (instructions[index + 4].OpCode != OpCodes.Callvirt)
+                                        if (instructions[index + 4].OpCode != OpCodes.Callvirt)     // set_IDENT_SUCCESSFULLY
                                         {
                                             continue;
                                         }
@@ -614,7 +614,7 @@ namespace AssemblyPatcher
                                             continue;
                                         }
 
-                                        if (instructions[index + 7].OpCode != OpCodes.Callvirt)
+                                        if (instructions[index + 7].OpCode != OpCodes.Callvirt)     // set_FS_SUCCESSFULLY
                                         {
                                             continue;
                                         }
@@ -627,6 +627,24 @@ namespace AssemblyPatcher
                                 if (patchIndex1 >= 0 && patchIndex2 >= 0)
                                 {
                                     instructions[patchIndex1] = Instruction.Create(OpCodes.Ldc_I4_1);    // true
+
+                                    //  copy Ldarg_0, Call, Callvirt, Ldc_I4_2
+                                    List<Instruction> insertInstructions = new List<Instruction>();
+                                    int pos;
+                                    for (pos = 0; pos < 4; pos++)
+                                    {
+                                        Instruction instruction = instructions[getBnTypeIndex + pos];
+                                        insertInstructions.Add(instruction.Clone());
+                                    }
+                                    insertInstructions.Add(new Instruction(OpCodes.Beq_S, instructions[patchIndex2 + 3]));
+
+                                    int offset = 0;
+                                    foreach (Instruction insertInstruction in insertInstructions)
+                                    {
+                                        instructions.Insert(patchIndex2 + offset, insertInstruction);
+                                        offset++;
+                                    }
+
                                     patched = true;
                                 }
                                 else
@@ -640,6 +658,7 @@ namespace AssemblyPatcher
                             // ignored
                         }
 
+#if false
                         try
                         {
                             Target target = new Target
@@ -730,7 +749,7 @@ namespace AssemblyPatcher
                         {
                             // ignored
                         }
-
+#endif
 
                         if (noIcomVerCheck)
                         {
