@@ -65,8 +65,8 @@ namespace PsdzClient.Core.Container
                     Match match = Regex.Match(resultName, "\\[\\d+\\]");
                     if (match.Success)
                     {
-                        int num2 = Convert.ToInt32(match.Value.Replace("[", string.Empty).Replace("]", string.Empty));
-                        string text = string.Format(CultureInfo.InvariantCulture, "/WurzelIn/StateLists/Result[{0}]/", num2);
+                        int num = Convert.ToInt32(match.Value.Replace("[", string.Empty).Replace("]", string.Empty));
+                        string text = string.Format(CultureInfo.InvariantCulture, "/WurzelIn/StateLists/Result[{0}]/", num);
                         string resultName2 = inParameters.getParameter(text + "Path") as string;
                         object iSTAResult = job.getISTAResult(resultName2);
                         if (iSTAResult != null && true.Equals(inParameters.getParameter(text + "ReplaceResultWithState")))
