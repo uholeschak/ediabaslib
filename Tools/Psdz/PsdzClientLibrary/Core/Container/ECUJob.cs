@@ -14,7 +14,7 @@ namespace PsdzClient.Core.Container
 {
     public class ECUJob : ECUJobAbstract, IEcuJob, INotifyPropertyChanged
     {
-        private bool fastaRelevant = false;
+        private bool fastaRelevant;
 
         private readonly decimal hashValue;
 
@@ -84,11 +84,7 @@ namespace PsdzClient.Core.Container
         {
             if (IsDone())
             {
-                if (getStringResult(set, "JOB_STATUS") == state)
-                {
-                    return true;
-                }
-                return false;
+                return getStringResult(set, "JOB_STATUS") == state;
             }
             return false;
         }
@@ -97,11 +93,7 @@ namespace PsdzClient.Core.Container
         {
             if (IsDone())
             {
-                if (getStringResult("JOB_STATUS") == state)
-                {
-                    return true;
-                }
-                return false;
+                return getResultsAs<string>("JOB_STATUS") == state;
             }
             return false;
         }
@@ -161,16 +153,7 @@ namespace PsdzClient.Core.Container
         {
             if (IsDone())
             {
-                string stringResult = getStringResult((ushort)base.JobResultSets, "JOB_STATUS");
-                if (string.IsNullOrEmpty(stringResult))
-                {
-                    stringResult = getStringResult("JOB_STATUS");
-                }
-                if (string.CompareOrdinal(stringResult, "OKAY") == 0)
-                {
-                    return true;
-                }
-                return false;
+                return getResultsAs<string>("JOB_STATUS") == "OKAY";
             }
             return false;
         }
@@ -179,11 +162,7 @@ namespace PsdzClient.Core.Container
         {
             if (IsDone())
             {
-                if (getStringResult(set, "JOB_STATUS") == "OKAY")
-                {
-                    return true;
-                }
-                return false;
+                return getResultsAs<string>("JOB_STATUS", null, set) == "OKAY";
             }
             return false;
         }
@@ -232,18 +211,15 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    ECUResult eCUResult = base.JobResult.FirstOrDefault((ECUResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase) && item.Format == 7);
-                    if (eCUResult != null)
+                    byte[] resultsAs = getResultsAs<byte[]>(resultName, null, set);
+                    if (resultsAs != null)
                     {
-                        eCUResult.FASTARelevant = true;
-                        len = eCUResult.Length;
-                        return (byte[])eCUResult.Value;
+                        len = (uint)resultsAs.Length;
                     }
+                    len = 0u;
+                    return resultsAs;
                 }
-                else
-                {
-                    Log.Warning("ECUJob.getByteArrayResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
-                }
+                Log.Warning("ECUJob.getByteArrayResult()", "(set={0},resultName={1}) - JobResult was null.", set, resultName);
             }
             catch (Exception ex)
             {
@@ -259,32 +235,16 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    foreach (ECUResult item in enumerable)
+                    byte[] resultsAs = getResultsAs<byte[]>(resultName);
+                    if (resultsAs == null)
                     {
-                        if (item.Format != 7)
-                        {
-                            Log.Warning("ECUJob.getByteArrayResult()", "resultName: {0} has different format type!!! You selected ByteArray but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
-                            continue;
-                        }
-                        if (item.Value == null)
-                        {
-                            len = 0u;
-                            return null;
-                        }
-                        byte[] array = (byte[])item.Value;
-                        len = item.Length;
-                        if (array != null && array.Length > len)
-                        {
-                            Array.Resize(ref array, (int)len);
-                        }
-                        return array;
+                        len = 0u;
+                        return null;
                     }
+                    len = (uint)resultsAs.Length;
+                    return resultsAs;
                 }
-                else
-                {
-                    Log.Warning("ECUJob.getByteArrayResult()", "JobResult was null for resultName: {0} ", resultName);
-                }
+                Log.Warning("ECUJob.getByteArrayResult()", "JobResult was null for resultName: {0} ", resultName);
             }
             catch (Exception ex)
             {
@@ -300,15 +260,13 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    foreach (ECUResult item in enumerable)
+                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (item.Format != 1)
+                        if (item.Format == 1)
                         {
-                            Log.Warning("ECUJob.getByteResult()", "(set={0},resultName={1}) has different format type!!! You selected Byte but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
-                            continue;
+                            return (byte)item.Value;
                         }
-                        return (byte)item.Value;
+                        Log.Warning("ECUJob.getByteResult()", "(set={0},resultName={1}) has different format type!!! You selected Byte but should be:{2}", set, resultName, ECUKom.APIFormatName(item.Format));
                     }
                 }
                 else
@@ -329,15 +287,13 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    IEnumerable<ECUResult> enumerable = base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    foreach (ECUResult item in enumerable)
+                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
-                        if (item.Format != 1)
+                        if (item.Format == 1)
                         {
-                            Log.Warning("ECUJob.getByteResult()", "(resultName={0}) has different format type!!! You selected Byte but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
-                            continue;
+                            return (byte)item.Value;
                         }
-                        return (byte)item.Value;
+                        Log.Warning("ECUJob.getByteResult()", "(resultName={0}) has different format type!!! You selected Byte but should be:{1}", resultName, ECUKom.APIFormatName(item.Format));
                     }
                 }
                 else
