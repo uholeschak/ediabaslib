@@ -43,16 +43,13 @@ namespace PsdzClient.Core
 			}
 		}
 
-		[XmlIgnore]
-		public bool IsAlive
-		{
-			get
-			{
-				return !this.IsDead;
-			}
-		}
+        [XmlIgnore]
+        public bool IsDoIP { get; set; }
 
-		[XmlIgnore]
+        [XmlIgnore]
+        public bool IsAlive => !IsDead;
+
+        [XmlIgnore]
 		public bool IsIdentified
 		{
 			get

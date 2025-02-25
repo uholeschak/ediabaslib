@@ -11,6 +11,6 @@ namespace PsdzClient.Core.Container
 
         IEcuJob ApiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter = "", int retries = 0);
 
-        IEcuJob ExecuteJobOverEnet(string icomAddress, string ecu, string job, string param, string resultFilter = "", int retries = 0);
+        IEcuJob ExecuteJobOverEnet(string icomAddress, string ecu, string job, string param, bool isDopIp, string resultFilter = "", int retries = 0);
     }
 }

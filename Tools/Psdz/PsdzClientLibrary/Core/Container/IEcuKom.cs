@@ -22,9 +22,9 @@ namespace PsdzClient.Core.Container
 
         string GetEdiabasIniFilePath(string iniFilename);
 
-        bool InitVCI(IVciDevice vciDevice);
+        bool InitVCI(IVciDevice vciDevice, bool isDoIP);
 
-        bool Refresh();
+        bool Refresh(bool isDoIP);
 
         void SetLogLevelToMax();
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
+using PsdzClientLibrary.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
@@ -59,133 +60,133 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         WLAN
     }
 
-	[AuthorAPI(SelectableTypeDeclaration = true)]
-	public interface IVciDevice : INotifyPropertyChanged
-	{
-		string AccuCapacity { get; }
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IVciDevice : INotifyPropertyChanged, IVciDeviceRuleEvaluation
+    {
+        string AccuCapacity { get; }
 
-		IBasicFeatures BasicFeatures { get; }
+        IBasicFeatures BasicFeatures { get; }
 
-		string Color { get; }
+        string Color { get; }
 
-		bool CommunicationDisturbanceRecognized { get; }
+        bool CommunicationDisturbanceRecognized { get; }
 
-		bool ConnectionLossRecognized { get; }
+        bool ConnectionLossRecognized { get; }
 
-		int? ControlPort { get; }
+        bool IsDoIP { get; }
 
-		string Counter { get; }
+        int? ControlPort { get; }
 
-		string Description { get; }
+        string Counter { get; }
 
-		string Description1 { get; }
+        string Description { get; }
 
-		string DevId { get; }
+        string Description1 { get; }
 
-		string DevType { get; }
+        string DevId { get; }
 
-		bool ForceReInit { get; }
+        string DevType { get; }
 
-		string Gateway { get; }
+        bool ForceReInit { get; }
 
-		string IFHParameter { get; }
+        string Gateway { get; }
 
-		string IFHReserved { get; }
+        string IFHParameter { get; }
 
-		string IPAddress { get; }
+        string IFHReserved { get; }
 
-		string ImageVersionApplication { get; }
+        string IPAddress { get; }
 
-		string ImageVersionBoot { get; }
+        string ImageVersionApplication { get; }
 
-		string ImageVersionPackage { get; }
+        string ImageVersionBoot { get; }
 
-		string Imagename { get; }
+        string ImageVersionPackage { get; }
 
-		bool IsConnectable { get; }
+        string Imagename { get; }
 
-		bool IsImibR2 { get; }
+        bool IsConnectable { get; }
 
-		bool IsImibNext { get; }
+        bool IsImibR2 { get; }
 
-		string Kl15Trigger { get; }
+        bool IsImibNext { get; }
 
-		string Kl15Voltage { get; }
+        string Kl15Trigger { get; }
 
-		string Kl30Trigger { get; }
+        string Kl15Voltage { get; }
 
-		string Kl30Voltage { get; }
+        string Kl30Trigger { get; }
 
-		string MacAddress { get; }
+        string Kl30Voltage { get; }
 
-		string Netmask { get; }
+        string MacAddress { get; }
 
-		string NetworkType { get; }
+        string Netmask { get; }
 
-		string NetworkTypeLabel { get; }
+        string NetworkType { get; }
 
-		string Owner { get; }
+        string NetworkTypeLabel { get; }
 
-		int? Port { get; }
+        string Owner { get; }
 
-		string PwfState { get; }
+        int? Port { get; }
 
-		string ReceivingIP { get; }
+        string PwfState { get; }
 
-		bool ReconnectFailed { get; }
+        string ReceivingIP { get; }
 
-		long ReserveHandle { get; }
+        bool ReconnectFailed { get; }
 
-		DateTime ScanDate { get; }
+        long ReserveHandle { get; }
 
-		string Serial { get; }
+        DateTime ScanDate { get; }
 
-		string Service { get; }
+        string Serial { get; }
 
-		string SignalStrength { get; }
+        string Service { get; }
 
-		string State { get; }
+        string SignalStrength { get; }
 
-		string UUID { get; }
+        string State { get; }
 
-		bool UnderVoltageRecognized { get; }
+        string UUID { get; }
 
-		DateTime UnderVoltageRecognizedLastTime { get; }
+        bool UnderVoltageRecognized { get; }
 
-		bool UnderVoltageRecognizedLastTimeSpecified { get; }
+        DateTime UnderVoltageRecognizedLastTime { get; }
 
-		bool UsePdmResult { get; }
+        bool UnderVoltageRecognizedLastTimeSpecified { get; }
 
-		VCIReservationType VCIReservation { get; }
+        bool UsePdmResult { get; }
 
-		VCIDeviceType VCIType { get; }
+        VCIReservationType VCIReservation { get; }
 
-		string VIN { get; }
+        string VIN { get; }
 
-		string VciChannels { get; }
+        string VciChannels { get; }
 
-		long leastSigBits { get; }
+        long leastSigBits { get; }
 
-		bool leastSigBitsSpecified1 { get; }
+        bool leastSigBitsSpecified1 { get; }
 
-		long mostSigBits { get; }
+        long mostSigBits { get; }
 
-		bool mostSigBitsSpecified1 { get; }
+        bool mostSigBitsSpecified1 { get; }
 
-		bool IsConnected { get; }
+        bool IsConnected { get; }
 
-		bool IsMarkedToDefault { get; set; }
+        bool IsMarkedToDefault { get; set; }
 
-		bool CheckChannel(string channelId);
+        bool CheckChannel(string channelId);
 
-		double? GetClamp15();
+        double? GetClamp15();
 
-		double? GetClamp30();
+        double? GetClamp30();
 
-		string ToAttrList();
+        string ToAttrList();
 
-		string ToAttrList(bool addLineFeed);
+        string ToAttrList(bool addLineFeed);
 
-		string getVCIDescription(VCIDeviceType devType);
-	}
+        string getVCIDescription(VCIDeviceType devType);
+    }
 }

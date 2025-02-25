@@ -172,9 +172,9 @@ namespace PsdzClient.Core.Container
             return EdiabasIniFilePath(iniFilename);
         }
 
-        public bool InitVCI(IVciDevice vciDevice)
+        public bool InitVCI(IVciDevice vciDevice, bool isDoIP)
         {
-            bool result = InitVCI(vciDevice, logging: true);
+            bool result = InitVCI(vciDevice, logging: true, isDoIP);
             if (isProblemHandlingTraceRunning)
             {
                 SetLogLevelToMax();
@@ -217,20 +217,19 @@ namespace PsdzClient.Core.Container
             isProblemHandlingTraceRunning = true;
         }
 
-        public bool Refresh()
+        public bool Refresh(bool isDoIP)
         {
             End();
             bool result = false;
             try
             {
-                result = InitVCI(VCI);
-                return result;
+                result = InitVCI(VCI, isDoIP);
             }
             catch (Exception exception)
             {
                 Log.ErrorException("ECUKom.Refresh()", exception);
-                return result;
             }
+            return result;
         }
 
         public bool ApiInitExt(string ifh, string unit, string app, string reserved)
@@ -279,8 +278,6 @@ namespace PsdzClient.Core.Container
         {
             switch (resultFormat)
             {
-                default:
-                    return "Ediabas: UNKNOWN !!!!";
                 case 0:
                     return "Ediabas: API.APIFORMAT_CHAR <=> C#: char";
                 case 1:
@@ -295,21 +292,23 @@ namespace PsdzClient.Core.Container
                     return "Ediabas: API.APIFORMAT_DWORD <=> C#: uint";
                 case 6:
                     return "Ediabas: API.APIFORMAT_TEXT <=> C# String";
-                case 7:
-                    return "Ediabas: API.APIFORMAT_BINARY <=> C# Byte[]";
                 case 8:
                     return "Ediabas: API.APIFORMAT_REAL <=> C#: double";
+                case 7:
+                    return "Ediabas: API.APIFORMAT_BINARY <=> C# Byte[]";
+                default:
+                    return "Ediabas: UNKNOWN !!!!";
             }
         }
 
         public static ECUKom DeSerialize(string filename, EdiabasNet ediabas = null)
         {
+            Log.Info("ECUKom.DeSerialize()", "called");
             ECUKom eCUKom;
             try
             {
                 XmlTextReader xmlTextReader = new XmlTextReader(filename);
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(ECUKom));
-                eCUKom = (ECUKom)xmlSerializer.Deserialize(xmlTextReader);
+                eCUKom = (ECUKom)new XmlSerializer(typeof(ECUKom)).Deserialize(xmlTextReader);
                 xmlTextReader.Close();
             }
             catch (Exception exception)
@@ -338,6 +337,7 @@ namespace PsdzClient.Core.Container
             {
                 Log.Warning("ECUKom.DeSerialize()", "failed to normalize EcuName and JobName tu uppercase with exception: {0}", ex.ToString());
             }
+            Log.Info("ECUKom.DeSerialize()", "successfully done");
             return eCUKom;
         }
 
@@ -345,8 +345,7 @@ namespace PsdzClient.Core.Container
         {
             try
             {
-                string environmentVariable = Environment.GetEnvironmentVariable("PATH");
-                string[] array = environmentVariable.Split(';');
+                string[] array = Environment.GetEnvironmentVariable("PATH").Split(';');
                 if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "api32.dll")))
                 {
                     return AppDomain.CurrentDomain.BaseDirectory;
@@ -363,23 +362,6 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUKom.EdiabasBinPath()", exception);
-            }
-            return null;
-        }
-
-        public static string EdiabasIniFilePath()
-        {
-            try
-            {
-                string path = EdiabasBinPath();
-                if (File.Exists(Path.Combine(path, "ediabas.ini")))
-                {
-                    return Path.Combine(path, "ediabas.ini");
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ECUKom.EdiabasIniFilePath()", exception);
             }
             return null;
         }
@@ -403,11 +385,11 @@ namespace PsdzClient.Core.Container
 
         public static bool Serialize(string filename, ECUKom ecuKom, Encoding encType)
         {
+            Log.Info("ECUKom.Serialize()", "called");
             try
             {
                 XmlTextWriter xmlTextWriter = new XmlTextWriter(filename, encType);
-                XmlSerializer xmlSerializer = new XmlSerializer(typeof(ECUKom));
-                xmlSerializer.Serialize(xmlTextWriter, ecuKom);
+                new XmlSerializer(typeof(ECUKom)).Serialize(xmlTextWriter, ecuKom);
                 xmlTextWriter.Close();
                 Log.Info("ECUKom.Serialize()", "successfully done");
                 return true;
@@ -416,6 +398,7 @@ namespace PsdzClient.Core.Container
             {
                 Log.WarningException("ECUKom.Serialize()", exception);
             }
+            Log.Warning("ECUKom.Serialize()", "failed when writing ECUKom data");
             return false;
         }
 
@@ -436,7 +419,7 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        public bool InitVCI(IVciDevice device, bool logging)
+        public bool InitVCI(IVciDevice device, bool logging, bool isDoIP)
         {
             if (device == null)
             {
@@ -639,186 +622,191 @@ namespace PsdzClient.Core.Container
 
         public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding)
         {
-            if (string.IsNullOrEmpty(ecu))
-            {
-                ECUJob eCUJob = new ECUJob();
-                eCUJob.EcuName = string.Empty;
-                eCUJob.JobName = jobName;
-                eCUJob.JobParam = param;
-                eCUJob.ExecutionStartTime = DateTime.Now;
-                eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
-                eCUJob.JobErrorCode = 91;
-                eCUJob.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
-                eCUJob.JobResult = new List<ECUResult>();
-                return eCUJob;
-            }
-            if (param == null)
-            {
-                param = string.Empty;
-            }
-            if (resultFilter == null)
-            {
-                resultFilter = string.Empty;
-            }
-
-            DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
-            int num2 = 0;
-            ECUJob eCUJob5 = new ECUJob();
-            eCUJob5.EcuName = ecu;
-            eCUJob5.ExecutionStartTime = dateTimePrecise.Now;
-            eCUJob5.JobName = jobName;
-            eCUJob5.JobParam = param;
-            eCUJob5.JobResultFilter = resultFilter;
-            eCUJob5.JobResult = new List<ECUResult>();
+            //TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
             try
             {
-                if (vci != null && vci.ForceReInit)
+                if (!VehicleCommunication.validLicense)
                 {
-                    api.apiEnd();
-                    if (!InitVCI(vci, logging: false))
+                    throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
+                }
+                if (string.IsNullOrEmpty(ecu))
+                {
+                    ECUJob obj = new ECUJob()
                     {
-                        Log.Warning("ECUKom.apiJob()", "failed to switch/reinit ediabas API");
+                        EcuName = string.Empty,
+                        JobName = jobName,
+                        JobParam = param,
+                        ExecutionStartTime = DateTime.Now
+                    };
+                    obj.ExecutionEndTime = obj.ExecutionStartTime;
+                    obj.JobErrorCode = 91;
+                    obj.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
+                    obj.JobResult = new List<ECUResult>();
+                    return obj;
+                }
+                if (param == null)
+                {
+                    param = string.Empty;
+                }
+                if (resultFilter == null)
+                {
+                    resultFilter = string.Empty;
+                }
+                DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
+                int num = 0;
+                ECUJob eCUJob3 = new ECUJob();
+                eCUJob3.EcuName = ecu;
+                eCUJob3.ExecutionStartTime = dateTimePrecise.Now;
+                eCUJob3.JobName = jobName;
+                eCUJob3.JobParam = param;
+                eCUJob3.JobResultFilter = resultFilter;
+                eCUJob3.JobResult = new List<ECUResult>();
+                try
+                {
+                    api.apiJob(ecu, jobName, param, resultFilter);
+                    while (api.apiStateExt(1000) == 0)
+                    {
+                        Thread.Sleep(2);
                     }
-                }
-                api.apiJob(ecu, jobName, param, resultFilter);
-                while (api.apiStateExt(1000) == 0)
-                {
-                    Thread.Sleep(2);
-                }
-                num2 = (eCUJob5.JobErrorCode = api.apiErrorCode());
-                eCUJob5.JobErrorText = api.apiErrorText();
-                api.apiResultSets(out var rsets);
-                eCUJob5.JobResultSets = rsets;
-                if (rsets > 0)
-                {
-                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5} RSets: {6}", ecu, jobName, param, resultFilter, eCUJob5.JobErrorCode, eCUJob5.JobErrorText, rsets);
-                    for (ushort num4 = 0; num4 <= rsets; num4++)
+                    num = (eCUJob3.JobErrorCode = api.apiErrorCode());
+                    eCUJob3.JobErrorText = api.apiErrorText();
+                    api.apiResultSets(out var rsets);
+                    eCUJob3.JobResultSets = rsets;
+                    if (rsets > 0)
                     {
-                        if (api.apiResultNumber(out var buffer, num4))
+                        Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5} RSets: {6}", ecu, jobName, param, resultFilter, eCUJob3.JobErrorCode, eCUJob3.JobErrorText, rsets);
+                        for (ushort num3 = 0; num3 <= rsets; num3++)
                         {
-                            for (ushort num5 = 1; num5 <= buffer; num5++)
+                            if (api.apiResultNumber(out var buffer, num3))
                             {
-                                ECUResult eCUResult = new ECUResult();
-                                string buffer2 = string.Empty;
-                                eCUResult.Set = num4;
-                                if (api.apiResultName(out buffer2, num5, num4))
+                                for (ushort num4 = 1; num4 <= buffer; num4++)
                                 {
-                                    eCUResult.Name = buffer2;
-                                    if (api.apiResultFormat(out var buffer3, buffer2, num4))
+                                    ECUResult eCUResult = new ECUResult();
+                                    string buffer2 = string.Empty;
+                                    eCUResult.Set = num3;
+                                    if (api.apiResultName(out buffer2, num4, num3))
                                     {
-                                        eCUResult.Format = buffer3;
-                                        switch (buffer3)
+                                        eCUResult.Name = buffer2;
+                                        if (api.apiResultFormat(out var buffer3, buffer2, num3))
                                         {
-                                            default:
-                                                {
-                                                    api.apiResultVar(out var var);
-                                                    eCUResult.Value = var;
-                                                    break;
-                                                }
-                                            case 0:
-                                                {
-                                                    api.apiResultChar(out var buffer11, buffer2, num4);
-                                                    eCUResult.Value = buffer11;
-                                                    break;
-                                                }
-                                            case 1:
-                                                {
-                                                    api.apiResultByte(out var buffer12, buffer2, num4);
-                                                    eCUResult.Value = buffer12;
-                                                    break;
-                                                }
-                                            case 2:
-                                                {
-                                                    api.apiResultInt(out var buffer10, buffer2, num4);
-                                                    eCUResult.Value = buffer10;
-                                                    break;
-                                                }
-                                            case 3:
-                                                {
-                                                    api.apiResultWord(out var buffer7, buffer2, num4);
-                                                    eCUResult.Value = buffer7;
-                                                    break;
-                                                }
-                                            case 4:
-                                                {
-                                                    api.apiResultLong(out var buffer8, buffer2, num4);
-                                                    eCUResult.Value = buffer8;
-                                                    break;
-                                                }
-                                            case 5:
-                                                {
-                                                    api.apiResultDWord(out var buffer9, buffer2, num4);
-                                                    eCUResult.Value = buffer9;
-                                                    break;
-                                                }
-                                            case 6:
-                                                {
-                                                    api.apiResultText(out string buffer6, buffer2, num4, string.Empty);
-                                                    eCUResult.Value = buffer6;
-                                                    break;
-                                                }
-                                            case 7:
-                                                {
-                                                    uint bufferLen2;
-                                                    if (api.apiResultBinary(out var buffer5, out var bufferLen, buffer2, num4))
+                                            eCUResult.Format = buffer3;
+                                            switch (buffer3)
+                                            {
+                                                case 1:
                                                     {
-                                                        if (buffer5 != null)
-                                                        {
-                                                            Array.Resize(ref buffer5, bufferLen);
-                                                        }
+                                                        api.apiResultByte(out var buffer10, buffer2, num3);
+                                                        eCUResult.Value = buffer10;
+                                                        break;
+                                                    }
+                                                case 0:
+                                                    {
+                                                        api.apiResultChar(out var buffer11, buffer2, num3);
+                                                        eCUResult.Value = buffer11;
+                                                        break;
+                                                    }
+                                                case 5:
+                                                    {
+                                                        api.apiResultDWord(out var buffer12, buffer2, num3);
+                                                        eCUResult.Value = buffer12;
+                                                        break;
+                                                    }
+                                                case 2:
+                                                    {
+                                                        api.apiResultInt(out var buffer9, buffer2, num3);
+                                                        eCUResult.Value = buffer9;
+                                                        break;
+                                                    }
+                                                case 4:
+                                                    {
+                                                        api.apiResultLong(out var buffer6, buffer2, num3);
+                                                        eCUResult.Value = buffer6;
+                                                        break;
+                                                    }
+                                                case 8:
+                                                    {
+                                                        api.apiResultReal(out var buffer7, buffer2, num3);
+                                                        eCUResult.Value = buffer7;
+                                                        break;
+                                                    }
+                                                case 6:
+                                                    {
+                                                        api.apiResultText(out string buffer8, buffer2, num3, string.Empty);
+                                                        eCUResult.Value = buffer8;
+                                                        break;
+                                                    }
+                                                case 3:
+                                                    {
+                                                        api.apiResultWord(out var buffer5, buffer2, num3);
                                                         eCUResult.Value = buffer5;
-                                                        eCUResult.Length = bufferLen;
+                                                        break;
                                                     }
-                                                    else if (api.apiResultBinaryExt(out buffer5, out bufferLen2, 65536u, buffer2, num4))
+                                                case 7:
                                                     {
-                                                        if (buffer5 != null)
+                                                        uint bufferLen2;
+                                                        if (api.apiResultBinary(out var buffer4, out var bufferLen, buffer2, num3))
                                                         {
-                                                            Array.Resize(ref buffer5, (int)bufferLen2);
+                                                            if (buffer4 != null)
+                                                            {
+                                                                Array.Resize(ref buffer4, bufferLen);
+                                                            }
+                                                            eCUResult.Value = buffer4;
+                                                            eCUResult.Length = bufferLen;
                                                         }
-                                                        eCUResult.Value = buffer5;
-                                                        eCUResult.Length = bufferLen2;
+                                                        else if (api.apiResultBinaryExt(out buffer4, out bufferLen2, 65536u, buffer2, num3))
+                                                        {
+                                                            if (buffer4 != null)
+                                                            {
+                                                                Array.Resize(ref buffer4, (int)bufferLen2);
+                                                            }
+                                                            eCUResult.Value = buffer4;
+                                                            eCUResult.Length = bufferLen2;
+                                                        }
+                                                        else
+                                                        {
+                                                            eCUResult.Value = new byte[0];
+                                                            eCUResult.Length = 0u;
+                                                        }
+                                                        break;
                                                     }
-                                                    else
+                                                default:
                                                     {
-                                                        eCUResult.Value = new byte[0];
-                                                        eCUResult.Length = 0u;
+                                                        api.apiResultVar(out var var);
+                                                        eCUResult.Value = var;
+                                                        break;
                                                     }
-                                                    break;
-                                                }
-                                            case 8:
-                                                {
-                                                    api.apiResultReal(out var buffer4, buffer2, num4);
-                                                    eCUResult.Value = buffer4;
-                                                    break;
-                                                }
+                                            }
                                         }
+                                        eCUJob3.JobResult.Add(eCUResult);
                                     }
-                                    eCUJob5.JobResult.Add(eCUResult);
-                                }
-                                else
-                                {
-                                    buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", jobName, num5, num4);
+                                    else
+                                    {
+                                        buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", jobName, num4, num3);
+                                    }
                                 }
                             }
                         }
                     }
+                    if (num != 0)
+                    {
+                        Log.Info("ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with apiError: {4}:{5}", ecu, jobName, param, resultFilter, eCUJob3.JobErrorCode, eCUJob3.JobErrorText);
+                    }
                 }
-                if (num2 != 0)
+                catch (IndexOutOfRangeException)
                 {
-                    Log.Info("ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with apiError: {4}:{5}", ecu, jobName, param, resultFilter, eCUJob5.JobErrorCode, eCUJob5.JobErrorText);
+                    Log.Warning("ECUKom.apiJob()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, jobName, param, resultFilter, eCUJob3.JobErrorText);
                 }
+                catch (Exception exception)
+                {
+                    Log.WarningException("ECUKom.apiJob()", exception);
+                }
+                eCUJob3.ExecutionEndTime = dateTimePrecise.Now;
+                AddJobInCache(eCUJob3, cacheAdding);
+                return eCUJob3;
             }
-            catch (IndexOutOfRangeException)
+            finally
             {
-                Log.Warning("ECUKom.apiJob()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, jobName, param, resultFilter, eCUJob5.JobErrorText);
+                //TimeMetricsUtility.Instance.ApiJobEnd(ecu, jobName, param, -1);
             }
-            catch (Exception exception)
-            {
-                Log.WarningException("ECUKom.apiJob()", exception);
-            }
-            eCUJob5.ExecutionEndTime = dateTimePrecise.Now;
-            AddJobInCache(eCUJob5, cacheAdding);
-            return eCUJob5;
         }
 
         public IEcuJob ApiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter = "", int retries = 0)
@@ -868,191 +856,195 @@ namespace PsdzClient.Core.Container
 
         public ECUJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter)
         {
-            if (string.IsNullOrEmpty(ecu))
-            {
-                ECUJob eCUJob = new ECUJob();
-                eCUJob.JobName = string.Empty;
-                eCUJob.ExecutionStartTime = DateTime.Now;
-                eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
-                eCUJob.JobErrorCode = 91;
-                eCUJob.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
-                eCUJob.JobResult = new List<ECUResult>();
-                return eCUJob;
-            }
-
-            if (param == null)
-            {
-                param = new byte[0];
-            }
-            if (resultFilter == null)
-            {
-                resultFilter = string.Empty;
-            }
-            if (paramlen == -1)
-            {
-                paramlen = param.Length;
-            }
-
-            DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
-            int num2 = 0;
-            ECUJob eCUJob4 = new ECUJob();
-            eCUJob4.EcuName = ecu;
-            eCUJob4.JobName = job;
-            eCUJob4.ExecutionStartTime = dateTimePrecise.Now;
-            eCUJob4.ExecutionEndTime = eCUJob4.ExecutionStartTime;
-            eCUJob4.JobResultFilter = resultFilter;
-            eCUJob4.JobResult = new List<ECUResult>();
+            //TimeMetricsUtility.Instance.ApiJobStart(ecu, job, string.Empty, paramlen);
             try
             {
-                eCUJob4.JobParam = FormatConverter.ByteArray2String(param, (uint)paramlen);
-                if (vci != null && vci.ForceReInit)
+                if (string.IsNullOrEmpty(ecu))
                 {
-                    api.apiEnd();
-                    if (!InitVCI(vci, logging: false))
+                    ECUJob obj = new ECUJob
                     {
-                        Log.Warning("ECUKom.apiJob()", "failed to switch/reinit ediabas API");
+                        JobName = string.Empty,
+                        ExecutionStartTime = DateTime.Now
+                    };
+                    obj.ExecutionEndTime = obj.ExecutionStartTime;
+                    obj.JobErrorCode = 91;
+                    obj.JobErrorText = "SYS-0001: ILLEGAL FUNCTION";
+                    obj.JobResult = new List<ECUResult>();
+                    return obj;
+                }
+                if (!VehicleCommunication.validLicense)
+                {
+                    throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
+                }
+                if (param == null)
+                {
+                    param = new byte[0];
+                }
+                if (resultFilter == null)
+                {
+                    resultFilter = string.Empty;
+                }
+                if (paramlen == -1)
+                {
+                    paramlen = param.Length;
+                }
+                DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
+                int num = 0;
+                ECUJob eCUJob2 = new ECUJob();
+                eCUJob2.EcuName = ecu;
+                eCUJob2.JobName = job;
+                eCUJob2.ExecutionStartTime = dateTimePrecise.Now;
+                eCUJob2.ExecutionEndTime = eCUJob2.ExecutionStartTime;
+                eCUJob2.JobResultFilter = resultFilter;
+                eCUJob2.JobResult = new List<ECUResult>();
+                try
+                {
+                    eCUJob2.JobParam = FormatConverter.ByteArray2String(param, (uint)paramlen);
+                    api.apiJobData(ecu, job, param, paramlen, resultFilter);
+                    while (api.apiStateExt(1000) == 0)
+                    {
+                        Thread.Sleep(2);
                     }
-                }
-                api.apiJobData(ecu, job, param, paramlen, resultFilter);
-                while (api.apiStateExt(1000) == 0)
-                {
-                    Thread.Sleep(2);
-                }
-                num2 = (eCUJob4.JobErrorCode = api.apiErrorCode());
-                eCUJob4.JobErrorText = api.apiErrorText();
-                if (num2 == 0)
-                {
-                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5}", ecu, job, param, resultFilter, eCUJob4.JobErrorCode, eCUJob4.JobErrorText);
-                    if (api.apiResultSets(out var rsets))
+                    num = (eCUJob2.JobErrorCode = api.apiErrorCode());
+                    eCUJob2.JobErrorText = api.apiErrorText();
+                    if (num == 0)
                     {
-                        eCUJob4.JobResultSets = rsets;
-                        for (ushort num4 = 0; num4 <= rsets; num4++)
+                        Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5}", ecu, job, param, resultFilter, eCUJob2.JobErrorCode, eCUJob2.JobErrorText);
+                        if (api.apiResultSets(out var rsets))
                         {
-                            if (api.apiResultNumber(out var buffer, num4))
+                            eCUJob2.JobResultSets = rsets;
+                            for (ushort num3 = 0; num3 <= rsets; num3++)
                             {
-                                for (ushort num5 = 1; num5 <= buffer; num5++)
+                                if (api.apiResultNumber(out var buffer, num3))
                                 {
-                                    ECUResult eCUResult = new ECUResult();
-                                    eCUResult.Set = num4;
-                                    if (api.apiResultName(out var buffer2, num5, num4))
+                                    for (ushort num4 = 1; num4 <= buffer; num4++)
                                     {
-                                        eCUResult.Name = buffer2;
-                                        if (api.apiResultFormat(out var buffer3, buffer2, num4))
+                                        ECUResult eCUResult = new ECUResult();
+                                        eCUResult.Set = num3;
+                                        if (api.apiResultName(out var buffer2, num4, num3))
                                         {
-                                            eCUResult.Format = buffer3;
-                                            switch (buffer3)
+                                            eCUResult.Name = buffer2;
+                                            if (api.apiResultFormat(out var buffer3, buffer2, num3))
                                             {
-                                                default:
-                                                    {
-                                                        api.apiResultVar(out var var);
-                                                        eCUResult.Value = var;
-                                                        break;
-                                                    }
-                                                case 0:
-                                                    {
-                                                        api.apiResultChar(out var buffer11, buffer2, num4);
-                                                        eCUResult.Value = buffer11;
-                                                        break;
-                                                    }
-                                                case 1:
-                                                    {
-                                                        api.apiResultByte(out var buffer12, buffer2, num4);
-                                                        eCUResult.Value = buffer12;
-                                                        break;
-                                                    }
-                                                case 2:
-                                                    {
-                                                        api.apiResultInt(out var buffer10, buffer2, num4);
-                                                        eCUResult.Value = buffer10;
-                                                        break;
-                                                    }
-                                                case 3:
-                                                    {
-                                                        api.apiResultWord(out var buffer7, buffer2, num4);
-                                                        eCUResult.Value = buffer7;
-                                                        break;
-                                                    }
-                                                case 4:
-                                                    {
-                                                        api.apiResultLong(out var buffer8, buffer2, num4);
-                                                        eCUResult.Value = buffer8;
-                                                        break;
-                                                    }
-                                                case 5:
-                                                    {
-                                                        api.apiResultDWord(out var buffer9, buffer2, num4);
-                                                        eCUResult.Value = buffer9;
-                                                        break;
-                                                    }
-                                                case 6:
-                                                    {
-                                                        api.apiResultText(out string buffer6, buffer2, num4, string.Empty);
-                                                        eCUResult.Value = buffer6;
-                                                        break;
-                                                    }
-                                                case 7:
-                                                    {
-                                                        uint bufferLen2;
-                                                        if (api.apiResultBinary(out var buffer5, out var bufferLen, buffer2, num4))
+                                                eCUResult.Format = buffer3;
+                                                switch (buffer3)
+                                                {
+                                                    case 1:
                                                         {
-                                                            if (buffer5 != null)
-                                                            {
-                                                                Array.Resize(ref buffer5, bufferLen);
-                                                            }
+                                                            api.apiResultByte(out var buffer10, buffer2, num3);
+                                                            eCUResult.Value = buffer10;
+                                                            break;
+                                                        }
+                                                    case 0:
+                                                        {
+                                                            api.apiResultChar(out var buffer11, buffer2, num3);
+                                                            eCUResult.Value = buffer11;
+                                                            break;
+                                                        }
+                                                    case 5:
+                                                        {
+                                                            api.apiResultDWord(out var buffer12, buffer2, num3);
+                                                            eCUResult.Value = buffer12;
+                                                            break;
+                                                        }
+                                                    case 2:
+                                                        {
+                                                            api.apiResultInt(out var buffer9, buffer2, num3);
+                                                            eCUResult.Value = buffer9;
+                                                            break;
+                                                        }
+                                                    case 4:
+                                                        {
+                                                            api.apiResultLong(out var buffer6, buffer2, num3);
+                                                            eCUResult.Value = buffer6;
+                                                            break;
+                                                        }
+                                                    case 8:
+                                                        {
+                                                            api.apiResultReal(out var buffer7, buffer2, num3);
+                                                            eCUResult.Value = buffer7;
+                                                            break;
+                                                        }
+                                                    case 6:
+                                                        {
+                                                            api.apiResultText(out string buffer8, buffer2, num3, string.Empty);
+                                                            eCUResult.Value = buffer8;
+                                                            break;
+                                                        }
+                                                    case 3:
+                                                        {
+                                                            api.apiResultWord(out var buffer5, buffer2, num3);
                                                             eCUResult.Value = buffer5;
-                                                            eCUResult.Length = bufferLen;
+                                                            break;
                                                         }
-                                                        else if (api.apiResultBinaryExt(out buffer5, out bufferLen2, 65536u, buffer2, num4))
+                                                    case 7:
                                                         {
-                                                            if (buffer5 != null)
+                                                            uint bufferLen2;
+                                                            if (api.apiResultBinary(out var buffer4, out var bufferLen, buffer2, num3))
                                                             {
-                                                                Array.Resize(ref buffer5, (int)bufferLen2);
+                                                                if (buffer4 != null)
+                                                                {
+                                                                    Array.Resize(ref buffer4, bufferLen);
+                                                                }
+                                                                eCUResult.Value = buffer4;
+                                                                eCUResult.Length = bufferLen;
                                                             }
-                                                            eCUResult.Value = buffer5;
-                                                            eCUResult.Length = bufferLen2;
+                                                            else if (api.apiResultBinaryExt(out buffer4, out bufferLen2, 65536u, buffer2, num3))
+                                                            {
+                                                                if (buffer4 != null)
+                                                                {
+                                                                    Array.Resize(ref buffer4, (int)bufferLen2);
+                                                                }
+                                                                eCUResult.Value = buffer4;
+                                                                eCUResult.Length = bufferLen2;
+                                                            }
+                                                            else
+                                                            {
+                                                                eCUResult.Value = new byte[0];
+                                                                eCUResult.Length = 0u;
+                                                            }
+                                                            break;
                                                         }
-                                                        else
+                                                    default:
                                                         {
-                                                            eCUResult.Value = new byte[0];
-                                                            eCUResult.Length = 0u;
+                                                            api.apiResultVar(out var var);
+                                                            eCUResult.Value = var;
+                                                            break;
                                                         }
-                                                        break;
-                                                    }
-                                                case 8:
-                                                    {
-                                                        api.apiResultReal(out var buffer4, buffer2, num4);
-                                                        eCUResult.Value = buffer4;
-                                                        break;
-                                                    }
+                                                }
                                             }
+                                            eCUJob2.JobResult.Add(eCUResult);
                                         }
-                                        eCUJob4.JobResult.Add(eCUResult);
-                                    }
-                                    else
-                                    {
-                                        buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", job, num5, num4);
+                                        else
+                                        {
+                                            buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", job, num4, num3);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    else
+                    {
+                        Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with apiError: {4}:{5}", ecu, job, param, resultFilter, eCUJob2.JobErrorCode, eCUJob2.JobErrorText);
+                    }
                 }
-                else
+                catch (IndexOutOfRangeException)
                 {
-                    Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with apiError: {4}:{5}", ecu, job, param, resultFilter, eCUJob4.JobErrorCode, eCUJob4.JobErrorText);
+                    Log.Warning("ECUKom.apiJobData()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, job, param, resultFilter, eCUJob2.JobErrorText);
                 }
+                catch (Exception ex3)
+                {
+                    Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex3.ToString());
+                }
+                eCUJob2.ExecutionEndTime = dateTimePrecise.Now;
+                AddJobInCache(eCUJob2);
+                return eCUJob2;
             }
-            catch (IndexOutOfRangeException)
+            finally
             {
-                Log.Warning("ECUKom.apiJobData()", "buggy sgbd ({0}, {1}, {2}, {3}) apiError: {4} found; wrong result set length was set", ecu, job, param, resultFilter, eCUJob4.JobErrorText);
+                //TimeMetricsUtility.Instance.ApiJobEnd(ecu, job, string.Empty, paramlen);
             }
-            catch (Exception ex3)
-            {
-                Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex3.ToString());
-            }
-            eCUJob4.ExecutionEndTime = dateTimePrecise.Now;
-            AddJobInCache(eCUJob4);
-            return eCUJob4;
         }
 
         public int getErrorCode()
@@ -1114,7 +1106,7 @@ namespace PsdzClient.Core.Container
             return null;
         }
 
-        public IEcuJob ExecuteJobOverEnet(string icomAddress, string ecu, string job, string param, string resultFilter = "", int retries = 0)
+        public IEcuJob ExecuteJobOverEnet(string icomAddress, string ecu, string job, string param, bool isDoIP, string resultFilter = "", int retries = 0)
         {
             End();
             string istaLogPath = GetIstaLogPath();
@@ -1127,18 +1119,18 @@ namespace PsdzClient.Core.Container
             if (!ApiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + icomAddress + ";DiagnosticPort=51560;ControlPort=51561;TracePath=" + istaLogPath + ";ApiTrace=" + text))
             {
                 Log.Warning("EdiabasUtils.ExecuteJobOverEnet()", "Failed switching to ENET. The Job will not be executed. The EDIABAS connection will be refreshed.");
-                RefreshEdiabasConnection();
+                RefreshEdiabasConnection(isDoIP);
                 return null;
             }
             SetEcuPath(logging: true);
             IEcuJob result = ApiJob(ecu, job, param, resultFilter, retries);
-            RefreshEdiabasConnection();
+            RefreshEdiabasConnection(isDoIP);
             return result;
         }
 
-        private void RefreshEdiabasConnection()
+        private void RefreshEdiabasConnection(bool isDoIp)
         {
-            if (Refresh())
+            if (Refresh(isDoIp))
             {
                 Log.Info("EdiabasUtils.RefreshEdiabasConnection()", "Successfully connected to current VCI device.");
             }

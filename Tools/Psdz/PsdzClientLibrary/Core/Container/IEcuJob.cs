@@ -44,7 +44,7 @@ namespace PsdzClient.Core.Container
 
         bool IsOkay(ushort set);
 
-        new string ToString();
+        string ToString();
 
         byte[] getByteArrayResult(ushort set, string resultName, out uint len);
 
