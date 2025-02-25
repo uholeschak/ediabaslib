@@ -49,16 +49,16 @@ namespace PsdzClient.Core.Container
 
         public void DoParameterization()
         {
+            long num = 0L;
             long num2 = 0L;
-            long num3 = 0L;
             try
             {
                 ParameterContainer parameterContainer = new ParameterContainer();
                 ABranch run = configContainer.Body.Configuration.Run;
                 if (configContainer.Header != null && configContainer.Header.Version != null)
                 {
-                    num2 = configContainer.Header.Version.Major;
-                    num3 = configContainer.Header.Version.Minor;
+                    num = configContainer.Header.Version.Major;
+                    num2 = configContainer.Header.Version.Minor;
                 }
                 if (run.Children != null)
                 {
@@ -100,14 +100,14 @@ namespace PsdzClient.Core.Container
                         string[] array = text.Split('/');
                         ecuGroup = array[5];
                         ecuJob = array[7];
-                        if (text.EndsWith("ARG1", StringComparison.Ordinal) && (num2 != 2L || num3 != 0L))
+                        if (text.EndsWith("ARG1", StringComparison.Ordinal) && (num != 2 || num2 != 0L))
                         {
-                            ecuParam = string.Concat(keyValuePairEndsWith.Value.Value, ";");
+                            ecuParam = keyValuePairEndsWith.Value.Value?.ToString() + ";";
                         }
                     }
                     if (string.IsNullOrEmpty(text))
                     {
-                        if (configContainer.Header == null || configContainer.Header.Version == null || configContainer.Header.Version.Major != 2L || configContainer.Header.Version.Minor != 0L)
+                        if (configContainer.Header == null || configContainer.Header.Version == null || configContainer.Header.Version.Major != 2 || configContainer.Header.Version.Minor != 0L)
                         {
                             Log.Warning("EDIABASAdapter.DoParamterization()", "unable to identify sgbd from default values od config overrides");
                             return;
@@ -146,7 +146,7 @@ namespace PsdzClient.Core.Container
                 }
                 foreach (KeyValuePair<string, object> item4 in parameterContainer.Parameter)
                 {
-                    if (!(item4.Key != text) && (num2 != 2L || num3 != 0L))
+                    if (!(item4.Key != text) && (num != 2 || num2 != 0L))
                     {
                         continue;
                     }
@@ -235,16 +235,16 @@ namespace PsdzClient.Core.Container
         private IEnumerable<string> RetrieveFastaRelevantJobNames(ParameterContainer inParam)
         {
             List<string> list = new List<string>();
-            int num2 = 0;
+            int num = 0;
             string text;
             do
             {
-                string name = $"/WurzelIn/StateLists/Result[{num2}]/Path";
+                string name = $"/WurzelIn/StateLists/Result[{num}]/Path";
                 text = inParam.getParameter(name, null) as string;
                 if (text != null)
                 {
                     list.Add(text.Split('/').Last());
-                    num2++;
+                    num++;
                 }
             }
             while (!string.IsNullOrEmpty(text));
