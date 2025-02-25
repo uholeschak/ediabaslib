@@ -421,56 +421,73 @@ namespace PsdzClient.Core.Container
 
         public bool InitVCI(IVciDevice device, bool logging, bool isDoIP)
         {
+            bool flag = false;
+            bool flag2 = false;
             if (device == null)
             {
                 Log.Warning("ECUKom.InitVCI()", "failed because device was null");
                 return false;
             }
+            bool isDoIP2 = device.IsDoIP;
             try
             {
-                bool flag;
+                string pathString = ConfigSettings.getPathString("BMW.Rheingold.Logging.Directory.Current", "..\\..\\..\\logs");
                 switch (device.VCIType)
                 {
-                    case VCIDeviceType.ENET:
-                        flag = api.apiInitExt("ENET", string.Empty, string.Empty, "remotehost=" + device.IPAddress);
-                        break;
                     case VCIDeviceType.ICOM:
+                        if (isDoIP2 && flag2)
                         {
-                            int configint3 = 6801;
-                            if (!string.IsNullOrEmpty(device.VIN) && device.VIN.Length == 17 && !device.VIN.Contains("XXXX"))
-                            {
-                                flag = api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161");
-                                break;
-                            }
-                            flag = api.apiInitExt("REMOTE::remotehost=" + device.IPAddress + ";Port=" + configint3, "_", "Rheingold", string.Empty);
+                            flag = InitEdiabasForDoIP(device);
                             break;
                         }
-                    case VCIDeviceType.SIM:
-                        flag = true;
+                        if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
+                        {
+                            flag = api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
+                            break;
+                        }
+                        if (!isDoIP)
+                        {
+                            flag = api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
+                        }
+                        if (isDoIP && flag2)
+                        {
+                            flag = InitEdiabasForDoIP(device);
+                        }
                         break;
-                    case VCIDeviceType.OMITEC:
-                        flag = api.apiInitExt("STD:OMITEC", "_", "Rheingold", string.Empty);
-                        break;
-                    default:
-                        flag = api.apiInit();
+                    case VCIDeviceType.ENET:
+                        if (device.IsDoIP)
+                        {
+                            if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
+                            {
+                                flag = api.apiInitExt("ENET", "_", "Rheingold",  "selectCertificate=" + service.CertificateFilePathWithoutEnding + ";remotehost=" + device.IPAddress );
+                            }
+                        }
+                        else
+                        {
+                            flag = api.apiInitExt("ENET", "_", "Rheingold", "remotehost=" + device.IPAddress);
+                        }
                         break;
                     case VCIDeviceType.TELESERVICE:
                         {
-                            flag = false;
+                            string text = string.Format(CultureInfo.InvariantCulture, "CompoundID={0};UsePdmResult={1}", device.DevId, device.UsePdmResult ? "true" : "false");
+                            Log.Info("ECUKom.InitVCI()", "calling TELESERVICE api init with parameter: {0}", text);
+                            flag = api.apiInitExt("TELE", "_", "Rheingold", text);
                             break;
                         }
-                    case VCIDeviceType.IRAM:
-                        flag = false;
-                        break;
                     case VCIDeviceType.PTT:
                         flag = false;
+                        break;
+                    case VCIDeviceType.SIM:
+                        flag = true;
+                        break;
+                    default:
+                        flag = api.apiInit();
                         break;
                 }
                 if (api.apiErrorCode() != 0)
                 {
                     Log.Warning("ECUKom.InitVCI()", "failed when init IFH with : {0} / {1}", api.apiErrorCode(), api.apiErrorText());
                 }
-                string pathString = "..\\..\\..\\logs";
                 api.apiSetConfig("TracePath", Path.GetFullPath(pathString));
                 if (flag)
                 {
@@ -487,20 +504,6 @@ namespace PsdzClient.Core.Container
                         Log.Info("ECUKom.InitVCI()", "Session name: {0}", cfgValue4);
                         api.apiGetConfig("Interface", out var cfgValue5);
                         Log.Info("ECUKom.InitVCI()", "Interface type loaded: {0}", cfgValue5);
-                        if (device.VCIType == VCIDeviceType.ICOM || (!string.IsNullOrEmpty(cfgValue5) && cfgValue5.StartsWith("remote", StringComparison.OrdinalIgnoreCase)))
-                        {
-                            string cfgValue6 = null;
-                            api.apiGetConfig("DisconnectOnApiEnd", out var cfgValue7);
-                            Log.Info("ECUKom.InitVCI()", "DisconnectOnApiEnd configured: {0}", cfgValue7);
-                            api.apiGetConfig("TimeoutReceive", out var cfgValue8);
-                            Log.Info("ECUKom.InitVCI()", "TimeoutConnect configured: {0}", cfgValue6);
-                            api.apiGetConfig("TimeoutConnect", out cfgValue6);
-                            Log.Info("ECUKom.InitVCI()", "TimeoutReceive configured: {0}", cfgValue8);
-                            api.apiGetConfig("TimeoutFunction", out var cfgValue9);
-                            Log.Info("ECUKom.InitVCI()", "TimeoutFunction configured: {0}", cfgValue9);
-                            api.apiGetConfig("TimeResponsePending", out var cfgValue10);
-                            Log.Info("ECUKom.InitVCI()", "TimeResponsePending configured: {0}", cfgValue10);
-                        }
                     }
                     SetEcuPath(logging);
                 }
@@ -511,6 +514,16 @@ namespace PsdzClient.Core.Container
                 Log.WarningException("ECUKom.InitVCI()", exception);
             }
             return true;
+        }
+
+        private bool InitEdiabasForDoIP(IVciDevice device)
+        {
+            if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
+            {
+                string reserved = $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162};selectCertificate={service.CertificateFilePathWithoutEnding};SSLPort={50163}";
+                return ApiInitExt("ENET", "_", "Rheingold", reserved);
+            }
+            return false;
         }
 
         public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter, bool cacheAdding)

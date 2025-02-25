@@ -66,5 +66,16 @@ namespace PsdzClientLibrary.Core
                 services.Remove(typeFromHandle);
             }
         }
+        public bool TryGetService<T>(out T service) where T : class
+        {
+            Type typeFromHandle = typeof(T);
+            if (!services.ContainsKey(typeFromHandle))
+            {
+                service = null;
+                return false;
+            }
+            service = (T)services[typeFromHandle];
+            return true;
+        }
     }
 }
