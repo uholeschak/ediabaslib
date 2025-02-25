@@ -1108,24 +1108,55 @@ namespace PsdzClient.Core.Container
 
         public IEcuJob ExecuteJobOverEnet(string icomAddress, string ecu, string job, string param, bool isDoIP, string resultFilter = "", int retries = 0)
         {
+            string method = "ExecuteJobOverEnet";
+            Log.Info(method, "Before End");
             End();
+            Log.Info(method, "After End");
+            IEcuJob result = ExecuteJobOverEnetWrapper(icomAddress, ecu, job, param, isDoIP, method, resultFilter, retries);
+            RefreshEdiabasConnection(isDoIP);
+            Log.Info(method, "After valid Refresh");
+            return result;
+        }
+
+        public IEcuJob ExecuteJobOverEnetActivateDHCP(string icomAddress, string ecu, string job, string param, bool isDoIP, string resultFilter = "", int retries = 0)
+        {
+            string method = "ExecuteJobOverEnet";
+            End();
+            IEcuJob result = ExecuteJobOverEnetWrapper(icomAddress, ecu, job, param, isDoIP, method, resultFilter, retries);
+            End();
+            Log.Info(method, "After API End");
+            return result;
+        }
+
+        private IEcuJob ExecuteJobOverEnetWrapper(string icomAddress, string ecu, string job, string param, bool isDoIP, string method, string resultFilter = "", int retries = 0)
+        {
             string istaLogPath = GetIstaLogPath();
             if (string.IsNullOrEmpty(istaLogPath))
             {
                 Log.Warning("EdiabasUtils.ExecuteJobOverEnet()", "Path to ista log cannot be found.");
                 return null;
             }
-            string text = (IsProblemHandlingTraceRunning ? "5" : "0");
-            if (!ApiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + icomAddress + ";DiagnosticPort=51560;ControlPort=51561;TracePath=" + istaLogPath + ";ApiTrace=" + text))
+            string cfgValue = (IsProblemHandlingTraceRunning ? "5" : "0");
+            Log.Info(method, "Before ApiInitExt");
+            string reserved = $"RemoteHost={icomAddress};DiagnosticPort={51560};ControlPort={51561};PortDoIP={51562};";
+            bool num = ApiInitExt("ENET", "_", "Rheingold", reserved);
+            api.apiSetConfig("ApiTrace", cfgValue);
+            api.apiSetConfig("TracePath", Path.GetFullPath(istaLogPath));
+            Log.Info(method, "After ApiInitExt");
+            if (!num)
             {
                 Log.Warning("EdiabasUtils.ExecuteJobOverEnet()", "Failed switching to ENET. The Job will not be executed. The EDIABAS connection will be refreshed.");
+                Log.Info(method, "Before invalid refresh");
                 RefreshEdiabasConnection(isDoIP);
+                Log.Info(method, "After invalid refresh");
                 return null;
             }
             SetEcuPath(logging: true);
-            IEcuJob result = ApiJob(ecu, job, param, resultFilter, retries);
-            RefreshEdiabasConnection(isDoIP);
-            return result;
+            Log.Info(method, "Before ApiJob");
+            IEcuJob ecuJob = ApiJob(ecu, job, param, resultFilter, retries);
+            Log.Info(method, $"After ApiJob, ECode: {ecuJob.JobErrorCode}, EText: {ecuJob.JobErrorText}");
+            Log.Info(method, "Before valid Refresh");
+            return ecuJob;
         }
 
         private void RefreshEdiabasConnection(bool isDoIp)
@@ -1145,8 +1176,7 @@ namespace PsdzClient.Core.Container
             string result = string.Empty;
             try
             {
-                string pathString = ConfigSettings.getPathString("BMW.Rheingold.Logging.Directory.Current", "..\\..\\..\\logs");
-                result = Path.GetFullPath(pathString);
+                result = Path.GetFullPath(ConfigSettings.getPathString("BMW.Rheingold.Logging.Directory.Current", "..\\..\\..\\logs"));
             }
             catch (Exception ex)
             {
