@@ -312,58 +312,56 @@ namespace PsdzClient.Core.Container
         {
             try
             {
-                switch (resultName)
+                if (!(resultName == "/Result/Status/JOB_STATUS"))
                 {
-                    case "/Result/Rows/$Count":
+                    if (resultName == "/Result/Rows/$Count")
+                    {
                         if (base.JobResultSets > 0)
                         {
                             return base.JobResultSets;
                         }
                         return 0;
-                    case "/Result/Status/JOB_STATUS":
-                        return getResult("JOB_STATUS");
-                    default:
-                        if (resultName.Contains('['))
+                    }
+                    if (resultName.Contains('['))
+                    {
+                        Match match = Regex.Match(resultName, "\\[\\d+\\]");
+                        if (match.Success)
                         {
-                            Match match = Regex.Match(resultName, "\\[\\d+\\]");
-                            if (match.Success)
+                            int num = Convert.ToInt32(match.Value.Replace("[", string.Empty).Replace("]", string.Empty));
+                            string[] array = Regex.Split(resultName, string.Format(CultureInfo.InvariantCulture, "/Row\\[{0}\\]/", num));
+                            if (array.Length == 2)
                             {
-                                string text = match.Value.Replace("[", string.Empty);
-                                text = text.Replace("]", string.Empty);
-                                int num2 = Convert.ToInt32(text);
-                                string[] array = Regex.Split(resultName, string.Format(CultureInfo.InvariantCulture, "/Row\\[{0}\\]/", num2));
-                                if (array.Length == 2)
-                                {
-                                    return getResult((ushort)(num2 + 1), array[1]);
-                                }
-                                Log.Warning("ECUJob.getISTAResult()", "failed to separate result name from result path: {0}", resultName);
-                                return null;
+                                return getResult((ushort)(num + 1), array[1]);
                             }
-                            Log.Warning("ECUJob.getISTAResult()", "failed to evaluate query: {0}", resultName);
+                            Log.Warning("ECUJob.getISTAResult()", "failed to separate result name from result path: {0}", resultName);
+                            return null;
                         }
-                        else if (resultName.StartsWith("/Result/Status/", StringComparison.Ordinal))
+                        Log.Warning("ECUJob.getISTAResult()", "failed to evaluate query: {0}", resultName);
+                    }
+                    else if (resultName.StartsWith("/Result/Status/", StringComparison.Ordinal))
+                    {
+                        string text = resultName.Substring(15);
+                        if (!string.IsNullOrEmpty(text))
                         {
-                            string text2 = resultName.Substring(15);
-                            if (!string.IsNullOrEmpty(text2))
+                            object result = getResult(text);
+                            if (result == null)
                             {
-                                object result = getResult(text2);
-                                if (result == null)
-                                {
-                                    Log.Warning("ECUJob.getISTAResult()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
-                                }
-                                else
-                                {
-                                    Log.Info("ECUJob.getISTAResult()", "obj type is {0}", result.GetType().ToString());
-                                }
-                                return result;
+                                Log.Warning("ECUJob.getISTAResult()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
                             }
+                            else
+                            {
+                                Log.Info("ECUJob.getISTAResult()", "obj type is {0}", result.GetType().ToString());
+                            }
+                            return result;
                         }
-                        else
-                        {
-                            Log.Warning("ECUJob.getISTAResult()", "failed to evaluate query: {0}", resultName);
-                        }
-                        return getResult(resultName);
+                    }
+                    else
+                    {
+                        Log.Warning("ECUJob.getISTAResult()", "failed to evaluate query: {0}", resultName);
+                    }
+                    return getResult(resultName);
                 }
+                return getResult("JOB_STATUS");
             }
             catch (Exception exception)
             {
@@ -432,112 +430,110 @@ namespace PsdzClient.Core.Container
         {
             try
             {
-                switch (resultName)
+                if (!(resultName == "/Result/Status/JOB_STATUS"))
                 {
-                    case "/Result/Rows/$Count":
+                    if (resultName == "/Result/Rows/$Count")
+                    {
                         if (base.JobResultSets > 0)
                         {
                             return base.JobResultSets;
                         }
                         return 0;
-                    case "/Result/Status/JOB_STATUS":
-                        return getResult("JOB_STATUS");
-                    default:
-                        if (resultName.Contains('['))
+                    }
+                    if (resultName.Contains('['))
+                    {
+                        Match match = Regex.Match(resultName, "\\[\\d+\\]");
+                        if (match.Success)
                         {
-                            Match match = Regex.Match(resultName, "\\[\\d+\\]");
-                            if (match.Success)
+                            int num = Convert.ToInt32(match.Value.Replace("[", string.Empty).Replace("]", string.Empty));
+                            string[] array = Regex.Split(resultName, $"/Row\\[{num}\\]/");
+                            if (array.Length == 2)
                             {
-                                string text = match.Value.Replace("[", string.Empty);
-                                text = text.Replace("]", string.Empty);
-                                int num2 = Convert.ToInt32(text);
-                                string[] array = Regex.Split(resultName, $"/Row\\[{num2}\\]/");
-                                if (array.Length == 2)
-                                {
-                                    object result = getResult((ushort)(num2 + 1), array[1]);
-                                    if (result == null)
-                                    {
-                                        Log.Warning("ECUJob.getISTAResultAsType()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
-                                        return null;
-                                    }
-                                    if (result.GetType() != targetType)
-                                    {
-                                        string text2 = result.GetType().ToString();
-                                        string text3 = targetType.ToString();
-                                        Log.Info("ECUJob.getISTAResultAsType(string, Type)", "result: {0} obj type is {1} targetType is: {2}", resultName, text2, text3);
-                                    }
-                                    try
-                                    {
-                                        if (result.GetType() != targetType)
-                                        {
-                                            return Convert.ChangeType(result, targetType);
-                                        }
-                                    }
-                                    catch (Exception exception)
-                                    {
-                                        Log.WarningException("ECUJob.getISTAResultAsType()", exception);
-                                        string text4 = result.ToString();
-                                        if (!string.IsNullOrEmpty(text4))
-                                        {
-                                            string[] array2 = text4.Split(' ');
-                                            if (array2.Length != 0)
-                                            {
-                                                if (!(targetType == typeof(bool)))
-                                                {
-                                                    Log.Info("ECUJob.getISTAResultAsType()", "found multipart string; trying conversion with the first part");
-                                                    return Convert.ChangeType(array2[0], targetType);
-                                                }
-                                                if ("wahr".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "true".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "1".Equals(array2[0], StringComparison.OrdinalIgnoreCase))
-                                                {
-                                                    return true;
-                                                }
-                                                if ("unwahr".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "false".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "falsch".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "0".Equals(array2[0], StringComparison.OrdinalIgnoreCase))
-                                                {
-                                                    return false;
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if (result is string && Regex.Match(resultName, "STAT.*TEXT").Success)
-                                    {
-                                        Log.Warning("ECUJob.getISTAResultAsType()", "found STAT_*_TEXT string construct for result: {0}; force character conversion to enable bogus testmodules", resultName);
-                                        return FormatConverter.Ascii2UTF8(result);
-                                    }
-                                    return result;
-                                }
-                                Log.Warning("ECUJob.getISTAResultAsType()", "failed to separate result name from result path: {0}", resultName);
-                                return null;
-                            }
-                            Log.Warning("ECUJob.getISTAResultAsType()", "failed to evaluate query: {0}", resultName);
-                        }
-                        else if (resultName.StartsWith("/Result/Status/", StringComparison.Ordinal))
-                        {
-                            string text5 = resultName.Substring(15);
-                            if (!string.IsNullOrEmpty(text5))
-                            {
-                                object result2 = getResult(text5);
-                                if (result2 == null)
+                                object result = getResult((ushort)(num + 1), array[1]);
+                                if (result == null)
                                 {
                                     Log.Warning("ECUJob.getISTAResultAsType()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
                                     return null;
                                 }
-                                if (result2.GetType() != targetType)
+                                if (result.GetType() != targetType)
                                 {
-                                    Log.Info("ECUJob.getISTAResultAsType()", "result: {0} obj type is {1} targetType is: {2}", resultName, result2.GetType().ToString(), targetType.ToString());
+                                    string text = result.GetType().ToString();
+                                    string text2 = targetType.ToString();
+                                    Log.Info("ECUJob.getISTAResultAsType(string, Type)", "result: {0} obj type is {1} targetType is: {2}", resultName, text, text2);
                                 }
-                                if (result2.GetType() != targetType)
+                                try
                                 {
-                                    return Convert.ChangeType(result2, targetType);
+                                    if (result.GetType() != targetType)
+                                    {
+                                        return Convert.ChangeType(result, targetType);
+                                    }
                                 }
-                                return result2;
+                                catch (Exception exception)
+                                {
+                                    Log.WarningException("ECUJob.getISTAResultAsType()", exception);
+                                    string text3 = result.ToString();
+                                    if (!string.IsNullOrEmpty(text3))
+                                    {
+                                        string[] array2 = text3.Split(' ');
+                                        if (array2.Length != 0)
+                                        {
+                                            if (!(targetType == typeof(bool)))
+                                            {
+                                                Log.Info("ECUJob.getISTAResultAsType()", "found multipart string; trying conversion with the first part");
+                                                return Convert.ChangeType(array2[0], targetType);
+                                            }
+                                            if ("wahr".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "true".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "1".Equals(array2[0], StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                return true;
+                                            }
+                                            if ("unwahr".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "false".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "falsch".Equals(array2[0], StringComparison.OrdinalIgnoreCase) || "0".Equals(array2[0], StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (result is string && Regex.Match(resultName, "STAT.*TEXT").Success)
+                                {
+                                    Log.Warning("ECUJob.getISTAResultAsType()", "found STAT_*_TEXT string construct for result: {0}; force character conversion to enable bogus testmodules", resultName);
+                                    return FormatConverter.Ascii2UTF8(result);
+                                }
+                                return result;
                             }
+                            Log.Warning("ECUJob.getISTAResultAsType()", "failed to separate result name from result path: {0}", resultName);
+                            return null;
                         }
-                        else
+                        Log.Warning("ECUJob.getISTAResultAsType()", "failed to evaluate query: {0}", resultName);
+                    }
+                    else if (resultName.StartsWith("/Result/Status/", StringComparison.Ordinal))
+                    {
+                        string text4 = resultName.Substring(15);
+                        if (!string.IsNullOrEmpty(text4))
                         {
-                            Log.Warning("ECUJob.getISTAResultAsType()", "failed to evaluate query: {0}", resultName);
+                            object result2 = getResult(text4);
+                            if (result2 == null)
+                            {
+                                Log.Warning("ECUJob.getISTAResultAsType()", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
+                                return null;
+                            }
+                            if (result2.GetType() != targetType)
+                            {
+                                Log.Info("ECUJob.getISTAResultAsType()", "result: {0} obj type is {1} targetType is: {2}", resultName, result2.GetType().ToString(), targetType.ToString());
+                            }
+                            if (result2.GetType() != targetType)
+                            {
+                                return Convert.ChangeType(result2, targetType);
+                            }
+                            return result2;
                         }
-                        return getResult(resultName);
+                    }
+                    else
+                    {
+                        Log.Warning("ECUJob.getISTAResultAsType()", "failed to evaluate query: {0}", resultName);
+                    }
+                    return getResult(resultName);
                 }
+                return getResult("JOB_STATUS");
             }
             catch (Exception exception2)
             {
