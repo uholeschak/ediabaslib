@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -539,6 +540,104 @@ namespace PsdzClient.Core.Container
             return true;
         }
 
+        private bool CheckAuthentificationState(bool doip)
+        {
+            if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var _) && doip)
+            {
+                IEcuJob ecuJob = ApiJob("IPB_APP2", "STATUS_LESEN", "ARG;SEC4DIAG_READ_AUTH_MODE");
+                if (ecuJob.IsOkay())
+                {
+                    ecuJob.getuintResult("STAT_ROLL_MASK_WERT");
+                    ecuJob.getStringResult("AuthenticationReturnParameter_TEXT");
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void CreateEdiabasPublicKeyIfNotExist(IVciDevice device)
+        {
+            if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service) && service.CheckIfEdiabasPublicKeyExists())
+            {
+                return;
+            }
+            string reserved = string.Empty;
+            switch (device.VCIType)
+            {
+                case VCIDeviceType.ICOM:
+                    reserved = $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162};";
+                    break;
+                case VCIDeviceType.ENET:
+                    reserved = "RemoteHost=" + device.IPAddress;
+                    break;
+                case VCIDeviceType.PTT:
+                    reserved = "RPLUS:ICOM_P:remotehost=127.0.0.1;Port=6408";
+                    break;
+            }
+            if (ApiInitExt("ENET", "_", "Rheingold", reserved))
+            {
+                SetEcuPath(logging: false);
+                ApiJob("IPB_APP2", "IDENT", string.Empty, string.Empty);
+                while (api.apiState() == 0)
+                {
+                    SleepUtility.TaskDelay(200, "ECUKom.CreateEdiabasPubglickeyIfNotExist - IPB_APP2, IDENT").GetAwaiter().GetResult();
+                }
+                api.apiSetConfig("EDIABASUnload", "1");
+                api.apiEnd();
+            }
+        }
+
+        private bool HandleS29Authentication(IVciDevice device)
+        {
+            try
+            {
+                if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service) && ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out var service2))
+                {
+                    service.EdiabasPublicKey = service.GetPublicKeyFromEdiabas();
+                    string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
+                    string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
+                    if (string.IsNullOrEmpty(configString) || string.IsNullOrEmpty(configString2))
+                    {
+                        return RequestCaAndSubCACertificates(device, service, service2);
+                    }
+                    X509Certificate2Collection subCaCertificate = new X509Certificate2Collection();
+                    X509Certificate2Collection caCertificate = new X509Certificate2Collection();
+                    if (!service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate) || subCaCertificate.Count == 0 || caCertificate.Count == 0)
+                    {
+                        return RequestCaAndSubCACertificates(device, service, service2);
+                    }
+                    if (subCaCertificate.Count == 1 || caCertificate.Count == 1)
+                    {
+                        service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
+                        return true;
+                    }
+                    return false;
+                }
+                Log.Error("HandleS29Authentication", "ISec4DiagHandler or IBackendCallsWatchDog not found");
+                return false;
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException("HandleS29Authentication", exception);
+                return false;
+            }
+        }
+
+        private bool RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
+        {
+            if (ServiceLocator.Current.TryGetService<IDataContext>(out var service))
+            {
+                WebCallResponse<Sec4DiagResponseData> webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.Sec4Diag, service.AccessToken);
+                if (webCallResponse.IsSuccessful)
+                {
+                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0]);
+                    return true;
+                }
+                return false;
+            }
+            throw new InvalidOperationException("IDataContext service not found.");
+        }
+
         private bool InitEdiabasForDoIP(IVciDevice device)
         {
             if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
@@ -591,13 +690,13 @@ namespace PsdzClient.Core.Container
                 {
                     return eCUJob;
                 }
-                ushort num2 = 1;
-                while (num2 < retries && !eCUJob.IsDone())
+                ushort num = 1;
+                while (num < retries && !eCUJob.IsDone())
                 {
-                    Thread.Sleep(millisecondsTimeout);
-                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, jobName, num2);
+                    SleepUtility.ThreadSleep(millisecondsTimeout, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
+                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, jobName, num);
                     eCUJob = apiJob(ecu, jobName, param, resultFilter);
-                    num2 = (ushort)(num2 + 1);
+                    num++;
                 }
                 return eCUJob;
             }
@@ -691,7 +790,7 @@ namespace PsdzClient.Core.Container
                     {
                         return eCUJob;
                     }
-                    ECUJob obj2 = new ECUJob() //ECUJob(fastaprotocoller)
+                    ECUJob obj2 = new ECUJob()
                     {
                         EcuName = ecu,
                         JobName = jobName,
@@ -728,7 +827,7 @@ namespace PsdzClient.Core.Container
                     api.apiJob(ecu, jobName, param, resultFilter);
                     while (api.apiStateExt(1000) == 0)
                     {
-                        Thread.Sleep(2);
+                        SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
                     }
                     num = (eCUJob3.JobErrorCode = api.apiErrorCode());
                     eCUJob3.JobErrorText = api.apiErrorText();
@@ -994,7 +1093,7 @@ namespace PsdzClient.Core.Container
                     api.apiJobData(ecu, job, param, paramlen, resultFilter);
                     while (api.apiStateExt(1000) == 0)
                     {
-                        Thread.Sleep(2);
+                        SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecu + ", " + job + ", byte[]");
                     }
                     num = (eCUJob2.JobErrorCode = api.apiErrorCode());
                     eCUJob2.JobErrorText = api.apiErrorText();

@@ -136,6 +136,8 @@
     <Compile Include="Core\Fasta2Service.cs" />
     <Compile Include="Core\FFMResultRuleEvaluation.cs" />
     <Compile Include="Core\FormatConverterBase.cs" />
+    <Compile Include="Core\IBackendCallsWatchDog.cs" />
+    <Compile Include="Core\IDataContext.cs" />
     <Compile Include="Core\IEMotor.cs" />
     <Compile Include="Core\IFARuleEvaluation.cs" />
     <Compile Include="Core\IFasta2Service.cs" />
@@ -157,6 +159,8 @@
     <Compile Include="Core\IReactorVehicle.cs" />
     <Compile Include="Core\ISec4DiagCertificates.cs" />
     <Compile Include="Core\ISec4DiagHandler.cs" />
+    <Compile Include="Core\ISec4DiagProcessor.cs" />
+    <Compile Include="Core\ISec4DiagProcessorImpl.cs" />
     <Compile Include="Core\IServiceLocator.cs" />
     <Compile Include="Core\ITextContent.cs" />
     <Compile Include="Core\Container\NativeError.cs" />
@@ -232,6 +236,7 @@
     <Compile Include="Core\MultisourceProperties.cs" />
     <Compile Include="Core\NotExpression.cs" />
     <Compile Include="Core\ObservableCollectionEx.cs" />
+    <Compile Include="Core\OnlinePatchDownloadStatus.cs" />
     <Compile Include="Core\OrExpression.cs" />
     <Compile Include="Core\Container\ParameterContainer.cs" />
     <Compile Include="Core\Container\QuantityChoice.cs" />
@@ -245,13 +250,18 @@
     <Compile Include="Core\SaLaPaExpression.cs" />
     <Compile Include="Core\SALAPALocalizedEntry.cs" />
     <Compile Include="Core\Container\Sequence.cs" />
+    <Compile Include="Core\Sec4DiagProcessor.cs" />
+    <Compile Include="Core\Sec4DiagProcessorFactory.cs" />
+    <Compile Include="Core\Sec4DiagProcessorImplFactory.cs" />
     <Compile Include="Core\Sec4DiagRequestData.cs" />
+    <Compile Include="Core\Sec4DiagResponseData.cs" />
     <Compile Include="Core\ServiceCodes.cs" />
     <Compile Include="Core\ServiceLocator.cs" />
     <Compile Include="Core\SGBDBusLogisticsEntry.cs" />
     <Compile Include="Core\SiFaExpression.cs" />
     <Compile Include="Core\SingleAssignmentExpression.cs" />
     <Compile Include="Core\Container\SingleChoice.cs" />
+    <Compile Include="Core\SleepUtility.cs" />
     <Compile Include="Core\SpecialEcuCharacteristics.cs" />
     <Compile Include="Core\Container\StepConstraint.cs" />
     <Compile Include="Core\Container\StepRange.cs" />
@@ -289,6 +299,7 @@
     <Compile Include="Core\VehicleCharacteristicIdent.cs" />
     <Compile Include="Core\VehicleCharacteristicVCIDeviceHelper.cs" />
     <Compile Include="Core\VehicleCharacteristicVehicleHelper.cs" />
+    <Compile Include="Core\WebCallResponse.cs" />
     <Compile Include="Core\XGBMBusLogisticsEntry.cs" />
     <Compile Include="Core\XNodeExtension.cs" />
     <Compile Include="DataHolderItem.cs" />
