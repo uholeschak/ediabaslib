@@ -661,10 +661,6 @@ namespace PsdzClient.Core.Container
             //TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
             try
             {
-                if (!VehicleCommunication.validLicense)
-                {
-                    throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-                }
                 if (string.IsNullOrEmpty(ecu))
                 {
                     ECUJob obj = new ECUJob()
@@ -687,6 +683,36 @@ namespace PsdzClient.Core.Container
                 if (resultFilter == null)
                 {
                     resultFilter = string.Empty;
+                }
+                if (communicationMode == CommMode.Simulation)
+                {
+                    ECUJob eCUJob = ApiJobSim(ecu, jobName, param, resultFilter);
+                    if (eCUJob != null)
+                    {
+                        return eCUJob;
+                    }
+                    ECUJob obj2 = new ECUJob() //ECUJob(fastaprotocoller)
+                    {
+                        EcuName = ecu,
+                        JobName = jobName,
+                        JobParam = param,
+                        JobResultFilter = resultFilter,
+                        ExecutionStartTime = DateTime.Now
+                    };
+                    obj2.ExecutionEndTime = obj2.ExecutionStartTime;
+                    obj2.JobErrorCode = 19;
+                    obj2.JobErrorText = "IFH-0009: NO RESPONSE FROM CONTROLUNIT";
+                    obj2.JobResult = new List<ECUResult>();
+                    return obj2;
+                }
+                if (communicationMode == CommMode.CacheFirst && cacheAdding)
+                {
+                    lastJobExecution = DateTime.MinValue;
+                    ECUJob eCUJob2 = ApiJobSim(ecu, jobName, param, resultFilter);
+                    if (eCUJob2 != null && eCUJob2.JobErrorCode == 0 && eCUJob2.JobResult != null && eCUJob2.JobResult.Count > 0)
+                    {
+                        return eCUJob2;
+                    }
                 }
                 DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
                 int num = 0;
@@ -923,6 +949,35 @@ namespace PsdzClient.Core.Container
                 if (paramlen == -1)
                 {
                     paramlen = param.Length;
+                }
+                if (communicationMode == CommMode.Simulation)
+                {
+                    try
+                    {
+                        string param2 = FormatConverter.ByteArray2String(param, (uint)paramlen);
+                        ECUJob eCUJob = ApiJobSim(ecu, job, param2, resultFilter);
+                        if (eCUJob != null)
+                        {
+                            return eCUJob;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Warning("ECUKom.apiJobData()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - failed with exception: {4}", ecu, job, param, resultFilter, ex.ToString());
+                    }
+                    ECUJob obj2 = new ECUJob
+                    {
+                        EcuName = ecu,
+                        JobName = job,
+                        JobParam = FormatConverter.ByteArray2String(param, (uint)paramlen),
+                        JobResultFilter = resultFilter,
+                        ExecutionStartTime = DateTime.Now
+                    };
+                    obj2.ExecutionEndTime = obj2.ExecutionStartTime;
+                    obj2.JobErrorCode = 19;
+                    obj2.JobErrorText = "IFH-0009: NO RESPONSE FROM CONTROLUNIT";
+                    obj2.JobResult = new List<ECUResult>();
+                    return obj2;
                 }
                 DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
                 int num = 0;
@@ -1267,6 +1322,25 @@ namespace PsdzClient.Core.Container
             Log.Debug(VehicleCommunication.DebugLevel, 2, "ECUKom.GetJobFromCache()", "1st try: found job {0}/{1}/{2}/{3}/{4} at {5}", query.First().EcuName, query.First().JobName, query.First().JobParam, query.First().JobErrorCode, query.First().JobErrorText, query.First().ExecutionStartTime);
             CacheHitCounter++;
             return query.First();
+        }
+
+        private ECUJob ApiJobSim(string ecu, string job, string param, string result)
+        {
+            ECUJob eCUJob = null;
+            if (!FromFastaConfig)
+            {
+                Log.Info(Log.CurrentMethod(), "Retrieving ECU " + ecu + " job " + job + " from cache.");
+                eCUJob = GetJobFromCache(ecu, job, param, result);
+            }
+            if (eCUJob != null)
+            {
+                eCUJob.FASTARelevant = false;
+                foreach (ECUResult item in eCUJob.JobResult)
+                {
+                    item.FASTARelevant = false;
+                }
+            }
+            return eCUJob;
         }
 
         private DateTime GetLastExecutionTime(DateTime executionStartTime)
