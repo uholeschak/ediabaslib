@@ -173,6 +173,7 @@ namespace PsdzClient.Core.Container
         {
             try
             {
+                api.apiSetConfig("EDIABASUnload", "1");
                 api.apiEnd();
             }
             catch (Exception exception)
@@ -224,8 +225,8 @@ namespace PsdzClient.Core.Container
 
         public void SetLogLevelToMax()
         {
-            int configint = 5;
-            int configint2 = 32767;
+            int configint = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Level.Trace.Ediabas", 5);
+            int configint2 = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Trace.Ediabas.Size", 32767);
             api.apiSetConfig("ApiTrace", configint.ToString(CultureInfo.InvariantCulture));
             api.apiSetConfig("TraceSize", configint2.ToString(CultureInfo.InvariantCulture));
             isProblemHandlingTraceRunning = true;
@@ -255,7 +256,7 @@ namespace PsdzClient.Core.Container
         {
             try
             {
-                string pathString = "..\\..\\..\\Ecu\\";
+                string pathString = ConfigSettings.getPathString("BMW.Rheingold.VehicleCommunication.ECUKom.EcuPath", "..\\..\\..\\Ecu\\");
                 if (!string.IsNullOrEmpty(pathString))
                 {
                     string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -266,10 +267,18 @@ namespace PsdzClient.Core.Container
                     if (Path.IsPathRooted(pathString))
                     {
                         api.apiSetConfig("EcuPath", Path.GetFullPath(pathString));
+                        if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.VehicleCommunication.ECUKom.SetEcuPathSGCLIB", defaultValue: true))
+                        {
+                            Environment.SetEnvironmentVariable("SGCLIB_EDIABAS_ECU_PATH", Path.GetFullPath(pathString));
+                        }
                     }
                     else
                     {
                         api.apiSetConfig("EcuPath", Path.GetFullPath(Path.Combine(baseDirectory, pathString)));
+                        if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.VehicleCommunication.ECUKom.SetEcuPathSGCLIB", defaultValue: true))
+                        {
+                            Environment.SetEnvironmentVariable("SGCLIB_EDIABAS_ECU_PATH", Path.Combine(baseDirectory, pathString));
+                        }
                     }
                     api.apiGetConfig("EcuPath", out var cfgValue);
                     if (logging)
@@ -328,7 +337,7 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUKom.DeSerialize()", exception);
-                eCUKom = new ECUKom("Rheingold", ediabas);
+                eCUKom = new ECUKom("Rheingold");
             }
             VCIDevice vCIDevice = new VCIDevice(VCIDeviceType.SIM, "SIM", filename);
             vCIDevice.Serial = filename;
