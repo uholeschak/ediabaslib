@@ -33,11 +33,25 @@ namespace PsdzClient.Core.Container
 
         private const int DEFAULT_EDIABAS_TRACE_SIZE = 32767;
 
+        private const int _diagnosticPort = 50160;
+
+        private const int _controlPort = 50161;
+
+        private const int _portDoIP = 50162;
+
+        private const int _sslPort = 50163;
+
+        private const int _diagnosticPortW2V = 51560;
+
+        private const int _controlPortW2V = 51561;
+
+        private const int _portDoIPW2V = 51562;
+
         private ApiInternal api;
 
         private string _APP;
 
-        private CommMode communicationMode = CommMode.Normal;
+        private CommMode communicationMode;
 
         private bool isProblemHandlingTraceRunning;
 
@@ -49,7 +63,7 @@ namespace PsdzClient.Core.Container
 
         private Dictionary<string, List<ECUJob>> ecuJobDictionary = new Dictionary<string, List<ECUJob>>();
 
-        private bool m_FromFastaConfig = false;
+        private bool m_FromFastaConfig;
 
         public List<ECUJob> jobList = new List<ECUJob>();
 
