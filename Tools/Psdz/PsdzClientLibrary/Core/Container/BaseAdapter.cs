@@ -71,28 +71,28 @@ namespace PsdzClient.Core.Container
                     }
                     else if (literal.Item is decimal)
                     {
-                        decimal num2 = (decimal)literal.Item;
-                        NodePathList.setParameter(path, num2);
+                        decimal num = (decimal)literal.Item;
+                        NodePathList.setParameter(path, num);
                     }
                     else if (literal.Item is double)
                     {
-                        double num3 = (double)literal.Item;
-                        NodePathList.setParameter(path, num3);
+                        double num2 = (double)literal.Item;
+                        NodePathList.setParameter(path, num2);
                     }
                     else if (literal.Item is float)
                     {
-                        float num4 = (float)literal.Item;
-                        NodePathList.setParameter(path, num4);
+                        float num3 = (float)literal.Item;
+                        NodePathList.setParameter(path, num3);
                     }
                     else if (literal.Item is int)
                     {
-                        int num5 = (int)literal.Item;
-                        NodePathList.setParameter(path, num5);
+                        int num4 = (int)literal.Item;
+                        NodePathList.setParameter(path, num4);
                     }
                     else if (literal.Item is long)
                     {
-                        long num6 = (long)literal.Item;
-                        NodePathList.setParameter(path, num6);
+                        long num5 = (long)literal.Item;
+                        NodePathList.setParameter(path, num5);
                     }
                     else if (literal.Item is sbyte)
                     {
@@ -101,8 +101,8 @@ namespace PsdzClient.Core.Container
                     }
                     else if (literal.Item is short)
                     {
-                        short num7 = (short)literal.Item;
-                        NodePathList.setParameter(path, num7);
+                        short num6 = (short)literal.Item;
+                        NodePathList.setParameter(path, num6);
                     }
                     else if (literal.Item is Text)
                     {
@@ -116,18 +116,18 @@ namespace PsdzClient.Core.Container
                     }
                     else if (literal.Item is uint)
                     {
-                        uint num8 = (uint)literal.Item;
-                        NodePathList.setParameter(path, num8);
+                        uint num7 = (uint)literal.Item;
+                        NodePathList.setParameter(path, num7);
                     }
                     else if (literal.Item is ulong)
                     {
-                        ulong num9 = (ulong)literal.Item;
-                        NodePathList.setParameter(path, num9);
+                        ulong num8 = (ulong)literal.Item;
+                        NodePathList.setParameter(path, num8);
                     }
                     else if (literal.Item is ushort)
                     {
-                        ushort num10 = (ushort)literal.Item;
-                        NodePathList.setParameter(path, num10);
+                        ushort num9 = (ushort)literal.Item;
+                        NodePathList.setParameter(path, num9);
                     }
                     else if (literal.Item == null)
                     {
