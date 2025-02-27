@@ -938,6 +938,12 @@ namespace PsdzClient
             if (_programmingJobs.PsdzContext?.Connection == null)
             {
                 string convertResult = DetectVehicle.ConvertContainerXml(configurationContainerXml, runOverrideDict);
+                if (string.IsNullOrEmpty(convertResult))
+                {
+                    UpdateStatus(Resources.ContainerError);
+                    return;
+                }
+
                 UpdateStatus(convertResult);
                 return;
             }

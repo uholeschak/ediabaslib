@@ -61,6 +61,15 @@ namespace PsdzClient.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Container conversion failed. ähnelt.
+        /// </summary>
+        internal static string ContainerError {
+            get {
+                return ResourceManager.GetString("ContainerError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle not detected ähnelt.
         /// </summary>
         internal static string VehiceNotDetected {
