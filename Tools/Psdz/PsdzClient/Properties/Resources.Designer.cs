@@ -70,6 +70,15 @@ namespace PsdzClient.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No response ähnelt.
+        /// </summary>
+        internal static string NoResponse {
+            get {
+                return ResourceManager.GetString("NoResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle not detected ähnelt.
         /// </summary>
         internal static string VehiceNotDetected {

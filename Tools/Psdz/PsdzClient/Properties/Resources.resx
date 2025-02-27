@@ -120,6 +120,9 @@
   <data name="ContainerError" xml:space="preserve">
     <value>Container conversion failed.</value>
   </data>
+  <data name="NoResponse" xml:space="preserve">
+    <value>No response</value>
+  </data>
   <data name="VehiceNotDetected" xml:space="preserve">
     <value>Vehicle not detected</value>
   </data>

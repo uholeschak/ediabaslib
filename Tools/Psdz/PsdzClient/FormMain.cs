@@ -964,6 +964,10 @@ namespace PsdzClient
                     {
                         sb.AppendLine(task.Result);
                     }
+                    else
+                    {
+                        sb.AppendLine(Resources.NoResponse);
+                    }
 
                     UpdateStatus(sb.ToString());
                 }));
