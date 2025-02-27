@@ -12,6 +12,12 @@ namespace PsdzClient.Core.Container
 
         bool IsProblemHandlingTraceRunning { get; }
 
+        string VciIpAddress { get; }
+
+        VCIDeviceType VCIDeviceType { get; }
+
+        new IEcuJob ExecuteJobOverEnetActivateDHCP(string icomAddress, string ecu, string job, string param, bool isDoIP, string resultFilter = "", int retries = 0);
+
         IEcuJob ApiJob(string ecu, string job, string param, string resultFilter, bool cacheAdding);
 
         IEcuJob DefaultApiJob(string ecu, string job, string param, string resultFilter);

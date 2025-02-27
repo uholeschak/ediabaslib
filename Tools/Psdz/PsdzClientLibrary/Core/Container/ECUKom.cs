@@ -145,6 +145,10 @@ namespace PsdzClient.Core.Container
 
         public bool IsProblemHandlingTraceRunning => isProblemHandlingTraceRunning;
 
+        public string VciIpAddress => VCI?.IPAddress;
+
+        public VCIDeviceType VCIDeviceType => VCI.VCIType;
+
         public IEcuJob DefaultApiJob(string ecu, string job, string param, string resultFilter)
         {
             return apiJob(ecu, job, param, resultFilter);
