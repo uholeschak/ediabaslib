@@ -91,6 +91,8 @@
     <Compile Include="Contracts\ITransmissionDataType.cs" />
     <Compile Include="Core\BaseFormatedData.cs" />
     <Compile Include="Core\ConfigSettings.cs" />
+    <Compile Include="Core\ConfigSettingsRuleEvaluation.cs" />
+    <Compile Include="Core\ConfigSettingsRuleEvaluationFactory.cs" />
     <Compile Include="Core\ConfigValue.cs" />
     <Compile Include="Core\Container\ABranch.cs" />
     <Compile Include="Core\Container\AChoice.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="Core\FFMResultRuleEvaluation.cs" />
     <Compile Include="Core\FormatConverterBase.cs" />
     <Compile Include="Core\IBackendCallsWatchDog.cs" />
+    <Compile Include="Core\IConfigSettingsRuleEvaluation.cs" />
     <Compile Include="Core\IDataContext.cs" />
     <Compile Include="Core\IEMotor.cs" />
     <Compile Include="Core\IFARuleEvaluation.cs" />
@@ -157,6 +160,7 @@
     <Compile Include="Core\IProgressMonitor.cs" />
     <Compile Include="Core\IReactorFa.cs" />
     <Compile Include="Core\IReactorVehicle.cs" />
+    <Compile Include="Core\IRuleEvaluationServices.cs" />
     <Compile Include="Core\ISec4DiagCertificates.cs" />
     <Compile Include="Core\ISec4DiagHandler.cs" />
     <Compile Include="Core\ISec4DiagProcessor.cs" />
@@ -227,6 +231,7 @@
     <Compile Include="Core\Localization.cs" />
     <Compile Include="Core\LocalizedText.cs" />
     <Compile Include="Core\Log.cs" />
+    <Compile Include="Core\LoggerRuleEvaluationFactory.cs" />
     <Compile Include="Core\LogValue.cs" />
     <Compile Include="Core\ManufactoringDateExpression.cs" />
     <Compile Include="Core\Container\MultipleChoice.cs" />
@@ -246,6 +251,7 @@
     <Compile Include="Core\PropertyData.cs" />
     <Compile Include="Core\Reactor.cs" />
     <Compile Include="Core\ReactorEngine.cs" />
+    <Compile Include="Core\RuleEvaluationServices.cs" />
     <Compile Include="Core\RuleExpression.cs" />
     <Compile Include="Core\SaLaPaExpression.cs" />
     <Compile Include="Core\SALAPALocalizedEntry.cs" />
