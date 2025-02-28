@@ -627,10 +627,10 @@ namespace PsdzClient.Programming
 
             ClientContext clientContext = ClientContext.GetClientContext(VecInfo);
             SetFa(programmingService);
-            CharacteristicExpression.EnumBrand brand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
+            UiBrand brand = UiBrand.BMWBMWiMINI;
             if (VecInfo.IsMotorcycle())
             {
-                brand = CharacteristicExpression.EnumBrand.BMWMotorrad;
+                brand = UiBrand.BMWMotorrad;
             }
 
             if (clientContext != null)

@@ -14,33 +14,6 @@ namespace PsdzClient.Core
 	[Serializable]
 	public class CharacteristicExpression : RuleExpression
 	{
-        [DataContract]
-        public enum EnumBrand
-        {
-            [DataMember]
-            BMWBMWiMINI,
-            [DataMember]
-            BMWBMWi,
-            [DataMember]
-            BMWiMINI,
-            [DataMember]
-            BMWMINI,
-            [DataMember]
-            BMWPKW,
-            [DataMember]
-            Mini,
-            [DataMember]
-            RollsRoyce,
-            [DataMember]
-            BMWMotorrad,
-            [DataMember]
-            BMWi,
-            [DataMember]
-            TOYOTA,
-            [DataMember]
-            Unknown
-        }
-
         public CharacteristicExpression(long dataclassId, long datavalueId, Vehicle vec)
 		{
 			this.dataclassId = dataclassId;
@@ -124,34 +97,34 @@ namespace PsdzClient.Core
                     default:
                         text = "-";
                         break;
-                    case EnumBrand.BMWBMWiMINI:
+                    case UiBrand.BMWBMWiMINI:
                         text = "BMW/BMW I/MINI";
                         break;
-                    case EnumBrand.BMWBMWi:
+                    case UiBrand.BMWBMWi:
                         text = "BMW/BMW I";
                         break;
-                    case EnumBrand.BMWiMINI:
+                    case UiBrand.BMWiMINI:
                         text = "BMW I/MINI";
                         break;
-                    case EnumBrand.BMWMINI:
+                    case UiBrand.BMWMINI:
                         text = "BMW/MINI";
                         break;
-                    case EnumBrand.BMWPKW:
+                    case UiBrand.BMWPKW:
                         text = "BMW PKW";
                         break;
-                    case EnumBrand.Mini:
+                    case UiBrand.Mini:
                         text = "MINI PKW";
                         break;
-                    case EnumBrand.RollsRoyce:
+                    case UiBrand.RollsRoyce:
                         text = "ROLLS-ROYCE PKW";
                         break;
-                    case EnumBrand.BMWMotorrad:
+                    case UiBrand.BMWMotorrad:
                         text = "BMW MOTORRAD";
                         break;
-                    case EnumBrand.BMWi:
+                    case UiBrand.BMWi:
                         text = "BMW I";
                         break;
-                    case EnumBrand.TOYOTA:
+                    case UiBrand.TOYOTA:
                         text = "TOYOTA";
                         break;
                 }
@@ -174,19 +147,18 @@ namespace PsdzClient.Core
 
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
 		{
-			long num;
-			if (!baseConfiguration.Characteristics.TryGetValue(this.dataclassId, out num))
-			{
-				return EEvaluationResult.MISSING_CHARACTERISTIC;
-			}
-			if (num == this.datavalueId)
-			{
-				return EEvaluationResult.VALID;
-			}
-			return EEvaluationResult.INVALID;
+            if (baseConfiguration.Characteristics.TryGetValue(dataclassId, out var value))
+            {
+                if (value == datavalueId)
+                {
+                    return EEvaluationResult.VALID;
+                }
+                return EEvaluationResult.INVALID;
+            }
+            return EEvaluationResult.MISSING_CHARACTERISTIC;
 		}
 
-		public override long GetExpressionCount()
+        public override long GetExpressionCount()
 		{
 			return 1L;
 		}
@@ -262,7 +234,33 @@ namespace PsdzClient.Core
 			return ClientContext.GetDatabase(this.vecInfo)?.LookupVehicleCharDeDeById(this.datavalueId.ToString(CultureInfo.InvariantCulture));
 		}
 
-		private readonly long dataclassId;
+        private string GetBrandNameAsString(BrandName brand)
+        {
+            switch (brand)
+            {
+                case BrandName.BMWPKW:
+                    return "BMW PKW";
+                case BrandName.MINIPKW:
+                    return "MINI PKW";
+                case BrandName.ROLLSROYCEPKW:
+                    return "ROLLS-ROYCE PKW";
+                case BrandName.BMWMOTORRAD:
+                    return "BMW MOTORRAD";
+                case BrandName.BMWMGmbHPKW:
+                    return "BMW M GmbH PKW";
+                case BrandName.BMWUSAPKW:
+                    return "BMW USA PKW";
+                case BrandName.BMWi:
+                    return "BMW i";
+                case BrandName.TOYOTA:
+                    return BrandName.TOYOTA.ToString();
+                default:
+                    Log.Warning(Log.CurrentMethod(), $"Unknown vehicle brand: {brand}");
+                    return string.Empty;
+            }
+        }
+
+        private readonly long dataclassId;
 
 		private readonly long datavalueId;
 

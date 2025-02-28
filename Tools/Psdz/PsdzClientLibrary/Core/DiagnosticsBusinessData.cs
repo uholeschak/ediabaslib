@@ -612,7 +612,7 @@ namespace PsdzClient.Core
 
         public void SetSp2021Enabled(IVehicle vecInfo)
         {
-            if (string.IsNullOrEmpty(vecInfo.Produktlinie) && ClientContext.GetBrand((Vehicle) vecInfo) == CharacteristicExpression.EnumBrand.BMWMotorrad)
+            if (string.IsNullOrEmpty(vecInfo.Produktlinie) && ClientContext.GetBrand((Vehicle) vecInfo) == UiBrand.BMWMotorrad)
             {
                 vecInfo.Produktlinie = "-";
             }

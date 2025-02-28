@@ -10,6 +10,7 @@ namespace PsdzClientLibrary.Core
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
+    using System.Runtime.Serialization;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -46,6 +47,33 @@ namespace PsdzClientLibrary.Core
         XPS,
         PDF,
         ALL
+    }
+
+    [DataContract]
+    public enum UiBrand
+    {
+        [DataMember]
+        BMWBMWiMINI,
+        [DataMember]
+        BMWBMWi,
+        [DataMember]
+        BMWiMINI,
+        [DataMember]
+        BMWMINI,
+        [DataMember]
+        BMWPKW,
+        [DataMember]
+        Mini,
+        [DataMember]
+        RollsRoyce,
+        [DataMember]
+        BMWMotorrad,
+        [DataMember]
+        BMWi,
+        [DataMember]
+        TOYOTA,
+        [DataMember]
+        Unknown
     }
 
     public class ConfigSettings
@@ -191,7 +219,7 @@ namespace PsdzClientLibrary.Core
 
         public static bool IsISTAModeTS => OperationalMode == OperationalMode.TELESERVICE;
 
-        public static CharacteristicExpression.EnumBrand SelectedBrand
+        public static UiBrand SelectedBrand
         {
             get
             {
@@ -202,12 +230,12 @@ namespace PsdzClientLibrary.Core
                 }
 #endif
                 string configString = getConfigString("TesterGUI.SelectedBrand", "");
-                if (Enum.TryParse<CharacteristicExpression.EnumBrand>(configString, ignoreCase: true, out var result))
+                if (Enum.TryParse<UiBrand>(configString, ignoreCase: true, out var result))
                 {
                     return result;
                 }
                 Log.Error("ConfigSettings.get_SelectedBrand()", "Unknown selected Brand '{0}'!", configString);
-                return CharacteristicExpression.EnumBrand.Unknown;
+                return UiBrand.Unknown;
             }
         }
 

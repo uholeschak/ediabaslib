@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using log4net;
 using PsdzClient.Core;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient
 {
@@ -16,7 +17,7 @@ namespace PsdzClient
         private bool _disposed;
 
         public PsdzDatabase Database { get; set; }
-        public CharacteristicExpression.EnumBrand SelectedBrand { get; set; }
+        public UiBrand SelectedBrand { get; set; }
         public string OutletCountry { get; set; }
         public string Language { get; set; }
         public bool ProtectionVehicleService { get; set; }
@@ -47,7 +48,7 @@ namespace PsdzClient
         public ClientContext()
         {
             Database = null;
-            SelectedBrand = CharacteristicExpression.EnumBrand.BMWBMWiMINI;
+            SelectedBrand = UiBrand.BMWBMWiMINI;
             OutletCountry = string.Empty;
             Language = "En";
             ProtectionVehicleService = true;
@@ -94,13 +95,13 @@ namespace PsdzClient
             return clientContext.Database;
         }
 
-        public static CharacteristicExpression.EnumBrand GetBrand(Vehicle vehicle)
+        public static UiBrand GetBrand(Vehicle vehicle)
         {
             ClientContext clientContext = GetClientContext(vehicle);
             if (clientContext == null)
             {
                 log.ErrorFormat("GetBrand ClientContext is null");
-                return CharacteristicExpression.EnumBrand.BMWBMWiMINI;
+                return UiBrand.BMWBMWiMINI;
             }
 
             return clientContext.SelectedBrand;
