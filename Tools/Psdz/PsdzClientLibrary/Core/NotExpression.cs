@@ -33,14 +33,14 @@ namespace PsdzClient.Core
 			return new NotExpression(RuleExpression.Deserialize(ms, vec));
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
 		{
 			if (vec == null)
 			{
 				return false;
 			}
 			internalResult.RuleExpression = this;
-			return !RuleExpression.Evaluate(vec, this.operand, ffmResolver, ruleEvaluationServices, internalResult);
+			return !RuleExpression.Evaluate(vec, this.operand, ffmResolver, ruleEvaluationUtils, internalResult);
 		}
 
 		public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)

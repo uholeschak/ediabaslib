@@ -21,7 +21,7 @@ namespace PsdzClient.Core
 			this.value = ecuCliqueId;
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
 		{
 			bool flag = false;
 			PsdzDatabase database = ClientContext.GetDatabase(vec);

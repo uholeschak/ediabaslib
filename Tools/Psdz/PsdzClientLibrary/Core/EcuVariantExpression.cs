@@ -42,7 +42,7 @@ namespace PsdzClient.Core
 			}
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             this.vecInfo = vec;
             PsdzDatabase database = ClientContext.GetDatabase(this.vecInfo);

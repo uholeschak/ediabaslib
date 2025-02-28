@@ -64,13 +64,13 @@ namespace PsdzClient.Core
 			this.operands = array;
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
 		{
 			bool flag = false;
 			internalResult.RuleExpression = this;
 			foreach (RuleExpression ruleExpression in this.operands)
 			{
-				flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationServices, internalResult);
+				flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
 			}
 			return flag;
 		}

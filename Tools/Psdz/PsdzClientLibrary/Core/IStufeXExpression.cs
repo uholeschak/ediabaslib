@@ -31,7 +31,7 @@ namespace PsdzClient.Core
 			return new IStufeXExpression(ecompareOperator, ilevelid, levelyType, vec);
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
 		{
 			if (vec == null)
 			{
