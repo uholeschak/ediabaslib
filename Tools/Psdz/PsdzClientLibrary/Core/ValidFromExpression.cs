@@ -18,7 +18,7 @@ namespace PsdzClient.Core
             this.value = date.ToBinary();
         }
 
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             bool flag = true;
             flag = ((DateTime.Now >= DateTime.FromBinary(value)) ? true : false);

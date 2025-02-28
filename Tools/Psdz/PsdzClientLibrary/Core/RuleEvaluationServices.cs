@@ -1,9 +1,20 @@
-﻿namespace PsdzClientLibrary.Core
+﻿using PsdzClient;
+using PsdzClient.Core;
+
+namespace PsdzClientLibrary.Core
 {
     public class RuleEvaluationServices : IRuleEvaluationServices
     {
-        public ILogger Logger => LoggerRuleEvaluationFactory.Create();
+        public Vehicle Vec { get; }
 
-        public IConfigSettingsRuleEvaluation ConfigSettings => ConfigSettingsRuleEvaluationFactory.Create();
+        public IConfigSettingsRuleEvaluation ConfigSettings { get; }
+
+        public RuleEvaluationServices(Vehicle vec)
+        {
+            this.Vec = vec;
+            ConfigSettings = new ConfigSettingsRuleEvaluation(ClientContext.GetBrand(vec));
+        }
+
+        public ILogger Logger => LoggerRuleEvaluationFactory.Create();
     }
 }

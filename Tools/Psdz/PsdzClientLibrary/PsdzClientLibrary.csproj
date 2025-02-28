@@ -92,7 +92,6 @@
     <Compile Include="Core\BaseFormatedData.cs" />
     <Compile Include="Core\ConfigSettings.cs" />
     <Compile Include="Core\ConfigSettingsRuleEvaluation.cs" />
-    <Compile Include="Core\ConfigSettingsRuleEvaluationFactory.cs" />
     <Compile Include="Core\ConfigValue.cs" />
     <Compile Include="Core\Container\ABranch.cs" />
     <Compile Include="Core\Container\AChoice.cs" />

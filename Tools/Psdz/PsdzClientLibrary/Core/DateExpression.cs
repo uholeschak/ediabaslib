@@ -27,7 +27,7 @@ namespace PsdzClient.Core
 			return new DateExpression(ecompareOperator, num);
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
 		{
 			if (vec == null)
 			{

@@ -81,7 +81,7 @@ namespace PsdzClient.Core
 			return new CharacteristicExpression(num, num2, vec);
 		}
 
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             string value = null;
             bool flag;

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -63,13 +64,13 @@ namespace PsdzClient.Core
 			this.operands = array;
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
 		{
 			bool flag = false;
 			internalResult.RuleExpression = this;
 			foreach (RuleExpression ruleExpression in this.operands)
 			{
-				flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, internalResult);
+				flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationServices, internalResult);
 			}
 			return flag;
 		}

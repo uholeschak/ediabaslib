@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
@@ -32,14 +33,14 @@ namespace PsdzClient.Core
 			return new NotExpression(RuleExpression.Deserialize(ms, vec));
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
 		{
 			if (vec == null)
 			{
 				return false;
 			}
 			internalResult.RuleExpression = this;
-			return !RuleExpression.Evaluate(vec, this.operand, ffmResolver, internalResult);
+			return !RuleExpression.Evaluate(vec, this.operand, ffmResolver, ruleEvaluationServices, internalResult);
 		}
 
 		public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)
