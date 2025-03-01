@@ -81,67 +81,33 @@ namespace PsdzClient.Core
 			return new CharacteristicExpression(num, num2, vec);
 		}
 
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
+            logger = ruleEvaluationServices.Logger;
             string value = null;
             bool flag;
-            if (vec != null && vec.VCI != null && vec.VCI.VCIType != VCIDeviceType.UNKNOWN)
+            if (vec == null || vec.VCI == null || vec.VCI.VCIType == VCIDeviceType.UNKNOWN)
             {
-                flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult, vec);
-            }
-            else if (CharacteristicRoot.Equals("Marke"))
-            {
-                string text;
-                switch (ClientContext.GetBrand(vec))
+                if (CharacteristicRoot.Equals("Marke"))
                 {
-                    default:
-                        text = "-";
-                        break;
-                    case UiBrand.BMWBMWiMINI:
-                        text = "BMW/BMW I/MINI";
-                        break;
-                    case UiBrand.BMWBMWi:
-                        text = "BMW/BMW I";
-                        break;
-                    case UiBrand.BMWiMINI:
-                        text = "BMW I/MINI";
-                        break;
-                    case UiBrand.BMWMINI:
-                        text = "BMW/MINI";
-                        break;
-                    case UiBrand.BMWPKW:
-                        text = "BMW PKW";
-                        break;
-                    case UiBrand.Mini:
-                        text = "MINI PKW";
-                        break;
-                    case UiBrand.RollsRoyce:
-                        text = "ROLLS-ROYCE PKW";
-                        break;
-                    case UiBrand.BMWMotorrad:
-                        text = "BMW MOTORRAD";
-                        break;
-                    case UiBrand.BMWi:
-                        text = "BMW I";
-                        break;
-                    case UiBrand.TOYOTA:
-                        text = "TOYOTA";
-                        break;
+                    return ruleEvaluationServices.ConfigSettings.SelectedBrand.Any((BrandName b) => string.Equals(GetBrandNameAsString(b), CharacteristicValue, StringComparison.InvariantCultureIgnoreCase));
                 }
-                value = text;
-                flag = string.Compare(text, CharacteristicValue, StringComparison.OrdinalIgnoreCase) == 0 || ((CharacteristicValue == "MINI PKW" || CharacteristicValue == "BMW PKW") && string.Compare(text, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0) || (CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) && string.Compare(text, "BMW/MINI", StringComparison.OrdinalIgnoreCase) == 0) || ((CharacteristicValue == "MINI PKW" || CharacteristicValue == "BMW PKW" || CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase)) && string.Compare(text, "BMW/BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0) || ((CharacteristicValue == "BMW PKW" || CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase)) && string.Compare(text, "BMW/BMW I", StringComparison.OrdinalIgnoreCase) == 0) || (((CharacteristicValue.Equals("BMW I", StringComparison.OrdinalIgnoreCase) || CharacteristicValue == "MINI PKW") && string.Compare(text, "BMW I/MINI", StringComparison.OrdinalIgnoreCase) == 0) ? true : false);
-            }
-            else if (!"Sicherheitsrelevant".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase) && !"Sicherheitsfahrzeug".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase))
-            {
-                Log.Warning("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer true", CharacteristicRoot);
-                flag = true;
+                if ("Sicherheitsrelevant".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase) || "Sicherheitsfahrzeug".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase))
+                {
+                    ruleEvaluationServices.Logger.Info("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer false for 'Sicherheitsrelevant'", CharacteristicRoot);
+                    flag = false;
+                }
+                else
+                {
+                    ruleEvaluationServices.Logger.Warning("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer true", CharacteristicRoot);
+                    flag = true;
+                }
             }
             else
             {
-                Log.Info("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer false for 'Sicherheitsrelevant'", CharacteristicRoot);
-                flag = false;
+                flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult, vec);
             }
-            Log.Debug("CharacteristicExpression.Evaluate()", "rule: {0}={1} result: {2} (session context: {3}) [original rule: {4}={5}]", CharacteristicRoot, CharacteristicValue, flag, value, dataclassId, datavalueId);
+            ruleEvaluationServices.Logger.Debug("CharacteristicExpression.Evaluate()", "rule: {0}={1} result: {2} (session context: {3}) [original rule: {4}={5}]", CharacteristicRoot, CharacteristicValue, flag, value, dataclassId, datavalueId);
             return flag;
         }
 
@@ -255,7 +221,7 @@ namespace PsdzClient.Core
                 case BrandName.TOYOTA:
                     return BrandName.TOYOTA.ToString();
                 default:
-                    Log.Warning(Log.CurrentMethod(), $"Unknown vehicle brand: {brand}");
+                    logger?.Warning(logger.CurrentMethod(), $"Unknown vehicle brand: {brand}");
                     return string.Empty;
             }
         }
@@ -267,6 +233,8 @@ namespace PsdzClient.Core
 		private string characteristicRoot;
 
 		private string characteristicValue;
+
+        private ILogger logger;
 
         private Vehicle vecInfo;
     }
