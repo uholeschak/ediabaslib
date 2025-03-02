@@ -192,6 +192,7 @@ namespace PsdzClientLibrary.Core
 
         public static string IstaGuiLogFullName { get; set; }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         public static OperationalMode OperationalMode
         {
             get
@@ -220,6 +221,7 @@ namespace PsdzClientLibrary.Core
         public static bool IsISTAModeHO => OperationalMode == OperationalMode.ISTA;
 
         public static bool IsISTAModeTS => OperationalMode == OperationalMode.TELESERVICE;
+#pragma warning restore CS0618 // Type or member is obsolete
 
         public static UiBrand SelectedBrand
         {
