@@ -13,60 +13,61 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-	class ObjectBuilderServiceClient : PsdzClientBase<IObjectBuilderService>, IObjectBuilderService
-	{
-		public ObjectBuilderServiceClient(Binding binding, EndpointAddress remoteAddress) : base(binding, remoteAddress)
-		{
-		}
+    internal class ObjectBuilderServiceClient : PsdzClientBase<IObjectBuilderService>, IObjectBuilderService
+    {
+        public ObjectBuilderServiceClient(Binding binding, EndpointAddress remoteAddress)
+            : base(binding, remoteAddress)
+        {
+        }
 
-		public IPsdzTalFilter BuildEmptyTalFilter()
-		{
-			return base.CallFunction<IPsdzTalFilter>((IObjectBuilderService service) => service.BuildEmptyTalFilter());
-		}
+        public IPsdzTalFilter BuildEmptyTalFilter()
+        {
+            return CallFunction((IObjectBuilderService service) => service.BuildEmptyTalFilter());
+        }
 
-		public IPsdzFa BuildFa(IPsdzFa faInput)
-		{
-			return base.CallFunction<IPsdzFa>((IObjectBuilderService service) => service.BuildFa(faInput));
-		}
+        public IPsdzFa BuildFa(IPsdzFa faInput)
+        {
+            return CallFunction((IObjectBuilderService service) => service.BuildFa(faInput));
+        }
 
-		public IPsdzFa BuildFaFromXml(string xml)
-		{
-			return base.CallFunction<IPsdzFa>((IObjectBuilderService service) => service.BuildFaFromXml(xml));
-		}
+        public IPsdzFa BuildFaFromXml(string xml)
+        {
+            return CallFunction((IObjectBuilderService service) => service.BuildFaFromXml(xml));
+        }
 
-		public IPsdzSwtAction BuildSwtActionFromXml(string xml)
-		{
-			return base.CallFunction<IPsdzSwtAction>((IObjectBuilderService service) => service.BuildSwtActionFromXml(xml));
-		}
+        public IPsdzSwtAction BuildSwtActionFromXml(string xml)
+        {
+            return CallFunction((IObjectBuilderService service) => service.BuildSwtActionFromXml(xml));
+        }
 
-		public IPsdzTal BuildTalFromXml(string xml)
-		{
-			return base.CallFunction<IPsdzTal>((IObjectBuilderService service) => service.BuildTalFromXml(xml));
-		}
+        public IPsdzTal BuildTalFromXml(string xml)
+        {
+            return CallFunction((IObjectBuilderService service) => service.BuildTalFromXml(xml));
+        }
 
-		public IPsdzTal BuildEmptyTal()
-		{
-			return base.CallFunction<IPsdzTal>((IObjectBuilderService service) => service.BuildEmptyTal());
-		}
+        public IPsdzTal BuildEmptyTal()
+        {
+            return CallFunction((IObjectBuilderService service) => service.BuildEmptyTal());
+        }
 
-		public IPsdzTalFilter DefineFilterForAllEcus(PsdzTaCategories[] psdzTaCategories, PsdzTalFilterAction talFilterAction, IPsdzTalFilter filter)
-		{
-			return base.CallFunction<IPsdzTalFilter>((IObjectBuilderService service) => service.DefineFilterForAllEcus(psdzTaCategories, talFilterAction, filter));
-		}
+        public IPsdzTalFilter DefineFilterForAllEcus(PsdzTaCategories[] psdzTaCategories, PsdzTalFilterAction talFilterAction, IPsdzTalFilter filter)
+        {
+            return CallFunction((IObjectBuilderService service) => service.DefineFilterForAllEcus(psdzTaCategories, talFilterAction, filter));
+        }
 
-		public IPsdzTalFilter DefineFilterForSelectedEcus(PsdzTaCategories[] psdzTaCategories, int[] diagAddress, PsdzTalFilterAction talFilterAction, IPsdzTalFilter filter)
-		{
-			return base.CallFunction<IPsdzTalFilter>((IObjectBuilderService service) => service.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, filter));
-		}
+        public IPsdzTalFilter DefineFilterForSelectedEcus(PsdzTaCategories[] psdzTaCategories, int[] diagAddress, PsdzTalFilterAction talFilterAction, IPsdzTalFilter filter, IDictionary<string, PsdzTalFilterAction> smacFilter = null)
+        {
+            return CallFunction((IObjectBuilderService service) => service.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, filter, smacFilter));
+        }
 
-		public IPsdzTal SetPreferredFlashProtocol(IPsdzTal tal, IPsdzEcuIdentifier ecu, PsdzProtocol psdzProtocol)
-		{
-			return base.CallFunction<IPsdzTal>((IObjectBuilderService service) => service.SetPreferredFlashProtocol(tal, ecu, psdzProtocol));
-		}
+        public IPsdzTal SetPreferredFlashProtocol(IPsdzTal tal, IPsdzEcuIdentifier ecu, PsdzProtocol psdzProtocol)
+        {
+            return CallFunction((IObjectBuilderService service) => service.SetPreferredFlashProtocol(tal, ecu, psdzProtocol));
+        }
 
-		public IPsdzTal UpdateTalEcus(IPsdzTal psdzTal, IEnumerable<IPsdzEcuIdentifier> installedEcuListIst, IEnumerable<IPsdzEcuIdentifier> installedEcuListSoll)
-		{
-			return base.CallFunction<IPsdzTal>((IObjectBuilderService service) => service.UpdateTalEcus(psdzTal, installedEcuListIst, installedEcuListSoll));
-		}
-	}
+        public IPsdzTal UpdateTalEcus(IPsdzTal psdzTal, IEnumerable<IPsdzEcuIdentifier> installedEcuListIst, IEnumerable<IPsdzEcuIdentifier> installedEcuListSoll)
+        {
+            return CallFunction((IObjectBuilderService service) => service.UpdateTalEcus(psdzTal, installedEcuListIst, installedEcuListSoll));
+        }
+    }
 }

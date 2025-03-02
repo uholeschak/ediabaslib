@@ -12,54 +12,54 @@ using BMW.Rheingold.Psdz.Model.Tal;
 
 namespace BMW.Rheingold.Psdz
 {
-	[ServiceKnownType(typeof(PsdzSwtAction))]
-	[ServiceKnownType(typeof(PsdzEcuIdentifier))]
-	[ServiceContract(SessionMode = SessionMode.Required)]
-	[ServiceKnownType(typeof(PsdzTal))]
-	[ServiceKnownType(typeof(PsdzConnection))]
-	[ServiceKnownType(typeof(PsdzSwtApplicationId))]
-	[ServiceKnownType(typeof(PsdzSvt))]
-	[ServiceKnownType(typeof(PsdzAsamJobInputDictionary))]
-	public interface IProgrammingService
-	{
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IEnumerable<IPsdzEcuIdentifier> CheckProgrammingCounter(IPsdzConnection connection, IPsdzTal tal);
+    [ServiceContract(SessionMode = SessionMode.Required)]
+    [ServiceKnownType(typeof(PsdzConnection))]
+    [ServiceKnownType(typeof(PsdzSwtAction))]
+    [ServiceKnownType(typeof(PsdzEcuIdentifier))]
+    [ServiceKnownType(typeof(PsdzTal))]
+    [ServiceKnownType(typeof(PsdzSvt))]
+    [ServiceKnownType(typeof(PsdzSwtApplicationId))]
+    [ServiceKnownType(typeof(PsdzAsamJobInputDictionary))]
+    public interface IProgrammingService
+    {
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzEcuIdentifier> CheckProgrammingCounter(IPsdzConnection connection, IPsdzTal tal);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		bool DisableFsc(IPsdzConnection connection, IPsdzEcuIdentifier ecuIdentifier, IPsdzSwtApplicationId swtApplicationId);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        bool DisableFsc(IPsdzConnection connection, IPsdzEcuIdentifier ecuIdentifier, IPsdzSwtApplicationId swtApplicationId);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IDictionary<string, object> ExecuteAsamJob(IPsdzConnection connection, IPsdzEcuIdentifier ecuIdentifier, string jobId, IPsdzAsamJobInputDictionary inputDictionary);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IDictionary<string, object> ExecuteAsamJob(IPsdzConnection connection, IPsdzEcuIdentifier ecuIdentifier, string jobId, IPsdzAsamJobInputDictionary inputDictionary);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		long GetExecutionTimeEstimate(IPsdzConnection connection, IPsdzTal tal, bool isParallel);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        long GetExecutionTimeEstimate(IPsdzConnection connection, IPsdzTal tal, bool isParallel);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		byte[] GetFsc(IPsdzConnection connection, IPsdzEcuIdentifier ecuIdentifier, IPsdzSwtApplicationId swtApplicationId);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        byte[] GetFsc(IPsdzConnection connection, IPsdzEcuIdentifier ecuIdentifier, IPsdzSwtApplicationId swtApplicationId);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		void RequestBackupdata(string talExecutionId, string targetDir);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        void RequestBackupdata(string talExecutionId, string targetDir);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract(Name = "RequestSwtStatusForSingleEcu")]
-		IPsdzSwtAction RequestSwtAction(IPsdzConnection connection, IPsdzEcuIdentifier ecuIdentifier, IPsdzSwtApplicationId swtApplicationId, bool periodicalCheck);
+        [OperationContract(Name = "RequestSwtStatusForSingleEcu")]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSwtAction RequestSwtAction(IPsdzConnection connection, IPsdzEcuIdentifier ecuIdentifier, IPsdzSwtApplicationId swtApplicationId, bool periodicalCheck);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzSwtAction RequestSwtAction(IPsdzConnection connection, bool periodicalCheck);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSwtAction RequestSwtAction(IPsdzConnection connection, bool periodicalCheck);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		bool StoreFsc(IPsdzConnection connection, byte[] fsc, IPsdzEcuIdentifier ecuIdentifier, IPsdzSwtApplicationId swtApplicationId);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        bool StoreFsc(IPsdzConnection connection, byte[] fsc, IPsdzEcuIdentifier ecuIdentifier, IPsdzSwtApplicationId swtApplicationId);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		void TslUpdate(IPsdzConnection connection, bool complete, IPsdzSvt svtActual, IPsdzSvt svtTarget);
-	}
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        void TslUpdate(IPsdzConnection connection, bool complete, IPsdzSvt svtActual, IPsdzSvt svtTarget);
+    }
 }

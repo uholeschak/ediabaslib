@@ -10,19 +10,24 @@ using BMW.Rheingold.Psdz.Model.Exceptions;
 
 namespace BMW.Rheingold.Psdz
 {
-    [ServiceKnownType(typeof(PsdzIstufe))]
-    [ServiceKnownType(typeof(PsdzSgbmId))]
-    [ServiceKnownType(typeof(PsdzFa))]
-    [ServiceKnownType(typeof(PsdzEcuIdentifier))]
     [ServiceContract(SessionMode = SessionMode.Required)]
+    [ServiceKnownType(typeof(PsdzSgbmId))]
+    [ServiceKnownType(typeof(PsdzEcuIdentifier))]
+    [ServiceKnownType(typeof(PsdzFa))]
+    [ServiceKnownType(typeof(PsdzIstufe))]
+    [ServiceKnownType(typeof(PsdzConnection))]
     public interface IMacrosService
     {
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzSgbmId> CheckSoftwareEntries(IEnumerable<IPsdzSgbmId> sgbmIds);
 
-        [FaultContract(typeof(PsdzRuntimeException))]
         [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzEcuIdentifier> GetInstalledEcuList(IPsdzFa fa, IPsdzIstufe iStufe);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzEcuIdentifier> GetInstalledEcuListWithConnection(IPsdzConnection connection, IPsdzFa fa, IPsdzIstufe iStufe);
     }
 }
