@@ -61,69 +61,75 @@ namespace BMW.Rheingold.Psdz.Client
         ERROR
     }
 
-	class ConnectionManagerServiceClient : PsdzClientBase<IConnectionManagerService>, IConnectionManagerService
-	{
-		public ConnectionManagerServiceClient(Binding binding, EndpointAddress remoteAddress) : base(binding, remoteAddress)
-		{
-		}
+    internal sealed class ConnectionManagerServiceClient : PsdzClientBase<IConnectionManagerService>, IConnectionManagerService
+    {
+        public ConnectionManagerServiceClient(Binding binding, EndpointAddress remoteAddress)
+            : base(binding, remoteAddress)
+        {
+        }
 
-		public bool CheckConnection(IPsdzConnection connection)
-		{
-			return base.CallFunction<bool>((IConnectionManagerService m) => m.CheckConnection(connection));
-		}
+        public bool CheckConnection(IPsdzConnection connection)
+        {
+            return CallFunction((IConnectionManagerService m) => m.CheckConnection(connection));
+        }
 
-		public void CloseConnection(IPsdzConnection connection)
-		{
-			base.CallMethod(delegate (IConnectionManagerService m)
-			{
-				m.CloseConnection(connection);
-			}, true);
-		}
+        public IPsdzConnectionVerboseResult CheckConnectionVerbose(IPsdzConnection connection)
+        {
+            return CallFunction((IConnectionManagerService m) => m.CheckConnectionVerbose(connection));
+        }
 
-		public IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe)
-		{
-			return base.CallFunction<IPsdzConnection>((IConnectionManagerService m) => m.ConnectOverBus(project, vehicleInfo, bus, interfaceType, baureihe, bauIstufe));
-		}
+        public void CloseConnection(IPsdzConnection connection)
+        {
+            CallMethod(delegate (IConnectionManagerService m)
+            {
+                m.CloseConnection(connection);
+            });
+        }
 
-		public IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe)
-		{
-			return base.CallFunction<IPsdzConnection>((IConnectionManagerService m) => m.ConnectOverEthernet(project, vehicleInfo, url, baureihe, bauIstufe));
-		}
+        public IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe)
+        {
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverBus(project, vehicleInfo, bus, interfaceType, baureihe, bauIstufe));
+        }
 
-		public IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan)
-		{
-			return base.CallFunction<IPsdzConnection>((IConnectionManagerService m) => m.ConnectOverIcom(project, vehicleInfo, url, additionalTransmissionTimeout, baureihe, bauIstufe, connectionType, shouldSetLinkPropertiesToDCan));
-		}
+        public IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe)
+        {
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverEthernet(project, vehicleInfo, url, baureihe, bauIstufe));
+        }
 
-		public IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe)
-		{
-			return base.CallFunction<IPsdzConnection>((IConnectionManagerService m) => m.ConnectOverVin(project, vehicleInfo, vin, baureihe, bauIstufe));
-		}
+        public IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan)
+        {
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverIcom(project, vehicleInfo, url, additionalTransmissionTimeout, baureihe, bauIstufe, connectionType, shouldSetLinkPropertiesToDCan));
+        }
 
-		public void SetProdiasLogLevel(ProdiasLoglevel prodiasLoglevel)
-		{
-			base.CallMethod(delegate (IConnectionManagerService service)
-			{
-				service.SetProdiasLogLevel(prodiasLoglevel);
-			}, true);
-		}
+        public IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe)
+        {
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverVin(project, vehicleInfo, vin, baureihe, bauIstufe));
+        }
 
-		public void RequestShutdown()
-		{
-			base.CallMethod(delegate (IConnectionManagerService service)
-			{
-				service.RequestShutdown();
-			}, false);
-		}
+        public void SetProdiasLogLevel(ProdiasLoglevel prodiasLoglevel)
+        {
+            CallMethod(delegate (IConnectionManagerService service)
+            {
+                service.SetProdiasLogLevel(prodiasLoglevel);
+            });
+        }
 
-		public int GetHttpServerPort()
-		{
-			return base.CallFunction<int>((IConnectionManagerService service) => service.GetHttpServerPort());
-		}
+        public void RequestShutdown()
+        {
+            CallMethod(delegate (IConnectionManagerService service)
+            {
+                service.RequestShutdown();
+            }, cacheChannel: false);
+        }
 
-		public IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe)
-		{
-			return base.CallFunction<IPsdzConnection>((IConnectionManagerService m) => m.ConnectOverPtt(project, vehicleInfo, bus, baureihe, bauIstufe));
-		}
-	}
+        public int GetHttpServerPort()
+        {
+            return CallFunction((IConnectionManagerService service) => service.GetHttpServerPort());
+        }
+
+        public IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe)
+        {
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverPtt(project, vehicleInfo, bus, baureihe, bauIstufe));
+        }
+    }
 }

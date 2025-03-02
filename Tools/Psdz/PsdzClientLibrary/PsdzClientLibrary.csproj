@@ -449,6 +449,7 @@
     <Compile Include="Psdz\IPsdzCheckNcdResultEto.cs" />
     <Compile Include="Psdz\IPsdzCoding1NcdEntry.cs" />
     <Compile Include="Psdz\IPsdzConnection.cs" />
+    <Compile Include="Psdz\IPsdzConnectionVerboseResult.cs" />
     <Compile Include="Psdz\IPsdzDetailedNcdInfoEto.cs" />
     <Compile Include="Psdz\IPsdzDetailedStatusCto.cs" />
     <Compile Include="Psdz\IPsdzDiagAddress.cs" />
@@ -562,6 +563,7 @@
     <Compile Include="Psdz\PsdzClientBase.cs" />
     <Compile Include="Psdz\PsdzCoding1NcdEntry.cs" />
     <Compile Include="Psdz\PsdzConnection.cs" />
+    <Compile Include="Psdz\PsdzConnectionVerboseResult.cs" />
     <Compile Include="Psdz\PsdzDetailedNcdInfoEto.cs" />
     <Compile Include="Psdz\PsdzDetailedStatusCto.cs" />
     <Compile Include="Psdz\PsdzDiagAddress.cs" />

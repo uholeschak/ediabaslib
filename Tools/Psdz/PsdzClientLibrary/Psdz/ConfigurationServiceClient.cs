@@ -8,51 +8,52 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-	class ConfigurationServiceClient : PsdzClientBase<IConfigurationService>, IConfigurationService
-	{
-		public ConfigurationServiceClient(Binding binding, EndpointAddress remoteAddress) : base(binding, remoteAddress)
-		{
-		}
+    internal sealed class ConfigurationServiceClient : PsdzClientBase<IConfigurationService>, IConfigurationService
+    {
+        public ConfigurationServiceClient(Binding binding, EndpointAddress remoteAddress)
+            : base(binding, remoteAddress)
+        {
+        }
 
-		public string GetExpectedPsdzVersion()
-		{
-			return base.CallFunction<string>((IConfigurationService service) => service.GetExpectedPsdzVersion());
-		}
+        public string GetExpectedPsdzVersion()
+        {
+            return CallFunction((IConfigurationService service) => service.GetExpectedPsdzVersion());
+        }
 
-		public string GetPsdzVersion()
-		{
-			return base.CallFunction<string>((IConfigurationService service) => service.GetPsdzVersion());
-		}
+        public string GetPsdzVersion()
+        {
+            return CallFunction((IConfigurationService service) => service.GetPsdzVersion());
+        }
 
-		public string GetRootDirectory()
-		{
-			return base.CallFunction<string>((IConfigurationService service) => service.GetRootDirectory());
-		}
+        public string GetRootDirectory()
+        {
+            return CallFunction((IConfigurationService service) => service.GetRootDirectory());
+        }
 
-		public bool ImportPdx(string pathToPdxContainer, string projectName)
-		{
-			return base.CallFunction<bool>((IConfigurationService service) => service.ImportPdx(pathToPdxContainer, projectName));
-		}
+        public bool ImportPdx(string pathToPdxContainer, string projectName)
+        {
+            return CallFunction((IConfigurationService service) => service.ImportPdx(pathToPdxContainer, projectName));
+        }
 
-		public string RequestBaureihenverbund(string baureihe)
-		{
-			return base.CallFunction<string>((IConfigurationService service) => service.RequestBaureihenverbund(baureihe));
-		}
+        public string RequestBaureihenverbund(string baureihe)
+        {
+            return CallFunction((IConfigurationService service) => service.RequestBaureihenverbund(baureihe));
+        }
 
-		public void SetRootDirectory(string rootDir)
-		{
-			base.CallMethod(delegate (IConfigurationService service)
-			{
-				service.SetRootDirectory(rootDir);
-			}, true);
-		}
+        public void SetRootDirectory(string rootDir)
+        {
+            CallMethod(delegate (IConfigurationService service)
+            {
+                service.SetRootDirectory(rootDir);
+            });
+        }
 
-		public void UnsetRootDirectory()
-		{
-			base.CallMethod(delegate (IConfigurationService service)
-			{
-				service.UnsetRootDirectory();
-			}, true);
-		}
-	}
+        public void UnsetRootDirectory()
+        {
+            CallMethod(delegate (IConfigurationService service)
+            {
+                service.UnsetRootDirectory();
+            });
+        }
+    }
 }

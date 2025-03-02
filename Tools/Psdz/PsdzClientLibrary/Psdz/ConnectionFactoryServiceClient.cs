@@ -5,15 +5,16 @@ using BMW.Rheingold.Psdz.Model;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    class ConnectionFactoryServiceClient : PsdzClientBase<IConnectionFactoryService>, IConnectionFactoryService
+    internal sealed class ConnectionFactoryServiceClient : PsdzClientBase<IConnectionFactoryService>, IConnectionFactoryService
     {
-        public ConnectionFactoryServiceClient(Binding binding, EndpointAddress remoteAddress) : base(binding, remoteAddress)
+        internal ConnectionFactoryServiceClient(Binding binding, EndpointAddress remoteAddress)
+            : base(binding, remoteAddress)
         {
         }
 
         public IEnumerable<IPsdzTargetSelector> GetTargetSelectors()
         {
-            return base.CallFunction<IEnumerable<IPsdzTargetSelector>>((IConnectionFactoryService m) => m.GetTargetSelectors());
+            return CallFunction((IConnectionFactoryService m) => m.GetTargetSelectors());
         }
     }
 }
