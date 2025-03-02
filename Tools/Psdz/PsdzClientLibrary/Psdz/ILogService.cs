@@ -24,8 +24,8 @@ namespace BMW.Rheingold.Psdz
         [FaultContract(typeof(PsdzRuntimeException))]
         string ClosePsdzLog();
 
-        [FaultContract(typeof(PsdzRuntimeException))]
         [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         void SetLogLevel(PsdzLoglevel psdzLoglevel);
     }
 }
