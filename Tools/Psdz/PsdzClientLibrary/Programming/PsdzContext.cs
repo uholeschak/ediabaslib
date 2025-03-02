@@ -643,8 +643,7 @@ namespace PsdzClient.Programming
                 ObservableCollection<ECU> EcuList = new ObservableCollection<ECU>();
                 foreach (PsdzDatabase.EcuInfo ecuInfo in DetectVehicle.EcuListPsdz)
                 {
-                    IEcuObj ecuObj = programmingObjectBuilder.Build(ecuInfo.PsdzEcu);
-                    ECU ecu = programmingObjectBuilder.Build(ecuObj);
+                    ECU ecu = programmingObjectBuilder.Build(ecuInfo.PsdzEcu);
                     if (ecu != null)
                     {
                         if (string.IsNullOrEmpty(ecu.ECU_NAME))

@@ -275,12 +275,10 @@ namespace PsdzClient.Programming
                 if (itemFromProgrammingInfos != null)
                 {
                     itemFromProgrammingInfos.SvkTarget = ecu.StandardSvk;
-                    continue;
                 }
-                ECU eCU = programmingObjectBuilder.Build(ecu);
-                if (eCU != null)
+                else if (ecu is ECU ecuFromTargetSvt)
                 {
-                    itemFromProgrammingInfos = GetEcuProgrammingInfo(eCU);
+                    itemFromProgrammingInfos = GetEcuProgrammingInfo(ecuFromTargetSvt);
                 }
             }
         }
@@ -407,17 +405,19 @@ namespace PsdzClient.Programming
 			this.RefreshProgrammingInfo(list);
 		}
 
-		private EcuProgrammingInfo GetEcuProgrammingInfo(ECU ecuFromTargetSvt)
-		{
-			EcuProgrammingInfo ecuProgrammingInfo = new EcuProgrammingInfo(ecuFromTargetSvt, this.programmingObjectBuilder, true);
-			this.ecuProgrammingInfos.Add(ecuProgrammingInfo);
-			this.DataContext.List.Add(ecuProgrammingInfo.Data);
-			this.AddProgrammingInfoBeforeReplace(ecuProgrammingInfo.Data);
-			this.ecuProgrammingInfosMap.Add(ecuFromTargetSvt, ecuProgrammingInfo);
-			return ecuProgrammingInfo;
-		}
+        private EcuProgrammingInfo GetEcuProgrammingInfo(ECU ecuFromTargetSvt)
+        {
+            Log.Info("EcuProgrammingInfos.SetSvkTargetForEachEcu", "Try to fill ECU name from database for ECU: {0}", ecuFromTargetSvt.LogEcu());
+            EcuProgrammingInfo ecuProgrammingInfo = new EcuProgrammingInfo(ecuFromTargetSvt, programmingObjectBuilder);
+            ecuProgrammingInfos.Add(ecuProgrammingInfo);
+            DataContext.List.Add(ecuProgrammingInfo.Data);
+            AddProgrammingInfoBeforeReplace(ecuProgrammingInfo.Data);
+            ecuProgrammingInfosMap.Add(ecuFromTargetSvt, ecuProgrammingInfo);
+            Log.Info("EcuProgrammingInfos.SetSvkTargetForEachEcu", "Added EcuProgrammingInfo {0} from SVT target.", ecuProgrammingInfo.EcuIdentifier);
+            return ecuProgrammingInfo;
+        }
 
-		private void OnEcuProgrammingActionsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void OnEcuProgrammingActionsChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			NotifyCollectionChangedAction action = e.Action;
 			if (action <= NotifyCollectionChangedAction.Remove)

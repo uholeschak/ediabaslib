@@ -379,33 +379,6 @@ namespace BMW.Rheingold.Programming.API
             return null;
         }
 
-        public ECU Build(IEcuObj ecuInput)
-        {
-            ECU eCU = null;
-            if (ecuInput is EcuObj ecuObj)
-            {
-                eCU = new ECU();
-                eCU.ID_SG_ADR = ecuObj.EcuIdentifier.DiagAddrAsInt;
-                eCU.TITLE_ECUTREE = ecuObj.EcuRep;
-                eCU.ECU_SGBD = ecuObj.EcuVariant;
-                eCU.VARIANTE = ecuObj.EcuVariant;
-                eCU.ECU_GRUPPE = ecuObj.EcuGroup;
-                eCU.ECU_GROBNAME = ecuObj.BaseVariant;
-                //eCU.XepEcuClique = ecuObj.XepEcuClique;
-                //eCU.ECUTitle = ((ecuObj.XepEcuClique != null) ? ecuObj.XepEcuClique.Title : string.Empty);
-                //eCU.XepEcuVariant = ecuObj.XepEcuVariant;
-                eCU.ProgrammingVariantName = ecuObj.BnTnName;
-                eCU.StatusInfo = ecuObj.EcuStatusInfo;
-#if false
-				if (eCU.XepEcuVariant == null)
-                {
-                    vdc.FillEcuNames(eCU, vehicle, ffmResolver);
-                }
-#endif
-            }
-            return eCU;
-        }
-
         public IEcuIdentifier Build(IPsdzEcuIdentifier ecuIdentifierInput)
         {
             if (ecuIdentifierInput == null)
