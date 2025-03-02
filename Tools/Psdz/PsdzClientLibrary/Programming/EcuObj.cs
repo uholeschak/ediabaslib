@@ -22,13 +22,7 @@ namespace PsdzClient.Programming
 
         public IList<Bus> BusConnections { get; internal set; }
 
-        public IList<string> BusConnectionsAsString
-        {
-            get
-            {
-                return ((List<Bus>)this.BusConnections).ConvertAll<string>((Bus x) => x.ToString("G"));
-            }
-        }
+        public IList<string> BusConnectionsAsString => ((List<Bus>)BusConnections).ConvertAll((Bus x) => x.ToString("G"));
 
         public Bus DiagnosticBus { get; internal set; }
 
@@ -49,5 +43,7 @@ namespace PsdzClient.Programming
         public string OrderNumber { get; set; }
 
         public IEcuPdxInfo EcuPdxInfo { get; internal set; }
+
+        public bool IsSmartActuator { get; internal set; }
     }
 }

@@ -21,31 +21,31 @@ namespace BMW.Rheingold.Programming.API
 {
 	public class ProgrammingObjectBuilder : IProgrammingObjectBuilder
 	{
-		public ProgrammingObjectBuilder(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
-		{
-			this.vehicle = vehicle;
-			this.ffmResolver = ffmResolver;
-		}
+        public ProgrammingObjectBuilder(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        {
+            this.vehicle = vehicle;
+            this.ffmResolver = ffmResolver;
+        }
 
-		public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(IPsdzStandardFa faInput)
-		{
-			if (faInput == null)
-			{
-				return null;
-			}
-			return new VehicleOrder
-			{
-				FaVersion = faInput.FaVersion,
-				Entwicklungsbaureihe = faInput.Entwicklungsbaureihe,
-				Lackcode = faInput.Lackcode,
-				Polstercode = faInput.Polstercode,
-				Type = faInput.Type,
-				Zeitkriterium = faInput.Zeitkriterium,
-				EWords = ((faInput.EWords != null) ? new List<string>(faInput.EWords) : null),
-				HOWords = ((faInput.HOWords != null) ? new List<string>(faInput.HOWords) : null),
-				Salapas = ((faInput.Salapas != null) ? new List<string>(faInput.Salapas) : null)
-			};
-		}
+        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(IPsdzStandardFa faInput)
+        {
+            if (faInput == null)
+            {
+                return null;
+            }
+            return new BMW.Rheingold.Programming.API.VehicleOrder
+            {
+                FaVersion = faInput.FaVersion,
+                Entwicklungsbaureihe = faInput.Entwicklungsbaureihe,
+                Lackcode = faInput.Lackcode,
+                Polstercode = faInput.Polstercode,
+                Type = faInput.Type,
+                Zeitkriterium = faInput.Zeitkriterium,
+                EWords = ((faInput.EWords != null) ? new List<string>(faInput.EWords) : null),
+                HOWords = ((faInput.HOWords != null) ? new List<string>(faInput.HOWords) : null),
+                Salapas = ((faInput.Salapas != null) ? new List<string>(faInput.Salapas) : null)
+            };
+        }
 
         public IVehicleProfile Build(IPsdzFp fp)
         {
@@ -104,6 +104,53 @@ namespace BMW.Rheingold.Programming.API
             vehicleOrder.HOWords = ((faInput.HO_WORT != null) ? new List<string>(faInput.HO_WORT) : null);
             vehicleOrder.Salapas = ((faInput.SA != null) ? new List<string>(faInput.SA) : null);
             return vehicleOrder;
+        }
+
+        public FA Build(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faInput)
+        {
+            if (faInput == null)
+            {
+                return null;
+            }
+            FA fA = new FA();
+            fA.VERSION = faInput.FaVersion.ToString(CultureInfo.InvariantCulture);
+            fA.BR = faInput.Entwicklungsbaureihe;
+            fA.LACK = faInput.Lackcode;
+            fA.POLSTER = faInput.Polstercode;
+            fA.TYPE = faInput.Type;
+            fA.C_DATE = faInput.Zeitkriterium;
+            if (faInput.EWords == null)
+            {
+                fA.E_WORT_ANZ = 0;
+                fA.E_WORT = new ObservableCollection<string>();
+            }
+            else
+            {
+                fA.E_WORT_ANZ = (short)faInput.EWords.Count;
+                fA.E_WORT = new ObservableCollection<string>(faInput.EWords);
+            }
+            if (faInput.HOWords == null)
+            {
+                fA.HO_WORT_ANZ = 0;
+                fA.HO_WORT = new ObservableCollection<string>();
+            }
+            else
+            {
+                fA.HO_WORT_ANZ = (short)faInput.HOWords.Count;
+                fA.HO_WORT = new ObservableCollection<string>(faInput.HOWords);
+            }
+            if (faInput.Salapas == null)
+            {
+                fA.SA_ANZ = 0;
+                fA.SA = new ObservableCollection<string>();
+            }
+            else
+            {
+                fA.SA_ANZ = (short)faInput.Salapas.Count;
+                fA.SA = new ObservableCollection<string>(faInput.Salapas);
+            }
+            fA.STANDARD_FA = faInput.ToString();
+            return fA;
         }
 
         public IStandardSvk Build(IPsdzStandardSvk svkInput)
@@ -211,13 +258,13 @@ namespace BMW.Rheingold.Programming.API
             {
                 foreach (IPsdzEcu item in ecus)
                 {
-                    IEcuObj eCU = Build(item);
+                    ECU eCU = Build(item);
                     if (orderNumbers != null && orderNumbers.Any())
                     {
                         string key = BuildKey(item);
                         if (orderNumbers.ContainsKey(key))
                         {
-                            ((EcuObj)eCU).OrderNumber = orderNumbers[key];
+                            eCU.OrderNumber = orderNumbers[key];
                         }
                     }
                     systemVerbauTabelle.AddEcu(eCU);
@@ -226,51 +273,85 @@ namespace BMW.Rheingold.Programming.API
             return systemVerbauTabelle;
         }
 
-        public IEcuObj Build(IPsdzEcu ecuInput)
+        public ECU Build(IPsdzEcu ecuInput)
         {
             if (ecuInput == null)
             {
                 return null;
             }
-            EcuObj ecuObj = new EcuObj();
-            ecuObj.BaseVariant = ecuInput.BaseVariant;
-            ecuObj.EcuVariant = ecuInput.EcuVariant;
-            ecuObj.BnTnName = ecuInput.BnTnName;
-            ecuObj.GatewayDiagAddrAsInt = ((ecuInput.GatewayDiagAddr != null) ? new int?(ecuInput.GatewayDiagAddr.Offset) : null);
-            ecuObj.DiagnosticBus = busEnumMapper.GetValue(ecuInput.DiagnosticBus);
-            ecuObj.SerialNumber = ecuInput.SerialNumber;
-            ecuObj.EcuIdentifier = Build(ecuInput.PrimaryKey);
-            ecuObj.StandardSvk = Build(ecuInput.StandardSvk);
-            ecuObj.BusConnections = ((ecuInput.BusConnections != null) ? ecuInput.BusConnections.Select(busEnumMapper.GetValue).ToList() : null);
-            ecuObj.EcuDetailInfo = ((ecuInput.EcuDetailInfo != null) ? new EcuObjDetailInfo(ecuInput.EcuDetailInfo.ByteValue) : null);
-            ecuObj.EcuStatusInfo = ((ecuInput.EcuStatusInfo != null) ? new EcuObjStatusInfo(ecuInput.EcuStatusInfo.ByteValue, ecuInput.EcuStatusInfo.HasIndividualData) : null);
-            ecuObj.EcuPdxInfo = Build(ecuInput.PsdzEcuPdxInfo);
+            ECU eCU = new ECU();
+            eCU.BaseVariant = ecuInput.BaseVariant;
+            eCU.EcuVariant = ecuInput.EcuVariant;
+            eCU.BnTnName = ecuInput.BnTnName;
+            eCU.GatewayDiagAddrAsInt = ((ecuInput.GatewayDiagAddr != null) ? new int?(ecuInput.GatewayDiagAddr.Offset) : ((int?)null));
+            eCU.DiagnosticBus = busEnumMapper.GetValue(ecuInput.DiagnosticBus);
+            eCU.SerialNumber = ecuInput.SerialNumber;
+            eCU.EcuIdentifier = Build(ecuInput.PrimaryKey);
+            eCU.StandardSvk = Build(ecuInput.StandardSvk);
+            eCU.BusConnections = ((ecuInput.BusConnections != null) ? ecuInput.BusConnections.Select(busEnumMapper.GetValue).ToList() : null);
+            eCU.EcuDetailInfo = ((ecuInput.EcuDetailInfo != null) ? new EcuObjDetailInfo(ecuInput.EcuDetailInfo.ByteValue) : null);
+            eCU.EcuStatusInfo = ((ecuInput.EcuStatusInfo != null) ? new EcuObjStatusInfo(ecuInput.EcuStatusInfo.ByteValue, ecuInput.EcuStatusInfo.HasIndividualData) : null);
+            eCU.EcuPdxInfo = Build(ecuInput.PsdzEcuPdxInfo);
+            if (eCU.EcuIdentifier != null)
+            {
+                eCU.ID_SG_ADR = eCU.EcuIdentifier.DiagAddrAsInt;
+            }
+            eCU.IsSmartActuator = ecuInput.IsSmartActuator;
             PsdzDatabase database = ClientContext.GetDatabase(this.vehicle);
             if (database != null)
             {
                 string bnTnName = ecuInput.BnTnName;
-                IEcuIdentifier ecuIdentifier = ecuObj.EcuIdentifier;
+                IEcuIdentifier ecuIdentifier = eCU.EcuIdentifier;
                 PsdzDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int?(ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
                 if (ecuVar != null && !string.IsNullOrEmpty(ecuVar.Name))
                 {
-                    //ecuObj.XepEcuVariant = xep_ECUVARIANTS;
-                    ecuObj.EcuVariant = ecuVar.Name.ToUpper(CultureInfo.InvariantCulture);
+                    //eCU.XepEcuVariant = xEP_ECUVARIANTS;
+                    eCU.EcuVariant = ecuVar.Name.ToUpper(CultureInfo.InvariantCulture);
                     PsdzDatabase.EcuClique ecuClique = database.FindEcuClique(ecuVar);
-                    //ecuObj.XepEcuClique = ecuClique;
+                    //eCU.XepEcuClique = vdc.FindEcuClique(xEP_ECUVARIANTS);
                     PsdzDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
                     if (ecuGroup != null)
                     {
-                        ecuObj.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
+                        eCU.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
                     }
                     PsdzDatabase.EcuReps ecuReps = database.FindEcuRep(ecuClique);
                     if (ecuReps != null)
                     {
-                        ecuObj.EcuRep = ecuReps.EcuShortcut;
+                        eCU.EcuRep = ecuReps.EcuShortcut;
                     }
                 }
+                else
+                {
+                    Log.Warning("ProgrammingObjectBuilder.Build", "No valid ECU variant found for \"{0}\".", ecuInput.BnTnName);
+                }
             }
-
-            return ecuObj;
+            if (eCU.IsSmartActuator)
+            {
+                if (!(ecuInput is PsdzSmartActuatorEcu psdzSmartActuatorEcu))
+                {
+                    Log.Error(Log.CurrentMethod(), $"{ecuInput} is not a SmartActuator");
+                    return eCU;
+                }
+                return new SmartActuatorECU(eCU)
+                {
+                    SmacMasterDiagAddressAsInt = ((psdzSmartActuatorEcu.SmacMasterDiagAddress != null) ? new int?(psdzSmartActuatorEcu.SmacMasterDiagAddress.Offset) : ((int?)null)),
+                    SmacID = psdzSmartActuatorEcu.SmacID
+                };
+            }
+            if (ecuInput.PsdzEcuPdxInfo != null && ecuInput.PsdzEcuPdxInfo.IsSmartActuatorMaster)
+            {
+                if (!(ecuInput is PsdzSmartActuatorMasterEcu psdzSmartActuatorMasterEcu))
+                {
+                    Log.Error(Log.CurrentMethod(), $"'{ecuInput.PrimaryKey}' is not a SmartActuatorMaster");
+                    return eCU;
+                }
+                return new SmartActuatorMasterECU(eCU)
+                {
+                    SmacMasterSVK = Build(psdzSmartActuatorMasterEcu.SmacMasterSVK),
+                    SmartActuators = psdzSmartActuatorMasterEcu.SmartActuatorEcus.Select((IPsdzEcu x) => (ISmartActuatorEcu)Build(x)).ToList()
+                };
+            }
+            return eCU;
         }
 
         private IEcuPdxInfo Build(IPsdzEcuPdxInfo psdzEcuPdxInfo)
@@ -288,8 +369,11 @@ namespace BMW.Rheingold.Programming.API
                     IsIPSecEnabled = psdzEcuPdxInfo.IsIPSecEnabled,
                     IsLcsServicePackSupported = psdzEcuPdxInfo.IsLcsServicePackSupported,
                     IsLcsSystemTimeSwitchSupported = psdzEcuPdxInfo.IsLcsSystemTimeSwitchSupported,
-                    //IsMirrorProtocolSupported = psdzEcuPdxInfo.IsMirrorProtocolSupported,
-                    //IsEcuAuthEnabled = psdzEcuPdxInfo.IsEcuAuthEnabled
+                    IsMirrorProtocolSupported = psdzEcuPdxInfo.IsMirrorProtocolSupported,
+                    IsEcuAuthEnabled = psdzEcuPdxInfo.IsEcuAuthEnabled,
+                    IsIPsecBitmaskSupported = psdzEcuPdxInfo.IsIPsecBitmaskSupported,
+                    ProgrammingProtectionLevel = psdzEcuPdxInfo.ProgrammingProtectionLevel,
+                    IsSmartActuatorMaster = psdzEcuPdxInfo.IsSmartActuatorMaster
                 };
             }
             return null;

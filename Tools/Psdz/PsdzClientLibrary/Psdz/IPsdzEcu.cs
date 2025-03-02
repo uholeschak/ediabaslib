@@ -32,5 +32,7 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
         IPsdzStandardSvk StandardSvk { get; }
 
         IPsdzEcuPdxInfo PsdzEcuPdxInfo { get; }
+
+        bool IsSmartActuator { get; }
     }
 }

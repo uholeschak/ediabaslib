@@ -547,6 +547,8 @@
     <Compile Include="Psdz\ISecureCodingService.cs" />
     <Compile Include="Psdz\ISecureFeatureActivationService.cs" />
     <Compile Include="Psdz\ISecurityManagementService.cs" />
+    <Compile Include="Psdz\ISmartActuatorEcu.cs" />
+    <Compile Include="Psdz\ISmartActuatorMasterEcu.cs" />
     <Compile Include="Psdz\ITalExecutionService.cs" />
     <Compile Include="Psdz\IVcmService.cs" />
     <Compile Include="Psdz\KdsServiceClient.cs" />
@@ -587,6 +589,7 @@
     <Compile Include="Psdz\PsdzEcuIdentifier.cs" />
     <Compile Include="Psdz\PsdzEcuLcsValueCto.cs" />
     <Compile Include="Psdz\PsdzEcuPdxInfo.cs" />
+    <Compile Include="Psdz\PsdzEcuPdxInfoCtorModel.cs" />
     <Compile Include="Psdz\PsdzEcuStatusInfo.cs" />
     <Compile Include="Psdz\PsdzEcuUidCto.cs" />
     <Compile Include="Psdz\PsdzEcuVariantInstance.cs" />
@@ -676,6 +679,8 @@
     <Compile Include="Psdz\PsdzSFAWriteTA.cs" />
     <Compile Include="Psdz\PsdzSgbmId.cs" />
     <Compile Include="Psdz\PsdzSignatureResultCto.cs" />
+    <Compile Include="Psdz\PsdzSmartActuatorEcu.cs" />
+    <Compile Include="Psdz\PsdzSmartActuatorMasterEcu.cs" />
     <Compile Include="Psdz\PsdzSollSfaCto.cs" />
     <Compile Include="Psdz\PsdzSollverbauung.cs" />
     <Compile Include="Psdz\PsdzStandardFa.cs" />
@@ -707,6 +712,8 @@
     <Compile Include="Psdz\SecureCodingServiceClient.cs" />
     <Compile Include="Psdz\SecureFeatureActivationServiceClient.cs" />
     <Compile Include="Psdz\SecurityManagementServiceClient.cs" />
+    <Compile Include="Psdz\SmartActuatorECU.cs" />
+    <Compile Include="Psdz\SmartActuatorMasterECU.cs" />
     <Compile Include="Psdz\TalExecutionServiceClient.cs" />
     <Compile Include="Psdz\TalExecutionSettings.cs" />
     <Compile Include="Psdz\TalGenerationSettings.cs" />

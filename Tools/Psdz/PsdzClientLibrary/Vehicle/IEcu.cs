@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using PsdzClientLibrary.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
@@ -65,10 +66,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     }
 
     [AuthorAPI(SelectableTypeDeclaration = true)]
-    public interface IEcu : INotifyPropertyChanged
+    public interface IEcu : INotifyPropertyChanged, IIdentEcu
     {
-        string ProgrammingVariantName { get; set; }
-
         IEnumerable<IAif> AIF { get; }
 
         bool AIF_SUCCESSFULLY { get; }
@@ -85,25 +84,25 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         typeDiagProtocoll DiagProtocoll { get; }
 
-        string ECUTreeColor { get; set; }
+        new string ECUTreeColor { get; set; }
 
         int ECUTreeColumn { get; }
 
         int ECUTreeRow { get; }
 
-        string ECU_ADR { get; }
+        new string ECU_ADR { get; }
 
         bool ECU_ASSEMBLY_CONFIRMED { get; }
 
         string ECU_GROBNAME { get; set; }
 
-        string ECU_GRUPPE { get; set; }
+        new string ECU_GRUPPE { get; set; }
 
         bool ECU_HAS_CONFIG_OVERRIDE { get; }
 
         string ECU_NAME { get; }
 
-        string ECU_SGBD { get; }
+        new string ECU_SGBD { get; }
 
         //IEnumerable<IDtc> FEHLER { get; }
 
@@ -151,7 +150,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         long? ID_SGBD_INDEX { get; }
 
-        long ID_SG_ADR { get; set; }
+        new long ID_SG_ADR { get; set; }
 
         short? ID_SW_NR { get; }
 
@@ -179,7 +178,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool SERIAL_SUCCESSFULLY { get; }
 
-        string SERIENNUMMER { get; }
+        new string SERIENNUMMER { get; }
 
         ISvk SVK { get; }
 
@@ -193,9 +192,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         IEnumerable<IEcuTransaction> TAL { get; }
 
-        string TITLE_ECUTREE { get; set; }
-
-        string VARIANTE { get; }
+        new string TITLE_ECUTREE { get; set; }
 
         IEcuStatusInfo StatusInfo { get; set; }
 

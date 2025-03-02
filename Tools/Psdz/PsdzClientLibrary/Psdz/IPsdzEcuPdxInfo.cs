@@ -18,6 +18,8 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
 
         bool IsSecOcEnabled { get; }
 
+        bool IsSecOcMaster { get; }
+
         bool IsSfaEnabled { get; }
 
         bool IsIPSecEnabled { get; }
@@ -27,5 +29,25 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
         bool IsLcsSystemTimeSwitchSupported { get; }
 
         bool IsMirrorProtocolSupported { get; }
+
+        bool IsEcuAuthEnabled { get; }
+
+        bool IsIPsecBitmaskSupported { get; }
+
+        int ProgrammingProtectionLevel { get; }
+
+        bool IsMACsecEnabled { get; }
+
+        bool AclEnabled { get; }
+
+        bool IsSmartActuatorMaster { get; }
+
+        bool UpdateSmartActuatorConfigurationSupported { get; }
+
+        bool LcsIntegrityProtectionOCSupported { get; }
+
+        bool LcsIukCluster { get; }
+
+        int ServicePack { get; }
     }
 }

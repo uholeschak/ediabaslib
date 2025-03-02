@@ -16,7 +16,7 @@ using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
-    public class ECU : ICloneable, INotifyPropertyChanged, IEcu
+    public class ECU : ICloneable, IEcu, INotifyPropertyChanged, IIdentEcu, IEcuObj
     {
         private string bntn;
 
@@ -157,7 +157,31 @@ namespace PsdzClient.Core
         private bool eCU_ASSEMBLY_CONFIRMEDField;
 
         private IEcuStatusInfo statusInfo;
+#if false
+        [XmlIgnore]
+        IXepEcuVariants IIdentEcu.XepEcuVariant
+        {
+            get
+            {
+                return XepEcuVariant;
+            }
+            set
+            {
+            }
+        }
 
+        [XmlIgnore]
+        IXepEcuCliques IIdentEcu.XepEcuClique
+        {
+            get
+            {
+                return XepEcuClique;
+            }
+            set
+            {
+            }
+        }
+#endif
         [XmlIgnore]
         IEnumerable<IAif> IEcu.AIF => AIF;
 
@@ -227,6 +251,7 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         IEnumerable<IEcuTransaction> IEcu.TAL => TAL;
+
 #if false
         [XmlIgnore]
         public XEP_ECUCLIQUES XepEcuClique
@@ -245,6 +270,7 @@ namespace PsdzClient.Core
             }
         }
 #endif
+
         public string ECUTitle
         {
             get
@@ -260,6 +286,7 @@ namespace PsdzClient.Core
                 }
             }
         }
+
 #if false
         [XmlIgnore]
         public XEP_ECUVARIANTS XepEcuVariant { get; set; }
@@ -267,6 +294,127 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public ILcSwitchList LCSwitchList { get; set; } = new LcSwitchList();
 #endif
+
+        [XmlIgnore]
+        public string EcuRep
+        {
+            get
+            {
+                return TITLE_ECUTREE;
+            }
+            set
+            {
+                TITLE_ECUTREE = value;
+            }
+        }
+
+        [XmlIgnore]
+        public string EcuGroup
+        {
+            get
+            {
+                return ECU_GRUPPE;
+            }
+            set
+            {
+                ECU_GRUPPE = value;
+            }
+        }
+
+        [XmlIgnore]
+        public string BaseVariant { get; set; }
+
+        [XmlIgnore]
+        public string BnTnName
+        {
+            get
+            {
+                return ProgrammingVariantName;
+            }
+            set
+            {
+                ProgrammingVariantName = value;
+            }
+        }
+
+        [XmlIgnore]
+        public IList<Bus> BusConnections { get; set; }
+
+        [XmlIgnore]
+        public IList<string> BusConnectionsAsString
+        {
+            get
+            {
+                return BusConnections?.Select((Bus x) => x.ToString("G")).ToList();
+            }
+            private set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [XmlIgnore]
+        public Bus DiagnosticBus { get; set; }
+
+        [XmlIgnore]
+        public IEcuDetailInfo EcuDetailInfo { get; set; }
+
+        [XmlIgnore]
+        public IEcuIdentifier EcuIdentifier { get; set; }
+
+        [XmlIgnore]
+        public IEcuStatusInfo EcuStatusInfo
+        {
+            get
+            {
+                return StatusInfo;
+            }
+            set
+            {
+                StatusInfo = value;
+            }
+        }
+
+        [XmlIgnore]
+        public string EcuVariant
+        {
+            get
+            {
+                return VARIANTE;
+            }
+            set
+            {
+                VARIANTE = value;
+            }
+        }
+
+        [XmlIgnore]
+        public int? GatewayDiagAddrAsInt { get; set; }
+
+        [XmlIgnore]
+        public string SerialNumber
+        {
+            get
+            {
+                return SERIENNUMMER;
+            }
+            set
+            {
+                SERIENNUMMER = value;
+            }
+        }
+
+        [XmlIgnore]
+        public IStandardSvk StandardSvk { get; set; }
+
+        [XmlIgnore]
+        public string OrderNumber { get; set; }
+
+        [XmlIgnore]
+        public IEcuPdxInfo EcuPdxInfo { get; set; }
+
+        [XmlIgnore]
+        public bool IsSmartActuator { get; set; }
 
         [XmlIgnore]
         public IEcuStatusInfo StatusInfo
@@ -308,6 +456,7 @@ namespace PsdzClient.Core
                 }
             }
         }
+
 #if false
         public ObservableCollection<JOB> JOBS
         {
@@ -333,6 +482,7 @@ namespace PsdzClient.Core
             }
         }
 #endif
+
         public BusType BUS
         {
             get
@@ -1052,6 +1202,7 @@ namespace PsdzClient.Core
                 }
             }
         }
+
 #if false
         public ObservableCollection<DTC> FEHLER
         {
@@ -1079,6 +1230,7 @@ namespace PsdzClient.Core
             }
         }
 #endif
+
         public int I_ANZ
         {
             get
@@ -1094,6 +1246,7 @@ namespace PsdzClient.Core
                 }
             }
         }
+
 #if false
         public ObservableCollection<DTC> INFO
         {
@@ -1119,6 +1272,7 @@ namespace PsdzClient.Core
             }
         }
 #endif
+
         public SVK SVK
         {
             get
@@ -1586,6 +1740,7 @@ namespace PsdzClient.Core
             }
             set
             {
+                _ = bUSIDField;
                 if (!bUSIDField.Equals(value))
                 {
                     bUSIDField = value;
@@ -1647,6 +1802,30 @@ namespace PsdzClient.Core
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        protected ECU(ECU ecu)
+            : this()
+        {
+            BaseVariant = ecu.BaseVariant;
+            EcuVariant = ecu.EcuVariant;
+            BnTnName = ecu.BnTnName;
+            GatewayDiagAddrAsInt = ecu.GatewayDiagAddrAsInt;
+            DiagnosticBus = ecu.DiagnosticBus;
+            SerialNumber = ecu.SerialNumber;
+            EcuIdentifier = ecu.EcuIdentifier;
+            StandardSvk = ecu.StandardSvk;
+            BusConnections = ecu.BusConnections;
+            EcuDetailInfo = ecu.EcuDetailInfo;
+            EcuStatusInfo = ecu.EcuStatusInfo;
+            EcuPdxInfo = ecu.EcuPdxInfo;
+            ID_SG_ADR = ecu.ID_SG_ADR;
+            //XepEcuVariant = ecu.XepEcuVariant;
+            EcuVariant = ecu.EcuVariant;
+            //XepEcuClique = ecu.XepEcuClique;
+            EcuGroup = ecu.EcuGroup;
+            EcuRep = ecu.EcuRep;
+            IsSmartActuator = ecu.IsSmartActuator;
+        }
+
         public object Clone()
         {
             return MemberwiseClone();
@@ -1669,10 +1848,16 @@ namespace PsdzClient.Core
         {
             if (string.IsNullOrEmpty(TITLE_ECUTREE) || !IsTitleEcuTreeFilled())
             {
-                string text = $"{ECU_GROBNAME}_0x{ID_SG_ADR:X2}";
-                TITLE_ECUTREE = (string.IsNullOrEmpty(ecuShortName) ? text : ecuShortName);
+                string eCU_GROBNAME = ECU_GROBNAME;
+                TITLE_ECUTREE = (string.IsNullOrEmpty(ecuShortName) ? eCU_GROBNAME : ecuShortName);
             }
         }
+
+        public void FillEcuTitleTree(ISet<string> ecuShortName)
+        {
+            TITLE_ECUTREE = ((ecuShortName.Count == 0) ? ECU_GROBNAME : ecuShortName.First());
+        }
+
 #if false
         public DTC getDTCbyF_ORT(int F_ORT)
         {
@@ -1761,13 +1946,15 @@ namespace PsdzClient.Core
         public bool IsRoot()
         {
             BusType bUS = BUS;
-            if (bUS != 0 && bUS != BusType.VIRTUALROOT)
+            if (bUS == BusType.ROOT || bUS == BusType.VIRTUALROOT)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
+
 #if false
+
         public bool IsSet(long fOrt)
         {
             try
@@ -1790,6 +1977,7 @@ namespace PsdzClient.Core
             return false;
         }
 #endif
+
         public bool IsTitleEcuTreeFilled()
         {
             if (!string.IsNullOrEmpty(TITLE_ECUTREE))
@@ -1802,11 +1990,11 @@ namespace PsdzClient.Core
         public bool IsVirtual()
         {
             BusType bUS = BUS;
-            if (bUS != BusType.VIRTUAL && bUS != BusType.VIRTUALROOT)
+            if (bUS == BusType.VIRTUAL || bUS == BusType.VIRTUALROOT)
             {
-                return false;
+                return true;
             }
-            return true;
+            return false;
         }
 
         public bool IsVirtualOrVirtualBusCheck()
@@ -1914,6 +2102,7 @@ namespace PsdzClient.Core
             fLASH_STATEField = -1;
             eCU_ASSEMBLY_CONFIRMEDField = true;
         }
+
 #if false
         private void FEHLER_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -1931,6 +2120,7 @@ namespace PsdzClient.Core
             }
         }
 #endif
+
         public virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

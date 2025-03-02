@@ -39,8 +39,8 @@ namespace PsdzClient.Programming
         SrrCanFd
     }
 
-	[AuthorAPI(SelectableTypeDeclaration = true)]
-	public interface IEcuObj
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IEcuObj
     {
         string EcuRep { get; }
 
@@ -73,5 +73,7 @@ namespace PsdzClient.Programming
         string OrderNumber { get; }
 
         IEcuPdxInfo EcuPdxInfo { get; }
+
+        bool IsSmartActuator { get; }
     }
 }
