@@ -11,80 +11,99 @@ using BMW.Rheingold.Psdz.Model.Sfa;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-	class SecureFeatureActivationServiceClient : PsdzDuplexClientBase<ISecureFeatureActivationService, IPsdzProgressListener>, ISecureFeatureActivationService
-	{
-		internal SecureFeatureActivationServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress) : base(progressListener, binding, remoteAddress)
-		{
-		}
+    internal sealed class SecureFeatureActivationServiceClient : PsdzDuplexClientBase<ISecureFeatureActivationService, IPsdzProgressListener>, ISecureFeatureActivationService
+    {
+        internal SecureFeatureActivationServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)
+            : base(progressListener, binding, remoteAddress)
+        {
+        }
 
-		public IPsdzSecurityBackendRequestIdEto RequestNewestSecureTokenPackageForVehicle(IEnumerable<string> backendUrls, IEnumerable<string> certificatRevocations, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svtIst, bool rebuildTokens)
-		{
-			return base.CallFunction<IPsdzSecurityBackendRequestIdEto>((ISecureFeatureActivationService service) => service.RequestNewestSecureTokenPackageForVehicle(backendUrls, certificatRevocations, client, system, retries, timeout, vin, svtIst, rebuildTokens));
-		}
+        public IPsdzDiscoverFeatureStatusResultCto DiscoverAllFeatures(IPsdzConnection connection, IPsdzSvt svt)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.DiscoverAllFeatures(connection, svt));
+        }
 
-		public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackage(IEnumerable<string> backendUrlList, IEnumerable<string> crl, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
-		{
-			return base.CallFunction<IPsdzSecurityBackendRequestIdEto>((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackage(backendUrlList, crl, client, system, retries, timeout, vin, svt, secureTokenRequest));
-		}
+        public IPsdzSecurityBackendRequestIdEto RequestNewestSecureTokenPackageForVehicle(IEnumerable<string> backendUrls, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svtIst, bool rebuildTokens)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.RequestNewestSecureTokenPackageForVehicle(backendUrls, client, system, retries, timeout, vin, svtIst, rebuildTokens));
+        }
 
-		public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestDirectSecureTokensPackageOffline(string filePath, string client, string system, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
-		{
-			return base.CallFunction<IEnumerable<IPsdzSecurityBackendRequestFailureCto>>((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackageOffline(filePath, client, system, vin, svt, secureTokenRequest));
-		}
+        public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackage(IEnumerable<string> backendUrlList, IEnumerable<string> crl, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
+        {
+#pragma warning disable CS0612 // Type or member is obsolete
+            return CallFunction((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackage(backendUrlList, crl, client, system, retries, timeout, vin, svt, secureTokenRequest));
+#pragma warning restore CS0612 // Type or member is obsolete
+        }
 
-		public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForEcuOffline(string requestFile, string client, string system, IPsdzVin vin, bool rebuildTokens, IPsdzEcuIdentifier ecu)
-		{
-			return base.CallFunction<IEnumerable<IPsdzSecurityBackendRequestFailureCto>>((ISecureFeatureActivationService service) => service.RequestNewestSecureTokenPackageForEcuOffline(requestFile, client, system, vin, rebuildTokens, ecu));
-		}
+        public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackageWithoutCrlFiles(IEnumerable<string> backendUrlList, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackageWithoutCrlFiles(backendUrlList, client, system, retries, timeout, vin, svt, secureTokenRequest));
+        }
 
-		public IPsdzFetchCalculationSecureTokensResultCto FetchResultOfSecureTokenCalculation(IPsdzSecurityBackendRequestIdEto securityBackendRequestIdEto)
-		{
-			return base.CallFunction<IPsdzFetchCalculationSecureTokensResultCto>((ISecureFeatureActivationService service) => service.FetchResultOfSecureTokenCalculation(securityBackendRequestIdEto));
-		}
+        public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackageWithoutCrlFilesWithReturnToken(IEnumerable<string> backendUrlList, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest, bool returnToken)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackageWithoutCrlFilesWithReturnToken(backendUrlList, client, system, retries, timeout, vin, svt, secureTokenRequest, returnToken));
+        }
 
-		public IPsdzReadStatusResultCto ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum statusRequestFeatureType, IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecus, bool extendedStatus, int retries, int timeBetweenRetries)
-		{
-			return base.CallFunction<IPsdzReadStatusResultCto>((ISecureFeatureActivationService service) => service.ReadStatus(statusRequestFeatureType, connection, svt, ecus, extendedStatus, retries, timeBetweenRetries));
-		}
+        [Obsolete]
+        public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestDirectSecureTokensPackageOffline(string filePath, string client, string system, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackageOffline(filePath, client, system, vin, svt, secureTokenRequest));
+        }
 
-		public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForVehicleOffline(string requestFilePath, string client, string system, IPsdzVin vin, bool rebuildTokens)
-		{
-			return base.CallFunction<IEnumerable<IPsdzSecurityBackendRequestFailureCto>>((ISecureFeatureActivationService service) => service.RequestNewestSecureTokenPackageForVehicleOffline(requestFilePath, client, system, vin, rebuildTokens));
-		}
+        public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForEcuOffline(string requestFile, string client, string system, IPsdzVin vin, bool rebuildTokens, IPsdzEcuIdentifier ecu)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.RequestNewestSecureTokenPackageForEcuOffline(requestFile, client, system, vin, rebuildTokens, ecu));
+        }
 
-		public IPsdzFetchCalculationSecureTokensResultCto FetchCalculationOfSecureTokensOffline(string secureTokenFilePath, IPsdzSvt svtIst)
-		{
-			return base.CallFunction<IPsdzFetchCalculationSecureTokensResultCto>((ISecureFeatureActivationService service) => service.FetchCalculationOfSecureTokensOffline(secureTokenFilePath, svtIst));
-		}
+        public IPsdzFetchCalculationSecureTokensResultCto FetchResultOfSecureTokenCalculation(IPsdzSecurityBackendRequestIdEto securityBackendRequestIdEto)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.FetchResultOfSecureTokenCalculation(securityBackendRequestIdEto));
+        }
 
-		public IPsdzReadLcsResultCto ReadLcs(IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> whitelistedECUs, IEnumerable<IPsdzEcuIdentifier> blacklistedECUs)
-		{
-			return base.CallFunction<IPsdzReadLcsResultCto>((ISecureFeatureActivationService service) => service.ReadLcs(connection, svt, whitelistedECUs, blacklistedECUs));
-		}
+        public IPsdzReadStatusResultCto ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum statusRequestFeatureType, IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecus, bool extendedStatus, int retries, int timeBetweenRetries)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.ReadStatus(statusRequestFeatureType, connection, svt, ecus, extendedStatus, retries, timeBetweenRetries));
+        }
 
-		public IPsdzReadSecureEcuModeResultCto ReadSecureEcuMode(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> pEcus, IPsdzSvt svt)
-		{
-			return base.CallFunction<IPsdzReadSecureEcuModeResultCto>((ISecureFeatureActivationService service) => service.ReadSecureEcuMode(connection, pEcus, svt));
-		}
+        public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForVehicleOffline(string requestFilePath, string client, string system, IPsdzVin vin, bool rebuildTokens)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.RequestNewestSecureTokenPackageForVehicleOffline(requestFilePath, client, system, vin, rebuildTokens));
+        }
 
-		public IEnumerable<IPsdzEcuFailureResponseCto> SwitchToSecureEcuFieldMode(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> pEcus, IPsdzSvt svt)
-		{
-			return base.CallFunction<IEnumerable<IPsdzEcuFailureResponseCto>>((ISecureFeatureActivationService service) => service.SwitchToSecureEcuFieldMode(connection, pEcus, svt));
-		}
+        public IPsdzFetchCalculationSecureTokensResultCto FetchCalculationOfSecureTokensOffline(string secureTokenFilePath, IPsdzSvt svtIst)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.FetchCalculationOfSecureTokensOffline(secureTokenFilePath, svtIst));
+        }
 
-		public IEnumerable<IPsdzEcuFailureResponseCto> SetLcs(IPsdzConnection connection, IEnumerable<IPsdzEcuLcsValueCto> pLcsValues)
-		{
-			return base.CallFunction<IEnumerable<IPsdzEcuFailureResponseCto>>((ISecureFeatureActivationService service) => service.SetLcs(connection, pLcsValues));
-		}
+        public IPsdzReadLcsResultCto ReadLcs(IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> whitelistedECUs, IEnumerable<IPsdzEcuIdentifier> blacklistedECUs)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.ReadLcs(connection, svt, whitelistedECUs, blacklistedECUs));
+        }
 
-		public IEnumerable<IPsdzEcuFailureResponseCto> WriteSecureToken(IPsdzConnection pConnection, IEnumerable<IPsdzSecureTokenEto> secureTokens, IPsdzSvt svt)
-		{
-			return base.CallFunction<IEnumerable<IPsdzEcuFailureResponseCto>>((ISecureFeatureActivationService service) => service.WriteSecureToken(pConnection, secureTokens, svt));
-		}
+        public IPsdzReadSecureEcuModeResultCto ReadSecureEcuMode(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> pEcus, IPsdzSvt svt)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.ReadSecureEcuMode(connection, pEcus, svt));
+        }
 
-		public IEnumerable<IPsdzEcuFailureResponseCto> DeleteSecureToken(IPsdzConnection pConnection, IPsdzEcuIdentifier psdzEcuIdentifier, IPsdzFeatureIdCto psdzFeatureId)
-		{
-			return base.CallFunction<IEnumerable<IPsdzEcuFailureResponseCto>>((ISecureFeatureActivationService service) => service.DeleteSecureToken(pConnection, psdzEcuIdentifier, psdzFeatureId));
-		}
-	}
+        public IEnumerable<IPsdzEcuFailureResponseCto> SwitchToSecureEcuFieldMode(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> pEcus, IPsdzSvt svt)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.SwitchToSecureEcuFieldMode(connection, pEcus, svt));
+        }
+
+        public IEnumerable<IPsdzEcuFailureResponseCto> SetLcs(IPsdzConnection connection, IEnumerable<IPsdzEcuLcsValueCto> pLcsValues, IPsdzSvt svt)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.SetLcs(connection, pLcsValues, svt));
+        }
+
+        public IEnumerable<IPsdzEcuFailureResponseCto> WriteSecureToken(IPsdzConnection pConnection, IEnumerable<IPsdzSecureTokenEto> secureTokens, IPsdzSvt svt)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.WriteSecureToken(pConnection, secureTokens, svt));
+        }
+
+        public IEnumerable<IPsdzEcuFailureResponseCto> DeleteSecureToken(IPsdzConnection pConnection, IPsdzEcuIdentifier psdzEcuIdentifier, IPsdzFeatureIdCto psdzFeatureId)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.DeleteSecureToken(pConnection, psdzEcuIdentifier, psdzFeatureId));
+        }
+    }
 }

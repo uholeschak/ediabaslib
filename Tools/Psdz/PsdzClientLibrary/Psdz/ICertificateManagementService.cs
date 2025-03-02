@@ -10,48 +10,42 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz
 {
-	[ServiceKnownType(typeof(PsdzConnection))]
-	[ServiceKnownType(typeof(PsdzSvt))]
-	[ServiceKnownType(typeof(PsdzVin))]
-	[ServiceKnownType(typeof(PsdzEcuIdentifier))]
-	[ServiceKnownType(typeof(PsdzDiagAddress))]
-	[ServiceContract(SessionMode = SessionMode.Required)]
-	public interface ICertificateManagementService
-	{
-		[OperationContract]
-		PsdzRequestEcuSecCheckingResult RequestEcuSecChecking(IPsdzConnection connection, IPsdzSvt svtIst, IPsdzEcuIdentifier[] ecus, int retries);
+    [ServiceContract(SessionMode = SessionMode.Required)]
+    [ServiceKnownType(typeof(PsdzSvt))]
+    [ServiceKnownType(typeof(PsdzConnection))]
+    [ServiceKnownType(typeof(PsdzDiagAddress))]
+    [ServiceKnownType(typeof(PsdzEcuIdentifier))]
+    [ServiceKnownType(typeof(PsdzVin))]
+    public interface ICertificateManagementService
+    {
+        [OperationContract]
+        PsdzRequestEcuSecCheckingResult RequestEcuSecChecking(IPsdzConnection connection, IPsdzSvt svtIst, IPsdzEcuIdentifier[] ecus, int retries);
 
-		[OperationContract]
-		PsdzRequestEcuSecCheckingResult RequestEcuCertCheckingWithFiltering(IPsdzConnection connection, IPsdzSvt svtIst, IPsdzDiagAddress[] ecuWhiteList, IPsdzDiagAddress[] ecuBlackList, int retries);
+        [OperationContract]
+        PsdzFetchEcuCertCheckingResult FetchEcuSecChecking(IPsdzConnection connection, IPsdzSvt svtIst, IPsdzEcuIdentifier[] ecus, int retries);
 
-		[OperationContract]
-		PsdzFetchEcuCertCheckingResult FetchEcuSecChecking(IPsdzConnection connection, IPsdzSvt svtIst, IPsdzEcuIdentifier[] ecus, int retries);
+        [OperationContract]
+        PsdzCertMemoryObject[] CalculateBindingDistribution(PsdzCertMemoryObject[] bindingsFromCbb, PsdzCertMemoryObject[] bindingsFromVehicle);
 
-		[OperationContract]
-		PsdzCertMemoryObject[] CalculateBindingDistribution(PsdzCertMemoryObject[] bindingsFromCbb, PsdzCertMemoryObject[] bindingsFromVehicle);
+        [OperationContract]
+        PsdzCertMemoryObject[] DeleteCertificatesWithRole(string role, IPsdzEcuIdentifier[] ecus, PsdzCertMemoryObject[] memoryObjects);
 
-		[OperationContract]
-		PsdzCertMemoryObject[] DeleteCertificatesWithRole(string role, IPsdzEcuIdentifier[] ecus, PsdzCertMemoryObject[] memoryObjects);
+        [OperationContract]
+        PsdzFetchBindingCalculationResult FetchCertificatesBindingsAndKeypacks(PsdzBindingCalculationRequestId requestId);
 
-		[OperationContract]
-		PsdzFetchBindingCalculationResult FetchCertificatesBindingsAndKeypacks(PsdzBindingCalculationRequestId requestId);
+        [OperationContract]
+        PsdzReadCertMemoryObjectResult ReadSecurityMemoryObjects(IPsdzConnection connection, IPsdzSvt svtIst, IPsdzEcuIdentifier[] ecus, PsdzCertMemoryObjectType certMemoryObjectType);
 
-		[OperationContract]
-		PsdzBindingCalculationRequestId RequestBindingCalculation(PsdzCertMemoryObject[] certificates, string[] cbbUrls, string client, string system, IPsdzVin vin, int retries, int timeout, string[] certificatesRevocationList);
+        [OperationContract]
+        PsdzEcuFailureResponse[] WriteSecurityMemoryObjects(IPsdzConnection connection, IPsdzSvt svtIst, PsdzCertMemoryObject[] certificates);
 
-		[OperationContract]
-		PsdzReadCertMemoryObjectResult ReadSecurityMemoryObjects(IPsdzConnection connection, IPsdzSvt svtIst, IPsdzEcuIdentifier[] ecus, PsdzCertMemoryObjectType certMemoryObjectType);
+        [OperationContract]
+        PsdzBindingCalculationFailure[] RequestCertificatesBindingsAndKeypacksOffline(PsdzCertMemoryObject[] certificates, string requestFile, string client, string system, IPsdzVin vin, IPsdzSvt svt);
 
-		[OperationContract]
-		PsdzEcuFailureResponse[] WriteSecurityMemoryObjects(IPsdzConnection connection, IPsdzSvt svtIst, PsdzCertMemoryObject[] certificates);
+        [OperationContract]
+        PsdzFetchBindingCalculationResult FetchCertificatesBindingsAndKeypacksOffline(string bindingsFile);
 
-		[OperationContract]
-		PsdzBindingCalculationFailure[] RequestCertificatesBindingsAndKeypacksOffline(PsdzCertMemoryObject[] certificates, string requestFile, string client, string system, IPsdzVin vin);
-
-		[OperationContract]
-		PsdzFetchBindingCalculationResult FetchCertificatesBindingsAndKeypacksOffline(string bindingsFile);
-
-		[OperationContract]
-		PsdzResponse[] CheckBackendConnection(string[] cbbUrls, string[] certificatesRevocationList, int timeout);
-	}
+        [OperationContract]
+        PsdzResponse[] CheckBackendConnection(string[] cbbUrls, int timeout);
+    }
 }

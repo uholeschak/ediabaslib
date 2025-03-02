@@ -454,6 +454,7 @@
     <Compile Include="Psdz\IPsdzDetailedStatusCto.cs" />
     <Compile Include="Psdz\IPsdzDiagAddress.cs" />
     <Compile Include="Psdz\IPsdzDiagAddressCto.cs" />
+    <Compile Include="Psdz\IPsdzDiscoverFeatureStatusResultCto.cs" />
     <Compile Include="Psdz\IPsdzEcu.cs" />
     <Compile Include="Psdz\IPsdzEcuContextInfo.cs" />
     <Compile Include="Psdz\IPsdzEcuDetailInfo.cs" />
@@ -474,6 +475,7 @@
     <Compile Include="Psdz\IPsdzFeatureLongStatusCto.cs" />
     <Compile Include="Psdz\IPsdzFeatureRequestCto.cs" />
     <Compile Include="Psdz\IPsdzFeatureSpecificFieldCto.cs" />
+    <Compile Include="Psdz\IPsdzFeatureStatusTo.cs" />
     <Compile Include="Psdz\IPsdzFetchCalculationSecureTokensResultCto.cs" />
     <Compile Include="Psdz\IPsdzFp.cs" />
     <Compile Include="Psdz\IPsdzFsaTa.cs" />
@@ -570,6 +572,7 @@
     <Compile Include="Psdz\PsdzDetailedStatusCto.cs" />
     <Compile Include="Psdz\PsdzDiagAddress.cs" />
     <Compile Include="Psdz\PsdzDiagAddressCto.cs" />
+    <Compile Include="Psdz\PsdzDiscoverFeatureStatusResultCto.cs" />
     <Compile Include="Psdz\PsdzDuplexClientBase.cs" />
     <Compile Include="Psdz\PsdzEcu.cs" />
     <Compile Include="Psdz\PsdzEcuCertCheckingResponse.cs" />
@@ -594,6 +597,7 @@
     <Compile Include="Psdz\PsdzFeatureLongStatusCto.cs" />
     <Compile Include="Psdz\PsdzFeatureRequestCto.cs" />
     <Compile Include="Psdz\PsdzFeatureSpecificFieldCto.cs" />
+    <Compile Include="Psdz\PsdzFeatureStatusTo.cs" />
     <Compile Include="Psdz\PsdzFetchBindingCalculationResult.cs" />
     <Compile Include="Psdz\PsdzFetchCalculationSecureTokensResultCto.cs" />
     <Compile Include="Psdz\PsdzFetchEcuCertCheckingResult.cs" />

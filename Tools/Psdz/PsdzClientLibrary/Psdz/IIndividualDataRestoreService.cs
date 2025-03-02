@@ -5,6 +5,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Tal;
@@ -12,43 +13,44 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 
 namespace BMW.Rheingold.Psdz
 {
-	[ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
-	[ServiceKnownType(typeof(PsdzSvt))]
-	[ServiceKnownType(typeof(PsdzFa))]
-	[ServiceKnownType(typeof(PsdzTalFilter))]
-	[ServiceKnownType(typeof(TalExecutionSettings))]
-	[ServiceKnownType(typeof(PsdzSecureCodingConfigCto))]
-	[ServiceKnownType(typeof(PsdzVin))]
-	[ServiceKnownType(typeof(PsdzConnection))]
-	[ServiceKnownType(typeof(PsdzTal))]
-	public interface IIndividualDataRestoreService
-	{
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzTal GenerateBackupTal(IPsdzConnection connection, string backupDataPath, IPsdzTal standardTal, IPsdzTalFilter talFilter);
+    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
+    [ServiceKnownType(typeof(PsdzConnection))]
+    [ServiceKnownType(typeof(PsdzTal))]
+    [ServiceKnownType(typeof(PsdzTalFilter))]
+    [ServiceKnownType(typeof(PsdzSvt))]
+    [ServiceKnownType(typeof(PsdzFa))]
+    [ServiceKnownType(typeof(PsdzVin))]
+    [ServiceKnownType(typeof(TalExecutionSettings))]
+    [ServiceKnownType(typeof(PsdzSecureCodingConfigCto))]
+    [ServiceKnownType(typeof(PsdzDiagAddress))]
+    public interface IIndividualDataRestoreService
+    {
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal GenerateBackupTal(IPsdzConnection connection, string backupDataPath, IPsdzTal standardTal, IPsdzTalFilter talFilter);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzTal GenerateRestorePrognosisTal(IPsdzConnection connection, string backupDataPath, IPsdzTal standardTal, IPsdzTal backupTal, IPsdzTalFilter talFilter);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal GenerateRestorePrognosisTal(IPsdzConnection connection, string backupDataPath, IPsdzTal standardTal, IPsdzTal backupTal, IPsdzTalFilter talFilter);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzTal ExecuteAsyncBackupTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, IPsdzVin vin, TalExecutionSettings talExecutionSettings, string backupDataPath);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal ExecuteAsyncBackupTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, IPsdzVin vin, TalExecutionSettings talExecutionSettings, string backupDataPath);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzTal ExecuteBackupTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, IPsdzVin vin, TalExecutionSettings talExecutionSettings, string backupDataPath);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal ExecuteBackupTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, IPsdzVin vin, TalExecutionSettings talExecutionSettings, string backupDataPath);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzTal GenerateRestoreTal(IPsdzConnection connection, string backupDataFilePath, IPsdzTal standardTal, IPsdzTalFilter talFilter);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal GenerateRestoreTal(IPsdzConnection connection, string backupDataFilePath, IPsdzTal standardTal, IPsdzTalFilter talFilter);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzTal ExecuteAsyncRestoreTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, IPsdzVin vin, TalExecutionSettings talExecutionSettings);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal ExecuteAsyncRestoreTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, IPsdzVin vin, TalExecutionSettings talExecutionSettings);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzTal ExecuteRestoreTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, IPsdzVin vin, TalExecutionSettings talExecutionSettings);
-	}
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal ExecuteRestoreTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, IPsdzVin vin, TalExecutionSettings talExecutionSettings);
+    }
 }

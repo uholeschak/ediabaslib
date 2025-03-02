@@ -18,74 +18,89 @@ namespace BMW.Rheingold.Psdz
         APPLICATION_FEATURES
     }
 
-	[ServiceKnownType(typeof(PsdzSvt))]
-	[ServiceKnownType(typeof(PsdzFetchCalculationSecureTokensResultCto))]
-	[ServiceKnownType(typeof(PsdzReadStatusResultCto))]
-	[ServiceKnownType(typeof(PsdzReadSecureEcuModeResultCto))]
-	[ServiceKnownType(typeof(PsdzSecureTokenRequestCto))]
-	[ServiceKnownType(typeof(PsdzEcuLcsValueCto))]
-	[ServiceKnownType(typeof(PsdzVin))]
-	[ServiceKnownType(typeof(PsdzReadLcsResultCto))]
-	[ServiceKnownType(typeof(PsdzSecurityBackendRequestIdEto))]
-	[ServiceKnownType(typeof(PsdzConnection))]
-	[ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
-	[ServiceKnownType(typeof(PsdzEcuIdentifier))]
-	public interface ISecureFeatureActivationService
-	{
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzSecurityBackendRequestIdEto RequestNewestSecureTokenPackageForVehicle(IEnumerable<string> backendUrls, IEnumerable<string> certificatRevocations, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svtIst, bool rebuildTokens);
+    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
+    [ServiceKnownType(typeof(PsdzVin))]
+    [ServiceKnownType(typeof(PsdzSecurityBackendRequestIdEto))]
+    [ServiceKnownType(typeof(PsdzConnection))]
+    [ServiceKnownType(typeof(PsdzSvt))]
+    [ServiceKnownType(typeof(PsdzEcuIdentifier))]
+    [ServiceKnownType(typeof(PsdzReadStatusResultCto))]
+    [ServiceKnownType(typeof(PsdzFetchCalculationSecureTokensResultCto))]
+    [ServiceKnownType(typeof(PsdzReadLcsResultCto))]
+    [ServiceKnownType(typeof(PsdzReadSecureEcuModeResultCto))]
+    [ServiceKnownType(typeof(PsdzSecureTokenRequestCto))]
+    [ServiceKnownType(typeof(PsdzEcuLcsValueCto))]
+    [ServiceKnownType(typeof(PsdzDiscoverFeatureStatusResultCto))]
+    public interface ISecureFeatureActivationService
+    {
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzDiscoverFeatureStatusResultCto DiscoverAllFeatures(IPsdzConnection connection, IPsdzSvt svt);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackage(IEnumerable<string> backendUrlList, IEnumerable<string> crl, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSecurityBackendRequestIdEto RequestNewestSecureTokenPackageForVehicle(IEnumerable<string> backendUrls, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svtIst, bool rebuildTokens);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestDirectSecureTokensPackageOffline(string filePath, string client, string system, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        [Obsolete]
+        IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackage(IEnumerable<string> backendUrlList, IEnumerable<string> crl, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForEcuOffline(string requestFile, string client, string system, IPsdzVin vin, bool rebuildTokens, IPsdzEcuIdentifier ecu);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackageWithoutCrlFiles(IEnumerable<string> backendUrlList, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzFetchCalculationSecureTokensResultCto FetchResultOfSecureTokenCalculation(IPsdzSecurityBackendRequestIdEto securityBackendRequestIdEto);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackageWithoutCrlFilesWithReturnToken(IEnumerable<string> backendUrlList, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest, bool returnToken);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzReadStatusResultCto ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum statusRequestFeatureType, IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecus, bool extendedStatus, int retries, int timeBetweenRetries);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        [Obsolete]
+        IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestDirectSecureTokensPackageOffline(string filePath, string client, string system, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForVehicleOffline(string requestFilePath, string client, string system, IPsdzVin vin, bool rebuildTokens);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForEcuOffline(string requestFile, string client, string system, IPsdzVin vin, bool rebuildTokens, IPsdzEcuIdentifier ecu);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzFetchCalculationSecureTokensResultCto FetchCalculationOfSecureTokensOffline(string secureTokenFilePath, IPsdzSvt svtIst);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzFetchCalculationSecureTokensResultCto FetchResultOfSecureTokenCalculation(IPsdzSecurityBackendRequestIdEto securityBackendRequestIdEto);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzReadLcsResultCto ReadLcs(IPsdzConnection pConnection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> whitelistedECUs, IEnumerable<IPsdzEcuIdentifier> blacklistedECUs);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzReadStatusResultCto ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum statusRequestFeatureType, IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecus, bool extendedStatus, int retries, int timeBetweenRetries);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzReadSecureEcuModeResultCto ReadSecureEcuMode(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> pEcus, IPsdzSvt svt);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForVehicleOffline(string requestFilePath, string client, string system, IPsdzVin vin, bool rebuildTokens);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IEnumerable<IPsdzEcuFailureResponseCto> SwitchToSecureEcuFieldMode(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> pEcus, IPsdzSvt svt);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzFetchCalculationSecureTokensResultCto FetchCalculationOfSecureTokensOffline(string secureTokenFilePath, IPsdzSvt svtIst);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IEnumerable<IPsdzEcuFailureResponseCto> SetLcs(IPsdzConnection pConnection, IEnumerable<IPsdzEcuLcsValueCto> pLcsValues);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzReadLcsResultCto ReadLcs(IPsdzConnection pConnection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> whitelistedECUs, IEnumerable<IPsdzEcuIdentifier> blacklistedECUs);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IEnumerable<IPsdzEcuFailureResponseCto> WriteSecureToken(IPsdzConnection pConnection, IEnumerable<IPsdzSecureTokenEto> secureTokens, IPsdzSvt svt);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzReadSecureEcuModeResultCto ReadSecureEcuMode(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> pEcus, IPsdzSvt svt);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IEnumerable<IPsdzEcuFailureResponseCto> DeleteSecureToken(IPsdzConnection pConnection, IPsdzEcuIdentifier psdzEcuIdentifier, IPsdzFeatureIdCto psdzFeatureId);
-	}
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzEcuFailureResponseCto> SwitchToSecureEcuFieldMode(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> pEcus, IPsdzSvt svt);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzEcuFailureResponseCto> SetLcs(IPsdzConnection pConnection, IEnumerable<IPsdzEcuLcsValueCto> pLcsValues, IPsdzSvt svt);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzEcuFailureResponseCto> WriteSecureToken(IPsdzConnection pConnection, IEnumerable<IPsdzSecureTokenEto> secureTokens, IPsdzSvt svt);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzEcuFailureResponseCto> DeleteSecureToken(IPsdzConnection pConnection, IPsdzEcuIdentifier psdzEcuIdentifier, IPsdzFeatureIdCto psdzFeatureId);
+    }
 }
