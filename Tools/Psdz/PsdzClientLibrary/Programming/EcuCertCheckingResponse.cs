@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public class EcuCertCheckingResponse : IEcuCertCheckingResponse
+    internal class EcuCertCheckingResponse : IEcuCertCheckingResponse
     {
         public IEcuIdentifier Ecu { get; internal set; }
 
@@ -19,5 +19,19 @@ namespace PsdzClient.Programming
         public IBindingDetailsStatus[] BindingDetailStatus { get; internal set; }
 
         public IOtherBindingDetailsStatus[] OtherBindingDetailStatus { get; internal set; }
+
+        public EcuCertCheckingStatus? KeypackStatus { get; internal set; }
+
+        public IKeypackDetailStatus[] KeyPackDetailedStatus { get; internal set; }
+
+        public EcuCertCheckingStatus? OnlineBindingsStatus { get; internal set; }
+
+        public IBindingDetailsStatus[] OnlineBindingDetailStatus { get; internal set; }
+
+        public EcuCertCheckingStatus? OnlineCertificateStatus { get; internal set; }
+
+        public string CreationTimestamp { get; internal set; }
+
+        public IEcuPdxInfo PdxInfo { get; set; }
     }
 }

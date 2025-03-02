@@ -434,6 +434,7 @@
     <Compile Include="Psdz\IEventManagerService.cs" />
     <Compile Include="Psdz\IIndividualDataRestoreService.cs" />
     <Compile Include="Psdz\IKdsService.cs" />
+    <Compile Include="Psdz\IKeypackDetailStatus.cs" />
     <Compile Include="Psdz\ILocalizableMessage.cs" />
     <Compile Include="Psdz\ILocalizableMessageTo.cs" />
     <Compile Include="Psdz\ILogicService.cs" />
@@ -552,6 +553,7 @@
     <Compile Include="Psdz\ITalExecutionService.cs" />
     <Compile Include="Psdz\IVcmService.cs" />
     <Compile Include="Psdz\KdsServiceClient.cs" />
+    <Compile Include="Psdz\KeypackDetailStatus.cs" />
     <Compile Include="Psdz\LogicServiceClient.cs" />
     <Compile Include="Psdz\LogServiceClient.cs" />
     <Compile Include="Psdz\MacrosServiceClient.cs" />

@@ -490,10 +490,15 @@ namespace BMW.Rheingold.Programming.API
                         CertificateStatus = BuildEcuCertCheckingStatus(result.CertificateStatus),
                         Ecu = BuildEcuIdentifier(result.Ecu.BaseVariant, result.Ecu.DiagAddrAsInt),
                         OtherBindingDetailStatus = BuildOtherBindingDetailStatus(result.OtherBindingDetailStatus),
-                        OtherBindingsStatus = BuildEcuCertCheckingStatus(result.OtherBindingsStatus)
+                        OtherBindingsStatus = BuildEcuCertCheckingStatus(result.OtherBindingsStatus),
+                        KeypackStatus = BuildEcuCertCheckingStatus(result.KeyPackStatus),
+                        OnlineCertificateStatus = BuildEcuCertCheckingStatus(result.OnlineCertificateStatus),
+                        OnlineBindingsStatus = BuildEcuCertCheckingStatus(result.OnlineBindingsStatus),
+                        OnlineBindingDetailStatus = BuildDetailStatus(result.OnlineBindingDetailStatus),
+                        KeyPackDetailedStatus = BuildKeypackDetailStatus(result.KeyPackDatailedStatus),
+                        CreationTimestamp = result.CreationTimestamp
                     });
                 }
-                return list;
             }
             return list;
         }
@@ -542,8 +547,24 @@ namespace BMW.Rheingold.Programming.API
                     return EcuCertCheckingStatus.Unchecked;
                 case PsdzEcuCertCheckingStatus.WrongVin17:
                     return EcuCertCheckingStatus.WrongVin17;
+                case PsdzEcuCertCheckingStatus.Decryption_Error:
+                    return EcuCertCheckingStatus.Decryption_Error;
+                case PsdzEcuCertCheckingStatus.IssuerCertError:
+                    return EcuCertCheckingStatus.IssuerCertError;
+                case PsdzEcuCertCheckingStatus.Outdated:
+                    return EcuCertCheckingStatus.Outdated;
+                case PsdzEcuCertCheckingStatus.OwnCertNotPresent:
+                    return EcuCertCheckingStatus.OwnCertNotPresent;
+                case PsdzEcuCertCheckingStatus.Undefined:
+                    return EcuCertCheckingStatus.Undefined;
+                case PsdzEcuCertCheckingStatus.WrongEcuUid:
+                    return EcuCertCheckingStatus.WrongEcuUid;
+                case PsdzEcuCertCheckingStatus.KeyError:
+                    return EcuCertCheckingStatus.KeyError;
+                case PsdzEcuCertCheckingStatus.NotUsed:
+                    return EcuCertCheckingStatus.NotUsed;
                 default:
-                    return EcuCertCheckingStatus.Empty;
+                    return EcuCertCheckingStatus.Unknown;
             }
         }
 
@@ -569,6 +590,28 @@ namespace BMW.Rheingold.Programming.API
             return null;
         }
 
+        private IKeypackDetailStatus[] BuildKeypackDetailStatus(PsdzKeypackDetailStatus[] psdzKeypackDetailStatuses)
+        {
+            if (psdzKeypackDetailStatuses == null || psdzKeypackDetailStatuses.Length == 0)
+            {
+                return null;
+            }
+            KeypackDetailStatus[] array = new KeypackDetailStatus[psdzKeypackDetailStatuses.Length];
+            for (int i = 0; i < psdzKeypackDetailStatuses.Length; i++)
+            {
+                if (psdzKeypackDetailStatuses[i] != null)
+                {
+                    array[i] = new KeypackDetailStatus
+                    {
+                        KeyPackStatus = BuildEcuCertCheckingStatus(psdzKeypackDetailStatuses[i].KeyPackStatus),
+                        KeyId = psdzKeypackDetailStatuses[i].KeyId
+                    };
+                }
+            }
+            return array;
+        }
+
+
         private IEnumerable<IEcuFailureResponse> BuildEcuCertCheckingResultFailedEcus(IEnumerable<PsdzEcuFailureResponse> psdzFailedEcus)
         {
             List<EcuFailureResponse> list = new List<EcuFailureResponse>();
@@ -582,7 +625,6 @@ namespace BMW.Rheingold.Programming.API
                         Reason = psdzFailedEcu.Reason
                     });
                 }
-                return list;
             }
             return list;
         }

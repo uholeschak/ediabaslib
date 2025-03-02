@@ -24,7 +24,9 @@ namespace BMW.Rheingold.Psdz.Model.Certificate
         Unchecked,
         Undefined,
         WrongEcuUid,
-        WrongVin17
+        WrongVin17,
+        KeyError,
+        NotUsed
     }
 
     [DataContract]
@@ -63,5 +65,8 @@ namespace BMW.Rheingold.Psdz.Model.Certificate
 
         [DataMember]
         public PsdzKeypackDetailStatus[] KeyPackDatailedStatus { get; set; }
+
+        [DataMember]
+        public string CreationTimestamp { get; set; }
     }
 }
