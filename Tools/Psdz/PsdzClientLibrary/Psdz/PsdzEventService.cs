@@ -8,86 +8,84 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-	class PsdzEventService
-	{
-		public PsdzEventService(Binding binding, EndpointAddress endpointAddress)
-		{
-			this.binding = binding;
-			this.endpointAddress = endpointAddress;
-			this.eventListenerClients = new Dictionary<IPsdzEventListener, PsdzEventService.PsdzEventListenerClient>();
-		}
+    internal class PsdzEventService
+    {
+        private sealed class PsdzEventListenerClient : DuplexClientBase<IEventManagerService>
+        {
+            public PsdzEventListenerClient(IPsdzEventListener eventListener, Binding binding, EndpointAddress endPointAddress)
+                : base((object)eventListener, binding, endPointAddress)
+            {
+            }
 
-		public void AddEventListener(IPsdzEventListener psdzEventListener)
-		{
-			if (psdzEventListener == null)
-			{
-				return;
-			}
-			IDictionary<IPsdzEventListener, PsdzEventService.PsdzEventListenerClient> obj = this.eventListenerClients;
-			lock (obj)
-			{
-				if (!this.eventListenerClients.ContainsKey(psdzEventListener))
-				{
-					PsdzEventService.PsdzEventListenerClient psdzEventListenerClient = new PsdzEventService.PsdzEventListenerClient(psdzEventListener, this.binding, this.endpointAddress);
-					psdzEventListenerClient.StartListening();
-					this.eventListenerClients.Add(psdzEventListener, psdzEventListenerClient);
-				}
-			}
-		}
+            public void StartListening()
+            {
+                base.Channel.StartListening();
+            }
 
-		public void RemoveAllEventListener()
-		{
-			IDictionary<IPsdzEventListener, PsdzEventService.PsdzEventListenerClient> obj = this.eventListenerClients;
-			lock (obj)
-			{
-				while (this.eventListenerClients.Any<KeyValuePair<IPsdzEventListener, PsdzEventService.PsdzEventListenerClient>>())
-				{
-					IPsdzEventListener psdzEventListener = this.eventListenerClients.Keys.First<IPsdzEventListener>();
-					this.RemoveEventListener(psdzEventListener);
-				}
-			}
-		}
+            public void StopListening()
+            {
+                base.Channel.StopListening();
+            }
+        }
 
-		public void RemoveEventListener(IPsdzEventListener psdzEventListener)
-		{
-			if (psdzEventListener == null)
-			{
-				return;
-			}
-			IDictionary<IPsdzEventListener, PsdzEventService.PsdzEventListenerClient> obj = this.eventListenerClients;
-			lock (obj)
-			{
-				if (this.eventListenerClients.ContainsKey(psdzEventListener))
-				{
-					PsdzEventService.PsdzEventListenerClient psdzEventListenerClient = this.eventListenerClients[psdzEventListener];
-					psdzEventListenerClient.StopListening();
-					psdzEventListenerClient.Close();
-					this.eventListenerClients.Remove(psdzEventListener);
-				}
-			}
-		}
+        private readonly Binding binding;
 
-		private readonly Binding binding;
+        private readonly EndpointAddress endpointAddress;
 
-		private readonly EndpointAddress endpointAddress;
+        private readonly IDictionary<IPsdzEventListener, PsdzEventListenerClient> eventListenerClients;
 
-		private readonly IDictionary<IPsdzEventListener, PsdzEventService.PsdzEventListenerClient> eventListenerClients;
+        public PsdzEventService(Binding binding, EndpointAddress endpointAddress)
+        {
+            this.binding = binding;
+            this.endpointAddress = endpointAddress;
+            eventListenerClients = new Dictionary<IPsdzEventListener, PsdzEventListenerClient>();
+        }
 
-		private sealed class PsdzEventListenerClient : DuplexClientBase<IEventManagerService>
-		{
-			public PsdzEventListenerClient(IPsdzEventListener eventListener, Binding binding, EndpointAddress endPointAddress) : base(eventListener, binding, endPointAddress)
-			{
-			}
+        public void AddEventListener(IPsdzEventListener psdzEventListener)
+        {
+            if (psdzEventListener == null)
+            {
+                return;
+            }
+            lock (eventListenerClients)
+            {
+                if (!eventListenerClients.ContainsKey(psdzEventListener))
+                {
+                    PsdzEventListenerClient psdzEventListenerClient = new PsdzEventListenerClient(psdzEventListener, binding, endpointAddress);
+                    psdzEventListenerClient.StartListening();
+                    eventListenerClients.Add(psdzEventListener, psdzEventListenerClient);
+                }
+            }
+        }
 
-			public void StartListening()
-			{
-				base.Channel.StartListening();
-			}
+        public void RemoveAllEventListener()
+        {
+            lock (eventListenerClients)
+            {
+                while (eventListenerClients.Any())
+                {
+                    IPsdzEventListener psdzEventListener = eventListenerClients.Keys.First();
+                    RemoveEventListener(psdzEventListener);
+                }
+            }
+        }
 
-			public void StopListening()
-			{
-				base.Channel.StopListening();
-			}
-		}
-	}
+        public void RemoveEventListener(IPsdzEventListener psdzEventListener)
+        {
+            if (psdzEventListener == null)
+            {
+                return;
+            }
+            lock (eventListenerClients)
+            {
+                if (eventListenerClients.ContainsKey(psdzEventListener))
+                {
+                    PsdzEventListenerClient psdzEventListenerClient = eventListenerClients[psdzEventListener];
+                    psdzEventListenerClient.StopListening();
+                    psdzEventListenerClient.Close();
+                    eventListenerClients.Remove(psdzEventListener);
+                }
+            }
+        }
+    }
 }

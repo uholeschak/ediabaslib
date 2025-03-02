@@ -14,21 +14,21 @@ using BMW.Rheingold.Psdz.Model.Tal;
 namespace BMW.Rheingold.Psdz
 {
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
-    [ServiceKnownType(typeof(PsdzVin))]
-    [ServiceKnownType(typeof(PsdzSecureCodingConfigCto))]
+    [ServiceKnownType(typeof(PsdzConnection))]
     [ServiceKnownType(typeof(PsdzFa))]
     [ServiceKnownType(typeof(PsdzSvt))]
-    [ServiceKnownType(typeof(PsdzConnection))]
+    [ServiceKnownType(typeof(PsdzVin))]
     [ServiceKnownType(typeof(PsdzTal))]
+    [ServiceKnownType(typeof(PsdzSecureCodingConfigCto))]
     public interface ITalExecutionService
     {
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzTal ExecuteTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzVin vin, IPsdzFa faTarget, TalExecutionSettings talExecutionConfig, string backupDataPath, CancellationToken ct);
 
+        [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(FileNotFoundException))]
-        [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzTal ExecuteTalFile(IPsdzConnection connection, string pathToTal, string vin, string pathToFa, TalExecutionSettings talExecutionSettings, CancellationToken ct);
 

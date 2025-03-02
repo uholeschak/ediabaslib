@@ -501,6 +501,7 @@
     <Compile Include="Psdz\IPsdzReadPublicKeyResultCto.cs" />
     <Compile Include="Psdz\IPsdzReadSecureEcuModeResultCto.cs" />
     <Compile Include="Psdz\IPsdzReadStatusResultCto.cs" />
+    <Compile Include="Psdz\IPsdzReadVpcFromVcmCto.cs" />
     <Compile Include="Psdz\IPsdzReplacementPart.cs" />
     <Compile Include="Psdz\IPsdzRequestNcdEto.cs" />
     <Compile Include="Psdz\IPsdzRequestNcdSignatureResponseCto.cs" />
@@ -643,6 +644,7 @@
     <Compile Include="Psdz\PsdzReadPublicKeyResultCto.cs" />
     <Compile Include="Psdz\PsdzReadSecureEcuModeResultCto.cs" />
     <Compile Include="Psdz\PsdzReadStatusResultCto.cs" />
+    <Compile Include="Psdz\PsdzReadVpcFromVcmCto.cs" />
     <Compile Include="Psdz\PsdzReplacementPart.cs" />
     <Compile Include="Psdz\PsdzRequestEcuSecCheckingResult.cs" />
     <Compile Include="Psdz\PsdzRequestNcdEto.cs" />

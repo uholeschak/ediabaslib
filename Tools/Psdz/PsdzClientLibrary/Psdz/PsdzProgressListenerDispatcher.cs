@@ -6,89 +6,82 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-	class PsdzProgressListenerDispatcher : IPsdzProgressListener
-	{
-		public void AddPsdzProgressListener(IPsdzProgressListener progressListener)
-		{
-			IList<IPsdzProgressListener> obj = this.psdzProgressListeners;
-			lock (obj)
-			{
-				if (!this.psdzProgressListeners.Contains(progressListener))
-				{
-					this.psdzProgressListeners.Add(progressListener);
-				}
-			}
-		}
+    internal class PsdzProgressListenerDispatcher : IPsdzProgressListener
+    {
+        private readonly IList<IPsdzProgressListener> psdzProgressListeners = new List<IPsdzProgressListener>();
 
-		public void BeginTask(string task)
-		{
-			IList<IPsdzProgressListener> obj = this.psdzProgressListeners;
-			lock (obj)
-			{
-				foreach (IPsdzProgressListener psdzProgressListener in this.psdzProgressListeners)
-				{
-					psdzProgressListener.BeginTask(task);
-				}
-			}
-		}
+        public void AddPsdzProgressListener(IPsdzProgressListener progressListener)
+        {
+            lock (psdzProgressListeners)
+            {
+                if (!psdzProgressListeners.Contains(progressListener))
+                {
+                    psdzProgressListeners.Add(progressListener);
+                }
+            }
+        }
 
-		public void RemovePsdzProgressListener(IPsdzProgressListener progressListener)
-		{
-			IList<IPsdzProgressListener> obj = this.psdzProgressListeners;
-			lock (obj)
-			{
-				if (this.psdzProgressListeners.Contains(progressListener))
-				{
-					this.psdzProgressListeners.Remove(progressListener);
-				}
-			}
-		}
+        public void BeginTask(string task)
+        {
+            lock (psdzProgressListeners)
+            {
+                foreach (IPsdzProgressListener psdzProgressListener in psdzProgressListeners)
+                {
+                    psdzProgressListener.BeginTask(task);
+                }
+            }
+        }
 
-		public void SetDuration(long milliseconds)
-		{
-			IList<IPsdzProgressListener> obj = this.psdzProgressListeners;
-			lock (obj)
-			{
-				foreach (IPsdzProgressListener psdzProgressListener in this.psdzProgressListeners)
-				{
-					psdzProgressListener.SetDuration(milliseconds);
-				}
-			}
-		}
+        public void RemovePsdzProgressListener(IPsdzProgressListener progressListener)
+        {
+            lock (psdzProgressListeners)
+            {
+                if (psdzProgressListeners.Contains(progressListener))
+                {
+                    psdzProgressListeners.Remove(progressListener);
+                }
+            }
+        }
 
-		public void SetElapsedTime(long milliseconds)
-		{
-			IList<IPsdzProgressListener> obj = this.psdzProgressListeners;
-			lock (obj)
-			{
-				foreach (IPsdzProgressListener psdzProgressListener in this.psdzProgressListeners)
-				{
-					psdzProgressListener.SetElapsedTime(milliseconds);
-				}
-			}
-		}
+        public void SetDuration(long milliseconds)
+        {
+            lock (psdzProgressListeners)
+            {
+                foreach (IPsdzProgressListener psdzProgressListener in psdzProgressListeners)
+                {
+                    psdzProgressListener.SetDuration(milliseconds);
+                }
+            }
+        }
 
-		public void SetFinished()
-		{
-			IList<IPsdzProgressListener> obj = this.psdzProgressListeners;
-			lock (obj)
-			{
-				foreach (IPsdzProgressListener psdzProgressListener in this.psdzProgressListeners)
-				{
-					psdzProgressListener.SetFinished();
-				}
-			}
-		}
+        public void SetElapsedTime(long milliseconds)
+        {
+            lock (psdzProgressListeners)
+            {
+                foreach (IPsdzProgressListener psdzProgressListener in psdzProgressListeners)
+                {
+                    psdzProgressListener.SetElapsedTime(milliseconds);
+                }
+            }
+        }
 
-		public void Clear()
-		{
-			IList<IPsdzProgressListener> obj = this.psdzProgressListeners;
-			lock (obj)
-			{
-				this.psdzProgressListeners.Clear();
-			}
-		}
+        public void SetFinished()
+        {
+            lock (psdzProgressListeners)
+            {
+                foreach (IPsdzProgressListener psdzProgressListener in psdzProgressListeners)
+                {
+                    psdzProgressListener.SetFinished();
+                }
+            }
+        }
 
-		private readonly IList<IPsdzProgressListener> psdzProgressListeners = new List<IPsdzProgressListener>();
-	}
+        public void Clear()
+        {
+            lock (psdzProgressListeners)
+            {
+                psdzProgressListeners.Clear();
+            }
+        }
+    }
 }

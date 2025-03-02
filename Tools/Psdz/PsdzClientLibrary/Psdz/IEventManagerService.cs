@@ -11,8 +11,8 @@ namespace BMW.Rheingold.Psdz
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzEventListener))]
     public interface IEventManagerService
     {
-        [FaultContract(typeof(PsdzRuntimeException))]
         [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         void StartListening();
 
         [OperationContract]

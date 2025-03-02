@@ -11,25 +11,26 @@ using BMW.Rheingold.Psdz.Model.Tal;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    class TalExecutionServiceClient : PsdzDuplexClientBase<ITalExecutionService, IPsdzProgressListener>, ITalExecutionService
+    internal sealed class TalExecutionServiceClient : PsdzDuplexClientBase<ITalExecutionService, IPsdzProgressListener>, ITalExecutionService
     {
-        internal TalExecutionServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress) : base(progressListener, binding, remoteAddress)
+        internal TalExecutionServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)
+            : base(progressListener, binding, remoteAddress)
         {
         }
 
         public IPsdzTal ExecuteTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzVin vin, IPsdzFa faTarget, TalExecutionSettings talExecutionConfig, string backupDataPath, CancellationToken ct)
         {
-            return base.CallFunction<IPsdzTal>((ITalExecutionService m) => m.ExecuteTal(connection, tal, svtTarget, vin, faTarget, talExecutionConfig, backupDataPath, ct));
+            return CallFunction((ITalExecutionService m) => m.ExecuteTal(connection, tal, svtTarget, vin, faTarget, talExecutionConfig, backupDataPath, ct));
         }
 
         public IPsdzTal ExecuteTalFile(IPsdzConnection connection, string pathToTal, string vin, string pathToFa, TalExecutionSettings talExecutionSettings, CancellationToken ct)
         {
-            return base.CallFunction<IPsdzTal>((ITalExecutionService m) => m.ExecuteTalFile(connection, pathToTal, vin, pathToFa, talExecutionSettings, ct));
+            return CallFunction((ITalExecutionService m) => m.ExecuteTalFile(connection, pathToTal, vin, pathToFa, talExecutionSettings, ct));
         }
 
         public IPsdzTal ExecuteHDDUpdate(IPsdzConnection connection, IPsdzTal tal, IPsdzFa fa, IPsdzVin vin, TalExecutionSettings talExecutionSettings)
         {
-            return base.CallFunction<IPsdzTal>((ITalExecutionService m) => m.ExecuteHDDUpdate(connection, tal, fa, vin, talExecutionSettings));
+            return CallFunction((ITalExecutionService m) => m.ExecuteHDDUpdate(connection, tal, fa, vin, talExecutionSettings));
         }
     }
 }
