@@ -187,43 +187,43 @@ namespace BMW.Rheingold.Programming.API
 
         internal string BuildKey(IPsdzEcu ecu)
         {
-            if (ecu != null && ecu.BaseVariant != null && ecu.PrimaryKey != null)
+            if (ecu == null || ecu.BaseVariant == null || ecu.PrimaryKey == null)
             {
-                return ecu.BaseVariant + "-" + ecu.PrimaryKey.DiagAddrAsInt;
+                return null;
             }
-            return null;
+            return ecu.BaseVariant + "-" + ecu.PrimaryKey.DiagAddrAsInt;
         }
 
         public ISvt Build(IPsdzSollverbauung sollVerbauung, IDictionary<string, string> orderNumbers)
         {
-            if (sollVerbauung != null && sollVerbauung.Svt != null)
+            if (sollVerbauung == null || sollVerbauung.Svt == null)
             {
-                IPsdzSvt svt = sollVerbauung.Svt;
-                _ = sollVerbauung.PsdzOrderList;
-                SystemVerbauTabelle systemVerbauTabelle = new SystemVerbauTabelle();
-                systemVerbauTabelle.Version = svt.Version;
-                systemVerbauTabelle.HoSignature = svt.HoSignature;
-                systemVerbauTabelle.HoSignatureDate = svt.HoSignatureDate;
-                IEnumerable<IPsdzEcu> ecus = svt.Ecus;
-                if (ecus != null)
-                {
-                    foreach (IPsdzEcu item in ecus)
-                    {
-                        IEcuObj ecuObj = Build(item);
-                        if (orderNumbers != null && orderNumbers.Any())
-                        {
-                            string key = BuildKey(item);
-                            if (orderNumbers.ContainsKey(key))
-                            {
-                                ((EcuObj)ecuObj).OrderNumber = orderNumbers[key];
-                            }
-                        }
-                        systemVerbauTabelle.AddEcu(ecuObj);
-                    }
-                }
-                return systemVerbauTabelle;
+                return null;
             }
-            return null;
+            IPsdzSvt svt = sollVerbauung.Svt;
+            _ = sollVerbauung.PsdzOrderList;
+            SystemVerbauTabelle systemVerbauTabelle = new SystemVerbauTabelle();
+            systemVerbauTabelle.Version = svt.Version;
+            systemVerbauTabelle.HoSignature = svt.HoSignature;
+            systemVerbauTabelle.HoSignatureDate = svt.HoSignatureDate;
+            IEnumerable<IPsdzEcu> ecus = svt.Ecus;
+            if (ecus != null)
+            {
+                foreach (IPsdzEcu item in ecus)
+                {
+                    IEcuObj eCU = Build(item);
+                    if (orderNumbers != null && orderNumbers.Any())
+                    {
+                        string key = BuildKey(item);
+                        if (orderNumbers.ContainsKey(key))
+                        {
+                            ((EcuObj)eCU).OrderNumber = orderNumbers[key];
+                        }
+                    }
+                    systemVerbauTabelle.AddEcu(eCU);
+                }
+            }
+            return systemVerbauTabelle;
         }
 
         public IEcuObj Build(IPsdzEcu ecuInput)
