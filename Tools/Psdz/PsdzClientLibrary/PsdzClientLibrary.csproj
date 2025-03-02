@@ -479,6 +479,7 @@
     <Compile Include="Psdz\IPsdzFetchCalculationSecureTokensResultCto.cs" />
     <Compile Include="Psdz\IPsdzFp.cs" />
     <Compile Include="Psdz\IPsdzFsaTa.cs" />
+    <Compile Include="Psdz\IPsdzIPsecEcuBitmaskResultCto.cs" />
     <Compile Include="Psdz\IPsdzIstufe.cs" />
     <Compile Include="Psdz\IPsdzIstufenTriple.cs" />
     <Compile Include="Psdz\IPsdzKdsActionStatusResultCto.cs" />
@@ -537,6 +538,7 @@
     <Compile Include="Psdz\IPsdzTalElement.cs" />
     <Compile Include="Psdz\IPsdzTalFilter.cs" />
     <Compile Include="Psdz\IPsdzTalLine.cs" />
+    <Compile Include="Psdz\IPsdzTargetBitmask.cs" />
     <Compile Include="Psdz\IPsdzTargetSelector.cs" />
     <Compile Include="Psdz\IPsdzTransactionEvent.cs" />
     <Compile Include="Psdz\IPsdzTransactionProgressEvent.cs" />
@@ -617,6 +619,7 @@
     <Compile Include="Psdz\PsdzIdRestore.cs" />
     <Compile Include="Psdz\PsdzIdRestoreLightTa.cs" />
     <Compile Include="Psdz\PsdzIdRestoreTa.cs" />
+    <Compile Include="Psdz\PsdzIPsecEcuBitmaskResultCto.cs" />
     <Compile Include="Psdz\PsdzIstufe.cs" />
     <Compile Include="Psdz\PsdzIstufenTriple.cs" />
     <Compile Include="Psdz\PsdzKdsActionStatusResultCto.cs" />
@@ -695,6 +698,7 @@
     <Compile Include="Psdz\PsdzTalElement.cs" />
     <Compile Include="Psdz\PsdzTalFilter.cs" />
     <Compile Include="Psdz\PsdzTalLine.cs" />
+    <Compile Include="Psdz\PsdzTargetBitmask.cs" />
     <Compile Include="Psdz\PsdzTargetSelector.cs" />
     <Compile Include="Psdz\PsdzTransactionEvent.cs" />
     <Compile Include="Psdz\PsdzTransactionProgressEvent.cs" />
