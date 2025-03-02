@@ -25,112 +25,126 @@ namespace BMW.Rheingold.Psdz
         UPDATE_WITHOUT_DELETE
     }
 
-	[ServiceKnownType(typeof(PsdzObdData))]
-	[ServiceKnownType(typeof(PsdzTalFilter))]
-	[ServiceKnownType(typeof(PsdzSwtApplicationId))]
-	[ServiceKnownType(typeof(PsdzSwtAction))]
-	[ServiceKnownType(typeof(PsdzSvt))]
-	[ServiceKnownType(typeof(PsdzStandardSvt))]
-	[ServiceKnownType(typeof(PsdzSollverbauung))]
-	[ServiceKnownType(typeof(PsdzConnection))]
-	[ServiceKnownType(typeof(PsdzSgbmId))]
-	[ServiceKnownType(typeof(PsdzDiagAddress))]
-	[ServiceKnownType(typeof(PsdzTal))]
-	[ServiceContract(SessionMode = SessionMode.Required)]
-	[ServiceKnownType(typeof(PsdzSollSfaCto))]
-	[ServiceKnownType(typeof(PsdzSecureTokenEto))]
-	[ServiceKnownType(typeof(PsdzFeatureLongStatusCto))]
-	[ServiceKnownType(typeof(PsdzEcuFeatureTokenRelationCto))]
-	[ServiceKnownType(typeof(PsdzFeatureIdCto))]
-	[ServiceKnownType(typeof(PsdzEcuIdentifier))]
-	[ServiceKnownType(typeof(PsdzSwtApplication))]
-	[ServiceKnownType(typeof(PsdzFa))]
-	[ServiceKnownType(typeof(PsdzFp))]
-	[ServiceKnownType(typeof(PsdzIstufe))]
-	public interface ILogicService
-	{
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzTal ChangeSwtActionType(IPsdzTal tal, IEnumerable<IPsdzSwtApplicationId> swtApplicationIds, IEnumerable<PsdzSwtActionType> swtActionTypes);
+    [ServiceContract(SessionMode = SessionMode.Required)]
+    [ServiceKnownType(typeof(PsdzFa))]
+    [ServiceKnownType(typeof(PsdzFp))]
+    [ServiceKnownType(typeof(PsdzIstufe))]
+    [ServiceKnownType(typeof(PsdzTal))]
+    [ServiceKnownType(typeof(PsdzTalFilter))]
+    [ServiceKnownType(typeof(PsdzSwtApplication))]
+    [ServiceKnownType(typeof(PsdzSwtApplicationId))]
+    [ServiceKnownType(typeof(PsdzSwtAction))]
+    [ServiceKnownType(typeof(PsdzSvt))]
+    [ServiceKnownType(typeof(PsdzStandardSvt))]
+    [ServiceKnownType(typeof(PsdzSollverbauung))]
+    [ServiceKnownType(typeof(PsdzConnection))]
+    [ServiceKnownType(typeof(PsdzSgbmId))]
+    [ServiceKnownType(typeof(PsdzDiagAddress))]
+    [ServiceKnownType(typeof(PsdzEcuIdentifier))]
+    [ServiceKnownType(typeof(PsdzObdData))]
+    [ServiceKnownType(typeof(PsdzSollSfaCto))]
+    [ServiceKnownType(typeof(PsdzSecureTokenEto))]
+    [ServiceKnownType(typeof(PsdzFeatureLongStatusCto))]
+    [ServiceKnownType(typeof(PsdzEcuFeatureTokenRelationCto))]
+    [ServiceKnownType(typeof(PsdzFeatureIdCto))]
+    [ServiceKnownType(typeof(PsdzProgrammingProtectionDataCto))]
+    [ServiceKnownType(typeof(TalGenerationSettings))]
+    public interface ILogicService
+    {
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal ChangeSwtActionType(IPsdzTal tal, IEnumerable<IPsdzSwtApplicationId> swtApplicationIds, IEnumerable<PsdzSwtActionType> swtActionTypes);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzTal DeleteSwtTransactions(IPsdzTal tal, IEnumerable<IPsdzSwtApplicationId> swtApplicationIdsWhitelist, IEnumerable<IPsdzSwtApplicationId> swtApplicationIdsBlacklist);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal DeleteSwtTransactions(IPsdzTal tal, IEnumerable<IPsdzSwtApplicationId> swtApplicationIdsWhitelist, IEnumerable<IPsdzSwtApplicationId> swtApplicationIdsBlacklist);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzStandardSvt FillBntnNamesForMainSeries(string baureihenverbund, IPsdzStandardSvt svt);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzStandardSvt FillBntnNamesForMainSeries(string baureihenverbund, IPsdzStandardSvt svt);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzTal FillFsc(IPsdzTal tal, IPsdzSwtAction swtAction);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal FillFsc(IPsdzTal tal, IPsdzSwtAction swtAction);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract(Name = "FillFscSingle")]
-		IPsdzTal FillFsc(IPsdzTal tal, IEnumerable<IPsdzSwtApplication> swtApplications);
+        [OperationContract(Name = "FillFscSingle")]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal FillFsc(IPsdzTal tal, IEnumerable<IPsdzSwtApplication> swtApplications);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzTal FilterTal(IPsdzTal tal, IPsdzTalFilter talFilter);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal FilterTal(IPsdzTal tal, IPsdzTalFilter talFilter);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzTal GenerateFcfnTal(IEnumerable<IPsdzSwtApplication> swtApplications, IPsdzSvt svtActual, IPsdzTalFilter talFilter);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal GenerateFcfnTal(IEnumerable<IPsdzSwtApplication> swtApplications, IPsdzSvt svtActual, IPsdzTalFilter talFilter);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzFp GenerateFp(IPsdzFa fa);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzFp GenerateFp(IPsdzFa fa);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzFp GenerateFpInterpretation(string baureihe, IPsdzFp fp);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzFp GenerateFpInterpretation(string baureihe, IPsdzFp fp);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzSollverbauung GenerateSollverbauungEinzelFlash(IPsdzConnection connection, IPsdzIstufe iStufeTarget, IPsdzIstufe iStufeShipment, IPsdzSvt svtActual, IPsdzFa faTarget, IEnumerable<IPsdzDiagAddress> ecusToBeFlashed);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSollverbauung GenerateSollverbauungEinzelFlash(IPsdzConnection connection, IPsdzIstufe iStufeTarget, IPsdzIstufe iStufeShipment, IPsdzSvt svtActual, IPsdzFa faTarget, IEnumerable<IPsdzDiagAddress> ecusToBeFlashed);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzSollverbauung GenerateSollverbauungGesamtFlash(IPsdzConnection connection, IPsdzIstufe iStufeTarget, IPsdzIstufe iStufeShipment, IPsdzSvt svtActual, IPsdzFa faTarget, IPsdzTalFilter talFilter);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSollverbauung GenerateSollverbauungGesamtFlash(IPsdzConnection connection, IPsdzIstufe iStufeTarget, IPsdzIstufe iStufeShipment, IPsdzSvt svtActual, IPsdzFa faTarget, IPsdzTalFilter talFilter);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IPsdzSvt GenerateSvtSoll(IPsdzConnection connection, IPsdzFa faActual, IPsdzFa faTarget, IPsdzSvt svtActual, IPsdzIstufe iStufeShipment, IPsdzIstufe iStufeActual, IPsdzIstufe iStufeTarget);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSollverbauung GenerateSollverbauungGesamtflashWithMatcher(IPsdzIstufe iStufeTarget, IPsdzIstufe iStufeShipment, IPsdzSvt svtActual, IPsdzFa faTarget, IPsdzTalFilter talFilter);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzTal GenerateTal(IPsdzConnection connection, IPsdzSvt svtActual, IPsdzSollverbauung sollverbauung, IPsdzSwtAction swtAction, IPsdzTalFilter talFilter, string backupDataPath, string vinFromFA = "");
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSvt GenerateSvtSoll(IPsdzConnection connection, IPsdzFa faActual, IPsdzFa faTarget, IPsdzSvt svtActual, IPsdzIstufe iStufeShipment, IPsdzIstufe iStufeActual, IPsdzIstufe iStufeTarget);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract(Name = "GenerateTalWithoutBackup")]
-		IPsdzTal GenerateTal(IPsdzConnection connection, IPsdzSvt svtActual, IPsdzSollverbauung sollverbauung, IPsdzSwtAction swtAction, IPsdzTalFilter talFilter, string vinFromFA = "");
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal GenerateTal(IPsdzConnection connection, IPsdzSvt svtActual, IPsdzSollverbauung sollverbauung, IPsdzSwtAction swtAction, IPsdzTalFilter talFilter, string backupDataPath, string vinFromFA = "");
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IEnumerable<IPsdzIstufe> GetPossibleIntegrationLevel(IPsdzFa fa);
+        [OperationContract(Name = "GenerateTalWithoutBackup")]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal GenerateTal(IPsdzConnection connection, IPsdzSvt svtActual, IPsdzSollverbauung sollverbauung, IPsdzSwtAction swtAction, IPsdzTalFilter talFilter, string vinFromFA = "");
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract]
-		IEnumerable<IPsdzSgbmId> RequestSweList(IPsdzTal tal, bool ignoreSwDelete);
+        [OperationContract(Name = "GenerateTalWithTalSettings")]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal GenerateTal(IPsdzConnection connection, IPsdzSvt svtActual, IPsdzSollverbauung sollverbauung, IPsdzSwtAction swtAction, IPsdzTalFilter talFilter, TalGenerationSettings config, string vinFromFA = "");
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IDictionary<IPsdzEcuIdentifier, IPsdzObdData> RequestRelevantObdData(IPsdzConnection connection, IPsdzSvt svtActual);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzIstufe> GetPossibleIntegrationLevel(IPsdzFa fa);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzTal RequestHDDUpdateTal(IPsdzConnection connection, IPsdzSvt svtActual, IPsdzSvt svtSoll, IPsdzSwtAction swtAction, string backupDataPath);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzSgbmId> RequestSweList(IPsdzTal tal, bool ignoreSwDelete);
 
-		[OperationContract]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzSollSfaCto GenerateSfaSollStand(IEnumerable<IPsdzSecureTokenEto> tokenPack);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IDictionary<IPsdzEcuIdentifier, IPsdzObdData> RequestRelevantObdData(IPsdzConnection connection, IPsdzSvt svtActual);
 
-		[FaultContract(typeof(PsdzRuntimeException))]
-		[OperationContract(Name = "GenerateTalForSfaUsingTal")]
-		IPsdzTal GenerateTalForSfa(IPsdzTal tal, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList);
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal RequestHDDUpdateTal(IPsdzConnection connection, IPsdzSvt svtActual, IPsdzSvt svtSoll, IPsdzSwtAction swtAction, string backupDataPath);
 
-		[OperationContract(Name = "GenerateTalForSfaUsingSvt")]
-		[FaultContract(typeof(PsdzRuntimeException))]
-		IPsdzTal GenerateTalForSfa(IPsdzSvt svt, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList);
-	}
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSollSfaCto GenerateSfaSollStand(IEnumerable<IPsdzSecureTokenEto> tokenPack);
+
+        [OperationContract(Name = "GenerateTalForSfaUsingTal")]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal GenerateTalForSfa(IPsdzTal tal, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA);
+
+        [OperationContract(Name = "GenerateTalForSfaUsingSvt")]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTal GenerateTalForSfa(IPsdzSvt svt, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzProgrammingProtectionDataCto GenerateSweListForProgrammingProtection(IPsdzConnection connection, IPsdzTal tal);
+    }
 }

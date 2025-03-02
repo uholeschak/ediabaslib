@@ -26,7 +26,7 @@ namespace BMW.Rheingold.Psdz.Client
 
         private readonly ObjectBuilderServiceClient objectBuilderServiceClient;
 
-        private readonly BMW.Rheingold.Psdz.Client.ProgrammingServiceClient programmingService;
+        private readonly ProgrammingServiceClient programmingService;
 
         private readonly PsdzEventService psdzEventService;
 

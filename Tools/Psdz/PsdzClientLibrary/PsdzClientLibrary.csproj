@@ -494,6 +494,7 @@
     <Compile Include="Psdz\IPsdzOrderList.cs" />
     <Compile Include="Psdz\IPsdzOrderPart.cs" />
     <Compile Include="Psdz\IPsdzPerformQuickKdsCheckResultCto.cs" />
+    <Compile Include="Psdz\IPsdzProgrammingProtectionDataCto.cs" />
     <Compile Include="Psdz\IPsdzProgressListener.cs" />
     <Compile Include="Psdz\IPsdzReadEcuUidResultCto.cs" />
     <Compile Include="Psdz\IPsdzReadLcsResultCto.cs" />
@@ -633,6 +634,7 @@
     <Compile Include="Psdz\PsdzOtherBindingDetailsStatus.cs" />
     <Compile Include="Psdz\PsdzPerformQuickKdsCheckResultCto.cs" />
     <Compile Include="Psdz\PsdzPreviousRun.cs" />
+    <Compile Include="Psdz\PsdzProgrammingProtectionDataCto.cs" />
     <Compile Include="Psdz\PsdzProgressEvent.cs" />
     <Compile Include="Psdz\PsdzProgressListenerDispatcher.cs" />
     <Compile Include="Psdz\PsdzReadCertMemoryObjectResult.cs" />
@@ -697,6 +699,7 @@
     <Compile Include="Psdz\SecurityManagementServiceClient.cs" />
     <Compile Include="Psdz\TalExecutionServiceClient.cs" />
     <Compile Include="Psdz\TalExecutionSettings.cs" />
+    <Compile Include="Psdz\TalGenerationSettings.cs" />
     <Compile Include="Psdz\TestRunParams.cs" />
     <Compile Include="Psdz\VcmServiceClient.cs" />
     <Compile Include="Resources\Strings.de.Designer.cs">
