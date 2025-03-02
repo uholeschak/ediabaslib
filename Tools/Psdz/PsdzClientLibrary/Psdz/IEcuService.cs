@@ -10,29 +10,33 @@ using BMW.Rheingold.Psdz.Model.Exceptions;
 
 namespace BMW.Rheingold.Psdz
 {
-    [ServiceKnownType(typeof(PsdzEcuContextInfo))]
+    [ServiceContract(SessionMode = SessionMode.Required)]
     [ServiceKnownType(typeof(PsdzConnection))]
-    [ServiceKnownType(typeof(PsdzSvt))]
     [ServiceKnownType(typeof(PsdzEcuIdentifier))]
     [ServiceKnownType(typeof(PsdzStandardSvt))]
+    [ServiceKnownType(typeof(PsdzEcuContextInfo))]
     [ServiceKnownType(typeof(PsdzResponse))]
-    [ServiceContract(SessionMode = SessionMode.Required)]
+    [ServiceKnownType(typeof(PsdzSvt))]
     public interface IEcuService
     {
         [OperationContract(Name = "RequestSvtFunctional")]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzStandardSvt RequestSvt(IPsdzConnection connection);
 
-        [FaultContract(typeof(PsdzRuntimeException))]
         [OperationContract(Name = "RequestSvtFunctionalWithPhysicalRequest")]
+        [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzStandardSvt RequestSvt(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus);
+
+        [OperationContract(Name = "RequestSvtFunctionalWithSmacs")]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzSvt RequestSvtWithSmacs(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus);
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzEcuContextInfo> RequestEcuContextInfos(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus);
 
-        [FaultContract(typeof(PsdzRuntimeException))]
         [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzResponse UpdatePiaPortierungsmaster(IPsdzConnection connection, IPsdzSvt svt);
     }
 }
