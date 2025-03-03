@@ -22,242 +22,219 @@ namespace PsdzClient.Programming
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public IEcuProgrammingInfosData DataContext
-		{
-			get
-			{
-				return this.dataContext;
-			}
-			set
-			{
-				this.dataContext = value;
-				this.OnPropertyChanged("DataContext");
-			}
-		}
+        public IEcuProgrammingInfosData DataContext
+        {
+            get
+            {
+                return dataContext;
+            }
+            set
+            {
+                dataContext = value;
+                OnPropertyChanged("DataContext");
+            }
+        }
 
         public ProgrammingObjectBuilder ProgrammingObjectBuilder
-		{
-			get
-			{
-				return this.programmingObjectBuilder;
-			}
-			set
-			{
-				this.programmingObjectBuilder = value;
-			}
-		}
+        {
+            get
+            {
+                return programmingObjectBuilder;
+            }
+            set
+            {
+                programmingObjectBuilder = value;
+            }
+        }
 
         public EcuProgrammingInfos(IVehicle vehicle, IFFMDynamicResolver ffmResolver, bool standard = true)
 		{
-			//this.db = db;
-			this.vehicle = vehicle;
-			this.ffmResolver = ffmResolver;
-			this.ecuProgrammingInfos = new List<EcuProgrammingInfo>();
-			if (standard)
-			{
-				this.dataContext = new EcuProgrammingInfosData();
-				this.ResetProgrammingInfos(false, true);
-			}
+            if (vehicle == null)
+            {
+                throw new ArgumentNullException("vehicle");
+            }
+            //this.db = db;
+            this.vehicle = vehicle;
+            this.ffmResolver = ffmResolver;
+            ecuProgrammingInfos = new List<EcuProgrammingInfo>();
+            if (standard)
+            {
+                dataContext = new EcuProgrammingInfosData();
+                ResetProgrammingInfos(unregister: false);
+            }
 		}
 
-		~EcuProgrammingInfos()
-		{
-			this.UnregisterEventHandler();
-		}
-
-		public virtual void EstablishSelection()
-		{
-		}
-
-		public IEnumerator<IEcuProgrammingInfo> GetEnumerator()
-		{
-			return this.ecuProgrammingInfos.GetEnumerator();
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.ecuProgrammingInfos.GetEnumerator();
-		}
-
-		IEcuProgrammingInfo IEcuProgrammingInfos.GetItem(IEcu ecu)
-		{
-			EcuProgrammingInfo item = this.GetItem(ecu);
-			if (item == null)
-			{
-				return null;
-			}
-			return item.Data;
-		}
-
-		public virtual IEcuProgrammingInfo GetItem(IEcu ecu, string category)
-		{
-			return this.GetItem(ecu);
-		}
-
-		public void SelectCodingForIndustrialCustomer(IEcu ecu, string category, bool value)
-		{
-			IEcuProgrammingInfo item = this.GetItem(ecu, category);
-			if (item == null)
-			{
-				throw new ArgumentNullException("ecu");
-			}
-			IProgrammingAction programmingAction = item.GetProgrammingAction(ProgrammingActionType.Coding);
-			if (programmingAction != null)
-			{
-				programmingAction.Select(value);
-			}
-			if (programmingAction != null)
-			{
-				item.IsCodingScheduled = value;
-			}
-		}
-
-		public void SelectProgrammingForIndustrialCustomer(IEcu ecu, string category, bool value)
-		{
-			IEcuProgrammingInfo item = this.GetItem(ecu, category);
-			if (item == null)
-			{
-				throw new ArgumentNullException("ecu");
-			}
-			foreach (IProgrammingAction programmingAction in item.GetProgrammingActions(null))
-			{
-				if (programmingAction != null)
-				{
-					programmingAction.Select(value);
-				}
-				if (programmingAction != null && programmingAction.Type == ProgrammingActionType.Coding)
-				{
-					item.IsCodingScheduled = value;
-				}
-			}
-			item.IsProgrammingScheduled = value;
-		}
-
-		public void SelectReplacementForIndustrialCustomer(IEcu ecu, string category, bool value)
-		{
-			IEcuProgrammingInfo item = this.GetItem(ecu, category);
-			if (item == null)
-			{
-				throw new ArgumentNullException("ecu");
-			}
-			IProgrammingAction programmingAction = item.GetProgrammingAction(ProgrammingActionType.Replacement);
-			if (programmingAction == null)
-			{
-				return;
-			}
-			programmingAction.Select(value);
-		}
-
-		internal EcuProgrammingInfo AddEcuProgrammingInfo(IEcu ecu)
-		{
-			if (this.GetItemFromProgrammingInfos(ecu.ID_SG_ADR) != null)
-			{
-				throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Diagnosis address 0x{0:X2} is already added.", ecu.ID_SG_ADR));
-			}
-			EcuProgrammingInfo ecuProgrammingInfo = new EcuProgrammingInfo(ecu, this.programmingObjectBuilder, true);
-			this.RegisterEventHandler(ecuProgrammingInfo);
-			this.ecuProgrammingInfos.Add(ecuProgrammingInfo);
-			this.DataContext.List.Add(ecuProgrammingInfo.Data);
-			this.AddProgrammingInfoBeforeReplace(ecuProgrammingInfo.Data);
-			this.ecuProgrammingInfosMap.Add(ecuProgrammingInfo.Ecu, ecuProgrammingInfo);
-			return ecuProgrammingInfo;
-		}
-
-		internal void AddProgrammingInfoBeforeReplace(IEcuProgrammingInfoData ecuProgrammingInfoData)
-		{
-			if (this.ProgrammingInfoCanBeAdded(ecuProgrammingInfoData))
-			{
-				this.DataContext.ECUsWithIndividualData.Add(ecuProgrammingInfoData);
-			}
-		}
-
-		internal EcuProgrammingInfo GetItem(IEcu ecu)
-		{
-			if (this.ecuProgrammingInfosMap.ContainsKey(ecu))
-			{
-				return this.ecuProgrammingInfosMap[ecu];
-			}
-			return null;
-		}
-
-		internal EcuProgrammingInfo GetItemFromProgrammingInfos(long diagAddress)
-		{
-			using (IEnumerator<EcuProgrammingInfo> enumerator = this.ecuProgrammingInfos.GetEnumerator())
-			{
-				while (enumerator.MoveNext())
-				{
-					EcuProgrammingInfo ecuProgrammingInfo = enumerator.Current;
-					if (ecuProgrammingInfo.Ecu.ID_SG_ADR == diagAddress)
-					{
-						return ecuProgrammingInfo;
-					}
-				}
-			}
-			return null;
-		}
-
-		internal IEnumerable<IProgrammingAction> GetProgrammingActions(ProgrammingActionType[] programmingActionTypeFilter, typeDiagProtocoll[] diagProtocolFilter)
-		{
-			IList<IProgrammingAction> list = new List<IProgrammingAction>();
-			foreach (IEcuProgrammingInfo ecuProgrammingInfo in this.ecuProgrammingInfos)
-			{
-				if (diagProtocolFilter == null || diagProtocolFilter.Contains(ecuProgrammingInfo.Ecu.DiagProtocoll))
-				{
-					list.AddRange(ecuProgrammingInfo.GetProgrammingActions(programmingActionTypeFilter));
-				}
-			}
-			return list;
-		}
-
-		internal void RefreshProgrammingInfoBeforeReplace(IEnumerable<IEcuProgrammingInfoData> ecuProgrammingInfoData)
-		{
-			this.DataContext.ECUsWithIndividualData.Clear();
-			foreach (IEcuProgrammingInfoData ecuProgrammingInfoData2 in ecuProgrammingInfoData)
-			{
-				this.AddProgrammingInfoBeforeReplace(ecuProgrammingInfoData2);
-			}
-		}
-
-		internal void ResetProgrammingInfos(bool unregister = true, bool resetAll = true)
-		{
-			if (resetAll)
-			{
-				if (unregister)
-				{
-					this.UnregisterEventHandler();
-				}
-				this.programmingObjectBuilder = new ProgrammingObjectBuilder(this.vehicle as Vehicle, this.ffmResolver);
-				this.CreateEcuProgrammingInfos(this.vehicle.ECU);
-				this.ecuProgrammingInfosMap = new Dictionary<IEcu, EcuProgrammingInfo>();
-				this.ecuProgrammingInfos.ForEach(delegate (EcuProgrammingInfo info)
-				{
-					this.ecuProgrammingInfosMap.Add(info.Ecu, info);
-				});
-				return;
-			}
-
-			foreach (IEcu key in ((IEnumerable<IEcu>)new List<IEcu>(from ecu in this.ecuProgrammingInfosMap.Keys
-																	where !this.vehicle.ECU.Contains(ecu)
-																	select ecu)))
-			{
-				EcuProgrammingInfo ecuProgrammingInfo = this.ecuProgrammingInfosMap[key];
-				this.ecuProgrammingInfos.Remove(ecuProgrammingInfo);
-				this.DataContext.List.Remove(ecuProgrammingInfo.Data);
-				this.DataContext.ECUsWithIndividualData.Remove(ecuProgrammingInfo.Data);
-				this.ecuProgrammingInfosMap.Remove(key);
-			}
+        ~EcuProgrammingInfos()
+        {
+            UnregisterEventHandler();
         }
 
-		internal void SetSvkCurrentForEachEcu(ISvt svt)
+        public virtual void EstablishSelection()
 		{
-			if (svt == null)
-			{
-				this.SetSvkCurrentToNull();
-				return;
-			}
-			this.UpdateProgrammingInfo(svt);
-			this.RefreshProgrammingInfoBeforeReplace(this.DataContext.List.ToList<IEcuProgrammingInfoData>());
 		}
+
+        public IEnumerator<IEcuProgrammingInfo> GetEnumerator()
+        {
+            return ecuProgrammingInfos.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ecuProgrammingInfos.GetEnumerator();
+        }
+
+        IEcuProgrammingInfo IEcuProgrammingInfos.GetItem(IEcu ecu)
+        {
+            return GetItem(ecu)?.Data;
+        }
+
+        public virtual IEcuProgrammingInfo GetItem(IEcu ecu, string category)
+        {
+            return GetItem(ecu);
+        }
+
+        public void SelectCodingForIndustrialCustomer(IEcu ecu, string category, bool value)
+        {
+            IEcuProgrammingInfo item = GetItem(ecu, category);
+            if (item == null)
+            {
+                throw new ArgumentNullException("ecu");
+            }
+            IProgrammingAction programmingAction = item.GetProgrammingAction(ProgrammingActionType.Coding);
+            programmingAction?.Select(value);
+            if (programmingAction != null)
+            {
+                item.IsCodingScheduled = value;
+            }
+        }
+
+        public void SelectProgrammingForIndustrialCustomer(IEcu ecu, string category, bool value)
+        {
+            IEcuProgrammingInfo item = GetItem(ecu, category);
+            if (item == null)
+            {
+                throw new ArgumentNullException("ecu");
+            }
+            foreach (IProgrammingAction programmingAction in item.GetProgrammingActions(null))
+            {
+                programmingAction?.Select(value);
+                if (programmingAction != null && programmingAction.Type == ProgrammingActionType.Coding)
+                {
+                    item.IsCodingScheduled = value;
+                }
+            }
+            item.IsProgrammingScheduled = value;
+        }
+
+        public void SelectReplacementForIndustrialCustomer(IEcu ecu, string category, bool value)
+        {
+            (GetItem(ecu, category) ?? throw new ArgumentNullException("ecu")).GetProgrammingAction(ProgrammingActionType.Replacement)?.Select(value);
+        }
+
+        internal EcuProgrammingInfo AddEcuProgrammingInfo(IEcu ecu)
+        {
+            if (GetItemFromProgrammingInfos(ecu.ID_SG_ADR) != null)
+            {
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Diagnosis address 0x{0:X2} is already added.", ecu.ID_SG_ADR));
+            }
+            EcuProgrammingInfo ecuProgrammingInfo = new EcuProgrammingInfo(ecu, programmingObjectBuilder);
+            RegisterEventHandler(ecuProgrammingInfo);
+            ecuProgrammingInfos.Add(ecuProgrammingInfo);
+            DataContext.List.Add(ecuProgrammingInfo.Data);
+            AddProgrammingInfoBeforeReplace(ecuProgrammingInfo.Data);
+            ecuProgrammingInfosMap.Add(ecuProgrammingInfo.Ecu, ecuProgrammingInfo);
+            return ecuProgrammingInfo;
+        }
+
+        internal void AddProgrammingInfoBeforeReplace(IEcuProgrammingInfoData ecuProgrammingInfoData)
+        {
+            if (ProgrammingInfoCanBeAdded(ecuProgrammingInfoData))
+            {
+                DataContext.ECUsWithIndividualData.Add(ecuProgrammingInfoData);
+            }
+        }
+
+        internal EcuProgrammingInfo GetItem(IEcu ecu)
+        {
+            if (ecuProgrammingInfosMap.ContainsKey(ecu))
+            {
+                return ecuProgrammingInfosMap[ecu];
+            }
+            return null;
+        }
+
+        internal EcuProgrammingInfo GetItemFromProgrammingInfos(long diagAddress)
+        {
+            foreach (EcuProgrammingInfo ecuProgrammingInfo in ecuProgrammingInfos)
+            {
+                if (ecuProgrammingInfo.Ecu.ID_SG_ADR == diagAddress)
+                {
+                    return ecuProgrammingInfo;
+                }
+            }
+            return null;
+        }
+
+        internal IEnumerable<IProgrammingAction> GetProgrammingActions(ProgrammingActionType[] programmingActionTypeFilter, typeDiagProtocoll[] diagProtocolFilter)
+        {
+            IList<IProgrammingAction> list = new List<IProgrammingAction>();
+            foreach (EcuProgrammingInfo ecuProgrammingInfo in ecuProgrammingInfos)
+            {
+                if (diagProtocolFilter == null || diagProtocolFilter.Contains(((IEcuProgrammingInfo)ecuProgrammingInfo).Ecu.DiagProtocoll))
+                {
+                    list.AddRange(((IEcuProgrammingInfo)ecuProgrammingInfo).GetProgrammingActions(programmingActionTypeFilter));
+                }
+            }
+            return list;
+        }
+
+        internal void RefreshProgrammingInfoBeforeReplace(IEnumerable<IEcuProgrammingInfoData> ecuProgrammingInfoData)
+        {
+            DataContext.ECUsWithIndividualData.Clear();
+            foreach (IEcuProgrammingInfoData ecuProgrammingInfoDatum in ecuProgrammingInfoData)
+            {
+                AddProgrammingInfoBeforeReplace(ecuProgrammingInfoDatum);
+            }
+        }
+
+        internal void ResetProgrammingInfos(bool unregister = true, bool resetAll = true)
+        {
+            if (resetAll)
+            {
+                if (unregister)
+                {
+                    UnregisterEventHandler();
+                }
+                programmingObjectBuilder = new ProgrammingObjectBuilder((Vehicle)vehicle, ffmResolver);
+                CreateEcuProgrammingInfos(vehicle.ECU);
+                ecuProgrammingInfosMap = new Dictionary<IEcu, EcuProgrammingInfo>();
+                ecuProgrammingInfos.ForEach(delegate (EcuProgrammingInfo info)
+                {
+                    ecuProgrammingInfosMap.Add(info.Ecu, info);
+                });
+                return;
+            }
+            foreach (IEcu item in (IEnumerable<IEcu>)new List<IEcu>(ecuProgrammingInfosMap.Keys.Where((IEcu ecu) => !vehicle.ECU.Contains(ecu))))
+            {
+                EcuProgrammingInfo ecuProgrammingInfo = ecuProgrammingInfosMap[item];
+                ecuProgrammingInfos.Remove(ecuProgrammingInfo);
+                DataContext.List.Remove(ecuProgrammingInfo.Data);
+                DataContext.ECUsWithIndividualData.Remove(ecuProgrammingInfo.Data);
+                ecuProgrammingInfosMap.Remove(item);
+            }
+        }
+
+
+        internal void SetSvkCurrentForEachEcu(ISvt svt)
+        {
+            if (svt == null)
+            {
+                SetSvkCurrentToNull();
+                return;
+            }
+            UpdateProgrammingInfo(svt);
+            RefreshProgrammingInfoBeforeReplace(DataContext.List.ToList());
+        }
 
         internal void SetSvkTargetForEachEcu(ISvt svt)
         {
@@ -284,126 +261,117 @@ namespace PsdzClient.Programming
         }
 
         internal void UpdateProgrammingActions(IPsdzTal tal, int escalationStep)
-		{
-			foreach (IPsdzEcuIdentifier psdzEcuIdentifier in tal.AffectedEcus)
-			{
-				EcuProgrammingInfo itemFromProgrammingInfos = this.GetItemFromProgrammingInfos((long)psdzEcuIdentifier.DiagAddrAsInt);
-				if (itemFromProgrammingInfos != null)
-				{
-					IPsdzEcuIdentifier id = psdzEcuIdentifier;
-					IEnumerable<IPsdzTalLine> talLines = from talLine in tal.TalLines
-														 where talLine.EcuIdentifier.Equals(id)
-														 select talLine;
-					itemFromProgrammingInfos.UpdateProgrammingActions(talLines, true, escalationStep);
-				}
-				else
-				{
-					Log.Warning("EcuProgrammingInfos.UpdateProgrammingActions", "Could not find ecu programming object for 0x{0:X2}", new object[]
-					{
-						psdzEcuIdentifier.DiagAddrAsInt
-					});
-				}
-			}
-		}
+        {
+            foreach (IPsdzEcuIdentifier affectedEcu in tal.AffectedEcus)
+            {
+                EcuProgrammingInfo itemFromProgrammingInfos = GetItemFromProgrammingInfos(affectedEcu.DiagAddrAsInt);
+                if (itemFromProgrammingInfos != null)
+                {
+                    IPsdzEcuIdentifier id = affectedEcu;
+                    IEnumerable<IPsdzTalLine> talLines = tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(id));
+                    itemFromProgrammingInfos.UpdateProgrammingActions(talLines, isTalExecuted: true, escalationStep);
+                }
+                else
+                {
+                    Log.Warning("EcuProgrammingInfos.UpdateProgrammingActions", "Could not find ecu programming object for 0x{0:X2}", affectedEcu.DiagAddrAsInt);
+                }
+            }
+        }
 
-		protected virtual void OnActionPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == "IsSelected")
-			{
-				IProgrammingAction programmingAction = sender as IProgrammingAction;
-				if (programmingAction == null)
-				{
-					return;
-				}
-				object obj = this.threadLock;
-				lock (obj)
-				{
-					if (!programmingAction.IsSelected && this.dataContext.SelectedActionData.Contains(programmingAction.DataContext))
-					{
-						this.dataContext.SelectedActionData.Remove(programmingAction.DataContext);
-					}
-					else if (programmingAction.IsSelected && !this.dataContext.SelectedActionData.Contains(programmingAction.DataContext))
-					{
-						this.AddItem(programmingAction);
-					}
-				}
-			}
-		}
+        protected virtual void OnActionPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (!(e.PropertyName == "IsSelected") || !(sender is IProgrammingAction programmingAction))
+            {
+                return;
+            }
+            lock (threadLock)
+            {
+                if (!programmingAction.IsSelected && dataContext.SelectedActionData.Contains(programmingAction.DataContext))
+                {
+                    dataContext.SelectedActionData.Remove(programmingAction.DataContext);
+                }
+                else if (programmingAction.IsSelected && !dataContext.SelectedActionData.Contains(programmingAction.DataContext))
+                {
+                    AddItem(programmingAction);
+                }
+            }
+        }
 
-		protected virtual bool OnlyAddECUsWithIndividualData()
-		{
-			return true;
-		}
+        protected virtual bool OnlyAddECUsWithIndividualData()
+        {
+            return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.DisplayOnlyECUsWithIndividualData", defaultValue: true);
+        }
 
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged == null)
-			{
-				return;
-			}
-			propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-		protected void RegisterEventHandler(IEcuProgrammingInfo ecuProgrammingInfo)
-		{
-			INotifyCollectionChanged notifyCollectionChanged = ecuProgrammingInfo.ProgrammingActions as INotifyCollectionChanged;
-			if (notifyCollectionChanged != null)
-			{
-				notifyCollectionChanged.CollectionChanged += this.OnEcuProgrammingActionsChanged;
-			}
-		}
+        protected void RegisterEventHandler(IEcuProgrammingInfo ecuProgrammingInfo)
+        {
+            if (ecuProgrammingInfo.ProgrammingActions is INotifyCollectionChanged notifyCollectionChanged)
+            {
+                notifyCollectionChanged.CollectionChanged += OnEcuProgrammingActionsChanged;
+            }
+        }
 
-		protected void UnregisterEventHandler()
-		{
-			foreach (EcuProgrammingInfo ecuProgrammingInfo in this.ecuProgrammingInfos)
-			{
-				INotifyCollectionChanged notifyCollectionChanged = ((IEcuProgrammingInfo)ecuProgrammingInfo).ProgrammingActions as INotifyCollectionChanged;
-				if (notifyCollectionChanged != null)
-				{
-					notifyCollectionChanged.CollectionChanged -= this.OnEcuProgrammingActionsChanged;
-				}
-				foreach (IProgrammingAction programmingAction in ((IEcuProgrammingInfo)ecuProgrammingInfo).ProgrammingActions)
-				{
-					programmingAction.PropertyChanged -= this.OnActionPropertyChanged;
-				}
-			}
-		}
+        protected void UnregisterEventHandler()
+        {
+            foreach (EcuProgrammingInfo ecuProgrammingInfo in ecuProgrammingInfos)
+            {
+                if (((IEcuProgrammingInfo)ecuProgrammingInfo).ProgrammingActions is INotifyCollectionChanged notifyCollectionChanged)
+                {
+                    notifyCollectionChanged.CollectionChanged -= OnEcuProgrammingActionsChanged;
+                }
+                foreach (IProgrammingAction programmingAction in ((IEcuProgrammingInfo)ecuProgrammingInfo).ProgrammingActions)
+                {
+                    programmingAction.PropertyChanged -= OnActionPropertyChanged;
+                }
+            }
+        }
 
-		private void AddItem(IProgrammingAction itemToAdd)
-		{
-			for (int i = 0; i < this.dataContext.SelectedActionData.Count; i++)
-			{
-				IProgrammingActionData programmingActionData = this.dataContext.SelectedActionData[i];
-				if (itemToAdd.DataContext.Order < programmingActionData.Order)
-				{
-					this.dataContext.SelectedActionData.Insert(i, itemToAdd.DataContext);
-					this.OnPropertyChanged("SelectedActions");
-					return;
-				}
-			}
-			this.dataContext.SelectedActionData.Add(itemToAdd.DataContext);
-			this.OnPropertyChanged("SelectedActions");
-		}
+        private void AddItem(IProgrammingAction itemToAdd)
+        {
+            for (int i = 0; i < dataContext.SelectedActionData.Count; i++)
+            {
+                IProgrammingActionData programmingActionData = dataContext.SelectedActionData[i];
+                if (itemToAdd.DataContext.Order < programmingActionData.Order)
+                {
+                    dataContext.SelectedActionData.Insert(i, itemToAdd.DataContext);
+                    OnPropertyChanged("SelectedActions");
+                    return;
+                }
+            }
+            dataContext.SelectedActionData.Add(itemToAdd.DataContext);
+            OnPropertyChanged("SelectedActions");
+        }
 
-		private void CreateEcuProgrammingInfos(IEnumerable<IEcu> ecus)
-		{
-			if (ecus == null)
-			{
-				throw new ArgumentNullException();
-			}
-			this.ecuProgrammingInfos.Clear();
-			IList<EcuProgrammingInfoData> list = new List<EcuProgrammingInfoData>();
-			foreach (IEcu ecu in ecus)
-			{
-				EcuProgrammingInfo ecuProgrammingInfo = new EcuProgrammingInfo(ecu, this.programmingObjectBuilder, true);
-				this.RegisterEventHandler(ecuProgrammingInfo);
-				this.ecuProgrammingInfos.Add(ecuProgrammingInfo);
-				list.Add(ecuProgrammingInfo.Data);
-			}
-			this.RefreshProgrammingInfoBeforeReplace(list);
-			this.RefreshProgrammingInfo(list);
-		}
+        private void CreateEcuProgrammingInfos(IEnumerable<IEcu> ecus)
+        {
+            if (ecus == null)
+            {
+                throw new ArgumentNullException();
+            }
+            ecuProgrammingInfos.Clear();
+            IList<EcuProgrammingInfoData> list = new List<EcuProgrammingInfoData>();
+            foreach (IEcu ecu in ecus)
+            {
+                EcuProgrammingInfo ecuProgrammingInfo = new EcuProgrammingInfo(ecu, programmingObjectBuilder);
+                if (ecuProgrammingInfo?.Ecu != null && ecu != null)
+                {
+                    IDictionary<IEcu, EcuProgrammingInfo> dictionary = ecuProgrammingInfosMap;
+                    if (dictionary != null && dictionary.ContainsKey(ecu) && !string.IsNullOrEmpty(ecuProgrammingInfosMap[ecu]?.Ecu?.ProgrammingVariantName))
+                    {
+                        ecuProgrammingInfo.Ecu.ProgrammingVariantName = ecuProgrammingInfosMap[ecu].Ecu.ProgrammingVariantName;
+                    }
+                }
+                RegisterEventHandler(ecuProgrammingInfo);
+                ecuProgrammingInfos.Add(ecuProgrammingInfo);
+                list.Add(ecuProgrammingInfo.Data);
+            }
+            RefreshProgrammingInfoBeforeReplace(list);
+            RefreshProgrammingInfo(list);
+        }
 
         private EcuProgrammingInfo GetEcuProgrammingInfo(ECU ecuFromTargetSvt)
         {
@@ -418,87 +386,90 @@ namespace PsdzClient.Programming
         }
 
         private void OnEcuProgrammingActionsChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			NotifyCollectionChangedAction action = e.Action;
-			if (action <= NotifyCollectionChangedAction.Remove)
-			{
-				foreach (object obj in e.NewItems)
-				{
-					IProgrammingAction programmingAction = obj as IProgrammingAction;
-					if (programmingAction != null)
-					{
-						object obj2 = this.threadLock;
-						lock (obj2)
-						{
-							if (e.Action == NotifyCollectionChangedAction.Add)
-							{
-								programmingAction.PropertyChanged += this.OnActionPropertyChanged;
-								if (programmingAction.IsSelected && !this.dataContext.SelectedActionData.Contains(programmingAction.DataContext))
-								{
-									this.AddItem(programmingAction);
-								}
-							}
-							else if (e.Action == NotifyCollectionChangedAction.Remove)
-							{
-								programmingAction.PropertyChanged -= this.OnActionPropertyChanged;
-								if (this.dataContext.SelectedActionData.Contains(programmingAction.DataContext))
-								{
-									this.dataContext.SelectedActionData.Remove(programmingAction.DataContext);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+        {
+            NotifyCollectionChangedAction action = e.Action;
+            if ((uint)action > 1u)
+            {
+                return;
+            }
+            foreach (object newItem in e.NewItems)
+            {
+                if (!(newItem is IProgrammingAction programmingAction))
+                {
+                    continue;
+                }
+                lock (threadLock)
+                {
+                    if (e.Action == NotifyCollectionChangedAction.Add)
+                    {
+                        programmingAction.PropertyChanged += OnActionPropertyChanged;
+                        if (programmingAction.IsSelected && !dataContext.SelectedActionData.Contains(programmingAction.DataContext))
+                        {
+                            AddItem(programmingAction);
+                        }
+                    }
+                    else if (e.Action == NotifyCollectionChangedAction.Remove)
+                    {
+                        programmingAction.PropertyChanged -= OnActionPropertyChanged;
+                        if (dataContext.SelectedActionData.Contains(programmingAction.DataContext))
+                        {
+                            dataContext.SelectedActionData.Remove(programmingAction.DataContext);
+                        }
+                    }
+                }
+            }
+        }
 
-		private bool ProgrammingInfoCanBeAdded(IEcuProgrammingInfoData ecuProgrammingInfoData)
-		{
-			return !this.OnlyAddECUsWithIndividualData() || this.vehicle.IsMotorcycle() || (ecuProgrammingInfoData.Ecu != null && ecuProgrammingInfoData.Ecu.StatusInfo != null && ecuProgrammingInfoData.Ecu.StatusInfo.HasIndividualData);
-		}
 
-		private void RefreshProgrammingInfo(IList<EcuProgrammingInfoData> ecuProgrammingInfoDataList)
-		{
-			this.DataContext.List.Clear();
-			this.DataContext.List.AddRange(ecuProgrammingInfoDataList);
-		}
+        private bool ProgrammingInfoCanBeAdded(IEcuProgrammingInfoData ecuProgrammingInfoData)
+        {
+            if (!OnlyAddECUsWithIndividualData() || vehicle.IsMotorcycle())
+            {
+                return true;
+            }
+            if (ecuProgrammingInfoData.Ecu != null && ecuProgrammingInfoData.Ecu.StatusInfo != null)
+            {
+                return ecuProgrammingInfoData.Ecu.StatusInfo.HasIndividualData;
+            }
+            return false;
+        }
 
-		private void SetSvkCurrentToNull()
-		{
-			foreach (EcuProgrammingInfo ecuProgrammingInfo in this.ecuProgrammingInfos)
-			{
-				ecuProgrammingInfo.SvkCurrent = null;
-			}
-		}
+        private void RefreshProgrammingInfo(IList<EcuProgrammingInfoData> ecuProgrammingInfoDataList)
+        {
+            DataContext.List.Clear();
+            DataContext.List.AddRange(ecuProgrammingInfoDataList);
+        }
 
-		private void UpdateProgrammingInfo(ISvt svt)
-		{
-			foreach (IEcuObj ecuObj in svt.Ecus)
-			{
-				EcuProgrammingInfo itemFromProgrammingInfos = this.GetItemFromProgrammingInfos((long)ecuObj.EcuIdentifier.DiagAddrAsInt);
-				if (itemFromProgrammingInfos != null)
-				{
-					if (ecuObj.BnTnName == null && itemFromProgrammingInfos.Ecu.ProgrammingVariantName != null)
-					{
-#if false
-						Log.Info("EcuProgrammingInfos.SetSvkCurrentForEachEcu()", "Do not replace \"{0}\" with null for ECU: {1}.", new object[]
-						{
-							itemFromProgrammingInfos.Ecu.ProgrammingVariantName,
-							itemFromProgrammingInfos.Ecu.LogEcu()
-						});
-#endif
-					}
-					else
-					{
-						itemFromProgrammingInfos.Ecu.ProgrammingVariantName = ecuObj.BnTnName;
-					}
-					itemFromProgrammingInfos.Ecu.StatusInfo = ecuObj.EcuStatusInfo;
-					itemFromProgrammingInfos.SvkCurrent = ecuObj.StandardSvk;
-				}
-			}
-		}
+        private void SetSvkCurrentToNull()
+        {
+            foreach (EcuProgrammingInfo ecuProgrammingInfo in ecuProgrammingInfos)
+            {
+                ecuProgrammingInfo.SvkCurrent = null;
+            }
+        }
 
-		protected readonly IList<EcuProgrammingInfo> ecuProgrammingInfos;
+        private void UpdateProgrammingInfo(ISvt svt)
+        {
+            foreach (IEcuObj ecu in svt.Ecus)
+            {
+                EcuProgrammingInfo itemFromProgrammingInfos = GetItemFromProgrammingInfos(ecu.EcuIdentifier.DiagAddrAsInt);
+                if (itemFromProgrammingInfos != null)
+                {
+                    if (ecu.BnTnName == null && itemFromProgrammingInfos.Ecu.ProgrammingVariantName != null)
+                    {
+                        Log.Info("EcuProgrammingInfos.SetSvkCurrentForEachEcu()", "Do not replace \"{0}\" with null for ECU: {1}.", itemFromProgrammingInfos.Ecu.ProgrammingVariantName, itemFromProgrammingInfos.Ecu.LogEcu());
+                    }
+                    else
+                    {
+                        itemFromProgrammingInfos.Ecu.ProgrammingVariantName = ecu.BnTnName;
+                    }
+                    itemFromProgrammingInfos.Ecu.StatusInfo = ecu.EcuStatusInfo;
+                    itemFromProgrammingInfos.SvkCurrent = ecu.StandardSvk;
+                }
+            }
+        }
+
+        protected readonly IList<EcuProgrammingInfo> ecuProgrammingInfos;
 
 		protected IDictionary<IEcu, EcuProgrammingInfo> ecuProgrammingInfosMap;
 
