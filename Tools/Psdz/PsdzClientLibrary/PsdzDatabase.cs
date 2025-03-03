@@ -3459,7 +3459,8 @@ namespace PsdzClient
             return swiActions;
         }
 
-        public List<SwiAction> ReadLinkedSwiActions(List<SwiAction> selectedRegister, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        // From VehicleConversionManager
+        public List<SwiAction> ReadLinkedSwiActions(Vehicle vehicle, List<SwiAction> selectedRegister, IFFMDynamicResolver ffmResolver)
         {
             if (selectedRegister == null)
             {

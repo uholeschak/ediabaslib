@@ -645,7 +645,7 @@ namespace WebPsdzClient
 
                 Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
                 List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(programmingJobs);
-                List<PsdzDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(selectedSwiActions, programmingJobs.PsdzContext?.VecInfo, null);
+                List<PsdzDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(programmingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
 
                 if (optionsDict != null && programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
                 {

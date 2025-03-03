@@ -420,7 +420,7 @@ namespace PsdzClient
                 }
 
                 List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
-                List<PsdzDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(selectedSwiActions, _programmingJobs.PsdzContext?.VecInfo, null);
+                List<PsdzDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(_programmingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
                 ProgrammingJobs.OptionsItem topItemCurrent = null;
                 int topIndexCurrent = checkedListBoxOptions.TopIndex;
                 if (topIndexCurrent >= 0 && topIndexCurrent < checkedListBoxOptions.Items.Count)
