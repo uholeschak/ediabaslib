@@ -21,6 +21,26 @@ namespace BMW.Rheingold.Programming.API
 {
 	public class ProgrammingObjectBuilder : IProgrammingObjectBuilder
 	{
+        private readonly IFFMDynamicResolver ffmResolver;
+
+        private readonly Vehicle vehicle;
+
+        //private readonly VehicleDataConverter vdc;
+
+        private readonly BusEnumMapper busEnumMapper = new BusEnumMapper();
+
+        private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
+
+        private readonly SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new SoftwareSigStateEnumMapper();
+
+        private readonly FscStateEnumMapper fscStateEnumMapper = new FscStateEnumMapper();
+
+        private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
+
+        private readonly SwtTypeEnumMapper swtTypeEnumMapper = new SwtTypeEnumMapper();
+
+        private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
+
         public ProgrammingObjectBuilder(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             this.vehicle = vehicle;
@@ -611,131 +631,100 @@ namespace BMW.Rheingold.Programming.API
 			return new IntegrationLevelTriple(istufenTriple.Shipment, istufenTriple.Last, istufenTriple.Current);
 		}
 
-		internal SystemVerbauKennung Build(CoreFramework.Contracts.Vehicle.ISvk svkInput)
-		{
-			if (svkInput == null)
-			{
-				return null;
-			}
-			SystemVerbauKennung systemVerbauKennung = new SystemVerbauKennung();
-			SgbmIdParser sgbmIdParser = new SgbmIdParser();
-			IEnumerable<string> xwe_SGBMID = svkInput.XWE_SGBMID;
-			if (xwe_SGBMID != null)
-			{
-				List<ISgbmId> list = new List<ISgbmId>();
-				foreach (string sgbmId in xwe_SGBMID)
-				{
-					if (sgbmIdParser.ParseDec(sgbmId))
-					{
-						list.Add(new SgbmIdentifier
-						{
-							ProcessClass = sgbmIdParser.ProcessClass,
-							Id = sgbmIdParser.Id,
-							MainVersion = sgbmIdParser.MainVersion,
-							SubVersion = sgbmIdParser.SubVersion,
-							PatchVersion = sgbmIdParser.PatchVersion
-						});
-					}
-				}
-				list.Sort();
-				systemVerbauKennung.SgbmIds = list;
-			}
-			return systemVerbauKennung;
-		}
-
-		internal IDictionary<IEcuIdentifier, IObdData> BuildObdDataDictionary(IDictionary<IPsdzEcuIdentifier, IPsdzObdData> obdMap)
-		{
-			IDictionary<IEcuIdentifier, IObdData> dictionary = new Dictionary<IEcuIdentifier, IObdData>();
-			foreach (KeyValuePair<IPsdzEcuIdentifier, IPsdzObdData> keyValuePair in obdMap)
-			{
-				IEcuIdentifier key = this.Build(keyValuePair.Key);
-				IObdData value = this.Build(keyValuePair.Value);
-				dictionary.Add(new KeyValuePair<IEcuIdentifier, IObdData>(key, value));
-			}
-			return dictionary;
-		}
-
-		private ISwtEcu Build(IPsdzSwtEcu swtEcuInput)
-		{
-			if (swtEcuInput == null)
-			{
-				return null;
-			}
-			SwtEcuObj swtEcuObj = new SwtEcuObj();
-			swtEcuObj.EcuIdentifier = this.Build(swtEcuInput.EcuIdentifier);
-			swtEcuObj.RootCertificateState = this.rootCertificateStateEnumMapper.GetValue(swtEcuInput.RootCertState);
-			swtEcuObj.SoftwareSigState = this.softwareSigStateEnumMapper.GetValue(swtEcuInput.SoftwareSigState);
-			foreach (IPsdzSwtApplication swtApplicationInput in swtEcuInput.SwtApplications)
-			{
-				ISwtApplication swtApplication = this.Build(swtApplicationInput);
-				swtEcuObj.AddApplication(swtApplication);
-			}
-			return swtEcuObj;
-		}
-
-		private ISwtApplication Build(IPsdzSwtApplication swtApplicationInput)
-		{
-			if (swtApplicationInput == null)
-			{
-				return null;
-			}
-			IPsdzSwtApplicationId swtApplicationId = swtApplicationInput.SwtApplicationId;
-			if (swtApplicationId == null)
-			{
-				return null;
-			}
-			return new SwtApplicationObj(this.Build(swtApplicationId))
-			{
-				Fsc = swtApplicationInput.Fsc,
-				FscState = this.fscStateEnumMapper.GetValue(swtApplicationInput.FscState),
-				FscCertificate = swtApplicationInput.FscCert,
-				FscCertificateState = this.fscCertificateStateEnumMapper.GetValue(swtApplicationInput.FscCertState),
-				SwtType = this.swtTypeEnumMapper.GetValue(swtApplicationInput.SwtType),
-				SwtActionType = ((swtApplicationInput.SwtActionType != null) ? new SwtActionType?(this.swtActionTypeEnumMapper.GetValue(swtApplicationInput.SwtActionType.Value)) : null),
-				IsBackupPossible = swtApplicationInput.IsBackupPossible,
-				Position = swtApplicationInput.Position
-			};
-		}
-
-		private IObdData Build(IPsdzObdData psdzObdData)
-		{
-			ObdData obdData = new ObdData();
-			foreach (IPsdzObdTripleValue psdzObdTripleValue in psdzObdData.ObdTripleValues)
-			{
-				ObdTripleValue item = new ObdTripleValue(psdzObdTripleValue.CalId, psdzObdTripleValue.ObdId, psdzObdTripleValue.SubCVN);
-				obdData.ObdTripleValues.Add(item);
-			}
-			return obdData;
-		}
-
-        public IFFMDynamicResolver IFFMDynamicResolver
+        internal SystemVerbauKennung Build(CoreFramework.Contracts.Vehicle.ISvk svkInput)
         {
-            get => ffmResolver;
-            set => ffmResolver = value;
+            if (svkInput == null)
+            {
+                return null;
+            }
+            SystemVerbauKennung systemVerbauKennung = new SystemVerbauKennung();
+            SgbmIdParser sgbmIdParser = new SgbmIdParser();
+            IEnumerable<string> xWE_SGBMID = svkInput.XWE_SGBMID;
+            if (xWE_SGBMID != null)
+            {
+                List<ISgbmId> list = new List<ISgbmId>();
+                foreach (string item in xWE_SGBMID)
+                {
+                    if (sgbmIdParser.ParseDec(item))
+                    {
+                        SgbmIdentifier sgbmIdentifier = new SgbmIdentifier();
+                        sgbmIdentifier.ProcessClass = sgbmIdParser.ProcessClass;
+                        sgbmIdentifier.Id = sgbmIdParser.Id;
+                        sgbmIdentifier.MainVersion = sgbmIdParser.MainVersion;
+                        sgbmIdentifier.SubVersion = sgbmIdParser.SubVersion;
+                        sgbmIdentifier.PatchVersion = sgbmIdParser.PatchVersion;
+                        list.Add(sgbmIdentifier);
+                    }
+                }
+                list.Sort();
+                systemVerbauKennung.SgbmIds = list;
+            }
+            return systemVerbauKennung;
         }
 
-        public Vehicle Vehicle
-		{
-            get => vehicle;
-            set => vehicle = value;
+        internal IDictionary<IEcuIdentifier, IObdData> BuildObdDataDictionary(IDictionary<IPsdzEcuIdentifier, IPsdzObdData> obdMap)
+        {
+            IDictionary<IEcuIdentifier, IObdData> dictionary = new Dictionary<IEcuIdentifier, IObdData>();
+            foreach (KeyValuePair<IPsdzEcuIdentifier, IPsdzObdData> item in obdMap)
+            {
+                IEcuIdentifier key = Build(item.Key);
+                IObdData value = Build(item.Value);
+                dictionary.Add(new KeyValuePair<IEcuIdentifier, IObdData>(key, value));
+            }
+            return dictionary;
         }
 
-		private IFFMDynamicResolver ffmResolver;
+        private ISwtEcu Build(IPsdzSwtEcu swtEcuInput)
+        {
+            if (swtEcuInput == null)
+            {
+                return null;
+            }
+            SwtEcuObj swtEcuObj = new SwtEcuObj();
+            swtEcuObj.EcuIdentifier = Build(swtEcuInput.EcuIdentifier);
+            swtEcuObj.RootCertificateState = rootCertificateStateEnumMapper.GetValue(swtEcuInput.RootCertState);
+            swtEcuObj.SoftwareSigState = softwareSigStateEnumMapper.GetValue(swtEcuInput.SoftwareSigState);
+            foreach (IPsdzSwtApplication swtApplication2 in swtEcuInput.SwtApplications)
+            {
+                ISwtApplication swtApplication = Build(swtApplication2);
+                swtEcuObj.AddApplication(swtApplication);
+            }
+            return swtEcuObj;
+        }
 
-		private Vehicle vehicle;
+        private ISwtApplication Build(IPsdzSwtApplication swtApplicationInput)
+        {
+            if (swtApplicationInput == null)
+            {
+                return null;
+            }
+            IPsdzSwtApplicationId swtApplicationId = swtApplicationInput.SwtApplicationId;
+            if (swtApplicationId == null)
+            {
+                return null;
+            }
+            return new SwtApplicationObj(Build(swtApplicationId))
+            {
+                Fsc = swtApplicationInput.Fsc,
+                FscState = fscStateEnumMapper.GetValue(swtApplicationInput.FscState),
+                FscCertificate = swtApplicationInput.FscCert,
+                FscCertificateState = fscCertificateStateEnumMapper.GetValue(swtApplicationInput.FscCertState),
+                SwtType = swtTypeEnumMapper.GetValue(swtApplicationInput.SwtType),
+                SwtActionType = (swtApplicationInput.SwtActionType.HasValue ? new SwtActionType?(swtActionTypeEnumMapper.GetValue(swtApplicationInput.SwtActionType.Value)) : ((SwtActionType?)null)),
+                IsBackupPossible = swtApplicationInput.IsBackupPossible,
+                Position = swtApplicationInput.Position
+            };
+        }
 
-		private readonly BusEnumMapper busEnumMapper = new BusEnumMapper();
-
-		private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
-
-		private readonly SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new SoftwareSigStateEnumMapper();
-
-		private readonly FscStateEnumMapper fscStateEnumMapper = new FscStateEnumMapper();
-
-		private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
-
-		private readonly SwtTypeEnumMapper swtTypeEnumMapper = new SwtTypeEnumMapper();
-
-		private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
-	}
+        private IObdData Build(IPsdzObdData psdzObdData)
+        {
+            ObdData obdData = new ObdData();
+            foreach (IPsdzObdTripleValue obdTripleValue in psdzObdData.ObdTripleValues)
+            {
+                ObdTripleValue item = new ObdTripleValue(obdTripleValue.CalId, obdTripleValue.ObdId, obdTripleValue.SubCVN);
+                obdData.ObdTripleValues.Add(item);
+            }
+            return obdData;
+        }
+    }
 }
