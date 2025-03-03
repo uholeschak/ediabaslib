@@ -2191,9 +2191,9 @@ namespace PsdzClient
             log.InfoFormat("GetSwiActionsForTree Finish - Id: {0}, Name: {1}", swiRegister.Id, swiRegister.Name);
         }
 
-        public EcuVar GetEcuVariantByName(string sgbdName)
+        public EcuVar GetEcuVariantByName(string ecuVariant)
         {
-            if (string.IsNullOrEmpty(sgbdName))
+            if (string.IsNullOrEmpty(ecuVariant))
             {
                 return null;
             }
@@ -2201,7 +2201,7 @@ namespace PsdzClient
             EcuVar ecuVar = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, FAULTMEMORYDELETEWAITINGTIME, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", sgbdName.ToLowerInvariant());
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, FAULTMEMORYDELETEWAITINGTIME, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (lower(NAME) = '{0}')", ecuVariant.ToLowerInvariant());
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
@@ -2223,9 +2223,9 @@ namespace PsdzClient
             return ecuVar;
         }
 
-        public EcuVar GetEcuVariantById(string varId)
+        public EcuVar GetEcuVariantById(string ecuVariantId)
         {
-            if (string.IsNullOrEmpty(varId))
+            if (string.IsNullOrEmpty(ecuVariantId))
             {
                 return null;
             }
@@ -2233,7 +2233,7 @@ namespace PsdzClient
             EcuVar ecuVar = null;
             try
             {
-                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, FAULTMEMORYDELETEWAITINGTIME, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (ID = {0})", varId);
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, FAULTMEMORYDELETEWAITINGTIME, NAME, " + DatabaseFunctions.SqlTitleItems + ", VALIDFROM, VALIDTO, SICHERHEITSRELEVANT, ECUGROUPID, SORT FROM XEP_ECUVARIANTS WHERE (ID = {0})", ecuVariantId);
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
@@ -2292,9 +2292,9 @@ namespace PsdzClient
             return ecuVarList;
         }
 
-        public EcuVar FindEcuVariantFromBntn(string bnTnName, int? diagAddrAsInt, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        public EcuVar FindEcuVariantFromBntn(string bntn, int? diagAddrAsInt, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
-            if (string.IsNullOrEmpty(bnTnName))
+            if (string.IsNullOrEmpty(bntn))
             {
                 return null;
             }
@@ -2304,9 +2304,10 @@ namespace PsdzClient
                 return null;
             }
 
-            List<EcuVar> ecuVars = FindEcuVariantsFromBntn(bnTnName, vehicle, ffmResolver);
+            List<EcuVar> ecuVars = FindEcuVariantsFromBntn(bntn, vehicle, ffmResolver);
             if (ecuVars == null || ecuVars.Count == 0)
             {
+                log.WarnFormat("FindEcuVariantFromBntn No ECU variant found for: {0}", bntn);
                 return null;
             }
 
@@ -2317,6 +2318,7 @@ namespace PsdzClient
             }
             else
             {
+                log.WarnFormat("FindEcuVariantFromBntn More than one ECU variants found: {0}", bntn);
                 ecuVar = ecuVars.FirstOrDefault(x => vehicle.ECU != null && vehicle.ECU.Any(i => string.Compare(x.Name, i.ECU_SGBD, StringComparison.InvariantCultureIgnoreCase) == 0));
                 if (ecuVar == null)
                 {
@@ -2336,15 +2338,15 @@ namespace PsdzClient
             return ecuVar;
         }
 
-        private List<EcuVar> FindEcuVariantsFromBntn(string bnTnName, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        private List<EcuVar> FindEcuVariantsFromBntn(string bntn, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
-            log.InfoFormat("FindEcuVariantsFromBntn BnTnName: {0}", bnTnName);
-            if (string.IsNullOrEmpty(bnTnName))
+            log.InfoFormat("FindEcuVariantsFromBntn bntn: {0}", bntn);
+            if (string.IsNullOrEmpty(bntn))
             {
                 return null;
             }
 
-            List<EcuPrgVar> ecuPrgVars = GetEcuProgrammingVariantByName(bnTnName, vehicle, ffmResolver);
+            List<EcuPrgVar> ecuPrgVars = GetEcuProgrammingVariantByName(bntn, vehicle, ffmResolver);
             if (ecuPrgVars == null)
             {
                 return null;
