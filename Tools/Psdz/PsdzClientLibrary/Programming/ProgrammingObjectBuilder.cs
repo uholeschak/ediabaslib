@@ -45,6 +45,7 @@ namespace BMW.Rheingold.Programming.API
         {
             this.vehicle = vehicle;
             this.ffmResolver = ffmResolver;
+            //vdc = new VehicleDataConverter(db);
         }
 
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(IPsdzStandardFa faInput)
