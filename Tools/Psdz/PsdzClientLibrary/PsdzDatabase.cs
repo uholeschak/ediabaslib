@@ -97,6 +97,28 @@ namespace PsdzClient
             PbNew
         }
 
+        public enum SwiActionLinkType
+        {
+            SwiActionDiagnosticLink,
+            PRF,
+            MPB,
+            MHV,
+            MVF,
+            MVS,
+            MNS,
+            MNF,
+            MHN,
+            AUS,
+            TN,
+            ESK_VA,
+            ESK_VF,
+            ESK_VS,
+            ESK_MPB,
+            ESK_PRF,
+            SMP,
+            HDD
+        }
+
         public class EcuTranslation
         {
             public EcuTranslation()
@@ -3527,7 +3549,7 @@ namespace PsdzClient
             return swiRegisterList;
         }
 
-        public List<SwiInfoObj> GetServiceProgramsForSwiAction(SwiAction swiAction, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        public List<SwiInfoObj> GetServiceProgramsForSwiAction(SwiAction swiAction, Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, bool contextHddUpdate = false)
         {
             if (string.IsNullOrEmpty(swiAction.Id))
             {
@@ -4413,6 +4435,51 @@ namespace PsdzClient
 
             log.InfoFormat("AreAllParentDiagObjectsValid Valid: {0}", false);
             return false;
+        }
+
+        private SwiActionLinkType MapLinkTypeDatabaseToApplication(SwiInfoObj.SwiActionDatabaseLinkType swiActionDatabaseLinkType, bool contextHddUpdate = false)
+        {
+            switch (swiActionDatabaseLinkType)
+            {
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionVehiclePreparingLink:
+                    return SwiActionLinkType.MVF;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionEcuPreparingLink:
+                    return SwiActionLinkType.MVS;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionVehiclePostprocessingLink:
+                    return SwiActionLinkType.MNF;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionEcuPostprocessingLink:
+                    return SwiActionLinkType.MNS;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionPlanLink:
+                    return SwiActionLinkType.MPB;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionPreparingHintsLink:
+                    return SwiActionLinkType.MHV;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionPostprocessingHintsLink:
+                    return SwiActionLinkType.MHN;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionCheckLink:
+                    return SwiActionLinkType.PRF;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionActionSelectionLink:
+                    if (contextHddUpdate)
+                    {
+                        return SwiActionLinkType.HDD;
+                    }
+                    return SwiActionLinkType.AUS;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionDiagnosticLink:
+                    return SwiActionLinkType.SwiActionDiagnosticLink;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiactionEscalationPreparingGeneralLink:
+                    return SwiActionLinkType.ESK_VA;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiactionEscalationPreparingVehicleLink:
+                    return SwiActionLinkType.ESK_VF;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiactionEscalationPreparingEcuLink:
+                    return SwiActionLinkType.ESK_VS;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiactionEscalationActionplanCalculationLink:
+                    return SwiActionLinkType.ESK_MPB;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiactionEscalationPreconditionCheckLink:
+                    return SwiActionLinkType.ESK_PRF;
+                case SwiInfoObj.SwiActionDatabaseLinkType.SwiactionSpecialActionplanLink:
+                    return SwiActionLinkType.SMP;
+                default:
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported action link type \"{0}\".", swiActionDatabaseLinkType));
+            }
         }
 
         private bool UpdateDiagObjectRootNodes()
