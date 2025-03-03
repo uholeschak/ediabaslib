@@ -943,12 +943,13 @@ namespace PsdzClient
 
         public class SwiInfoObj
         {
-            public SwiInfoObj(SwiActionDatabaseLinkType? linkType, string id, string nodeClass, string assembly, string versionNum, string programType, string safetyRelevant,
+            public SwiInfoObj(SwiActionDatabaseLinkType? linkType, SwiActionLinkType? mappedLinkType, string id, string nodeClass, string assembly, string versionNum, string programType, string safetyRelevant,
                 string titleId, string general, string telSrvId, string vehicleComm, string measurement, string hidden, string name, string informationType,
                 string identification, string informationFormat, string siNumber, string targetILevel, string controlId,
                 string infoType, string infoFormat, string docNum, string priority, string identifier, string flowXml, EcuTranslation ecuTranslation)
             {
                 LinkType = linkType;
+                MappedTypeLink = mappedLinkType;
                 Id = id;
                 NodeClass = nodeClass;
                 Assembly = assembly;
@@ -999,6 +1000,8 @@ namespace PsdzClient
             }
 
             public SwiActionDatabaseLinkType? LinkType { get; set; }
+
+            public SwiActionLinkType? MappedTypeLink { get; set; }
 
             public string Id { get; set; }
 
@@ -3572,7 +3575,7 @@ namespace PsdzClient
                         {
                             string infoObjId = reader["INFOOBJECTID"].ToString()?.Trim();
                             string linkTypeId = reader["LINK_TYPE_ID"].ToString()?.Trim();
-                            SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, linkTypeId);
+                            SwiInfoObj swiInfoObj = GetInfoObjectById(infoObjId, linkTypeId, contextHddUpdate);
                             if (swiInfoObj != null)
                             {
                                 if (vehicle != null)
@@ -3644,7 +3647,7 @@ namespace PsdzClient
             return swiInfoObjList;
         }
 
-        public SwiInfoObj GetInfoObjectById(string infoObjectId, string linkTypeId)
+        public SwiInfoObj GetInfoObjectById(string infoObjectId, string linkTypeId, bool contextHddUpdate = false)
         {
             if (string.IsNullOrEmpty(infoObjectId))
             {
@@ -3666,7 +3669,9 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            swiInfoObj = ReadXepSwiInfoObj(reader, SwiInfoObj.GetLinkType(linkTypeId));
+                            SwiInfoObj.SwiActionDatabaseLinkType? dbLinkType = SwiInfoObj.GetLinkType(linkTypeId);
+                            SwiActionLinkType? mappedLinkType = MapLinkTypeDatabaseToApplication(dbLinkType, contextHddUpdate);
+                            swiInfoObj = ReadXepSwiInfoObj(reader, dbLinkType, mappedLinkType);
                         }
                     }
                 }
@@ -4437,8 +4442,13 @@ namespace PsdzClient
             return false;
         }
 
-        private SwiActionLinkType MapLinkTypeDatabaseToApplication(SwiInfoObj.SwiActionDatabaseLinkType swiActionDatabaseLinkType, bool contextHddUpdate = false)
+        private SwiActionLinkType? MapLinkTypeDatabaseToApplication(SwiInfoObj.SwiActionDatabaseLinkType? swiActionDatabaseLinkType, bool contextHddUpdate = false)
         {
+            if (swiActionDatabaseLinkType == null)
+            {
+                return null;
+            }
+
             switch (swiActionDatabaseLinkType)
             {
                 case SwiInfoObj.SwiActionDatabaseLinkType.SwiActionVehiclePreparingLink:
@@ -4478,7 +4488,7 @@ namespace PsdzClient
                 case SwiInfoObj.SwiActionDatabaseLinkType.SwiactionSpecialActionplanLink:
                     return SwiActionLinkType.SMP;
                 default:
-                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported action link type \"{0}\".", swiActionDatabaseLinkType));
+                    return null;
             }
         }
 
@@ -5376,7 +5386,7 @@ namespace PsdzClient
             return new SwiRegister(id, nodeClass, name, parentId, remark, sort, versionNum, identifer, GetTranslation(reader));
         }
 
-        private static SwiInfoObj ReadXepSwiInfoObj(SqliteDataReader reader, SwiInfoObj.SwiActionDatabaseLinkType? linkType = null)
+        private static SwiInfoObj ReadXepSwiInfoObj(SqliteDataReader reader, SwiInfoObj.SwiActionDatabaseLinkType? linkType = null, SwiActionLinkType? mappedLinkType = null)
         {
             string id = reader["ID"].ToString()?.Trim();
             string nodeClass = reader["NODECLASS"].ToString()?.Trim();
@@ -5403,7 +5413,7 @@ namespace PsdzClient
             string priority = reader["PRIORITY"].ToString()?.Trim();
             string identifier = reader["IDENTIFIER"].ToString()?.Trim();
             string flowXml = reader["FLOWXML"].ToString()?.Trim();
-            return new SwiInfoObj(linkType, id, nodeClass, assembly, versionNum, programType, safetyRelevant, titleId, general,
+            return new SwiInfoObj(linkType, mappedLinkType, id, nodeClass, assembly, versionNum, programType, safetyRelevant, titleId, general,
                 telSrvId, vehicleComm, measurement, hidden, name, informationType, identification, informationFormat, siNumber, targetILevel, controlId,
                 infoType, infoFormat, docNum, priority, identifier, flowXml, GetTranslation(reader));
         }
