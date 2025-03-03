@@ -251,6 +251,7 @@
     <Compile Include="Core\Reactor.cs" />
     <Compile Include="Core\ReactorEngine.cs" />
     <Compile Include="Core\RuleEvaluationServices.cs" />
+    <Compile Include="Core\RuleEvaluationUtill.cs" />
     <Compile Include="Core\RuleExpression.cs" />
     <Compile Include="Core\SaLaPaExpression.cs" />
     <Compile Include="Core\SALAPALocalizedEntry.cs" />

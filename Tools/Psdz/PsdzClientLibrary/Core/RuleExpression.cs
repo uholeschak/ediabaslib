@@ -134,7 +134,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public static bool Evaluate(Vehicle vec, RuleExpression exp, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils = null, ValidationRuleInternalResults internalResult = null)
+        public static bool Evaluate(Vehicle vec, IRuleExpression exp, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils = null, ValidationRuleInternalResults internalResult = null)
         {
             if (internalResult == null)
             {
@@ -188,7 +188,7 @@ namespace PsdzClient.Core
 		}
 
 		public virtual bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
-		{
+        {
             ruleEvaluationUtils.Logger.Error("RuleExpression.Evaluate(Vehicle vec)", "method Evaluate(Vehicle vec) is missing.");
             return false;
 		}
