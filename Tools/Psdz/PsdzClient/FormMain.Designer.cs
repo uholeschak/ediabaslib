@@ -59,6 +59,7 @@ namespace PsdzClient
             this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
             this.buttonInternalTest = new System.Windows.Forms.Button();
             this.openFileDialogTest = new System.Windows.Forms.OpenFileDialog();
+            this.checkBoxGenServiceData = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -250,7 +251,7 @@ namespace PsdzClient
             // 
             // buttonVehicleSearch
             // 
-            this.buttonVehicleSearch.Location = new System.Drawing.Point(255, 68);
+            this.buttonVehicleSearch.Location = new System.Drawing.Point(255, 66);
             this.buttonVehicleSearch.Name = "buttonVehicleSearch";
             this.buttonVehicleSearch.Size = new System.Drawing.Size(75, 23);
             this.buttonVehicleSearch.TabIndex = 10;
@@ -321,7 +322,7 @@ namespace PsdzClient
             // 
             // buttonInternalTest
             // 
-            this.buttonInternalTest.Location = new System.Drawing.Point(336, 68);
+            this.buttonInternalTest.Location = new System.Drawing.Point(336, 66);
             this.buttonInternalTest.Name = "buttonInternalTest";
             this.buttonInternalTest.Size = new System.Drawing.Size(75, 23);
             this.buttonInternalTest.TabIndex = 25;
@@ -335,6 +336,16 @@ namespace PsdzClient
             this.openFileDialogTest.Filter = "*.xml|*.xml|*.*|*.*";
             this.openFileDialogTest.SupportMultiDottedExtensions = true;
             // 
+            // checkBoxGenServiceData
+            // 
+            this.checkBoxGenServiceData.AutoSize = true;
+            this.checkBoxGenServiceData.Location = new System.Drawing.Point(417, 70);
+            this.checkBoxGenServiceData.Name = "checkBoxGenServiceData";
+            this.checkBoxGenServiceData.Size = new System.Drawing.Size(86, 17);
+            this.checkBoxGenServiceData.TabIndex = 26;
+            this.checkBoxGenServiceData.Text = "Service data";
+            this.checkBoxGenServiceData.UseVisualStyleBackColor = true;
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -342,6 +353,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(784, 661);
+            this.Controls.Add(this.checkBoxGenServiceData);
             this.Controls.Add(this.buttonInternalTest);
             this.Controls.Add(this.comboBoxLanguage);
             this.Controls.Add(this.labelLanguage);
@@ -410,6 +422,7 @@ namespace PsdzClient
         private System.Windows.Forms.ComboBox comboBoxLanguage;
         private System.Windows.Forms.Button buttonInternalTest;
         private System.Windows.Forms.OpenFileDialog openFileDialogTest;
+        private System.Windows.Forms.CheckBox checkBoxGenServiceData;
     }
 }
 
