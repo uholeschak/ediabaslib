@@ -122,6 +122,7 @@ namespace PsdzClient
             comboBoxLanguage.Enabled = !active;
             ipAddressControlVehicleIp.Enabled = ipEnabled;
             checkBoxIcom.Enabled = ipEnabled;
+            checkBoxGenServiceModules.Enabled = !active && !vehicleConnected;
             buttonVehicleSearch.Enabled = ipEnabled;
             buttonInternalTest.Enabled = !active;
             buttonStopHost.Enabled = !active && hostRunning;
@@ -151,7 +152,7 @@ namespace PsdzClient
                 comboBoxLanguage.SelectedIndex = Properties.Settings.Default.LanguageIndex;
                 ipAddressControlVehicleIp.Text = Properties.Settings.Default.VehicleIp;
                 checkBoxIcom.Checked = Properties.Settings.Default.IcomConnection;
-                checkBoxGenServiceData.Checked = Properties.Settings.Default.GenServiceData;
+                checkBoxGenServiceModules.Checked = Properties.Settings.Default.GenServiceModules;
                 if (string.IsNullOrWhiteSpace(ipAddressControlVehicleIp.Text.Trim('.')))
                 {
                     ipAddressControlVehicleIp.Text = DefaultIp;
@@ -181,7 +182,7 @@ namespace PsdzClient
                 Properties.Settings.Default.LanguageIndex = comboBoxLanguage.SelectedIndex;
                 Properties.Settings.Default.VehicleIp = ipAddressControlVehicleIp.Text;
                 Properties.Settings.Default.IcomConnection = checkBoxIcom.Checked;
-                Properties.Settings.Default.GenServiceData = checkBoxGenServiceData.Checked;
+                Properties.Settings.Default.GenServiceModules = checkBoxGenServiceModules.Checked;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
@@ -726,6 +727,7 @@ namespace PsdzClient
 
             StoreSettings();    // required for sub process
             bool useIcom = checkBoxIcom.Checked;
+            _programmingJobs.GenServiceModules = checkBoxGenServiceModules.Checked;
             _cts = new CancellationTokenSource();
             ConnectVehicleTask(textBoxIstaFolder.Text, ipAddressControlVehicleIp.Text, useIcom).ContinueWith(task =>
             {

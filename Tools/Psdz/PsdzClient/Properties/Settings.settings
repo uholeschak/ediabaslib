@@ -14,7 +14,7 @@
     <Setting Name="LanguageIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="GenServiceData" Type="System.Boolean" Scope="User">
+    <Setting Name="GenServiceModules" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>

@@ -325,6 +325,7 @@ namespace PsdzClient.Programming
         public bool DisableTalFlash { get; set; }
         public PsdzDatabase.SwiRegisterGroup RegisterGroup { get; set; }
         public IntPtr ParentWindowHandle { get; set; }
+        public bool GenServiceModules { get; set; }
 
         private PsdzContext _psdzContext;
         public PsdzContext PsdzContext
@@ -535,107 +536,111 @@ namespace PsdzClient.Programming
                             return false;
                         }
 
-                        bool checkOnlyService = _executionMode != ExecutionMode.GenerateServiceModules;
-                        for (;;)
+                        if (GenServiceModules || _executionMode == ExecutionMode.GenerateServiceModules)
                         {
-                            if (!executeDirect)
+                            bool checkOnlyService = _executionMode != ExecutionMode.GenerateServiceModules;
+
+                            for (; ; )
                             {
-                                if (_executionMode != ExecutionMode.Normal && _executionMode != ExecutionMode.GenerateServiceModules)
+                                if (!executeDirect)
+                                {
+                                    if (_executionMode != ExecutionMode.Normal && _executionMode != ExecutionMode.GenerateServiceModules)
+                                    {
+                                        break;
+                                    }
+
+                                    if (!checkOnlyService)
+                                    {
+                                        if (!IsMasterProcessMutexValid(GlobalMutexGenerateServiceModules))
+                                        {
+                                            log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateServiceModules);
+                                            sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                            UpdateStatus(sbResult.ToString());
+                                            return false;
+                                        }
+                                    }
+                                }
+
+                                int failCountService = -1;
+                                int lastProgressService = 100;
+                                bool resultService = ProgrammingService.PsdzDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
+                                {
+                                    if (startConvert)
+                                    {
+                                        sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                                        UpdateStatus(sbResult.ToString());
+                                    }
+                                    else
+                                    {
+                                        failCountService = failures;
+                                        lastProgressService = progress;
+                                        string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
+                                        ProgressEvent?.Invoke(progress, false, message);
+                                    }
+
+                                    if (!checkOnlyService && !executeDirect)
+                                    {
+                                        if (!IsMasterProcessMutexValid(GlobalMutexGenerateServiceModules))
+                                        {
+                                            log.ErrorFormat("Aborting IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateServiceModules);
+                                            return true;
+                                        }
+                                    }
+
+                                    if (cts != null)
+                                    {
+                                        return cts.Token.IsCancellationRequested;
+                                    }
+                                    return false;
+                                }, checkOnlyService && !executeDirect);
+
+                                if (checkOnlyService)
+                                {
+                                    if (resultService)
+                                    {
+                                        break;
+                                    }
+
+                                    if (!ExecuteSubProcess(cts, ArgumentGenerateServiceModules, GlobalMutexGenerateServiceModules))
+                                    {
+                                        log.ErrorFormat("GenerateServiceModuleData failed");
+                                        sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                        UpdateStatus(sbResult.ToString());
+                                        return false;
+                                    }
+                                }
+                                else
+                                {
+                                    if (!resultService)
+                                    {
+                                        log.ErrorFormat("GenerateServiceModuleData failed");
+                                        sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
+                                        UpdateStatus(sbResult.ToString());
+                                        return false;
+                                    }
+                                }
+
+                                if (lastProgressService < 100)
+                                {
+                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
+                                }
+
+                                if (failCountService >= 0)
+                                {
+                                    log.InfoFormat("Test module generation failures: {0}", failCountService);
+                                    sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
+                                    UpdateStatus(sbResult.ToString());
+                                }
+
+                                if (executeDirect)
                                 {
                                     break;
                                 }
 
                                 if (!checkOnlyService)
                                 {
-                                    if (!IsMasterProcessMutexValid(GlobalMutexGenerateServiceModules))
-                                    {
-                                        log.ErrorFormat("IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateServiceModules);
-                                        sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
-                                        UpdateStatus(sbResult.ToString());
-                                        return false;
-                                    }
+                                    return true;
                                 }
-                            }
-
-                            int failCountService = -1;
-                            int lastProgressService = 100;
-                            bool resultService = ProgrammingService.PsdzDatabase.GenerateServiceModuleData((startConvert, progress, failures) =>
-                            {
-                                if (startConvert)
-                                {
-                                    sbResult.AppendLine(Strings.GeneratingInfoFiles);
-                                    UpdateStatus(sbResult.ToString());
-                                }
-                                else
-                                {
-                                    failCountService = failures;
-                                    lastProgressService = progress;
-                                    string message = string.Format(CultureInfo.InvariantCulture, Strings.TestModuleProgress, progress, failures);
-                                    ProgressEvent?.Invoke(progress, false, message);
-                                }
-
-                                if (!checkOnlyService && !executeDirect)
-                                {
-                                    if (!IsMasterProcessMutexValid(GlobalMutexGenerateServiceModules))
-                                    {
-                                        log.ErrorFormat("Aborting IsMasterProcessMutexValid: Mutex invalid: {0}", GlobalMutexGenerateServiceModules);
-                                        return true;
-                                    }
-                                }
-
-                                if (cts != null)
-                                {
-                                    return cts.Token.IsCancellationRequested;
-                                }
-                                return false;
-                            }, checkOnlyService && !executeDirect);
-
-                            if (checkOnlyService)
-                            {
-                                if (resultService)
-                                {
-                                    break;
-                                }
-
-                                if (!ExecuteSubProcess(cts, ArgumentGenerateServiceModules, GlobalMutexGenerateServiceModules))
-                                {
-                                    log.ErrorFormat("GenerateServiceModuleData failed");
-                                    sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
-                                    UpdateStatus(sbResult.ToString());
-                                    return false;
-                                }
-                            }
-                            else
-                            {
-                                if (!resultService)
-                                {
-                                    log.ErrorFormat("GenerateServiceModuleData failed");
-                                    sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
-                                    UpdateStatus(sbResult.ToString());
-                                    return false;
-                                }
-                            }
-
-                            if (lastProgressService < 100)
-                            {
-                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleNotCompleted, lastProgressService));
-                            }
-
-                            if (failCountService >= 0)
-                            {
-                                log.InfoFormat("Test module generation failures: {0}", failCountService);
-                                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.TestModuleFailures, failCountService));
-                                UpdateStatus(sbResult.ToString());
-                            }
-
-                            if (executeDirect)
-                            {
-                                break;
-                            }
-
-                            if (!checkOnlyService)
-                            {
-                                return true;
                             }
                         }
                     }

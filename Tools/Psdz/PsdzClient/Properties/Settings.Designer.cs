@@ -74,12 +74,12 @@ namespace PsdzClient.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool GenServiceData {
+        public bool GenServiceModules {
             get {
-                return ((bool)(this["GenServiceData"]));
+                return ((bool)(this["GenServiceModules"]));
             }
             set {
-                this["GenServiceData"] = value;
+                this["GenServiceModules"] = value;
             }
         }
     }

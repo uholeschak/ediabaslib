@@ -59,7 +59,7 @@ namespace PsdzClient
             this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
             this.buttonInternalTest = new System.Windows.Forms.Button();
             this.openFileDialogTest = new System.Windows.Forms.OpenFileDialog();
-            this.checkBoxGenServiceData = new System.Windows.Forms.CheckBox();
+            this.checkBoxGenServiceModules = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -336,15 +336,15 @@ namespace PsdzClient
             this.openFileDialogTest.Filter = "*.xml|*.xml|*.*|*.*";
             this.openFileDialogTest.SupportMultiDottedExtensions = true;
             // 
-            // checkBoxGenServiceData
+            // checkBoxGenServiceModules
             // 
-            this.checkBoxGenServiceData.AutoSize = true;
-            this.checkBoxGenServiceData.Location = new System.Drawing.Point(417, 70);
-            this.checkBoxGenServiceData.Name = "checkBoxGenServiceData";
-            this.checkBoxGenServiceData.Size = new System.Drawing.Size(86, 17);
-            this.checkBoxGenServiceData.TabIndex = 26;
-            this.checkBoxGenServiceData.Text = "Service data";
-            this.checkBoxGenServiceData.UseVisualStyleBackColor = true;
+            this.checkBoxGenServiceModules.AutoSize = true;
+            this.checkBoxGenServiceModules.Location = new System.Drawing.Point(417, 70);
+            this.checkBoxGenServiceModules.Name = "checkBoxGenServiceModules";
+            this.checkBoxGenServiceModules.Size = new System.Drawing.Size(104, 17);
+            this.checkBoxGenServiceModules.TabIndex = 26;
+            this.checkBoxGenServiceModules.Text = "Service modules";
+            this.checkBoxGenServiceModules.UseVisualStyleBackColor = true;
             // 
             // FormMain
             // 
@@ -353,7 +353,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(784, 661);
-            this.Controls.Add(this.checkBoxGenServiceData);
+            this.Controls.Add(this.checkBoxGenServiceModules);
             this.Controls.Add(this.buttonInternalTest);
             this.Controls.Add(this.comboBoxLanguage);
             this.Controls.Add(this.labelLanguage);
@@ -422,7 +422,7 @@ namespace PsdzClient
         private System.Windows.Forms.ComboBox comboBoxLanguage;
         private System.Windows.Forms.Button buttonInternalTest;
         private System.Windows.Forms.OpenFileDialog openFileDialogTest;
-        private System.Windows.Forms.CheckBox checkBoxGenServiceData;
+        private System.Windows.Forms.CheckBox checkBoxGenServiceModules;
     }
 }
 
