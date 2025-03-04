@@ -122,7 +122,7 @@ namespace PsdzClient
             comboBoxLanguage.Enabled = !active;
             ipAddressControlVehicleIp.Enabled = ipEnabled;
             checkBoxIcom.Enabled = ipEnabled;
-            checkBoxGenServiceModules.Enabled = !active && !vehicleConnected;
+            checkBoxGenServiceModules.Enabled = !active && !hostRunning;
             buttonVehicleSearch.Enabled = ipEnabled;
             buttonInternalTest.Enabled = !active;
             buttonStopHost.Enabled = !active && hostRunning;
