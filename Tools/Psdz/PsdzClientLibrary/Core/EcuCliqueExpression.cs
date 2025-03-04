@@ -30,7 +30,7 @@ namespace PsdzClient.Core
                 return false;
             }
 
-            PsdzDatabase.EcuClique ecuClique = database.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.EcuClique ecuClique = database.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture));
 			if (vec == null)
 			{
 				return false;
@@ -39,10 +39,11 @@ namespace PsdzClient.Core
 			{
 				return true;
 			}
-			if (!database.EvaluateXepRulesById(ecuClique.Id, vec, ffmResolver, null))
-			{
-				return false;
-			}
+            RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationUtils, database);
+            if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuClique.Id, ffmResolver))
+            {
+                return false;
+            }
             List<PsdzDatabase.EcuVar> ecuVariantsByEcuCliquesId = ClientContext.GetDatabase(vec)?.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
 			if (ecuVariantsByEcuCliquesId == null || ecuVariantsByEcuCliquesId.Count == 0)
 			{
@@ -106,7 +107,7 @@ namespace PsdzClient.Core
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
-            PsdzDatabase.EcuClique ecuClique = ClientContext.GetDatabase(this.vecInfo)?.GetEcuCliqueById(this.value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.EcuClique ecuClique = ClientContext.GetDatabase(this.vecInfo)?.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture));
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));

@@ -53,7 +53,8 @@ namespace PsdzClient.Core
 				}
 				else
 				{
-					bool flag3 = database.EvaluateXepRulesById(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver, null);
+                    RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationUtils, database);
+                    bool flag3 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, this.value.ToString(CultureInfo.InvariantCulture), ffmResolver);
 #if false
 					if (ffmResolver != null && flag3)
 					{

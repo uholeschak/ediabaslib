@@ -2575,7 +2575,7 @@ namespace PsdzClient
             return equipement;
         }
 
-        public EcuClique GetEcuCliqueById(string ecuCliqueId)
+        public EcuClique GetEcuClique(string ecuCliqueId)
         {
             if (string.IsNullOrEmpty(ecuCliqueId))
             {
@@ -2652,7 +2652,7 @@ namespace PsdzClient
                 return null;
             }
 
-            return GetEcuCliqueById(ecuRefClique.EcuCliqueId);
+            return GetEcuClique(ecuRefClique.EcuCliqueId);
         }
 
         public CharacteristicRoots GetCharacteristicRootsById(string characteristicRootsId)

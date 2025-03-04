@@ -57,10 +57,11 @@ namespace PsdzClient.Core
 			}
 			if (vec.VCI != null && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
 			{
-				if (!database.EvaluateXepRulesById(ecuVariantById.Id, vec, ffmResolver, null))
-				{
-					return false;
-				}
+                RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationUtils, database);
+                if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuVariantById.Id, ffmResolver))
+                {
+                    return false;
+                }
 				IEcuVariantLocator ecuVariantLocator = new EcuVariantLocator(ecuVariantById, vec, ffmResolver);
 				if (ecuVariantLocator == null)
 				{
