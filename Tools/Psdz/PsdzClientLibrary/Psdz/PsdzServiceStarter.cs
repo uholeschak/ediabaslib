@@ -34,8 +34,6 @@ namespace BMW.Rheingold.Psdz.Client
 
         private static string istaPIDfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ISTA", "PsdzInstances.txt");
 
-        private static bool pidFileSupport = Environment.Is64BitProcess;
-
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PsdzServiceStarter));
 
         private const string PsdzServiceHostProcessName = "PsdzServiceHost";
@@ -180,6 +178,17 @@ namespace BMW.Rheingold.Psdz.Client
             processStartInfo.RedirectStandardError = false;
             processStartInfo.CreateNoWindow = true;
             processStartInfo.Environment["PSDZSERVICEHOST_LOGDIR"] = psdzServiceHostLogDir;
+
+            bool pidFileSupport = false;
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(processStartInfo.FileName);
+            if (fileVersionInfo.FileVersion != null)
+            {
+                if (fileVersionInfo.FileMajorPart >= 24)
+                {
+                    pidFileSupport = true;
+                }
+            }
+
             if (pidFileSupport)
             {
                 if (istaProcessId == 0)
