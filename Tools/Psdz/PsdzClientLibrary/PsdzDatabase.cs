@@ -25,6 +25,7 @@ using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClientLibrary;
+using PsdzClientLibrary.Core;
 using SQLitePCL;
 
 namespace PsdzClient
@@ -1485,7 +1486,22 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.InfoFormat("PsdzDatabase CreateDirectory Exception: {0}", e.Message);
+                    log.ErrorFormat("PsdzDatabase CreateDirectory Exception: {0}, Path: {1}", e.Message, _databaseExtractPath);
+                    _databaseExtractPath = string.Empty;
+                }
+            }
+
+            if (string.IsNullOrEmpty(_databaseExtractPath))
+            {
+                _databaseExtractPath = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzExtractDataPath", "%ISPIDATA%\\BMW\\ISPI\\data\\TRIC\\ISTA\\Extract\\");
+                try
+                {
+                    Directory.CreateDirectory(_databaseExtractPath);
+                }
+                catch (Exception e)
+                {
+                    log.ErrorFormat("PsdzDatabase CreateDirectory Exception: {0}, Path: {1}", e.Message, _databaseExtractPath);
+                    _databaseExtractPath = string.Empty;
                 }
             }
 
