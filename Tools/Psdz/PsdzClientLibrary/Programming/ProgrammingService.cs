@@ -124,9 +124,26 @@ namespace PsdzClient.Programming
 
 		private void PreparePsdzBackupDataPath(string istaFolder)
 		{
-			string pathString = Path.Combine(istaFolder, "Temp");
+            string pathConfig = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", PsdzContext.DefaultBackupPath);
+            string pathString = null;
+            if (!string.IsNullOrEmpty(pathConfig))
+            {
+                if (Path.IsPathRooted(pathConfig))
+                {
+                    if (Directory.Exists(pathConfig))
+                    {
+                        pathString = pathConfig;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(pathString))
+            {
+                pathString = Path.Combine(istaFolder, "Temp");
+            }
+
 			try
-			{
+            {
 				if (!Directory.Exists(pathString))
 				{
 					Directory.CreateDirectory(pathString);
