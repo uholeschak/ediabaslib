@@ -46,8 +46,7 @@ namespace PsdzClient.Programming
             string psdzSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\binx64" : @"PSdZ\bin";
             string psdzBinaryPath = Path.Combine(istaFolder, psdzSubDir);
             PsdzServiceArgs psdzServiceArgs = new PsdzServiceArgs();
-            string jreSubDir = Environment.Is64BitOperatingSystem ? @"OpenJREx64" : @"OpenJREx86";
-            psdzServiceArgs.JrePath = Path.Combine(istaFolder, jreSubDir);
+            psdzServiceArgs.JrePath = GetJrePath(istaFolder);
             psdzServiceArgs.JvmOptions = GetPsdzJvmOptions(psdzBinaryPath, psdzLogFilePath);
             psdzServiceArgs.PsdzBinaryPath = psdzBinaryPath;
             psdzServiceArgs.PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
@@ -105,5 +104,19 @@ namespace PsdzClient.Programming
             }
             return 0;
         }
+
+        public static string GetJrePath(string istaFolder)
+        {
+            bool configStringAsBoolean = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.PsdzWebservice.Enabled", defaultValue: false);
+            string text = (configStringAsBoolean ? "WebService\\" : string.Empty);
+            string defaultValue = (Environment.Is64BitOperatingSystem ? (text + "OpenJREx64") : (text + "OpenJREx86"));
+            string configPath = ConfigSettings.getPathString(configStringAsBoolean ? "BMW.Rheingold.Programming.PsdzJrePath.WebService" : "BMW.Rheingold.Programming.PsdzJrePath", string.Empty);
+            if (!string.IsNullOrEmpty(configPath))
+            {
+                return Path.GetFullPath(configPath);
+            }
+            return Path.Combine(istaFolder, defaultValue);
+        }
+
     }
 }
