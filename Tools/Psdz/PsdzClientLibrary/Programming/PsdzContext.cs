@@ -26,7 +26,6 @@ namespace PsdzClient.Programming
 {
 	public class PsdzContext : IPsdzContext, IDisposable
 	{
-        public const string DefaultBackupPath = "%ISPIDATA%\\BMW\\ISPI\\data\\TRIC\\ISTA\\Temp\\";
         private const string IdrBackupFileName = "_IDR_Files.backup";
 
         public enum BackupTalResult
@@ -289,10 +288,9 @@ namespace PsdzClient.Programming
             return null;
         }
 
-        public bool SetPathToBackupData(string vin17)
-		{
-			this.hasVinBackupDataFolder = false;
-            string pathConfig = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", DefaultBackupPath);
+        public static string GetBackupBasePath(string istaFolder)
+        {
+            string pathConfig = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", "%ISPIDATA%\\BMW\\ISPI\\data\\TRIC\\ISTA\\Temp\\");
             string pathString = null;
             if (!string.IsNullOrEmpty(pathConfig))
             {
@@ -307,8 +305,15 @@ namespace PsdzClient.Programming
 
             if (string.IsNullOrEmpty(pathString))
             {
-                pathString = Path.Combine(IstaFolder, "Temp");
+                pathString = Path.Combine(istaFolder, "Temp");
             }
+            return pathString;
+        }
+
+        public bool SetPathToBackupData(string vin17)
+		{
+			this.hasVinBackupDataFolder = false;
+            string pathString = GetBackupBasePath(IstaFolder);
 
 			if (string.IsNullOrEmpty(pathString))
 			{
