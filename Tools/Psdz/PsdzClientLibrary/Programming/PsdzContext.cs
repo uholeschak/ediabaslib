@@ -291,9 +291,27 @@ namespace PsdzClient.Programming
         public bool SetPathToBackupData(string vin17)
 		{
 			this.hasVinBackupDataFolder = false;
-			string pathString = Path.Combine(IstaFolder, "Temp");
+            string pathConfig = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", "%ISPIDATA%\\BMW\\ISPI\\data\\TRIC\\ISTA\\Temp\\");
+            string pathString = null;
+            if (!string.IsNullOrEmpty(pathConfig))
+            {
+                if (Path.IsPathRooted(pathConfig))
+                {
+                    if (Directory.Exists(pathConfig))
+                    {
+                        pathString = pathConfig;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(pathString))
+            {
+                pathString = Path.Combine(IstaFolder, "Temp");
+            }
+
 			if (string.IsNullOrEmpty(pathString))
 			{
+                Log.Warning("PsdzContext.SetPathToBackupData()", "Backup data path (\"BMW.Rheingold.Programming.PsdzBackupDataPath\") is not set. Thus data recovery is disabled.");
 				this.PathToBackupData = null;
 				return false;
 			}
@@ -307,10 +325,12 @@ namespace PsdzClient.Programming
                 this.PathToBackupData = Path.GetFullPath(Path.Combine(pathString, vin17));
             }
 
-            if (!string.IsNullOrEmpty(PathToBackupData) && !Directory.Exists(this.PathToBackupData))
-			{
-				Directory.CreateDirectory(this.PathToBackupData);
-			}
+            if (!Directory.Exists(PathToBackupData))
+            {
+                Log.Info("PsdzContext.SetPathToBackupData()", "Backup data path (\"{0}\") is not an existing directory. Try to create...", PathToBackupData);
+                Directory.CreateDirectory(PathToBackupData);
+            }
+            Log.Info("PsdzContext.SetPathToBackupData()", "Backup data path: \"{0}\"", PathToBackupData);
 
             return true;
         }
