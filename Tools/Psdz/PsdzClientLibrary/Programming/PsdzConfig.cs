@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Management;
 using System.Text.RegularExpressions;
 using BMW.Rheingold.Psdz;
+using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Programming
 {
@@ -34,6 +36,9 @@ namespace PsdzClient.Programming
                 Directory.CreateDirectory(PsdzServiceHostLogDir);
             }
             PsdzServiceArgs = CreateServiceArgs(istaFolder, PsdzLogFilePath, dealerId);
+            Log.Info("PsdzConfig.PsdzConfig()", "Hostpath:               {0}", HostPath);
+            Log.Info("PsdzConfig.PsdzConfig()", "PSdZ Logging directory: {0}", PsdzServiceHostLogDir);
+            Log.Info("PsdzConfig.PsdzConfig()", "PsdzServiceArgs: \n{0}", PsdzServiceArgs);
         }
 
         private static PsdzServiceArgs CreateServiceArgs(string istaFolder, string psdzLogFilePath, string dealerId)
@@ -48,7 +53,7 @@ namespace PsdzClient.Programming
             psdzServiceArgs.PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
             psdzServiceArgs.EdiabasBinPath = Path.Combine(istaFolder, @"Ediabas\BIN");
             psdzServiceArgs.IsTestRun = false;
-            psdzServiceArgs.IdleTimeout = 10000;
+            psdzServiceArgs.IdleTimeout = ConfigSettings.getConfigint("BMW.Rheingold.Programming.PsdzService.HostIdleTimeout", 10000);
             psdzServiceArgs.ClientConfigArgs = new ClientConfigArgs();
             psdzServiceArgs.ClientConfigArgs.DealerID = dealerId;
             return psdzServiceArgs;
@@ -56,30 +61,49 @@ namespace PsdzClient.Programming
 
         private static string[] GetPsdzJvmOptions(string psdzBinaryPath, string psdzLogFilePath)
         {
-            int memory = 1024;
+            int num = 1024;
             if (Environment.Is64BitOperatingSystem)
             {
-                memory *= 2;
+                int totalPhysicalMemoryInGb = GetTotalPhysicalMemoryInGb();
+                int configint = ConfigSettings.getConfigint("BMW.Rheingold.CoreFramework.ParallelOperationsLimit", -1);
+                num = ((totalPhysicalMemoryInGb <= 8 || configint <= 3) ? ((int)((double)num * 2.5)) : (512 + 512 * configint));
             }
 
-            string defaultValue = string.Join(" ", new List<string>
-            {
-                "-XX:ThreadStackSize=1024",
-                string.Format(CultureInfo.InvariantCulture, "-Xmx{0}m", memory),
-                "-XX:+UseG1GC",
-                "-XX:MaxGCPauseMillis=50",
-                "-Dcom.sun.management.jmxremote",
-                "-Djava.endorsed.dirs=${PSDZ_BIN_PATH}\\endorsed",
-                "-Djava.library.path='${PSDZ_BIN_PATH}\\prodias; ${PSDZ_BIN_PATH}\\psdz'"
-            });
-
+            List<string> list = new List<string>();
+            list.Add("-XX:ThreadStackSize=1024");
+            list.Add(string.Format(CultureInfo.InvariantCulture, "-Xmx{0}m", num));
+            list.Add("-XX:+UseG1GC");
+            list.Add("-XX:MaxGCPauseMillis=50");
+            list.Add("-Dcom.sun.management.jmxremote");
+            list.Add("-Djava.endorsed.dirs=${PSDZ_BIN_PATH}\\endorsed");
+            list.Add("-Djava.library.path='${PSDZ_BIN_PATH}\\prodias; ${PSDZ_BIN_PATH}\\psdz'");
+            string defaultValue = string.Join(" ", list);
             string text = defaultValue.Replace("${PSDZ_BIN_PATH}", psdzBinaryPath);
-
+            Log.Info("PsdzConfig.GetPsdzJvmOptions()", "{0}: {1}", "BMW.Rheingold.Programming.PsdzJvmOptions", text);
             return new List<string>(Regex.Split(text, "\\s+(?=\\-)"))
             {
                 "-DPsdzLogFilePath=" + psdzLogFilePath,
-                "-Dlog4j.configuration=psdzservicehost.properties"
+                "-Dlog4j.configurationFile=psdz-log4j2-config.xml"
             }.ToArray();
+        }
+
+        private static int GetTotalPhysicalMemoryInGb()
+        {
+            try
+            {
+                using (ManagementObjectCollection.ManagementObjectEnumerator managementObjectEnumerator = new ManagementObjectSearcher(new ObjectQuery("SELECT * FROM Win32_OperatingSystem")).Get().GetEnumerator())
+                {
+                    if (managementObjectEnumerator.MoveNext())
+                    {
+                        return int.Parse(((ManagementObject)managementObjectEnumerator.Current)["TotalVisibleMemorySize"].ToString()) / 1024 / 1024;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException("PsdzConfig.GetTotalPhysicalMemoryInGb()", exception);
+            }
+            return 0;
         }
     }
 }
