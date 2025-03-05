@@ -34,7 +34,7 @@ namespace BMW.Rheingold.Psdz.Client
 
         private static string istaPIDfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ISTA", "PsdzInstances.txt");
 
-        private static bool pidFileSupport;
+        private static bool pidFileSupport = Environment.Is64BitProcess;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PsdzServiceStarter));
 
