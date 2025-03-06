@@ -1461,7 +1461,16 @@ namespace PsdzClient
                 throw new Exception(string.Format("ISTA path not existing: {0}", istaFolder));
             }
 
-            _databasePath = Path.Combine(istaFolder, "SQLiteDBs");
+            string databaseBasePath = ConfigSettings.getPathString("BMW.Rheingold.DatabaseProvider.SQLiteConnector.DbBasePath", null);
+            if (!string.IsNullOrEmpty(databaseBasePath) && Directory.Exists(databaseBasePath))
+            {
+                _databasePath = databaseBasePath;
+            }
+            else
+            {
+                _databasePath = Path.Combine(istaFolder, "SQLiteDBs");
+            }
+
             if (!Directory.Exists(_databasePath))
             {
                 log.ErrorFormat("PsdzDatabase: ISTA database path not existing: {0}", _databasePath);
