@@ -2024,8 +2024,6 @@ namespace PsdzClient
 
         private string GetTableWithFTSModule()
         {
-            string text = string.Empty;
-            string result = string.Empty;
             try
             {
                 string databaseName = @"xmlvalueprimitive_ENGB.sqlite";
@@ -2046,6 +2044,7 @@ namespace PsdzClient
                 using (SqliteConnection mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString))
                 {
                     mDbConnection.Open();
+                    string text1 = string.Empty;
                     using (SqliteCommand command = mDbConnection.CreateCommand())
                     {
                         command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='xmlvalueprimitive_content'";
@@ -2053,32 +2052,32 @@ namespace PsdzClient
                         {
                             while (reader.Read())
                             {
-                                text = reader["name"].ToString();
+                                text1 = reader["name"].ToString();
                             }
                         }
                     }
 
-                    if (!string.IsNullOrEmpty(text))
+                    if (!string.IsNullOrEmpty(text1))
                     {
-                        result = "xmlvalueprimitive";
+                        return "xmlvalueprimitive";
                     }
-                    else
+
+                    string text2 = string.Empty;
+                    using (SqliteCommand command = mDbConnection.CreateCommand())
                     {
-                        using (SqliteCommand command = mDbConnection.CreateCommand())
+                        command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='fts'";
+                        using (SqliteDataReader reader = command.ExecuteReader())
                         {
-                            command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='fts'";
-                            using (SqliteDataReader reader = command.ExecuteReader())
+                            while (reader.Read())
                             {
-                                while (reader.Read())
-                                {
-                                    text = reader["name"].ToString();
-                                }
+                                text2 = reader["name"].ToString();
                             }
                         }
                     }
-                    if (!string.IsNullOrEmpty(text))
+
+                    if (!string.IsNullOrEmpty(text2))
                     {
-                        result = text;
+                        return text2;
                     }
                 }
             }
@@ -2088,8 +2087,7 @@ namespace PsdzClient
                 return null;
             }
 
-            log.InfoFormat("GetTableWithFTSModule Table: {0}", result);
-            return result;
+            return string.Empty;
         }
 
 
