@@ -1965,7 +1965,6 @@ namespace PsdzClient
                 {
                     DataSource = "file:" + databaseFile,
                     Mode = SqliteOpenMode.ReadOnly,
-                    Cache = SqliteCacheMode.Private
                 };
 
                 using (SqliteConnection mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString))
@@ -2038,7 +2037,6 @@ namespace PsdzClient
                 {
                     DataSource = "file:" + databaseFile,
                     Mode = SqliteOpenMode.ReadOnly,
-                    Cache = SqliteCacheMode.Private
                 };
 
                 using (SqliteConnection mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString))
