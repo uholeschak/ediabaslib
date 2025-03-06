@@ -1964,6 +1964,7 @@ namespace PsdzClient
                 {
                     DataSource = "file:" + databaseFile,
                     Mode = SqliteOpenMode.ReadOnly,
+                    Cache = SqliteCacheMode.Shared
                 };
 
                 using (SqliteConnection mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString))
@@ -1993,6 +1994,57 @@ namespace PsdzClient
             log.InfoFormat("GetXmlValuePrimitivesByIdSingle OK");
             return data;
         }
+
+        private string GetTableWithFTSModule(SqliteConnection mDbConnection)
+        {
+            string text = string.Empty;
+            string result = string.Empty;
+            try
+            {
+                using (SqliteCommand command = mDbConnection.CreateCommand())
+                {
+                    command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='xmlvalueprimitive_content'";
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            text = reader["name"].ToString();
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(text))
+                {
+                    result = "xmlvalueprimitive";
+                }
+                else
+                {
+                    using (SqliteCommand command = mDbConnection.CreateCommand())
+                    {
+                        command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='fts'";
+                        using (SqliteDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                text = reader["name"].ToString();
+                            }
+                        }
+                    }
+                }
+                if (!string.IsNullOrEmpty(text))
+                {
+                    result = text;
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetTableWithFTSModule Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return result;
+        }
+
 
         public string GetFlowForInfoObj(SwiInfoObj swiInfoObj)
         {
