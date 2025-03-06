@@ -1,32 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Xml.Linq;
-using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BmwFileReader;
 using HarmonyLib;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
 using log4net;
 using Microsoft.Data.Sqlite;
 using Microsoft.Win32;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClientLibrary;
 using PsdzClientLibrary.Core;
-using SQLitePCL;
 
 namespace PsdzClient
 {
@@ -1452,6 +1441,8 @@ namespace PsdzClient
         private SqliteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
+        private string _tableForFTSSearch = string.Empty;
+        private bool? _doesXMLValuePrimitiveTableHaveFTS;
         private Dictionary<string, XepRule> _xepRuleDict;
         private List<SwiDiagObj> _diagObjRootNodes;
         private HashSet<string> _diagObjRootNodeIdSet;
@@ -1960,17 +1951,18 @@ namespace PsdzClient
                     return null;
                 }
 
+                string comparator = this.DoesXMLValuePrimitiveTableHaveFTS ? "Match" : "=";
                 SqliteConnectionStringBuilder sqliteConnectionString = new SqliteConnectionStringBuilder
                 {
                     DataSource = "file:" + databaseFile,
                     Mode = SqliteOpenMode.ReadOnly,
-                    Cache = SqliteCacheMode.Shared
+                    Cache = SqliteCacheMode.Private
                 };
 
                 using (SqliteConnection mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString))
                 {
                     mDbConnection.Open();
-                    string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, DATA FROM XMLVALUEPRIMITIVE WHERE (ID = '{0}')", id);
+                    string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, DATA FROM XMLVALUEPRIMITIVE WHERE (ID {0} '{1}')", comparator, id);
                     using (SqliteCommand command = mDbConnection.CreateCommand())
                     {
                         command.CommandText = sql;
@@ -1995,33 +1987,59 @@ namespace PsdzClient
             return data;
         }
 
-        private string GetTableWithFTSModule(SqliteConnection mDbConnection)
+        private string TableForFTSSearch
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this._tableForFTSSearch))
+                {
+                    this._tableForFTSSearch = this.GetTableWithFTSModule();
+                }
+                return this._tableForFTSSearch;
+            }
+        }
+
+        private bool DoesXMLValuePrimitiveTableHaveFTS
+        {
+            get
+            {
+                bool? flag = this._doesXMLValuePrimitiveTableHaveFTS;
+                if (flag == null)
+                {
+                    bool? flag2 = (this._doesXMLValuePrimitiveTableHaveFTS = new bool?(this.TableForFTSSearch.Equals("xmlvalueprimitive", StringComparison.OrdinalIgnoreCase)));
+                    return flag2.Value;
+                }
+                return flag.GetValueOrDefault();
+            }
+        }
+
+        private string GetTableWithFTSModule()
         {
             string text = string.Empty;
             string result = string.Empty;
             try
             {
-                using (SqliteCommand command = mDbConnection.CreateCommand())
+                string databaseName = @"xmlvalueprimitive_ENGB.sqlite";
+                string databaseFile = Path.Combine(_databasePath, databaseName);
+                if (!File.Exists(databaseFile))
                 {
-                    command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='xmlvalueprimitive_content'";
-                    using (SqliteDataReader reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            text = reader["name"].ToString();
-                        }
-                    }
+                    log.ErrorFormat("GetTableWithFTSModule File not found: {0}", databaseFile);
+                    return null;
                 }
 
-                if (!string.IsNullOrEmpty(text))
+                SqliteConnectionStringBuilder sqliteConnectionString = new SqliteConnectionStringBuilder
                 {
-                    result = "xmlvalueprimitive";
-                }
-                else
+                    DataSource = "file:" + databaseFile,
+                    Mode = SqliteOpenMode.ReadOnly,
+                    Cache = SqliteCacheMode.Private
+                };
+
+                using (SqliteConnection mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString))
                 {
+                    mDbConnection.Open();
                     using (SqliteCommand command = mDbConnection.CreateCommand())
                     {
-                        command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='fts'";
+                        command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='xmlvalueprimitive_content'";
                         using (SqliteDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
@@ -2030,10 +2048,29 @@ namespace PsdzClient
                             }
                         }
                     }
-                }
-                if (!string.IsNullOrEmpty(text))
-                {
-                    result = text;
+
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        result = "xmlvalueprimitive";
+                    }
+                    else
+                    {
+                        using (SqliteCommand command = mDbConnection.CreateCommand())
+                        {
+                            command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='fts'";
+                            using (SqliteDataReader reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    text = reader["name"].ToString();
+                                }
+                            }
+                        }
+                    }
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        result = text;
+                    }
                 }
             }
             catch (Exception e)
@@ -2042,6 +2079,7 @@ namespace PsdzClient
                 return null;
             }
 
+            log.InfoFormat("GetTableWithFTSModule Table: {0}", result);
             return result;
         }
 
