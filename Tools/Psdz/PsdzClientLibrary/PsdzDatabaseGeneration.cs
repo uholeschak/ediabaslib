@@ -3044,6 +3044,11 @@ namespace PsdzClient
                         continue;
                     }
 
+                    if (methodName == "Fehlerspeicher_Lesen_02_s")
+                    {
+                        continue;
+                    }
+
                     ParameterInfo[] parameters = privateMethod.GetParameters();
                     if (parameters.Any())
                     {
@@ -3133,7 +3138,7 @@ namespace PsdzClient
                         {
                             log.ErrorFormat("ReadServiceModule Method processing slow: {0}, Module: {1}, Count: {2}", simpleMethod.Name, moduleName, waitCount);
                             waitCount++;
-                            if (waitCount >= 5)
+                            if (waitCount > 10)
                             {
                                 log.ErrorFormat("ReadServiceModule Method timeout, aborting: {0}, Module: {1}, Aborting", simpleMethod.Name, moduleName);
                                 moduleThread.Abort();
