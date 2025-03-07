@@ -3039,6 +3039,11 @@ namespace PsdzClient
                         continue;
                     }
 
+                    if (methodName == "Meldung_01_s")
+                    {
+                        continue;
+                    }
+
                     ParameterInfo[] parameters = privateMethod.GetParameters();
                     if (parameters.Any())
                     {
