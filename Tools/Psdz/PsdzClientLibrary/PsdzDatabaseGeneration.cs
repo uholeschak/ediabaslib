@@ -2390,9 +2390,10 @@ namespace PsdzClient
                             long usedMemory = currentProcess.PrivateMemorySize64;
                             long usedMemoryMB = usedMemory / (1024 * 1024);
                             log.InfoFormat("ConvertAllServiceModules Memory: {0}MB", usedMemoryMB);
-                            if (usedMemoryMB > 200)
+                            int memLimit = Environment.Is64BitProcess ? 2000 : 200;
+                            if (usedMemoryMB > memLimit)
                             {
-                                log.InfoFormat("ConvertAllServiceModules Memory exhausted");
+                                log.InfoFormat("ConvertAllServiceModules Memory limit reached: {0}", memLimit);
                                 completed = false;
                                 break;
                             }
