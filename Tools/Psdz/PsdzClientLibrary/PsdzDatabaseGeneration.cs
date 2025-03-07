@@ -3130,7 +3130,7 @@ namespace PsdzClient
                             waitCount++;
                             if (waitCount >= 5)
                             {
-                                log.ErrorFormat("ReadServiceModule Method processing slow: {0}, Module: {1}, Aborting", simpleMethod.Name, moduleName);
+                                log.ErrorFormat("ReadServiceModule Method timeout, aborting: {0}, Module: {1}, Aborting", simpleMethod.Name, moduleName);
                                 moduleThread.Abort();
                             }
                         }
