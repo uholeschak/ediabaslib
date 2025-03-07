@@ -3033,6 +3033,11 @@ namespace PsdzClient
                         continue;
                     }
 
+                    if (methodName == "Auswertung")
+                    {
+                        continue;
+                    }
+
                     ParameterInfo[] parameters = privateMethod.GetParameters();
                     if (parameters.Any())
                     {
