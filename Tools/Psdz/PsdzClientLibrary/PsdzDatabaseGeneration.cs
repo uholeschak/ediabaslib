@@ -3117,9 +3117,16 @@ namespace PsdzClient
 
                         moduleThread.Start();
                         DateTime startTime = DateTime.Now;
+                        int waitCount = 0;
                         while (!moduleThread.Join(5000))
                         {
-                            log.ErrorFormat("ReadServiceModule Method processing slow: {0}, Module: {1}", simpleMethod.Name, moduleName);
+                            log.ErrorFormat("ReadServiceModule Method processing slow: {0}, Module: {1}, Count: {2}", simpleMethod.Name, moduleName, waitCount);
+                            waitCount++;
+                            if (waitCount >= 5)
+                            {
+                                log.ErrorFormat("ReadServiceModule Method processing slow: {0}, Module: {1}, Aborting", simpleMethod.Name, moduleName);
+                                moduleThread.Abort();
+                            }
                         }
 
                         TimeSpan diffTime = DateTime.Now - startTime;
